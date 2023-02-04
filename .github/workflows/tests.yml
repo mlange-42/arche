@@ -1,0 +1,62 @@
+name: Tests
+
+on: [push]
+
+jobs:
+
+  build:
+    name: Build binaries
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.19.x'
+      - name: Install dependencies
+        run: go get .
+      - name: Build Linux
+        run: GOOS=linux GOARCH=amd64 go build .
+      - name: Build Windows
+        run: GOOS=windows GOARCH=amd64 go build .
+      - name: Build MacOS
+        run: GOOS=darwin GOARCH=amd64 go build .
+
+  test:
+    name: Run tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.19.x'
+      - name: Install dependencies
+        run: go get .
+      - name: Test
+        run: |
+          go test -v ./... -covermode=count -coverprofile="coverage.out"
+          go tool cover -func="coverage.out"
+
+  lint:
+    name: Run linters
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.19.x'
+      - name: Install dependencies
+        run: |
+          go get .
+          go install honnef.co/go/tools/cmd/staticcheck@latest
+      - name: Check format
+        run: |
+          if gofmt -e -l . >&1 | grep '^'; then
+            exit 1
+          fi
+      - name: Lint with vet
+        run: go vet ./...
+      - name: Lint with staticcheck
+        run: staticcheck ./...
