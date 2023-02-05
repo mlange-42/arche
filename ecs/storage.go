@@ -13,16 +13,12 @@ type Storage interface {
 	Len() uint32
 }
 
-// NewStorage creates a new component storage
-func NewStorage(obj interface{}) Storage {
-	return newStorage(obj)
-}
-
-func newStorage(obj interface{}) *storage {
+// NewByteStorage creates a new ByteStorage
+func NewByteStorage(obj interface{}) *ByteStorage {
 	tp := reflect.TypeOf(obj)
 	size := tp.Size()
 
-	return &storage{
+	return &ByteStorage{
 		data:              []byte{},
 		itemSize:          size,
 		len:               0,
@@ -30,7 +26,10 @@ func newStorage(obj interface{}) *storage {
 	}
 }
 
-type storage struct {
+// ByteStorage stores components in a byte slice
+// It does not work with components that contain references or pointers,
+// because the referenced memory will be garbage-collected.
+type ByteStorage struct {
 	data              []byte
 	itemSize          uintptr
 	len               uint32
@@ -38,7 +37,7 @@ type storage struct {
 }
 
 // Get retrieves an unsafe pointer to an element
-func (s *storage) Get(index uint32) unsafe.Pointer {
+func (s *ByteStorage) Get(index uint32) unsafe.Pointer {
 	base := unsafe.Pointer(&s.data[0])
 
 	offset := uintptr(index) * s.itemSize
@@ -46,7 +45,7 @@ func (s *storage) Get(index uint32) unsafe.Pointer {
 }
 
 // Add adds an element to the end of the storage
-func (s *storage) Add(value interface{}) (index uint32) {
+func (s *ByteStorage) Add(value interface{}) (index uint32) {
 	// TODO this allocates a new slice and should be improved
 	if uint32(len(s.data)) < (s.len+1)*uint32(s.itemSize) {
 		old := s.data
@@ -59,19 +58,19 @@ func (s *storage) Add(value interface{}) (index uint32) {
 }
 
 // Remove swap-removes an element
-func (s *storage) Remove(index uint32) {
+func (s *ByteStorage) Remove(index uint32) {
 	o := s.len - 1
 	n := index
-	s.swap(o, n)
+	s.copy(o, n)
 	s.len--
 }
 
 // Len returns the number of items in the storage
-func (s *storage) Len() uint32 {
+func (s *ByteStorage) Len() uint32 {
 	return s.len
 }
 
-func (s *storage) set(index uint32, value interface{}) {
+func (s *ByteStorage) set(index uint32, value interface{}) {
 	dst := s.Get(index)
 	src := unsafe.Pointer(reflect.ValueOf(value).Pointer())
 	for i := uintptr(0); i < s.itemSize; i++ {
@@ -81,15 +80,13 @@ func (s *storage) set(index uint32, value interface{}) {
 	}
 }
 
-func (s *storage) swap(i, j uint32) {
-	if i == j {
+func (s *ByteStorage) copy(from, to uint32) {
+	if from == to {
 		return
 	}
-	ii := uintptr(i) * s.itemSize
-	jj := uintptr(j) * s.itemSize
-	for k := uintptr(0); k < s.itemSize; k++ {
-		s.data[ii+k], s.data[jj+k] = s.data[jj+k], s.data[ii+k]
-	}
+	f := uintptr(from) * s.itemSize
+	t := uintptr(to) * s.itemSize
+	copy(s.data[t:t+s.itemSize], s.data[f:f+s.itemSize])
 }
 
 // ToSlice converts the content of a storage to a slice of structs

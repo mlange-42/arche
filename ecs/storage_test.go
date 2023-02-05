@@ -17,7 +17,7 @@ type simpleStruct struct {
 	Index int
 }
 
-func TestStorageItemSize(t *testing.T) {
+func TestByteStorageItemSize(t *testing.T) {
 	obj1 := struct{}{}
 	obj2 := struct{ bool }{true}
 	obj3 := struct{ int8 }{0}
@@ -29,13 +29,13 @@ func TestStorageItemSize(t *testing.T) {
 		bool
 	}{0, true}
 
-	s1 := newStorage(obj1)
-	s2 := newStorage(obj2)
-	s3 := newStorage(obj3)
-	s4 := newStorage(obj4)
-	s5 := newStorage(obj5)
-	s6 := newStorage(obj6)
-	s7 := newStorage(obj7)
+	s1 := NewByteStorage(obj1)
+	s2 := NewByteStorage(obj2)
+	s3 := NewByteStorage(obj3)
+	s4 := NewByteStorage(obj4)
+	s5 := NewByteStorage(obj5)
+	s6 := NewByteStorage(obj6)
+	s7 := NewByteStorage(obj7)
 
 	assert.Equal(
 		t,
@@ -45,10 +45,10 @@ func TestStorageItemSize(t *testing.T) {
 	)
 }
 
-func TestStorageAddGet(t *testing.T) {
+func TestByteStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
 	obj2 := testStruct{1, 2, true, false}
-	s := newStorage(obj1)
+	s := NewByteStorage(obj1)
 
 	idx := s.Add(&obj1)
 	assert.Equal(t, idx, uint32(0), "Index of first insertion should be 0")
@@ -69,9 +69,9 @@ func TestStorageAddGet(t *testing.T) {
 	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
 }
 
-func TestStorageRemove(t *testing.T) {
+func TestByteStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
-	s := newStorage(ref)
+	s := NewByteStorage(ref)
 
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
@@ -89,9 +89,9 @@ func TestStorageRemove(t *testing.T) {
 	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
 }
 
-func TestStorageDataSize(t *testing.T) {
+func TestByteStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
-	s := newStorage(ref)
+	s := NewByteStorage(ref)
 	s.capacityIncrement = 1
 
 	size := int(s.itemSize)
@@ -117,13 +117,13 @@ func TestStorageDataSize(t *testing.T) {
 	assert.Equal(t, 6*size, len(s.data))
 }
 
-func TestNewStorage(t *testing.T) {
-	_ = NewStorage(simpleStruct{})
+func TestNewByteStorage(t *testing.T) {
+	_ = NewByteStorage(simpleStruct{})
 }
 
-func BenchmarkIterStorage(b *testing.B) {
+func BenchmarkIterByteStorage(b *testing.B) {
 	ref := testStruct{}
-	s := newStorage(ref)
+	s := NewByteStorage(ref)
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
