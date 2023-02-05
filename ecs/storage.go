@@ -50,7 +50,9 @@ func (s *storage) Get(index uint32) unsafe.Pointer {
 // Add adds an element to the end of the storage
 func (s *storage) Add(value interface{}) (index uint32) {
 	// TODO this allocates a new slice and should be improved
-	s.data = append(s.data, make([]byte, s.itemSize)...)
+	if uint32(len(s.data)) < (s.len+1)*uint32(s.itemSize) {
+		s.data = append(s.data, make([]byte, s.itemSize)...)
+	}
 	s.len++
 	s.set(s.len-1, value)
 	return s.len - 1
