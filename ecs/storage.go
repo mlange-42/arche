@@ -23,16 +23,18 @@ func newStorage(obj interface{}) *storage {
 	size := tp.Size()
 
 	return &storage{
-		data:     []byte{},
-		itemSize: size,
-		len:      0,
+		data:              []byte{},
+		itemSize:          size,
+		len:               0,
+		capacityIncrement: 32,
 	}
 }
 
 type storage struct {
-	data     []byte
-	itemSize uintptr
-	len      uint32
+	data              []byte
+	itemSize          uintptr
+	len               uint32
+	capacityIncrement uint32
 }
 
 // Get retrieves an unsafe pointer to an element
@@ -47,7 +49,9 @@ func (s *storage) Get(index uint32) unsafe.Pointer {
 func (s *storage) Add(value interface{}) (index uint32) {
 	// TODO this allocates a new slice and should be improved
 	if uint32(len(s.data)) < (s.len+1)*uint32(s.itemSize) {
-		s.data = append(s.data, make([]byte, s.itemSize)...)
+		old := s.data
+		s.data = make([]byte, (s.len+s.capacityIncrement)*uint32(s.itemSize))
+		copy(s.data, old)
 	}
 	s.len++
 	s.set(s.len-1, value)

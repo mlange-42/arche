@@ -92,6 +92,7 @@ func TestStorageRemove(t *testing.T) {
 func TestStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
 	s := newStorage(ref)
+	s.capacityIncrement = 1
 
 	size := int(s.itemSize)
 
