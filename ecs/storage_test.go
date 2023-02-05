@@ -17,40 +17,6 @@ type simpleStruct struct {
 	Index int
 }
 
-func TestByteStorageItemSize(t *testing.T) {
-	obj1 := struct{}{}
-	obj2 := struct{ bool }{true}
-	obj3 := struct{ int8 }{0}
-	obj4 := struct{ int16 }{0}
-	obj5 := struct{ int32 }{0}
-	obj6 := struct{ int64 }{0}
-	obj7 := struct {
-		int64
-		bool
-	}{0, true}
-
-	s1 := NewByteStorage(obj1, 32)
-	s2 := NewByteStorage(obj2, 32)
-	s3 := NewByteStorage(obj3, 32)
-	s4 := NewByteStorage(obj4, 32)
-	s5 := NewByteStorage(obj5, 32)
-	s6 := NewByteStorage(obj6, 32)
-	s7 := NewByteStorage(obj7, 32)
-
-	assert.Equal(
-		t,
-		[]uintptr{0, 1, 1, 2, 4, 8, 16},
-		[]uintptr{s1.itemSize, s2.itemSize, s3.itemSize, s4.itemSize, s5.itemSize, s6.itemSize, s7.itemSize},
-		"Unexpected struct size",
-	)
-}
-
-func TestByteStorageAddGet(t *testing.T) {
-	obj1 := testStruct{}
-	s := NewByteStorage(obj1, 32)
-	storageAddGet(t, s)
-}
-
 func TestReflectStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
 	s := NewReflectStorage(obj1, 32)
@@ -80,13 +46,6 @@ func storageAddGet(t *testing.T, s Storage) {
 	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
 }
 
-func TestByteStorageRemove(t *testing.T) {
-	ref := simpleStruct{}
-	s := NewByteStorage(ref, 32)
-
-	storageRemove(t, s)
-}
-
 func TestReflectStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
 	s := NewReflectStorage(ref, 32)
@@ -109,33 +68,6 @@ func storageRemove(t *testing.T, s Storage) {
 	s.Remove(1)
 	assert.Equal(t, uint32(3), s.Len(), "Wrong storage length")
 	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
-}
-
-func TestByteStorageDataSize(t *testing.T) {
-	ref := simpleStruct{}
-	s := NewByteStorage(ref, 1)
-
-	size := int(s.itemSize)
-
-	for i := 0; i < 5; i++ {
-		obj := simpleStruct{i}
-		s.Add(&obj)
-	}
-
-	assert.Equal(t, 5*size, len(s.data))
-
-	s.Remove(0)
-	assert.Equal(t, 5*size, len(s.data))
-	s.Remove(0)
-	assert.Equal(t, 5*size, len(s.data))
-
-	s.Add(&simpleStruct{})
-	assert.Equal(t, 5*size, len(s.data))
-	s.Add(&simpleStruct{})
-	assert.Equal(t, 5*size, len(s.data))
-
-	s.Add(&simpleStruct{})
-	assert.Equal(t, 6*size, len(s.data))
 }
 
 func TestReflectStorageDataSize(t *testing.T) {
@@ -163,28 +95,8 @@ func TestReflectStorageDataSize(t *testing.T) {
 	assert.Equal(t, 6, int(s.cap))
 }
 
-func TestNewByteStorage(t *testing.T) {
-	_ = NewByteStorage(simpleStruct{}, 32)
-}
-
 func TestNewReflectStorage(t *testing.T) {
 	_ = NewReflectStorage(simpleStruct{}, 32)
-}
-
-func BenchmarkIterByteStorage(b *testing.B) {
-	ref := testStruct{}
-	s := NewByteStorage(ref, 128)
-	for i := 0; i < 1000; i++ {
-		s.Add(&testStruct{})
-	}
-	assert.Equal(b, 1000, int(s.Len()))
-
-	for i := 0; i < b.N; i++ {
-		for j := 0; j < int(s.Len()); j++ {
-			a := (*testStruct)(s.Get(uint32(j)))
-			_ = a
-		}
-	}
 }
 
 func BenchmarkIterReflectStorage(b *testing.B) {
@@ -233,19 +145,6 @@ func BenchmarkIterSliceInterface(b *testing.B) {
 	}
 }
 
-func BenchmarkAddByteStorage(b *testing.B) {
-	ref := testStruct{}
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		s := NewByteStorage(ref, 1024)
-		b.StartTimer()
-
-		for i := 0; i < 1000; i++ {
-			s.Add(&ref)
-		}
-	}
-}
-
 func BenchmarkAddReflectStorage(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
@@ -290,22 +189,6 @@ func BenchmarkAddSliceInterface(b *testing.B) {
 		b.StopTimer()
 		_ = s
 		b.StartTimer()
-	}
-}
-
-func BenchmarkRemoveByteStorage(b *testing.B) {
-	ref := testStruct{}
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		s := NewByteStorage(ref, 1024)
-		for i := 0; i < 1000; i++ {
-			s.Add(&ref)
-		}
-		b.StartTimer()
-
-		for i := 0; i < 1000; i++ {
-			s.Remove(0)
-		}
 	}
 }
 
