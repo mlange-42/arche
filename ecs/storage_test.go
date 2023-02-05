@@ -88,3 +88,20 @@ func TestStorageRemove(t *testing.T) {
 	assert.Equal(t, uint32(3), s.Len(), "Wrong storage length")
 	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
 }
+
+func TestStoragePanic(t *testing.T) {
+	ref := simpleStruct{}
+	s := newStorage(ref)
+
+	for i := 0; i < 5; i++ {
+		obj := simpleStruct{i}
+		s.Add(&obj)
+	}
+
+	assert.Panics(t, func() { s.Get(5) }, "Should panic on invalid get index")
+	assert.Panics(t, func() { s.Remove(5) }, "Should panic on invalid remove index")
+}
+
+func TestNewStorage(t *testing.T) {
+	_ = NewStorage(simpleStruct{})
+}
