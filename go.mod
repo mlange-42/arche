@@ -2,10 +2,7 @@ module github.com/mlange-42/arche
 
 go 1.20
 
-require (
-	github.com/magiconair/properties v1.8.7
-	github.com/stretchr/testify v1.8.1
-)
+require github.com/stretchr/testify v1.8.1
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect

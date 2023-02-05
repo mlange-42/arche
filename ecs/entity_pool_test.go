@@ -7,6 +7,10 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestEntityPoolConstructor(t *testing.T) {
+	_ = NewEntityPool()
+}
+
 func TestEntityPool(t *testing.T) {
 	p := newImplicitListEntityPool()
 
