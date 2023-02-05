@@ -23,7 +23,7 @@ func TestEntityPool(t *testing.T) {
 
 	e0Old := e0
 	e0 = p.Get()
-	expectedAll[1].gen++
+	expectedAll[0].gen++
 	assert.True(t, p.Alive(e0), "Recycled entity of new generation should be alive")
 	assert.False(t, p.Alive(e0Old), "Recycled entity of old generation should not be alive")
 
@@ -45,29 +45,43 @@ func TestEntityPool(t *testing.T) {
 }
 
 func TestEntityPoolStochastic(t *testing.T) {
-	p := newImplicitListEntityPool()
+	for i := 0; i < 10; i++ {
+		p := newImplicitListEntityPool()
 
-	alive := map[Entity]bool{}
-	for i := 0; i < 100; i++ {
-		e := p.Get()
-		alive[e] = true
-	}
-	for e := range alive {
-		if rand.Float32() > 0.5 {
-			continue
+		alive := map[Entity]bool{}
+		for i := 0; i < 10; i++ {
+			e := p.Get()
+			alive[e] = true
 		}
-		p.Recycle(e)
-		alive[e] = false
+		for e, isAlive := range alive {
+			assert.Equal(t, isAlive, p.Alive(e), "Wrong alive state of entity %v after initialization", e)
+			if rand.Float32() > 0.75 {
+				continue
+			}
+			p.Recycle(e)
+			alive[e] = false
+		}
+		for e, isAlive := range alive {
+			assert.Equal(t, isAlive, p.Alive(e), "Wrong alive state of entity %v after 1st removal. Entity is %v", e, p.entities[e.id])
+		}
+		for i := 0; i < 10; i++ {
+			e := p.Get()
+			alive[e] = true
+		}
+		for e, isAlive := range alive {
+			assert.Equal(t, isAlive, p.Alive(e), "Wrong alive state of entity %v after 1st recycling. Entity is %v", e, p.entities[e.id])
+		}
+		assert.Equal(t, uint32(0), p.available, "No more entities should be available")
+
+		for e, isAlive := range alive {
+			if !isAlive || rand.Float32() > 0.75 {
+				continue
+			}
+			p.Recycle(e)
+			alive[e] = false
+		}
+		for e, a := range alive {
+			assert.Equal(t, a, p.Alive(e), "Wrong alive state of entity %v after 2nd removal. Entity is %v", e, p.entities[e.id])
+		}
 	}
-	for e, a := range alive {
-		assert.Equal(t, a, p.Alive(e), "Wrong alive state of entity %v after removal", e)
-	}
-	for i := 0; i < 100; i++ {
-		e := p.Get()
-		alive[e] = true
-	}
-	for e, a := range alive {
-		assert.Equal(t, a, p.Alive(e), "Wrong alive state of entity %v after recycling", e)
-	}
-	assert.Equal(t, uint32(0), p.available, "No more entities should be available")
 }

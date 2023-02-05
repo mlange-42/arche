@@ -14,19 +14,16 @@ type EntityPool interface {
 func NewEntityPool() EntityPool {
 	return &implicitListEntityPool{
 		entities:  []Entity{},
-		next:      newEntity(0),
+		next:      0,
 		available: 0,
 	}
 }
 
 // Creates a pool with proper initialization of next
-// TODO: check for a better solution than using the max generation
-// The problem it that we identify dead entities partially by tha fact that their ID does not match their position.
-// Depending on the initialization of `next` and the first recycled entity, this assumption may not be valid.
 func newImplicitListEntityPool() *implicitListEntityPool {
 	return &implicitListEntityPool{
 		entities:  []Entity{},
-		next:      Entity{0, 1},
+		next:      0,
 		available: 0,
 	}
 }
@@ -35,7 +32,7 @@ func newImplicitListEntityPool() *implicitListEntityPool {
 // Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
 type implicitListEntityPool struct {
 	entities  []Entity
-	next      Entity
+	next      uint32
 	available uint32
 }
 
@@ -46,19 +43,20 @@ func (p *implicitListEntityPool) Get() Entity {
 		p.entities = append(p.entities, e)
 		return e
 	}
-	p.next, p.entities[p.next.id] = p.entities[p.next.id], p.next
+	curr := p.next
+	p.next, p.entities[p.next].id = p.entities[p.next].id, p.next
 	p.available--
-	return p.entities[p.next.id]
+	return p.entities[curr]
 }
 
 // Recycle hands an entity back for recycling
 func (p *implicitListEntityPool) Recycle(e Entity) {
-	e.gen++
-	p.next, p.entities[e.id] = e, p.next
+	p.entities[e.id].gen++
+	p.next, p.entities[e.id].id = e.id, p.next
 	p.available++
 }
 
 // Alive return whether an entity is currently alive
 func (p *implicitListEntityPool) Alive(e Entity) bool {
-	return p.entities[e.id].id == e.id && e.gen == p.entities[e.id].gen
+	return e.gen == p.entities[e.id].gen
 }
