@@ -47,8 +47,19 @@ func TestByteStorageItemSize(t *testing.T) {
 
 func TestByteStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
-	obj2 := testStruct{1, 2, true, false}
 	s := NewByteStorage(obj1)
+	storageAddGet(t, s)
+}
+
+func TestReflectStorageAddGet(t *testing.T) {
+	obj1 := testStruct{}
+	s := NewReflectStorage(obj1)
+	storageAddGet(t, s)
+}
+
+func storageAddGet(t *testing.T, s Storage) {
+	obj1 := testStruct{}
+	obj2 := testStruct{1, 2, true, false}
 
 	idx := s.Add(&obj1)
 	assert.Equal(t, idx, uint32(0), "Index of first insertion should be 0")
@@ -73,6 +84,17 @@ func TestByteStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
 	s := NewByteStorage(ref)
 
+	storageRemove(t, s)
+}
+
+func TestReflectStorageRemove(t *testing.T) {
+	ref := simpleStruct{}
+	s := NewReflectStorage(ref)
+
+	storageRemove(t, s)
+}
+
+func storageRemove(t *testing.T, s Storage) {
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
 		s.Add(&obj)
@@ -117,8 +139,38 @@ func TestByteStorageDataSize(t *testing.T) {
 	assert.Equal(t, 6*size, len(s.data))
 }
 
+func TestReflectStorageDataSize(t *testing.T) {
+	ref := simpleStruct{}
+	s := NewReflectStorage(ref)
+	s.capacityIncrement = 1
+
+	for i := 0; i < 5; i++ {
+		obj := simpleStruct{i}
+		s.Add(&obj)
+	}
+
+	assert.Equal(t, 5, int(s.cap))
+
+	s.Remove(0)
+	assert.Equal(t, 5, int(s.cap))
+	s.Remove(0)
+	assert.Equal(t, 5, int(s.cap))
+
+	s.Add(&simpleStruct{})
+	assert.Equal(t, 5, int(s.cap))
+	s.Add(&simpleStruct{})
+	assert.Equal(t, 5, int(s.cap))
+
+	s.Add(&simpleStruct{})
+	assert.Equal(t, 6, int(s.cap))
+}
+
 func TestNewByteStorage(t *testing.T) {
 	_ = NewByteStorage(simpleStruct{})
+}
+
+func TestNewReflectStorage(t *testing.T) {
+	_ = NewReflectStorage(simpleStruct{})
 }
 
 func BenchmarkIterByteStorage(b *testing.B) {
@@ -127,6 +179,23 @@ func BenchmarkIterByteStorage(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
+	assert.Equal(b, 1000, int(s.Len()))
+
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < int(s.Len()); j++ {
+			a := (*testStruct)(s.Get(uint32(j)))
+			_ = a
+		}
+	}
+}
+
+func BenchmarkIterReflectStorage(b *testing.B) {
+	ref := testStruct{}
+	s := NewReflectStorage(ref)
+	for i := 0; i < 1000; i++ {
+		s.Add(&testStruct{})
+	}
+	assert.Equal(b, 1000, int(s.Len()))
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < int(s.Len()); j++ {
@@ -141,6 +210,7 @@ func BenchmarkIterSlice(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
 	}
+	assert.Equal(b, 1000, len(s))
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < len(s); j++ {
@@ -155,6 +225,7 @@ func BenchmarkIterSliceInterface(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
 	}
+	assert.Equal(b, 1000, len(s))
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < len(s); j++ {
