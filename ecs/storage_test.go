@@ -13,6 +13,10 @@ type testStruct struct {
 	Bool2 bool
 }
 
+type simpleStruct struct {
+	Index int
+}
+
 func TestStorageItemSize(t *testing.T) {
 	obj1 := struct{}{}
 	obj2 := struct{ bool }{true}
@@ -63,4 +67,24 @@ func TestStorageAddGet(t *testing.T) {
 	assert.Equal(t, testStruct{1, 1001, true, false}, *ret2, "Manipulating element does not change data")
 
 	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
+}
+
+func TestStorageRemove(t *testing.T) {
+	ref := simpleStruct{}
+	s := newStorage(ref)
+
+	for i := 0; i < 5; i++ {
+		obj := simpleStruct{i}
+		s.Add(&obj)
+	}
+
+	assert.Equal(t, uint32(5), s.Len(), "Wrong storage length")
+
+	s.Remove(4)
+	assert.Equal(t, uint32(4), s.Len(), "Wrong storage length")
+	assert.Equal(t, []simpleStruct{{0}, {1}, {2}, {3}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
+
+	s.Remove(1)
+	assert.Equal(t, uint32(3), s.Len(), "Wrong storage length")
+	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
 }
