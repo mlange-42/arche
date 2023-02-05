@@ -85,3 +85,27 @@ func TestNewArchetype(t *testing.T) {
 
 	_ = NewArchetype(comps...)
 }
+
+func BenchmarkArchetypeAccess(b *testing.B) {
+	comps := []Component{
+		{ID: 0, Component: Position{}},
+		{ID: 1, Component: Rotation{}},
+	}
+
+	arch := newArchetype(comps...)
+
+	for i := 0; i < 1000; i++ {
+		arch.Add(
+			newEntity(i),
+			Component{ID: 0, Component: &Position{1, 2}},
+			Component{ID: 1, Component: &Rotation{3}},
+		)
+	}
+
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < 1000; j++ {
+			pos := (*Position)(arch.Get(i, ID(0)))
+			_ = pos
+		}
+	}
+}
