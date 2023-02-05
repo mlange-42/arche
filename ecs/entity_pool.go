@@ -33,7 +33,7 @@ func newImplicitListEntityPool() *implicitListEntityPool {
 // Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
 type implicitListEntityPool struct {
 	entities  []Entity
-	next      uint32
+	next      ID
 	available uint32
 }
 
