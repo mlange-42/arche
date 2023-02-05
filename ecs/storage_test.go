@@ -29,13 +29,13 @@ func TestByteStorageItemSize(t *testing.T) {
 		bool
 	}{0, true}
 
-	s1 := NewByteStorage(obj1)
-	s2 := NewByteStorage(obj2)
-	s3 := NewByteStorage(obj3)
-	s4 := NewByteStorage(obj4)
-	s5 := NewByteStorage(obj5)
-	s6 := NewByteStorage(obj6)
-	s7 := NewByteStorage(obj7)
+	s1 := NewByteStorage(obj1, 32)
+	s2 := NewByteStorage(obj2, 32)
+	s3 := NewByteStorage(obj3, 32)
+	s4 := NewByteStorage(obj4, 32)
+	s5 := NewByteStorage(obj5, 32)
+	s6 := NewByteStorage(obj6, 32)
+	s7 := NewByteStorage(obj7, 32)
 
 	assert.Equal(
 		t,
@@ -47,13 +47,13 @@ func TestByteStorageItemSize(t *testing.T) {
 
 func TestByteStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
-	s := NewByteStorage(obj1)
+	s := NewByteStorage(obj1, 32)
 	storageAddGet(t, s)
 }
 
 func TestReflectStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
-	s := NewReflectStorage(obj1)
+	s := NewReflectStorage(obj1, 32)
 	storageAddGet(t, s)
 }
 
@@ -82,14 +82,14 @@ func storageAddGet(t *testing.T, s Storage) {
 
 func TestByteStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewByteStorage(ref)
+	s := NewByteStorage(ref, 32)
 
 	storageRemove(t, s)
 }
 
 func TestReflectStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewReflectStorage(ref)
+	s := NewReflectStorage(ref, 32)
 
 	storageRemove(t, s)
 }
@@ -113,8 +113,7 @@ func storageRemove(t *testing.T, s Storage) {
 
 func TestByteStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewByteStorage(ref)
-	s.capacityIncrement = 1
+	s := NewByteStorage(ref, 1)
 
 	size := int(s.itemSize)
 
@@ -141,8 +140,7 @@ func TestByteStorageDataSize(t *testing.T) {
 
 func TestReflectStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewReflectStorage(ref)
-	s.capacityIncrement = 1
+	s := NewReflectStorage(ref, 1)
 
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
@@ -166,16 +164,16 @@ func TestReflectStorageDataSize(t *testing.T) {
 }
 
 func TestNewByteStorage(t *testing.T) {
-	_ = NewByteStorage(simpleStruct{})
+	_ = NewByteStorage(simpleStruct{}, 32)
 }
 
 func TestNewReflectStorage(t *testing.T) {
-	_ = NewReflectStorage(simpleStruct{})
+	_ = NewReflectStorage(simpleStruct{}, 32)
 }
 
 func BenchmarkIterByteStorage(b *testing.B) {
 	ref := testStruct{}
-	s := NewByteStorage(ref)
+	s := NewByteStorage(ref, 128)
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
@@ -191,7 +189,7 @@ func BenchmarkIterByteStorage(b *testing.B) {
 
 func BenchmarkIterReflectStorage(b *testing.B) {
 	ref := testStruct{}
-	s := NewReflectStorage(ref)
+	s := NewReflectStorage(ref, 128)
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
@@ -232,5 +230,145 @@ func BenchmarkIterSliceInterface(b *testing.B) {
 			a := s[j].(testStruct)
 			_ = a
 		}
+	}
+}
+
+func BenchmarkAddByteStorage(b *testing.B) {
+	ref := testStruct{}
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := NewByteStorage(ref, 1024)
+		b.StartTimer()
+
+		for i := 0; i < 1000; i++ {
+			s.Add(&ref)
+		}
+	}
+}
+
+func BenchmarkAddReflectStorage(b *testing.B) {
+	ref := testStruct{}
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := NewReflectStorage(ref, 1024)
+		b.StartTimer()
+
+		for i := 0; i < 1000; i++ {
+			s.Add(&ref)
+		}
+	}
+}
+
+func BenchmarkAddSlice(b *testing.B) {
+	ref := testStruct{}
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := make([]testStruct, 0)
+		b.StartTimer()
+
+		for i := 0; i < 1000; i++ {
+			s = append(s, ref)
+		}
+
+		b.StopTimer()
+		_ = s
+		b.StartTimer()
+	}
+}
+
+func BenchmarkAddSliceInterface(b *testing.B) {
+	ref := testStruct{}
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := make([]interface{}, 0)
+		b.StartTimer()
+
+		for i := 0; i < 1000; i++ {
+			s = append(s, ref)
+		}
+
+		b.StopTimer()
+		_ = s
+		b.StartTimer()
+	}
+}
+
+func BenchmarkRemoveByteStorage(b *testing.B) {
+	ref := testStruct{}
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := NewByteStorage(ref, 1024)
+		for i := 0; i < 1000; i++ {
+			s.Add(&ref)
+		}
+		b.StartTimer()
+
+		for i := 0; i < 1000; i++ {
+			s.Remove(0)
+		}
+	}
+}
+
+func BenchmarkRemoveReflectStorage(b *testing.B) {
+	ref := testStruct{}
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := NewReflectStorage(ref, 1024)
+		for i := 0; i < 1000; i++ {
+			s.Add(&ref)
+		}
+		b.StartTimer()
+
+		for i := 0; i < 1000; i++ {
+			s.Remove(0)
+		}
+	}
+}
+
+func BenchmarkRemoveSlice(b *testing.B) {
+	ref := testStruct{}
+	template := make([]testStruct, 0)
+	for i := 0; i < 1000; i++ {
+		template = append(template, ref)
+	}
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := append([]testStruct{}, template...)
+		b.StartTimer()
+
+		l := len(s) - 1
+		for i := 0; i < 1000; i++ {
+			s[0], s[l] = s[l], s[0]
+			s = s[:l]
+			l--
+		}
+
+		b.StopTimer()
+		_ = s
+		b.StartTimer()
+	}
+}
+
+func BenchmarkRemoveSliceInterface(b *testing.B) {
+	ref := testStruct{}
+	template := make([]interface{}, 0)
+	for i := 0; i < 1000; i++ {
+		template = append(template, ref)
+	}
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		s := append([]interface{}{}, template...)
+		b.StartTimer()
+
+		l := len(s) - 1
+		for i := 0; i < 1000; i++ {
+			s[0], s[l] = s[l], s[0]
+			s = s[:l]
+			l--
+		}
+
+		b.StopTimer()
+		_ = s
+		b.StartTimer()
 	}
 }

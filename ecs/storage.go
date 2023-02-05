@@ -14,19 +14,6 @@ type Storage interface {
 	Len() uint32
 }
 
-// NewByteStorage creates a new ByteStorage
-func NewByteStorage(obj interface{}) *ByteStorage {
-	tp := reflect.TypeOf(obj)
-	size := tp.Size()
-
-	return &ByteStorage{
-		data:              []byte{},
-		itemSize:          size,
-		len:               0,
-		capacityIncrement: 32,
-	}
-}
-
 // ByteStorage stores components in a byte slice
 // It does not work with components that contain references or pointers,
 // because the referenced memory will be garbage-collected.
@@ -35,6 +22,19 @@ type ByteStorage struct {
 	itemSize          uintptr
 	len               uint32
 	capacityIncrement uint32
+}
+
+// NewByteStorage creates a new ByteStorage
+func NewByteStorage(obj interface{}, increment int) *ByteStorage {
+	tp := reflect.TypeOf(obj)
+	size := tp.Size()
+
+	return &ByteStorage{
+		data:              make([]byte, increment*int(size)),
+		itemSize:          size,
+		len:               0,
+		capacityIncrement: uint32(increment),
+	}
 }
 
 // Get retrieves an unsafe pointer to an element
@@ -64,6 +64,7 @@ func (s *ByteStorage) Remove(index uint32) {
 	n := index
 	s.copy(o, n)
 	s.len--
+	// TODO shrink the underlying data arrays
 }
 
 // Len returns the number of items in the storage
@@ -102,21 +103,19 @@ type ReflectStorage struct {
 }
 
 // NewReflectStorage creates a new ReflectStorage
-func NewReflectStorage(obj interface{}) *ReflectStorage {
-	incr := 32
-
+func NewReflectStorage(obj interface{}, increment int) *ReflectStorage {
 	tp := reflect.TypeOf(obj)
 	size := tp.Size()
 
-	buffer := reflect.New(reflect.ArrayOf(0, tp)).Elem()
+	buffer := reflect.New(reflect.ArrayOf(increment, tp)).Elem()
 	return &ReflectStorage{
 		buffer:            buffer,
 		bufferAddress:     buffer.Addr().UnsafePointer(),
 		typeOf:            tp,
 		itemSize:          size,
 		len:               0,
-		cap:               0,
-		capacityIncrement: uint32(incr),
+		cap:               uint32(increment),
+		capacityIncrement: uint32(increment),
 	}
 }
 
@@ -169,6 +168,7 @@ func (s *ReflectStorage) Remove(index uint32) {
 	copy(dstSlice, srcSlice)
 
 	s.len--
+	// TODO shrink the underlying data arrays
 }
 
 func (s *ReflectStorage) set(index uint32, value interface{}) {
