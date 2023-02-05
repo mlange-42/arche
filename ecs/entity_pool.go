@@ -1,6 +1,7 @@
 package ecs
 
 // EntityPool is the interface for entity recycling
+// TODO: Add a way to shrink/compact the pool?
 type EntityPool interface {
 	// Get returns a fresh or recycled entity
 	Get() Entity
@@ -56,7 +57,7 @@ func (p *implicitListEntityPool) Recycle(e Entity) {
 	p.available++
 }
 
-// Alive return whether an entity is currently alive
+// Alive return whether an entity is still alive, based on the entity's generations
 func (p *implicitListEntityPool) Alive(e Entity) bool {
 	return e.gen == p.entities[e.id].gen
 }
