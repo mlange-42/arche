@@ -1,7 +1,6 @@
 package ecs
 
 import (
-	"fmt"
 	"reflect"
 	"unsafe"
 )
@@ -38,9 +37,6 @@ type storage struct {
 
 // Get retrieves an unsafe pointer to an element
 func (s *storage) Get(index uint32) unsafe.Pointer {
-	if index >= s.len {
-		panic(fmt.Sprintf("Index %d out of range %d", index, s.len))
-	}
 	base := unsafe.Pointer(&s.data[0])
 
 	offset := uintptr(index) * s.itemSize
@@ -60,9 +56,6 @@ func (s *storage) Add(value interface{}) (index uint32) {
 
 // Remove swap-removes an element
 func (s *storage) Remove(index uint32) {
-	if index >= s.len {
-		panic(fmt.Sprintf("Index %d out of range %d", index, s.len))
-	}
 	o := s.len - 1
 	n := index
 	s.swap(o, n)

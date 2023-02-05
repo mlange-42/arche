@@ -89,19 +89,6 @@ func TestStorageRemove(t *testing.T) {
 	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
 }
 
-func TestStoragePanic(t *testing.T) {
-	ref := simpleStruct{}
-	s := newStorage(ref)
-
-	for i := 0; i < 5; i++ {
-		obj := simpleStruct{i}
-		s.Add(&obj)
-	}
-
-	assert.Panics(t, func() { s.Get(5) }, "Should panic on invalid get index")
-	assert.Panics(t, func() { s.Remove(5) }, "Should panic on invalid remove index")
-}
-
 func TestStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
 	s := newStorage(ref)
@@ -131,4 +118,47 @@ func TestStorageDataSize(t *testing.T) {
 
 func TestNewStorage(t *testing.T) {
 	_ = NewStorage(simpleStruct{})
+}
+
+func BenchmarkIterStorage(b *testing.B) {
+	ref := testStruct{}
+	s := newStorage(ref)
+	for i := 0; i < 1000; i++ {
+		s.Add(&testStruct{})
+	}
+
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < int(s.Len()); j++ {
+			a := (*testStruct)(s.Get(uint32(j)))
+			_ = a
+		}
+	}
+}
+
+func BenchmarkIterSlice(b *testing.B) {
+	s := []testStruct{}
+	for i := 0; i < 1000; i++ {
+		s = append(s, testStruct{})
+	}
+
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < len(s); j++ {
+			a := s[j]
+			_ = a
+		}
+	}
+}
+
+func BenchmarkIterSliceInterface(b *testing.B) {
+	s := []interface{}{}
+	for i := 0; i < 1000; i++ {
+		s = append(s, testStruct{})
+	}
+
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < len(s); j++ {
+			a := s[j].(testStruct)
+			_ = a
+		}
+	}
 }
