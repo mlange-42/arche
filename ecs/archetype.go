@@ -20,19 +20,19 @@ func NewArchetype(components ...Component) Archetype {
 
 type archetype struct {
 	mask       Mask
-	indices    []int
+	indices    []ID
 	entities   Storage
 	components []Storage
 }
 
 func newArchetype(components ...Component) *archetype {
 	var mask Mask
-	indices := make([]int, MaskTotalBits)
-	comps := make([]Storage, len(components))
+	indices := make([]ID, len(components))
+	comps := make([]Storage, MaskTotalBits)
 	for i, c := range components {
 		mask.Set(c.ID, true)
-		indices[c.ID] = i
-		comps[i] = NewReflectStorage(c.Component, 32)
+		indices[i] = c.ID
+		comps[c.ID] = NewReflectStorage(c.Component, 32)
 	}
 
 	return &archetype{
@@ -50,26 +50,24 @@ func (a *archetype) GetEntity(index int) Entity {
 
 // GetEntity returns the component with the given ID at the given index
 func (a *archetype) Get(index int, id ID) unsafe.Pointer {
-	idx := a.indices[id]
-	return a.components[idx].Get(uint32(index))
+	return a.components[id].Get(uint32(index))
 }
 
 // Add adds an entity with components to the archetype
 func (a *archetype) Add(entity Entity, components ...Component) {
-	if len(components) != len(a.components) {
+	if len(components) != len(a.indices) {
 		panic("Invalid number of components")
 	}
 	a.entities.Add(&entity)
 	for _, c := range components {
-		idx := a.indices[c.ID]
-		a.components[idx].Add(c.Component)
+		a.components[c.ID].Add(c.Component)
 	}
 }
 
 // Remove removes an entity from the archetype
 func (a *archetype) Remove(index int) {
 	a.entities.Remove(uint32(index))
-	for _, c := range a.components {
-		c.Remove(uint32(index))
+	for _, c := range a.indices {
+		a.components[c].Remove(uint32(index))
 	}
 }

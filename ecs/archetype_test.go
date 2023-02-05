@@ -23,8 +23,6 @@ func TestArchetype(t *testing.T) {
 
 	arch := newArchetype(comps...)
 
-	assert.Equal(t, 2, len(arch.components))
-
 	arch.Add(
 		newEntity(0),
 		Component{ID: 0, Component: &Position{1, 2}},
