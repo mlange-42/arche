@@ -102,6 +102,33 @@ func TestStoragePanic(t *testing.T) {
 	assert.Panics(t, func() { s.Remove(5) }, "Should panic on invalid remove index")
 }
 
+func TestStorageDataSize(t *testing.T) {
+	ref := simpleStruct{}
+	s := newStorage(ref)
+
+	size := int(s.itemSize)
+
+	for i := 0; i < 5; i++ {
+		obj := simpleStruct{i}
+		s.Add(&obj)
+	}
+
+	assert.Equal(t, 5*size, len(s.data))
+
+	s.Remove(0)
+	assert.Equal(t, 5*size, len(s.data))
+	s.Remove(0)
+	assert.Equal(t, 5*size, len(s.data))
+
+	s.Add(&simpleStruct{})
+	assert.Equal(t, 5*size, len(s.data))
+	s.Add(&simpleStruct{})
+	assert.Equal(t, 5*size, len(s.data))
+
+	s.Add(&simpleStruct{})
+	assert.Equal(t, 6*size, len(s.data))
+}
+
 func TestNewStorage(t *testing.T) {
 	_ = NewStorage(simpleStruct{})
 }
