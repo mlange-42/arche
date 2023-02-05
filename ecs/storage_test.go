@@ -19,7 +19,7 @@ type simpleStruct struct {
 
 func TestReflectStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
-	s := NewReflectStorage(obj1, 32)
+	s := NewReflectStorage(obj1, 1)
 	storageAddGet(t, s)
 }
 

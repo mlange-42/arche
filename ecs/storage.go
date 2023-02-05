@@ -51,24 +51,10 @@ func (s *ReflectStorage) Get(index uint32) unsafe.Pointer {
 // Add adds an element to the end of the storage
 func (s *ReflectStorage) Add(value interface{}) (index uint32) {
 	if s.cap < s.len+1 {
-		newCap := s.cap + s.capacityIncrement
-
 		old := s.buffer
-		oldAddr := s.bufferAddress
-
-		buffer := reflect.New(reflect.ArrayOf(int(newCap), s.typeOf)).Elem()
-		newAddr := buffer.Addr().UnsafePointer()
-
-		if s.len > 0 {
-			dstSlice := (*[math.MaxInt32]byte)(newAddr)[: s.itemSize : s.itemSize*uintptr(s.len)]
-			srcSlice := (*[math.MaxInt32]byte)(oldAddr)[: s.itemSize : s.itemSize*uintptr(s.len)]
-
-			copy(dstSlice, srcSlice)
-		}
-
-		s.cap = newCap
-		s.buffer = buffer
-		s.bufferAddress = newAddr
+		s.cap = s.cap + s.capacityIncrement
+		s.buffer = reflect.New(reflect.ArrayOf(int(s.cap), s.typeOf)).Elem()
+		s.bufferAddress = s.buffer.Addr().UnsafePointer()
 		reflect.Copy(s.buffer, old)
 	}
 	s.len++
