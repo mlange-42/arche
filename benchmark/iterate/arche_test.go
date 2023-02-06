@@ -33,10 +33,6 @@ func runArcheArchetype(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkIterArcheArchetype100(b *testing.B) {
-	runArcheArchetype(b, 100)
-}
-
 func BenchmarkIterArcheArchetype1000(b *testing.B) {
 	runArcheArchetype(b, 1000)
 }
@@ -65,10 +61,6 @@ func runArcheWorld(b *testing.B, count int) {
 			_ = pos
 		}
 	}
-}
-
-func BenchmarkIterArcheWorld100(b *testing.B) {
-	runArcheWorld(b, 100)
 }
 
 func BenchmarkIterArcheWorld1000(b *testing.B) {

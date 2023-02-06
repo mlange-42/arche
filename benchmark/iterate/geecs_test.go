@@ -28,10 +28,6 @@ func runGameEngineEcs(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkIterGEEcs100(b *testing.B) {
-	runGameEngineEcs(b, 100)
-}
-
 func BenchmarkIterGEEcs1000(b *testing.B) {
 	runGameEngineEcs(b, 1000)
 }
