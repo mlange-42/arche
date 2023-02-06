@@ -10,7 +10,7 @@ type Archetype struct {
 	mask       Mask
 	indices    []ID
 	entities   Storage
-	components []Storage
+	components [MaskTotalBits]Storage
 }
 
 var entityType = reflect.TypeOf(Entity{})
@@ -20,7 +20,7 @@ var entityType = reflect.TypeOf(Entity{})
 func NewArchetype(components ...ComponentType) Archetype {
 	var mask Mask
 	indices := make([]ID, len(components))
-	comps := make([]Storage, MaskTotalBits)
+	comps := [MaskTotalBits]Storage{}
 
 	prev := -1
 	for i, c := range components {

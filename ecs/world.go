@@ -9,28 +9,25 @@ import (
 // NewWorld creates a new World
 func NewWorld() World {
 	return World{
-		entities:         []entityIndex{},
-		entityPool:       NewEntityPool(),
-		registry:         NewComponentRegistry(),
-		archetypes:       []Archetype{NewArchetype()},
-		archetypeLengths: []int{0},
+		entities:   []entityIndex{},
+		entityPool: NewEntityPool(),
+		registry:   NewComponentRegistry(),
+		archetypes: []Archetype{NewArchetype()},
 	}
 }
 
 // World holds all ECS data
 type World struct {
-	entities         []entityIndex
-	archetypes       []Archetype
-	archetypeLengths []int
-	entityPool       EntityPool
-	registry         ComponentRegistry
+	entities   []entityIndex
+	archetypes []Archetype
+	entityPool EntityPool
+	registry   ComponentRegistry
 }
 
 // NewEntity creates a new or recycled entity
 func (w *World) NewEntity() Entity {
 	entity := w.entityPool.Get()
 	idx := w.archetypes[0].Add(entity)
-	w.archetypeLengths[0]++
 	if int(entity.id) == len(w.entities) {
 		w.entities = append(w.entities, entityIndex{0, idx})
 	} else {
@@ -48,7 +45,6 @@ func (w *World) RemEntity(entity Entity) bool {
 	index := w.entities[entity.id]
 	oldArch := &w.archetypes[index.arch]
 	swapped := oldArch.Remove(int(index.index))
-	w.archetypeLengths[index.arch]--
 
 	w.entityPool.Recycle(entity)
 
@@ -112,10 +108,8 @@ func (w *World) Add(entity Entity, comps ...ID) {
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
-	w.archetypeLengths[archIdx]++
 
 	swapped := oldArch.Remove(int(index.index))
-	w.archetypeLengths[index.arch]--
 
 	if swapped {
 		swapEntity := oldArch.GetEntity(int(index.index))
@@ -158,10 +152,8 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
-	w.archetypeLengths[archIdx]++
 
 	swapped := oldArch.Remove(int(index.index))
-	w.archetypeLengths[index.arch]--
 
 	if swapped {
 		swapEntity := oldArch.GetEntity(int(index.index))
@@ -171,8 +163,9 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 }
 
 func (w *World) findArchetype(mask Mask) (int, bool) {
-	for i, a := range w.archetypes {
-		if a.mask == mask {
+	length := len(w.archetypes)
+	for i := 0; i < length; i++ {
+		if w.archetypes[i].mask == mask {
 			return i, true
 		}
 	}
@@ -187,7 +180,6 @@ func (w *World) createArchetype(comps ...ID) int {
 	}
 	a := NewArchetype(types...)
 	w.archetypes = append(w.archetypes, a)
-	w.archetypeLengths = append(w.archetypeLengths, 0)
 	return len(w.archetypes) - 1
 }
 
@@ -205,9 +197,11 @@ func (w *World) Registry() *ComponentRegistry {
 func (w *World) Query(comps ...ID) Query {
 	mask := NewMask(comps...)
 	arches := []archetypeIter{}
-	for _, arch := range w.archetypes {
+	length := len(w.archetypes)
+	for i := 0; i < length; i++ {
+		arch := &w.archetypes[i]
 		if arch.mask.Contains(mask) {
-			arches = append(arches, newArchetypeIter(&arch))
+			arches = append(arches, newArchetypeIter(arch))
 		}
 	}
 	return NewQuery(arches)
