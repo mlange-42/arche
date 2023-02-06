@@ -65,6 +65,10 @@ func TestArchetype(t *testing.T) {
 			Component{ID: 0, Component: &position{4, 5}},
 		)
 	})
+
+	assert.Panics(t, func() {
+		arch.AddPointer(newEntity(1))
+	})
 }
 
 func TestNewArchetype(t *testing.T) {

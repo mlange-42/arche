@@ -52,8 +52,10 @@ func TestWorldComponents(t *testing.T) {
 	assert.Equal(t, 2, len(w.archetypes))
 	w.Add(e1, posID, rotID)
 	assert.Equal(t, 3, len(w.archetypes))
-	w.Add(e2, rotID)
-	assert.Equal(t, 4, len(w.archetypes))
+	w.Add(e2, posID, rotID)
+	assert.Equal(t, 3, len(w.archetypes))
+
+	w.Remove(e2, posID)
 
 	maskNone := NewMask()
 	maskPos := NewMask(posID)
@@ -80,6 +82,15 @@ func TestWorldComponents(t *testing.T) {
 	assert.Equal(t, 1, int(w.archetypes[archPos].Len()))
 	assert.Equal(t, 2, int(w.archetypes[archRot].Len()))
 	assert.Equal(t, 0, int(w.archetypes[archPosRot].Len()))
+
+	w.Add(e0, rotID)
+	assert.Equal(t, 0, int(w.archetypes[archPos].Len()))
+	assert.Equal(t, 1, int(w.archetypes[archPosRot].Len()))
+
+	w.Remove(e2, rotID)
+	// No-op add/remove
+	w.Add(e0)
+	w.Remove(e0)
 }
 
 func TestRegisterComponents(t *testing.T) {
