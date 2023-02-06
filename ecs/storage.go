@@ -6,8 +6,8 @@ import (
 	"unsafe"
 )
 
-// ReflectStorage is a storage implementation that works with reflection
-type ReflectStorage struct {
+// Storage is a storage implementation that works with reflection
+type Storage struct {
 	buffer            reflect.Value
 	bufferAddress     unsafe.Pointer
 	typeOf            reflect.Type
@@ -18,12 +18,12 @@ type ReflectStorage struct {
 }
 
 // NewReflectStorage creates a new ReflectStorage
-func NewReflectStorage(obj interface{}, increment int) ReflectStorage {
+func NewReflectStorage(obj interface{}, increment int) Storage {
 	tp := reflect.TypeOf(obj)
 	size := tp.Size()
 
 	buffer := reflect.New(reflect.ArrayOf(increment, tp)).Elem()
-	return ReflectStorage{
+	return Storage{
 		buffer:            buffer,
 		bufferAddress:     buffer.Addr().UnsafePointer(),
 		typeOf:            tp,
@@ -35,13 +35,13 @@ func NewReflectStorage(obj interface{}, increment int) ReflectStorage {
 }
 
 // Get retrieves an unsafe pointer to an element
-func (s *ReflectStorage) Get(index uint32) unsafe.Pointer {
+func (s *Storage) Get(index uint32) unsafe.Pointer {
 	ptr := unsafe.Add(s.bufferAddress, uintptr(index)*s.itemSize)
 	return unsafe.Pointer(ptr)
 }
 
 // Add adds an element to the end of the storage
-func (s *ReflectStorage) Add(value interface{}) (index uint32) {
+func (s *Storage) Add(value interface{}) (index uint32) {
 	if s.cap < s.len+1 {
 		old := s.buffer
 		s.cap = s.cap + s.capacityIncrement
@@ -55,7 +55,7 @@ func (s *ReflectStorage) Add(value interface{}) (index uint32) {
 }
 
 // Remove swap-removes an element
-func (s *ReflectStorage) Remove(index uint32) {
+func (s *Storage) Remove(index uint32) {
 	o := s.len - 1
 	n := index
 	size := s.itemSize
@@ -72,7 +72,7 @@ func (s *ReflectStorage) Remove(index uint32) {
 	// TODO shrink the underlying data arrays
 }
 
-func (s *ReflectStorage) set(index uint32, value interface{}) {
+func (s *Storage) set(index uint32, value interface{}) {
 	rValue := reflect.ValueOf(value)
 	dst := s.Get(index)
 	var src unsafe.Pointer
@@ -87,12 +87,12 @@ func (s *ReflectStorage) set(index uint32, value interface{}) {
 }
 
 // Len returns the number of items in the storage
-func (s *ReflectStorage) Len() uint32 {
+func (s *Storage) Len() uint32 {
 	return s.len
 }
 
 // ToSlice converts the content of a storage to a slice of structs
-func ToSlice[T any](s ReflectStorage) []T {
+func ToSlice[T any](s Storage) []T {
 	res := make([]T, s.Len())
 	for i := 0; i < int(s.Len()); i++ {
 		ptr := (*T)(s.Get(uint32(i)))

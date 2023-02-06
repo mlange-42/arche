@@ -21,7 +21,7 @@ func TestArchetype(t *testing.T) {
 		{ID: 1, Component: Rotation{}},
 	}
 
-	arch := newArchetype(comps...)
+	arch := NewArchetype(comps...)
 
 	arch.Add(
 		newEntity(0),
@@ -90,7 +90,7 @@ func BenchmarkArchetypeAccess(b *testing.B) {
 		{ID: 1, Component: Rotation{}},
 	}
 
-	arch := newArchetype(comps...)
+	arch := NewArchetype(comps...)
 
 	for i := 0; i < 1000; i++ {
 		arch.Add(

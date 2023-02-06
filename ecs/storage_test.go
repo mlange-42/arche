@@ -23,7 +23,7 @@ func TestReflectStorageAddGet(t *testing.T) {
 	storageAddGet(t, s)
 }
 
-func storageAddGet(t *testing.T, s ReflectStorage) {
+func storageAddGet(t *testing.T, s Storage) {
 	obj1 := testStruct{}
 	obj2 := testStruct{1, 2, true, false}
 
@@ -53,7 +53,7 @@ func TestReflectStorageRemove(t *testing.T) {
 	storageRemove(t, s)
 }
 
-func storageRemove(t *testing.T, s ReflectStorage) {
+func storageRemove(t *testing.T, s Storage) {
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
 		s.Add(&obj)
