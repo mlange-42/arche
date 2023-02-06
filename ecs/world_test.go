@@ -130,6 +130,24 @@ func TestWorldGetComponents(t *testing.T) {
 	assert.True(t, pos2 == nil)
 }
 
+func TestWorldIter(t *testing.T) {
+	world := NewWorld()
+
+	posID := RegisterComponent[position](&world)
+	rotID := RegisterComponent[rotation](&world)
+
+	for i := 0; i < 1000; i++ {
+		entity := world.NewEntity()
+		world.Add(entity, posID, rotID)
+	}
+
+	query := world.Query(posID, rotID)
+	for query.Next() {
+		pos := (*position)(query.Get(posID))
+		_ = pos
+	}
+}
+
 func TestRegisterComponents(t *testing.T) {
 	world := NewWorld()
 

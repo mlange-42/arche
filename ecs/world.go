@@ -191,44 +191,26 @@ func (w *World) createArchetype(comps ...ID) int {
 	return len(w.archetypes) - 1
 }
 
+// Alive reports whether an entity is still alive
 func (w *World) Alive(entity Entity) bool {
 	return w.entityPool.Alive(entity)
 }
 
+// Registry returns the world's ComponentRegistry
 func (w *World) Registry() *ComponentRegistry {
 	return &w.registry
 }
 
+// Query creates a query iterator for the given components
 func (w *World) Query(comps ...ID) Query {
-	return NewQuery(w, NewMask(comps...))
-}
-
-func (w *World) Next(mask Mask, arch, index int) (int, int, bool) {
-	if arch < 0 || index >= int(w.archetypeLengths[arch])-1 {
-		arch++
-		index = -1
-		match := false
-		len := len(w.archetypeLengths)
-		for arch < len {
-			if w.archetypes[arch].mask.Contains(mask) {
-				match = true
-				break
-			}
-			arch++
-		}
-		if !match {
-			return 0, 0, false
+	mask := NewMask(comps...)
+	arches := []archetypeIter{}
+	for _, arch := range w.archetypes {
+		if arch.mask.Contains(mask) {
+			arches = append(arches, newArchetypeIter(&arch))
 		}
 	}
-	return arch, index + 1, true
-}
-
-func (w *World) GetAt(arch, index int, id ID) unsafe.Pointer {
-	return w.archetypes[arch].Get(index, id)
-}
-
-func (w *World) GetEntityAt(arch, index int) Entity {
-	return w.archetypes[arch].GetEntity(index)
+	return NewQuery(arches)
 }
 
 // RegisterComponent provides a way to register components via generics

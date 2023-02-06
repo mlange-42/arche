@@ -58,4 +58,6 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 4, cnt)
+
+	assert.False(t, q.Next())
 }

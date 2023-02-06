@@ -1,38 +1,77 @@
 package ecs
 
-import "unsafe"
+import (
+	"unsafe"
+)
 
 // Query is an iterator to iterate entities
 type Query struct {
-	Mask      Mask
-	World     *World
-	archetype int
-	index     int
+	archetypes []archetypeIter
+	index      int
+	done       bool
 }
 
 // NewQuery creates a new QueryIter
-func NewQuery(w *World, mask Mask) Query {
+func NewQuery(arches []archetypeIter) Query {
 	return Query{
-		Mask:      mask,
-		World:     w,
-		archetype: -1,
-		index:     -1,
+		archetypes: arches,
+		index:      0,
+		done:       false,
 	}
 }
 
 // Next proceeds to the next entity
 func (q *Query) Next() bool {
-	a, i, hasNext := q.World.Next(q.Mask, q.archetype, q.index)
-	q.archetype, q.index = a, i
-	return hasNext
+	if q.done {
+		return false
+	}
+	for {
+		if q.archetypes[q.index].Next() {
+			return true
+		}
+		q.index++
+		if q.index >= len(q.archetypes) {
+			q.done = true
+			return false
+		}
+	}
 }
 
 // Get returns the pointer to the given component at the iterator's position
 func (q *Query) Get(comp ID) unsafe.Pointer {
-	return q.World.GetAt(q.archetype, q.index, comp)
+	return q.archetypes[q.index].Get(comp)
 }
 
 // Entity returns the entity at the iterator's position
 func (q *Query) Entity() Entity {
-	return q.World.GetEntityAt(q.archetype, q.index)
+	return q.archetypes[q.index].Entity()
+}
+
+type archetypeIter struct {
+	Archetype *Archetype
+	Length    int
+	Index     int
+}
+
+func newArchetypeIter(arch *Archetype) archetypeIter {
+	return archetypeIter{
+		Archetype: arch,
+		Length:    int(arch.Len()),
+		Index:     -1,
+	}
+}
+
+func (it *archetypeIter) Next() bool {
+	it.Index++
+	return it.Index < it.Length
+}
+
+// Get returns the pointer to the given component at the iterator's position
+func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
+	return it.Archetype.Get(it.Index, comp)
+}
+
+// Entity returns the entity at the iterator's position
+func (it *archetypeIter) Entity() Entity {
+	return it.Archetype.GetEntity(it.Index)
 }
