@@ -16,3 +16,12 @@ func TestWorldEntites(t *testing.T) {
 	w.RemEntity(Entity{1, 0})
 	assert.Equal(t, Entity{1, 1}, w.NewEntity())
 }
+
+func TestRegisterComponents(t *testing.T) {
+	world := NewWorld()
+
+	RegisterComponent[position](world)
+
+	assert.Equal(t, ID(0), ComponentID[position](world))
+	assert.Equal(t, ID(1), ComponentID[rotation](world))
+}
