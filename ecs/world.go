@@ -24,7 +24,9 @@ type World struct {
 	registry   componentRegistry
 }
 
-// NewEntity creates a new or recycled entity
+// NewEntity creates a new or recycled entity.
+//
+// Do not use during Query iteration!
 func (w *World) NewEntity() Entity {
 	entity := w.entityPool.Get()
 	idx := w.archetypes[0].Add(entity)
@@ -36,7 +38,9 @@ func (w *World) NewEntity() Entity {
 	return entity
 }
 
-// RemEntity recycles an entity
+// RemEntity recycles an entity.
+//
+// Do not use during Query iteration!
 func (w *World) RemEntity(entity Entity) bool {
 	if !w.entityPool.Alive(entity) {
 		return false
@@ -76,7 +80,9 @@ func (w *World) Has(entity Entity, comp ID) bool {
 	return arch.HasComponent(comp)
 }
 
-// Add adds components to an entity
+// Add adds components to an entity.
+//
+// Do not use during Query iteration!
 func (w *World) Add(entity Entity, comps ...ID) {
 	if len(comps) == 0 {
 		return
@@ -118,7 +124,9 @@ func (w *World) Add(entity Entity, comps ...ID) {
 	w.entities[entity.id] = entityIndex{archIdx, newIndex}
 }
 
-// Remove removes components from an entity
+// Remove removes components from an entity.
+//
+// Do not use during Query iteration!
 func (w *World) Remove(entity Entity, comps ...ID) {
 	if len(comps) == 0 {
 		return
