@@ -6,14 +6,14 @@ import (
 	ecs "github.com/marioolofo/go-gameengine-ecs"
 )
 
-func BenchmarkGameEngineEcs(b *testing.B) {
+func runGameEngineEcs(b *testing.B, count int) {
 	comps := []ecs.ComponentConfig{
 		{ID: 0, Component: position{}},
 		{ID: 1, Component: rotation{}},
 	}
 	world := ecs.NewWorld(comps...)
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < count; i++ {
 		entity := world.NewEntity()
 		world.Assign(entity, 0, 1)
 	}
@@ -26,4 +26,16 @@ func BenchmarkGameEngineEcs(b *testing.B) {
 			_ = pos
 		}
 	}
+}
+
+func BenchmarkGameEngineEcs100(b *testing.B) {
+	runGameEngineEcs(b, 100)
+}
+
+func BenchmarkGameEngineEcs1000(b *testing.B) {
+	runGameEngineEcs(b, 1000)
+}
+
+func BenchmarkGameEngineEcs10000(b *testing.B) {
+	runGameEngineEcs(b, 10000)
 }
