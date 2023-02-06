@@ -39,8 +39,8 @@ func run(rounds, iters, entities int) {
 	for i := 0; i < rounds; i++ {
 		world := ecs.NewWorld()
 
-		posID := ecs.RegisterComponent[position](&world)
-		rotID := ecs.RegisterComponent[rotation](&world)
+		posID := ecs.ComponentID[position](&world)
+		rotID := ecs.ComponentID[rotation](&world)
 
 		for j := 0; j < entities; j++ {
 			entity := world.NewEntity()

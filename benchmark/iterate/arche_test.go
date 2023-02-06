@@ -10,8 +10,8 @@ func runArcheQuery(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
-	posID := ecs.RegisterComponent[position](&world)
-	rotID := ecs.RegisterComponent[rotation](&world)
+	posID := ecs.ComponentID[position](&world)
+	rotID := ecs.ComponentID[rotation](&world)
 
 	for i := 0; i < count; i++ {
 		entity := world.NewEntity()
@@ -34,8 +34,8 @@ func runArcheWorld(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
-	posID := ecs.RegisterComponent[position](&world)
-	rotID := ecs.RegisterComponent[rotation](&world)
+	posID := ecs.ComponentID[position](&world)
+	rotID := ecs.ComponentID[rotation](&world)
 
 	for i := 0; i < count; i++ {
 		entity := world.NewEntity()

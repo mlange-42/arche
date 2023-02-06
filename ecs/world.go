@@ -196,11 +196,6 @@ func (w *World) Alive(entity Entity) bool {
 	return w.entityPool.Alive(entity)
 }
 
-// RegisterComponent registers a components and assigns an ID for it
-func (w *World) RegisterComponent(tp reflect.Type) ID {
-	return w.registry.RegisterComponent(tp)
-}
-
 // ComponentID returns the ID for a component type, and registers it if not already registered
 func (w *World) ComponentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
@@ -218,12 +213,6 @@ func (w *World) Query(comps ...ID) Query {
 		}
 	}
 	return newQuery(arches)
-}
-
-// RegisterComponent provides a way to register components via generics
-func RegisterComponent[T any](w *World) ID {
-	tp := reflect.TypeOf((*T)(nil)).Elem()
-	return w.RegisterComponent(tp)
 }
 
 // ComponentID provides a way to get a component's ID via generics

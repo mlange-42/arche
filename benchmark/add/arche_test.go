@@ -11,8 +11,8 @@ func addArcheWorld(b *testing.B, count int) {
 		b.StopTimer()
 		world := ecs.NewWorld()
 
-		posID := ecs.RegisterComponent[position](&world)
-		rotID := ecs.RegisterComponent[rotation](&world)
+		posID := ecs.ComponentID[position](&world)
+		rotID := ecs.ComponentID[rotation](&world)
 		b.StartTimer()
 
 		for i := 0; i < count; i++ {

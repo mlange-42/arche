@@ -15,9 +15,12 @@ func newComponentRegistry() componentRegistry {
 	}
 }
 
-// RegisterComponent registers a components and assigns an ID for it
-func (r *componentRegistry) RegisterComponent(tp reflect.Type) ID {
+// registerComponent registers a components and assigns an ID for it
+func (r *componentRegistry) registerComponent(tp reflect.Type, totalBits int) ID {
 	id := ID(len(r.components))
+	if int(id) >= totalBits {
+		panic("maximum of 64 component types exceeded")
+	}
 	r.components[tp] = id
 	r.types[id] = tp
 	return id
@@ -28,7 +31,7 @@ func (r *componentRegistry) ComponentID(tp reflect.Type) ID {
 	if id, ok := r.components[tp]; ok {
 		return id
 	}
-	return r.RegisterComponent(tp)
+	return r.registerComponent(tp, MaskTotalBits)
 }
 
 // ComponentType returns the type of a component by ID
