@@ -48,8 +48,8 @@ func BenchmarkArcheArchetype10000(b *testing.B) {
 func runArcheWorld(b *testing.B, count int) {
 	world := ecs.NewWorld()
 
-	posID := ecs.RegisterComponent[position](world)
-	rotID := ecs.RegisterComponent[rotation](world)
+	posID := ecs.RegisterComponent[position](&world)
+	rotID := ecs.RegisterComponent[rotation](&world)
 
 	for i := 0; i < count; i++ {
 		entity := world.NewEntity()

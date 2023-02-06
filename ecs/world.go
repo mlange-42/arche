@@ -6,47 +6,31 @@ import (
 	"unsafe"
 )
 
-// World is the interface for the ECS world
-type World interface {
-	NewEntity() Entity
-	RemEntity(entity Entity) bool
-	Get(entity Entity, comps ID) unsafe.Pointer
-	GetAt(arch, index int, id ID) unsafe.Pointer
-	GetEntityAt(arch, index int) Entity
-	Has(entity Entity, comps ID) bool
-	Add(entity Entity, comps ...ID)
-	Remove(entity Entity, comps ...ID)
-	Alive(entity Entity) bool
-	Registry() *ComponentRegistry
-	Query(comps ...ID) Query
-	Next(mask Mask, arch, index int) (int, int, bool)
-	IterQuery(mask Mask, fn func(entity Entity))
-}
-
 // NewWorld creates a new World
 func NewWorld() World {
-	return newWorld()
-}
-
-func newWorld() *world {
-	return &world{
-		entities:   []entityIndex{},
-		entityPool: NewEntityPool(),
-		registry:   NewComponentRegistry(),
-		archetypes: []Archetype{NewArchetype()},
+	return World{
+		entities:         []entityIndex{},
+		entityPool:       NewEntityPool(),
+		registry:         NewComponentRegistry(),
+		archetypes:       []Archetype{NewArchetype()},
+		archetypeLengths: []int{0},
 	}
 }
 
-type world struct {
-	entities   []entityIndex
-	archetypes []Archetype
-	entityPool EntityPool
-	registry   ComponentRegistry
+// World holds all ECS data
+type World struct {
+	entities         []entityIndex
+	archetypes       []Archetype
+	archetypeLengths []int
+	entityPool       EntityPool
+	registry         ComponentRegistry
 }
 
-func (w *world) NewEntity() Entity {
+// NewEntity creates a new or recycled entity
+func (w *World) NewEntity() Entity {
 	entity := w.entityPool.Get()
 	idx := w.archetypes[0].Add(entity)
+	w.archetypeLengths[0]++
 	if int(entity.id) == len(w.entities) {
 		w.entities = append(w.entities, entityIndex{0, idx})
 	} else {
@@ -55,7 +39,8 @@ func (w *world) NewEntity() Entity {
 	return entity
 }
 
-func (w *world) RemEntity(entity Entity) bool {
+// RemEntity recycles an entity
+func (w *World) RemEntity(entity Entity) bool {
 	if !w.entityPool.Alive(entity) {
 		return false
 	}
@@ -63,6 +48,8 @@ func (w *world) RemEntity(entity Entity) bool {
 	index := w.entities[entity.id]
 	oldArch := &w.archetypes[index.arch]
 	swapped := oldArch.Remove(int(index.index))
+	w.archetypeLengths[index.arch]--
+
 	w.entityPool.Recycle(entity)
 
 	if swapped {
@@ -74,7 +61,8 @@ func (w *world) RemEntity(entity Entity) bool {
 	return true
 }
 
-func (w *world) Get(entity Entity, comp ID) unsafe.Pointer {
+// Get returns a component for an entity
+func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
 	arch := w.archetypes[index.arch]
 
@@ -85,13 +73,15 @@ func (w *world) Get(entity Entity, comp ID) unsafe.Pointer {
 	return arch.Get(int(index.index), comp)
 }
 
-func (w *world) Has(entity Entity, comp ID) bool {
+// Has returns whether an entity has a component
+func (w *World) Has(entity Entity, comp ID) bool {
 	index := w.entities[entity.id]
 	arch := w.archetypes[index.arch]
 	return arch.HasComponent(comp)
 }
 
-func (w *world) Add(entity Entity, comps ...ID) {
+// Add adds components to an entity
+func (w *World) Add(entity Entity, comps ...ID) {
 	if len(comps) == 0 {
 		return
 	}
@@ -122,8 +112,10 @@ func (w *world) Add(entity Entity, comps ...ID) {
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
+	w.archetypeLengths[archIdx]++
 
 	swapped := oldArch.Remove(int(index.index))
+	w.archetypeLengths[index.arch]--
 
 	if swapped {
 		swapEntity := oldArch.GetEntity(int(index.index))
@@ -132,7 +124,8 @@ func (w *world) Add(entity Entity, comps ...ID) {
 	w.entities[entity.id] = entityIndex{archIdx, newIndex}
 }
 
-func (w *world) Remove(entity Entity, comps ...ID) {
+// Remove removes components from an entity
+func (w *World) Remove(entity Entity, comps ...ID) {
 	if len(comps) == 0 {
 		return
 	}
@@ -165,8 +158,11 @@ func (w *world) Remove(entity Entity, comps ...ID) {
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
+	w.archetypeLengths[archIdx]++
 
 	swapped := oldArch.Remove(int(index.index))
+	w.archetypeLengths[index.arch]--
+
 	if swapped {
 		swapEntity := oldArch.GetEntity(int(index.index))
 		w.entities[swapEntity.id].index = index.index
@@ -174,7 +170,7 @@ func (w *world) Remove(entity Entity, comps ...ID) {
 	w.entities[entity.id] = entityIndex{archIdx, newIndex}
 }
 
-func (w *world) findArchetype(mask Mask) (int, bool) {
+func (w *World) findArchetype(mask Mask) (int, bool) {
 	for i, a := range w.archetypes {
 		if a.mask == mask {
 			return i, true
@@ -183,7 +179,7 @@ func (w *world) findArchetype(mask Mask) (int, bool) {
 	return 0, false
 }
 
-func (w *world) createArchetype(comps ...ID) int {
+func (w *World) createArchetype(comps ...ID) int {
 	sort.Slice(comps, func(i, j int) bool { return comps[i] < comps[j] })
 	types := make([]ComponentType, len(comps))
 	for i, id := range comps {
@@ -191,27 +187,29 @@ func (w *world) createArchetype(comps ...ID) int {
 	}
 	a := NewArchetype(types...)
 	w.archetypes = append(w.archetypes, a)
+	w.archetypeLengths = append(w.archetypeLengths, 0)
 	return len(w.archetypes) - 1
 }
 
-func (w *world) Alive(entity Entity) bool {
+func (w *World) Alive(entity Entity) bool {
 	return w.entityPool.Alive(entity)
 }
 
-func (w *world) Registry() *ComponentRegistry {
+func (w *World) Registry() *ComponentRegistry {
 	return &w.registry
 }
 
-func (w *world) Query(comps ...ID) Query {
+func (w *World) Query(comps ...ID) Query {
 	return NewQuery(w, NewMask(comps...))
 }
 
-func (w *world) Next(mask Mask, arch, index int) (int, int, bool) {
-	if arch < 0 || index >= w.archetypeLength(arch)-1 {
+func (w *World) Next(mask Mask, arch, index int) (int, int, bool) {
+	if arch < 0 || index >= int(w.archetypeLengths[arch])-1 {
 		arch++
 		index = -1
 		match := false
-		for arch < len(w.archetypes) {
+		len := len(w.archetypeLengths)
+		for arch < len {
 			if w.archetypes[arch].mask.Contains(mask) {
 				match = true
 				break
@@ -225,37 +223,22 @@ func (w *world) Next(mask Mask, arch, index int) (int, int, bool) {
 	return arch, index + 1, true
 }
 
-func (w *world) IterQuery(mask Mask, fn func(entity Entity)) {
-	for _, arch := range w.archetypes {
-		if !arch.mask.Contains(mask) {
-			continue
-		}
-		for i := 0; i < int(arch.Len()); i++ {
-			fn(arch.GetEntity(i))
-		}
-	}
-}
-
-func (w *world) archetypeLength(arch int) int {
-	return int(w.archetypes[arch].Len())
-}
-
-func (w *world) GetAt(arch, index int, id ID) unsafe.Pointer {
+func (w *World) GetAt(arch, index int, id ID) unsafe.Pointer {
 	return w.archetypes[arch].Get(index, id)
 }
 
-func (w *world) GetEntityAt(arch, index int) Entity {
+func (w *World) GetEntityAt(arch, index int) Entity {
 	return w.archetypes[arch].GetEntity(index)
 }
 
 // RegisterComponent provides a way to register components via generics
-func RegisterComponent[T any](w World) ID {
+func RegisterComponent[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.Registry().RegisterComponent(tp)
 }
 
 // ComponentID provides a way to get a component's ID via generics
-func ComponentID[T any](w World) ID {
+func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.Registry().ComponentID(tp)
 }

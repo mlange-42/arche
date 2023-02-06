@@ -21,7 +21,7 @@ type rotation struct {
 }
 
 func main() {
-	defer profile.Start(profile.CPUProfile, profile.MemProfile, profile.ProfilePath(".")).Stop()
+	defer profile.Start(profile.CPUProfile, profile.ProfilePath(".")).Stop()
 
 	count := 1000
 	iters := 1000
@@ -30,8 +30,8 @@ func main() {
 	for i := 0; i < rounds; i++ {
 		world := ecs.NewWorld()
 
-		posID := ecs.RegisterComponent[position](world)
-		rotID := ecs.RegisterComponent[rotation](world)
+		posID := ecs.RegisterComponent[position](&world)
+		rotID := ecs.RegisterComponent[rotation](&world)
 
 		for j := 0; j < count; j++ {
 			entity := world.NewEntity()
@@ -39,13 +39,6 @@ func main() {
 		}
 
 		for j := 0; j < iters; j++ {
-			/*
-				mask := ecs.NewMask(posID, rotID)
-				world.IterQuery(mask, func(entity ecs.Entity) {
-					pos := (*position)(world.Get(entity, posID))
-					_ = pos
-				})
-			*/
 			query := world.Query(posID, rotID)
 			for query.Next() {
 				pos := (*position)(query.Get(posID))

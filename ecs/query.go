@@ -5,13 +5,13 @@ import "unsafe"
 // Query is an iterator to iterate entities
 type Query struct {
 	Mask      Mask
-	World     World
+	World     *World
 	archetype int
 	index     int
 }
 
 // NewQuery creates a new QueryIter
-func NewQuery(w World, mask Mask) Query {
+func NewQuery(w *World, mask Mask) Query {
 	return Query{
 		Mask:      mask,
 		World:     w,

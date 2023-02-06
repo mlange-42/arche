@@ -7,10 +7,10 @@ import (
 )
 
 func TestQuery(t *testing.T) {
-	w := newWorld()
+	w := NewWorld()
 
-	posID := RegisterComponent[position](w)
-	rotID := RegisterComponent[rotation](w)
+	posID := RegisterComponent[position](&w)
+	rotID := RegisterComponent[rotation](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
