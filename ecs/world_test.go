@@ -7,7 +7,7 @@ import (
 )
 
 func TestWorldEntites(t *testing.T) {
-	w := newWorld()
+	w := NewWorld()
 
 	assert.Equal(t, Entity{0, 0}, w.NewEntity())
 	assert.Equal(t, Entity{1, 0}, w.NewEntity())
@@ -37,10 +37,10 @@ func TestWorldEntites(t *testing.T) {
 }
 
 func TestWorldComponents(t *testing.T) {
-	w := newWorld()
+	w := NewWorld()
 
-	posID := RegisterComponent[position](w)
-	rotID := RegisterComponent[rotation](w)
+	posID := RegisterComponent[position](&w)
+	rotID := RegisterComponent[rotation](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -94,10 +94,10 @@ func TestWorldComponents(t *testing.T) {
 }
 
 func TestWorldGetComponents(t *testing.T) {
-	w := newWorld()
+	w := NewWorld()
 
-	posID := RegisterComponent[position](w)
-	rotID := RegisterComponent[rotation](w)
+	posID := RegisterComponent[position](&w)
+	rotID := RegisterComponent[rotation](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -130,11 +130,29 @@ func TestWorldGetComponents(t *testing.T) {
 	assert.True(t, pos2 == nil)
 }
 
+func TestWorldIter(t *testing.T) {
+	world := NewWorld()
+
+	posID := RegisterComponent[position](&world)
+	rotID := RegisterComponent[rotation](&world)
+
+	for i := 0; i < 1000; i++ {
+		entity := world.NewEntity()
+		world.Add(entity, posID, rotID)
+	}
+
+	query := world.Query(posID, rotID)
+	for query.Next() {
+		pos := (*position)(query.Get(posID))
+		_ = pos
+	}
+}
+
 func TestRegisterComponents(t *testing.T) {
 	world := NewWorld()
 
-	RegisterComponent[position](world)
+	RegisterComponent[position](&world)
 
-	assert.Equal(t, ID(0), ComponentID[position](world))
-	assert.Equal(t, ID(1), ComponentID[rotation](world))
+	assert.Equal(t, ID(0), ComponentID[position](&world))
+	assert.Equal(t, ID(1), ComponentID[rotation](&world))
 }
