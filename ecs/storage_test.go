@@ -45,6 +45,9 @@ func storageAddGet(t *testing.T, s Storage) {
 	assert.Equal(t, testStruct{1, 1001, true, false}, *ret2, "Manipulating element does not change data")
 
 	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
+
+	s.Alloc()
+	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}, {}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
 }
 
 func TestReflectStorageRemove(t *testing.T) {

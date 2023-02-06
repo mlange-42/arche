@@ -1,11 +1,16 @@
 package ecs
 
-import "reflect"
+import (
+	"reflect"
+	"sort"
+)
 
 // World is the interface for the ECS world
 type World interface {
 	NewEntity() Entity
 	RemEntity(entity Entity) bool
+	Add(entity Entity, comps ...ID)
+	Remove(entity Entity, comps ...ID)
 	Alive(entity Entity) bool
 	Registry() *ComponentRegistry
 }
@@ -35,9 +40,9 @@ func (w *world) NewEntity() Entity {
 	entity := w.entityPool.Get()
 	idx := w.archetypes[0].Add(entity)
 	if int(entity.id) == len(w.entities) {
-		w.entities = append(w.entities, entityIndex{&w.archetypes[0], idx})
+		w.entities = append(w.entities, entityIndex{0, idx})
 	} else {
-		w.entities[entity.id] = entityIndex{&w.archetypes[0], idx}
+		w.entities[entity.id] = entityIndex{0, idx}
 	}
 	return entity
 }
@@ -48,14 +53,120 @@ func (w *world) RemEntity(entity Entity) bool {
 	}
 
 	index := w.entities[entity.id]
-	swapped := index.arch.Remove(int(index.index))
+	oldArch := &w.archetypes[index.arch]
+	swapped := oldArch.Remove(int(index.index))
 	w.entityPool.Recycle(entity)
 
 	if swapped {
-		swapEntity := index.arch.GetEntity(int(index.index))
+		swapEntity := oldArch.GetEntity(int(index.index))
 		w.entities[swapEntity.id].index = index.index
 	}
+
+	w.entities[entity.id].arch = -1
 	return true
+}
+
+func (w *world) Add(entity Entity, comps ...ID) {
+	if len(comps) == 0 {
+		return
+	}
+	index := w.entities[entity.id]
+	oldArch := &w.archetypes[index.arch]
+	mask := oldArch.mask
+	for _, comp := range comps {
+		mask.Set(comp, true)
+	}
+
+	oldIDs := oldArch.Components()
+
+	archIdx, ok := w.findArchetype(mask)
+	if !ok {
+		ids := append(oldIDs, comps...)
+		archIdx = w.createArchetype(ids...)
+	}
+	arch := &w.archetypes[archIdx]
+	oldArch = &w.archetypes[index.arch]
+
+	allComps := make([]ComponentPointer, 0, len(oldIDs)+len(comps))
+	for _, id := range oldIDs {
+		comp := oldArch.Get(int(index.index), id)
+		allComps = append(allComps, ComponentPointer{id, comp})
+	}
+	for _, id := range comps {
+		allComps = append(allComps, ComponentPointer{id, nil})
+	}
+
+	newIndex := arch.AddPointer(entity, allComps...)
+
+	swapped := oldArch.Remove(int(index.index))
+
+	if swapped {
+		swapEntity := oldArch.GetEntity(int(index.index))
+		w.entities[swapEntity.id].index = index.index
+	}
+	w.entities[entity.id] = entityIndex{archIdx, newIndex}
+}
+
+func (w *world) Remove(entity Entity, comps ...ID) {
+	if len(comps) == 0 {
+		return
+	}
+	index := w.entities[entity.id]
+	oldArch := &w.archetypes[index.arch]
+	mask := oldArch.mask
+	for _, comp := range comps {
+		mask.Set(comp, false)
+	}
+
+	oldIDs := oldArch.Components()
+	newIDs := make([]ID, 0, len(oldIDs))
+	for _, id := range oldIDs {
+		if mask.Get(id) {
+			newIDs = append(newIDs, id)
+		}
+	}
+
+	archIdx, ok := w.findArchetype(mask)
+	if !ok {
+		archIdx = w.createArchetype(newIDs...)
+	}
+	arch := &w.archetypes[archIdx]
+	oldArch = &w.archetypes[index.arch]
+
+	allComps := make([]ComponentPointer, 0, len(newIDs))
+	for _, id := range newIDs {
+		comp := oldArch.Get(int(index.index), id)
+		allComps = append(allComps, ComponentPointer{id, comp})
+	}
+
+	newIndex := arch.AddPointer(entity, allComps...)
+
+	swapped := oldArch.Remove(int(index.index))
+	if swapped {
+		swapEntity := oldArch.GetEntity(int(index.index))
+		w.entities[swapEntity.id].index = index.index
+	}
+	w.entities[entity.id] = entityIndex{archIdx, newIndex}
+}
+
+func (w *world) findArchetype(mask Mask) (int, bool) {
+	for i, a := range w.archetypes {
+		if a.mask == mask {
+			return i, true
+		}
+	}
+	return 0, false
+}
+
+func (w *world) createArchetype(comps ...ID) int {
+	sort.Slice(comps, func(i, j int) bool { return comps[i] < comps[j] })
+	types := make([]ComponentType, len(comps))
+	for i, id := range comps {
+		types[i] = ComponentType{id, w.registry.types[id]}
+	}
+	a := NewArchetype(types...)
+	w.archetypes = append(w.archetypes, a)
+	return len(w.archetypes) - 1
 }
 
 func (w *world) Alive(entity Entity) bool {

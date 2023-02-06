@@ -1,6 +1,9 @@
 package ecs
 
-import "reflect"
+import (
+	"reflect"
+	"unsafe"
+)
 
 // ID defines the format for the components identifier
 type ID uint32
@@ -15,4 +18,10 @@ type Component struct {
 type ComponentType struct {
 	ID
 	Type reflect.Type
+}
+
+// ComponentPointer is a component ID with a pointer in a storage
+type ComponentPointer struct {
+	ID
+	Pointer unsafe.Pointer
 }

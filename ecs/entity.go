@@ -12,6 +12,6 @@ func newEntity(id int) Entity {
 }
 
 type entityIndex struct {
-	arch  *Archetype
+	arch  int
 	index uint32
 }

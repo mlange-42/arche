@@ -47,6 +47,29 @@ func (s *Storage) Get(index uint32) unsafe.Pointer {
 
 // Add adds an element to the end of the storage
 func (s *Storage) Add(value interface{}) (index uint32) {
+	s.extend()
+	s.len++
+	s.set(s.len-1, value)
+	return s.len - 1
+}
+
+// AddPointer adds an element to the end of the storage, based on a pointer
+func (s *Storage) AddPointer(value unsafe.Pointer) (index uint32) {
+	s.extend()
+	s.len++
+	s.setPointer(s.len-1, value)
+	return s.len - 1
+}
+
+// Alloc adds an empty element to the end of the storage
+func (s *Storage) Alloc() (index uint32) {
+	s.extend()
+	s.len++
+	s.Zero(s.len - 1)
+	return s.len - 1
+}
+
+func (s *Storage) extend() {
 	if s.cap < s.len+1 {
 		old := s.buffer
 		s.cap = s.cap + s.capacityIncrement
@@ -54,9 +77,6 @@ func (s *Storage) Add(value interface{}) (index uint32) {
 		s.bufferAddress = s.buffer.Addr().UnsafePointer()
 		reflect.Copy(s.buffer, old)
 	}
-	s.len++
-	s.set(s.len-1, value)
-	return s.len - 1
 }
 
 // Remove swap-removes an element
@@ -96,6 +116,26 @@ func (s *Storage) set(index uint32, value interface{}) {
 	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
 
 	copy(dstSlice, srcSlice)
+}
+
+func (s *Storage) setPointer(index uint32, value unsafe.Pointer) {
+	dst := s.Get(index)
+	size := s.itemSize
+
+	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
+	srcSlice := (*[math.MaxInt32]byte)(value)[:size:size]
+
+	copy(dstSlice, srcSlice)
+}
+
+// Zero resets a block of storage
+func (s *Storage) Zero(index uint32) {
+	dst := s.Get(index)
+
+	for i := uintptr(0); i < s.itemSize; i++ {
+		*(*byte)(dst) = 0
+		dst = unsafe.Add(dst, 1)
+	}
 }
 
 // Len returns the number of items in the storage

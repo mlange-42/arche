@@ -72,8 +72,15 @@ func TestNewArchetype(t *testing.T) {
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
-
 	_ = NewArchetype(comps...)
+
+	comps = []ComponentType{
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
+		{ID: 0, Type: reflect.TypeOf(position{})},
+	}
+	assert.Panics(t, func() {
+		_ = NewArchetype(comps...)
+	})
 }
 
 func BenchmarkArchetypeAccess(b *testing.B) {
