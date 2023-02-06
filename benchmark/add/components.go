@@ -1,4 +1,4 @@
-package benchmark
+package add
 
 type position struct {
 	X int

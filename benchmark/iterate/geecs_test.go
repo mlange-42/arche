@@ -1,4 +1,4 @@
-package benchmark
+package iterate
 
 import (
 	"testing"
@@ -28,14 +28,14 @@ func runGameEngineEcs(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkGameEngineEcs100(b *testing.B) {
+func BenchmarkIterGEEcs100(b *testing.B) {
 	runGameEngineEcs(b, 100)
 }
 
-func BenchmarkGameEngineEcs1000(b *testing.B) {
+func BenchmarkIterGEEcs1000(b *testing.B) {
 	runGameEngineEcs(b, 1000)
 }
 
-func BenchmarkGameEngineEcs10000(b *testing.B) {
+func BenchmarkIterGEEcs10000(b *testing.B) {
 	runGameEngineEcs(b, 10000)
 }
