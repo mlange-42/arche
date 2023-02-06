@@ -11,11 +11,15 @@ type World interface {
 	NewEntity() Entity
 	RemEntity(entity Entity) bool
 	Get(entity Entity, comps ID) unsafe.Pointer
+	GetAt(arch, index int, id ID) unsafe.Pointer
+	GetEntityAt(arch, index int) Entity
 	Has(entity Entity, comps ID) bool
 	Add(entity Entity, comps ...ID)
 	Remove(entity Entity, comps ...ID)
 	Alive(entity Entity) bool
 	Registry() *ComponentRegistry
+	Query(comps ...ID) Query
+	Next(mask Mask, arch, index int) (int, int, bool)
 }
 
 // NewWorld creates a new World
@@ -195,6 +199,37 @@ func (w *world) Alive(entity Entity) bool {
 
 func (w *world) Registry() *ComponentRegistry {
 	return &w.registry
+}
+
+func (w *world) Query(comps ...ID) Query {
+	return NewQuery(w, NewMask(comps...))
+}
+
+func (w *world) Next(mask Mask, arch, index int) (int, int, bool) {
+	if arch < 0 || index >= int(w.archetypes[arch].Len())-1 {
+		arch++
+		index = -1
+		match := false
+		for arch < len(w.archetypes) {
+			if w.archetypes[arch].mask.Contains(mask) {
+				match = true
+				break
+			}
+			arch++
+		}
+		if !match {
+			return 0, 0, false
+		}
+	}
+	return arch, index + 1, true
+}
+
+func (w *world) GetAt(arch, index int, id ID) unsafe.Pointer {
+	return w.archetypes[arch].Get(index, id)
+}
+
+func (w *world) GetEntityAt(arch, index int) Entity {
+	return w.archetypes[arch].GetEntity(index)
 }
 
 // RegisterComponent provides a way to register components via generics
