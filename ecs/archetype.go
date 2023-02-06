@@ -94,6 +94,11 @@ func (a *Archetype) Components() []ID {
 	return a.indices
 }
 
+// HasComponent returns whether the archetype contains the given component ID
+func (a *Archetype) HasComponent(id ID) bool {
+	return a.mask.Get(id)
+}
+
 // Len reports the number of entities in the archetype
 func (a *Archetype) Len() uint32 {
 	return a.entities.Len()

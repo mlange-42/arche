@@ -3,12 +3,15 @@ package ecs
 import (
 	"reflect"
 	"sort"
+	"unsafe"
 )
 
 // World is the interface for the ECS world
 type World interface {
 	NewEntity() Entity
 	RemEntity(entity Entity) bool
+	Get(entity Entity, comps ID) unsafe.Pointer
+	Has(entity Entity, comps ID) bool
 	Add(entity Entity, comps ...ID)
 	Remove(entity Entity, comps ...ID)
 	Alive(entity Entity) bool
@@ -64,6 +67,23 @@ func (w *world) RemEntity(entity Entity) bool {
 
 	w.entities[entity.id].arch = -1
 	return true
+}
+
+func (w *world) Get(entity Entity, comp ID) unsafe.Pointer {
+	index := w.entities[entity.id]
+	arch := w.archetypes[index.arch]
+
+	if !arch.HasComponent(comp) {
+		return nil
+	}
+
+	return arch.Get(int(index.index), comp)
+}
+
+func (w *world) Has(entity Entity, comp ID) bool {
+	index := w.entities[entity.id]
+	arch := w.archetypes[index.arch]
+	return arch.HasComponent(comp)
 }
 
 func (w *world) Add(entity Entity, comps ...ID) {

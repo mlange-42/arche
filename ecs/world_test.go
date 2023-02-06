@@ -93,6 +93,43 @@ func TestWorldComponents(t *testing.T) {
 	w.Remove(e0)
 }
 
+func TestWorldGetComponents(t *testing.T) {
+	w := newWorld()
+
+	posID := RegisterComponent[position](w)
+	rotID := RegisterComponent[rotation](w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Add(e0, posID, rotID)
+	w.Add(e1, posID, rotID)
+	w.Add(e2, rotID)
+
+	assert.False(t, w.Has(e2, posID))
+	assert.True(t, w.Has(e2, rotID))
+
+	pos1 := (*position)(w.Get(e1, posID))
+	assert.Equal(t, &position{}, pos1)
+
+	pos1.X = 100
+	pos1.Y = 101
+
+	pos0 := (*position)(w.Get(e0, posID))
+	pos1 = (*position)(w.Get(e1, posID))
+	assert.Equal(t, &position{}, pos0)
+	assert.Equal(t, &position{100, 101}, pos1)
+
+	w.RemEntity(e0)
+
+	pos1 = (*position)(w.Get(e1, posID))
+	assert.Equal(t, &position{100, 101}, pos1)
+
+	pos2 := (*position)(w.Get(e2, posID))
+	assert.True(t, pos2 == nil)
+}
+
 func TestRegisterComponents(t *testing.T) {
 	world := NewWorld()
 
