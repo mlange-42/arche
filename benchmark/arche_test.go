@@ -6,7 +6,7 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-func BenchmarkArche(b *testing.B) {
+func runArche(b *testing.B, count int) {
 	world := ecs.NewWorld()
 
 	comps := []ecs.Component{
@@ -16,7 +16,7 @@ func BenchmarkArche(b *testing.B) {
 
 	arch := ecs.NewArchetype(comps...)
 
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < count; i++ {
 		arch.Add(
 			world.NewEntity(),
 			ecs.Component{ID: 0, Component: &position{1, 2}},
@@ -25,9 +25,21 @@ func BenchmarkArche(b *testing.B) {
 	}
 
 	for i := 0; i < b.N; i++ {
-		for j := 0; j < 1000; j++ {
+		for j := 0; j < count; j++ {
 			pos := (*position)(arch.Get(i, ecs.ID(0)))
 			_ = pos
 		}
 	}
+}
+
+func BenchmarkArche100(b *testing.B) {
+	runArche(b, 100)
+}
+
+func BenchmarkArche1000(b *testing.B) {
+	runArche(b, 1000)
+}
+
+func BenchmarkArche10000(b *testing.B) {
+	runArche(b, 10000)
 }
