@@ -6,14 +6,6 @@ import (
 	"unsafe"
 )
 
-// Storage is the interface for component storage
-type Storage interface {
-	Get(index uint32) unsafe.Pointer
-	Add(value interface{}) (index uint32)
-	Remove(index uint32)
-	Len() uint32
-}
-
 // ReflectStorage is a storage implementation that works with reflection
 type ReflectStorage struct {
 	buffer            reflect.Value
@@ -26,12 +18,12 @@ type ReflectStorage struct {
 }
 
 // NewReflectStorage creates a new ReflectStorage
-func NewReflectStorage(obj interface{}, increment int) *ReflectStorage {
+func NewReflectStorage(obj interface{}, increment int) ReflectStorage {
 	tp := reflect.TypeOf(obj)
 	size := tp.Size()
 
 	buffer := reflect.New(reflect.ArrayOf(increment, tp)).Elem()
-	return &ReflectStorage{
+	return ReflectStorage{
 		buffer:            buffer,
 		bufferAddress:     buffer.Addr().UnsafePointer(),
 		typeOf:            tp,
@@ -100,7 +92,7 @@ func (s *ReflectStorage) Len() uint32 {
 }
 
 // ToSlice converts the content of a storage to a slice of structs
-func ToSlice[T any](s Storage) []T {
+func ToSlice[T any](s ReflectStorage) []T {
 	res := make([]T, s.Len())
 	for i := 0; i < int(s.Len()); i++ {
 		ptr := (*T)(s.Get(uint32(i)))

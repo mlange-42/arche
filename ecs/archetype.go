@@ -21,14 +21,14 @@ func NewArchetype(components ...Component) Archetype {
 type archetype struct {
 	mask       Mask
 	indices    []ID
-	entities   Storage
-	components []Storage
+	entities   ReflectStorage
+	components []ReflectStorage
 }
 
 func newArchetype(components ...Component) *archetype {
 	var mask Mask
 	indices := make([]ID, len(components))
-	comps := make([]Storage, MaskTotalBits)
+	comps := make([]ReflectStorage, MaskTotalBits)
 	for i, c := range components {
 		mask.Set(c.ID, true)
 		indices[i] = c.ID
