@@ -8,23 +8,23 @@ import (
 )
 
 func TestArchetype(t *testing.T) {
-	comps := []ComponentType{
+	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	arch := NewArchetype(comps...)
+	arch := newArchetype(comps...)
 
 	arch.Add(
 		newEntity(0),
-		Component{ID: 0, Component: &position{1, 2}},
-		Component{ID: 1, Component: &rotation{3}},
+		component{ID: 0, Component: &position{1, 2}},
+		component{ID: 1, Component: &rotation{3}},
 	)
 
 	arch.Add(
 		newEntity(1),
-		Component{ID: 0, Component: &position{4, 5}},
-		Component{ID: 1, Component: &rotation{6}},
+		component{ID: 0, Component: &position{4, 5}},
+		component{ID: 1, Component: &rotation{6}},
 	)
 
 	assert.Equal(t, 2, int(arch.entities.Len()))
@@ -62,7 +62,7 @@ func TestArchetype(t *testing.T) {
 	assert.Panics(t, func() {
 		arch.Add(
 			newEntity(1),
-			Component{ID: 0, Component: &position{4, 5}},
+			component{ID: 0, Component: &position{4, 5}},
 		)
 	})
 
@@ -72,34 +72,34 @@ func TestArchetype(t *testing.T) {
 }
 
 func TestNewArchetype(t *testing.T) {
-	comps := []ComponentType{
+	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
-	_ = NewArchetype(comps...)
+	_ = newArchetype(comps...)
 
-	comps = []ComponentType{
+	comps = []componentType{
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 		{ID: 0, Type: reflect.TypeOf(position{})},
 	}
 	assert.Panics(t, func() {
-		_ = NewArchetype(comps...)
+		_ = newArchetype(comps...)
 	})
 }
 
-func BenchmarkArchetypeAccess(b *testing.B) {
-	comps := []ComponentType{
+func BenchmarkArchetypeAccess_1000(b *testing.B) {
+	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	arch := NewArchetype(comps...)
+	arch := newArchetype(comps...)
 
 	for i := 0; i < 1000; i++ {
 		arch.Add(
 			newEntity(i),
-			Component{ID: 0, Component: &position{1, 2}},
-			Component{ID: 1, Component: &rotation{3}},
+			component{ID: 0, Component: &position{1, 2}},
+			component{ID: 1, Component: &rotation{3}},
 		)
 	}
 

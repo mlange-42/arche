@@ -26,14 +26,14 @@ func addGameEngineEcs(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkAddGEEcs100(b *testing.B) {
+func BenchmarkGGEcsAdd_100(b *testing.B) {
 	addGameEngineEcs(b, 100)
 }
 
-func BenchmarkAddGEEcs1000(b *testing.B) {
+func BenchmarkGGEcsAdd_1000(b *testing.B) {
 	addGameEngineEcs(b, 1000)
 }
 
-func BenchmarkAddGEEcs10000(b *testing.B) {
+func BenchmarkGGEcsAdd_10000(b *testing.B) {
 	addGameEngineEcs(b, 10000)
 }

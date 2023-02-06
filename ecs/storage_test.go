@@ -20,11 +20,11 @@ type simpleStruct struct {
 
 func TestReflectStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
-	s := NewReflectStorageFromTemplate(obj1, 1)
+	s := newStorage(reflect.TypeOf(obj1), 1)
 	storageAddGet(t, s)
 }
 
-func storageAddGet(t *testing.T, s Storage) {
+func storageAddGet(t *testing.T, s storage) {
 	obj1 := testStruct{}
 	obj2 := testStruct{1, 2, true, false}
 
@@ -52,12 +52,12 @@ func storageAddGet(t *testing.T, s Storage) {
 
 func TestReflectStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewReflectStorageFromTemplate(ref, 32)
+	s := newStorage(reflect.TypeOf(ref), 32)
 
 	storageRemove(t, s)
 }
 
-func storageRemove(t *testing.T, s Storage) {
+func storageRemove(t *testing.T, s storage) {
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
 		s.Add(&obj)
@@ -76,7 +76,7 @@ func storageRemove(t *testing.T, s Storage) {
 
 func TestReflectStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewReflectStorageFromTemplate(ref, 1)
+	s := newStorage(reflect.TypeOf(ref), 1)
 
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
@@ -100,12 +100,12 @@ func TestReflectStorageDataSize(t *testing.T) {
 }
 
 func TestNewReflectStorage(t *testing.T) {
-	_ = NewReflectStorage(reflect.TypeOf(simpleStruct{}), 32)
+	_ = newStorage(reflect.TypeOf(simpleStruct{}), 32)
 }
 
-func BenchmarkIterReflectStorage(b *testing.B) {
+func BenchmarkIterReflectStorage_1000(b *testing.B) {
 	ref := testStruct{}
-	s := NewReflectStorageFromTemplate(ref, 128)
+	s := newStorage(reflect.TypeOf(ref), 128)
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
@@ -119,7 +119,7 @@ func BenchmarkIterReflectStorage(b *testing.B) {
 	}
 }
 
-func BenchmarkIterSlice(b *testing.B) {
+func BenchmarkIterSlice_1000(b *testing.B) {
 	s := []testStruct{}
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
@@ -134,7 +134,7 @@ func BenchmarkIterSlice(b *testing.B) {
 	}
 }
 
-func BenchmarkIterSliceInterface(b *testing.B) {
+func BenchmarkIterSliceInterface_1000(b *testing.B) {
 	s := []interface{}{}
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
@@ -149,11 +149,11 @@ func BenchmarkIterSliceInterface(b *testing.B) {
 	}
 }
 
-func BenchmarkAddReflectStorage(b *testing.B) {
+func BenchmarkAddReflectStorage_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		s := NewReflectStorageFromTemplate(ref, 1024)
+		s := newStorage(reflect.TypeOf(ref), 1024)
 		b.StartTimer()
 
 		for i := 0; i < 1000; i++ {
@@ -162,7 +162,7 @@ func BenchmarkAddReflectStorage(b *testing.B) {
 	}
 }
 
-func BenchmarkAddSlice(b *testing.B) {
+func BenchmarkAddSlice_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -179,7 +179,7 @@ func BenchmarkAddSlice(b *testing.B) {
 	}
 }
 
-func BenchmarkAddSliceInterface(b *testing.B) {
+func BenchmarkAddSliceInterface_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -196,11 +196,11 @@ func BenchmarkAddSliceInterface(b *testing.B) {
 	}
 }
 
-func BenchmarkRemoveReflectStorage(b *testing.B) {
+func BenchmarkRemoveReflectStorage_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		s := NewReflectStorageFromTemplate(ref, 1024)
+		s := newStorage(reflect.TypeOf(ref), 1024)
 		for i := 0; i < 1000; i++ {
 			s.Add(&ref)
 		}
@@ -212,7 +212,7 @@ func BenchmarkRemoveReflectStorage(b *testing.B) {
 	}
 }
 
-func BenchmarkRemoveSlice(b *testing.B) {
+func BenchmarkRemoveSlice_1000(b *testing.B) {
 	ref := testStruct{}
 	template := make([]testStruct, 0)
 	for i := 0; i < 1000; i++ {
@@ -236,7 +236,7 @@ func BenchmarkRemoveSlice(b *testing.B) {
 	}
 }
 
-func BenchmarkRemoveSliceInterface(b *testing.B) {
+func BenchmarkRemoveSliceInterface_1000(b *testing.B) {
 	ref := testStruct{}
 	template := make([]interface{}, 0)
 	for i := 0; i < 1000; i++ {
