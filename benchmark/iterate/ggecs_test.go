@@ -28,10 +28,10 @@ func runGameEngineEcs(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkIterGEEcs_1000(b *testing.B) {
+func BenchmarkGGEcsIter_1000(b *testing.B) {
 	runGameEngineEcs(b, 1000)
 }
 
-func BenchmarkIterGEEcs_10000(b *testing.B) {
+func BenchmarkGGEcsIter_10000(b *testing.B) {
 	runGameEngineEcs(b, 10000)
 }

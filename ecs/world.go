@@ -60,7 +60,7 @@ func (w *World) RemEntity(entity Entity) bool {
 // Get returns a component for an entity
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
-	arch := w.archetypes[index.arch]
+	arch := &w.archetypes[index.arch]
 
 	if !arch.HasComponent(comp) {
 		return nil
