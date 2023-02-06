@@ -1,6 +1,7 @@
 package benchmark
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
@@ -9,9 +10,9 @@ import (
 func runArche(b *testing.B, count int) {
 	world := ecs.NewWorld()
 
-	comps := []ecs.Component{
-		{ID: 0, Component: position{}},
-		{ID: 1, Component: rotation{}},
+	comps := []ecs.ComponentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
 	arch := ecs.NewArchetype(comps...)

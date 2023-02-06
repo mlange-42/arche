@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"reflect"
 	"unsafe"
 )
 
@@ -12,22 +13,24 @@ type Archetype struct {
 	components []Storage
 }
 
+var entityType = reflect.TypeOf(Entity{})
+
 // NewArchetype creates a new Archetype for the given components
 // Component arguments must be sorted by ID!
-func NewArchetype(components ...Component) Archetype {
+func NewArchetype(components ...ComponentType) Archetype {
 	var mask Mask
 	indices := make([]ID, len(components))
 	comps := make([]Storage, MaskTotalBits)
 	for i, c := range components {
 		mask.Set(c.ID, true)
 		indices[i] = c.ID
-		comps[c.ID] = NewReflectStorage(c.Component, 32)
+		comps[c.ID] = NewReflectStorage(c.Type, 32)
 	}
 
 	return Archetype{
 		mask:       mask,
 		indices:    indices,
-		entities:   NewReflectStorage(Entity{}, 32),
+		entities:   NewReflectStorage(entityType, 32),
 		components: comps,
 	}
 }

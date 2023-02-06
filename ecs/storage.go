@@ -18,8 +18,7 @@ type Storage struct {
 }
 
 // NewReflectStorage creates a new ReflectStorage
-func NewReflectStorage(obj interface{}, increment int) Storage {
-	tp := reflect.TypeOf(obj)
+func NewReflectStorage(tp reflect.Type, increment int) Storage {
 	size := tp.Size()
 
 	buffer := reflect.New(reflect.ArrayOf(increment, tp)).Elem()
@@ -32,6 +31,12 @@ func NewReflectStorage(obj interface{}, increment int) Storage {
 		cap:               uint32(increment),
 		capacityIncrement: uint32(increment),
 	}
+}
+
+// NewReflectStorageFromTemplate creates a new ReflectStorage from a template object
+func NewReflectStorageFromTemplate(obj interface{}, increment int) Storage {
+	tp := reflect.TypeOf(obj)
+	return NewReflectStorage(tp, increment)
 }
 
 // Get retrieves an unsafe pointer to an element

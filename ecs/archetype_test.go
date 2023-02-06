@@ -1,15 +1,16 @@
 package ecs
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 func TestArchetype(t *testing.T) {
-	comps := []Component{
-		{ID: 0, Component: position{}},
-		{ID: 1, Component: rotation{}},
+	comps := []ComponentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
 	arch := NewArchetype(comps...)
@@ -67,18 +68,18 @@ func TestArchetype(t *testing.T) {
 }
 
 func TestNewArchetype(t *testing.T) {
-	comps := []Component{
-		{ID: 0, Component: position{}},
-		{ID: 1, Component: rotation{}},
+	comps := []ComponentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
 	_ = NewArchetype(comps...)
 }
 
 func BenchmarkArchetypeAccess(b *testing.B) {
-	comps := []Component{
-		{ID: 0, Component: position{}},
-		{ID: 1, Component: rotation{}},
+	comps := []ComponentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
 	arch := NewArchetype(comps...)
