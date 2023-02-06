@@ -44,10 +44,10 @@ func storageAddGet(t *testing.T, s storage) {
 	ret2 = (*testStruct)(s.Get(1))
 	assert.Equal(t, testStruct{1, 1001, true, false}, *ret2, "Manipulating element does not change data")
 
-	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
+	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}}, toSlice[testStruct](s), "Wrong extracted struct slice")
 
 	s.Alloc()
-	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}, {}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
+	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}, {}}, toSlice[testStruct](s), "Wrong extracted struct slice")
 }
 
 func TestReflectStorageRemove(t *testing.T) {
@@ -67,11 +67,11 @@ func storageRemove(t *testing.T, s storage) {
 
 	s.Remove(4)
 	assert.Equal(t, uint32(4), s.Len(), "Wrong storage length")
-	assert.Equal(t, []simpleStruct{{0}, {1}, {2}, {3}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
+	assert.Equal(t, []simpleStruct{{0}, {1}, {2}, {3}}, toSlice[simpleStruct](s), "Wrong slice after remove")
 
 	s.Remove(1)
 	assert.Equal(t, uint32(3), s.Len(), "Wrong storage length")
-	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
+	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, toSlice[simpleStruct](s), "Wrong slice after remove")
 }
 
 func TestReflectStorageDataSize(t *testing.T) {
