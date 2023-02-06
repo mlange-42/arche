@@ -20,6 +20,7 @@ type World interface {
 	Registry() *ComponentRegistry
 	Query(comps ...ID) Query
 	Next(mask Mask, arch, index int) (int, int, bool)
+	IterQuery(mask Mask, fn func(entity Entity))
 }
 
 // NewWorld creates a new World
@@ -206,7 +207,7 @@ func (w *world) Query(comps ...ID) Query {
 }
 
 func (w *world) Next(mask Mask, arch, index int) (int, int, bool) {
-	if arch < 0 || index >= int(w.archetypes[arch].Len())-1 {
+	if arch < 0 || index >= w.archetypeLength(arch)-1 {
 		arch++
 		index = -1
 		match := false
@@ -222,6 +223,21 @@ func (w *world) Next(mask Mask, arch, index int) (int, int, bool) {
 		}
 	}
 	return arch, index + 1, true
+}
+
+func (w *world) IterQuery(mask Mask, fn func(entity Entity)) {
+	for _, arch := range w.archetypes {
+		if !arch.mask.Contains(mask) {
+			continue
+		}
+		for i := 0; i < int(arch.Len()); i++ {
+			fn(arch.GetEntity(i))
+		}
+	}
+}
+
+func (w *world) archetypeLength(arch int) int {
+	return int(w.archetypes[arch].Len())
 }
 
 func (w *world) GetAt(arch, index int, id ID) unsafe.Pointer {

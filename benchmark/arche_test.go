@@ -7,7 +7,7 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-func runArche(b *testing.B, count int) {
+func runArcheArchetype(b *testing.B, count int) {
 	world := ecs.NewWorld()
 
 	comps := []ecs.ComponentType{
@@ -33,14 +33,58 @@ func runArche(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkArche100(b *testing.B) {
-	runArche(b, 100)
+func BenchmarkArcheArchetype100(b *testing.B) {
+	runArcheArchetype(b, 100)
 }
 
-func BenchmarkArche1000(b *testing.B) {
-	runArche(b, 1000)
+func BenchmarkArcheArchetype1000(b *testing.B) {
+	runArcheArchetype(b, 1000)
 }
 
-func BenchmarkArche10000(b *testing.B) {
-	runArche(b, 10000)
+func BenchmarkArcheArchetype10000(b *testing.B) {
+	runArcheArchetype(b, 10000)
+}
+
+func runArcheWorld(b *testing.B, count int) {
+	world := ecs.NewWorld()
+
+	posID := ecs.RegisterComponent[position](world)
+	rotID := ecs.RegisterComponent[rotation](world)
+
+	for i := 0; i < count; i++ {
+		entity := world.NewEntity()
+		world.Add(entity, posID, rotID)
+	}
+
+	for i := 0; i < b.N; i++ {
+		/*
+			b.StopTimer()
+			mask := ecs.NewMask(posID, rotID)
+			b.StartTimer()
+			world.IterQuery(mask, func(entity ecs.Entity) {
+				pos := (*position)(world.Get(entity, posID))
+				_ = pos
+			})
+		*/
+
+		b.StopTimer()
+		query := world.Query(posID, rotID)
+		b.StartTimer()
+		for query.Next() {
+			pos := (*position)(query.Get(posID))
+			_ = pos
+		}
+	}
+}
+
+/*func BenchmarkArcheWorld100(b *testing.B) {
+	runArcheWorld(b, 100)
+}*/
+
+func BenchmarkArcheWorld1000(b *testing.B) {
+	runArcheWorld(b, 1000)
+}
+
+func BenchmarkArcheWorld10000(b *testing.B) {
+	runArcheWorld(b, 10000)
 }
