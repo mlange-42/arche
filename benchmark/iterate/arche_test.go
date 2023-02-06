@@ -7,6 +7,7 @@ import (
 )
 
 func runArcheQuery(b *testing.B, count int) {
+	b.StopTimer()
 	world := ecs.NewWorld()
 
 	posID := ecs.RegisterComponent[position](&world)
@@ -16,6 +17,7 @@ func runArcheQuery(b *testing.B, count int) {
 		entity := world.NewEntity()
 		world.Add(entity, posID, rotID)
 	}
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -29,6 +31,7 @@ func runArcheQuery(b *testing.B, count int) {
 }
 
 func runArcheWorld(b *testing.B, count int) {
+	b.StopTimer()
 	world := ecs.NewWorld()
 
 	posID := ecs.RegisterComponent[position](&world)
@@ -38,6 +41,7 @@ func runArcheWorld(b *testing.B, count int) {
 		entity := world.NewEntity()
 		world.Add(entity, posID, rotID)
 	}
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -51,18 +55,26 @@ func runArcheWorld(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkArcheIterQuery_1000(b *testing.B) {
+func BenchmarkArcheIterQuery_1_000(b *testing.B) {
 	runArcheQuery(b, 1000)
 }
 
-func BenchmarkArcheIterQuery_10000(b *testing.B) {
+func BenchmarkArcheIterQuery_10_000(b *testing.B) {
 	runArcheQuery(b, 10000)
 }
 
-func BenchmarkArcheIterWorld_1000(b *testing.B) {
+func BenchmarkArcheIterQuery_100_000(b *testing.B) {
+	runArcheQuery(b, 100000)
+}
+
+func BenchmarkArcheIterWorld_1_000(b *testing.B) {
 	runArcheWorld(b, 1000)
 }
 
-func BenchmarkArcheIterWorld_10000(b *testing.B) {
+func BenchmarkArcheIterWorld_10_000(b *testing.B) {
 	runArcheWorld(b, 10000)
+}
+
+func BenchmarkArcheIterWorld_100_000(b *testing.B) {
+	runArcheWorld(b, 100000)
 }

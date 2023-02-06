@@ -44,10 +44,10 @@ func storageAddGet(t *testing.T, s storage) {
 	ret2 = (*testStruct)(s.Get(1))
 	assert.Equal(t, testStruct{1, 1001, true, false}, *ret2, "Manipulating element does not change data")
 
-	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
+	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}}, toSlice[testStruct](s), "Wrong extracted struct slice")
 
 	s.Alloc()
-	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}, {}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
+	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}, {}}, toSlice[testStruct](s), "Wrong extracted struct slice")
 }
 
 func TestReflectStorageRemove(t *testing.T) {
@@ -67,11 +67,11 @@ func storageRemove(t *testing.T, s storage) {
 
 	s.Remove(4)
 	assert.Equal(t, uint32(4), s.Len(), "Wrong storage length")
-	assert.Equal(t, []simpleStruct{{0}, {1}, {2}, {3}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
+	assert.Equal(t, []simpleStruct{{0}, {1}, {2}, {3}}, toSlice[simpleStruct](s), "Wrong slice after remove")
 
 	s.Remove(1)
 	assert.Equal(t, uint32(3), s.Len(), "Wrong storage length")
-	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, ToSlice[simpleStruct](s), "Wrong slice after remove")
+	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, toSlice[simpleStruct](s), "Wrong slice after remove")
 }
 
 func TestReflectStorageDataSize(t *testing.T) {
@@ -104,12 +104,14 @@ func TestNewReflectStorage(t *testing.T) {
 }
 
 func BenchmarkIterReflectStorage_1000(b *testing.B) {
+	b.StopTimer()
 	ref := testStruct{}
 	s := newStorage(reflect.TypeOf(ref), 128)
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
 	assert.Equal(b, 1000, int(s.Len()))
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < int(s.Len()); j++ {
@@ -120,11 +122,13 @@ func BenchmarkIterReflectStorage_1000(b *testing.B) {
 }
 
 func BenchmarkIterSlice_1000(b *testing.B) {
+	b.StopTimer()
 	s := []testStruct{}
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
 	}
 	assert.Equal(b, 1000, len(s))
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < len(s); j++ {
@@ -135,11 +139,13 @@ func BenchmarkIterSlice_1000(b *testing.B) {
 }
 
 func BenchmarkIterSliceInterface_1000(b *testing.B) {
+	b.StopTimer()
 	s := []interface{}{}
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
 	}
 	assert.Equal(b, 1000, len(s))
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < len(s); j++ {
@@ -213,11 +219,13 @@ func BenchmarkRemoveReflectStorage_1000(b *testing.B) {
 }
 
 func BenchmarkRemoveSlice_1000(b *testing.B) {
+	b.StopTimer()
 	ref := testStruct{}
 	template := make([]testStruct, 0)
 	for i := 0; i < 1000; i++ {
 		template = append(template, ref)
 	}
+	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		s := append([]testStruct{}, template...)
@@ -237,11 +245,13 @@ func BenchmarkRemoveSlice_1000(b *testing.B) {
 }
 
 func BenchmarkRemoveSliceInterface_1000(b *testing.B) {
+	b.StopTimer()
 	ref := testStruct{}
 	template := make([]interface{}, 0)
 	for i := 0; i < 1000; i++ {
 		template = append(template, ref)
 	}
+	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		s := append([]interface{}{}, template...)

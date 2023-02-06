@@ -137,8 +137,8 @@ func (s *storage) Len() uint32 {
 	return s.len
 }
 
-// ToSlice converts the content of a storage to a slice of structs
-func ToSlice[T any](s storage) []T {
+// toSlice converts the content of a storage to a slice of structs
+func toSlice[T any](s storage) []T {
 	res := make([]T, s.Len())
 	for i := 0; i < int(s.Len()); i++ {
 		ptr := (*T)(s.Get(uint32(i)))
