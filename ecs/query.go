@@ -23,7 +23,7 @@ func newQuery(arches []archetypeIter) Query {
 // Next proceeds to the next entity
 func (q *Query) Next() bool {
 	if q.done {
-		return false
+		panic("Query is used up. Create a new Query!")
 	}
 	for {
 		if q.archetypes[q.index].Next() {
@@ -39,16 +39,25 @@ func (q *Query) Next() bool {
 
 // Has returns whether the current entity has the given component
 func (q *Query) Has(comp ID) bool {
+	if q.done {
+		panic("Query is used up. Create a new Query!")
+	}
 	return q.archetypes[q.index].Has(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's position
 func (q *Query) Get(comp ID) unsafe.Pointer {
+	if q.done {
+		panic("Query is used up. Create a new Query!")
+	}
 	return q.archetypes[q.index].Get(comp)
 }
 
 // Entity returns the entity at the iterator's position
 func (q *Query) Entity() Entity {
+	if q.done {
+		panic("Query is used up. Create a new Query!")
+	}
 	return q.archetypes[q.index].Entity()
 }
 
