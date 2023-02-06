@@ -55,21 +55,28 @@ func (s *Storage) Add(value interface{}) (index uint32) {
 }
 
 // Remove swap-removes an element
-func (s *Storage) Remove(index uint32) {
+func (s *Storage) Remove(index uint32) bool {
 	o := s.len - 1
 	n := index
-	size := s.itemSize
 
-	src := unsafe.Add(s.bufferAddress, uintptr(o)*s.itemSize)
-	dst := unsafe.Add(s.bufferAddress, uintptr(n)*s.itemSize)
+	// TODO shrink the underlying data arrays
+	if n < o {
+		size := s.itemSize
 
-	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
-	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
+		src := unsafe.Add(s.bufferAddress, uintptr(o)*s.itemSize)
+		dst := unsafe.Add(s.bufferAddress, uintptr(n)*s.itemSize)
 
-	copy(dstSlice, srcSlice)
+		dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
+		srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
+
+		copy(dstSlice, srcSlice)
+
+		s.len--
+		return true
+	}
 
 	s.len--
-	// TODO shrink the underlying data arrays
+	return false
 }
 
 func (s *Storage) set(index uint32, value interface{}) {

@@ -37,26 +37,28 @@ func (a *Archetype) GetEntity(index int) Entity {
 	return *(*Entity)(a.entities.Get(uint32(index)))
 }
 
-// GetEntity returns the component with the given ID at the given index
+// Get returns the component with the given ID at the given index
 func (a *Archetype) Get(index int, id ID) unsafe.Pointer {
 	return a.components[id].Get(uint32(index))
 }
 
 // Add adds an entity with components to the archetype
-func (a *Archetype) Add(entity Entity, components ...Component) {
+func (a *Archetype) Add(entity Entity, components ...Component) uint32 {
 	if len(components) != len(a.indices) {
 		panic("Invalid number of components")
 	}
-	a.entities.Add(&entity)
+	idx := a.entities.Add(&entity)
 	for _, c := range components {
 		a.components[c.ID].Add(c.Component)
 	}
+	return idx
 }
 
 // Remove removes an entity from the archetype
-func (a *Archetype) Remove(index int) {
-	a.entities.Remove(uint32(index))
+func (a *Archetype) Remove(index int) bool {
+	swapped := a.entities.Remove(uint32(index))
 	for _, c := range a.indices {
 		a.components[c].Remove(uint32(index))
 	}
+	return swapped
 }

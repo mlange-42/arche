@@ -10,3 +10,8 @@ type Entity struct {
 func newEntity(id int) Entity {
 	return Entity{ID(id), 0}
 }
+
+type entityIndex struct {
+	arch  *Archetype
+	index uint32
+}
