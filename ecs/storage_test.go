@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,7 +20,7 @@ type simpleStruct struct {
 
 func TestReflectStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
-	s := NewReflectStorage(obj1, 1)
+	s := NewReflectStorageFromTemplate(obj1, 1)
 	storageAddGet(t, s)
 }
 
@@ -44,11 +45,14 @@ func storageAddGet(t *testing.T, s Storage) {
 	assert.Equal(t, testStruct{1, 1001, true, false}, *ret2, "Manipulating element does not change data")
 
 	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
+
+	s.Alloc()
+	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}, {}}, ToSlice[testStruct](s), "Wrong extracted struct slice")
 }
 
 func TestReflectStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewReflectStorage(ref, 32)
+	s := NewReflectStorageFromTemplate(ref, 32)
 
 	storageRemove(t, s)
 }
@@ -72,7 +76,7 @@ func storageRemove(t *testing.T, s Storage) {
 
 func TestReflectStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewReflectStorage(ref, 1)
+	s := NewReflectStorageFromTemplate(ref, 1)
 
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
@@ -96,12 +100,12 @@ func TestReflectStorageDataSize(t *testing.T) {
 }
 
 func TestNewReflectStorage(t *testing.T) {
-	_ = NewReflectStorage(simpleStruct{}, 32)
+	_ = NewReflectStorage(reflect.TypeOf(simpleStruct{}), 32)
 }
 
 func BenchmarkIterReflectStorage(b *testing.B) {
 	ref := testStruct{}
-	s := NewReflectStorage(ref, 128)
+	s := NewReflectStorageFromTemplate(ref, 128)
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
@@ -149,7 +153,7 @@ func BenchmarkAddReflectStorage(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		s := NewReflectStorage(ref, 1024)
+		s := NewReflectStorageFromTemplate(ref, 1024)
 		b.StartTimer()
 
 		for i := 0; i < 1000; i++ {
@@ -196,7 +200,7 @@ func BenchmarkRemoveReflectStorage(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		s := NewReflectStorage(ref, 1024)
+		s := NewReflectStorageFromTemplate(ref, 1024)
 		for i := 0; i < 1000; i++ {
 			s.Add(&ref)
 		}

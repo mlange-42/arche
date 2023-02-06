@@ -1,38 +1,30 @@
 package ecs
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
-type Position struct {
-	X int
-	Y int
-}
-
-type Rotation struct {
-	Angle int
-}
-
 func TestArchetype(t *testing.T) {
-	comps := []Component{
-		{ID: 0, Component: Position{}},
-		{ID: 1, Component: Rotation{}},
+	comps := []ComponentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
 	arch := NewArchetype(comps...)
 
 	arch.Add(
 		newEntity(0),
-		Component{ID: 0, Component: &Position{1, 2}},
-		Component{ID: 1, Component: &Rotation{3}},
+		Component{ID: 0, Component: &position{1, 2}},
+		Component{ID: 1, Component: &rotation{3}},
 	)
 
 	arch.Add(
 		newEntity(1),
-		Component{ID: 0, Component: &Position{4, 5}},
-		Component{ID: 1, Component: &Rotation{6}},
+		Component{ID: 0, Component: &position{4, 5}},
+		Component{ID: 1, Component: &rotation{6}},
 	)
 
 	assert.Equal(t, 2, int(arch.entities.Len()))
@@ -44,10 +36,10 @@ func TestArchetype(t *testing.T) {
 	assert.Equal(t, Entity{0, 0}, e0)
 	assert.Equal(t, Entity{1, 0}, e1)
 
-	pos0 := (*Position)(arch.Get(0, ID(0)))
-	rot0 := (*Rotation)(arch.Get(0, ID(1)))
-	pos1 := (*Position)(arch.Get(1, ID(0)))
-	rot1 := (*Rotation)(arch.Get(1, ID(1)))
+	pos0 := (*position)(arch.Get(0, ID(0)))
+	rot0 := (*rotation)(arch.Get(0, ID(1)))
+	pos1 := (*position)(arch.Get(1, ID(0)))
+	rot1 := (*rotation)(arch.Get(1, ID(1)))
 
 	assert.Equal(t, 1, pos0.X)
 	assert.Equal(t, 2, pos0.Y)
@@ -61,8 +53,8 @@ func TestArchetype(t *testing.T) {
 	assert.Equal(t, 1, int(arch.components[0].Len()))
 	assert.Equal(t, 1, int(arch.components[1].Len()))
 
-	pos0 = (*Position)(arch.Get(0, ID(0)))
-	rot0 = (*Rotation)(arch.Get(0, ID(1)))
+	pos0 = (*position)(arch.Get(0, ID(0)))
+	rot0 = (*rotation)(arch.Get(0, ID(1)))
 	assert.Equal(t, 4, pos0.X)
 	assert.Equal(t, 5, pos0.Y)
 	assert.Equal(t, 6, rot0.Angle)
@@ -70,24 +62,35 @@ func TestArchetype(t *testing.T) {
 	assert.Panics(t, func() {
 		arch.Add(
 			newEntity(1),
-			Component{ID: 0, Component: &Position{4, 5}},
+			Component{ID: 0, Component: &position{4, 5}},
 		)
+	})
+
+	assert.Panics(t, func() {
+		arch.AddPointer(newEntity(1))
 	})
 }
 
 func TestNewArchetype(t *testing.T) {
-	comps := []Component{
-		{ID: 0, Component: Position{}},
-		{ID: 1, Component: Rotation{}},
+	comps := []ComponentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
-
 	_ = NewArchetype(comps...)
+
+	comps = []ComponentType{
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
+		{ID: 0, Type: reflect.TypeOf(position{})},
+	}
+	assert.Panics(t, func() {
+		_ = NewArchetype(comps...)
+	})
 }
 
 func BenchmarkArchetypeAccess(b *testing.B) {
-	comps := []Component{
-		{ID: 0, Component: Position{}},
-		{ID: 1, Component: Rotation{}},
+	comps := []ComponentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
 	arch := NewArchetype(comps...)
@@ -95,14 +98,14 @@ func BenchmarkArchetypeAccess(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		arch.Add(
 			newEntity(i),
-			Component{ID: 0, Component: &Position{1, 2}},
-			Component{ID: 1, Component: &Rotation{3}},
+			Component{ID: 0, Component: &position{1, 2}},
+			Component{ID: 1, Component: &rotation{3}},
 		)
 	}
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < 1000; j++ {
-			pos := (*Position)(arch.Get(i, ID(0)))
+			pos := (*position)(arch.Get(i, ID(0)))
 			_ = pos
 		}
 	}
