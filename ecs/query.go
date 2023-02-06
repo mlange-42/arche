@@ -37,6 +37,11 @@ func (q *Query) Next() bool {
 	}
 }
 
+// Has returns whether the current entity has the given component
+func (q *Query) Has(comp ID) bool {
+	return q.archetypes[q.index].Has(comp)
+}
+
 // Get returns the pointer to the given component at the iterator's position
 func (q *Query) Get(comp ID) unsafe.Pointer {
 	return q.archetypes[q.index].Get(comp)
@@ -64,6 +69,11 @@ func newArchetypeIter(arch *Archetype) archetypeIter {
 func (it *archetypeIter) Next() bool {
 	it.Index++
 	return it.Index < it.Length
+}
+
+// Has returns whether the current entity has the given component
+func (it *archetypeIter) Has(comp ID) bool {
+	return it.Archetype.HasComponent(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's position

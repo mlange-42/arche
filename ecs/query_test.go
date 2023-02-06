@@ -52,9 +52,11 @@ func TestQuery(t *testing.T) {
 	cnt = 0
 	for q.Next() {
 		ent := q.Entity()
-		rot := (*rotation)(q.Get(posID))
+		rot := (*rotation)(q.Get(rotID))
 		_ = ent
 		_ = rot
+		hasPos := q.Has(posID)
+		_ = hasPos
 		cnt++
 	}
 	assert.Equal(t, 4, cnt)
