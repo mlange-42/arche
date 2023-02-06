@@ -10,18 +10,18 @@ import (
 func NewWorld() World {
 	return World{
 		entities:   []entityIndex{},
-		entityPool: NewEntityPool(),
-		registry:   NewComponentRegistry(),
-		archetypes: []Archetype{NewArchetype()},
+		entityPool: newEntityPool(),
+		registry:   newComponentRegistry(),
+		archetypes: []archetype{newArchetype()},
 	}
 }
 
 // World holds all ECS data
 type World struct {
 	entities   []entityIndex
-	archetypes []Archetype
-	entityPool EntityPool
-	registry   ComponentRegistry
+	archetypes []archetype
+	entityPool entityPool
+	registry   componentRegistry
 }
 
 // NewEntity creates a new or recycled entity
@@ -98,13 +98,13 @@ func (w *World) Add(entity Entity, comps ...ID) {
 	arch := &w.archetypes[archIdx]
 	oldArch = &w.archetypes[index.arch]
 
-	allComps := make([]ComponentPointer, 0, len(oldIDs)+len(comps))
+	allComps := make([]componentPointer, 0, len(oldIDs)+len(comps))
 	for _, id := range oldIDs {
 		comp := oldArch.Get(int(index.index), id)
-		allComps = append(allComps, ComponentPointer{id, comp})
+		allComps = append(allComps, componentPointer{id, comp})
 	}
 	for _, id := range comps {
-		allComps = append(allComps, ComponentPointer{id, nil})
+		allComps = append(allComps, componentPointer{id, nil})
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
@@ -145,10 +145,10 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 	arch := &w.archetypes[archIdx]
 	oldArch = &w.archetypes[index.arch]
 
-	allComps := make([]ComponentPointer, 0, len(newIDs))
+	allComps := make([]componentPointer, 0, len(newIDs))
 	for _, id := range newIDs {
 		comp := oldArch.Get(int(index.index), id)
-		allComps = append(allComps, ComponentPointer{id, comp})
+		allComps = append(allComps, componentPointer{id, comp})
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
@@ -174,11 +174,11 @@ func (w *World) findArchetype(mask Mask) (int, bool) {
 
 func (w *World) createArchetype(comps ...ID) int {
 	sort.Slice(comps, func(i, j int) bool { return comps[i] < comps[j] })
-	types := make([]ComponentType, len(comps))
+	types := make([]componentType, len(comps))
 	for i, id := range comps {
-		types[i] = ComponentType{id, w.registry.types[id]}
+		types[i] = componentType{id, w.registry.types[id]}
 	}
-	a := NewArchetype(types...)
+	a := newArchetype(types...)
 	w.archetypes = append(w.archetypes, a)
 	return len(w.archetypes) - 1
 }
@@ -188,9 +188,14 @@ func (w *World) Alive(entity Entity) bool {
 	return w.entityPool.Alive(entity)
 }
 
-// Registry returns the world's ComponentRegistry
-func (w *World) Registry() *ComponentRegistry {
-	return &w.registry
+// RegisterComponent registers a components and assigns an ID for it
+func (w *World) RegisterComponent(tp reflect.Type) ID {
+	return w.registry.RegisterComponent(tp)
+}
+
+// ComponentID returns the ID for a component type, and registers it if not already registered
+func (w *World) ComponentID(tp reflect.Type) ID {
+	return w.registry.ComponentID(tp)
 }
 
 // Query creates a query iterator for the given components
@@ -204,17 +209,17 @@ func (w *World) Query(comps ...ID) Query {
 			arches = append(arches, newArchetypeIter(arch))
 		}
 	}
-	return NewQuery(arches)
+	return newQuery(arches)
 }
 
 // RegisterComponent provides a way to register components via generics
 func RegisterComponent[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
-	return w.Registry().RegisterComponent(tp)
+	return w.RegisterComponent(tp)
 }
 
 // ComponentID provides a way to get a component's ID via generics
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
-	return w.Registry().ComponentID(tp)
+	return w.ComponentID(tp)
 }

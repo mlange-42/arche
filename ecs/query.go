@@ -11,8 +11,8 @@ type Query struct {
 	done       bool
 }
 
-// NewQuery creates a new QueryIter
-func NewQuery(arches []archetypeIter) Query {
+// newQuery creates a new QueryIter
+func newQuery(arches []archetypeIter) Query {
 	return Query{
 		archetypes: arches,
 		index:      0,
@@ -53,12 +53,12 @@ func (q *Query) Entity() Entity {
 }
 
 type archetypeIter struct {
-	Archetype *Archetype
+	Archetype *archetype
 	Length    int
 	Index     int
 }
 
-func newArchetypeIter(arch *Archetype) archetypeIter {
+func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
 		Length:    int(arch.Len()),

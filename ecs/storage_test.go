@@ -20,11 +20,11 @@ type simpleStruct struct {
 
 func TestReflectStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
-	s := NewReflectStorageFromTemplate(obj1, 1)
+	s := newStorage(reflect.TypeOf(obj1), 1)
 	storageAddGet(t, s)
 }
 
-func storageAddGet(t *testing.T, s Storage) {
+func storageAddGet(t *testing.T, s storage) {
 	obj1 := testStruct{}
 	obj2 := testStruct{1, 2, true, false}
 
@@ -52,12 +52,12 @@ func storageAddGet(t *testing.T, s Storage) {
 
 func TestReflectStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewReflectStorageFromTemplate(ref, 32)
+	s := newStorage(reflect.TypeOf(ref), 32)
 
 	storageRemove(t, s)
 }
 
-func storageRemove(t *testing.T, s Storage) {
+func storageRemove(t *testing.T, s storage) {
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
 		s.Add(&obj)
@@ -76,7 +76,7 @@ func storageRemove(t *testing.T, s Storage) {
 
 func TestReflectStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
-	s := NewReflectStorageFromTemplate(ref, 1)
+	s := newStorage(reflect.TypeOf(ref), 1)
 
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
@@ -100,12 +100,12 @@ func TestReflectStorageDataSize(t *testing.T) {
 }
 
 func TestNewReflectStorage(t *testing.T) {
-	_ = NewReflectStorage(reflect.TypeOf(simpleStruct{}), 32)
+	_ = newStorage(reflect.TypeOf(simpleStruct{}), 32)
 }
 
 func BenchmarkIterReflectStorage(b *testing.B) {
 	ref := testStruct{}
-	s := NewReflectStorageFromTemplate(ref, 128)
+	s := newStorage(reflect.TypeOf(ref), 128)
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
@@ -153,7 +153,7 @@ func BenchmarkAddReflectStorage(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		s := NewReflectStorageFromTemplate(ref, 1024)
+		s := newStorage(reflect.TypeOf(ref), 1024)
 		b.StartTimer()
 
 		for i := 0; i < 1000; i++ {
@@ -200,7 +200,7 @@ func BenchmarkRemoveReflectStorage(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		s := NewReflectStorageFromTemplate(ref, 1024)
+		s := newStorage(reflect.TypeOf(ref), 1024)
 		for i := 0; i < 1000; i++ {
 			s.Add(&ref)
 		}

@@ -1,45 +1,10 @@
 package iterate
 
 import (
-	"reflect"
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
 )
-
-func runArcheArchetype(b *testing.B, count int) {
-	world := ecs.NewWorld()
-
-	comps := []ecs.ComponentType{
-		{ID: 0, Type: reflect.TypeOf(position{})},
-		{ID: 1, Type: reflect.TypeOf(rotation{})},
-	}
-
-	arch := ecs.NewArchetype(comps...)
-
-	for i := 0; i < count; i++ {
-		arch.Add(
-			world.NewEntity(),
-			ecs.Component{ID: 0, Component: &position{1, 2}},
-			ecs.Component{ID: 1, Component: &rotation{3}},
-		)
-	}
-
-	for i := 0; i < b.N; i++ {
-		for j := 0; j < count; j++ {
-			pos := (*position)(arch.Get(i, ecs.ID(0)))
-			_ = pos
-		}
-	}
-}
-
-func BenchmarkIterArcheArchetype1000(b *testing.B) {
-	runArcheArchetype(b, 1000)
-}
-
-func BenchmarkIterArcheArchetype10000(b *testing.B) {
-	runArcheArchetype(b, 10000)
-}
 
 func runArcheWorld(b *testing.B, count int) {
 	world := ecs.NewWorld()

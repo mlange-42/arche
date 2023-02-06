@@ -5,22 +5,22 @@ import (
 	"unsafe"
 )
 
-// Archetype represents an ECS archetype
-type Archetype struct {
+// archetype represents an ECS archetype
+type archetype struct {
 	mask       Mask
 	indices    []ID
-	entities   Storage
-	components [MaskTotalBits]Storage
+	entities   storage
+	components [MaskTotalBits]storage
 }
 
 var entityType = reflect.TypeOf(Entity{})
 
-// NewArchetype creates a new Archetype for the given components
+// newArchetype creates a new Archetype for the given components
 // Component arguments must be sorted by ID!
-func NewArchetype(components ...ComponentType) Archetype {
+func newArchetype(components ...componentType) archetype {
 	var mask Mask
 	indices := make([]ID, len(components))
-	comps := [MaskTotalBits]Storage{}
+	comps := [MaskTotalBits]storage{}
 
 	prev := -1
 	for i, c := range components {
@@ -31,29 +31,29 @@ func NewArchetype(components ...ComponentType) Archetype {
 
 		mask.Set(c.ID, true)
 		indices[i] = c.ID
-		comps[c.ID] = NewReflectStorage(c.Type, 32)
+		comps[c.ID] = newStorage(c.Type, 32)
 	}
 
-	return Archetype{
+	return archetype{
 		mask:       mask,
 		indices:    indices,
-		entities:   NewReflectStorage(entityType, 32),
+		entities:   newStorage(entityType, 32),
 		components: comps,
 	}
 }
 
 // GetEntity returns the entity at the given index
-func (a *Archetype) GetEntity(index int) Entity {
+func (a *archetype) GetEntity(index int) Entity {
 	return *(*Entity)(a.entities.Get(uint32(index)))
 }
 
 // Get returns the component with the given ID at the given index
-func (a *Archetype) Get(index int, id ID) unsafe.Pointer {
+func (a *archetype) Get(index int, id ID) unsafe.Pointer {
 	return a.components[id].Get(uint32(index))
 }
 
 // Add adds an entity with components to the archetype
-func (a *Archetype) Add(entity Entity, components ...Component) uint32 {
+func (a *archetype) Add(entity Entity, components ...component) uint32 {
 	if len(components) != len(a.indices) {
 		panic("Invalid number of components")
 	}
@@ -65,7 +65,7 @@ func (a *Archetype) Add(entity Entity, components ...Component) uint32 {
 }
 
 // AddPointer adds an entity with components to the archetype, using pointers
-func (a *Archetype) AddPointer(entity Entity, components ...ComponentPointer) uint32 {
+func (a *archetype) AddPointer(entity Entity, components ...componentPointer) uint32 {
 	if len(components) != len(a.indices) {
 		panic("Invalid number of components")
 	}
@@ -81,7 +81,7 @@ func (a *Archetype) AddPointer(entity Entity, components ...ComponentPointer) ui
 }
 
 // Remove removes an entity from the archetype
-func (a *Archetype) Remove(index int) bool {
+func (a *archetype) Remove(index int) bool {
 	swapped := a.entities.Remove(uint32(index))
 	for _, c := range a.indices {
 		a.components[c].Remove(uint32(index))
@@ -90,16 +90,16 @@ func (a *Archetype) Remove(index int) bool {
 }
 
 // Components returns the component IDs for this archetype
-func (a *Archetype) Components() []ID {
+func (a *archetype) Components() []ID {
 	return a.indices
 }
 
 // HasComponent returns whether the archetype contains the given component ID
-func (a *Archetype) HasComponent(id ID) bool {
+func (a *archetype) HasComponent(id ID) bool {
 	return a.mask.Get(id)
 }
 
 // Len reports the number of entities in the archetype
-func (a *Archetype) Len() uint32 {
+func (a *archetype) Len() uint32 {
 	return a.entities.Len()
 }

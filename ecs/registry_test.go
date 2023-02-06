@@ -8,7 +8,7 @@ import (
 )
 
 func TestComponentRegistry(t *testing.T) {
-	reg := NewComponentRegistry()
+	reg := newComponentRegistry()
 
 	posType := reflect.TypeOf((*position)(nil)).Elem()
 	rotType := reflect.TypeOf((*rotation)(nil)).Elem()
