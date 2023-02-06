@@ -163,8 +163,9 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 }
 
 func (w *World) findArchetype(mask Mask) (int, bool) {
-	for i, a := range w.archetypes {
-		if a.mask == mask {
+	length := len(w.archetypes)
+	for i := 0; i < length; i++ {
+		if w.archetypes[i].mask == mask {
 			return i, true
 		}
 	}
@@ -196,9 +197,11 @@ func (w *World) Registry() *ComponentRegistry {
 func (w *World) Query(comps ...ID) Query {
 	mask := NewMask(comps...)
 	arches := []archetypeIter{}
-	for _, arch := range w.archetypes {
+	length := len(w.archetypes)
+	for i := 0; i < length; i++ {
+		arch := &w.archetypes[i]
 		if arch.mask.Contains(mask) {
-			arches = append(arches, newArchetypeIter(&arch))
+			arches = append(arches, newArchetypeIter(arch))
 		}
 	}
 	return NewQuery(arches)
