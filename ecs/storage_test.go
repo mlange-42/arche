@@ -104,12 +104,14 @@ func TestNewReflectStorage(t *testing.T) {
 }
 
 func BenchmarkIterReflectStorage_1000(b *testing.B) {
+	b.StopTimer()
 	ref := testStruct{}
 	s := newStorage(reflect.TypeOf(ref), 128)
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
 	assert.Equal(b, 1000, int(s.Len()))
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < int(s.Len()); j++ {
@@ -120,11 +122,13 @@ func BenchmarkIterReflectStorage_1000(b *testing.B) {
 }
 
 func BenchmarkIterSlice_1000(b *testing.B) {
+	b.StopTimer()
 	s := []testStruct{}
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
 	}
 	assert.Equal(b, 1000, len(s))
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < len(s); j++ {
@@ -135,11 +139,13 @@ func BenchmarkIterSlice_1000(b *testing.B) {
 }
 
 func BenchmarkIterSliceInterface_1000(b *testing.B) {
+	b.StopTimer()
 	s := []interface{}{}
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
 	}
 	assert.Equal(b, 1000, len(s))
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < len(s); j++ {
@@ -213,11 +219,13 @@ func BenchmarkRemoveReflectStorage_1000(b *testing.B) {
 }
 
 func BenchmarkRemoveSlice_1000(b *testing.B) {
+	b.StopTimer()
 	ref := testStruct{}
 	template := make([]testStruct, 0)
 	for i := 0; i < 1000; i++ {
 		template = append(template, ref)
 	}
+	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		s := append([]testStruct{}, template...)
@@ -237,11 +245,13 @@ func BenchmarkRemoveSlice_1000(b *testing.B) {
 }
 
 func BenchmarkRemoveSliceInterface_1000(b *testing.B) {
+	b.StopTimer()
 	ref := testStruct{}
 	template := make([]interface{}, 0)
 	for i := 0; i < 1000; i++ {
 		template = append(template, ref)
 	}
+	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		s := append([]interface{}{}, template...)

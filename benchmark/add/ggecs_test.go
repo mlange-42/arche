@@ -7,10 +7,12 @@ import (
 )
 
 func addGameEngineEcs(b *testing.B, count int) {
+	b.StopTimer()
 	comps := []ecs.ComponentConfig{
 		{ID: 0, Component: position{}},
 		{ID: 1, Component: rotation{}},
 	}
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()

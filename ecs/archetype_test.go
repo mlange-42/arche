@@ -88,6 +88,7 @@ func TestNewArchetype(t *testing.T) {
 }
 
 func BenchmarkArchetypeAccess_1000(b *testing.B) {
+	b.StopTimer()
 	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
@@ -102,6 +103,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 			component{ID: 1, Component: &rotation{3}},
 		)
 	}
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < 1000; j++ {

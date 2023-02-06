@@ -7,6 +7,7 @@ import (
 )
 
 func runGameEngineEcs(b *testing.B, count int) {
+	b.StopTimer()
 	comps := []ecs.ComponentConfig{
 		{ID: 0, Component: position{}},
 		{ID: 1, Component: rotation{}},
@@ -17,6 +18,7 @@ func runGameEngineEcs(b *testing.B, count int) {
 		entity := world.NewEntity()
 		world.Assign(entity, 0, 1)
 	}
+	b.StartTimer()
 
 	filter := world.NewFilter(0, 1)
 
@@ -28,10 +30,14 @@ func runGameEngineEcs(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkGGEcsIter_1000(b *testing.B) {
+func BenchmarkGGEcsIter_1_000(b *testing.B) {
 	runGameEngineEcs(b, 1000)
 }
 
-func BenchmarkGGEcsIter_10000(b *testing.B) {
+func BenchmarkGGEcsIter_10_000(b *testing.B) {
 	runGameEngineEcs(b, 10000)
+}
+
+func BenchmarkGGEcsIter_100_000(b *testing.B) {
+	runGameEngineEcs(b, 100000)
 }
