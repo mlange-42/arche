@@ -28,10 +28,10 @@ func runArcheWorld(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkIterArcheWorld1000(b *testing.B) {
+func BenchmarkIterArcheWorld_1000(b *testing.B) {
 	runArcheWorld(b, 1000)
 }
 
-func BenchmarkIterArcheWorld10000(b *testing.B) {
+func BenchmarkIterArcheWorld_10000(b *testing.B) {
 	runArcheWorld(b, 10000)
 }

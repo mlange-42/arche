@@ -79,6 +79,8 @@ func main() {
 
 [TODO]
 
+For now, see the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
+
 ## References
 
 Information and inspiration taken from:

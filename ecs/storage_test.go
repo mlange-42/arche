@@ -103,7 +103,7 @@ func TestNewReflectStorage(t *testing.T) {
 	_ = newStorage(reflect.TypeOf(simpleStruct{}), 32)
 }
 
-func BenchmarkIterReflectStorage(b *testing.B) {
+func BenchmarkIterReflectStorage_1000(b *testing.B) {
 	ref := testStruct{}
 	s := newStorage(reflect.TypeOf(ref), 128)
 	for i := 0; i < 1000; i++ {
@@ -119,7 +119,7 @@ func BenchmarkIterReflectStorage(b *testing.B) {
 	}
 }
 
-func BenchmarkIterSlice(b *testing.B) {
+func BenchmarkIterSlice_1000(b *testing.B) {
 	s := []testStruct{}
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
@@ -134,7 +134,7 @@ func BenchmarkIterSlice(b *testing.B) {
 	}
 }
 
-func BenchmarkIterSliceInterface(b *testing.B) {
+func BenchmarkIterSliceInterface_1000(b *testing.B) {
 	s := []interface{}{}
 	for i := 0; i < 1000; i++ {
 		s = append(s, testStruct{})
@@ -149,7 +149,7 @@ func BenchmarkIterSliceInterface(b *testing.B) {
 	}
 }
 
-func BenchmarkAddReflectStorage(b *testing.B) {
+func BenchmarkAddReflectStorage_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -162,7 +162,7 @@ func BenchmarkAddReflectStorage(b *testing.B) {
 	}
 }
 
-func BenchmarkAddSlice(b *testing.B) {
+func BenchmarkAddSlice_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -179,7 +179,7 @@ func BenchmarkAddSlice(b *testing.B) {
 	}
 }
 
-func BenchmarkAddSliceInterface(b *testing.B) {
+func BenchmarkAddSliceInterface_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -196,7 +196,7 @@ func BenchmarkAddSliceInterface(b *testing.B) {
 	}
 }
 
-func BenchmarkRemoveReflectStorage(b *testing.B) {
+func BenchmarkRemoveReflectStorage_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -212,7 +212,7 @@ func BenchmarkRemoveReflectStorage(b *testing.B) {
 	}
 }
 
-func BenchmarkRemoveSlice(b *testing.B) {
+func BenchmarkRemoveSlice_1000(b *testing.B) {
 	ref := testStruct{}
 	template := make([]testStruct, 0)
 	for i := 0; i < 1000; i++ {
@@ -236,7 +236,7 @@ func BenchmarkRemoveSlice(b *testing.B) {
 	}
 }
 
-func BenchmarkRemoveSliceInterface(b *testing.B) {
+func BenchmarkRemoveSliceInterface_1000(b *testing.B) {
 	ref := testStruct{}
 	template := make([]interface{}, 0)
 	for i := 0; i < 1000; i++ {

@@ -22,14 +22,14 @@ func addArcheWorld(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkAddArche100(b *testing.B) {
+func BenchmarkAddArche_100(b *testing.B) {
 	addArcheWorld(b, 100)
 }
 
-func BenchmarkAddArche1000(b *testing.B) {
+func BenchmarkAddArche_1000(b *testing.B) {
 	addArcheWorld(b, 1000)
 }
 
-func BenchmarkAddArche10000(b *testing.B) {
+func BenchmarkAddArche_10000(b *testing.B) {
 	addArcheWorld(b, 10000)
 }

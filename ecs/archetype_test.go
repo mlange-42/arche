@@ -87,7 +87,7 @@ func TestNewArchetype(t *testing.T) {
 	})
 }
 
-func BenchmarkArchetypeAccess(b *testing.B) {
+func BenchmarkArchetypeAccess_1000(b *testing.B) {
 	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
