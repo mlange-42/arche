@@ -9,7 +9,7 @@ import (
 // NewWorld creates a new World
 func NewWorld() World {
 	return World{
-		entities:   []entityIndex{},
+		entities:   []entityIndex{{-1, 0}},
 		entityPool: newEntityPool(),
 		registry:   newComponentRegistry(),
 		archetypes: []archetype{newArchetype()},

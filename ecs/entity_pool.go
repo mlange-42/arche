@@ -1,9 +1,11 @@
 package ecs
 
+import "math"
+
 // newEntityPool creates a new, initialized EntityPool
 func newEntityPool() entityPool {
 	return entityPool{
-		entities:  []Entity{},
+		entities:  []Entity{{0, math.MaxUint16}},
 		next:      0,
 		available: 0,
 	}
@@ -32,6 +34,9 @@ func (p *entityPool) Get() Entity {
 
 // Recycle hands an entity back for recycling
 func (p *entityPool) Recycle(e Entity) {
+	if e.id == 0 {
+		panic("can't recycle reserved zero entity")
+	}
 	p.entities[e.id].gen++
 	p.next, p.entities[e.id].id = e.id, p.next
 	p.available++
@@ -39,5 +44,5 @@ func (p *entityPool) Recycle(e Entity) {
 
 // Alive return whether an entity is still alive, based on the entity's generations
 func (p *entityPool) Alive(e Entity) bool {
-	return e.gen == p.entities[e.id].gen
+	return e.id != 0 && e.gen == p.entities[e.id].gen
 }

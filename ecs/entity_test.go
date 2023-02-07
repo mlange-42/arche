@@ -2,6 +2,8 @@ package ecs
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestEntityAsIndex(t *testing.T) {
@@ -10,4 +12,9 @@ func TestEntityAsIndex(t *testing.T) {
 
 	val := arr[entity.id]
 	_ = val
+}
+
+func TestZeroEntity(t *testing.T) {
+	assert.True(t, Entity{}.IsZero())
+	assert.False(t, Entity{1, 0}.IsZero())
 }

@@ -9,33 +9,33 @@ import (
 func TestWorldEntites(t *testing.T) {
 	w := NewWorld()
 
-	assert.Equal(t, Entity{0, 0}, w.NewEntity())
 	assert.Equal(t, Entity{1, 0}, w.NewEntity())
 	assert.Equal(t, Entity{2, 0}, w.NewEntity())
+	assert.Equal(t, Entity{3, 0}, w.NewEntity())
 
 	assert.Equal(t, 0, int(w.entities[0].index))
-	assert.Equal(t, 1, int(w.entities[1].index))
+	assert.Equal(t, 0, int(w.entities[1].index))
+	assert.Equal(t, 1, int(w.entities[2].index))
+	assert.Equal(t, 2, int(w.entities[3].index))
+	w.RemEntity(Entity{2, 0})
+	assert.False(t, w.Alive(Entity{2, 0}))
+
+	assert.Equal(t, 0, int(w.entities[1].index))
+	assert.Equal(t, 1, int(w.entities[3].index))
+
+	assert.Equal(t, Entity{2, 1}, w.NewEntity())
+	assert.False(t, w.Alive(Entity{2, 0}))
+	assert.True(t, w.Alive(Entity{2, 1}))
+
 	assert.Equal(t, 2, int(w.entities[2].index))
 
+	w.RemEntity(Entity{3, 0})
+	w.RemEntity(Entity{2, 1})
 	w.RemEntity(Entity{1, 0})
-	assert.False(t, w.Alive(Entity{1, 0}))
 
-	assert.Equal(t, 0, int(w.entities[0].index))
-	assert.Equal(t, 1, int(w.entities[2].index))
-
-	assert.Equal(t, Entity{1, 1}, w.NewEntity())
-	assert.False(t, w.Alive(Entity{1, 0}))
-	assert.True(t, w.Alive(Entity{1, 1}))
-
-	assert.Equal(t, 2, int(w.entities[1].index))
-
-	w.RemEntity(Entity{2, 0})
-	w.RemEntity(Entity{1, 1})
-	w.RemEntity(Entity{0, 0})
-
-	assert.Panics(t, func() { w.RemEntity(Entity{2, 0}) })
-	assert.Panics(t, func() { w.RemEntity(Entity{1, 1}) })
-	assert.Panics(t, func() { w.RemEntity(Entity{0, 0}) })
+	assert.Panics(t, func() { w.RemEntity(Entity{3, 0}) })
+	assert.Panics(t, func() { w.RemEntity(Entity{2, 1}) })
+	assert.Panics(t, func() { w.RemEntity(Entity{1, 0}) })
 }
 
 func TestWorldComponents(t *testing.T) {

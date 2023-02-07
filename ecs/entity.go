@@ -11,6 +11,11 @@ func newEntity(id int) Entity {
 	return Entity{ID(id), 0}
 }
 
+// IsZero returns whether this entity is the reserved zero entity
+func (e Entity) IsZero() bool {
+	return e.id == 0
+}
+
 type entityIndex struct {
 	arch  int
 	index uint32

@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"math"
 	"math/rand"
 	"testing"
 
@@ -14,29 +15,32 @@ func TestEntityPoolConstructor(t *testing.T) {
 func TestEntityPool(t *testing.T) {
 	p := newEntityPool()
 
-	expectedAll := []Entity{newEntity(0), newEntity(1), newEntity(2), newEntity(3), newEntity(4)}
+	expectedAll := []Entity{newEntity(0), newEntity(1), newEntity(2), newEntity(3), newEntity(4), newEntity(5)}
+	expectedAll[0].gen = math.MaxUint16
 
 	for i := 0; i < 5; i++ {
 		_ = p.Get()
 	}
 	assert.Equal(t, expectedAll, p.entities, "Wrong initial entities")
 
-	e0 := p.entities[0]
+	assert.Panics(t, func() { p.Recycle(p.entities[0]) })
+
+	e0 := p.entities[1]
 	p.Recycle(e0)
 	assert.False(t, p.Alive(e0), "Dead entity should not be alive")
 
 	e0Old := e0
 	e0 = p.Get()
-	expectedAll[0].gen++
+	expectedAll[1].gen++
 	assert.True(t, p.Alive(e0), "Recycled entity of new generation should be alive")
 	assert.False(t, p.Alive(e0Old), "Recycled entity of old generation should not be alive")
 
 	assert.Equal(t, expectedAll, p.entities, "Wrong entities after get/recycle")
 
-	e0Old = p.entities[0]
+	e0Old = p.entities[1]
 	for i := 0; i < 5; i++ {
-		p.Recycle(p.entities[i])
-		expectedAll[i].gen++
+		p.Recycle(p.entities[i+1])
+		expectedAll[i+1].gen++
 	}
 
 	assert.False(t, p.Alive(e0Old), "Recycled entity of old generation should not be alive")
