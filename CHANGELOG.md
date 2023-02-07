@@ -2,7 +2,9 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.1.1...main)
 
-None
+### Other
+
+* Use aligned item size in component storage, for approx. 20% faster query iteration (#25)
 
 ## [[v0.1.1]](https://github.com/mlange-42/arche/compare/v0.1.0...v0.1.1)
 

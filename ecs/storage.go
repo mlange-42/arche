@@ -20,6 +20,8 @@ type storage struct {
 // newStorage creates a new ReflectStorage
 func newStorage(tp reflect.Type, increment int) storage {
 	size := tp.Size()
+	align := uintptr(tp.Align())
+	size = (size + (align - 1)) / align * align
 
 	buffer := reflect.New(reflect.ArrayOf(increment, tp)).Elem()
 	return storage{
