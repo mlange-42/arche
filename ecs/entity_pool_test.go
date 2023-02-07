@@ -9,11 +9,11 @@ import (
 )
 
 func TestEntityPoolConstructor(t *testing.T) {
-	_ = newEntityPool()
+	_ = newEntityPool(128)
 }
 
 func TestEntityPool(t *testing.T) {
-	p := newEntityPool()
+	p := newEntityPool(128)
 
 	expectedAll := []Entity{newEntity(0), newEntity(1), newEntity(2), newEntity(3), newEntity(4), newEntity(5)}
 	expectedAll[0].gen = math.MaxUint16
@@ -54,7 +54,7 @@ func TestEntityPool(t *testing.T) {
 
 func TestEntityPoolStochastic(t *testing.T) {
 	for i := 0; i < 10; i++ {
-		p := newEntityPool()
+		p := newEntityPool(128)
 
 		alive := map[Entity]bool{}
 		for i := 0; i < 10; i++ {

@@ -2,7 +2,9 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.1.2...main)
 
-Nothing
+## Features
+
+* Add `Config` to allow for configuration of the world (currently only storage capacity increment) (#28)
 
 ## [[v0.1.2]](https://github.com/mlange-42/arche/compare/v0.1.1...v0.1.2)
 

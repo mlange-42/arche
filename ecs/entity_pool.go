@@ -3,26 +3,33 @@ package ecs
 import "math"
 
 // newEntityPool creates a new, initialized Entity pool
-func newEntityPool() entityPool {
+func newEntityPool(capacityIncrement int) entityPool {
 	return entityPool{
-		entities:  []Entity{{0, math.MaxUint16}},
-		next:      0,
-		available: 0,
+		entities:          []Entity{{0, math.MaxUint16}},
+		next:              0,
+		available:         0,
+		capacityIncrement: capacityIncrement,
 	}
 }
 
 // entityPool is an implementation using implicit linked lists.
 // Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
 type entityPool struct {
-	entities  []Entity
-	next      ID
-	available uint32
+	entities          []Entity
+	next              ID
+	available         uint32
+	capacityIncrement int
 }
 
 // Get returns a fresh or recycled entity
 func (p *entityPool) Get() Entity {
 	if p.available == 0 {
 		e := newEntity(len(p.entities))
+		if len(p.entities) == cap(p.entities) {
+			old := p.entities
+			p.entities = make([]Entity, len(p.entities), len(p.entities)+p.capacityIncrement)
+			copy(p.entities, old)
+		}
 		p.entities = append(p.entities, e)
 		return e
 	}

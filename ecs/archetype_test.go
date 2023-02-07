@@ -13,7 +13,7 @@ func TestArchetype(t *testing.T) {
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	arch := newArchetype(comps...)
+	arch := newArchetype(32, comps...)
 
 	arch.Add(
 		newEntity(0),
@@ -76,14 +76,14 @@ func TestNewArchetype(t *testing.T) {
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
-	_ = newArchetype(comps...)
+	_ = newArchetype(32, comps...)
 
 	comps = []componentType{
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 		{ID: 0, Type: reflect.TypeOf(position{})},
 	}
 	assert.Panics(t, func() {
-		_ = newArchetype(comps...)
+		_ = newArchetype(32, comps...)
 	})
 }
 
@@ -94,7 +94,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	arch := newArchetype(comps...)
+	arch := newArchetype(32, comps...)
 
 	for i := 0; i < 1000; i++ {
 		arch.Add(

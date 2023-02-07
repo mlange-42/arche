@@ -8,18 +8,25 @@ import (
 
 // NewWorld creates a new World
 func NewWorld() World {
+	return FromConfig(NewConfig())
+}
+
+// FromConfig creates a new World from a Config
+func FromConfig(conf Config) World {
 	return World{
+		config:     conf,
 		entities:   []entityIndex{{-1, 0}},
-		entityPool: newEntityPool(),
+		entityPool: newEntityPool(conf.CapacityIncrement),
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
-		archetypes: []archetype{newArchetype()},
+		archetypes: []archetype{newArchetype(conf.CapacityIncrement)},
 		locks:      Mask(0),
 	}
 }
 
 // World holds all ECS data
 type World struct {
+	config     Config
 	entities   []entityIndex
 	archetypes []archetype
 	entityPool entityPool
@@ -37,6 +44,11 @@ func (w *World) NewEntity() Entity {
 	entity := w.entityPool.Get()
 	idx := w.archetypes[0].Add(entity)
 	if int(entity.id) == len(w.entities) {
+		if len(w.entities) == cap(w.entities) {
+			old := w.entities
+			w.entities = make([]entityIndex, len(w.entities), len(w.entities)+w.config.CapacityIncrement)
+			copy(w.entities, old)
+		}
 		w.entities = append(w.entities, entityIndex{0, idx})
 	} else {
 		w.entities[entity.id] = entityIndex{0, idx}
@@ -193,7 +205,7 @@ func (w *World) createArchetype(comps ...ID) int {
 	for i, id := range comps {
 		types[i] = componentType{id, w.registry.types[id]}
 	}
-	w.archetypes = append(w.archetypes, newArchetype(types...))
+	w.archetypes = append(w.archetypes, newArchetype(w.config.CapacityIncrement, types...))
 	return len(w.archetypes) - 1
 }
 
