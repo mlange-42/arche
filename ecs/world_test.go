@@ -143,11 +143,57 @@ func TestWorldIter(t *testing.T) {
 		world.Add(entity, posID, rotID)
 	}
 
-	query := world.Query(posID, rotID)
-	for query.Next() {
-		pos := (*position)(query.Get(posID))
-		_ = pos
+	for i := 0; i < 100; i++ {
+		query := world.Query(posID, rotID)
+		for query.Next() {
+			pos := (*position)(query.Get(posID))
+			_ = pos
+		}
+		assert.Panics(t, func() { query.Next() })
 	}
+
+	for i := 0; i < MaskTotalBits-1; i++ {
+		query := world.Query(posID, rotID)
+		for query.Next() {
+			pos := (*position)(query.Get(posID))
+			_ = pos
+			break
+		}
+	}
+	query := world.Query(posID, rotID)
+
+	assert.Panics(t, func() { world.Query(posID, rotID) })
+
+	query.Close()
+	assert.Panics(t, func() { query.Close() })
+}
+
+func TestWorldLock(t *testing.T) {
+	world := NewWorld()
+
+	posID := ComponentID[position](&world)
+	rotID := ComponentID[rotation](&world)
+
+	var entity Entity
+	for i := 0; i < 100; i++ {
+		entity = world.NewEntity()
+		world.Add(entity, posID)
+	}
+
+	query1 := world.Query(posID)
+	query2 := world.Query(posID)
+	assert.True(t, world.IsLocked())
+	query1.Close()
+	assert.True(t, world.IsLocked())
+	query2.Close()
+	assert.False(t, world.IsLocked())
+
+	query1 = world.Query(posID)
+
+	assert.Panics(t, func() { world.NewEntity() })
+	assert.Panics(t, func() { world.RemEntity(entity) })
+	assert.Panics(t, func() { world.Add(entity, rotID) })
+	assert.Panics(t, func() { world.Remove(entity, posID) })
 }
 
 func TestRegisterComponents(t *testing.T) {

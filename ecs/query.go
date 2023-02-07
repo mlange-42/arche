@@ -6,17 +6,21 @@ import (
 
 // Query is an iterator to iterate entities
 type Query struct {
+	world      *World
 	archetypes []archetypeIter
 	index      int
 	done       bool
+	lockBit    uint8
 }
 
 // newQuery creates a new QueryIter
-func newQuery(arches []archetypeIter) Query {
+func newQuery(world *World, arches []archetypeIter, lockBit uint8) Query {
 	return Query{
+		world:      world,
 		archetypes: arches,
 		index:      0,
 		done:       false,
+		lockBit:    lockBit,
 	}
 }
 
@@ -32,6 +36,7 @@ func (q *Query) Next() bool {
 		q.index++
 		if q.index >= len(q.archetypes) {
 			q.done = true
+			q.world.closeQuery(q)
 			return false
 		}
 	}
@@ -59,6 +64,15 @@ func (q *Query) Entity() Entity {
 		panic("Query is used up. Create a new Query!")
 	}
 	return q.archetypes[q.index].Entity()
+}
+
+// Close closes the query and unlocks the world.
+//
+// Automatically called when iteration finishes.
+// Needs to be called only if breaking out of the query iteration.
+func (q *Query) Close() {
+	q.done = true
+	q.world.closeQuery(q)
 }
 
 type archetypeIter struct {

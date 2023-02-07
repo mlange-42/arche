@@ -5,6 +5,7 @@
 ### Other
 
 * Use aligned item size in component storage, for approx. 20% faster query iteration (#25)
+* Queries lock the World, and automatically unlock it after iteration (#26)
 
 ## [[v0.1.1]](https://github.com/mlange-42/arche/compare/v0.1.0...v0.1.1)
 
