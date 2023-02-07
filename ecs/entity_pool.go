@@ -2,7 +2,7 @@ package ecs
 
 import "math"
 
-// newEntityPool creates a new, initialized EntityPool
+// newEntityPool creates a new, initialized Entity pool
 func newEntityPool() entityPool {
 	return entityPool{
 		entities:  []Entity{{0, math.MaxUint16}},
@@ -11,7 +11,7 @@ func newEntityPool() entityPool {
 	}
 }
 
-// entityPool is an entityPool implementation using implicit linked lists.
+// entityPool is an implementation using implicit linked lists.
 // Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
 type entityPool struct {
 	entities  []Entity
