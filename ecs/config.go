@@ -8,7 +8,7 @@ type Config struct {
 // NewConfig creates a new default config
 func NewConfig() Config {
 	return Config{
-		CapacityIncrement: 128,
+		CapacityIncrement: 1024,
 	}
 }
 

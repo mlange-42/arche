@@ -100,6 +100,6 @@ func (a *archetype) HasComponent(id ID) bool {
 }
 
 // Len reports the number of entities in the archetype
-func (a *archetype) Len() uint32 {
+func (a *archetype) Len() int {
 	return a.entities.Len()
 }

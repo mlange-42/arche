@@ -63,14 +63,14 @@ func storageRemove(t *testing.T, s storage) {
 		s.Add(&obj)
 	}
 
-	assert.Equal(t, uint32(5), s.Len(), "Wrong storage length")
+	assert.Equal(t, 5, s.Len(), "Wrong storage length")
 
 	s.Remove(4)
-	assert.Equal(t, uint32(4), s.Len(), "Wrong storage length")
+	assert.Equal(t, 4, s.Len(), "Wrong storage length")
 	assert.Equal(t, []simpleStruct{{0}, {1}, {2}, {3}}, toSlice[simpleStruct](s), "Wrong slice after remove")
 
 	s.Remove(1)
-	assert.Equal(t, uint32(3), s.Len(), "Wrong storage length")
+	assert.Equal(t, 3, s.Len(), "Wrong storage length")
 	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, toSlice[simpleStruct](s), "Wrong slice after remove")
 }
 
@@ -83,20 +83,20 @@ func TestReflectStorageDataSize(t *testing.T) {
 		s.Add(&obj)
 	}
 
-	assert.Equal(t, 5, int(s.cap))
+	assert.Equal(t, 5, s.Cap())
 
 	s.Remove(0)
-	assert.Equal(t, 5, int(s.cap))
+	assert.Equal(t, 5, s.Cap())
 	s.Remove(0)
-	assert.Equal(t, 5, int(s.cap))
+	assert.Equal(t, 5, s.Cap())
 
 	s.Add(&simpleStruct{})
-	assert.Equal(t, 5, int(s.cap))
+	assert.Equal(t, 5, s.Cap())
 	s.Add(&simpleStruct{})
-	assert.Equal(t, 5, int(s.cap))
+	assert.Equal(t, 5, s.Cap())
 
 	s.Add(&simpleStruct{})
-	assert.Equal(t, 6, int(s.cap))
+	assert.Equal(t, 6, s.Cap())
 }
 
 func TestNewReflectStorage(t *testing.T) {
@@ -110,11 +110,11 @@ func BenchmarkIterReflectStorage_1000(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
-	assert.Equal(b, 1000, int(s.Len()))
+	assert.Equal(b, 1000, s.Len())
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		for j := 0; j < int(s.Len()); j++ {
+		for j := 0; j < s.Len(); j++ {
 			a := (*testStruct)(s.Get(uint32(j)))
 			_ = a
 		}
