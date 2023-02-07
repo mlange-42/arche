@@ -11,8 +11,10 @@ func NewWorld() World {
 	return World{
 		entities:   []entityIndex{{-1, 0}},
 		entityPool: newEntityPool(),
+		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
 		archetypes: []archetype{newArchetype()},
+		locks:      Mask(0),
 	}
 }
 
@@ -21,13 +23,17 @@ type World struct {
 	entities   []entityIndex
 	archetypes []archetype
 	entityPool entityPool
+	bitPool    bitPool
 	registry   componentRegistry
+	locks      Mask
 }
 
 // NewEntity creates a new or recycled entity.
 //
 // Do not use during Query iteration!
 func (w *World) NewEntity() Entity {
+	w.checkLocked()
+
 	entity := w.entityPool.Get()
 	idx := w.archetypes[0].Add(entity)
 	if int(entity.id) == len(w.entities) {
@@ -42,6 +48,8 @@ func (w *World) NewEntity() Entity {
 //
 // Do not use during Query iteration!
 func (w *World) RemEntity(entity Entity) {
+	w.checkLocked()
+
 	index := w.entities[entity.id]
 	oldArch := &w.archetypes[index.arch]
 	swapped := oldArch.Remove(int(index.index))
@@ -79,6 +87,8 @@ func (w *World) Has(entity Entity, comp ID) bool {
 //
 // Do not use during Query iteration!
 func (w *World) Add(entity Entity, comps ...ID) {
+	w.checkLocked()
+
 	if len(comps) == 0 {
 		return
 	}
@@ -123,6 +133,8 @@ func (w *World) Add(entity Entity, comps ...ID) {
 //
 // Do not use during Query iteration!
 func (w *World) Remove(entity Entity, comps ...ID) {
+	w.checkLocked()
+
 	if len(comps) == 0 {
 		return
 	}
@@ -196,6 +208,8 @@ func (w *World) ComponentID(tp reflect.Type) ID {
 }
 
 // Query creates a query iterator for the given components
+//
+// Locks the world to prevent changes to component compositions
 func (w *World) Query(comps ...ID) Query {
 	mask := NewMask(comps...)
 	arches := []archetypeIter{}
@@ -206,7 +220,30 @@ func (w *World) Query(comps ...ID) Query {
 			arches = append(arches, newArchetypeIter(arch))
 		}
 	}
-	return newQuery(arches)
+	lock := w.bitPool.Get()
+	w.locks.Set(ID(lock), true)
+	return newQuery(w, arches, lock)
+}
+
+// closeQuery closes a query and unlocks the world
+func (w *World) closeQuery(query *Query) {
+	l := query.lockBit
+	if !w.locks.Get(ID(l)) {
+		panic("unbalanced query unlock")
+	}
+	w.locks.Set(ID(l), false)
+	w.bitPool.Recycle(l)
+}
+
+// IsLocked returns whether the world is locked by any queries
+func (w *World) IsLocked() bool {
+	return w.locks != 0
+}
+
+func (w *World) checkLocked() {
+	if w.locks != 0 {
+		panic("attempt to modify a locked world")
+	}
 }
 
 // ComponentID provides a way to get a component's ID via generics
