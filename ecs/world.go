@@ -226,15 +226,17 @@ func (w *World) Query(comps ...ID) Query {
 	mask := NewMask(comps...)
 	arches := []archetypeIter{}
 	length := len(w.archetypes)
+	count := 0
 	for i := 0; i < length; i++ {
 		arch := &w.archetypes[i]
 		if arch.mask.Contains(mask) {
 			arches = append(arches, newArchetypeIter(arch))
+			count += int(arch.Len())
 		}
 	}
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newQuery(w, arches, lock)
+	return newQuery(w, arches, count, lock)
 }
 
 // closeQuery closes a query and unlocks the world

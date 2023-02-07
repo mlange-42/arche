@@ -10,16 +10,18 @@ type Query struct {
 	archetypes []archetypeIter
 	index      int
 	done       bool
+	count      int
 	lockBit    uint8
 }
 
 // newQuery creates a new QueryIter
-func newQuery(world *World, arches []archetypeIter, lockBit uint8) Query {
+func newQuery(world *World, arches []archetypeIter, count int, lockBit uint8) Query {
 	return Query{
 		world:      world,
 		archetypes: arches,
 		index:      0,
 		done:       false,
+		count:      count,
 		lockBit:    lockBit,
 	}
 }
@@ -73,6 +75,11 @@ func (q *Query) Entity() Entity {
 func (q *Query) Close() {
 	q.done = true
 	q.world.closeQuery(q)
+}
+
+// Count returns the number of matching entities
+func (q *Query) Count() int {
+	return q.count
 }
 
 type archetypeIter struct {

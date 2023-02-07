@@ -5,6 +5,7 @@
 ## Features
 
 * Add `Config` to allow for configuration of the world (currently only storage capacity increment) (#28)
+* `Query` has a method `Count()`, reporting the total number of matching entities (#30)
 
 ## [[v0.1.2]](https://github.com/mlange-42/arche/compare/v0.1.1...v0.1.2)
 
