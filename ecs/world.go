@@ -76,7 +76,7 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 // Has returns whether an entity has a component
 func (w *World) Has(entity Entity, comp ID) bool {
 	index := w.entities[entity.id]
-	arch := w.archetypes[index.arch]
+	arch := &w.archetypes[index.arch]
 	return arch.HasComponent(comp)
 }
 
@@ -186,8 +186,7 @@ func (w *World) createArchetype(comps ...ID) int {
 	for i, id := range comps {
 		types[i] = componentType{id, w.registry.types[id]}
 	}
-	a := newArchetype(types...)
-	w.archetypes = append(w.archetypes, a)
+	w.archetypes = append(w.archetypes, newArchetype(types...))
 	return len(w.archetypes) - 1
 }
 
