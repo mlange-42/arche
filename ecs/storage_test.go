@@ -99,6 +99,28 @@ func TestReflectStorageDataSize(t *testing.T) {
 	assert.Equal(t, 6, s.Cap())
 }
 
+func TestReflectStoragePages(t *testing.T) {
+	ref := simpleStruct{}
+	s := newStorage(reflect.TypeOf(ref), 4)
+
+	for i := 0; i < 4; i++ {
+		s.Add(&simpleStruct{i})
+	}
+
+	assert.Equal(t, 4, s.Len())
+	assert.Equal(t, 4, s.Cap())
+
+	s.Add(&simpleStruct{0})
+	assert.Equal(t, 5, s.Len())
+	assert.Equal(t, 8, s.Cap())
+
+	for i := 0; i < 4; i++ {
+		s.Add(&simpleStruct{i})
+	}
+
+	assert.Equal(t, 12, s.Cap())
+}
+
 func TestNewReflectStorage(t *testing.T) {
 	_ = newStorage(reflect.TypeOf(simpleStruct{}), 32)
 }
