@@ -17,7 +17,7 @@ func TestWorldEntites(t *testing.T) {
 	assert.Equal(t, 1, int(w.entities[1].index))
 	assert.Equal(t, 2, int(w.entities[2].index))
 
-	assert.True(t, w.RemEntity(Entity{1, 0}))
+	w.RemEntity(Entity{1, 0})
 	assert.False(t, w.Alive(Entity{1, 0}))
 
 	assert.Equal(t, 0, int(w.entities[0].index))
@@ -29,11 +29,13 @@ func TestWorldEntites(t *testing.T) {
 
 	assert.Equal(t, 2, int(w.entities[1].index))
 
-	assert.False(t, w.RemEntity(Entity{1, 0}))
+	w.RemEntity(Entity{2, 0})
+	w.RemEntity(Entity{1, 1})
+	w.RemEntity(Entity{0, 0})
 
-	assert.True(t, w.RemEntity(Entity{2, 0}))
-	assert.True(t, w.RemEntity(Entity{1, 1}))
-	assert.True(t, w.RemEntity(Entity{0, 0}))
+	assert.Panics(t, func() { w.RemEntity(Entity{2, 0}) })
+	assert.Panics(t, func() { w.RemEntity(Entity{1, 1}) })
+	assert.Panics(t, func() { w.RemEntity(Entity{0, 0}) })
 }
 
 func TestWorldComponents(t *testing.T) {

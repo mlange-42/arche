@@ -41,11 +41,7 @@ func (w *World) NewEntity() Entity {
 // RemEntity recycles an entity.
 //
 // Do not use during Query iteration!
-func (w *World) RemEntity(entity Entity) bool {
-	if !w.entityPool.Alive(entity) {
-		return false
-	}
-
+func (w *World) RemEntity(entity Entity) {
 	index := w.entities[entity.id]
 	oldArch := &w.archetypes[index.arch]
 	swapped := oldArch.Remove(int(index.index))
@@ -58,7 +54,6 @@ func (w *World) RemEntity(entity Entity) bool {
 	}
 
 	w.entities[entity.id].arch = -1
-	return true
 }
 
 // Get returns a component for an entity
