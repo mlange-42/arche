@@ -8,8 +8,8 @@ import (
 // ID defines the format for the components identifier
 type ID uint32
 
-// component is a component ID with a reference struct
-type component struct {
+// Component is a Component ID/Component pointer pair
+type Component struct {
 	ID
 	Component interface{}
 }

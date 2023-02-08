@@ -2,7 +2,6 @@ package ecs
 
 import (
 	"reflect"
-	"sort"
 	"unsafe"
 )
 
@@ -48,7 +47,6 @@ type World struct {
 // NewEntity returns a new or recycled [Entity].
 //
 // Panics when called on a locked world.
-//
 // Do not use during [Query] iteration!
 func (w *World) NewEntity() Entity {
 	w.checkLocked()
@@ -72,7 +70,6 @@ func (w *World) NewEntity() Entity {
 // RemEntity removes and recycles an [Entity].
 //
 // Panics when called on a locked world or for an already removed entity.
-//
 // Do not use during [Query] iteration!
 func (w *World) RemEntity(entity Entity) {
 	w.checkLocked()
@@ -117,40 +114,105 @@ func (w *World) Has(entity Entity, comp ID) bool {
 // Add adds components to an [Entity].
 //
 // Panics when called on a locked world or for an already removed entity.
-//
 // Do not use during [Query] iteration!
 func (w *World) Add(entity Entity, comps ...ID) {
+	w.Exchange(entity, comps, []ID{})
+}
+
+// Assign assigns a component to an [Entity], using a given pointer for the content.
+// See also [World.AssignN].
+//
+// The passed component must be a pointer.
+// Returns a pointer to the assigned memory.
+// The passed in pointer is not a valid reference to that memory!
+//
+// Panics when called on a locked world or for an already removed entity.
+// Do not use during [Query] iteration!
+func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
+	w.Exchange(entity, []ID{id}, []ID{})
+	return w.copyTo(entity, id, comp)
+}
+
+// AssignN assigns multiple components to an [Entity], using pointers for the content.
+// See also [World.Assign].
+//
+// The passed components must be pointers.
+// The passed in pointers are no valid references to the assigned memory!
+//
+// Panics when called on a locked world or for an already removed entity.
+// Do not use during [Query] iteration!
+func (w *World) AssignN(entity Entity, comps ...Component) {
+	ids := make([]ID, len(comps))
+	for i, c := range comps {
+		ids[i] = c.ID
+	}
+	w.Exchange(entity, ids, []ID{})
+	for _, c := range comps {
+		w.copyTo(entity, c.ID, c.Component)
+	}
+}
+
+// Remove removes components from an entity.
+//
+// Panics when called on a locked world or for an already removed entity.
+//
+// Do not use during [Query] iteration!
+func (w *World) Remove(entity Entity, comps ...ID) {
+	w.Exchange(entity, []ID{}, comps)
+}
+
+// Exchange adds and removes components in one pass
+//
+// Panics when called on a locked world or for an already removed entity.
+// Do not use during [Query] iteration!
+func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.checkLocked()
 
-	if len(comps) == 0 {
+	if len(add) == 0 && len(rem) == 0 {
 		return
 	}
 	index := w.entities[entity.id]
 	oldArch := index.arch
 	mask := oldArch.mask
-	for _, comp := range comps {
+	for _, comp := range add {
+		if mask.Get(comp) {
+			panic("entity already has this component, can't add")
+		}
 		mask.Set(comp, true)
+	}
+	for _, comp := range rem {
+		if !mask.Get(comp) {
+			panic("entity does not have this component, can't remove")
+		}
+		mask.Set(comp, false)
 	}
 
 	oldIDs := oldArch.Components()
-
-	arch, ok := w.findArchetype(mask)
-	if !ok {
-		ids := append(oldIDs, comps...)
-		arch = w.createArchetype(ids...)
+	keepIDs := make([]ID, 0, len(oldIDs))
+	for _, id := range oldIDs {
+		if mask.Get(id) {
+			keepIDs = append(keepIDs, id)
+		}
+	}
+	addIDs := make([]ID, 0, len(add))
+	for _, id := range add {
+		if mask.Get(id) {
+			addIDs = append(addIDs, id)
+		}
 	}
 
-	allComps := make([]componentPointer, 0, len(oldIDs)+len(comps))
-	for _, id := range oldIDs {
+	arch := w.findOrCreateArchetype(mask)
+
+	allComps := make([]componentPointer, 0, len(keepIDs)+len(addIDs))
+	for _, id := range keepIDs {
 		comp := oldArch.Get(int(index.index), id)
 		allComps = append(allComps, componentPointer{id, comp})
 	}
-	for _, id := range comps {
+	for _, id := range addIDs {
 		allComps = append(allComps, componentPointer{id, nil})
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
-
 	swapped := oldArch.Remove(int(index.index))
 
 	if swapped {
@@ -160,52 +222,20 @@ func (w *World) Add(entity Entity, comps ...ID) {
 	w.entities[entity.id] = entityIndex{arch, newIndex}
 }
 
-// Remove removes components from an entity.
-//
-// Panics when called on a locked world or for an already removed entity.
-//
-// Do not use during [Query] iteration!
-func (w *World) Remove(entity Entity, comps ...ID) {
-	w.checkLocked()
-
-	if len(comps) == 0 {
-		return
+func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
+	if !w.Has(entity, id) {
+		panic("can't copy component into entity that has no such component type")
 	}
 	index := w.entities[entity.id]
-	oldArch := index.arch
-	mask := oldArch.mask
-	for _, comp := range comps {
-		mask.Set(comp, false)
+	arch := index.arch
+	return arch.Set(index.index, id, comp)
+}
+
+func (w *World) findOrCreateArchetype(mask Mask) *archetype {
+	if arch, ok := w.findArchetype(mask); ok {
+		return arch
 	}
-
-	oldIDs := oldArch.Components()
-	newIDs := make([]ID, 0, len(oldIDs))
-	for _, id := range oldIDs {
-		if mask.Get(id) {
-			newIDs = append(newIDs, id)
-		}
-	}
-
-	arch, ok := w.findArchetype(mask)
-	if !ok {
-		arch = w.createArchetype(newIDs...)
-	}
-
-	allComps := make([]componentPointer, 0, len(newIDs))
-	for _, id := range newIDs {
-		comp := oldArch.Get(int(index.index), id)
-		allComps = append(allComps, componentPointer{id, comp})
-	}
-
-	newIndex := arch.AddPointer(entity, allComps...)
-
-	swapped := oldArch.Remove(int(index.index))
-
-	if swapped {
-		swapEntity := oldArch.GetEntity(int(index.index))
-		w.entities[swapEntity.id].index = index.index
-	}
-	w.entities[entity.id] = entityIndex{arch, newIndex}
+	return w.createArchetype(mask)
 }
 
 func (w *World) findArchetype(mask Mask) (*archetype, bool) {
@@ -219,11 +249,17 @@ func (w *World) findArchetype(mask Mask) (*archetype, bool) {
 	return nil, false
 }
 
-func (w *World) createArchetype(comps ...ID) *archetype {
-	sort.Slice(comps, func(i, j int) bool { return comps[i] < comps[j] })
-	types := make([]componentType, len(comps))
-	for i, id := range comps {
-		types[i] = componentType{id, w.registry.types[id]}
+func (w *World) createArchetype(mask Mask) *archetype {
+	count := int(mask.TotalBitsSet())
+	types := make([]componentType, count)
+
+	idx := 0
+	for i := 0; i < MaskTotalBits; i++ {
+		id := ID(i)
+		if mask.Get(id) {
+			types[idx] = componentType{id, w.registry.types[id]}
+			idx++
+		}
 	}
 	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)

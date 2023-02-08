@@ -18,14 +18,14 @@ func TestArchetype(t *testing.T) {
 
 	arch.Add(
 		newEntity(0),
-		component{ID: 0, Component: &position{1, 2}},
-		component{ID: 1, Component: &rotation{3}},
+		Component{ID: 0, Component: &position{1, 2}},
+		Component{ID: 1, Component: &rotation{3}},
 	)
 
 	arch.Add(
 		newEntity(1),
-		component{ID: 0, Component: &position{4, 5}},
-		component{ID: 1, Component: &rotation{6}},
+		Component{ID: 0, Component: &position{4, 5}},
+		Component{ID: 1, Component: &rotation{6}},
 	)
 
 	assert.Equal(t, 2, int(arch.entities.Len()))
@@ -63,7 +63,7 @@ func TestArchetype(t *testing.T) {
 	assert.Panics(t, func() {
 		arch.Add(
 			newEntity(1),
-			component{ID: 0, Component: &position{4, 5}},
+			Component{ID: 0, Component: &position{4, 5}},
 		)
 	})
 
@@ -102,7 +102,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 	for i := 0; i < 1000; i++ {
 		arch.Add(
 			newEntity(i),
-			component{ID: 0, Component: &testStruct{}},
+			Component{ID: 0, Component: &testStruct{}},
 		)
 	}
 	b.StartTimer()

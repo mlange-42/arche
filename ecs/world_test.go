@@ -97,6 +97,80 @@ func TestWorldComponents(t *testing.T) {
 	w.Remove(e0)
 }
 
+func TestWorldExchange(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	velID := ComponentID[velocity](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Exchange(e0, []ID{posID}, []ID{})
+	w.Exchange(e1, []ID{posID, rotID}, []ID{})
+	w.Exchange(e2, []ID{rotID}, []ID{})
+
+	assert.True(t, w.Has(e0, posID))
+	assert.False(t, w.Has(e0, rotID))
+
+	assert.True(t, w.Has(e1, posID))
+	assert.True(t, w.Has(e1, rotID))
+
+	assert.False(t, w.Has(e2, posID))
+	assert.True(t, w.Has(e2, rotID))
+
+	w.Exchange(e2, []ID{posID}, []ID{})
+	assert.True(t, w.Has(e2, posID))
+	assert.True(t, w.Has(e2, rotID))
+
+	w.Exchange(e0, []ID{rotID}, []ID{posID})
+	assert.False(t, w.Has(e0, posID))
+	assert.True(t, w.Has(e0, rotID))
+
+	w.Exchange(e1, []ID{velID}, []ID{posID})
+	assert.False(t, w.Has(e1, posID))
+	assert.True(t, w.Has(e1, rotID))
+	assert.True(t, w.Has(e1, velID))
+
+	assert.Panics(t, func() { w.Exchange(e1, []ID{velID}, []ID{}) })
+	assert.Panics(t, func() { w.Exchange(e1, []ID{}, []ID{posID}) })
+}
+
+func TestWorldAssign(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	velID := ComponentID[velocity](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+
+	pos := (*position)(w.Assign(e0, posID, &position{2, 3}))
+	assert.Equal(t, 2, pos.X)
+	pos.X = 5
+
+	pos = (*position)(w.Get(e0, posID))
+	assert.Equal(t, 5, pos.X)
+
+	assert.Panics(t, func() { _ = (*position)(w.Assign(e0, posID, &position{2, 3})) })
+	assert.Panics(t, func() { _ = (*position)(w.copyTo(e1, posID, &position{2, 3})) })
+
+	e2 := w.NewEntity()
+	w.AssignN(e2,
+		Component{velID, &velocity{1, 2}},
+		Component{rotID, &rotation{3}},
+		Component{posID, &position{4, 5}},
+	)
+	assert.True(t, w.Has(e2, velID))
+	assert.True(t, w.Has(e2, rotID))
+	assert.True(t, w.Has(e2, posID))
+
+	pos = (*position)(w.Get(e2, posID))
+	assert.Equal(t, 4, pos.X)
+}
 func TestWorldGetComponents(t *testing.T) {
 	w := NewWorld()
 
