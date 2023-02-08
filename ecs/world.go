@@ -53,10 +53,11 @@ func (w *World) NewEntity() Entity {
 
 	entity := w.entityPool.Get()
 	idx := w.archetypes[0].Add(entity)
-	if int(entity.id) == len(w.entities) {
-		if len(w.entities) == cap(w.entities) {
+	len := len(w.entities)
+	if int(entity.id) == len {
+		if len == cap(w.entities) {
 			old := w.entities
-			w.entities = make([]entityIndex, len(w.entities), len(w.entities)+w.config.CapacityIncrement)
+			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
 			copy(w.entities, old)
 		}
 		w.entities = append(w.entities, entityIndex{0, idx})
