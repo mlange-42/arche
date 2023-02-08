@@ -2,6 +2,12 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.1.4...main)
 
+### Features
+
+* `World` has method `Exchange` to add and remove components in one go (#38)
+* `World` has method `Assign` add and assign components in one go (#38)
+* `World` has method `AssignN` add and assign multiple components in one go (#38)
+
 ### Other
 
 * Optimization of `Query` iteration, avoids allocations and makes it approx. 30% faster (#35)
