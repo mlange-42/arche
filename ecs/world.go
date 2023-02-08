@@ -47,7 +47,6 @@ type World struct {
 // NewEntity returns a new or recycled [Entity].
 //
 // Panics when called on a locked world.
-//
 // Do not use during [Query] iteration!
 func (w *World) NewEntity() Entity {
 	w.checkLocked()
@@ -71,7 +70,6 @@ func (w *World) NewEntity() Entity {
 // RemEntity removes and recycles an [Entity].
 //
 // Panics when called on a locked world or for an already removed entity.
-//
 // Do not use during [Query] iteration!
 func (w *World) RemEntity(entity Entity) {
 	w.checkLocked()
@@ -116,10 +114,22 @@ func (w *World) Has(entity Entity, comp ID) bool {
 // Add adds components to an [Entity].
 //
 // Panics when called on a locked world or for an already removed entity.
-//
 // Do not use during [Query] iteration!
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, []ID{})
+}
+
+// Assign assigns a components to an [Entity], using a given pointer for the content.
+//
+// The passed component must be a pointer.
+// Returns a pointer to the assigned memory.
+// The passed in pointer is not a valid reference to that memory!
+//
+// Panics when called on a locked world or for an already removed entity.
+// Do not use during [Query] iteration!
+func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
+	w.Exchange(entity, []ID{id}, []ID{})
+	return w.copyTo(entity, id, comp)
 }
 
 // Remove removes components from an entity.
@@ -134,7 +144,6 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 // Exchange adds and removes components in one pass
 //
 // Panics when called on a locked world or for an already removed entity.
-//
 // Do not use during [Query] iteration!
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.checkLocked()
@@ -191,6 +200,15 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 		w.entities[swapEntity.id].index = index.index
 	}
 	w.entities[entity.id] = entityIndex{arch, newIndex}
+}
+
+func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
+	if !w.Has(entity, id) {
+		panic("can't copy component into entity that has no such component type")
+	}
+	index := w.entities[entity.id]
+	arch := index.arch
+	return arch.Set(index.index, id, comp)
 }
 
 func (w *World) findOrCreateArchetype(mask Mask) *archetype {

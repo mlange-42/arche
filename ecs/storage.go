@@ -97,7 +97,7 @@ func (s *storage) Remove(index uint32) bool {
 	return false
 }
 
-func (s *storage) set(index uint32, value interface{}) {
+func (s *storage) set(index uint32, value interface{}) unsafe.Pointer {
 	rValue := reflect.ValueOf(value)
 	dst := s.Get(index)
 	var src unsafe.Pointer
@@ -109,6 +109,7 @@ func (s *storage) set(index uint32, value interface{}) {
 	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
 
 	copy(dstSlice, srcSlice)
+	return dst
 }
 
 func (s *storage) setPointer(index uint32, value unsafe.Pointer) {

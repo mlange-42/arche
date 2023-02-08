@@ -7,8 +7,10 @@ import (
 
 // archetype represents an ECS archetype
 type archetype struct {
-	mask       Mask
-	ids        []ID
+	mask Mask
+	ids  []ID
+	// Indirection to avoid a fixed-size array of storages
+	// Increases access time by 50-100%
 	indices    [MaskTotalBits]uint8
 	entities   storage
 	components []storage
@@ -102,4 +104,9 @@ func (a *archetype) HasComponent(id ID) bool {
 // Len reports the number of entities in the archetype
 func (a *archetype) Len() uint32 {
 	return a.entities.Len()
+}
+
+// Set overwrites a component with the data behind the given pointer
+func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
+	return a.components[a.indices[id]].set(index, comp)
 }

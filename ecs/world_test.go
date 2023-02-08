@@ -133,8 +133,29 @@ func TestWorldExchange(t *testing.T) {
 	assert.False(t, w.Has(e1, posID))
 	assert.True(t, w.Has(e1, rotID))
 	assert.True(t, w.Has(e1, velID))
+
+	assert.Panics(t, func() { w.Exchange(e1, []ID{velID}, []ID{}) })
+	assert.Panics(t, func() { w.Exchange(e1, []ID{}, []ID{posID}) })
 }
 
+func TestWorldAssign(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+
+	pos := (*position)(w.Assign(e0, posID, &position{2, 3}))
+	assert.Equal(t, 2, pos.X)
+	pos.X = 5
+
+	pos = (*position)(w.Get(e0, posID))
+	assert.Equal(t, 5, pos.X)
+
+	assert.Panics(t, func() { _ = (*position)(w.Assign(e0, posID, &position{2, 3})) })
+	assert.Panics(t, func() { _ = (*position)(w.copyTo(e1, posID, &position{2, 3})) })
+}
 func TestWorldGetComponents(t *testing.T) {
 	w := NewWorld()
 
