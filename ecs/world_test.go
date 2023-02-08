@@ -97,6 +97,44 @@ func TestWorldComponents(t *testing.T) {
 	w.Remove(e0)
 }
 
+func TestWorldExchange(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	velID := ComponentID[velocity](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Exchange(e0, []ID{posID}, []ID{})
+	w.Exchange(e1, []ID{posID, rotID}, []ID{})
+	w.Exchange(e2, []ID{rotID}, []ID{})
+
+	assert.True(t, w.Has(e0, posID))
+	assert.False(t, w.Has(e0, rotID))
+
+	assert.True(t, w.Has(e1, posID))
+	assert.True(t, w.Has(e1, rotID))
+
+	assert.False(t, w.Has(e2, posID))
+	assert.True(t, w.Has(e2, rotID))
+
+	w.Exchange(e2, []ID{posID}, []ID{})
+	assert.True(t, w.Has(e2, posID))
+	assert.True(t, w.Has(e2, rotID))
+
+	w.Exchange(e0, []ID{rotID}, []ID{posID})
+	assert.False(t, w.Has(e0, posID))
+	assert.True(t, w.Has(e0, rotID))
+
+	w.Exchange(e1, []ID{velID}, []ID{posID})
+	assert.False(t, w.Has(e1, posID))
+	assert.True(t, w.Has(e1, rotID))
+	assert.True(t, w.Has(e1, velID))
+}
+
 func TestWorldGetComponents(t *testing.T) {
 	w := NewWorld()
 
