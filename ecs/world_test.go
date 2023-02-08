@@ -1,6 +1,8 @@
 package ecs
 
 import (
+	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -203,4 +205,23 @@ func TestRegisterComponents(t *testing.T) {
 
 	assert.Equal(t, ID(0), ComponentID[position](&world))
 	assert.Equal(t, ID(1), ComponentID[rotation](&world))
+}
+
+func TestTypeSizes(t *testing.T) {
+	printTypeSize[World]()
+	printTypeSizeName[PagedArr32[archetype]]("PagedArr32")
+	printTypeSize[archetype]()
+	printTypeSize[storage]()
+	printTypeSize[Query]()
+	printTypeSize[archetypeIter]()
+}
+
+func printTypeSize[T any]() {
+	tp := reflect.TypeOf((*T)(nil)).Elem()
+	fmt.Printf("%16s: %5db\n", tp.Name(), tp.Size())
+}
+
+func printTypeSizeName[T any](name string) {
+	tp := reflect.TypeOf((*T)(nil)).Elem()
+	fmt.Printf("%16s: %5db\n", name, tp.Size())
 }
