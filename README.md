@@ -1,6 +1,7 @@
 # Arche
 
 [![Test status](https://github.com/mlange-42/arche/actions/workflows/tests.yml/badge.svg)](https://github.com/mlange-42/arche/actions/workflows/tests.yml)
+[![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche.svg)](https://pkg.go.dev/github.com/mlange-42/arche)
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
 [![MIT license](https://img.shields.io/github/license/mlange-42/arche)](https://github.com/mlange-42/arche/blob/main/LICENSE)
 
@@ -30,6 +31,8 @@ go get github.com/mlange-42/arche
 
 Here is a minimal usage example.
 You will likely create systems with a method that takes a pointer to the `World` as argument.
+
+See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) for details.
 
 ```go
 package main
