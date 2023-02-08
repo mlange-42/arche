@@ -8,7 +8,7 @@ import (
 //
 // Create queries through the [World] using [World.Query].
 //
-// ## Example:
+// # Example:
 //
 //	query := world.Query(posID, rotID)
 //	for query.Next() {
