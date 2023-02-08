@@ -21,7 +21,7 @@ go get github.com/mlange-42/arche
 
 ## Features
 
-* Minimal API.
+* Minimal API. See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 * Very fast iteration and component access via `Query` (benchmarks for comparison in progress).
 * Fast random access for components of arbitrary entities. Useful for hierarchies.
 * No systems. Use your own structure.
