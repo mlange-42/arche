@@ -119,7 +119,8 @@ func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, []ID{})
 }
 
-// Assign assigns a components to an [Entity], using a given pointer for the content.
+// Assign assigns a component to an [Entity], using a given pointer for the content.
+// See also [World.AssignN].
 //
 // The passed component must be a pointer.
 // Returns a pointer to the assigned memory.
@@ -130,6 +131,25 @@ func (w *World) Add(entity Entity, comps ...ID) {
 func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	w.Exchange(entity, []ID{id}, []ID{})
 	return w.copyTo(entity, id, comp)
+}
+
+// AssignN assigns multiple components to an [Entity], using pointers for the content.
+// See also [World.Assign].
+//
+// The passed components must be pointers.
+// The passed in pointers are no valid references to the assigned memory!
+//
+// Panics when called on a locked world or for an already removed entity.
+// Do not use during [Query] iteration!
+func (w *World) AssignN(entity Entity, comps ...Component) {
+	ids := make([]ID, len(comps))
+	for i, c := range comps {
+		ids[i] = c.ID
+	}
+	w.Exchange(entity, ids, []ID{})
+	for _, c := range comps {
+		w.copyTo(entity, c.ID, c.Component)
+	}
 }
 
 // Remove removes components from an entity.

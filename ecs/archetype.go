@@ -54,7 +54,7 @@ func (a *archetype) Get(index int, id ID) unsafe.Pointer {
 }
 
 // Add adds an entity with components to the archetype
-func (a *archetype) Add(entity Entity, components ...component) uint32 {
+func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	if len(components) != len(a.ids) {
 		panic("Invalid number of components")
 	}

@@ -142,6 +142,8 @@ func TestWorldAssign(t *testing.T) {
 	w := NewWorld()
 
 	posID := ComponentID[position](&w)
+	velID := ComponentID[velocity](&w)
+	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -155,6 +157,19 @@ func TestWorldAssign(t *testing.T) {
 
 	assert.Panics(t, func() { _ = (*position)(w.Assign(e0, posID, &position{2, 3})) })
 	assert.Panics(t, func() { _ = (*position)(w.copyTo(e1, posID, &position{2, 3})) })
+
+	e2 := w.NewEntity()
+	w.AssignN(e2,
+		Component{velID, &velocity{1, 2}},
+		Component{rotID, &rotation{3}},
+		Component{posID, &position{4, 5}},
+	)
+	assert.True(t, w.Has(e2, velID))
+	assert.True(t, w.Has(e2, rotID))
+	assert.True(t, w.Has(e2, posID))
+
+	pos = (*position)(w.Get(e2, posID))
+	assert.Equal(t, 4, pos.X)
 }
 func TestWorldGetComponents(t *testing.T) {
 	w := NewWorld()
