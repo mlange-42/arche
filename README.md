@@ -91,7 +91,7 @@ func main() {
 		// Iterate it
 		for query.Next() {
 			// Component access through a Query.
-			// About twice as fast as access through the World.
+			// About 20-30% faster than access through the World.
 			// Can also fetch components not in the query.
 			pos := (*Position)(query.Get(positionID))
 			vel := (*Velocity)(query.Get(velocityID))
