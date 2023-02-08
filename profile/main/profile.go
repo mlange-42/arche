@@ -22,7 +22,7 @@ type rotation struct {
 
 func main() {
 
-	count := 100
+	count := 250
 	iters := 10000
 	entities := 1000
 

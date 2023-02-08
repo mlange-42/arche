@@ -19,13 +19,15 @@ func NewWorld() World {
 
 // FromConfig creates a new [World] from a [Config]
 func FromConfig(conf Config) World {
+	arch := archetype{}
+	arch.init(conf.CapacityIncrement)
 	return World{
 		config:     conf,
 		entities:   []entityIndex{{-1, 0}},
 		entityPool: newEntityPool(conf.CapacityIncrement),
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
-		archetypes: []archetype{newArchetype(conf.CapacityIncrement)},
+		archetypes: []archetype{arch},
 		locks:      Mask(0),
 	}
 }
@@ -51,10 +53,11 @@ func (w *World) NewEntity() Entity {
 
 	entity := w.entityPool.Get()
 	idx := w.archetypes[0].Add(entity)
-	if int(entity.id) == len(w.entities) {
-		if len(w.entities) == cap(w.entities) {
+	len := len(w.entities)
+	if int(entity.id) == len {
+		if len == cap(w.entities) {
 			old := w.entities
-			w.entities = make([]entityIndex, len(w.entities), len(w.entities)+w.config.CapacityIncrement)
+			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
 			copy(w.entities, old)
 		}
 		w.entities = append(w.entities, entityIndex{0, idx})
@@ -224,8 +227,10 @@ func (w *World) createArchetype(comps ...ID) int {
 	for i, id := range comps {
 		types[i] = componentType{id, w.registry.types[id]}
 	}
-	w.archetypes = append(w.archetypes, newArchetype(w.config.CapacityIncrement, types...))
-	return len(w.archetypes) - 1
+	w.archetypes = append(w.archetypes, archetype{})
+	idx := len(w.archetypes) - 1
+	w.archetypes[idx].init(w.config.CapacityIncrement, types...)
+	return idx
 }
 
 // Alive reports whether an entity is still alive.
@@ -238,24 +243,28 @@ func (w *World) componentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
 }
 
+func (w *World) nextArchetype(mask Mask, index int) (int, archetypeIter, bool) {
+	len := len(w.archetypes)
+	if index >= len {
+		panic("exceeded end of query")
+	}
+	for i := index + 1; i < len; i++ {
+		a := &w.archetypes[i]
+		if a.Len() > 0 && a.mask.Contains(mask) {
+			return i, newArchetypeIter(a), true
+		}
+	}
+	return len, archetypeIter{}, false
+}
+
 // Query creates a [Query] iterator for the given components.
 //
 // Locks the world to prevent changes to component compositions.
 func (w *World) Query(comps ...ID) Query {
 	mask := NewMask(comps...)
-	arches := []archetypeIter{}
-	length := len(w.archetypes)
-	count := 0
-	for i := 0; i < length; i++ {
-		arch := &w.archetypes[i]
-		if arch.mask.Contains(mask) {
-			arches = append(arches, newArchetypeIter(arch))
-			count += int(arch.Len())
-		}
-	}
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newQuery(w, arches, count, lock)
+	return newQuery(w, mask, lock)
 }
 
 // closeQuery closes a query and unlocks the world

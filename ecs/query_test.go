@@ -36,7 +36,6 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 2, cnt)
-	assert.Equal(t, 2, q.Count())
 
 	q = w.Query(posID)
 	cnt = 0
@@ -48,7 +47,6 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 3, cnt)
-	assert.Equal(t, 3, q.Count())
 
 	q = w.Query(rotID)
 	cnt = 0
@@ -62,10 +60,6 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 4, cnt)
-	assert.Equal(t, 4, q.Count())
 
 	assert.Panics(t, func() { q.Next() })
-	assert.Panics(t, func() { q.Entity() })
-	assert.Panics(t, func() { q.Has(posID) })
-	assert.Panics(t, func() { q.Get(posID) })
 }

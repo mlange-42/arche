@@ -8,7 +8,7 @@ import (
 //
 // Create queries through the [World] using [World.Query].
 //
-// ## Example:
+// # Example:
 //
 //	query := world.Query(posID, rotID)
 //	for query.Next() {
@@ -16,66 +16,53 @@ import (
 //	    pos.X += 1.0
 //	}
 type Query struct {
-	world      *World
-	archetypes []archetypeIter
-	index      int
-	done       bool
-	count      int
-	lockBit    uint8
+	world     *World
+	mask      Mask
+	archetype archetypeIter
+	index     int
+	done      bool
+	lockBit   uint8
 }
 
 // newQuery creates a new Query
-func newQuery(world *World, arches []archetypeIter, count int, lockBit uint8) Query {
+func newQuery(world *World, mask Mask, lockBit uint8) Query {
 	return Query{
-		world:      world,
-		archetypes: arches,
-		index:      0,
-		done:       false,
-		count:      count,
-		lockBit:    lockBit,
+		world:   world,
+		mask:    mask,
+		index:   -1,
+		lockBit: lockBit,
 	}
 }
 
 // Next proceeds to the next [Entity] in the Query.
 func (q *Query) Next() bool {
-	if q.done {
-		panic("Query is used up. Create a new Query!")
+	if q.archetype.Next() {
+		return true
 	}
-	for {
-		if q.archetypes[q.index].Next() {
-			return true
-		}
-		q.index++
-		if q.index >= len(q.archetypes) {
-			q.done = true
-			q.world.closeQuery(q)
-			return false
-		}
+	i, a, ok := q.world.nextArchetype(q.mask, q.index)
+	q.index = i
+	if ok {
+		q.archetype = a
+		return true
 	}
+	q.done = true
+	q.world.closeQuery(q)
+	return false
 }
 
 // Has returns whether the current [Entity] has the given component
 func (q *Query) Has(comp ID) bool {
-	if q.done {
-		panic("Query is used up. Create a new Query!")
-	}
-	return q.archetypes[q.index].Has(comp)
+	return q.archetype.Has(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's current [Entity]
 func (q *Query) Get(comp ID) unsafe.Pointer {
-	if q.done {
-		panic("Query is used up. Create a new Query!")
-	}
-	return q.archetypes[q.index].Get(comp)
+	return q.archetype.Get(comp)
 }
 
 // Entity returns the [Entity] at the iterator's position
 func (q *Query) Entity() Entity {
-	if q.done {
-		panic("Query is used up. Create a new Query!")
-	}
-	return q.archetypes[q.index].Entity()
+	return q.archetype.Entity()
 }
 
 // Close closes the Query and unlocks the world.
@@ -85,11 +72,6 @@ func (q *Query) Entity() Entity {
 func (q *Query) Close() {
 	q.done = true
 	q.world.closeQuery(q)
-}
-
-// Count returns the number of matching entities
-func (q *Query) Count() int {
-	return q.count
 }
 
 type archetypeIter struct {
@@ -102,7 +84,6 @@ func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
 		Length:    int(arch.Len()),
-		Index:     -1,
 	}
 }
 

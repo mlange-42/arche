@@ -15,11 +15,9 @@ type archetype struct {
 
 var entityType = reflect.TypeOf(Entity{})
 
-// newArchetype creates a new Archetype for the given components
-// Component arguments must be sorted by ID!
-func newArchetype(capacityIncrement int, components ...componentType) archetype {
+func (a *archetype) init(capacityIncrement int, components ...componentType) {
 	var mask Mask
-	indices := make([]ID, len(components))
+	a.indices = make([]ID, len(components))
 	comps := [MaskTotalBits]storage{}
 
 	prev := -1
@@ -30,16 +28,15 @@ func newArchetype(capacityIncrement int, components ...componentType) archetype 
 		prev = int(c.ID)
 
 		mask.Set(c.ID, true)
-		indices[i] = c.ID
-		comps[c.ID] = newStorage(c.Type, capacityIncrement)
+		a.indices[i] = c.ID
+		comps[c.ID] = storage{}
+		comps[c.ID].init(c.Type, capacityIncrement)
 	}
 
-	return archetype{
-		mask:       mask,
-		indices:    indices,
-		entities:   newStorage(entityType, capacityIncrement),
-		components: comps,
-	}
+	a.mask = mask
+	a.components = comps
+	a.entities = storage{}
+	a.entities.init(entityType, capacityIncrement)
 }
 
 // GetEntity returns the entity at the given index

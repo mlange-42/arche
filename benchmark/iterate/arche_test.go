@@ -30,6 +30,30 @@ func runArcheQuery(b *testing.B, count int) {
 	}
 }
 
+func runArcheQueryEntity(b *testing.B, count int) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[position](&world)
+	rotID := ecs.ComponentID[rotation](&world)
+
+	for i := 0; i < count; i++ {
+		entity := world.NewEntity()
+		world.Add(entity, posID, rotID)
+	}
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		query := world.Query(posID, rotID)
+		b.StartTimer()
+		for query.Next() {
+			e := query.Entity()
+			_ = e
+		}
+	}
+}
+
 func runArcheWorld(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
@@ -65,6 +89,18 @@ func BenchmarkArcheIterQuery_10_000(b *testing.B) {
 
 func BenchmarkArcheIterQuery_100_000(b *testing.B) {
 	runArcheQuery(b, 100000)
+}
+
+func BenchmarkArcheIterQueryEntity_1_000(b *testing.B) {
+	runArcheQueryEntity(b, 1000)
+}
+
+func BenchmarkArcheIterQueryEntity_10_000(b *testing.B) {
+	runArcheQueryEntity(b, 10000)
+}
+
+func BenchmarkArcheIterQueryEntity_100_000(b *testing.B) {
+	runArcheQueryEntity(b, 100000)
 }
 
 func BenchmarkArcheIterWorld_1_000(b *testing.B) {

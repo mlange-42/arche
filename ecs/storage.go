@@ -18,21 +18,18 @@ type storage struct {
 }
 
 // newStorage creates a new ReflectStorage
-func newStorage(tp reflect.Type, increment int) storage {
+func (s *storage) init(tp reflect.Type, increment int) {
 	size := tp.Size()
 	align := uintptr(tp.Align())
 	size = (size + (align - 1)) / align * align
 
-	buffer := reflect.New(reflect.ArrayOf(increment, tp)).Elem()
-	return storage{
-		buffer:            buffer,
-		bufferAddress:     buffer.Addr().UnsafePointer(),
-		typeOf:            tp,
-		itemSize:          size,
-		len:               0,
-		cap:               uint32(increment),
-		capacityIncrement: uint32(increment),
-	}
+	s.buffer = reflect.New(reflect.ArrayOf(increment, tp)).Elem()
+	s.bufferAddress = s.buffer.Addr().UnsafePointer()
+	s.typeOf = tp
+	s.itemSize = size
+	s.len = 0
+	s.cap = uint32(increment)
+	s.capacityIncrement = uint32(increment)
 }
 
 // Get retrieves an unsafe pointer to an element
