@@ -19,6 +19,6 @@ func (e Entity) IsZero() bool {
 }
 
 type entityIndex struct {
-	arch  int
+	arch  *archetype
 	index uint32
 }

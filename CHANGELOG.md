@@ -6,6 +6,7 @@
 
 * Optimization of `Query` iteration, avoids allocations and makes it approx. 30% faster (#35)
 * Removed method `Query.Count()`, as it was a by-product of the allocations in the above point (#35)
+* Archetypes are stored in a paged collection to use more efficient access by pointers (#36)
 
 ## [[v0.1.4]](https://github.com/mlange-42/arche/compare/v0.1.3...v0.1.4)
 

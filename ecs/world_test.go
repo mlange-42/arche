@@ -1,6 +1,8 @@
 package ecs
 
 import (
+	"fmt"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -48,14 +50,14 @@ func TestWorldComponents(t *testing.T) {
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	assert.Equal(t, 1, len(w.archetypes))
+	assert.Equal(t, 1, w.archetypes.Len())
 
 	w.Add(e0, posID)
-	assert.Equal(t, 2, len(w.archetypes))
+	assert.Equal(t, 2, w.archetypes.Len())
 	w.Add(e1, posID, rotID)
-	assert.Equal(t, 3, len(w.archetypes))
+	assert.Equal(t, 3, w.archetypes.Len())
 	w.Add(e2, posID, rotID)
-	assert.Equal(t, 3, len(w.archetypes))
+	assert.Equal(t, 3, w.archetypes.Len())
 
 	w.Remove(e2, posID)
 
@@ -73,21 +75,21 @@ func TestWorldComponents(t *testing.T) {
 	archPosRot, ok := w.findArchetype(maskPosRot)
 	assert.True(t, ok)
 
-	assert.Equal(t, 0, int(w.archetypes[archNone].Len()))
-	assert.Equal(t, 1, int(w.archetypes[archPos].Len()))
-	assert.Equal(t, 1, int(w.archetypes[archRot].Len()))
-	assert.Equal(t, 1, int(w.archetypes[archPosRot].Len()))
+	assert.Equal(t, 0, int(archNone.Len()))
+	assert.Equal(t, 1, int(archPos.Len()))
+	assert.Equal(t, 1, int(archRot.Len()))
+	assert.Equal(t, 1, int(archPosRot.Len()))
 
 	w.Remove(e1, posID)
 
-	assert.Equal(t, 0, int(w.archetypes[archNone].Len()))
-	assert.Equal(t, 1, int(w.archetypes[archPos].Len()))
-	assert.Equal(t, 2, int(w.archetypes[archRot].Len()))
-	assert.Equal(t, 0, int(w.archetypes[archPosRot].Len()))
+	assert.Equal(t, 0, int(archNone.Len()))
+	assert.Equal(t, 1, int(archPos.Len()))
+	assert.Equal(t, 2, int(archRot.Len()))
+	assert.Equal(t, 0, int(archPosRot.Len()))
 
 	w.Add(e0, rotID)
-	assert.Equal(t, 0, int(w.archetypes[archPos].Len()))
-	assert.Equal(t, 1, int(w.archetypes[archPosRot].Len()))
+	assert.Equal(t, 0, int(archPos.Len()))
+	assert.Equal(t, 1, int(archPosRot.Len()))
 
 	w.Remove(e2, rotID)
 	// No-op add/remove
@@ -203,4 +205,23 @@ func TestRegisterComponents(t *testing.T) {
 
 	assert.Equal(t, ID(0), ComponentID[position](&world))
 	assert.Equal(t, ID(1), ComponentID[rotation](&world))
+}
+
+func TestTypeSizes(t *testing.T) {
+	printTypeSize[World]()
+	printTypeSizeName[PagedArr32[archetype]]("PagedArr32")
+	printTypeSize[archetype]()
+	printTypeSize[storage]()
+	printTypeSize[Query]()
+	printTypeSize[archetypeIter]()
+}
+
+func printTypeSize[T any]() {
+	tp := reflect.TypeOf((*T)(nil)).Elem()
+	fmt.Printf("%16s: %5db\n", tp.Name(), tp.Size())
+}
+
+func printTypeSizeName[T any](name string) {
+	tp := reflect.TypeOf((*T)(nil)).Elem()
+	fmt.Printf("%16s: %5db\n", name, tp.Size())
 }
