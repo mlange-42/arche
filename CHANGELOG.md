@@ -2,7 +2,9 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.1.3...main)
 
-Nothing
+### Other
+
+* Extended and improved documentation (#34)
 
 ## [[v0.1.2]](https://github.com/mlange-42/arche/compare/v0.1.2...v0.1.3)
 
