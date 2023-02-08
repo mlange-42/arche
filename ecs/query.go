@@ -36,21 +36,18 @@ func newQuery(world *World, mask Mask, lockBit uint8) Query {
 
 // Next proceeds to the next [Entity] in the Query.
 func (q *Query) Next() bool {
-	for {
-		if q.archetype.Next() {
-			return true
-		}
-		i, a, ok := q.world.nextArchetype(q.mask, q.index)
-		q.index = i
-		if ok {
-			q.archetype = a
-			q.archetype.Next()
-			return true
-		}
-		q.done = true
-		q.world.closeQuery(q)
-		return false
+	if q.archetype.Next() {
+		return true
 	}
+	i, a, ok := q.world.nextArchetype(q.mask, q.index)
+	q.index = i
+	if ok {
+		q.archetype = a
+		return true
+	}
+	q.done = true
+	q.world.closeQuery(q)
+	return false
 }
 
 // Has returns whether the current [Entity] has the given component
@@ -87,7 +84,6 @@ func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
 		Length:    int(arch.Len()),
-		Index:     -1,
 	}
 }
 

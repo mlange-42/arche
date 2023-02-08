@@ -19,13 +19,15 @@ func NewWorld() World {
 
 // FromConfig creates a new [World] from a [Config]
 func FromConfig(conf Config) World {
+	arch := archetype{}
+	arch.init(conf.CapacityIncrement)
 	return World{
 		config:     conf,
 		entities:   []entityIndex{{-1, 0}},
 		entityPool: newEntityPool(conf.CapacityIncrement),
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
-		archetypes: []archetype{newArchetype(conf.CapacityIncrement)},
+		archetypes: []archetype{arch},
 		locks:      Mask(0),
 	}
 }
@@ -224,8 +226,10 @@ func (w *World) createArchetype(comps ...ID) int {
 	for i, id := range comps {
 		types[i] = componentType{id, w.registry.types[id]}
 	}
-	w.archetypes = append(w.archetypes, newArchetype(w.config.CapacityIncrement, types...))
-	return len(w.archetypes) - 1
+	w.archetypes = append(w.archetypes, archetype{})
+	idx := len(w.archetypes) - 1
+	w.archetypes[idx].init(w.config.CapacityIncrement, types...)
+	return idx
 }
 
 // Alive reports whether an entity is still alive.
@@ -240,13 +244,16 @@ func (w *World) componentID(tp reflect.Type) ID {
 
 func (w *World) nextArchetype(mask Mask, index int) (int, archetypeIter, bool) {
 	len := len(w.archetypes)
+	if index >= len {
+		panic("exceeded end of query")
+	}
 	for i := index + 1; i < len; i++ {
 		a := &w.archetypes[i]
 		if a.Len() > 0 && a.mask.Contains(mask) {
 			return i, newArchetypeIter(a), true
 		}
 	}
-	return -1, archetypeIter{}, false
+	return len, archetypeIter{}, false
 }
 
 // Query creates a [Query] iterator for the given components.
