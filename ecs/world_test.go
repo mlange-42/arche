@@ -61,10 +61,10 @@ func TestWorldComponents(t *testing.T) {
 
 	w.Remove(e2, posID)
 
-	maskNone := NewMask()
-	maskPos := NewMask(posID)
-	maskRot := NewMask(rotID)
-	maskPosRot := NewMask(posID, rotID)
+	maskNone := newMask()
+	maskPos := newMask(posID)
+	maskRot := newMask(rotID)
+	maskPosRot := newMask(posID, rotID)
 
 	archNone, ok := w.findArchetype(maskNone)
 	assert.True(t, ok)

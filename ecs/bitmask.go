@@ -1,7 +1,7 @@
 package ecs
 
-// Mask is a bitmask.
-type Mask uint64
+// bitMask is a bitmask.
+type bitMask uint64
 
 // MaskTotalBits is the size of Mask in bits.
 //
@@ -10,13 +10,13 @@ const MaskTotalBits = 64
 
 var nibbleToBitsSet = [16]uint{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4}
 
-// NewMask creates a new bitmask from a list of IDs.
+// newMask creates a new bitmask from a list of IDs.
 //
 // If any ID is bigger or equal [MaskTotalBits], it'll not be added to the mask.
 //
 // Implementation taken from https://github.com/marioolofo/go-gameengine-ecs.
-func NewMask(ids ...ID) Mask {
-	var mask Mask
+func newMask(ids ...ID) bitMask {
+	var mask bitMask
 	for _, id := range ids {
 		mask.Set(id, true)
 	}
@@ -26,34 +26,34 @@ func NewMask(ids ...ID) Mask {
 // Get reports if bit index defined by ID is true or false.
 //
 // The return will be always false for bit >= [MaskTotalBits].
-func (e Mask) Get(bit ID) bool {
-	mask := Mask(1 << bit)
+func (e bitMask) Get(bit ID) bool {
+	mask := bitMask(1 << bit)
 	return e&mask == mask
 }
 
 // Set sets the state of bit index to true or false.
 //
 // This function has no effect for bit >= [MaskTotalBits].
-func (e *Mask) Set(bit ID, value bool) {
+func (e *bitMask) Set(bit ID, value bool) {
 	if value {
-		*e |= Mask(1 << bit)
+		*e |= bitMask(1 << bit)
 	} else {
-		*e &= Mask(^(1 << bit))
+		*e &= bitMask(^(1 << bit))
 	}
 }
 
 // Reset changes the state of all bits to false.
-func (e *Mask) Reset() {
+func (e *bitMask) Reset() {
 	*e = 0
 }
 
 // Contains reports if other mask is a subset of this mask.
-func (e Mask) Contains(other Mask) bool {
+func (e bitMask) Contains(other bitMask) bool {
 	return e&other == other
 }
 
 // TotalBitsSet returns how many bits are set in this mask.
-func (e Mask) TotalBitsSet() uint {
+func (e bitMask) TotalBitsSet() uint {
 	var count uint
 
 	for e != 0 {

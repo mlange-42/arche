@@ -5,7 +5,7 @@ import (
 	"unsafe"
 )
 
-// ID defines the format for the components identifier
+// ID is the component identifier type
 type ID uint32
 
 // Component is a Component ID/Component pointer pair

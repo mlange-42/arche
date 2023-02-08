@@ -17,7 +17,7 @@ import (
 //	}
 type Query struct {
 	world     *World
-	mask      Mask
+	mask      bitMask
 	archetype archetypeIter
 	index     int
 	done      bool
@@ -25,7 +25,7 @@ type Query struct {
 }
 
 // newQuery creates a new Query
-func newQuery(world *World, mask Mask, lockBit uint8) Query {
+func newQuery(world *World, mask bitMask, lockBit uint8) Query {
 	return Query{
 		world:   world,
 		mask:    mask,
