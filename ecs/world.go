@@ -20,7 +20,7 @@ func NewWorld() World {
 func FromConfig(conf Config) World {
 	arch := archetype{}
 	arch.init(conf.CapacityIncrement)
-	arches := PagedArr32[archetype]{}
+	arches := pagedArr32[archetype]{}
 	arches.Add(arch)
 	return World{
 		config:     conf,
@@ -37,7 +37,7 @@ func FromConfig(conf Config) World {
 type World struct {
 	config     Config
 	entities   []entityIndex
-	archetypes PagedArr32[archetype]
+	archetypes pagedArr32[archetype]
 	entityPool entityPool
 	bitPool    bitPool
 	registry   componentRegistry

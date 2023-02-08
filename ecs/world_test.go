@@ -283,7 +283,7 @@ func TestRegisterComponents(t *testing.T) {
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
-	printTypeSizeName[PagedArr32[archetype]]("PagedArr32")
+	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
 	printTypeSize[archetype]()
 	printTypeSize[storage]()
 	printTypeSize[Query]()
