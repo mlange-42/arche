@@ -238,24 +238,25 @@ func (w *World) componentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
 }
 
+func (w *World) nextArchetype(mask Mask, index int) (int, archetypeIter, bool) {
+	len := len(w.archetypes)
+	for i := index + 1; i < len; i++ {
+		a := &w.archetypes[i]
+		if a.Len() > 0 && a.mask.Contains(mask) {
+			return i, newArchetypeIter(a), true
+		}
+	}
+	return -1, archetypeIter{}, false
+}
+
 // Query creates a [Query] iterator for the given components.
 //
 // Locks the world to prevent changes to component compositions.
 func (w *World) Query(comps ...ID) Query {
 	mask := NewMask(comps...)
-	arches := []archetypeIter{}
-	length := len(w.archetypes)
-	count := 0
-	for i := 0; i < length; i++ {
-		arch := &w.archetypes[i]
-		if arch.mask.Contains(mask) {
-			arches = append(arches, newArchetypeIter(arch))
-			count += int(arch.Len())
-		}
-	}
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newQuery(w, arches, count, lock)
+	return newQuery(w, mask, lock)
 }
 
 // closeQuery closes a query and unlocks the world
