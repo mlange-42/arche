@@ -36,15 +36,13 @@ func newQuery(world *World, mask Mask, lockBit uint8) Query {
 
 // Next proceeds to the next [Entity] in the Query.
 func (q *Query) Next() bool {
-	if q.done {
-		panic("Query is used up. Create a new Query!")
-	}
 	for {
 		if q.archetype.Next() {
 			return true
 		}
-		if i, a, ok := q.world.nextArchetype(q.mask, q.index); ok {
-			q.index = i
+		i, a, ok := q.world.nextArchetype(q.mask, q.index)
+		q.index = i
+		if ok {
 			q.archetype = a
 			q.archetype.Next()
 			return true
@@ -57,25 +55,16 @@ func (q *Query) Next() bool {
 
 // Has returns whether the current [Entity] has the given component
 func (q *Query) Has(comp ID) bool {
-	if q.done {
-		panic("Query is used up. Create a new Query!")
-	}
 	return q.archetype.Has(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's current [Entity]
 func (q *Query) Get(comp ID) unsafe.Pointer {
-	if q.done {
-		panic("Query is used up. Create a new Query!")
-	}
 	return q.archetype.Get(comp)
 }
 
 // Entity returns the [Entity] at the iterator's position
 func (q *Query) Entity() Entity {
-	if q.done {
-		panic("Query is used up. Create a new Query!")
-	}
 	return q.archetype.Entity()
 }
 

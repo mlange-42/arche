@@ -62,7 +62,4 @@ func TestQuery(t *testing.T) {
 	assert.Equal(t, 4, cnt)
 
 	assert.Panics(t, func() { q.Next() })
-	assert.Panics(t, func() { q.Entity() })
-	assert.Panics(t, func() { q.Has(posID) })
-	assert.Panics(t, func() { q.Get(posID) })
 }
