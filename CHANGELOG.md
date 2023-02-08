@@ -2,7 +2,10 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.1.4...main)
 
-Nothing
+### Other
+
+* Optimization of `Query` iteration, avoids allocations and makes it approx. 30% faster (#35)
+* Removed method `Query.Count()`, as it was a by-product of the allocations in the above point (#35)
 
 ## [[v0.1.4]](https://github.com/mlange-42/arche/compare/v0.1.3...v0.1.4)
 
