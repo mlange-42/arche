@@ -1,10 +1,16 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.1.3...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.1.4...main)
 
 Nothing
 
-## [[v0.1.2]](https://github.com/mlange-42/arche/compare/v0.1.2...v0.1.3)
+## [[v0.1.4]](https://github.com/mlange-42/arche/compare/v0.1.3...v0.1.4)
+
+### Other
+
+* Extended and improved documentation (#34)
+
+## [[v0.1.3]](https://github.com/mlange-42/arche/compare/v0.1.2...v0.1.3)
 
 ## Features
 

@@ -4,7 +4,17 @@ import (
 	"unsafe"
 )
 
-// Query is an iterator to iterate entities
+// Query is an iterator to iterate entities.
+//
+// Create queries through the [World] using [World.Query].
+//
+// ## Example:
+//
+//	query := world.Query(posID, rotID)
+//	for query.Next() {
+//	    pos := (*position)(query.Get(posID))
+//	    pos.X += 1.0
+//	}
 type Query struct {
 	world      *World
 	archetypes []archetypeIter
@@ -14,7 +24,7 @@ type Query struct {
 	lockBit    uint8
 }
 
-// newQuery creates a new QueryIter
+// newQuery creates a new Query
 func newQuery(world *World, arches []archetypeIter, count int, lockBit uint8) Query {
 	return Query{
 		world:      world,
@@ -26,7 +36,7 @@ func newQuery(world *World, arches []archetypeIter, count int, lockBit uint8) Qu
 	}
 }
 
-// Next proceeds to the next entity
+// Next proceeds to the next [Entity] in the Query.
 func (q *Query) Next() bool {
 	if q.done {
 		panic("Query is used up. Create a new Query!")
@@ -44,7 +54,7 @@ func (q *Query) Next() bool {
 	}
 }
 
-// Has returns whether the current entity has the given component
+// Has returns whether the current [Entity] has the given component
 func (q *Query) Has(comp ID) bool {
 	if q.done {
 		panic("Query is used up. Create a new Query!")
@@ -52,7 +62,7 @@ func (q *Query) Has(comp ID) bool {
 	return q.archetypes[q.index].Has(comp)
 }
 
-// Get returns the pointer to the given component at the iterator's position
+// Get returns the pointer to the given component at the iterator's current [Entity]
 func (q *Query) Get(comp ID) unsafe.Pointer {
 	if q.done {
 		panic("Query is used up. Create a new Query!")
@@ -60,7 +70,7 @@ func (q *Query) Get(comp ID) unsafe.Pointer {
 	return q.archetypes[q.index].Get(comp)
 }
 
-// Entity returns the entity at the iterator's position
+// Entity returns the [Entity] at the iterator's position
 func (q *Query) Entity() Entity {
 	if q.done {
 		panic("Query is used up. Create a new Query!")
@@ -68,7 +78,7 @@ func (q *Query) Entity() Entity {
 	return q.archetypes[q.index].Entity()
 }
 
-// Close closes the query and unlocks the world.
+// Close closes the Query and unlocks the world.
 //
 // Automatically called when iteration finishes.
 // Needs to be called only if breaking out of the query iteration.
