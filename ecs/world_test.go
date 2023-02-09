@@ -95,6 +95,10 @@ func TestWorldComponents(t *testing.T) {
 	// No-op add/remove
 	w.Add(e0)
 	w.Remove(e0)
+
+	w.RemEntity(e0)
+	assert.Panics(t, func() { w.Has(Entity{1, 0}, posID) })
+	assert.Panics(t, func() { w.Get(Entity{1, 0}, posID) })
 }
 
 func TestWorldLabels(t *testing.T) {
