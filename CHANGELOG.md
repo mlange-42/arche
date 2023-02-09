@@ -1,6 +1,10 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.1.4...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.2.0...main)
+
+Nothing
+
+## [[v0.2.0]](https://github.com/mlange-42/arche/compare/v0.1.4...v0.2.0)
 
 ### Features
 

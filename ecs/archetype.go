@@ -7,7 +7,7 @@ import (
 
 // archetype represents an ECS archetype
 type archetype struct {
-	mask Mask
+	mask bitMask
 	ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
@@ -19,7 +19,7 @@ type archetype struct {
 var entityType = reflect.TypeOf(Entity{})
 
 func (a *archetype) init(capacityIncrement int, components ...componentType) {
-	var mask Mask
+	var mask bitMask
 	a.ids = make([]ID, len(components))
 	comps := make([]storage, len(components))
 

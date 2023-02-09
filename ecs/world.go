@@ -20,7 +20,7 @@ func NewWorld() World {
 func FromConfig(conf Config) World {
 	arch := archetype{}
 	arch.init(conf.CapacityIncrement)
-	arches := PagedArr32[archetype]{}
+	arches := pagedArr32[archetype]{}
 	arches.Add(arch)
 	return World{
 		config:     conf,
@@ -29,7 +29,7 @@ func FromConfig(conf Config) World {
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
 		archetypes: arches,
-		locks:      Mask(0),
+		locks:      bitMask(0),
 	}
 }
 
@@ -37,11 +37,11 @@ func FromConfig(conf Config) World {
 type World struct {
 	config     Config
 	entities   []entityIndex
-	archetypes PagedArr32[archetype]
+	archetypes pagedArr32[archetype]
 	entityPool entityPool
 	bitPool    bitPool
 	registry   componentRegistry
-	locks      Mask
+	locks      bitMask
 }
 
 // NewEntity returns a new or recycled [Entity].
@@ -231,14 +231,14 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	return arch.Set(index.index, id, comp)
 }
 
-func (w *World) findOrCreateArchetype(mask Mask) *archetype {
+func (w *World) findOrCreateArchetype(mask bitMask) *archetype {
 	if arch, ok := w.findArchetype(mask); ok {
 		return arch
 	}
 	return w.createArchetype(mask)
 }
 
-func (w *World) findArchetype(mask Mask) (*archetype, bool) {
+func (w *World) findArchetype(mask bitMask) (*archetype, bool) {
 	length := w.archetypes.Len()
 	for i := 0; i < length; i++ {
 		arch := w.archetypes.Get(i)
@@ -249,7 +249,7 @@ func (w *World) findArchetype(mask Mask) (*archetype, bool) {
 	return nil, false
 }
 
-func (w *World) createArchetype(mask Mask) *archetype {
+func (w *World) createArchetype(mask bitMask) *archetype {
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 
@@ -277,7 +277,7 @@ func (w *World) componentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
 }
 
-func (w *World) nextArchetype(mask Mask, index int) (int, archetypeIter, bool) {
+func (w *World) nextArchetype(mask bitMask, index int) (int, archetypeIter, bool) {
 	len := w.archetypes.Len()
 	if index >= len {
 		panic("exceeded end of query")
@@ -295,7 +295,7 @@ func (w *World) nextArchetype(mask Mask, index int) (int, archetypeIter, bool) {
 //
 // Locks the world to prevent changes to component compositions.
 func (w *World) Query(comps ...ID) Query {
-	mask := NewMask(comps...)
+	mask := newMask(comps...)
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
 	return newQuery(w, mask, lock)

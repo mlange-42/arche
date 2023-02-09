@@ -61,10 +61,10 @@ func TestWorldComponents(t *testing.T) {
 
 	w.Remove(e2, posID)
 
-	maskNone := NewMask()
-	maskPos := NewMask(posID)
-	maskRot := NewMask(rotID)
-	maskPosRot := NewMask(posID, rotID)
+	maskNone := newMask()
+	maskPos := newMask(posID)
+	maskRot := newMask(rotID)
+	maskPosRot := newMask(posID, rotID)
 
 	archNone, ok := w.findArchetype(maskNone)
 	assert.True(t, ok)
@@ -283,7 +283,7 @@ func TestRegisterComponents(t *testing.T) {
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
-	printTypeSizeName[PagedArr32[archetype]]("PagedArr32")
+	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
 	printTypeSize[archetype]()
 	printTypeSize[storage]()
 	printTypeSize[Query]()

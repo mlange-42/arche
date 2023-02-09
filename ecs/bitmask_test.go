@@ -7,7 +7,7 @@ import (
 )
 
 func TestBitMask(t *testing.T) {
-	mask := NewMask(ID(1), ID(2), ID(13), ID(27))
+	mask := newMask(ID(1), ID(2), ID(13), ID(27))
 
 	assert.Equal(t, uint(4), mask.TotalBitsSet())
 
@@ -25,8 +25,8 @@ func TestBitMask(t *testing.T) {
 	assert.True(t, mask.Get(0))
 	assert.False(t, mask.Get(1))
 
-	other1 := NewMask(ID(1), ID(2), ID(32))
-	other2 := NewMask(ID(0), ID(2))
+	other1 := newMask(ID(1), ID(2), ID(32))
+	other2 := newMask(ID(0), ID(2))
 
 	assert.False(t, mask.Contains(other1))
 	assert.True(t, mask.Contains(other2))
