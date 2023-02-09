@@ -10,6 +10,8 @@ func TestGenericAddRemove(t *testing.T) {
 	e0 := w.NewEntity()
 
 	Add[testStruct0](&w, e0)
+	_ = Has[testStruct0](&w, e0)
+	_ = Get[testStruct0](&w, e0)
 	Remove[testStruct0](&w, e0)
 
 	Add2[testStruct0, testStruct1](&w, e0)

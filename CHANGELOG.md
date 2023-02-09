@@ -4,8 +4,9 @@
 
 ### Features
 
-* Generic queries for type safety and ergonomics (#47)
-* Generic add, assign and remove for type safety and ergonomics (#47)
+* Generic queries, for type safety and ergonomics (#47)
+* Generic add, assign and remove, for type safety and ergonomics (#47)
+* Generic get and has, for ergonomics but slow (#47)
 
 ### Other
 

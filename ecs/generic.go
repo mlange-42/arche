@@ -8,6 +8,23 @@ func ComponentID[T any](w *World) ID {
 	return w.componentID(tp)
 }
 
+// Get gets a component for an entity. THIS IS SLOW!!!
+//
+// Using [World.Get] is about 5 times faster,
+// and using queries in about 10 times faster.
+func Get[A any](w *World, entity Entity) *A {
+	id := ComponentID[A](w)
+	return (*A)(w.Get(entity, id))
+}
+
+// Has returns whether a component attached to an entity. THIS IS SLOW!!!
+//
+// Using [World.Has] is more than 5 times faster.
+func Has[A any](w *World, entity Entity) bool {
+	id := ComponentID[A](w)
+	return w.Has(entity, id)
+}
+
 // Add adds a component type to an entity
 func Add[A any](w *World, entity Entity) *A {
 	id := ComponentID[A](w)
