@@ -78,7 +78,7 @@ func main() {
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query.
-		// Generic queries support up to 5 components.
+		// Generic queries support up to 8 components.
 		// For more components, use World.Query()
 		query := ecs.Query2[Position, Velocity](&world)
 		// Iterate it

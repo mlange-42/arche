@@ -386,6 +386,8 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[storage]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
+	printTypeSizeName[Q1[testStruct0]]("Q1")
+	printTypeSizeName[Q8[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4, testStruct5, testStruct6, testStruct7]]("Q8")
 }
 
 func printTypeSize[T any]() {
