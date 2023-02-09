@@ -30,6 +30,42 @@ func runArcheQuery(b *testing.B, count int) {
 	}
 }
 
+func runArcheQuery1kArch(b *testing.B, count int) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+	registerAll(&world)
+
+	perArch := 2 * count / 1000
+
+	for i := 0; i < 1024; i++ {
+		mask := i
+		add := make([]ecs.ID, 0, 10)
+		for j := 0; j < 10; j++ {
+			id := ecs.ID(j)
+			m := 1 << j
+			if mask&m == m {
+				add = append(add, id)
+			}
+		}
+		for j := 0; j < perArch; j++ {
+			entity := world.NewEntity()
+			world.Add(entity, add...)
+		}
+	}
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		query := world.Query(6)
+		b.StartTimer()
+		for query.Next() {
+			pos := (*position)(query.Get(6))
+			_ = pos
+		}
+	}
+}
+
 func runArcheQueryEntity(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
@@ -113,4 +149,16 @@ func BenchmarkArcheIterWorld_10_000(b *testing.B) {
 
 func BenchmarkArcheIterWorld_100_000(b *testing.B) {
 	runArcheWorld(b, 100000)
+}
+
+func BenchmarkArcheIter1kArch_1_000(b *testing.B) {
+	runArcheQuery1kArch(b, 1000)
+}
+
+func BenchmarkArcheIter1kArch_10_000(b *testing.B) {
+	runArcheQuery1kArch(b, 10000)
+}
+
+func BenchmarkArcheIter1kArch_100_000(b *testing.B) {
+	runArcheQuery1kArch(b, 100000)
 }
