@@ -5,12 +5,6 @@ import (
 	"unsafe"
 )
 
-// ComponentID returns the ID for a component type. Registers the type if it is not already registered.
-func ComponentID[T any](w *World) ID {
-	tp := reflect.TypeOf((*T)(nil)).Elem()
-	return w.componentID(tp)
-}
-
 // NewWorld creates a new [World]
 func NewWorld() World {
 	return FromConfig(NewConfig())
