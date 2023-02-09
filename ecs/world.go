@@ -201,7 +201,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 		}
 	}
 
-	arch := w.findOrCreateArchetype(mask)
+	arch := w.findOrCreateArchetype(oldArch, addIDs, rem)
 
 	allComps := make([]componentPointer, 0, len(keepIDs)+len(addIDs))
 	for _, id := range keepIDs {
@@ -231,11 +231,39 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	return arch.Set(index.index, id, comp)
 }
 
-func (w *World) findOrCreateArchetype(mask bitMask) *archetype {
-	if arch, ok := w.findArchetype(mask); ok {
-		return arch
+func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *archetype {
+	curr := start
+	mask := start.mask
+	for _, id := range rem {
+		mask.Set(id, false)
+		if next, ok := curr.GetTransitionRemove(id); ok {
+			curr = next
+		} else {
+			next, _ := w.findOrCreateArchetypeSlow(mask)
+			next.SetTransitionAdd(id, curr)
+			curr.SetTransitionRemove(id, next)
+			curr = next
+		}
 	}
-	return w.createArchetype(mask)
+	for _, id := range add {
+		mask.Set(id, true)
+		if next, ok := curr.GetTransitionAdd(id); ok {
+			curr = next
+		} else {
+			next, _ := w.findOrCreateArchetypeSlow(mask)
+			next.SetTransitionRemove(id, curr)
+			curr.SetTransitionAdd(id, next)
+			curr = next
+		}
+	}
+	return curr
+}
+
+func (w *World) findOrCreateArchetypeSlow(mask bitMask) (*archetype, bool) {
+	if arch, ok := w.findArchetype(mask); ok {
+		return arch, false
+	}
+	return w.createArchetype(mask), true
 }
 
 func (w *World) findArchetype(mask bitMask) (*archetype, bool) {

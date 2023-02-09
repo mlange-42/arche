@@ -14,6 +14,8 @@ type archetype struct {
 	indices    [MaskTotalBits]uint8
 	entities   storage
 	components []storage
+	toAdd      [MaskTotalBits]*archetype
+	toRemove   [MaskTotalBits]*archetype
 }
 
 var entityType = reflect.TypeOf(Entity{})
@@ -109,4 +111,22 @@ func (a *archetype) Len() uint32 {
 // Set overwrites a component with the data behind the given pointer
 func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
 	return a.components[a.indices[id]].set(index, comp)
+}
+
+func (a *archetype) GetTransitionAdd(id ID) (*archetype, bool) {
+	p := a.toAdd[id]
+	return p, p != nil
+}
+
+func (a *archetype) GetTransitionRemove(id ID) (*archetype, bool) {
+	p := a.toRemove[id]
+	return p, p != nil
+}
+
+func (a *archetype) SetTransitionAdd(id ID, to *archetype) {
+	a.toAdd[id] = to
+}
+
+func (a *archetype) SetTransitionRemove(id ID, to *archetype) {
+	a.toRemove[id] = to
 }
