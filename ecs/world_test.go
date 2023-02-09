@@ -303,6 +303,66 @@ func TestArchetypeGraph(t *testing.T) {
 	assert.Equal(t, archEmpty, archEmpty3)
 }
 
+type testStruct0 struct{ val int32 }
+type testStruct1 struct{ val int32 }
+type testStruct2 struct{ val int32 }
+type testStruct3 struct{ val int32 }
+type testStruct4 struct{ val int32 }
+type testStruct5 struct{ val int32 }
+type testStruct6 struct{ val int32 }
+type testStruct7 struct{ val int32 }
+type testStruct8 struct{ val int32 }
+type testStruct9 struct{ val int32 }
+
+func Test1000Archetypes(t *testing.T) {
+	_ = testStruct0{1}
+	_ = testStruct1{1}
+	_ = testStruct2{1}
+	_ = testStruct3{1}
+	_ = testStruct4{1}
+	_ = testStruct5{1}
+	_ = testStruct6{1}
+	_ = testStruct7{1}
+	_ = testStruct8{1}
+	_ = testStruct9{1}
+
+	w := NewWorld()
+
+	ids := [10]ID{}
+	ids[0] = ComponentID[testStruct0](&w)
+	ids[1] = ComponentID[testStruct1](&w)
+	ids[2] = ComponentID[testStruct2](&w)
+	ids[3] = ComponentID[testStruct3](&w)
+	ids[4] = ComponentID[testStruct4](&w)
+	ids[5] = ComponentID[testStruct5](&w)
+	ids[6] = ComponentID[testStruct6](&w)
+	ids[7] = ComponentID[testStruct7](&w)
+	ids[8] = ComponentID[testStruct8](&w)
+	ids[9] = ComponentID[testStruct9](&w)
+
+	for i := 0; i < 1024; i++ {
+		mask := bitMask(i)
+		add := make([]ID, 0, 10)
+		for j := 0; j < 10; j++ {
+			id := ID(j)
+			if mask.Get(id) {
+				add = append(add, id)
+			}
+		}
+		entity := w.NewEntity()
+		w.Add(entity, add...)
+	}
+	assert.Equal(t, 1024, w.archetypes.Len())
+
+	cnt := 0
+	query := w.Query(0, 7)
+	for query.Next() {
+		cnt++
+	}
+
+	assert.Equal(t, 256, cnt)
+}
+
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
 	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
