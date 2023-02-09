@@ -1,7 +1,7 @@
 package main
 
 // Profiling:
-// go build ./profile/main/profile.go
+// go build ./main/profile.go
 // profile
 // go tool pprof -http=":8000" -nodefraction=0.001 profile cpu.pprof
 // go tool pprof -http=":8000" -nodefraction=0.001 profile mem.pprof

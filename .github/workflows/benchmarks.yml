@@ -18,4 +18,5 @@ jobs:
       - name: Benchmarks
         run: |
           go test -benchmem -run=^$ -bench ^.*$ github.com/mlange-42/arche/ecs
+          cd benchmark
           go test -benchmem -run=^$ -bench ^.*$ github.com/mlange-42/arche/benchmark/...

@@ -1,2 +1,2 @@
-/coverage.out
-/*.pprof
+coverage.out
+*.pprof

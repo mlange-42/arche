@@ -26,7 +26,7 @@ go get github.com/mlange-42/arche
 * Fast random access for components of arbitrary entities. Useful for hierarchies.
 * No systems. Use your own structure.
 * Not thread-safe. On purpose.
-* No dependencies (except for testing and benchmarks).
+* No dependencies (except for unit tests).
 
 ## Usage example
 
