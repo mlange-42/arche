@@ -97,6 +97,33 @@ func TestWorldComponents(t *testing.T) {
 	w.Remove(e0)
 }
 
+func TestWorldLabels(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	labID := ComponentID[label](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Add(e0, posID, labID)
+	w.Add(e1, labID)
+	w.Add(e1, posID)
+
+	lab0 := (*label)(w.Get(e0, labID))
+	assert.NotNil(t, lab0)
+
+	lab1 := (*label)(w.Get(e1, labID))
+	assert.NotNil(t, lab1)
+
+	assert.True(t, w.Has(e0, labID))
+	assert.True(t, w.Has(e1, labID))
+	assert.False(t, w.Has(e2, labID))
+
+	assert.Equal(t, lab0, lab1)
+}
+
 func TestWorldExchange(t *testing.T) {
 	w := NewWorld()
 
@@ -302,17 +329,6 @@ func TestArchetypeGraph(t *testing.T) {
 	archEmpty3 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID})
 	assert.Equal(t, archEmpty, archEmpty3)
 }
-
-type testStruct0 struct{ val int32 }
-type testStruct1 struct{ val int32 }
-type testStruct2 struct{ val int32 }
-type testStruct3 struct{ val int32 }
-type testStruct4 struct{ val int32 }
-type testStruct5 struct{ val int32 }
-type testStruct6 struct{ val int32 }
-type testStruct7 struct{ val int32 }
-type testStruct8 struct{ val int32 }
-type testStruct9 struct{ val int32 }
 
 func Test1000Archetypes(t *testing.T) {
 	_ = testStruct0{1}
