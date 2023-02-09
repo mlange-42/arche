@@ -60,22 +60,12 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
-	// Get component IDs.
-	// Registers component type if not already registered.
-	positionID := ecs.ComponentID[Position](&world)
-	velocityID := ecs.ComponentID[Velocity](&world)
-
 	// Create entities
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity.
 		entity := world.NewEntity()
 		// Add components to it.
-		world.Add(entity, positionID, velocityID)
-
-		// Component access through the World.
-		// See below for faster access in queries.
-		pos := (*Position)(world.Get(entity, positionID))
-		vel := (*Velocity)(world.Get(entity, velocityID))
+		pos, vel := ecs.Add2[Position, Velocity](&world, entity)
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
@@ -88,15 +78,13 @@ func main() {
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query.
-		query := world.Query(positionID, velocityID)
+		// Generic queries support up to 5 components.
+		// For more components, use World.Query()
+		query := ecs.Query2[Position, Velocity](&world)
 		// Iterate it
 		for query.Next() {
 			// Component access through a Query.
-			// About 20-30% faster than access through the World.
-			// Can also fetch components not in the query.
-			pos := (*Position)(query.Get(positionID))
-			vel := (*Velocity)(query.Get(velocityID))
-
+			pos, vel := query.GetAll()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y

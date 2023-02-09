@@ -15,7 +15,7 @@ func Add[A any](w *World, entity Entity) *A {
 	return (*A)(w.Get(entity, id))
 }
 
-// Add2 adds two component type to an entity
+// Add2 adds two component types to an entity
 func Add2[A any, B any](w *World, entity Entity) (*A, *B) {
 	idA := ComponentID[A](w)
 	idB := ComponentID[B](w)
@@ -23,7 +23,7 @@ func Add2[A any, B any](w *World, entity Entity) (*A, *B) {
 	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB))
 }
 
-// Add3 adds three component type to an entity
+// Add3 adds three component types to an entity
 func Add3[A any, B any, C any](w *World, entity Entity) (*A, *B, *C) {
 	idA := ComponentID[A](w)
 	idB := ComponentID[B](w)
@@ -32,7 +32,7 @@ func Add3[A any, B any, C any](w *World, entity Entity) (*A, *B, *C) {
 	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC))
 }
 
-// Add4 adds four component type to an entity
+// Add4 adds four component types to an entity
 func Add4[A any, B any, C any, D any](w *World, entity Entity) (*A, *B, *C, *D) {
 	idA := ComponentID[A](w)
 	idB := ComponentID[B](w)
@@ -42,7 +42,7 @@ func Add4[A any, B any, C any, D any](w *World, entity Entity) (*A, *B, *C, *D) 
 	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD))
 }
 
-// Add5 adds five component type to an entity
+// Add5 adds five component types to an entity
 func Add5[A any, B any, C any, D any, E any](w *World, entity Entity) (*A, *B, *C, *D, *E) {
 	idA := ComponentID[A](w)
 	idB := ComponentID[B](w)
@@ -53,27 +53,72 @@ func Add5[A any, B any, C any, D any, E any](w *World, entity Entity) (*A, *B, *
 	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD)), (*E)(w.Get(entity, idE))
 }
 
-// Remove removes a component type to an entity
+// Assign adds a components to an entity
+func Assign[A any](w *World, entity Entity, a *A) *A {
+	idA := ComponentID[A](w)
+	w.Assign(entity, idA, a)
+	return (*A)(w.Get(entity, idA))
+}
+
+// Assign2 adds two components to an entity
+func Assign2[A any, B any](w *World, entity Entity, a *A, b *B) (*A, *B) {
+	idA := ComponentID[A](w)
+	idB := ComponentID[B](w)
+	w.AssignN(entity, Component{idA, a}, Component{idB, b})
+	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB))
+}
+
+// Assign3 adds three components to an entity
+func Assign3[A any, B any, C any](w *World, entity Entity, a *A, b *B, c *C) (*A, *B, *C) {
+	idA := ComponentID[A](w)
+	idB := ComponentID[B](w)
+	idC := ComponentID[C](w)
+	w.AssignN(entity, Component{idA, a}, Component{idB, b}, Component{idC, c})
+	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC))
+}
+
+// Assign4 adds four components to an entity
+func Assign4[A any, B any, C any, D any](w *World, entity Entity, a *A, b *B, c *C, d *D) (*A, *B, *C, *D) {
+	idA := ComponentID[A](w)
+	idB := ComponentID[B](w)
+	idC := ComponentID[C](w)
+	idD := ComponentID[D](w)
+	w.AssignN(entity, Component{idA, a}, Component{idB, b}, Component{idC, c}, Component{idD, d})
+	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD))
+}
+
+// Assign5 adds four components to an entity
+func Assign5[A any, B any, C any, D any, E any](w *World, entity Entity, a *A, b *B, c *C, d *D, e *E) (*A, *B, *C, *D, *E) {
+	idA := ComponentID[A](w)
+	idB := ComponentID[B](w)
+	idC := ComponentID[C](w)
+	idD := ComponentID[D](w)
+	idE := ComponentID[E](w)
+	w.AssignN(entity, Component{idA, a}, Component{idB, b}, Component{idC, c}, Component{idD, d}, Component{idE, e})
+	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD)), (*E)(w.Get(entity, idE))
+}
+
+// Remove removes a component from an entity
 func Remove[A any](w *World, entity Entity) {
 	w.Remove(entity, ComponentID[A](w))
 }
 
-// Remove2 removes two component type to an entity
+// Remove2 removes two components from an entity
 func Remove2[A any, B any](w *World, entity Entity) {
 	w.Remove(entity, ComponentID[A](w), ComponentID[B](w))
 }
 
-// Remove3 removes three component type to an entity
+// Remove3 removes three components from an entity
 func Remove3[A any, B any, C any](w *World, entity Entity) {
 	w.Remove(entity, ComponentID[A](w), ComponentID[B](w), ComponentID[C](w))
 }
 
-// Remove4 removes four component type to an entity
+// Remove4 removes four components from an entity
 func Remove4[A any, B any, C any, D any](w *World, entity Entity) {
 	w.Remove(entity, ComponentID[A](w), ComponentID[B](w), ComponentID[C](w), ComponentID[D](w))
 }
 
-// Remove5 removes five component type to an entity
+// Remove5 removes five components from an entity
 func Remove5[A any, B any, C any, D any, E any](w *World, entity Entity) {
 	w.Remove(entity, ComponentID[A](w), ComponentID[B](w), ComponentID[C](w), ComponentID[D](w), ComponentID[E](w))
 }
