@@ -2,7 +2,9 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.2.0...main)
 
-Nothing
+### Other
+
+* Use of an archetype graph to speed up finding the target archetype for component addition/removal (#42)
 
 ## [[v0.2.0]](https://github.com/mlange-42/arche/compare/v0.1.4...v0.2.0)
 
