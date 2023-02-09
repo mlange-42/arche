@@ -281,6 +281,28 @@ func TestRegisterComponents(t *testing.T) {
 	assert.Equal(t, ID(1), ComponentID[rotation](&world))
 }
 
+func TestArchetypeGraph(t *testing.T) {
+	world := NewWorld()
+
+	posID := ComponentID[position](&world)
+	velID := ComponentID[velocity](&world)
+	rotID := ComponentID[rotation](&world)
+
+	archEmpty := world.archetypes.Get(0)
+	arch0 := world.findOrCreateArchetype(archEmpty, []ID{posID}, []ID{})
+	archEmpty2 := world.findOrCreateArchetype(arch0, []ID{}, []ID{posID})
+
+	assert.Equal(t, archEmpty, archEmpty2)
+
+	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{})
+	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{})
+
+	assert.Equal(t, []ID{0, 1, 2}, arch012.ids)
+
+	archEmpty3 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID})
+	assert.Equal(t, archEmpty, archEmpty3)
+}
+
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
 	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
