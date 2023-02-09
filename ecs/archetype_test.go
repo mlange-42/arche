@@ -101,7 +101,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 
 	for i := 0; i < 1000; i++ {
 		arch.Add(
-			newEntity(i),
+			newEntity(eid(i)),
 			Component{ID: 0, Component: &testStruct{}},
 		)
 	}

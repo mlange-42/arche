@@ -5,12 +5,12 @@ package ecs
 //
 // Entities should only be created via the [World], using [World.NewEntity].
 type Entity struct {
-	id  ID
+	id  eid
 	gen uint16
 }
 
-func newEntity(id int) Entity {
-	return Entity{ID(id), 0}
+func newEntity(id eid) Entity {
+	return Entity{id, 0}
 }
 
 // IsZero returns whether this entity is the reserved zero entity.
