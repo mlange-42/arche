@@ -26,7 +26,7 @@ go get github.com/mlange-42/arche
 * Not thread-safe. On purpose.
 * No dependencies. Except for unit tests (100% coverage).
 
-For details on Arche's architecture, 
+For details on Arche's architecture, see section [Architecture](#architecture).
 
 ## Usage example
 
@@ -93,12 +93,6 @@ func main() {
 }
 ```
 
-## Benchmarks
-
-[TODO]
-
-For now, see the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
-
 ## Architecture
 
 *Arche* uses an archetype-based architecture.
@@ -134,6 +128,32 @@ For getting components by entity ID, e.g. for hierarchies, the world contains a 
 Obviously, archetypes are an optimization for iteration speed.
 But they also come with a downside. Adding or removing components to/from an entity requires moving all the components of the entity to another archetype.
 It is therefore recommended to add/remove/exchange multiple components at the same time rather than one after the other.
+
+## Generic vs. ID access
+
+*Arche* provides generic functions and types for accessing and modifying components etc., as shown in the [Usage example](#usage-example).
+
+Generic access is built on top of ID-based access used by the `ecs.World`.
+Generic functions and types provide type-safety and are more user-friendly than ID-based access.
+
+Depending on the machine the code is running on, generics may or may not incur an overhead.
+The worst to expect is a doubling of iteration + access time (from 2.5ns/op to 4ns/op),
+while on other machines both approaches are equally fast.
+
+For performance-critical code, the use of the ID-based methods of `ecs.World` may be worth testing.
+Component IDs are retrieved like this:
+
+```go
+posID := ComponentID[Position](&world)
+```
+
+For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
+
+## Benchmarks
+
+[TODO]
+
+For now, see the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
 
 ## References
 

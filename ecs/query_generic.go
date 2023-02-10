@@ -45,7 +45,7 @@ func Query2[A any, B any](w *World) Q2[A, B] {
 	}
 }
 
-// GetAll returns all queried component for the current query position
+// GetAll returns all queried components for the current query position
 func (q *Q2[A, B]) GetAll() (*A, *B) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
 }
@@ -81,7 +81,7 @@ func Query3[A any, B any, C any](w *World) Q3[A, B, C] {
 	}
 }
 
-// GetAll returns all queried component for the current query position
+// GetAll returns all queried components for the current query position
 func (q *Q3[A, B, C]) GetAll() (*A, *B, *C) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
 }
@@ -122,7 +122,7 @@ func Query4[A any, B any, C any, D any](w *World) Q4[A, B, C, D] {
 	}
 }
 
-// GetAll returns all queried component for the current query position
+// GetAll returns all queried components for the current query position
 func (q *Q4[A, B, C, D]) GetAll() (*A, *B, *C, *D) {
 	return (*A)(q.Query.Get(q.ids[0])),
 		(*B)(q.Query.Get(q.ids[1])),
@@ -171,7 +171,7 @@ func Query5[A any, B any, C any, D any, E any](w *World) Q5[A, B, C, D, E] {
 	}
 }
 
-// GetAll returns all queried component for the current query position
+// GetAll returns all queried components for the current query position
 func (q *Q5[A, B, C, D, E]) GetAll() (*A, *B, *C, *D, *E) {
 	return (*A)(q.Query.Get(q.ids[0])),
 		(*B)(q.Query.Get(q.ids[1])),
@@ -229,7 +229,7 @@ func Query6[A any, B any, C any, D any, E any, F any](w *World) Q6[A, B, C, D, E
 	}
 }
 
-// GetAll returns all queried component for the current query position
+// GetAll returns all queried components for the current query position
 func (q *Q6[A, B, C, D, E, F]) GetAll() (*A, *B, *C, *D, *E, *F) {
 	return (*A)(q.Query.Get(q.ids[0])),
 		(*B)(q.Query.Get(q.ids[1])),
@@ -294,7 +294,7 @@ func Query7[A any, B any, C any, D any, E any, F any, G any](w *World) Q7[A, B, 
 	}
 }
 
-// GetAll returns all queried component for the current query position
+// GetAll returns all queried components for the current query position
 func (q *Q7[A, B, C, D, E, F, G]) GetAll() (*A, *B, *C, *D, *E, *F, *G) {
 	return (*A)(q.Query.Get(q.ids[0])),
 		(*B)(q.Query.Get(q.ids[1])),
@@ -365,7 +365,7 @@ func Query8[A any, B any, C any, D any, E any, F any, G any, H any](w *World) Q8
 	}
 }
 
-// GetAll returns all queried component for the current query position
+// GetAll returns all queried components for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) GetAll() (*A, *B, *C, *D, *E, *F, *G, *H) {
 	return (*A)(q.Query.Get(q.ids[0])),
 		(*B)(q.Query.Get(q.ids[1])),
