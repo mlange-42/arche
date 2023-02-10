@@ -54,6 +54,9 @@ func (a *archetype) GetEntity(index int) Entity {
 
 // Get returns the component with the given ID at the given index
 func (a *archetype) Get(index int, id ID) unsafe.Pointer {
+	if !a.mask.Get(id) {
+		return nil
+	}
 	return a.components[a.indices[id]].Get(uint32(index))
 }
 

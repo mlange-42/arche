@@ -107,13 +107,7 @@ func (w *World) Alive(entity Entity) bool {
 // See also [Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
-	arch := index.arch
-
-	if !arch.HasComponent(comp) {
-		return nil
-	}
-
-	return arch.Get(int(index.index), comp)
+	return index.arch.Get(int(index.index), comp)
 }
 
 // Has returns whether an [Entity] has a given component.
@@ -122,8 +116,7 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 //
 // See also [Map.Has] for a generic variant.
 func (w *World) Has(entity Entity, comp ID) bool {
-	index := w.entities[entity.id]
-	return index.arch.HasComponent(comp)
+	return w.entities[entity.id].arch.HasComponent(comp)
 }
 
 // Add adds components to an [Entity].
