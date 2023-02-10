@@ -14,6 +14,7 @@
 * Use of an archetype graph to speed up finding the target archetype for component addition/removal (#42)
 * Reduced dependencies by moving profiling and benchmarking to sub-modules (#46)
 * Smaller integer type for component identifiers (#47)
+* Minor optimization of component access by queries (#50)
 
 ## [[v0.2.0]](https://github.com/mlange-42/arche/compare/v0.1.4...v0.2.0)
 
