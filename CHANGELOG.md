@@ -1,8 +1,14 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.3.0...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.3.1...main)
 
 Nothing
+
+## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)
+
+### Other
+
+* Fix failing https://pkg.go.dev to fetch Arche version v0.3.0
 
 ## [[v0.3.0]](https://github.com/mlange-42/arche/compare/v0.2.0...v0.3.0)
 
