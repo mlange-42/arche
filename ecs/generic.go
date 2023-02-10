@@ -8,32 +8,47 @@ func ComponentID[T any](w *World) ID {
 	return w.componentID(tp)
 }
 
-// Getter provides a type-safe way to access components by entity ID.
+// Map provides a type-safe way to access a component type by entity ID.
 //
-// Create one with [NewGetter].
-type Getter[T any] struct {
+// Create one with [NewMap].
+type Map[T any] struct {
 	id    ID
 	world *World
 }
 
-// NewGetter creates a new [Getter] for a component type.
+// NewMap creates a new [Map] for a component type.
 //
-// Getter provides a type-safe way to access components by entity ID.
+// Map provides a type-safe way to access a component type by entity ID.
 //
-// See also [World.Get] and [World.Has].
-func NewGetter[T any](w *World) Getter[T] {
-	return Getter[T]{
+// See also [World.Get], [World.Has] and [World.Set].
+func NewMap[T any](w *World) Map[T] {
+	return Map[T]{
 		id:    ComponentID[T](w),
 		world: w,
 	}
 }
 
-func (g *Getter[T]) Get(entity Entity) *T {
+// Get gets the component for the given entity.
+//
+// See also [World.Get].
+func (g *Map[T]) Get(entity Entity) *T {
 	return (*T)(g.world.Get(entity, g.id))
 }
 
-func (g *Getter[T]) Has(entity Entity) bool {
+// Has returns whether the entity has the component.
+//
+// See also [World.Has].
+func (g *Map[T]) Has(entity Entity) bool {
 	return g.world.Has(entity, g.id)
+}
+
+// Set overwrites the component for the given entity.
+//
+// Panics if the entity does not have a component of that type.
+//
+// See also [World.Set].
+func (g *Map[T]) Set(entity Entity, comp *T) *T {
+	return (*T)(g.world.Set(entity, g.id, comp))
 }
 
 // Add adds a component type to an entity.

@@ -104,7 +104,7 @@ func (w *World) Alive(entity Entity) bool {
 // Returns `nil` if the entity has no such component.
 // Panics when called for an already removed entity.
 //
-// See also [Getter]/[NewGetter].
+// See also [Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
 	arch := index.arch
@@ -120,7 +120,7 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 //
 // Panics when called for an already removed entity.
 //
-// See also [Getter]/[NewGetter].
+// See also [Map.Has] for a generic variant.
 func (w *World) Has(entity Entity, comp ID) bool {
 	index := w.entities[entity.id]
 	return index.arch.HasComponent(comp)
@@ -149,6 +149,22 @@ func (w *World) Add(entity Entity, comps ...ID) {
 // See also the generic variants [Assign], [Assign2], [Assign3], ...
 func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	w.Exchange(entity, []ID{id}, []ID{})
+	return w.copyTo(entity, id, comp)
+}
+
+// Set overwrites a component for an [Entity], using a given pointer for the content.
+//
+// The passed component must be a pointer.
+// Returns a pointer to the assigned memory.
+// The passed in pointer is not a valid reference to that memory!
+//
+// Panics when called on a locked world or for an already removed entity.
+// Do not use during [Query] iteration!
+//
+// Panics if the entity does not have a component of that type.
+//
+// See also [Map.Set] for a generic variant.
+func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	return w.copyTo(entity, id, comp)
 }
 

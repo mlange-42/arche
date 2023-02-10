@@ -179,7 +179,7 @@ func runArcheWorldGeneric(b *testing.B, count int) {
 	posID := ecs.ComponentID[position](&world)
 	rotID := ecs.ComponentID[rotation](&world)
 
-	get := ecs.NewGetter[position](&world)
+	get := ecs.NewMap[position](&world)
 
 	for i := 0; i < count; i++ {
 		entity := world.NewEntity()
