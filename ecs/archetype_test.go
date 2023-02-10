@@ -116,3 +116,30 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 		}
 	}
 }
+
+func BenchmarkArchetypeAccessUnsafe_1000(b *testing.B) {
+	b.StopTimer()
+	comps := []componentType{
+		{ID: 0, Type: reflect.TypeOf(testStruct{})},
+	}
+
+	arch := archetype{}
+	arch.init(32, comps...)
+
+	for i := 0; i < 1000; i++ {
+		arch.Add(
+			newEntity(eid(i)),
+			Component{ID: 0, Component: &testStruct{}},
+		)
+	}
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		len := int(arch.Len())
+		id := ID(0)
+		for j := 0; j < len; j++ {
+			pos := (*testStruct)(arch.GetUnsafe(i, id))
+			_ = pos
+		}
+	}
+}
