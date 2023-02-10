@@ -20,7 +20,7 @@ type Getter[T any] struct {
 //
 // Getter provides a type-safe way to access components by entity ID.
 //
-// See also [World.Get] and [World.Has].
+// See also [World.Get], [World.Has] and [World.Set].
 func NewGetter[T any](w *World) Getter[T] {
 	return Getter[T]{
 		id:    ComponentID[T](w),
@@ -28,12 +28,27 @@ func NewGetter[T any](w *World) Getter[T] {
 	}
 }
 
+// Get gets the component for the given entity.
+//
+// See also [World.Get].
 func (g *Getter[T]) Get(entity Entity) *T {
 	return (*T)(g.world.Get(entity, g.id))
 }
 
+// Has returns whether the entity has the component.
+//
+// See also [World.Has].
 func (g *Getter[T]) Has(entity Entity) bool {
 	return g.world.Has(entity, g.id)
+}
+
+// Set overwrites the component for the given entity.
+//
+// Panics if the entity does not have a component of that type.
+//
+// See also [World.Set].
+func (g *Getter[T]) Set(entity Entity, comp *T) *T {
+	return (*T)(g.world.Set(entity, g.id, comp))
 }
 
 // Add adds a component type to an entity.

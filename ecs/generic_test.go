@@ -2,7 +2,29 @@ package ecs
 
 import (
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
+
+func TestGenericGetter(t *testing.T) {
+	w := NewWorld()
+	get := NewGetter[testStruct0](&w)
+
+	e0 := w.NewEntity()
+
+	Add[testStruct0](&w, e0)
+	has := get.Has(e0)
+	_ = get.Get(e0)
+	assert.True(t, has)
+
+	_ = get.Set(e0, &testStruct0{100})
+	str := get.Get(e0)
+
+	assert.Equal(t, 100, int(str.val))
+
+	get2 := NewGetter[testStruct1](&w)
+	assert.Panics(t, func() { get2.Set(e0, &testStruct1{}) })
+}
 
 func TestGenericAddRemove(t *testing.T) {
 	w := NewWorld()
