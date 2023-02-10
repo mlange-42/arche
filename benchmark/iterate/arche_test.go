@@ -147,30 +147,6 @@ func runArcheQuery1kArch(b *testing.B, count int) {
 	}
 }
 
-func runArcheQueryEntity(b *testing.B, count int) {
-	b.StopTimer()
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[position](&world)
-	rotID := ecs.ComponentID[rotation](&world)
-
-	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Add(entity, posID, rotID)
-	}
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(posID, rotID)
-		b.StartTimer()
-		for query.Next() {
-			e := query.Entity()
-			_ = e
-		}
-	}
-}
-
 func runArcheWorld(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
@@ -223,15 +199,15 @@ func runArcheWorldGeneric(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkArcheIterQuery_1_000(b *testing.B) {
+func BenchmarkArcheIterQueryID_1_000(b *testing.B) {
 	runArcheQuery(b, 1000)
 }
 
-func BenchmarkArcheIterQuery_10_000(b *testing.B) {
+func BenchmarkArcheIterQueryID_10_000(b *testing.B) {
 	runArcheQuery(b, 10000)
 }
 
-func BenchmarkArcheIterQuery_100_000(b *testing.B) {
+func BenchmarkArcheIterQueryID_100_000(b *testing.B) {
 	runArcheQuery(b, 100000)
 }
 
@@ -247,51 +223,39 @@ func BenchmarkArcheIterQueryGeneric_100_000(b *testing.B) {
 	runArcheQueryGeneric(b, 100000)
 }
 
-func BenchmarkArcheIterQuery5C_1_000(b *testing.B) {
+func BenchmarkArcheIterQueryID_5C_1_000(b *testing.B) {
 	runArcheQuery5C(b, 1000)
 }
 
-func BenchmarkArcheIterQuery5C_10_000(b *testing.B) {
+func BenchmarkArcheIterQueryID_5C_10_000(b *testing.B) {
 	runArcheQuery5C(b, 10000)
 }
 
-func BenchmarkArcheIterQuery5C_100_000(b *testing.B) {
+func BenchmarkArcheIterQueryID_5C_100_000(b *testing.B) {
 	runArcheQuery5C(b, 100000)
 }
 
-func BenchmarkArcheIterQueryGeneric5C_1_000(b *testing.B) {
+func BenchmarkArcheIterQueryGeneric_5C_1_000(b *testing.B) {
 	runArcheQueryGeneric5C(b, 1000)
 }
 
-func BenchmarkArcheIterQueryGeneric5C_10_000(b *testing.B) {
+func BenchmarkArcheIterQueryGeneric_5C_10_000(b *testing.B) {
 	runArcheQueryGeneric5C(b, 10000)
 }
 
-func BenchmarkArcheIterQueryGeneric5C_100_000(b *testing.B) {
+func BenchmarkArcheIterQueryGeneric_5C_100_000(b *testing.B) {
 	runArcheQueryGeneric5C(b, 100000)
 }
 
-func BenchmarkArcheIterQueryEntity_1_000(b *testing.B) {
-	runArcheQueryEntity(b, 1000)
-}
-
-func BenchmarkArcheIterQueryEntity_10_000(b *testing.B) {
-	runArcheQueryEntity(b, 10000)
-}
-
-func BenchmarkArcheIterQueryEntity_100_000(b *testing.B) {
-	runArcheQueryEntity(b, 100000)
-}
-
-func BenchmarkArcheIterWorld_1_000(b *testing.B) {
+func BenchmarkArcheIterWorldID_1_000(b *testing.B) {
 	runArcheWorld(b, 1000)
 }
 
-func BenchmarkArcheIterWorld_10_000(b *testing.B) {
+func BenchmarkArcheIterWorldID_10_000(b *testing.B) {
 	runArcheWorld(b, 10000)
 }
 
-func BenchmarkArcheIterWorld_100_000(b *testing.B) {
+func BenchmarkArcheIterWorldID_100_000(b *testing.B) {
 	runArcheWorld(b, 100000)
 }
 
@@ -307,14 +271,14 @@ func BenchmarkArcheIterWorldGeneric_100_000(b *testing.B) {
 	runArcheWorldGeneric(b, 100000)
 }
 
-func BenchmarkArcheIter1kArch_1_000(b *testing.B) {
+func BenchmarkArcheIter1kArchID_1_000(b *testing.B) {
 	runArcheQuery1kArch(b, 1000)
 }
 
-func BenchmarkArcheIter1kArch_10_000(b *testing.B) {
+func BenchmarkArcheIter1kArchID_10_000(b *testing.B) {
 	runArcheQuery1kArch(b, 10000)
 }
 
-func BenchmarkArcheIter1kArch_100_000(b *testing.B) {
+func BenchmarkArcheIter1kArchID_100_000(b *testing.B) {
 	runArcheQuery1kArch(b, 100000)
 }

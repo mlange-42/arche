@@ -11,8 +11,6 @@
 [Department for Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
 [Helmholtz Centre for Environmental Research](https://www.ufz.de).
 
-:warning: This project is in an early stage of development! :warning:
-
 ## Installations
 
 ```shell
@@ -22,11 +20,11 @@ go get github.com/mlange-42/arche
 ## Features
 
 * Minimal API. See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
-* Very fast iteration and component access via `Query` (benchmarks for comparison in progress).
+* Fast iteration and component access via queries (≈2.5ns iterate + get).
 * Fast random access for components of arbitrary entities. Useful for hierarchies.
 * No systems. Use your own structure.
 * Not thread-safe. On purpose.
-* No dependencies (except for unit tests).
+* No dependencies. Except for unit tests (100% coverage).
 
 ## Usage example
 
