@@ -7,6 +7,7 @@ import (
 // Query is an iterator to iterate entities.
 //
 // Create queries through the [World] using [World.Query].
+// See also the generic variants [Query1], [Query2], [Query3], ...
 //
 // # Example:
 //

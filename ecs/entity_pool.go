@@ -16,7 +16,7 @@ func newEntityPool(capacityIncrement int) entityPool {
 // Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
 type entityPool struct {
 	entities          []Entity
-	next              ID
+	next              eid
 	available         uint32
 	capacityIncrement int
 }
@@ -24,7 +24,7 @@ type entityPool struct {
 // Get returns a fresh or recycled entity
 func (p *entityPool) Get() Entity {
 	if p.available == 0 {
-		e := newEntity(len(p.entities))
+		e := newEntity(eid(len(p.entities)))
 		if len(p.entities) == cap(p.entities) {
 			old := p.entities
 			p.entities = make([]Entity, len(p.entities), len(p.entities)+p.capacityIncrement)

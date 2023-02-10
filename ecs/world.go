@@ -5,12 +5,6 @@ import (
 	"unsafe"
 )
 
-// ComponentID returns the ID for a component type. Registers the type if it is not already registered.
-func ComponentID[T any](w *World) ID {
-	tp := reflect.TypeOf((*T)(nil)).Elem()
-	return w.componentID(tp)
-}
-
 // NewWorld creates a new [World]
 func NewWorld() World {
 	return FromConfig(NewConfig())
@@ -88,10 +82,29 @@ func (w *World) RemEntity(entity Entity) {
 	w.entities[entity.id].arch = nil
 }
 
+// Query creates a [Query] iterator for the given components.
+//
+// Locks the world to prevent changes to component compositions.
+//
+// See also the generic variants [Query1], [Query2], [Query3], ...
+func (w *World) Query(comps ...ID) Query {
+	mask := newMask(comps...)
+	lock := w.bitPool.Get()
+	w.locks.Set(ID(lock), true)
+	return newQuery(w, mask, lock)
+}
+
+// Alive reports whether an entity is still alive.
+func (w *World) Alive(entity Entity) bool {
+	return w.entityPool.Alive(entity)
+}
+
 // Get returns a pointer th the given component of an [Entity].
 //
 // Returns `nil` if the entity has no such component.
 // Panics when called for an already removed entity.
+//
+// See also [Getter]/[NewGetter].
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
 	arch := index.arch
@@ -106,6 +119,8 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 // Has returns whether an [Entity] has a given component.
 //
 // Panics when called for an already removed entity.
+//
+// See also [Getter]/[NewGetter].
 func (w *World) Has(entity Entity, comp ID) bool {
 	index := w.entities[entity.id]
 	return index.arch.HasComponent(comp)
@@ -115,6 +130,8 @@ func (w *World) Has(entity Entity, comp ID) bool {
 //
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
+//
+// See also the generic variants [Add], [Add2], [Add3], ...
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, []ID{})
 }
@@ -128,6 +145,8 @@ func (w *World) Add(entity Entity, comps ...ID) {
 //
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
+//
+// See also the generic variants [Assign], [Assign2], [Assign3], ...
 func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	w.Exchange(entity, []ID{id}, []ID{})
 	return w.copyTo(entity, id, comp)
@@ -141,6 +160,8 @@ func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 //
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
+//
+// See also the generic variants [Assign], [Assign2], [Assign3], ...
 func (w *World) AssignN(entity Entity, comps ...Component) {
 	ids := make([]ID, len(comps))
 	for i, c := range comps {
@@ -157,6 +178,8 @@ func (w *World) AssignN(entity Entity, comps ...Component) {
 // Panics when called on a locked world or for an already removed entity.
 //
 // Do not use during [Query] iteration!
+//
+// See also the generic variants [Remove], [Remove2], [Remove3], ...
 func (w *World) Remove(entity Entity, comps ...ID) {
 	w.Exchange(entity, []ID{}, comps)
 }
@@ -220,6 +243,11 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 		w.entities[swapEntity.id].index = index.index
 	}
 	w.entities[entity.id] = entityIndex{arch, newIndex}
+}
+
+// IsLocked returns whether the world is locked by any queries.
+func (w *World) IsLocked() bool {
+	return w.locks != 0
 }
 
 func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
@@ -295,11 +323,6 @@ func (w *World) createArchetype(mask bitMask) *archetype {
 	return arch
 }
 
-// Alive reports whether an entity is still alive.
-func (w *World) Alive(entity Entity) bool {
-	return w.entityPool.Alive(entity)
-}
-
 // componentID returns the ID for a component type, and registers it if not already registered.
 func (w *World) componentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
@@ -319,16 +342,6 @@ func (w *World) nextArchetype(mask bitMask, index int) (int, archetypeIter, bool
 	return len, archetypeIter{}, false
 }
 
-// Query creates a [Query] iterator for the given components.
-//
-// Locks the world to prevent changes to component compositions.
-func (w *World) Query(comps ...ID) Query {
-	mask := newMask(comps...)
-	lock := w.bitPool.Get()
-	w.locks.Set(ID(lock), true)
-	return newQuery(w, mask, lock)
-}
-
 // closeQuery closes a query and unlocks the world
 func (w *World) closeQuery(query *Query) {
 	l := query.lockBit
@@ -337,11 +350,6 @@ func (w *World) closeQuery(query *Query) {
 	}
 	w.locks.Set(ID(l), false)
 	w.bitPool.Recycle(l)
-}
-
-// IsLocked returns whether the world is locked by any queries.
-func (w *World) IsLocked() bool {
-	return w.locks != 0
 }
 
 func (w *World) checkLocked() {

@@ -11,8 +11,6 @@
 [Department for Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
 [Helmholtz Centre for Environmental Research](https://www.ufz.de).
 
-:warning: This project is in an early stage of development! :warning:
-
 ## Installations
 
 ```shell
@@ -22,11 +20,11 @@ go get github.com/mlange-42/arche
 ## Features
 
 * Minimal API. See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
-* Very fast iteration and component access via `Query` (benchmarks for comparison in progress).
+* Fast iteration and component access via queries (≈2.5ns iterate + get).
 * Fast random access for components of arbitrary entities. Useful for hierarchies.
 * No systems. Use your own structure.
 * Not thread-safe. On purpose.
-* No dependencies (except for unit tests).
+* No dependencies. Except for unit tests (100% coverage).
 
 ## Usage example
 
@@ -60,22 +58,12 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
-	// Get component IDs.
-	// Registers component type if not already registered.
-	positionID := ecs.ComponentID[Position](&world)
-	velocityID := ecs.ComponentID[Velocity](&world)
-
 	// Create entities
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity.
 		entity := world.NewEntity()
 		// Add components to it.
-		world.Add(entity, positionID, velocityID)
-
-		// Component access through the World.
-		// See below for faster access in queries.
-		pos := (*Position)(world.Get(entity, positionID))
-		vel := (*Velocity)(world.Get(entity, velocityID))
+		pos, vel := ecs.Add2[Position, Velocity](&world, entity)
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
@@ -88,15 +76,13 @@ func main() {
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query.
-		query := world.Query(positionID, velocityID)
+		// Generic queries support up to 8 components.
+		// For more components, use World.Query()
+		query := ecs.Query2[Position, Velocity](&world)
 		// Iterate it
 		for query.Next() {
 			// Component access through a Query.
-			// About 20-30% faster than access through the World.
-			// Can also fetch components not in the query.
-			pos := (*Position)(query.Get(positionID))
-			vel := (*Velocity)(query.Get(velocityID))
-
+			pos, vel := query.GetAll()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y
