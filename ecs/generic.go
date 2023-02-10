@@ -8,21 +8,32 @@ func ComponentID[T any](w *World) ID {
 	return w.componentID(tp)
 }
 
-// Get gets a component for an entity. THIS IS SLOW!!!
+// Getter provides a type-safe way to access components by entity ID.
 //
-// Using [World.Get] is about 5 times faster,
-// and using queries in about 10 times faster.
-func Get[A any](w *World, entity Entity) *A {
-	id := ComponentID[A](w)
-	return (*A)(w.Get(entity, id))
+// Create one with [NewGetter].
+type Getter[T any] struct {
+	id    ID
+	world *World
 }
 
-// Has returns whether a component attached to an entity. THIS IS SLOW!!!
+// NewGetter creates a new [Getter] for a component type.
 //
-// Using [World.Has] is more than 5 times faster.
-func Has[A any](w *World, entity Entity) bool {
-	id := ComponentID[A](w)
-	return w.Has(entity, id)
+// Getter provides a type-safe way to access components by entity ID.
+//
+// See also [World.Get] and [World.Has].
+func NewGetter[T any](w *World) Getter[T] {
+	return Getter[T]{
+		id:    ComponentID[T](w),
+		world: w,
+	}
+}
+
+func (g *Getter[T]) Get(entity Entity) *T {
+	return (*T)(g.world.Get(entity, g.id))
+}
+
+func (g *Getter[T]) Has(entity Entity) bool {
+	return g.world.Has(entity, g.id)
 }
 
 // Add adds a component type to an entity.

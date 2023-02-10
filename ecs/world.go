@@ -104,7 +104,7 @@ func (w *World) Alive(entity Entity) bool {
 // Returns `nil` if the entity has no such component.
 // Panics when called for an already removed entity.
 //
-// See also the generic variant [Get].
+// See also [Getter]/[NewGetter].
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
 	arch := index.arch
@@ -120,7 +120,7 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 //
 // Panics when called for an already removed entity.
 //
-// See also the generic variant [Has].
+// See also [Getter]/[NewGetter].
 func (w *World) Has(entity Entity, comp ID) bool {
 	index := w.entities[entity.id]
 	return index.arch.HasComponent(comp)

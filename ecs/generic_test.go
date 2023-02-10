@@ -6,12 +6,13 @@ import (
 
 func TestGenericAddRemove(t *testing.T) {
 	w := NewWorld()
+	get := NewGetter[testStruct0](&w)
 
 	e0 := w.NewEntity()
 
 	Add[testStruct0](&w, e0)
-	_ = Has[testStruct0](&w, e0)
-	_ = Get[testStruct0](&w, e0)
+	_ = get.Has(e0)
+	_ = get.Get(e0)
 	Remove[testStruct0](&w, e0)
 
 	Add2[testStruct0, testStruct1](&w, e0)

@@ -30,6 +30,29 @@ func runArcheQuery(b *testing.B, count int) {
 	}
 }
 
+func runArcheQueryGeneric(b *testing.B, count int) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[position](&world)
+	rotID := ecs.ComponentID[rotation](&world)
+
+	for i := 0; i < count; i++ {
+		entity := world.NewEntity()
+		world.Add(entity, posID, rotID)
+	}
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		query := ecs.Query2[position, rotation](&world)
+		b.StartTimer()
+		for query.Next() {
+			pos := query.Get1()
+			_ = pos
+		}
+	}
+}
 func runArcheQuery5C(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
@@ -57,30 +80,6 @@ func runArcheQuery5C(b *testing.B, count int) {
 			t4 := (*testStruct0)(query.Get(id3))
 			t5 := (*testStruct0)(query.Get(id4))
 			_, _, _, _, _ = t1, t2, t3, t4, t5
-		}
-	}
-}
-
-func runArcheQueryGeneric(b *testing.B, count int) {
-	b.StopTimer()
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[position](&world)
-	rotID := ecs.ComponentID[rotation](&world)
-
-	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Add(entity, posID, rotID)
-	}
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := ecs.Query2[position, rotation](&world)
-		b.StartTimer()
-		for query.Next() {
-			pos := query.Get1()
-			_ = pos
 		}
 	}
 }
@@ -204,6 +203,8 @@ func runArcheWorldGeneric(b *testing.B, count int) {
 	posID := ecs.ComponentID[position](&world)
 	rotID := ecs.ComponentID[rotation](&world)
 
+	get := ecs.NewGetter[position](&world)
+
 	for i := 0; i < count; i++ {
 		entity := world.NewEntity()
 		world.Add(entity, posID, rotID)
@@ -216,7 +217,7 @@ func runArcheWorldGeneric(b *testing.B, count int) {
 		b.StartTimer()
 		for query.Next() {
 			entity := query.Entity()
-			pos := ecs.Get[position](&world, entity)
+			pos := get.Get(entity)
 			_ = pos
 		}
 	}
@@ -234,18 +235,6 @@ func BenchmarkArcheIterQuery_100_000(b *testing.B) {
 	runArcheQuery(b, 100000)
 }
 
-func BenchmarkArcheIterQuery5C_1_000(b *testing.B) {
-	runArcheQuery5C(b, 1000)
-}
-
-func BenchmarkArcheIterQuery5C_10_000(b *testing.B) {
-	runArcheQuery5C(b, 10000)
-}
-
-func BenchmarkArcheIterQuery5C_100_000(b *testing.B) {
-	runArcheQuery5C(b, 100000)
-}
-
 func BenchmarkArcheIterQueryGeneric_1_000(b *testing.B) {
 	runArcheQueryGeneric(b, 1000)
 }
@@ -256,6 +245,18 @@ func BenchmarkArcheIterQueryGeneric_10_000(b *testing.B) {
 
 func BenchmarkArcheIterQueryGeneric_100_000(b *testing.B) {
 	runArcheQueryGeneric(b, 100000)
+}
+
+func BenchmarkArcheIterQuery5C_1_000(b *testing.B) {
+	runArcheQuery5C(b, 1000)
+}
+
+func BenchmarkArcheIterQuery5C_10_000(b *testing.B) {
+	runArcheQuery5C(b, 10000)
+}
+
+func BenchmarkArcheIterQuery5C_100_000(b *testing.B) {
+	runArcheQuery5C(b, 100000)
 }
 
 func BenchmarkArcheIterQueryGeneric5C_1_000(b *testing.B) {
