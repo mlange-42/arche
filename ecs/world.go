@@ -104,7 +104,7 @@ func (w *World) Alive(entity Entity) bool {
 // Returns `nil` if the entity has no such component.
 // Panics when called for an already removed entity.
 //
-// See also [Getter.Get] for a generic variant.
+// See also [Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
 	arch := index.arch
@@ -120,7 +120,7 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 //
 // Panics when called for an already removed entity.
 //
-// See also [Getter.Has] for a generic variant.
+// See also [Map.Has] for a generic variant.
 func (w *World) Has(entity Entity, comp ID) bool {
 	index := w.entities[entity.id]
 	return index.arch.HasComponent(comp)
@@ -163,7 +163,7 @@ func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 //
 // Panics if the entity does not have a component of that type.
 //
-// See also [Getter.Set] for a generic variant.
+// See also [Map.Set] for a generic variant.
 func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	return w.copyTo(entity, id, comp)
 }

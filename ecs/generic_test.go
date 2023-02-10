@@ -6,9 +6,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGenericGetter(t *testing.T) {
+func TestGenericMap(t *testing.T) {
 	w := NewWorld()
-	get := NewGetter[testStruct0](&w)
+	get := NewMap[testStruct0](&w)
 
 	e0 := w.NewEntity()
 
@@ -22,13 +22,13 @@ func TestGenericGetter(t *testing.T) {
 
 	assert.Equal(t, 100, int(str.val))
 
-	get2 := NewGetter[testStruct1](&w)
+	get2 := NewMap[testStruct1](&w)
 	assert.Panics(t, func() { get2.Set(e0, &testStruct1{}) })
 }
 
 func TestGenericAddRemove(t *testing.T) {
 	w := NewWorld()
-	get := NewGetter[testStruct0](&w)
+	get := NewMap[testStruct0](&w)
 
 	e0 := w.NewEntity()
 

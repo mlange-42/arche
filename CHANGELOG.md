@@ -4,9 +4,10 @@
 
 ### Features
 
-* Generic queries, for type safety and ergonomics (#47)
-* Generic add, assign and remove, for type safety and ergonomics (#47)
-* Generic get and has, for ergonomics but slow (#47)
+* Added a layer of generic access as alternative for using component IDs, for type safety and ergonomics (#47, #48)
+  * Generic queries like `Query1[T]`, `Query2[T, U]`, ... (#47)
+  * Generic add, assign and remove (`Add[T]()`, `Add2[T, U](), ...`) (#47)
+  * Generic get, has, and set through component mapper `Map[T]` (#47)
 
 ### Other
 
