@@ -35,7 +35,7 @@ jobs:
         run: go get .
       - name: Test
         run: |
-          go test -v ./... -covermode=count -coverprofile="coverage.out"
+          go test -v ./internal/base ./... -covermode=count -coverprofile="coverage.out"
           go tool cover -func="coverage.out"
 
   lint:
@@ -57,6 +57,6 @@ jobs:
             exit 1
           fi
       - name: Lint with vet
-        run: go vet ./...
+        run: go vet ./internal/base ./...
       - name: Lint with staticcheck
-        run: staticcheck ./...
+        run: staticcheck ./internal/base ./...

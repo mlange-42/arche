@@ -9,8 +9,14 @@ type Entity struct {
 	gen uint16
 }
 
+// newEntity creates a new Entity.
 func newEntity(id eid) Entity {
 	return Entity{id, 0}
+}
+
+// newEntityGen creates a new Entity with a given generation.
+func newEntityGen(id eid, gen uint16) Entity {
+	return Entity{id, gen}
 }
 
 // IsZero returns whether this entity is the reserved zero entity.
@@ -18,6 +24,7 @@ func (e Entity) IsZero() bool {
 	return e.id == 0
 }
 
+// entityIndex indicates where an entity is currently stored
 type entityIndex struct {
 	arch  *archetype
 	index uint32

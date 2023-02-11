@@ -12,33 +12,33 @@ import (
 func TestWorldEntites(t *testing.T) {
 	w := NewWorld()
 
-	assert.Equal(t, Entity{1, 0}, w.NewEntity())
-	assert.Equal(t, Entity{2, 0}, w.NewEntity())
-	assert.Equal(t, Entity{3, 0}, w.NewEntity())
+	assert.Equal(t, newEntityGen(1, 0), w.NewEntity())
+	assert.Equal(t, newEntityGen(2, 0), w.NewEntity())
+	assert.Equal(t, newEntityGen(3, 0), w.NewEntity())
 
 	assert.Equal(t, 0, int(w.entities[0].index))
 	assert.Equal(t, 0, int(w.entities[1].index))
 	assert.Equal(t, 1, int(w.entities[2].index))
 	assert.Equal(t, 2, int(w.entities[3].index))
-	w.RemEntity(Entity{2, 0})
-	assert.False(t, w.Alive(Entity{2, 0}))
+	w.RemEntity(newEntityGen(2, 0))
+	assert.False(t, w.Alive(newEntityGen(2, 0)))
 
 	assert.Equal(t, 0, int(w.entities[1].index))
 	assert.Equal(t, 1, int(w.entities[3].index))
 
-	assert.Equal(t, Entity{2, 1}, w.NewEntity())
-	assert.False(t, w.Alive(Entity{2, 0}))
-	assert.True(t, w.Alive(Entity{2, 1}))
+	assert.Equal(t, newEntityGen(2, 1), w.NewEntity())
+	assert.False(t, w.Alive(newEntityGen(2, 0)))
+	assert.True(t, w.Alive(newEntityGen(2, 1)))
 
 	assert.Equal(t, 2, int(w.entities[2].index))
 
-	w.RemEntity(Entity{3, 0})
-	w.RemEntity(Entity{2, 1})
-	w.RemEntity(Entity{1, 0})
+	w.RemEntity(newEntityGen(3, 0))
+	w.RemEntity(newEntityGen(2, 1))
+	w.RemEntity(newEntityGen(1, 0))
 
-	assert.Panics(t, func() { w.RemEntity(Entity{3, 0}) })
-	assert.Panics(t, func() { w.RemEntity(Entity{2, 1}) })
-	assert.Panics(t, func() { w.RemEntity(Entity{1, 0}) })
+	assert.Panics(t, func() { w.RemEntity(newEntityGen(3, 0)) })
+	assert.Panics(t, func() { w.RemEntity(newEntityGen(2, 1)) })
+	assert.Panics(t, func() { w.RemEntity(newEntityGen(1, 0)) })
 }
 
 func TestWorldComponents(t *testing.T) {
@@ -62,10 +62,10 @@ func TestWorldComponents(t *testing.T) {
 
 	w.Remove(e2, posID)
 
-	maskNone := base.NewMask()
-	maskPos := base.NewMask(posID)
-	maskRot := base.NewMask(rotID)
-	maskPosRot := base.NewMask(posID, rotID)
+	maskNone := base.NewBitMask()
+	maskPos := base.NewBitMask(posID)
+	maskRot := base.NewBitMask(rotID)
+	maskPosRot := base.NewBitMask(posID, rotID)
 
 	archNone, ok := w.findArchetype(maskNone)
 	assert.True(t, ok)
@@ -98,8 +98,8 @@ func TestWorldComponents(t *testing.T) {
 	w.Remove(e0)
 
 	w.RemEntity(e0)
-	assert.Panics(t, func() { w.Has(Entity{1, 0}, posID) })
-	assert.Panics(t, func() { w.Get(Entity{1, 0}, posID) })
+	assert.Panics(t, func() { w.Has(newEntityGen(1, 0), posID) })
+	assert.Panics(t, func() { w.Get(newEntityGen(1, 0), posID) })
 }
 
 func TestWorldLabels(t *testing.T) {
@@ -333,7 +333,7 @@ func TestArchetypeGraph(t *testing.T) {
 	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{})
 	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{})
 
-	assert.Equal(t, []ID{0, 1, 2}, arch012.ids)
+	assert.Equal(t, []ID{0, 1, 2}, arch012.Ids)
 
 	archEmpty3 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID})
 	assert.Equal(t, archEmpty, archEmpty3)
@@ -390,13 +390,11 @@ func Test1000Archetypes(t *testing.T) {
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
-	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
+	printTypeSizeName[base.PagedArr32[archetype]]("PagedArr32")
 	printTypeSize[archetype]()
-	printTypeSize[storage]()
+	printTypeSize[base.Storage]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
-	printTypeSizeName[Q1[testStruct0]]("Q1")
-	printTypeSizeName[Q8[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4, testStruct5, testStruct6, testStruct7]]("Q8")
 }
 
 func printTypeSize[T any]() {

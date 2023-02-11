@@ -1,29 +1,31 @@
 package ecs
 
 import (
+	"internal/base"
 	"reflect"
 	"unsafe"
 )
 
 // archetype represents an ECS archetype
 type archetype struct {
-	mask bitMask
-	ids  []ID
+	Mask base.BitMask
+	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
 	indices    [MaskTotalBits]uint8
-	entities   storage
-	components []storage
+	entities   base.Storage
+	components []base.Storage
 	toAdd      map[ID]*archetype
 	toRemove   map[ID]*archetype
 }
 
 var entityType = reflect.TypeOf(Entity{})
 
-func (a *archetype) init(capacityIncrement int, components ...componentType) {
-	var mask bitMask
-	a.ids = make([]ID, len(components))
-	comps := make([]storage, len(components))
+// Init initializes an archetype
+func (a *archetype) Init(capacityIncrement int, components ...base.ComponentType) {
+	var mask base.BitMask
+	a.Ids = make([]ID, len(components))
+	comps := make([]base.Storage, len(components))
 
 	prev := -1
 	for i, c := range components {
@@ -33,18 +35,18 @@ func (a *archetype) init(capacityIncrement int, components ...componentType) {
 		prev = int(c.ID)
 
 		mask.Set(c.ID, true)
-		a.ids[i] = c.ID
+		a.Ids[i] = c.ID
 		a.indices[c.ID] = uint8(i)
-		comps[i] = storage{}
-		comps[i].init(c.Type, capacityIncrement)
+		comps[i] = base.Storage{}
+		comps[i].Init(c.Type, capacityIncrement)
 	}
 
-	a.mask = mask
+	a.Mask = mask
 	a.components = comps
-	a.entities = storage{}
+	a.entities = base.Storage{}
 	a.toAdd = map[ID]*archetype{}
 	a.toRemove = map[ID]*archetype{}
-	a.entities.init(entityType, capacityIncrement)
+	a.entities.Init(entityType, capacityIncrement)
 }
 
 // GetEntity returns the entity at the given index
@@ -54,7 +56,7 @@ func (a *archetype) GetEntity(index int) Entity {
 
 // Get returns the component with the given ID at the given index
 func (a *archetype) Get(index int, id ID) unsafe.Pointer {
-	if !a.mask.Get(id) {
+	if !a.Mask.Get(id) {
 		return nil
 	}
 	return a.components[a.indices[id]].Get(uint32(index))
@@ -70,7 +72,7 @@ func (a *archetype) GetUnsafe(index int, id ID) unsafe.Pointer {
 
 // Add adds an entity with components to the archetype
 func (a *archetype) Add(entity Entity, components ...Component) uint32 {
-	if len(components) != len(a.ids) {
+	if len(components) != len(a.Ids) {
 		panic("Invalid number of components")
 	}
 	idx := a.entities.Add(&entity)
@@ -81,8 +83,8 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 }
 
 // AddPointer adds an entity with components to the archetype, using pointers
-func (a *archetype) AddPointer(entity Entity, components ...componentPointer) uint32 {
-	if len(components) != len(a.ids) {
+func (a *archetype) AddPointer(entity Entity, components ...base.ComponentPointer) uint32 {
+	if len(components) != len(a.Ids) {
 		panic("Invalid number of components")
 	}
 	idx := a.entities.Add(&entity)
@@ -108,12 +110,12 @@ func (a *archetype) Remove(index int) bool {
 
 // Components returns the component IDs for this archetype
 func (a *archetype) Components() []ID {
-	return a.ids
+	return a.Ids
 }
 
 // HasComponent returns whether the archetype contains the given component ID
 func (a *archetype) HasComponent(id ID) bool {
-	return a.mask.Get(id)
+	return a.Mask.Get(id)
 }
 
 // Len reports the number of entities in the archetype
@@ -123,23 +125,27 @@ func (a *archetype) Len() uint32 {
 
 // Set overwrites a component with the data behind the given pointer
 func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
-	return a.components[a.indices[id]].set(index, comp)
+	return a.components[a.indices[id]].Set(index, comp)
 }
 
+// GetTransitionAdd returns the archetype resulting from adding a component
 func (a *archetype) GetTransitionAdd(id ID) (*archetype, bool) {
 	p, ok := a.toAdd[id]
 	return p, ok
 }
 
+// GetTransitionRemove returns the archetype resulting from removing a component
 func (a *archetype) GetTransitionRemove(id ID) (*archetype, bool) {
 	p, ok := a.toRemove[id]
 	return p, ok
 }
 
+// SetTransitionAdd sets the archetype resulting from adding a component
 func (a *archetype) SetTransitionAdd(id ID, to *archetype) {
 	a.toAdd[id] = to
 }
 
+// SetTransitionRemove sets the archetype resulting from removing a component
 func (a *archetype) SetTransitionRemove(id ID, to *archetype) {
 	a.toRemove[id] = to
 }

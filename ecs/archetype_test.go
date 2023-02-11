@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"internal/base"
 	"reflect"
 	"testing"
 
@@ -8,13 +9,13 @@ import (
 )
 
 func TestArchetype(t *testing.T) {
-	comps := []componentType{
+	comps := []base.ComponentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
 	arch := archetype{}
-	arch.init(32, comps...)
+	arch.Init(32, comps...)
 
 	arch.Add(
 		newEntity(0),
@@ -73,36 +74,36 @@ func TestArchetype(t *testing.T) {
 }
 
 func TestNewArchetype(t *testing.T) {
-	comps := []componentType{
+	comps := []base.ComponentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 	arch := archetype{}
-	arch.init(32, comps...)
+	arch.Init(32, comps...)
 
-	comps = []componentType{
+	comps = []base.ComponentType{
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 		{ID: 0, Type: reflect.TypeOf(position{})},
 	}
 	assert.Panics(t, func() {
 		arch := archetype{}
-		arch.init(32, comps...)
+		arch.Init(32, comps...)
 	})
 }
 
 func BenchmarkArchetypeAccess_1000(b *testing.B) {
 	b.StopTimer()
-	comps := []componentType{
-		{ID: 0, Type: reflect.TypeOf(testStruct{})},
+	comps := []base.ComponentType{
+		{ID: 0, Type: reflect.TypeOf(testStruct0{})},
 	}
 
 	arch := archetype{}
-	arch.init(32, comps...)
+	arch.Init(32, comps...)
 
 	for i := 0; i < 1000; i++ {
 		arch.Add(
 			newEntity(eid(i)),
-			Component{ID: 0, Component: &testStruct{}},
+			Component{ID: 0, Component: &testStruct0{}},
 		)
 	}
 	b.StartTimer()
@@ -111,7 +112,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 		len := int(arch.Len())
 		id := ID(0)
 		for j := 0; j < len; j++ {
-			pos := (*testStruct)(arch.Get(i, id))
+			pos := (*testStruct0)(arch.Get(i, id))
 			_ = pos
 		}
 	}
@@ -119,17 +120,17 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 
 func BenchmarkArchetypeAccessUnsafe_1000(b *testing.B) {
 	b.StopTimer()
-	comps := []componentType{
-		{ID: 0, Type: reflect.TypeOf(testStruct{})},
+	comps := []base.ComponentType{
+		{ID: 0, Type: reflect.TypeOf(testStruct0{})},
 	}
 
 	arch := archetype{}
-	arch.init(32, comps...)
+	arch.Init(32, comps...)
 
 	for i := 0; i < 1000; i++ {
 		arch.Add(
 			newEntity(eid(i)),
-			Component{ID: 0, Component: &testStruct{}},
+			Component{ID: 0, Component: &testStruct0{}},
 		)
 	}
 	b.StartTimer()
@@ -138,7 +139,7 @@ func BenchmarkArchetypeAccessUnsafe_1000(b *testing.B) {
 		len := int(arch.Len())
 		id := ID(0)
 		for j := 0; j < len; j++ {
-			pos := (*testStruct)(arch.GetUnsafe(i, id))
+			pos := (*testStruct0)(arch.GetUnsafe(i, id))
 			_ = pos
 		}
 	}

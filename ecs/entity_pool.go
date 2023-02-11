@@ -1,6 +1,8 @@
 package ecs
 
-import "math"
+import (
+	"math"
+)
 
 // newEntityPool creates a new, initialized Entity pool
 func newEntityPool(capacityIncrement int) entityPool {

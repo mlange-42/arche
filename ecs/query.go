@@ -3,6 +3,8 @@ package ecs
 import (
 	"internal/base"
 	"unsafe"
+
+	f "github.com/mlange-42/arche/filter"
 )
 
 // Query is a simple iterator to iterate entities.
@@ -19,8 +21,8 @@ import (
 //	}
 type Query struct {
 	queryIter
-	mask    bitMask
-	exclude bitMask
+	Mask    bitMask
+	Exclude bitMask
 }
 
 // newQuery creates a new Query
@@ -31,8 +33,8 @@ func newQuery(world *World, mask, exclude bitMask, lockBit uint8) Query {
 			index:   -1,
 			lockBit: lockBit,
 		},
-		mask:    mask,
-		exclude: exclude,
+		Mask:    mask,
+		Exclude: exclude,
 	}
 }
 
@@ -43,7 +45,7 @@ func newQuery(world *World, mask, exclude bitMask, lockBit uint8) Query {
 //
 //	query := world.Query(idA, isB).Not(idC, isD)
 func (q Query) Not(comps ...ID) Query {
-	q.exclude = base.NewMask(comps...)
+	q.Exclude = base.NewBitMask(comps...)
 	return q
 }
 
@@ -52,7 +54,7 @@ func (q *Query) Next() bool {
 	if q.archetype.Next() {
 		return true
 	}
-	i, a, ok := q.world.nextArchetype(q.mask, q.exclude, q.index)
+	i, a, ok := q.world.nextArchetype(q.Mask, q.Exclude, q.index)
 	q.index = i
 	if ok {
 		q.archetype = a
@@ -76,17 +78,17 @@ func (q *Query) Next() bool {
 //	        Not(OneOf(idD, idE)),
 //	    }
 //	)
-//	for query.Next() {
-//	    pos := (*position)(query.Get(posID))
+//	for filter.Next() {
+//	    pos := (*position)(filter.Get(posID))
 //	    pos.X += 1.0
 //	}
 type Filter struct {
 	queryIter
-	filter filter
+	filter f.MaskFilter
 }
 
 // newFilter creates a new Filter
-func newFilter(world *World, filter filter, lockBit uint8) Filter {
+func newFilter(world *World, filter f.MaskFilter, lockBit uint8) Filter {
 	return Filter{
 		queryIter: queryIter{
 			world:   world,
