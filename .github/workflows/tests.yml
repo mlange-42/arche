@@ -35,7 +35,7 @@ jobs:
         run: go get .
       - name: Test
         run: |
-          go test -v ./... -covermode=count -coverprofile="coverage.out"
+          go test -v ./internal/base ./... -covermode=count -coverprofile="coverage.out"
           go tool cover -func="coverage.out"
 
   lint:
