@@ -28,20 +28,20 @@ func OneOf(compA base.ID, compB base.ID) Or {
 
 // And is a filter for ANDing together components
 type And struct {
-	a MaskFilter
-	b MaskFilter
+	L MaskFilter
+	R MaskFilter
 }
 
 // Or is a filter for ORing together components
 type Or struct {
-	a MaskFilter
-	b MaskFilter
+	L MaskFilter
+	R MaskFilter
 }
 
 // XOr is a filter for XORing together components
 type XOr struct {
-	a MaskFilter
-	b MaskFilter
+	L MaskFilter
+	R MaskFilter
 }
 
 // Not is a filter for excluding components
@@ -49,17 +49,17 @@ type Not Mask
 
 // Matches matches a filter against a mask
 func (f *And) Matches(mask base.BitMask) bool {
-	return f.a.Matches(mask) && f.b.Matches(mask)
+	return f.L.Matches(mask) && f.R.Matches(mask)
 }
 
 // Matches matches a filter against a mask
 func (f *Or) Matches(mask base.BitMask) bool {
-	return f.a.Matches(mask) || f.b.Matches(mask)
+	return f.L.Matches(mask) || f.R.Matches(mask)
 }
 
 // Matches matches a filter against a mask
 func (f *XOr) Matches(mask base.BitMask) bool {
-	return f.a.Matches(mask) != f.b.Matches(mask)
+	return f.L.Matches(mask) != f.R.Matches(mask)
 }
 
 // Matches matches a filter against a mask
