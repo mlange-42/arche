@@ -1,10 +1,5 @@
 package ecs
 
-// Mask is a mask for a combination of components.
-type Mask struct {
-	mask bitMask
-}
-
 // Q0 is a generic query for no components.
 //
 // Create one with [Query0]
