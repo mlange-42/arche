@@ -86,7 +86,7 @@ func (w *World) RemEntity(entity Entity) {
 //
 // Locks the world to prevent changes to component compositions.
 //
-// See also the generic variants [Query1], [Query2], [Query3], ...
+// See also the generic alternatives [Query1], [Query2], [Query3], ...
 func (w *World) Query(comps ...ID) Query {
 	mask := newMask(comps...)
 	lock := w.bitPool.Get()
@@ -98,6 +98,17 @@ func (w *World) query(mask, exclude bitMask) Query {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
 	return newQuery(w, mask, exclude, lock)
+}
+
+// Filter creates an advanced [Filter] iterator.
+//
+// Locks the world to prevent changes to component compositions.
+//
+// There is no generic alternative for filters.
+func (w *World) Filter(filter filter) Filter {
+	lock := w.bitPool.Get()
+	w.locks.Set(ID(lock), true)
+	return newFilter(w, filter, lock)
 }
 
 // Alive reports whether an entity is still alive.
@@ -357,8 +368,22 @@ func (w *World) nextArchetype(mask, exclude bitMask, index int) (int, archetypeI
 	return len, archetypeIter{}, false
 }
 
+func (w *World) nextArchetypeFilter(filter filter, index int) (int, archetypeIter, bool) {
+	len := w.archetypes.Len()
+	if index >= len {
+		panic("exceeded end of query")
+	}
+	for i := index + 1; i < len; i++ {
+		a := w.archetypes.Get(i)
+		if a.Len() > 0 && filter.Matches(Mask{a.mask}) {
+			return i, newArchetypeIter(a), true
+		}
+	}
+	return len, archetypeIter{}, false
+}
+
 // closeQuery closes a query and unlocks the world
-func (w *World) closeQuery(query *Query) {
+func (w *World) closeQuery(query *queryIter) {
 	l := query.lockBit
 	if !w.locks.Get(ID(l)) {
 		panic("unbalanced query unlock")

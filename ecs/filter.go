@@ -5,6 +5,20 @@ type Mask struct {
 	mask bitMask
 }
 
+// All matches all the given components.
+//
+// Like [And] for combining individual components.
+func All(comps ...ID) Mask {
+	return Mask{newMask(comps...)}
+}
+
+// OneOf matches any of the two components.
+//
+// Like [Or] for combining individual components.
+func OneOf(compA ID, compB ID) Or {
+	return Or{Mask{newMask(compA)}, Mask{newMask(compB)}}
+}
+
 type filter interface {
 	Matches(mask Mask) bool
 }
