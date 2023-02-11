@@ -1,4 +1,4 @@
-package ecs
+package base
 
 import (
 	"reflect"
@@ -8,12 +8,12 @@ import (
 )
 
 func TestComponentRegistry(t *testing.T) {
-	reg := newComponentRegistry()
+	reg := NewComponentRegistry()
 
 	posType := reflect.TypeOf((*position)(nil)).Elem()
 	rotType := reflect.TypeOf((*rotation)(nil)).Elem()
 
-	reg.registerComponent(posType, MaskTotalBits)
+	reg.RegisterComponent(posType, MaskTotalBits)
 
 	assert.Equal(t, ID(0), reg.ComponentID(posType))
 	assert.Equal(t, ID(1), reg.ComponentID(rotType))
@@ -23,11 +23,11 @@ func TestComponentRegistry(t *testing.T) {
 }
 
 func TestComponentRegistryOverflow(t *testing.T) {
-	reg := newComponentRegistry()
+	reg := NewComponentRegistry()
 
-	reg.registerComponent(reflect.TypeOf((*position)(nil)).Elem(), 1)
+	reg.RegisterComponent(reflect.TypeOf((*position)(nil)).Elem(), 1)
 
 	assert.Panics(t, func() {
-		reg.registerComponent(reflect.TypeOf((*rotation)(nil)).Elem(), 1)
+		reg.RegisterComponent(reflect.TypeOf((*rotation)(nil)).Elem(), 1)
 	})
 }

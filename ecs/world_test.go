@@ -390,7 +390,7 @@ func Test1000Archetypes(t *testing.T) {
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
-	printTypeSizeName[pagedArr32[base.Archetype]]("PagedArr32")
+	printTypeSizeName[base.PagedArr32[base.Archetype]]("PagedArr32")
 	printTypeSize[base.Archetype]()
 	printTypeSize[base.Storage]()
 	printTypeSize[Query]()

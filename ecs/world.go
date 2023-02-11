@@ -17,14 +17,14 @@ func NewWorld() World {
 func FromConfig(conf Config) World {
 	arch := base.Archetype{}
 	arch.Init(conf.CapacityIncrement)
-	arches := pagedArr32[base.Archetype]{}
+	arches := base.PagedArr32[base.Archetype]{}
 	arches.Add(arch)
 	return World{
 		config:     conf,
 		entities:   []base.EntityIndex{{Arch: nil, Index: 0}},
 		entityPool: base.NewEntityPool(conf.CapacityIncrement),
-		bitPool:    newBitPool(),
-		registry:   newComponentRegistry(),
+		bitPool:    base.NewBitPool(),
+		registry:   base.NewComponentRegistry(),
 		archetypes: arches,
 		locks:      bitMask(0),
 	}
@@ -34,10 +34,10 @@ func FromConfig(conf Config) World {
 type World struct {
 	config     Config
 	entities   []base.EntityIndex
-	archetypes pagedArr32[base.Archetype]
+	archetypes base.PagedArr32[base.Archetype]
 	entityPool base.EntityPool
-	bitPool    bitPool
-	registry   componentRegistry
+	bitPool    base.BitPool
+	registry   base.ComponentRegistry
 	locks      bitMask
 }
 
@@ -342,7 +342,7 @@ func (w *World) createArchetype(mask bitMask) *base.Archetype {
 	for i := 0; i < MaskTotalBits; i++ {
 		id := ID(i)
 		if mask.Get(id) {
-			types[idx] = base.ComponentType{ID: id, Type: w.registry.types[id]}
+			types[idx] = base.ComponentType{ID: id, Type: w.registry.Types[id]}
 			idx++
 		}
 	}
