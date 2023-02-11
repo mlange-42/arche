@@ -18,7 +18,7 @@ type simpleStruct struct {
 	Index int
 }
 
-func TestReflectStorageAddGet(t *testing.T) {
+func TestStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
 	s := Storage{}
 	s.Init(reflect.TypeOf(obj1), 1)
@@ -51,7 +51,7 @@ func storageAddGet(t *testing.T, s Storage) {
 	assert.Equal(t, []testStruct{{}, {1, 1001, true, false}, {}}, toSlice[testStruct](s), "Wrong extracted struct slice")
 }
 
-func TestReflectStorageRemove(t *testing.T) {
+func TestStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
 	s := Storage{}
 	s.Init(reflect.TypeOf(ref), 32)
@@ -76,7 +76,7 @@ func storageRemove(t *testing.T, s Storage) {
 	assert.Equal(t, []simpleStruct{{0}, {3}, {2}}, toSlice[simpleStruct](s), "Wrong slice after remove")
 }
 
-func TestReflectStorageDataSize(t *testing.T) {
+func TestStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
 	s := Storage{}
 	s.Init(reflect.TypeOf(ref), 1)
@@ -102,12 +102,28 @@ func TestReflectStorageDataSize(t *testing.T) {
 	assert.Equal(t, 6, int(s.cap))
 }
 
-func TestNewReflectStorage(t *testing.T) {
+func TestNewStorage(t *testing.T) {
 	s := Storage{}
 	s.Init(reflect.TypeOf(simpleStruct{}), 32)
 }
 
-func BenchmarkIterReflectStorage_1000(b *testing.B) {
+func TestStoragePointer(t *testing.T) {
+	a := Storage{}
+	a.Init(reflect.TypeOf(simpleStruct{}), 32)
+	a.Add(&simpleStruct{})
+	s := (*simpleStruct)(a.Get(0))
+	s.Index = 10
+
+	b := Storage{}
+	b.Init(reflect.TypeOf(simpleStruct{}), 32)
+
+	ptr := a.Get(0)
+	b.AddPointer(ptr)
+	s = (*simpleStruct)(b.Get(0))
+	assert.Equal(t, 10, s.Index)
+}
+
+func BenchmarkIterStorage_1000(b *testing.B) {
 	b.StopTimer()
 	ref := testStruct{}
 	s := Storage{}
@@ -161,7 +177,7 @@ func BenchmarkIterSliceInterface_1000(b *testing.B) {
 	}
 }
 
-func BenchmarkAddReflectStorage_1000(b *testing.B) {
+func BenchmarkAddStorage_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -209,7 +225,7 @@ func BenchmarkAddSliceInterface_1000(b *testing.B) {
 	}
 }
 
-func BenchmarkRemoveReflectStorage_1000(b *testing.B) {
+func BenchmarkRemoveStorage_1000(b *testing.B) {
 	ref := testStruct{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
