@@ -131,7 +131,7 @@ func TestFilter(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Filter(&filter.And{L: filter.All(rotID), R: filter.Not(filter.All(posID))})
+	q = w.Filter(&filter.AND{L: filter.All(rotID), R: filter.NOT(filter.All(posID))})
 
 	cnt = 0
 	for q.Next() {

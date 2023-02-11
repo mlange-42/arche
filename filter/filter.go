@@ -22,47 +22,67 @@ func All(comps ...base.ID) Mask {
 // OneOf matches any of the two components.
 //
 // Like [Or] for combining individual components.
-func OneOf(compA base.ID, compB base.ID) *Or {
-	return &Or{base.NewMask(compA), base.NewMask(compB)}
+func OneOf(compA base.ID, compB base.ID) *OR {
+	return &OR{base.NewMask(compA), base.NewMask(compB)}
 }
 
-// And is a filter for ANDing together components
-type And struct {
+// AND is a filter for ANDing together components
+type AND struct {
 	L MaskFilter
 	R MaskFilter
 }
 
-// Or is a filter for ORing together components
-type Or struct {
+// And constructs a pointer to a AND filter
+func And(l, r MaskFilter) *AND {
+	return &AND{L: l, R: r}
+}
+
+// OR is a filter for ORing together components
+type OR struct {
 	L MaskFilter
 	R MaskFilter
 }
 
-// XOr is a filter for XORing together components
-type XOr struct {
+// Or constructs a pointer to a OR filter
+func Or(l, r MaskFilter) *OR {
+	return &OR{L: l, R: r}
+}
+
+// XOR is a filter for XORing together components
+type XOR struct {
 	L MaskFilter
 	R MaskFilter
 }
 
-// Not is a filter for excluding components
-type Not Mask
+// XOr constructs a pointer to a XOR filter
+func XOr(l, r MaskFilter) *XOR {
+	return &XOR{L: l, R: r}
+}
+
+// NOT is a filter for excluding components
+type NOT Mask
+
+// Not constructs a NOT filter
+func Not(comps ...base.ID) NOT {
+	return NOT(base.NewMask(comps...))
+}
 
 // Matches matches a filter against a mask
-func (f *And) Matches(mask base.BitMask) bool {
+func (f *AND) Matches(mask base.BitMask) bool {
 	return f.L.Matches(mask) && f.R.Matches(mask)
 }
 
 // Matches matches a filter against a mask
-func (f *Or) Matches(mask base.BitMask) bool {
+func (f *OR) Matches(mask base.BitMask) bool {
 	return f.L.Matches(mask) || f.R.Matches(mask)
 }
 
 // Matches matches a filter against a mask
-func (f *XOr) Matches(mask base.BitMask) bool {
+func (f *XOR) Matches(mask base.BitMask) bool {
 	return f.L.Matches(mask) != f.R.Matches(mask)
 }
 
 // Matches matches a filter against a mask
-func (f Not) Matches(mask base.BitMask) bool {
+func (f NOT) Matches(mask base.BitMask) bool {
 	return !mask.ContainsAny(f.BitMask)
 }
