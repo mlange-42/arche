@@ -7,6 +7,23 @@ import (
 	f "github.com/mlange-42/arche/filter"
 )
 
+// EntityIter is the interface for iterable queries
+type EntityIter interface {
+	// Next proceeds to the next [Entity] in the Query.
+	Next() bool
+	// Has returns whether the current [Entity] has the given component
+	Has(comp ID) bool
+	// Get returns the pointer to the given component at the iterator's current [Entity]
+	Get(comp ID) unsafe.Pointer
+	// Entity returns the [Entity] at the iterator's position
+	Entity() Entity
+	// Close closes the Query and unlocks the world.
+	//
+	// Automatically called when iteration finishes.
+	// Needs to be called only if breaking out of the query iteration.
+	Close()
+}
+
 // Query is a simple iterator to iterate entities.
 //
 // Create queries through the [World] using [World.Query].
@@ -14,9 +31,9 @@ import (
 //
 // # Example:
 //
-//	query := world.Query(posID, rotID)
-//	for query.Next() {
-//	    pos := (*position)(query.Get(posID))
+//	Query := world.Query(posID, rotID)
+//	for Query.Next() {
+//	    pos := (*position)(Query.Get(posID))
 //	    pos.X += 1.0
 //	}
 type Query struct {

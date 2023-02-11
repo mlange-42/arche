@@ -3,6 +3,7 @@ package ecs
 import (
 	"testing"
 
+	"github.com/mlange-42/arche/filter"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -71,4 +72,19 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 2, cnt)
+}
+
+func TestInterface(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	rotID := ComponentID[rotation](&w)
+
+	q := w.Query(posID, rotID)
+	var q2 EntityIter = &q
+	_ = q2
+
+	f := w.Filter(filter.All(posID))
+	var f2 EntityIter = &f
+	_ = f2
 }
