@@ -1,5 +1,10 @@
 package base
 
+// MaskTotalBits is the size of Mask in bits.
+//
+// It is the maximum number of component types that may exist in any [World].
+const MaskTotalBits = 64
+
 // BitMask is a bitmask.
 type BitMask uint64
 
