@@ -15,14 +15,14 @@ func NewWorld() World {
 
 // FromConfig creates a new [World] from a [Config]
 func FromConfig(conf Config) World {
-	arch := base.Archetype{}
+	arch := archetype{}
 	arch.Init(conf.CapacityIncrement)
-	arches := base.PagedArr32[base.Archetype]{}
+	arches := base.PagedArr32[archetype]{}
 	arches.Add(arch)
 	return World{
 		config:     conf,
-		entities:   []base.EntityIndex{{Arch: nil, Index: 0}},
-		entityPool: base.NewEntityPool(conf.CapacityIncrement),
+		entities:   []entityIndex{{arch: nil, index: 0}},
+		entityPool: newEntityPool(conf.CapacityIncrement),
 		bitPool:    base.NewBitPool(),
 		registry:   base.NewComponentRegistry(),
 		archetypes: arches,
@@ -33,9 +33,9 @@ func FromConfig(conf Config) World {
 // World is the central type holding [Entity] and component data.
 type World struct {
 	config     Config
-	entities   []base.EntityIndex
-	archetypes base.PagedArr32[base.Archetype]
-	entityPool base.EntityPool
+	entities   []entityIndex
+	archetypes base.PagedArr32[archetype]
+	entityPool entityPool
 	bitPool    base.BitPool
 	registry   base.ComponentRegistry
 	locks      bitMask
@@ -51,15 +51,15 @@ func (w *World) NewEntity() Entity {
 	entity := w.entityPool.Get()
 	idx := w.archetypes.Get(0).Add(entity)
 	len := len(w.entities)
-	if int(entity.ID) == len {
+	if int(entity.id) == len {
 		if len == cap(w.entities) {
 			old := w.entities
-			w.entities = make([]base.EntityIndex, len, len+w.config.CapacityIncrement)
+			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
 			copy(w.entities, old)
 		}
-		w.entities = append(w.entities, base.EntityIndex{Arch: w.archetypes.Get(0), Index: idx})
+		w.entities = append(w.entities, entityIndex{arch: w.archetypes.Get(0), index: idx})
 	} else {
-		w.entities[entity.ID] = base.EntityIndex{Arch: w.archetypes.Get(0), Index: idx}
+		w.entities[entity.id] = entityIndex{arch: w.archetypes.Get(0), index: idx}
 	}
 	return entity
 }
@@ -71,18 +71,18 @@ func (w *World) NewEntity() Entity {
 func (w *World) RemEntity(entity Entity) {
 	w.checkLocked()
 
-	index := w.entities[entity.ID]
-	oldArch := index.Arch
-	swapped := oldArch.Remove(int(index.Index))
+	index := w.entities[entity.id]
+	oldArch := index.arch
+	swapped := oldArch.Remove(int(index.index))
 
 	w.entityPool.Recycle(entity)
 
 	if swapped {
-		swapEntity := oldArch.GetEntity(int(index.Index))
-		w.entities[swapEntity.ID].Index = index.Index
+		swapEntity := oldArch.GetEntity(int(index.index))
+		w.entities[swapEntity.id].index = index.index
 	}
 
-	w.entities[entity.ID].Arch = nil
+	w.entities[entity.id].arch = nil
 }
 
 // Query creates a [Query] iterator for the given components.
@@ -126,8 +126,8 @@ func (w *World) Alive(entity Entity) bool {
 //
 // See also [Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
-	index := w.entities[entity.ID]
-	return index.Arch.Get(int(index.Index), comp)
+	index := w.entities[entity.id]
+	return index.arch.Get(int(index.index), comp)
 }
 
 // Has returns whether an [Entity] has a given component.
@@ -136,7 +136,7 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 //
 // See also [Map.Has] for a generic variant.
 func (w *World) Has(entity Entity, comp ID) bool {
-	return w.entities[entity.ID].Arch.HasComponent(comp)
+	return w.entities[entity.id].arch.HasComponent(comp)
 }
 
 // Add adds components to an [Entity].
@@ -223,8 +223,8 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	if len(add) == 0 && len(rem) == 0 {
 		return
 	}
-	index := w.entities[entity.ID]
-	oldArch := index.Arch
+	index := w.entities[entity.id]
+	oldArch := index.arch
 	mask := oldArch.Mask
 	for _, comp := range add {
 		if mask.Get(comp) {
@@ -257,7 +257,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 
 	allComps := make([]base.ComponentPointer, 0, len(keepIDs)+len(addIDs))
 	for _, id := range keepIDs {
-		comp := oldArch.Get(int(index.Index), id)
+		comp := oldArch.Get(int(index.index), id)
 		allComps = append(allComps, base.ComponentPointer{ID: id, Pointer: comp})
 	}
 	for _, id := range addIDs {
@@ -265,13 +265,13 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
-	swapped := oldArch.Remove(int(index.Index))
+	swapped := oldArch.Remove(int(index.index))
 
 	if swapped {
-		swapEntity := oldArch.GetEntity(int(index.Index))
-		w.entities[swapEntity.ID].Index = index.Index
+		swapEntity := oldArch.GetEntity(int(index.index))
+		w.entities[swapEntity.id].index = index.index
 	}
-	w.entities[entity.ID] = base.EntityIndex{Arch: arch, Index: newIndex}
+	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
 }
 
 // IsLocked returns whether the world is locked by any queries.
@@ -283,12 +283,12 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	if !w.Has(entity, id) {
 		panic("can't copy component into entity that has no such component type")
 	}
-	index := w.entities[entity.ID]
-	arch := index.Arch
-	return arch.Set(index.Index, id, comp)
+	index := w.entities[entity.id]
+	arch := index.arch
+	return arch.Set(index.index, id, comp)
 }
 
-func (w *World) findOrCreateArchetype(start *base.Archetype, add []ID, rem []ID) *base.Archetype {
+func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *archetype {
 	curr := start
 	mask := start.Mask
 	for _, id := range rem {
@@ -316,14 +316,14 @@ func (w *World) findOrCreateArchetype(start *base.Archetype, add []ID, rem []ID)
 	return curr
 }
 
-func (w *World) findOrCreateArchetypeSlow(mask bitMask) (*base.Archetype, bool) {
+func (w *World) findOrCreateArchetypeSlow(mask bitMask) (*archetype, bool) {
 	if arch, ok := w.findArchetype(mask); ok {
 		return arch, false
 	}
 	return w.createArchetype(mask), true
 }
 
-func (w *World) findArchetype(mask bitMask) (*base.Archetype, bool) {
+func (w *World) findArchetype(mask bitMask) (*archetype, bool) {
 	length := w.archetypes.Len()
 	for i := 0; i < length; i++ {
 		arch := w.archetypes.Get(i)
@@ -334,7 +334,7 @@ func (w *World) findArchetype(mask bitMask) (*base.Archetype, bool) {
 	return nil, false
 }
 
-func (w *World) createArchetype(mask bitMask) *base.Archetype {
+func (w *World) createArchetype(mask bitMask) *archetype {
 	count := int(mask.TotalBitsSet())
 	types := make([]base.ComponentType, count)
 
@@ -346,7 +346,7 @@ func (w *World) createArchetype(mask bitMask) *base.Archetype {
 			idx++
 		}
 	}
-	w.archetypes.Add(base.Archetype{})
+	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
 	arch.Init(w.config.CapacityIncrement, types...)
 	return arch

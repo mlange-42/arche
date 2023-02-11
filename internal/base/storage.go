@@ -17,8 +17,8 @@ type Storage struct {
 	capacityIncrement uint32
 }
 
-// newStorage creates a new ReflectStorage
-func (s *Storage) init(tp reflect.Type, increment int) {
+// Init initializes a storage
+func (s *Storage) Init(tp reflect.Type, increment int) {
 	size := tp.Size()
 	align := uintptr(tp.Align())
 	size = (size + (align - 1)) / align * align
@@ -42,7 +42,7 @@ func (s *Storage) Get(index uint32) unsafe.Pointer {
 func (s *Storage) Add(value interface{}) (index uint32) {
 	s.extend()
 	s.len++
-	s.set(s.len-1, value)
+	s.Set(s.len-1, value)
 	return s.len - 1
 }
 
@@ -97,7 +97,8 @@ func (s *Storage) Remove(index uint32) bool {
 	return false
 }
 
-func (s *Storage) set(index uint32, value interface{}) unsafe.Pointer {
+// Set sets the storage at the given index
+func (s *Storage) Set(index uint32, value interface{}) unsafe.Pointer {
 	rValue := reflect.ValueOf(value)
 	dst := s.Get(index)
 	var src unsafe.Pointer

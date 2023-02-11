@@ -7,6 +7,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type position struct {
+	X int
+	Y int
+}
+
+type rotation struct {
+	Angle int
+}
+
 func TestComponentRegistry(t *testing.T) {
 	reg := NewComponentRegistry()
 

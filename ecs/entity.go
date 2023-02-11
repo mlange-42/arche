@@ -1,31 +1,31 @@
-package base
+package ecs
 
 // Entity identifier.
 // Holds an entity ID and it's generation for recycling.
 //
 // Entities should only be created via the [World], using [World.NewEntity].
 type Entity struct {
-	ID  Eid
+	id  eid
 	gen uint16
 }
 
-// NewEntity creates a new Entity.
-func NewEntity(id Eid) Entity {
+// newEntity creates a new Entity.
+func newEntity(id eid) Entity {
 	return Entity{id, 0}
 }
 
-// NewEntityGen creates a new Entity with a given generation.
-func NewEntityGen(id Eid, gen uint16) Entity {
+// newEntityGen creates a new Entity with a given generation.
+func newEntityGen(id eid, gen uint16) Entity {
 	return Entity{id, gen}
 }
 
 // IsZero returns whether this entity is the reserved zero entity.
 func (e Entity) IsZero() bool {
-	return e.ID == 0
+	return e.id == 0
 }
 
-// EntityIndex indicates where an entity is currently stored
-type EntityIndex struct {
-	Arch  *Archetype
-	Index uint32
+// entityIndex indicates where an entity is currently stored
+type entityIndex struct {
+	arch  *archetype
+	index uint32
 }

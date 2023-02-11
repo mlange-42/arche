@@ -10,12 +10,6 @@ type eid = base.Eid
 // ID is the component identifier type
 type ID = base.ID
 
-// Entity identifier.
-// Holds an entity ID and it's generation for recycling.
-//
-// Entities should only be created via the [World], using [World.NewEntity].
-type Entity = base.Entity
-
 // bitMask is a bitmask.
 type bitMask = base.BitMask
 

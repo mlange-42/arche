@@ -1,4 +1,4 @@
-package base
+package ecs
 
 import (
 	"math"
@@ -9,13 +9,13 @@ import (
 )
 
 func TestEntityPoolConstructor(t *testing.T) {
-	_ = NewEntityPool(128)
+	_ = newEntityPool(128)
 }
 
 func TestEntityPool(t *testing.T) {
-	p := NewEntityPool(128)
+	p := newEntityPool(128)
 
-	expectedAll := []Entity{NewEntity(0), NewEntity(1), NewEntity(2), NewEntity(3), NewEntity(4), NewEntity(5)}
+	expectedAll := []Entity{newEntity(0), newEntity(1), newEntity(2), newEntity(3), newEntity(4), newEntity(5)}
 	expectedAll[0].gen = math.MaxUint16
 
 	for i := 0; i < 5; i++ {
@@ -54,7 +54,7 @@ func TestEntityPool(t *testing.T) {
 
 func TestEntityPoolStochastic(t *testing.T) {
 	for i := 0; i < 10; i++ {
-		p := NewEntityPool(128)
+		p := newEntityPool(128)
 
 		alive := map[Entity]bool{}
 		for i := 0; i < 10; i++ {
@@ -70,14 +70,14 @@ func TestEntityPoolStochastic(t *testing.T) {
 			alive[e] = false
 		}
 		for e, isAlive := range alive {
-			assert.Equal(t, isAlive, p.Alive(e), "Wrong alive state of entity %v after 1st removal. Entity is %v", e, p.entities[e.ID])
+			assert.Equal(t, isAlive, p.Alive(e), "Wrong alive state of entity %v after 1st removal. Entity is %v", e, p.entities[e.id])
 		}
 		for i := 0; i < 10; i++ {
 			e := p.Get()
 			alive[e] = true
 		}
 		for e, isAlive := range alive {
-			assert.Equal(t, isAlive, p.Alive(e), "Wrong alive state of entity %v after 1st recycling. Entity is %v", e, p.entities[e.ID])
+			assert.Equal(t, isAlive, p.Alive(e), "Wrong alive state of entity %v after 1st recycling. Entity is %v", e, p.entities[e.id])
 		}
 		assert.Equal(t, uint32(0), p.available, "No more entities should be available")
 
@@ -89,7 +89,7 @@ func TestEntityPoolStochastic(t *testing.T) {
 			alive[e] = false
 		}
 		for e, a := range alive {
-			assert.Equal(t, a, p.Alive(e), "Wrong alive state of entity %v after 2nd removal. Entity is %v", e, p.entities[e.ID])
+			assert.Equal(t, a, p.Alive(e), "Wrong alive state of entity %v after 2nd removal. Entity is %v", e, p.entities[e.id])
 		}
 	}
 }

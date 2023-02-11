@@ -1,30 +1,31 @@
-package base
+package ecs
 
 import (
+	"internal/base"
 	"reflect"
 	"unsafe"
 )
 
-// Archetype represents an ECS Archetype
-type Archetype struct {
-	Mask BitMask
+// archetype represents an ECS archetype
+type archetype struct {
+	Mask base.BitMask
 	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
 	indices    [MaskTotalBits]uint8
-	entities   Storage
-	components []Storage
-	toAdd      map[ID]*Archetype
-	toRemove   map[ID]*Archetype
+	entities   base.Storage
+	components []base.Storage
+	toAdd      map[ID]*archetype
+	toRemove   map[ID]*archetype
 }
 
 var entityType = reflect.TypeOf(Entity{})
 
 // Init initializes an archetype
-func (a *Archetype) Init(capacityIncrement int, components ...ComponentType) {
-	var mask BitMask
+func (a *archetype) Init(capacityIncrement int, components ...base.ComponentType) {
+	var mask base.BitMask
 	a.Ids = make([]ID, len(components))
-	comps := make([]Storage, len(components))
+	comps := make([]base.Storage, len(components))
 
 	prev := -1
 	for i, c := range components {
@@ -36,25 +37,25 @@ func (a *Archetype) Init(capacityIncrement int, components ...ComponentType) {
 		mask.Set(c.ID, true)
 		a.Ids[i] = c.ID
 		a.indices[c.ID] = uint8(i)
-		comps[i] = Storage{}
-		comps[i].init(c.Type, capacityIncrement)
+		comps[i] = base.Storage{}
+		comps[i].Init(c.Type, capacityIncrement)
 	}
 
 	a.Mask = mask
 	a.components = comps
-	a.entities = Storage{}
-	a.toAdd = map[ID]*Archetype{}
-	a.toRemove = map[ID]*Archetype{}
-	a.entities.init(entityType, capacityIncrement)
+	a.entities = base.Storage{}
+	a.toAdd = map[ID]*archetype{}
+	a.toRemove = map[ID]*archetype{}
+	a.entities.Init(entityType, capacityIncrement)
 }
 
 // GetEntity returns the entity at the given index
-func (a *Archetype) GetEntity(index int) Entity {
+func (a *archetype) GetEntity(index int) Entity {
 	return *(*Entity)(a.entities.Get(uint32(index)))
 }
 
 // Get returns the component with the given ID at the given index
-func (a *Archetype) Get(index int, id ID) unsafe.Pointer {
+func (a *archetype) Get(index int, id ID) unsafe.Pointer {
 	if !a.Mask.Get(id) {
 		return nil
 	}
@@ -65,12 +66,12 @@ func (a *Archetype) Get(index int, id ID) unsafe.Pointer {
 // without checking if the entity contains that component.
 //
 // This is used by queries, where the entity is guaranteed to be in the archetype.
-func (a *Archetype) GetUnsafe(index int, id ID) unsafe.Pointer {
+func (a *archetype) GetUnsafe(index int, id ID) unsafe.Pointer {
 	return a.components[a.indices[id]].Get(uint32(index))
 }
 
 // Add adds an entity with components to the archetype
-func (a *Archetype) Add(entity Entity, components ...Component) uint32 {
+func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	if len(components) != len(a.Ids) {
 		panic("Invalid number of components")
 	}
@@ -82,7 +83,7 @@ func (a *Archetype) Add(entity Entity, components ...Component) uint32 {
 }
 
 // AddPointer adds an entity with components to the archetype, using pointers
-func (a *Archetype) AddPointer(entity Entity, components ...ComponentPointer) uint32 {
+func (a *archetype) AddPointer(entity Entity, components ...base.ComponentPointer) uint32 {
 	if len(components) != len(a.Ids) {
 		panic("Invalid number of components")
 	}
@@ -98,7 +99,7 @@ func (a *Archetype) AddPointer(entity Entity, components ...ComponentPointer) ui
 }
 
 // Remove removes an entity from the archetype
-func (a *Archetype) Remove(index int) bool {
+func (a *archetype) Remove(index int) bool {
 	swapped := a.entities.Remove(uint32(index))
 	len := len(a.components)
 	for i := 0; i < len; i++ {
@@ -108,43 +109,43 @@ func (a *Archetype) Remove(index int) bool {
 }
 
 // Components returns the component IDs for this archetype
-func (a *Archetype) Components() []ID {
+func (a *archetype) Components() []ID {
 	return a.Ids
 }
 
 // HasComponent returns whether the archetype contains the given component ID
-func (a *Archetype) HasComponent(id ID) bool {
+func (a *archetype) HasComponent(id ID) bool {
 	return a.Mask.Get(id)
 }
 
 // Len reports the number of entities in the archetype
-func (a *Archetype) Len() uint32 {
+func (a *archetype) Len() uint32 {
 	return a.entities.Len()
 }
 
 // Set overwrites a component with the data behind the given pointer
-func (a *Archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
-	return a.components[a.indices[id]].set(index, comp)
+func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
+	return a.components[a.indices[id]].Set(index, comp)
 }
 
 // GetTransitionAdd returns the archetype resulting from adding a component
-func (a *Archetype) GetTransitionAdd(id ID) (*Archetype, bool) {
+func (a *archetype) GetTransitionAdd(id ID) (*archetype, bool) {
 	p, ok := a.toAdd[id]
 	return p, ok
 }
 
 // GetTransitionRemove returns the archetype resulting from removing a component
-func (a *Archetype) GetTransitionRemove(id ID) (*Archetype, bool) {
+func (a *archetype) GetTransitionRemove(id ID) (*archetype, bool) {
 	p, ok := a.toRemove[id]
 	return p, ok
 }
 
 // SetTransitionAdd sets the archetype resulting from adding a component
-func (a *Archetype) SetTransitionAdd(id ID, to *Archetype) {
+func (a *archetype) SetTransitionAdd(id ID, to *archetype) {
 	a.toAdd[id] = to
 }
 
 // SetTransitionRemove sets the archetype resulting from removing a component
-func (a *Archetype) SetTransitionRemove(id ID, to *Archetype) {
+func (a *archetype) SetTransitionRemove(id ID, to *archetype) {
 	a.toRemove[id] = to
 }

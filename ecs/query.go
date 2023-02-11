@@ -148,12 +148,12 @@ func (q *queryIter) Close() {
 }
 
 type archetypeIter struct {
-	Archetype *base.Archetype
+	Archetype *archetype
 	Length    int
 	Index     int
 }
 
-func newArchetypeIter(arch *base.Archetype) archetypeIter {
+func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
 		Length:    int(arch.Len()),

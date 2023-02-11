@@ -12,33 +12,33 @@ import (
 func TestWorldEntites(t *testing.T) {
 	w := NewWorld()
 
-	assert.Equal(t, base.NewEntityGen(1, 0), w.NewEntity())
-	assert.Equal(t, base.NewEntityGen(2, 0), w.NewEntity())
-	assert.Equal(t, base.NewEntityGen(3, 0), w.NewEntity())
+	assert.Equal(t, newEntityGen(1, 0), w.NewEntity())
+	assert.Equal(t, newEntityGen(2, 0), w.NewEntity())
+	assert.Equal(t, newEntityGen(3, 0), w.NewEntity())
 
-	assert.Equal(t, 0, int(w.entities[0].Index))
-	assert.Equal(t, 0, int(w.entities[1].Index))
-	assert.Equal(t, 1, int(w.entities[2].Index))
-	assert.Equal(t, 2, int(w.entities[3].Index))
-	w.RemEntity(base.NewEntityGen(2, 0))
-	assert.False(t, w.Alive(base.NewEntityGen(2, 0)))
+	assert.Equal(t, 0, int(w.entities[0].index))
+	assert.Equal(t, 0, int(w.entities[1].index))
+	assert.Equal(t, 1, int(w.entities[2].index))
+	assert.Equal(t, 2, int(w.entities[3].index))
+	w.RemEntity(newEntityGen(2, 0))
+	assert.False(t, w.Alive(newEntityGen(2, 0)))
 
-	assert.Equal(t, 0, int(w.entities[1].Index))
-	assert.Equal(t, 1, int(w.entities[3].Index))
+	assert.Equal(t, 0, int(w.entities[1].index))
+	assert.Equal(t, 1, int(w.entities[3].index))
 
-	assert.Equal(t, base.NewEntityGen(2, 1), w.NewEntity())
-	assert.False(t, w.Alive(base.NewEntityGen(2, 0)))
-	assert.True(t, w.Alive(base.NewEntityGen(2, 1)))
+	assert.Equal(t, newEntityGen(2, 1), w.NewEntity())
+	assert.False(t, w.Alive(newEntityGen(2, 0)))
+	assert.True(t, w.Alive(newEntityGen(2, 1)))
 
-	assert.Equal(t, 2, int(w.entities[2].Index))
+	assert.Equal(t, 2, int(w.entities[2].index))
 
-	w.RemEntity(base.NewEntityGen(3, 0))
-	w.RemEntity(base.NewEntityGen(2, 1))
-	w.RemEntity(base.NewEntityGen(1, 0))
+	w.RemEntity(newEntityGen(3, 0))
+	w.RemEntity(newEntityGen(2, 1))
+	w.RemEntity(newEntityGen(1, 0))
 
-	assert.Panics(t, func() { w.RemEntity(base.NewEntityGen(3, 0)) })
-	assert.Panics(t, func() { w.RemEntity(base.NewEntityGen(2, 1)) })
-	assert.Panics(t, func() { w.RemEntity(base.NewEntityGen(1, 0)) })
+	assert.Panics(t, func() { w.RemEntity(newEntityGen(3, 0)) })
+	assert.Panics(t, func() { w.RemEntity(newEntityGen(2, 1)) })
+	assert.Panics(t, func() { w.RemEntity(newEntityGen(1, 0)) })
 }
 
 func TestWorldComponents(t *testing.T) {
@@ -98,8 +98,8 @@ func TestWorldComponents(t *testing.T) {
 	w.Remove(e0)
 
 	w.RemEntity(e0)
-	assert.Panics(t, func() { w.Has(base.NewEntityGen(1, 0), posID) })
-	assert.Panics(t, func() { w.Get(base.NewEntityGen(1, 0), posID) })
+	assert.Panics(t, func() { w.Has(newEntityGen(1, 0), posID) })
+	assert.Panics(t, func() { w.Get(newEntityGen(1, 0), posID) })
 }
 
 func TestWorldLabels(t *testing.T) {
@@ -390,8 +390,8 @@ func Test1000Archetypes(t *testing.T) {
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
-	printTypeSizeName[base.PagedArr32[base.Archetype]]("PagedArr32")
-	printTypeSize[base.Archetype]()
+	printTypeSizeName[base.PagedArr32[archetype]]("PagedArr32")
+	printTypeSize[archetype]()
 	printTypeSize[base.Storage]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
