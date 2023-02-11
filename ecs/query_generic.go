@@ -1,5 +1,21 @@
 package ecs
 
+// Q0 is a generic query for no components.
+//
+// Create one with [Query0]
+type Q0 struct {
+	Query
+}
+
+// Query0 creates a generic query for no components.
+//
+// See also [World.Query].
+func Query0[A any](w *World) Q0 {
+	return Q0{
+		Query: w.Query(),
+	}
+}
+
 // Q1 is a generic query for one component.
 //
 // Create one with [Query1]

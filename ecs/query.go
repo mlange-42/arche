@@ -39,6 +39,10 @@ func newQuery(world *World, mask, exclude bitMask, lockBit uint8) Query {
 
 // Not excludes components from the query.
 // Entities with these components will be skipped.
+//
+// # Example:
+//
+//	query := world.Query(idA, isB).Not(idC, isD)
 func (q Query) Not(comps ...ID) Query {
 	q.exclude = newMask(comps...)
 	return q
