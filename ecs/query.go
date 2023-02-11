@@ -19,6 +19,7 @@ import (
 type Query struct {
 	world     *World
 	mask      bitMask
+	exclude   bitMask
 	archetype archetypeIter
 	index     int
 	done      bool
@@ -26,13 +27,21 @@ type Query struct {
 }
 
 // newQuery creates a new Query
-func newQuery(world *World, mask bitMask, lockBit uint8) Query {
+func newQuery(world *World, mask, exclude bitMask, lockBit uint8) Query {
 	return Query{
 		world:   world,
 		mask:    mask,
+		exclude: exclude,
 		index:   -1,
 		lockBit: lockBit,
 	}
+}
+
+// Not excludes components from the query.
+// Entities with these components will be skipped.
+func (q Query) Not(comps ...ID) Query {
+	q.exclude = newMask(comps...)
+	return q
 }
 
 // Next proceeds to the next [Entity] in the Query.
@@ -40,7 +49,7 @@ func (q *Query) Next() bool {
 	if q.archetype.Next() {
 		return true
 	}
-	i, a, ok := q.world.nextArchetype(q.mask, q.index)
+	i, a, ok := q.world.nextArchetype(q.mask, q.exclude, q.index)
 	q.index = i
 	if ok {
 		q.archetype = a

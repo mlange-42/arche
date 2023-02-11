@@ -33,4 +33,11 @@ func TestBitMask(t *testing.T) {
 
 	mask.Reset()
 	assert.Equal(t, uint(0), mask.TotalBitsSet())
+
+	mask = newMask(ID(1), ID(2), ID(13), ID(27))
+	other1 = newMask(ID(1), ID(32))
+	other2 = newMask(ID(0), ID(32))
+
+	assert.True(t, mask.ContainsAny(other1))
+	assert.False(t, mask.ContainsAny(other2))
 }

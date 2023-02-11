@@ -52,6 +52,11 @@ func (e bitMask) Contains(other bitMask) bool {
 	return e&other == other
 }
 
+// ContainsAny reports if any bit of other mask is a subset of this mask.
+func (e bitMask) ContainsAny(other bitMask) bool {
+	return e&other != 0
+}
+
 // TotalBitsSet returns how many bits are set in this mask.
 func (e bitMask) TotalBitsSet() uint {
 	var count uint
