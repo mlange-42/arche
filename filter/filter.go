@@ -22,8 +22,8 @@ func All(comps ...base.ID) Mask {
 // OneOf matches any of the two components.
 //
 // Like [Or] for combining individual components.
-func OneOf(compA base.ID, compB base.ID) Or {
-	return Or{base.NewMask(compA), base.NewMask(compB)}
+func OneOf(compA base.ID, compB base.ID) *Or {
+	return &Or{base.NewMask(compA), base.NewMask(compB)}
 }
 
 // And is a filter for ANDing together components
