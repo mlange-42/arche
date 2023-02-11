@@ -91,7 +91,13 @@ func (w *World) Query(comps ...ID) Query {
 	mask := newMask(comps...)
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newQuery(w, mask, lock)
+	return newQuery(w, mask, 0, lock)
+}
+
+func (w *World) query(mask, exclude bitMask) Query {
+	lock := w.bitPool.Get()
+	w.locks.Set(ID(lock), true)
+	return newQuery(w, mask, exclude, lock)
 }
 
 // Alive reports whether an entity is still alive.
@@ -337,14 +343,14 @@ func (w *World) componentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
 }
 
-func (w *World) nextArchetype(mask bitMask, index int) (int, archetypeIter, bool) {
+func (w *World) nextArchetype(mask, exclude bitMask, index int) (int, archetypeIter, bool) {
 	len := w.archetypes.Len()
 	if index >= len {
 		panic("exceeded end of query")
 	}
 	for i := index + 1; i < len; i++ {
 		a := w.archetypes.Get(i)
-		if a.Len() > 0 && a.mask.Contains(mask) {
+		if a.Len() > 0 && a.mask.Contains(mask) && !a.mask.ContainsAny(exclude) {
 			return i, newArchetypeIter(a), true
 		}
 	}

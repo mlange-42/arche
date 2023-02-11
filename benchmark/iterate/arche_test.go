@@ -30,6 +30,35 @@ func runArcheQuery(b *testing.B, count int) {
 	}
 }
 
+func runArcheQueryPointerHeap(b *testing.B, count int) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[position](&world)
+	rotID := ecs.ComponentID[rotation](&world)
+
+	for i := 0; i < count; i++ {
+		entity := world.NewEntity()
+		world.Add(entity, posID, rotID)
+	}
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		query := createQuery(&world, posID, rotID)
+		b.StartTimer()
+		for query.Next() {
+			pos := (*position)(query.Get(posID))
+			_ = pos
+		}
+	}
+}
+
+func createQuery(w *ecs.World, comps ...ecs.ID) *ecs.Query {
+	q := w.Query(comps...)
+	return &q
+}
+
 func runArcheQueryGeneric(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
@@ -209,6 +238,18 @@ func BenchmarkArcheIterQueryID_10_000(b *testing.B) {
 
 func BenchmarkArcheIterQueryID_100_000(b *testing.B) {
 	runArcheQuery(b, 100000)
+}
+
+func BenchmarkArcheIterQueryIDPointer_1_000(b *testing.B) {
+	runArcheQueryPointerHeap(b, 1000)
+}
+
+func BenchmarkArcheIterQueryIDPointer_10_000(b *testing.B) {
+	runArcheQueryPointerHeap(b, 10000)
+}
+
+func BenchmarkArcheIterQueryIDPointer_100_000(b *testing.B) {
+	runArcheQueryPointerHeap(b, 100000)
 }
 
 func BenchmarkArcheIterQueryGeneric_1_000(b *testing.B) {

@@ -62,4 +62,13 @@ func TestQuery(t *testing.T) {
 	assert.Equal(t, 4, cnt)
 
 	assert.Panics(t, func() { q.Next() })
+
+	q = w.Query(rotID).Not(posID)
+
+	cnt = 0
+	for q.Next() {
+		_ = q.Entity()
+		cnt++
+	}
+	assert.Equal(t, 2, cnt)
 }

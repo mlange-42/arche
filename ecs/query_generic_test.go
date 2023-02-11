@@ -6,19 +6,50 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestQuery1(t *testing.T) {
+func TestQuery0(t *testing.T) {
 	w := NewWorld()
 
-	id0 := ComponentID[testStruct0](&w)
+	registerAll(&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
+	e2 := w.NewEntity()
 
-	w.Assign(e0, id0, &testStruct0{1})
-	w.Assign(e1, id0, &testStruct0{2})
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e1, 0, &testStruct0{2})
+	w.Assign(e2, 0, &testStruct0{2})
+	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query1[testStruct0](&w)
+	query :=
+		Query0(&w).
+			Not(Mask1[testStruct9](&w))
+
+	for query.Next() {
+		cnt++
+	}
+	assert.Equal(t, 2, cnt)
+}
+
+func TestQuery1(t *testing.T) {
+	w := NewWorld()
+
+	registerAll(&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e1, 0, &testStruct0{2})
+	w.Assign(e2, 0, &testStruct0{0})
+	w.Assign(e2, 9, &testStruct9{})
+
+	cnt := 0
+	query :=
+		Query1[testStruct0](&w).
+			Not(Mask1[testStruct9](&w))
+
 	for query.Next() {
 		c0 := query.Get1()
 		assert.Equal(t, cnt+1, int(c0.val))
@@ -30,20 +61,27 @@ func TestQuery1(t *testing.T) {
 func TestQuery2(t *testing.T) {
 	w := NewWorld()
 
-	id0 := ComponentID[testStruct0](&w)
-	id1 := ComponentID[testStruct1](&w)
+	registerAll(&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
+	e2 := w.NewEntity()
 
-	w.Assign(e0, id0, &testStruct0{1})
-	w.Assign(e1, id0, &testStruct0{2})
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e1, 0, &testStruct0{2})
+	w.Assign(e2, 0, &testStruct0{3})
 
-	w.Assign(e0, id1, &testStruct1{2})
-	w.Assign(e1, id1, &testStruct1{3})
+	w.Assign(e0, 1, &testStruct1{2})
+	w.Assign(e1, 1, &testStruct1{3})
+	w.Assign(e2, 1, &testStruct1{4})
+
+	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query2[testStruct0, testStruct1](&w)
+	query :=
+		Query2[testStruct0, testStruct1](&w).
+			Not(Mask1[testStruct9](&w))
+
 	for query.Next() {
 		c1 := query.Get1()
 		c2 := query.Get2()
@@ -61,24 +99,31 @@ func TestQuery2(t *testing.T) {
 func TestQuery3(t *testing.T) {
 	w := NewWorld()
 
-	id0 := ComponentID[testStruct0](&w)
-	id1 := ComponentID[testStruct1](&w)
-	id2 := ComponentID[testStruct2](&w)
+	registerAll(&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
+	e2 := w.NewEntity()
 
-	w.Assign(e0, id0, &testStruct0{1})
-	w.Assign(e1, id0, &testStruct0{2})
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e1, 0, &testStruct0{2})
+	w.Assign(e2, 0, &testStruct0{3})
 
-	w.Assign(e0, id1, &testStruct1{2})
-	w.Assign(e1, id1, &testStruct1{3})
+	w.Assign(e0, 1, &testStruct1{2})
+	w.Assign(e1, 1, &testStruct1{3})
+	w.Assign(e2, 1, &testStruct1{4})
 
-	w.Assign(e0, id2, &testStruct2{3})
-	w.Assign(e1, id2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3})
+	w.Assign(e1, 2, &testStruct2{4})
+	w.Assign(e2, 2, &testStruct2{5})
+
+	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query3[testStruct0, testStruct1, testStruct2](&w)
+	query :=
+		Query3[testStruct0, testStruct1, testStruct2](&w).
+			Not(Mask1[testStruct9](&w))
+
 	for query.Next() {
 		c1 := query.Get1()
 		c2 := query.Get2()
@@ -99,28 +144,34 @@ func TestQuery3(t *testing.T) {
 func TestQuery4(t *testing.T) {
 	w := NewWorld()
 
-	id0 := ComponentID[testStruct0](&w)
-	id1 := ComponentID[testStruct1](&w)
-	id2 := ComponentID[testStruct2](&w)
-	id3 := ComponentID[testStruct3](&w)
+	registerAll(&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
+	e2 := w.NewEntity()
 
-	w.Assign(e0, id0, &testStruct0{1})
-	w.Assign(e1, id0, &testStruct0{2})
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e1, 0, &testStruct0{2})
+	w.Assign(e2, 0, &testStruct0{2})
 
-	w.Assign(e0, id1, &testStruct1{2})
-	w.Assign(e1, id1, &testStruct1{3})
+	w.Assign(e0, 1, &testStruct1{2})
+	w.Assign(e1, 1, &testStruct1{3})
+	w.Assign(e2, 1, &testStruct1{3})
 
-	w.Assign(e0, id2, &testStruct2{3})
-	w.Assign(e1, id2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3})
+	w.Assign(e1, 2, &testStruct2{4})
+	w.Assign(e2, 2, &testStruct2{4})
 
-	w.Assign(e0, id3, &testStruct3{4})
-	w.Assign(e1, id3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4})
+	w.Assign(e1, 3, &testStruct3{5})
+	w.Assign(e2, 3, &testStruct3{5})
+
+	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query4[testStruct0, testStruct1, testStruct2, testStruct3](&w)
+	query :=
+		Query4[testStruct0, testStruct1, testStruct2, testStruct3](&w).
+			Not(Mask1[testStruct9](&w))
 	for query.Next() {
 		c1 := query.Get1()
 		c2 := query.Get2()
@@ -144,32 +195,38 @@ func TestQuery4(t *testing.T) {
 func TestQuery5(t *testing.T) {
 	w := NewWorld()
 
-	id0 := ComponentID[testStruct0](&w)
-	id1 := ComponentID[testStruct1](&w)
-	id2 := ComponentID[testStruct2](&w)
-	id3 := ComponentID[testStruct3](&w)
-	id4 := ComponentID[testStruct4](&w)
+	registerAll(&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
+	e2 := w.NewEntity()
 
-	w.Assign(e0, id0, &testStruct0{1})
-	w.Assign(e1, id0, &testStruct0{2})
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e1, 0, &testStruct0{2})
+	w.Assign(e2, 0, &testStruct0{2})
 
-	w.Assign(e0, id1, &testStruct1{2})
-	w.Assign(e1, id1, &testStruct1{3})
+	w.Assign(e0, 1, &testStruct1{2})
+	w.Assign(e1, 1, &testStruct1{3})
+	w.Assign(e2, 1, &testStruct1{3})
 
-	w.Assign(e0, id2, &testStruct2{3})
-	w.Assign(e1, id2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3})
+	w.Assign(e1, 2, &testStruct2{4})
+	w.Assign(e2, 2, &testStruct2{4})
 
-	w.Assign(e0, id3, &testStruct3{4})
-	w.Assign(e1, id3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4})
+	w.Assign(e1, 3, &testStruct3{5})
+	w.Assign(e2, 3, &testStruct3{5})
 
-	w.Assign(e0, id4, &testStruct4{5})
-	w.Assign(e1, id4, &testStruct4{6})
+	w.Assign(e0, 4, &testStruct4{5})
+	w.Assign(e1, 4, &testStruct4{6})
+	w.Assign(e2, 4, &testStruct4{6})
+
+	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4](&w)
+	query :=
+		Query5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4](&w).
+			Not(Mask1[testStruct9](&w))
 	for query.Next() {
 		c1 := query.Get1()
 		c2 := query.Get2()
@@ -196,36 +253,42 @@ func TestQuery5(t *testing.T) {
 func TestQuery6(t *testing.T) {
 	w := NewWorld()
 
-	id0 := ComponentID[testStruct0](&w)
-	id1 := ComponentID[testStruct1](&w)
-	id2 := ComponentID[testStruct2](&w)
-	id3 := ComponentID[testStruct3](&w)
-	id4 := ComponentID[testStruct4](&w)
-	id5 := ComponentID[testStruct5](&w)
+	registerAll(&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
+	e2 := w.NewEntity()
 
-	w.Assign(e0, id0, &testStruct0{1})
-	w.Assign(e1, id0, &testStruct0{2})
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e1, 0, &testStruct0{2})
+	w.Assign(e2, 0, &testStruct0{2})
 
-	w.Assign(e0, id1, &testStruct1{2})
-	w.Assign(e1, id1, &testStruct1{3})
+	w.Assign(e0, 1, &testStruct1{2})
+	w.Assign(e1, 1, &testStruct1{3})
+	w.Assign(e2, 1, &testStruct1{3})
 
-	w.Assign(e0, id2, &testStruct2{3})
-	w.Assign(e1, id2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3})
+	w.Assign(e1, 2, &testStruct2{4})
+	w.Assign(e2, 2, &testStruct2{4})
 
-	w.Assign(e0, id3, &testStruct3{4})
-	w.Assign(e1, id3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4})
+	w.Assign(e1, 3, &testStruct3{5})
+	w.Assign(e2, 3, &testStruct3{5})
 
-	w.Assign(e0, id4, &testStruct4{5})
-	w.Assign(e1, id4, &testStruct4{6})
+	w.Assign(e0, 4, &testStruct4{5})
+	w.Assign(e1, 4, &testStruct4{6})
+	w.Assign(e2, 4, &testStruct4{6})
 
-	w.Assign(e0, id5, &testStruct5{6})
-	w.Assign(e1, id5, &testStruct5{7})
+	w.Assign(e0, 5, &testStruct5{6})
+	w.Assign(e1, 5, &testStruct5{7})
+	w.Assign(e2, 5, &testStruct5{7})
+
+	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query6[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4, testStruct5](&w)
+	query :=
+		Query6[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4, testStruct5](&w).
+			Not(Mask1[testStruct9](&w))
 	for query.Next() {
 		c1 := query.Get1()
 		c2 := query.Get2()
@@ -255,40 +318,46 @@ func TestQuery6(t *testing.T) {
 func TestQuery7(t *testing.T) {
 	w := NewWorld()
 
-	id0 := ComponentID[testStruct0](&w)
-	id1 := ComponentID[testStruct1](&w)
-	id2 := ComponentID[testStruct2](&w)
-	id3 := ComponentID[testStruct3](&w)
-	id4 := ComponentID[testStruct4](&w)
-	id5 := ComponentID[testStruct5](&w)
-	id6 := ComponentID[testStruct6](&w)
+	registerAll(&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
+	e2 := w.NewEntity()
 
-	w.Assign(e0, id0, &testStruct0{1})
-	w.Assign(e1, id0, &testStruct0{2})
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e1, 0, &testStruct0{2})
+	w.Assign(e2, 0, &testStruct0{2})
 
-	w.Assign(e0, id1, &testStruct1{2})
-	w.Assign(e1, id1, &testStruct1{3})
+	w.Assign(e0, 1, &testStruct1{2})
+	w.Assign(e1, 1, &testStruct1{3})
+	w.Assign(e2, 1, &testStruct1{3})
 
-	w.Assign(e0, id2, &testStruct2{3})
-	w.Assign(e1, id2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3})
+	w.Assign(e1, 2, &testStruct2{4})
+	w.Assign(e2, 2, &testStruct2{4})
 
-	w.Assign(e0, id3, &testStruct3{4})
-	w.Assign(e1, id3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4})
+	w.Assign(e1, 3, &testStruct3{5})
+	w.Assign(e2, 3, &testStruct3{5})
 
-	w.Assign(e0, id4, &testStruct4{5})
-	w.Assign(e1, id4, &testStruct4{6})
+	w.Assign(e0, 4, &testStruct4{5})
+	w.Assign(e1, 4, &testStruct4{6})
+	w.Assign(e2, 4, &testStruct4{6})
 
-	w.Assign(e0, id5, &testStruct5{6})
-	w.Assign(e1, id5, &testStruct5{7})
+	w.Assign(e0, 5, &testStruct5{6})
+	w.Assign(e1, 5, &testStruct5{7})
+	w.Assign(e2, 5, &testStruct5{7})
 
-	w.Assign(e0, id6, &testStruct5{7})
-	w.Assign(e1, id6, &testStruct5{8})
+	w.Assign(e0, 6, &testStruct5{7})
+	w.Assign(e1, 6, &testStruct5{8})
+	w.Assign(e2, 6, &testStruct5{8})
+
+	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query7[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4, testStruct5, testStruct6](&w)
+	query :=
+		Query7[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4, testStruct5, testStruct6](&w).
+			Not(Mask1[testStruct9](&w))
 	for query.Next() {
 		c1 := query.Get1()
 		c2 := query.Get2()
@@ -321,46 +390,44 @@ func TestQuery7(t *testing.T) {
 func TestQuery8(t *testing.T) {
 	w := NewWorld()
 
-	id0 := ComponentID[testStruct0](&w)
-	id1 := ComponentID[testStruct1](&w)
-	id2 := ComponentID[testStruct2](&w)
-	id3 := ComponentID[testStruct3](&w)
-	id4 := ComponentID[testStruct4](&w)
-	id5 := ComponentID[testStruct5](&w)
-	id6 := ComponentID[testStruct6](&w)
-	id7 := ComponentID[testStruct7](&w)
+	registerAll(&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
+	e2 := w.NewEntity()
 
-	w.Assign(e0, id0, &testStruct0{1})
-	w.Assign(e1, id0, &testStruct0{2})
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e1, 0, &testStruct0{2})
 
-	w.Assign(e0, id1, &testStruct1{2})
-	w.Assign(e1, id1, &testStruct1{3})
+	w.Assign(e0, 1, &testStruct1{2})
+	w.Assign(e1, 1, &testStruct1{3})
 
-	w.Assign(e0, id2, &testStruct2{3})
-	w.Assign(e1, id2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3})
+	w.Assign(e1, 2, &testStruct2{4})
 
-	w.Assign(e0, id3, &testStruct3{4})
-	w.Assign(e1, id3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4})
+	w.Assign(e1, 3, &testStruct3{5})
 
-	w.Assign(e0, id4, &testStruct4{5})
-	w.Assign(e1, id4, &testStruct4{6})
+	w.Assign(e0, 4, &testStruct4{5})
+	w.Assign(e1, 4, &testStruct4{6})
 
-	w.Assign(e0, id5, &testStruct5{6})
-	w.Assign(e1, id5, &testStruct5{7})
+	w.Assign(e0, 5, &testStruct5{6})
+	w.Assign(e1, 5, &testStruct5{7})
 
-	w.Assign(e0, id6, &testStruct5{7})
-	w.Assign(e1, id6, &testStruct5{8})
+	w.Assign(e0, 6, &testStruct5{7})
+	w.Assign(e1, 6, &testStruct5{8})
 
-	w.Assign(e0, id7, &testStruct5{8})
-	w.Assign(e1, id7, &testStruct5{9})
+	w.Assign(e0, 7, &testStruct5{8})
+	w.Assign(e1, 7, &testStruct5{9})
+
+	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query8[
-		testStruct0, testStruct1, testStruct2, testStruct3,
-		testStruct4, testStruct5, testStruct6, testStruct7](&w)
+	query :=
+		Query8[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7](&w).
+			Not(Mask1[testStruct9](&w))
 
 	for query.Next() {
 		c1 := query.Get1()
@@ -392,4 +459,52 @@ func TestQuery8(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 2, cnt)
+}
+
+func TestGenericMask(t *testing.T) {
+	w := NewWorld()
+
+	assert.Equal(t,
+		Mask1[testStruct0](&w).mask,
+		newMask(0),
+	)
+
+	assert.Equal(t,
+		Mask2[testStruct0, testStruct1](&w).mask,
+		newMask(0, 1),
+	)
+
+	assert.Equal(t,
+		Mask3[testStruct0, testStruct1, testStruct2](&w).mask,
+		newMask(0, 1, 2),
+	)
+
+	assert.Equal(t,
+		Mask4[testStruct0, testStruct1, testStruct2, testStruct3](&w).mask,
+		newMask(0, 1, 2, 3),
+	)
+
+	assert.Equal(t,
+		Mask5[testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4](&w).mask,
+		newMask(0, 1, 2, 3, 4),
+	)
+
+	assert.Equal(t,
+		Mask6[testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5](&w).mask,
+		newMask(0, 1, 2, 3, 4, 5),
+	)
+
+	assert.Equal(t,
+		Mask7[testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6](&w).mask,
+		newMask(0, 1, 2, 3, 4, 5, 6),
+	)
+
+	assert.Equal(t,
+		Mask8[testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7](&w).mask,
+		newMask(0, 1, 2, 3, 4, 5, 6, 7),
+	)
 }
