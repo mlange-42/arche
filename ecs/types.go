@@ -22,4 +22,7 @@ const MaskTotalBits = base.MaskTotalBits
 type Mask = base.Mask
 
 // Component is a Component ID/Component pointer pair
-type Component base.Component
+type Component struct {
+	ID
+	Component interface{}
+}

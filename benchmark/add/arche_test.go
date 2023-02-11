@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/generic"
 )
 
 func addArcheWorld(b *testing.B, count int) {
@@ -30,7 +31,7 @@ func addArcheGeneric(b *testing.B, count int) {
 
 		for i := 0; i < count; i++ {
 			entity := world.NewEntity()
-			ecs.Add[position](&world, entity)
+			generic.Add[position](&world, entity)
 		}
 	}
 }

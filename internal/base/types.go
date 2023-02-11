@@ -32,12 +32,6 @@ func (f Mask) Matches(mask BitMask) bool {
 	return mask.Contains(f.BitMask)
 }
 
-// Component is a Component ID/Component pointer pair
-type Component struct {
-	ID
-	Component interface{}
-}
-
 // ComponentType is a component ID with a data type
 type ComponentType struct {
 	ID

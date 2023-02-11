@@ -1,14 +1,15 @@
-package ecs
+package generic
 
 import (
 	"internal/base"
 	"testing"
 
+	"github.com/mlange-42/arche/ecs"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestQuery0(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	registerAll(&w)
 
@@ -33,7 +34,7 @@ func TestQuery0(t *testing.T) {
 }
 
 func TestQuery1(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	registerAll(&w)
 
@@ -60,7 +61,7 @@ func TestQuery1(t *testing.T) {
 }
 
 func TestQuery2(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	registerAll(&w)
 
@@ -98,7 +99,7 @@ func TestQuery2(t *testing.T) {
 }
 
 func TestQuery3(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	registerAll(&w)
 
@@ -143,7 +144,7 @@ func TestQuery3(t *testing.T) {
 }
 
 func TestQuery4(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	registerAll(&w)
 
@@ -194,7 +195,7 @@ func TestQuery4(t *testing.T) {
 }
 
 func TestQuery5(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	registerAll(&w)
 
@@ -252,7 +253,7 @@ func TestQuery5(t *testing.T) {
 }
 
 func TestQuery6(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	registerAll(&w)
 
@@ -317,7 +318,7 @@ func TestQuery6(t *testing.T) {
 }
 
 func TestQuery7(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	registerAll(&w)
 
@@ -389,7 +390,7 @@ func TestQuery7(t *testing.T) {
 }
 
 func TestQuery8(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	registerAll(&w)
 
@@ -463,7 +464,7 @@ func TestQuery8(t *testing.T) {
 }
 
 func TestGenericMask(t *testing.T) {
-	w := NewWorld()
+	w := ecs.NewWorld()
 
 	assert.Equal(t,
 		Mask1[testStruct0](&w).BitMask,

@@ -1,6 +1,8 @@
 package filter
 
-import "internal/base"
+import (
+	"internal/base"
+)
 
 // Mask is a mask for a combination of components.
 type Mask = base.Mask

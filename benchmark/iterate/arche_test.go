@@ -5,6 +5,7 @@ import (
 
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/filter"
+	"github.com/mlange-42/arche/generic"
 )
 
 func runArcheQuery(b *testing.B, count int) {
@@ -70,7 +71,7 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := ecs.Query2[position, rotation](&world)
+		query := generic.Query2[position, rotation](&world)
 		b.StartTimer()
 		for query.Next() {
 			pos := query.Get1()
@@ -127,7 +128,7 @@ func runArcheQueryGeneric5C(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := ecs.Query5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4](&world)
+		query := generic.Query5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4](&world)
 		b.StartTimer()
 		for query.Next() {
 			t1, t2, t3, t4, t5 := query.GetAll()
@@ -204,7 +205,7 @@ func runArcheWorldGeneric(b *testing.B, count int) {
 	posID := ecs.ComponentID[position](&world)
 	rotID := ecs.ComponentID[rotation](&world)
 
-	get := ecs.NewMap[position](&world)
+	get := generic.NewMap[position](&world)
 
 	for i := 0; i < count; i++ {
 		entity := world.NewEntity()

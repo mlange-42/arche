@@ -8,6 +8,23 @@ import (
 	f "github.com/mlange-42/arche/filter"
 )
 
+// ComponentID returns the ID for a component type. Registers the type if it is not already registered.
+func ComponentID[T any](w *World) ID {
+	tp := reflect.TypeOf((*T)(nil)).Elem()
+	return w.componentID(tp)
+}
+
+// World is the central type holding [Entity] and component data.
+type World struct {
+	config     Config
+	entities   []entityIndex
+	archetypes base.PagedArr32[archetype]
+	entityPool entityPool
+	bitPool    base.BitPool
+	registry   base.ComponentRegistry
+	locks      bitMask
+}
+
 // NewWorld creates a new [World]
 func NewWorld() World {
 	return FromConfig(NewConfig())
@@ -28,17 +45,6 @@ func FromConfig(conf Config) World {
 		archetypes: arches,
 		locks:      bitMask(0),
 	}
-}
-
-// World is the central type holding [Entity] and component data.
-type World struct {
-	config     Config
-	entities   []entityIndex
-	archetypes base.PagedArr32[archetype]
-	entityPool entityPool
-	bitPool    base.BitPool
-	registry   base.ComponentRegistry
-	locks      bitMask
 }
 
 // NewEntity returns a new or recycled [Entity].
