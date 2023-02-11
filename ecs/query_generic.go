@@ -25,7 +25,7 @@ func Query0(w *World) Q0 {
 //
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q Q0) Not(mask Mask) Q0 {
-	q.exclude = mask.mask
+	q.exclude = q.exclude | mask.mask
 	return q
 }
 
@@ -52,7 +52,7 @@ func Query1[A any](w *World) Q1[A] {
 //
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q Q1[A]) Not(mask Mask) Q1[A] {
-	q.exclude = mask.mask
+	q.exclude = q.exclude | mask.mask
 	return q
 }
 
@@ -86,7 +86,7 @@ func Query2[A any, B any](w *World) Q2[A, B] {
 //
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q Q2[A, B]) Not(mask Mask) Q2[A, B] {
-	q.exclude = mask.mask
+	q.exclude = q.exclude | mask.mask
 	return q
 }
 
@@ -130,7 +130,7 @@ func Query3[A any, B any, C any](w *World) Q3[A, B, C] {
 //
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q Q3[A, B, C]) Not(mask Mask) Q3[A, B, C] {
-	q.exclude = mask.mask
+	q.exclude = q.exclude | mask.mask
 	return q
 }
 
@@ -179,7 +179,7 @@ func Query4[A any, B any, C any, D any](w *World) Q4[A, B, C, D] {
 //
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q Q4[A, B, C, D]) Not(mask Mask) Q4[A, B, C, D] {
-	q.exclude = mask.mask
+	q.exclude = q.exclude | mask.mask
 	return q
 }
 
@@ -236,7 +236,7 @@ func Query5[A any, B any, C any, D any, E any](w *World) Q5[A, B, C, D, E] {
 //
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q Q5[A, B, C, D, E]) Not(mask Mask) Q5[A, B, C, D, E] {
-	q.exclude = mask.mask
+	q.exclude = q.exclude | mask.mask
 	return q
 }
 
@@ -302,7 +302,7 @@ func Query6[A any, B any, C any, D any, E any, F any](w *World) Q6[A, B, C, D, E
 //
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q Q6[A, B, C, D, E, F]) Not(mask Mask) Q6[A, B, C, D, E, F] {
-	q.exclude = mask.mask
+	q.exclude = q.exclude | mask.mask
 	return q
 }
 
@@ -386,7 +386,7 @@ func (q *Q7[A, B, C, D, E, F, G]) GetAll() (*A, *B, *C, *D, *E, *F, *G) {
 //
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q Q7[A, B, C, D, E, F, G]) Not(mask Mask) Q7[A, B, C, D, E, F, G] {
-	q.exclude = mask.mask
+	q.exclude = q.exclude | mask.mask
 	return q
 }
 
@@ -454,7 +454,7 @@ func Query8[A any, B any, C any, D any, E any, F any, G any, H any](w *World) Q8
 //
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q Q8[A, B, C, D, E, F, G, H]) Not(mask Mask) Q8[A, B, C, D, E, F, G, H] {
-	q.exclude = mask.mask
+	q.exclude = q.exclude | mask.mask
 	return q
 }
 
