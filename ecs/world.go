@@ -94,6 +94,12 @@ func (w *World) Query(comps ...ID) Query {
 	return newQuery(w, mask, 0, lock)
 }
 
+func (w *World) query(mask, exclude bitMask) Query {
+	lock := w.bitPool.Get()
+	w.locks.Set(ID(lock), true)
+	return newQuery(w, mask, exclude, lock)
+}
+
 // Alive reports whether an entity is still alive.
 func (w *World) Alive(entity Entity) bool {
 	return w.entityPool.Alive(entity)
