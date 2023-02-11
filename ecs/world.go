@@ -4,6 +4,8 @@ import (
 	"internal/base"
 	"reflect"
 	"unsafe"
+
+	f "github.com/mlange-42/arche/filter"
 )
 
 // NewWorld creates a new [World]
@@ -89,7 +91,7 @@ func (w *World) RemEntity(entity Entity) {
 //
 // See also the generic alternatives [Query1], [Query2], [Query3], ...
 func (w *World) Query(comps ...ID) Query {
-	mask := base.NewMask(comps...)
+	mask := base.NewBitMask(comps...)
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
 	return newQuery(w, mask, 0, lock)
@@ -106,7 +108,7 @@ func (w *World) query(mask, exclude bitMask) Query {
 // Locks the world to prevent changes to component compositions.
 //
 // There is no generic alternative for filters.
-func (w *World) Filter(filter filter) Filter {
+func (w *World) Filter(filter f.MaskFilter) Filter {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
 	return newFilter(w, filter, lock)
@@ -369,14 +371,14 @@ func (w *World) nextArchetype(mask, exclude bitMask, index int) (int, archetypeI
 	return len, archetypeIter{}, false
 }
 
-func (w *World) nextArchetypeFilter(filter filter, index int) (int, archetypeIter, bool) {
+func (w *World) nextArchetypeFilter(filter f.MaskFilter, index int) (int, archetypeIter, bool) {
 	len := w.archetypes.Len()
 	if index >= len {
 		panic("exceeded end of query")
 	}
 	for i := index + 1; i < len; i++ {
 		a := w.archetypes.Get(i)
-		if a.Len() > 0 && filter.Matches(Mask{a.mask}) {
+		if a.Len() > 0 && filter.Matches(a.mask) {
 			return i, newArchetypeIter(a), true
 		}
 	}

@@ -12,6 +12,9 @@ type eid = base.Eid
 // ID is the component identifier type
 type ID = base.ID
 
+// Mask is a mask for a combination of components.
+type Mask = base.Mask
+
 // Component is a Component ID/Component pointer pair
 type Component struct {
 	ID

@@ -466,46 +466,46 @@ func TestGenericMask(t *testing.T) {
 	w := NewWorld()
 
 	assert.Equal(t,
-		Mask1[testStruct0](&w).mask,
-		base.NewMask(0),
+		Mask1[testStruct0](&w).BitMask,
+		base.NewBitMask(0),
 	)
 
 	assert.Equal(t,
-		Mask2[testStruct0, testStruct1](&w).mask,
-		base.NewMask(0, 1),
+		Mask2[testStruct0, testStruct1](&w).BitMask,
+		base.NewBitMask(0, 1),
 	)
 
 	assert.Equal(t,
-		Mask3[testStruct0, testStruct1, testStruct2](&w).mask,
-		base.NewMask(0, 1, 2),
+		Mask3[testStruct0, testStruct1, testStruct2](&w).BitMask,
+		base.NewBitMask(0, 1, 2),
 	)
 
 	assert.Equal(t,
-		Mask4[testStruct0, testStruct1, testStruct2, testStruct3](&w).mask,
-		base.NewMask(0, 1, 2, 3),
+		Mask4[testStruct0, testStruct1, testStruct2, testStruct3](&w).BitMask,
+		base.NewBitMask(0, 1, 2, 3),
 	)
 
 	assert.Equal(t,
 		Mask5[testStruct0, testStruct1, testStruct2, testStruct3,
-			testStruct4](&w).mask,
-		base.NewMask(0, 1, 2, 3, 4),
+			testStruct4](&w).BitMask,
+		base.NewBitMask(0, 1, 2, 3, 4),
 	)
 
 	assert.Equal(t,
 		Mask6[testStruct0, testStruct1, testStruct2, testStruct3,
-			testStruct4, testStruct5](&w).mask,
-		base.NewMask(0, 1, 2, 3, 4, 5),
+			testStruct4, testStruct5](&w).BitMask,
+		base.NewBitMask(0, 1, 2, 3, 4, 5),
 	)
 
 	assert.Equal(t,
 		Mask7[testStruct0, testStruct1, testStruct2, testStruct3,
-			testStruct4, testStruct5, testStruct6](&w).mask,
-		base.NewMask(0, 1, 2, 3, 4, 5, 6),
+			testStruct4, testStruct5, testStruct6](&w).BitMask,
+		base.NewBitMask(0, 1, 2, 3, 4, 5, 6),
 	)
 
 	assert.Equal(t,
 		Mask8[testStruct0, testStruct1, testStruct2, testStruct3,
-			testStruct4, testStruct5, testStruct6, testStruct7](&w).mask,
-		base.NewMask(0, 1, 2, 3, 4, 5, 6, 7),
+			testStruct4, testStruct5, testStruct6, testStruct7](&w).BitMask,
+		base.NewBitMask(0, 1, 2, 3, 4, 5, 6, 7),
 	)
 }

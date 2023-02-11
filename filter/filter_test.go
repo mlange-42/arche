@@ -1,4 +1,4 @@
-package ecs
+package filter
 
 import (
 	"testing"
@@ -7,14 +7,13 @@ import (
 )
 
 func TestLogicFilters(t *testing.T) {
-	w := NewWorld()
 
-	hasA := Mask1[testStruct0](&w)
-	hasB := Mask1[testStruct1](&w)
-	hasAll := Mask2[testStruct0, testStruct1](&w)
+	hasA := All(0)
+	hasB := All(1)
+	hasAll := All(0, 1)
 	hasNone := Mask{}
 
-	var filter filter
+	var filter MaskFilter
 	filter = hasA
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
@@ -64,6 +63,6 @@ func TestLogicFilters(t *testing.T) {
 	assert.True(t, match(filter, hasNone))
 }
 
-func match(f filter, m Mask) bool {
-	return f.Matches(m)
+func match(f MaskFilter, m Mask) bool {
+	return f.Matches(m.BitMask)
 }

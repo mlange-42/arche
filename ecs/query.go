@@ -3,6 +3,8 @@ package ecs
 import (
 	"internal/base"
 	"unsafe"
+
+	f "github.com/mlange-42/arche/filter"
 )
 
 // Query is a simple iterator to iterate entities.
@@ -43,7 +45,7 @@ func newQuery(world *World, mask, exclude bitMask, lockBit uint8) Query {
 //
 //	query := world.Query(idA, isB).Not(idC, isD)
 func (q Query) Not(comps ...ID) Query {
-	q.exclude = base.NewMask(comps...)
+	q.exclude = base.NewBitMask(comps...)
 	return q
 }
 
@@ -82,11 +84,11 @@ func (q *Query) Next() bool {
 //	}
 type Filter struct {
 	queryIter
-	filter filter
+	filter f.MaskFilter
 }
 
 // newFilter creates a new Filter
-func newFilter(world *World, filter filter, lockBit uint8) Filter {
+func newFilter(world *World, filter f.MaskFilter, lockBit uint8) Filter {
 	return Filter{
 		queryIter: queryIter{
 			world:   world,
