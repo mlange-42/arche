@@ -1,13 +1,14 @@
 package ecs
 
 import (
+	"internal/base"
 	"unsafe"
 )
 
-// Query is an iterator to iterate entities.
+// Query is a simple iterator to iterate entities.
 //
 // Create queries through the [World] using [World.Query].
-// See also the generic variants [Query1], [Query2], [Query3], ...
+// See also the generic alternatives [Query1], [Query2], [Query3], ...
 //
 // # Example:
 //
@@ -17,23 +18,21 @@ import (
 //	    pos.X += 1.0
 //	}
 type Query struct {
-	world     *World
-	mask      bitMask
-	exclude   bitMask
-	archetype archetypeIter
-	index     int
-	done      bool
-	lockBit   uint8
+	queryIter
+	mask    bitMask
+	exclude bitMask
 }
 
 // newQuery creates a new Query
 func newQuery(world *World, mask, exclude bitMask, lockBit uint8) Query {
 	return Query{
-		world:   world,
+		queryIter: queryIter{
+			world:   world,
+			index:   -1,
+			lockBit: lockBit,
+		},
 		mask:    mask,
 		exclude: exclude,
-		index:   -1,
-		lockBit: lockBit,
 	}
 }
 
@@ -44,7 +43,7 @@ func newQuery(world *World, mask, exclude bitMask, lockBit uint8) Query {
 //
 //	query := world.Query(idA, isB).Not(idC, isD)
 func (q Query) Not(comps ...ID) Query {
-	q.exclude = newMask(comps...)
+	q.exclude = base.NewMask(comps...)
 	return q
 }
 
@@ -60,22 +59,80 @@ func (q *Query) Next() bool {
 		return true
 	}
 	q.done = true
-	q.world.closeQuery(q)
+	q.world.closeQuery(&q.queryIter)
 	return false
 }
 
+// Filter is an advanced iterator to iterate entities.
+//
+// Create filter through the [World] using [World.Query].
+// There is no generic alternative for filters.
+//
+// # Example:
+//
+//	filter := world.Filter(
+//	    And {
+//	        All(idA, idB, idC),
+//	        Not(OneOf(idD, idE)),
+//	    }
+//	)
+//	for query.Next() {
+//	    pos := (*position)(query.Get(posID))
+//	    pos.X += 1.0
+//	}
+type Filter struct {
+	queryIter
+	filter filter
+}
+
+// newFilter creates a new Filter
+func newFilter(world *World, filter filter, lockBit uint8) Filter {
+	return Filter{
+		queryIter: queryIter{
+			world:   world,
+			index:   -1,
+			lockBit: lockBit,
+		},
+		filter: filter,
+	}
+}
+
+// Next proceeds to the next [Entity] in the Query.
+func (q *Filter) Next() bool {
+	if q.archetype.Next() {
+		return true
+	}
+	i, a, ok := q.world.nextArchetypeFilter(q.filter, q.index)
+	q.index = i
+	if ok {
+		q.archetype = a
+		return true
+	}
+	q.done = true
+	q.world.closeQuery(&q.queryIter)
+	return false
+}
+
+type queryIter struct {
+	world     *World
+	archetype archetypeIter
+	index     int
+	done      bool
+	lockBit   uint8
+}
+
 // Has returns whether the current [Entity] has the given component
-func (q *Query) Has(comp ID) bool {
+func (q *queryIter) Has(comp ID) bool {
 	return q.archetype.Has(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's current [Entity]
-func (q *Query) Get(comp ID) unsafe.Pointer {
+func (q *queryIter) Get(comp ID) unsafe.Pointer {
 	return q.archetype.Get(comp)
 }
 
 // Entity returns the [Entity] at the iterator's position
-func (q *Query) Entity() Entity {
+func (q *queryIter) Entity() Entity {
 	return q.archetype.Entity()
 }
 
@@ -83,7 +140,7 @@ func (q *Query) Entity() Entity {
 //
 // Automatically called when iteration finishes.
 // Needs to be called only if breaking out of the query iteration.
-func (q *Query) Close() {
+func (q *queryIter) Close() {
 	q.done = true
 	q.world.closeQuery(q)
 }

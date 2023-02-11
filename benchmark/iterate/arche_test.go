@@ -30,7 +30,7 @@ func runArcheQuery(b *testing.B, count int) {
 	}
 }
 
-func runArcheQueryPointerHeap(b *testing.B, count int) {
+func runArcheQueryFilter(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -45,18 +45,13 @@ func runArcheQueryPointerHeap(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := createQuery(&world, posID, rotID)
+		query := world.Filter(ecs.All(posID, rotID))
 		b.StartTimer()
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
 			_ = pos
 		}
 	}
-}
-
-func createQuery(w *ecs.World, comps ...ecs.ID) *ecs.Query {
-	q := w.Query(comps...)
-	return &q
 }
 
 func runArcheQueryGeneric(b *testing.B, count int) {
@@ -240,16 +235,16 @@ func BenchmarkArcheIterQueryID_100_000(b *testing.B) {
 	runArcheQuery(b, 100000)
 }
 
-func BenchmarkArcheIterQueryIDPointer_1_000(b *testing.B) {
-	runArcheQueryPointerHeap(b, 1000)
+func BenchmarkArcheIterQueryFilter_1_000(b *testing.B) {
+	runArcheQueryFilter(b, 1000)
 }
 
-func BenchmarkArcheIterQueryIDPointer_10_000(b *testing.B) {
-	runArcheQueryPointerHeap(b, 10000)
+func BenchmarkArcheIterQueryFilter_10_000(b *testing.B) {
+	runArcheQueryFilter(b, 10000)
 }
 
-func BenchmarkArcheIterQueryIDPointer_100_000(b *testing.B) {
-	runArcheQueryPointerHeap(b, 100000)
+func BenchmarkArcheIterQueryFilter_100_000(b *testing.B) {
+	runArcheQueryFilter(b, 100000)
 }
 
 func BenchmarkArcheIterQueryGeneric_1_000(b *testing.B) {

@@ -1,9 +1,6 @@
 package ecs
 
-// Mask is a mask for a combination of components.
-type Mask struct {
-	mask bitMask
-}
+import "internal/base"
 
 // Q0 is a generic query for no components.
 //
@@ -512,26 +509,26 @@ func (q *Q8[A, B, C, D, E, F, G, H]) Get8() *H {
 
 // Mask1 creates a component [Mask] for one component type.
 func Mask1[A any](w *World) Mask {
-	return Mask{newMask(ComponentID[A](w))}
+	return Mask{base.NewMask(ComponentID[A](w))}
 }
 
 // Mask2 creates a component [Mask] for two component types.
 func Mask2[A any, B any](w *World) Mask {
-	return Mask{newMask(
+	return Mask{base.NewMask(
 		ComponentID[A](w), ComponentID[B](w),
 	)}
 }
 
 // Mask3 creates a component [Mask] for three component types.
 func Mask3[A any, B any, C any](w *World) Mask {
-	return Mask{newMask(
+	return Mask{base.NewMask(
 		ComponentID[A](w), ComponentID[B](w), ComponentID[C](w),
 	)}
 }
 
 // Mask4 creates a component [Mask] for four component types.
 func Mask4[A any, B any, C any, D any](w *World) Mask {
-	return Mask{newMask(
+	return Mask{base.NewMask(
 		ComponentID[A](w), ComponentID[B](w), ComponentID[C](w),
 		ComponentID[D](w),
 	)}
@@ -539,7 +536,7 @@ func Mask4[A any, B any, C any, D any](w *World) Mask {
 
 // Mask5 creates a component [Mask] for five component types.
 func Mask5[A any, B any, C any, D any, E any](w *World) Mask {
-	return Mask{newMask(
+	return Mask{base.NewMask(
 		ComponentID[A](w), ComponentID[B](w), ComponentID[C](w),
 		ComponentID[D](w), ComponentID[E](w),
 	)}
@@ -547,7 +544,7 @@ func Mask5[A any, B any, C any, D any, E any](w *World) Mask {
 
 // Mask6 creates a component [Mask] for six component types.
 func Mask6[A any, B any, C any, D any, E any, F any](w *World) Mask {
-	return Mask{newMask(
+	return Mask{base.NewMask(
 		ComponentID[A](w), ComponentID[B](w), ComponentID[C](w),
 		ComponentID[D](w), ComponentID[E](w), ComponentID[F](w),
 	)}
@@ -555,7 +552,7 @@ func Mask6[A any, B any, C any, D any, E any, F any](w *World) Mask {
 
 // Mask7 creates a component [Mask] for seven component types.
 func Mask7[A any, B any, C any, D any, E any, F any, G any](w *World) Mask {
-	return Mask{newMask(
+	return Mask{base.NewMask(
 		ComponentID[A](w), ComponentID[B](w), ComponentID[C](w),
 		ComponentID[D](w), ComponentID[E](w), ComponentID[F](w),
 		ComponentID[G](w),
@@ -564,7 +561,7 @@ func Mask7[A any, B any, C any, D any, E any, F any, G any](w *World) Mask {
 
 // Mask8 creates a component [Mask] for eight component types.
 func Mask8[A any, B any, C any, D any, E any, F any, G any, H any](w *World) Mask {
-	return Mask{newMask(
+	return Mask{base.NewMask(
 		ComponentID[A](w), ComponentID[B](w), ComponentID[C](w),
 		ComponentID[D](w), ComponentID[E](w), ComponentID[F](w),
 		ComponentID[G](w), ComponentID[H](w),
