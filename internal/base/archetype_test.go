@@ -1,4 +1,4 @@
-package ecs
+package base
 
 import (
 	"reflect"
@@ -7,23 +7,32 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+type position struct {
+	X int
+	Y int
+}
+
+type rotation struct {
+	Angle int
+}
+
 func TestArchetype(t *testing.T) {
-	comps := []componentType{
+	comps := []ComponentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	arch := archetype{}
-	arch.init(32, comps...)
+	arch := Archetype{}
+	arch.Init(32, comps...)
 
 	arch.Add(
-		newEntity(0),
+		NewEntity(0),
 		Component{ID: 0, Component: &position{1, 2}},
 		Component{ID: 1, Component: &rotation{3}},
 	)
 
 	arch.Add(
-		newEntity(1),
+		NewEntity(1),
 		Component{ID: 0, Component: &position{4, 5}},
 		Component{ID: 1, Component: &rotation{6}},
 	)
@@ -62,46 +71,46 @@ func TestArchetype(t *testing.T) {
 
 	assert.Panics(t, func() {
 		arch.Add(
-			newEntity(1),
+			NewEntity(1),
 			Component{ID: 0, Component: &position{4, 5}},
 		)
 	})
 
 	assert.Panics(t, func() {
-		arch.AddPointer(newEntity(1))
+		arch.AddPointer(NewEntity(1))
 	})
 }
 
 func TestNewArchetype(t *testing.T) {
-	comps := []componentType{
+	comps := []ComponentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
-	arch := archetype{}
-	arch.init(32, comps...)
+	arch := Archetype{}
+	arch.Init(32, comps...)
 
-	comps = []componentType{
+	comps = []ComponentType{
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 		{ID: 0, Type: reflect.TypeOf(position{})},
 	}
 	assert.Panics(t, func() {
-		arch := archetype{}
-		arch.init(32, comps...)
+		arch := Archetype{}
+		arch.Init(32, comps...)
 	})
 }
 
 func BenchmarkArchetypeAccess_1000(b *testing.B) {
 	b.StopTimer()
-	comps := []componentType{
+	comps := []ComponentType{
 		{ID: 0, Type: reflect.TypeOf(testStruct{})},
 	}
 
-	arch := archetype{}
-	arch.init(32, comps...)
+	arch := Archetype{}
+	arch.Init(32, comps...)
 
 	for i := 0; i < 1000; i++ {
 		arch.Add(
-			newEntity(eid(i)),
+			NewEntity(Eid(i)),
 			Component{ID: 0, Component: &testStruct{}},
 		)
 	}
@@ -119,16 +128,16 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 
 func BenchmarkArchetypeAccessUnsafe_1000(b *testing.B) {
 	b.StopTimer()
-	comps := []componentType{
+	comps := []ComponentType{
 		{ID: 0, Type: reflect.TypeOf(testStruct{})},
 	}
 
-	arch := archetype{}
-	arch.init(32, comps...)
+	arch := Archetype{}
+	arch.Init(32, comps...)
 
 	for i := 0; i < 1000; i++ {
 		arch.Add(
-			newEntity(eid(i)),
+			NewEntity(Eid(i)),
 			Component{ID: 0, Component: &testStruct{}},
 		)
 	}

@@ -1,4 +1,4 @@
-package ecs
+package base
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ func TestEntityAsIndex(t *testing.T) {
 	entity := Entity{1, 0}
 	arr := []int{0, 1, 2}
 
-	val := arr[entity.id]
+	val := arr[entity.ID]
 	_ = val
 }
 

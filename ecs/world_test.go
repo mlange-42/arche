@@ -12,33 +12,33 @@ import (
 func TestWorldEntites(t *testing.T) {
 	w := NewWorld()
 
-	assert.Equal(t, Entity{1, 0}, w.NewEntity())
-	assert.Equal(t, Entity{2, 0}, w.NewEntity())
-	assert.Equal(t, Entity{3, 0}, w.NewEntity())
+	assert.Equal(t, base.NewEntityGen(1, 0), w.NewEntity())
+	assert.Equal(t, base.NewEntityGen(2, 0), w.NewEntity())
+	assert.Equal(t, base.NewEntityGen(3, 0), w.NewEntity())
 
-	assert.Equal(t, 0, int(w.entities[0].index))
-	assert.Equal(t, 0, int(w.entities[1].index))
-	assert.Equal(t, 1, int(w.entities[2].index))
-	assert.Equal(t, 2, int(w.entities[3].index))
-	w.RemEntity(Entity{2, 0})
-	assert.False(t, w.Alive(Entity{2, 0}))
+	assert.Equal(t, 0, int(w.entities[0].Index))
+	assert.Equal(t, 0, int(w.entities[1].Index))
+	assert.Equal(t, 1, int(w.entities[2].Index))
+	assert.Equal(t, 2, int(w.entities[3].Index))
+	w.RemEntity(base.NewEntityGen(2, 0))
+	assert.False(t, w.Alive(base.NewEntityGen(2, 0)))
 
-	assert.Equal(t, 0, int(w.entities[1].index))
-	assert.Equal(t, 1, int(w.entities[3].index))
+	assert.Equal(t, 0, int(w.entities[1].Index))
+	assert.Equal(t, 1, int(w.entities[3].Index))
 
-	assert.Equal(t, Entity{2, 1}, w.NewEntity())
-	assert.False(t, w.Alive(Entity{2, 0}))
-	assert.True(t, w.Alive(Entity{2, 1}))
+	assert.Equal(t, base.NewEntityGen(2, 1), w.NewEntity())
+	assert.False(t, w.Alive(base.NewEntityGen(2, 0)))
+	assert.True(t, w.Alive(base.NewEntityGen(2, 1)))
 
-	assert.Equal(t, 2, int(w.entities[2].index))
+	assert.Equal(t, 2, int(w.entities[2].Index))
 
-	w.RemEntity(Entity{3, 0})
-	w.RemEntity(Entity{2, 1})
-	w.RemEntity(Entity{1, 0})
+	w.RemEntity(base.NewEntityGen(3, 0))
+	w.RemEntity(base.NewEntityGen(2, 1))
+	w.RemEntity(base.NewEntityGen(1, 0))
 
-	assert.Panics(t, func() { w.RemEntity(Entity{3, 0}) })
-	assert.Panics(t, func() { w.RemEntity(Entity{2, 1}) })
-	assert.Panics(t, func() { w.RemEntity(Entity{1, 0}) })
+	assert.Panics(t, func() { w.RemEntity(base.NewEntityGen(3, 0)) })
+	assert.Panics(t, func() { w.RemEntity(base.NewEntityGen(2, 1)) })
+	assert.Panics(t, func() { w.RemEntity(base.NewEntityGen(1, 0)) })
 }
 
 func TestWorldComponents(t *testing.T) {
@@ -98,8 +98,8 @@ func TestWorldComponents(t *testing.T) {
 	w.Remove(e0)
 
 	w.RemEntity(e0)
-	assert.Panics(t, func() { w.Has(Entity{1, 0}, posID) })
-	assert.Panics(t, func() { w.Get(Entity{1, 0}, posID) })
+	assert.Panics(t, func() { w.Has(base.NewEntityGen(1, 0), posID) })
+	assert.Panics(t, func() { w.Get(base.NewEntityGen(1, 0), posID) })
 }
 
 func TestWorldLabels(t *testing.T) {
@@ -333,7 +333,7 @@ func TestArchetypeGraph(t *testing.T) {
 	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{})
 	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{})
 
-	assert.Equal(t, []ID{0, 1, 2}, arch012.ids)
+	assert.Equal(t, []ID{0, 1, 2}, arch012.Ids)
 
 	archEmpty3 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID})
 	assert.Equal(t, archEmpty, archEmpty3)
@@ -390,9 +390,9 @@ func Test1000Archetypes(t *testing.T) {
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
-	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
-	printTypeSize[archetype]()
-	printTypeSize[storage]()
+	printTypeSizeName[pagedArr32[base.Archetype]]("PagedArr32")
+	printTypeSize[base.Archetype]()
+	printTypeSize[base.Storage]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
 	printTypeSizeName[Q1[testStruct0]]("Q1")

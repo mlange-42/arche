@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/filter"
 )
 
 func runArcheQuery(b *testing.B, count int) {
@@ -45,7 +46,7 @@ func runArcheQueryFilter(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := world.Filter(ecs.All(posID, rotID))
+		query := world.Filter(filter.All(posID, rotID))
 		b.StartTimer()
 		for query.Next() {
 			pos := (*position)(query.Get(posID))

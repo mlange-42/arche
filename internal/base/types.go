@@ -1,5 +1,10 @@
 package base
 
+import (
+	"reflect"
+	"unsafe"
+)
+
 // Eid is the entity identifier/index type
 type Eid uint32
 
@@ -25,4 +30,22 @@ func NewMask(ids ...ID) Mask {
 // Matches matches a filter against a mask
 func (f Mask) Matches(mask BitMask) bool {
 	return mask.Contains(f.BitMask)
+}
+
+// Component is a Component ID/Component pointer pair
+type Component struct {
+	ID
+	Component interface{}
+}
+
+// ComponentType is a component ID with a data type
+type ComponentType struct {
+	ID
+	Type reflect.Type
+}
+
+// ComponentPointer is a component ID with a pointer in a storage
+type ComponentPointer struct {
+	ID
+	Pointer unsafe.Pointer
 }

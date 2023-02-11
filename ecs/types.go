@@ -2,8 +2,6 @@ package ecs
 
 import (
 	"internal/base"
-	"reflect"
-	"unsafe"
 )
 
 // eid is the entity identifier/index type
@@ -11,6 +9,12 @@ type eid = base.Eid
 
 // ID is the component identifier type
 type ID = base.ID
+
+// Entity identifier.
+// Holds an entity ID and it's generation for recycling.
+//
+// Entities should only be created via the [World], using [World.NewEntity].
+type Entity = base.Entity
 
 // bitMask is a bitmask.
 type bitMask = base.BitMask
@@ -24,19 +28,4 @@ const MaskTotalBits = base.MaskTotalBits
 type Mask = base.Mask
 
 // Component is a Component ID/Component pointer pair
-type Component struct {
-	ID
-	Component interface{}
-}
-
-// componentType is a component ID with a data type
-type componentType struct {
-	ID
-	Type reflect.Type
-}
-
-// componentPointer is a component ID with a pointer in a storage
-type componentPointer struct {
-	ID
-	Pointer unsafe.Pointer
-}
+type Component base.Component
