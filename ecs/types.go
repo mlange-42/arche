@@ -1,15 +1,16 @@
 package ecs
 
 import (
+	"internal/base"
 	"reflect"
 	"unsafe"
 )
 
 // eid is the entity identifier/index type
-type eid uint32
+type eid = base.Eid
 
 // ID is the component identifier type
-type ID uint8
+type ID = base.ID
 
 // Component is a Component ID/Component pointer pair
 type Component struct {

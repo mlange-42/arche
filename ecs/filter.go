@@ -1,5 +1,7 @@
 package ecs
 
+import "internal/base"
+
 // Mask is a mask for a combination of components.
 type Mask struct {
 	mask bitMask
@@ -9,14 +11,14 @@ type Mask struct {
 //
 // Like [And] for combining individual components.
 func All(comps ...ID) Mask {
-	return Mask{newMask(comps...)}
+	return Mask{base.NewMask(comps...)}
 }
 
 // OneOf matches any of the two components.
 //
 // Like [Or] for combining individual components.
 func OneOf(compA ID, compB ID) Or {
-	return Or{Mask{newMask(compA)}, Mask{newMask(compB)}}
+	return Or{Mask{base.NewMask(compA)}, Mask{base.NewMask(compB)}}
 }
 
 type filter interface {

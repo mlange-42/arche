@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"internal/base"
 	"unsafe"
 )
 
@@ -42,7 +43,7 @@ func newQuery(world *World, mask, exclude bitMask, lockBit uint8) Query {
 //
 //	query := world.Query(idA, isB).Not(idC, isD)
 func (q Query) Not(comps ...ID) Query {
-	q.exclude = newMask(comps...)
+	q.exclude = base.NewMask(comps...)
 	return q
 }
 

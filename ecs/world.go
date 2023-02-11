@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"internal/base"
 	"reflect"
 	"unsafe"
 )
@@ -88,7 +89,7 @@ func (w *World) RemEntity(entity Entity) {
 //
 // See also the generic alternatives [Query1], [Query2], [Query3], ...
 func (w *World) Query(comps ...ID) Query {
-	mask := newMask(comps...)
+	mask := base.NewMask(comps...)
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
 	return newQuery(w, mask, 0, lock)

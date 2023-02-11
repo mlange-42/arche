@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"internal/base"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -466,45 +467,45 @@ func TestGenericMask(t *testing.T) {
 
 	assert.Equal(t,
 		Mask1[testStruct0](&w).mask,
-		newMask(0),
+		base.NewMask(0),
 	)
 
 	assert.Equal(t,
 		Mask2[testStruct0, testStruct1](&w).mask,
-		newMask(0, 1),
+		base.NewMask(0, 1),
 	)
 
 	assert.Equal(t,
 		Mask3[testStruct0, testStruct1, testStruct2](&w).mask,
-		newMask(0, 1, 2),
+		base.NewMask(0, 1, 2),
 	)
 
 	assert.Equal(t,
 		Mask4[testStruct0, testStruct1, testStruct2, testStruct3](&w).mask,
-		newMask(0, 1, 2, 3),
+		base.NewMask(0, 1, 2, 3),
 	)
 
 	assert.Equal(t,
 		Mask5[testStruct0, testStruct1, testStruct2, testStruct3,
 			testStruct4](&w).mask,
-		newMask(0, 1, 2, 3, 4),
+		base.NewMask(0, 1, 2, 3, 4),
 	)
 
 	assert.Equal(t,
 		Mask6[testStruct0, testStruct1, testStruct2, testStruct3,
 			testStruct4, testStruct5](&w).mask,
-		newMask(0, 1, 2, 3, 4, 5),
+		base.NewMask(0, 1, 2, 3, 4, 5),
 	)
 
 	assert.Equal(t,
 		Mask7[testStruct0, testStruct1, testStruct2, testStruct3,
 			testStruct4, testStruct5, testStruct6](&w).mask,
-		newMask(0, 1, 2, 3, 4, 5, 6),
+		base.NewMask(0, 1, 2, 3, 4, 5, 6),
 	)
 
 	assert.Equal(t,
 		Mask8[testStruct0, testStruct1, testStruct2, testStruct3,
 			testStruct4, testStruct5, testStruct6, testStruct7](&w).mask,
-		newMask(0, 1, 2, 3, 4, 5, 6, 7),
+		base.NewMask(0, 1, 2, 3, 4, 5, 6, 7),
 	)
 }
