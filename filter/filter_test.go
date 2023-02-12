@@ -3,8 +3,18 @@ package filter
 import (
 	"testing"
 
+	"github.com/mlange-42/arche/ecs"
 	"github.com/stretchr/testify/assert"
 )
+
+type position struct {
+	X int
+	Y int
+}
+
+type rotation struct {
+	Angle int
+}
 
 func TestLogicFilters(t *testing.T) {
 
@@ -13,7 +23,7 @@ func TestLogicFilters(t *testing.T) {
 	hasAll := All(0, 1)
 	hasNone := All()
 
-	var filter MaskFilter
+	var filter ecs.MaskFilter
 	filter = hasA
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
@@ -89,8 +99,85 @@ func TestLogicFilters(t *testing.T) {
 	assert.Equal(t, Or(hasA, hasB), OneOf(0, 1))
 }
 
-func match(f MaskFilter, m Mask) bool {
+func TestFilter(t *testing.T) {
+	w := ecs.NewWorld()
+
+	posID := ecs.ComponentID[position](&w)
+	rotID := ecs.ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	e4 := w.NewEntity()
+
+	w.Add(e0, posID)
+	w.Add(e1, posID, rotID)
+	w.Add(e2, posID, rotID)
+	w.Add(e3, rotID)
+	w.Add(e4, rotID)
+
+	q := w.Filter(All(posID, rotID))
+	cnt := 0
+	for q.Next() {
+		ent := q.Entity()
+		pos := (*position)(q.Get(posID))
+		rot := (*rotation)(q.Get(rotID))
+		_ = ent
+		_ = pos
+		_ = rot
+		cnt++
+	}
+	assert.Equal(t, 2, cnt)
+
+	q = w.Filter(All(posID))
+	cnt = 0
+	for q.Next() {
+		ent := q.Entity()
+		pos := (*position)(q.Get(posID))
+		_ = ent
+		_ = pos
+		cnt++
+	}
+	assert.Equal(t, 3, cnt)
+
+	q = w.Filter(All(rotID))
+	cnt = 0
+	for q.Next() {
+		ent := q.Entity()
+		rot := (*rotation)(q.Get(rotID))
+		_ = ent
+		_ = rot
+		hasPos := q.Has(posID)
+		_ = hasPos
+		cnt++
+	}
+	assert.Equal(t, 4, cnt)
+
+	assert.Panics(t, func() { q.Next() })
+
+	q = w.Filter(&AND{L: All(rotID), R: NotANY(All(posID))})
+
+	cnt = 0
+	for q.Next() {
+		_ = q.Entity()
+		cnt++
+	}
+	assert.Equal(t, 2, cnt)
+}
+
+func match(f ecs.MaskFilter, m Mask) bool {
 	return f.Matches(m.BitMask)
+}
+
+func TestInterface(t *testing.T) {
+	w := ecs.NewWorld()
+
+	posID := ecs.ComponentID[position](&w)
+
+	f := w.Filter(All(posID))
+	var f2 ecs.EntityIter = &f
+	_ = f2
 }
 
 func BenchmarkFilterStackOr(b *testing.B) {

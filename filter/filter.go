@@ -1,16 +1,12 @@
 package filter
 
 import (
+	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/internal/base"
 )
 
 // Mask is a mask for a combination of components.
 type Mask = base.Mask
-
-// MaskFilter is the interface for logic filters
-type MaskFilter interface {
-	Matches(mask base.BitMask) bool
-}
 
 // All matches all the given components.
 //
@@ -28,12 +24,12 @@ func OneOf(compA base.ID, compB base.ID) *OR {
 
 // AND is a filter for ANDing together components
 type AND struct {
-	L MaskFilter
-	R MaskFilter
+	L ecs.MaskFilter
+	R ecs.MaskFilter
 }
 
 // And constructs a pointer to a AND filter
-func And(l, r MaskFilter) *AND {
+func And(l, r ecs.MaskFilter) *AND {
 	return &AND{L: l, R: r}
 }
 
@@ -44,12 +40,12 @@ func (f *AND) Matches(mask base.BitMask) bool {
 
 // OR is a filter for ORing together components
 type OR struct {
-	L MaskFilter
-	R MaskFilter
+	L ecs.MaskFilter
+	R ecs.MaskFilter
 }
 
 // Or constructs a pointer to a OR filter
-func Or(l, r MaskFilter) *OR {
+func Or(l, r ecs.MaskFilter) *OR {
 	return &OR{L: l, R: r}
 }
 
@@ -60,12 +56,12 @@ func (f *OR) Matches(mask base.BitMask) bool {
 
 // XOR is a filter for XORing together components
 type XOR struct {
-	L MaskFilter
-	R MaskFilter
+	L ecs.MaskFilter
+	R ecs.MaskFilter
 }
 
 // XOr constructs a pointer to a XOR filter
-func XOr(l, r MaskFilter) *XOR {
+func XOr(l, r ecs.MaskFilter) *XOR {
 	return &XOR{L: l, R: r}
 }
 
