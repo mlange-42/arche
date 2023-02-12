@@ -2,7 +2,14 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.3.1...main)
 
-Nothing
+### Features
+
+* Generic queries support optional and excluded components (#53, #56, #58, #59)
+* Logic filters for complex queries (#54, #58)
+
+### Other
+
+* Overhaul of the module structure, with generics and filters in separate packages (#55, #57)
 
 ## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)
 

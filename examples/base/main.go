@@ -18,12 +18,18 @@ type Velocity struct {
 	Y float64
 }
 
+// Rotation component
+type Rotation struct {
+	A float64
+}
+
 func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
+	rotID := ecs.ComponentID[Rotation](&world)
 
 	// Create entities
 	for i := 0; i < 1000; i++ {
@@ -42,15 +48,18 @@ func main() {
 		vel.Y = rand.NormFloat64()
 	}
 
+	// Create a query
+	query := ecs.All(posID, velID).Without(rotID)
+
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query iterator.
-		query := world.Query(ecs.All(posID, velID))
+		q := world.Query(query)
 		// Iterate it
-		for query.Next() {
+		for q.Next() {
 			// Component access through a Query.
-			pos := (*Position)(query.Get(posID))
-			vel := (*Position)(query.Get(velID))
+			pos := (*Position)(q.Get(posID))
+			vel := (*Position)(q.Get(velID))
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y

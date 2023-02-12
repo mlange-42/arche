@@ -73,7 +73,7 @@ func TestQuery(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Query(All(rotID).ButNot(posID))
+	q = w.Query(All(rotID).Without(posID))
 
 	cnt = 0
 	for q.Next() {

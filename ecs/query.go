@@ -31,8 +31,8 @@ func (f Mask) Matches(bits BitMask) bool {
 	return bits.Contains(f.BitMask)
 }
 
-// ButNot excludes the given components.
-func (f Mask) ButNot(comps ...ID) MaskPair {
+// Without excludes the given components.
+func (f Mask) Without(comps ...ID) MaskPair {
 	return MaskPair{
 		Mask:    f,
 		Exclude: All(comps...),

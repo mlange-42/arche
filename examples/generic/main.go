@@ -19,6 +19,16 @@ type Velocity struct {
 	Y float64
 }
 
+// Rotation component
+type Rotation struct {
+	A float64
+}
+
+// Elevation component
+type Elevation struct {
+	E float64
+}
+
 func main() {
 	// Create a World.
 	world := ecs.NewWorld()
@@ -28,7 +38,7 @@ func main() {
 		// Create a new Entity.
 		entity := world.NewEntity()
 		// Add components to it.
-		pos, vel := generic.Add2[Position, Velocity](&world, entity)
+		pos, vel, _, _ := generic.Add4[Position, Velocity, Rotation, Elevation](&world, entity)
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
@@ -54,5 +64,21 @@ func main() {
 			pos.X += vel.X
 			pos.Y += vel.Y
 		}
+	}
+
+	// A more complex generic query using optional and excluded components:
+	query =
+		generic.
+			Query2[Position, Velocity]().        // Components provided through Get... methods
+			Optional(generic.Mask1[Velocity]()). // but those may be nil
+			With(generic.Mask1[Elevation]()).    // additional required components
+			Without(generic.Mask1[Rotation]())   // and entities with any of these are excluded.
+
+	q := query.Build(&world)
+
+	for q.Next() {
+		pos, vel := q.GetAll()
+		pos.X += vel.X
+		pos.Y += vel.Y
 	}
 }
