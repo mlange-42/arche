@@ -7,28 +7,80 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type testStruct0 struct{ val int32 }
+type testStruct0 struct{ val int8 }
 type testStruct1 struct{ val int32 }
-type testStruct2 struct{ val int32 }
-type testStruct3 struct{ val int32 }
-type testStruct4 struct{ val int32 }
-type testStruct5 struct{ val int32 }
-type testStruct6 struct{ val int32 }
-type testStruct7 struct{ val int32 }
-type testStruct8 struct{ val int32 }
-type testStruct9 struct{ val int32 }
+type testStruct2 struct {
+	val  int32
+	val2 int32
+}
+type testStruct3 struct {
+	val  int32
+	val2 int32
+	val3 int32
+}
+type testStruct4 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+}
+type testStruct5 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+}
+type testStruct6 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+}
+type testStruct7 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+	val7 int32
+}
+type testStruct8 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+	val7 int32
+	val8 int32
+}
+type testStruct9 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+	val7 int32
+	val8 int32
+	val9 int32
+}
 
 func registerAll(w *ecs.World) []ecs.ID {
-	_ = testStruct0{1}
-	_ = testStruct1{1}
-	_ = testStruct2{1}
-	_ = testStruct3{1}
-	_ = testStruct4{1}
-	_ = testStruct5{1}
-	_ = testStruct6{1}
-	_ = testStruct7{1}
-	_ = testStruct8{1}
-	_ = testStruct9{1}
+	_ = testStruct0{}
+	_ = testStruct1{}
+	_ = testStruct2{}
+	_ = testStruct3{}
+	_ = testStruct4{}
+	_ = testStruct5{}
+	_ = testStruct6{}
+	_ = testStruct7{}
+	_ = testStruct8{}
+	_ = testStruct9{}
 
 	ids := make([]ecs.ID, 10)
 	ids[0] = ecs.ComponentID[testStruct0](w)

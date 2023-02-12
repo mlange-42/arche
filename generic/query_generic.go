@@ -19,11 +19,11 @@ func toIds(w *ecs.World, types []reflect.Type) []ecs.ID {
 }
 
 func toMask(w *ecs.World, types []reflect.Type) ecs.Mask {
-	ids := make([]ecs.ID, len(types))
-	for i, t := range types {
-		ids[i] = ecs.TypeID(w, t)
+	mask := ecs.BitMask(0)
+	for _, t := range types {
+		mask.Set(ecs.TypeID(w, t), true)
 	}
-	return ecs.All(ids...)
+	return ecs.Mask{BitMask: mask}
 }
 
 // Q0Builder builds a Q0 query

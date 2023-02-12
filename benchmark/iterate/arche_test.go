@@ -80,6 +80,7 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 		}
 	}
 }
+
 func runArcheQuery5C(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()

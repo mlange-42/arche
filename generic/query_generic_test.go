@@ -109,9 +109,9 @@ func TestQuery3(t *testing.T) {
 	w.Assign(e1, 1, &testStruct1{3})
 	w.Assign(e2, 1, &testStruct1{4})
 
-	w.Assign(e0, 2, &testStruct2{3})
-	w.Assign(e1, 2, &testStruct2{4})
-	w.Assign(e2, 2, &testStruct2{5})
+	w.Assign(e0, 2, &testStruct2{3, 0})
+	w.Assign(e1, 2, &testStruct2{4, 0})
+	w.Assign(e2, 2, &testStruct2{5, 0})
 
 	w.Assign(e2, 9, &testStruct9{})
 
@@ -155,13 +155,13 @@ func TestQuery4(t *testing.T) {
 	w.Assign(e1, 1, &testStruct1{3})
 	w.Assign(e2, 1, &testStruct1{3})
 
-	w.Assign(e0, 2, &testStruct2{3})
-	w.Assign(e1, 2, &testStruct2{4})
-	w.Assign(e2, 2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3, 0})
+	w.Assign(e1, 2, &testStruct2{4, 0})
+	w.Assign(e2, 2, &testStruct2{4, 0})
 
-	w.Assign(e0, 3, &testStruct3{4})
-	w.Assign(e1, 3, &testStruct3{5})
-	w.Assign(e2, 3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4, 0, 0})
+	w.Assign(e1, 3, &testStruct3{5, 0, 0})
+	w.Assign(e2, 3, &testStruct3{5, 0, 0})
 
 	w.Assign(e2, 9, &testStruct9{})
 
@@ -208,17 +208,17 @@ func TestQuery5(t *testing.T) {
 	w.Assign(e1, 1, &testStruct1{3})
 	w.Assign(e2, 1, &testStruct1{3})
 
-	w.Assign(e0, 2, &testStruct2{3})
-	w.Assign(e1, 2, &testStruct2{4})
-	w.Assign(e2, 2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3, 0})
+	w.Assign(e1, 2, &testStruct2{4, 0})
+	w.Assign(e2, 2, &testStruct2{4, 0})
 
-	w.Assign(e0, 3, &testStruct3{4})
-	w.Assign(e1, 3, &testStruct3{5})
-	w.Assign(e2, 3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4, 0, 0})
+	w.Assign(e1, 3, &testStruct3{5, 0, 0})
+	w.Assign(e2, 3, &testStruct3{5, 0, 0})
 
-	w.Assign(e0, 4, &testStruct4{5})
-	w.Assign(e1, 4, &testStruct4{6})
-	w.Assign(e2, 4, &testStruct4{6})
+	w.Assign(e0, 4, &testStruct4{5, 0, 0, 0})
+	w.Assign(e1, 4, &testStruct4{6, 0, 0, 0})
+	w.Assign(e2, 4, &testStruct4{6, 0, 0, 0})
 
 	w.Assign(e2, 9, &testStruct9{})
 
@@ -268,21 +268,21 @@ func TestQuery6(t *testing.T) {
 	w.Assign(e1, 1, &testStruct1{3})
 	w.Assign(e2, 1, &testStruct1{3})
 
-	w.Assign(e0, 2, &testStruct2{3})
-	w.Assign(e1, 2, &testStruct2{4})
-	w.Assign(e2, 2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3, 0})
+	w.Assign(e1, 2, &testStruct2{4, 0})
+	w.Assign(e2, 2, &testStruct2{4, 0})
 
-	w.Assign(e0, 3, &testStruct3{4})
-	w.Assign(e1, 3, &testStruct3{5})
-	w.Assign(e2, 3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4, 0, 0})
+	w.Assign(e1, 3, &testStruct3{5, 0, 0})
+	w.Assign(e2, 3, &testStruct3{5, 0, 0})
 
-	w.Assign(e0, 4, &testStruct4{5})
-	w.Assign(e1, 4, &testStruct4{6})
-	w.Assign(e2, 4, &testStruct4{6})
+	w.Assign(e0, 4, &testStruct4{5, 0, 0, 0})
+	w.Assign(e1, 4, &testStruct4{6, 0, 0, 0})
+	w.Assign(e2, 4, &testStruct4{6, 0, 0, 0})
 
-	w.Assign(e0, 5, &testStruct5{6})
-	w.Assign(e1, 5, &testStruct5{7})
-	w.Assign(e2, 5, &testStruct5{7})
+	w.Assign(e0, 5, &testStruct5{6, 0, 0, 0, 0})
+	w.Assign(e1, 5, &testStruct5{7, 0, 0, 0, 0})
+	w.Assign(e2, 5, &testStruct5{7, 0, 0, 0, 0})
 
 	w.Assign(e2, 9, &testStruct9{})
 
@@ -335,25 +335,25 @@ func TestQuery7(t *testing.T) {
 	w.Assign(e1, 1, &testStruct1{3})
 	w.Assign(e2, 1, &testStruct1{3})
 
-	w.Assign(e0, 2, &testStruct2{3})
-	w.Assign(e1, 2, &testStruct2{4})
-	w.Assign(e2, 2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3, 0})
+	w.Assign(e1, 2, &testStruct2{4, 0})
+	w.Assign(e2, 2, &testStruct2{4, 0})
 
-	w.Assign(e0, 3, &testStruct3{4})
-	w.Assign(e1, 3, &testStruct3{5})
-	w.Assign(e2, 3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4, 0, 0})
+	w.Assign(e1, 3, &testStruct3{5, 0, 0})
+	w.Assign(e2, 3, &testStruct3{5, 0, 0})
 
-	w.Assign(e0, 4, &testStruct4{5})
-	w.Assign(e1, 4, &testStruct4{6})
-	w.Assign(e2, 4, &testStruct4{6})
+	w.Assign(e0, 4, &testStruct4{5, 0, 0, 0})
+	w.Assign(e1, 4, &testStruct4{6, 0, 0, 0})
+	w.Assign(e2, 4, &testStruct4{6, 0, 0, 0})
 
-	w.Assign(e0, 5, &testStruct5{6})
-	w.Assign(e1, 5, &testStruct5{7})
-	w.Assign(e2, 5, &testStruct5{7})
+	w.Assign(e0, 5, &testStruct5{6, 0, 0, 0, 0})
+	w.Assign(e1, 5, &testStruct5{7, 0, 0, 0, 0})
+	w.Assign(e2, 5, &testStruct5{7, 0, 0, 0, 0})
 
-	w.Assign(e0, 6, &testStruct5{7})
-	w.Assign(e1, 6, &testStruct5{8})
-	w.Assign(e2, 6, &testStruct5{8})
+	w.Assign(e0, 6, &testStruct5{7, 0, 0, 0, 0})
+	w.Assign(e1, 6, &testStruct5{8, 0, 0, 0, 0})
+	w.Assign(e2, 6, &testStruct5{8, 0, 0, 0, 0})
 
 	w.Assign(e2, 9, &testStruct9{})
 
@@ -410,23 +410,23 @@ func TestQuery8(t *testing.T) {
 	w.Assign(e0, 1, &testStruct1{2})
 	w.Assign(e1, 1, &testStruct1{3})
 
-	w.Assign(e0, 2, &testStruct2{3})
-	w.Assign(e1, 2, &testStruct2{4})
+	w.Assign(e0, 2, &testStruct2{3, 0})
+	w.Assign(e1, 2, &testStruct2{4, 0})
 
-	w.Assign(e0, 3, &testStruct3{4})
-	w.Assign(e1, 3, &testStruct3{5})
+	w.Assign(e0, 3, &testStruct3{4, 0, 0})
+	w.Assign(e1, 3, &testStruct3{5, 0, 0})
 
-	w.Assign(e0, 4, &testStruct4{5})
-	w.Assign(e1, 4, &testStruct4{6})
+	w.Assign(e0, 4, &testStruct4{5, 0, 0, 0})
+	w.Assign(e1, 4, &testStruct4{6, 0, 0, 0})
 
-	w.Assign(e0, 5, &testStruct5{6})
-	w.Assign(e1, 5, &testStruct5{7})
+	w.Assign(e0, 5, &testStruct5{6, 0, 0, 0, 0})
+	w.Assign(e1, 5, &testStruct5{7, 0, 0, 0, 0})
 
-	w.Assign(e0, 6, &testStruct5{7})
-	w.Assign(e1, 6, &testStruct5{8})
+	w.Assign(e0, 6, &testStruct5{7, 0, 0, 0, 0})
+	w.Assign(e1, 6, &testStruct5{8, 0, 0, 0, 0})
 
-	w.Assign(e0, 7, &testStruct5{8})
-	w.Assign(e1, 7, &testStruct5{9})
+	w.Assign(e0, 7, &testStruct5{8, 0, 0, 0, 0})
+	w.Assign(e1, 7, &testStruct5{9, 0, 0, 0, 0})
 
 	w.Assign(e2, 9, &testStruct9{})
 
@@ -559,4 +559,33 @@ func TestGenericMask(t *testing.T) {
 			typeOf[testStruct7](),
 		},
 	)
+}
+
+func BenchmarkQueryGeneric(b *testing.B) {
+	b.StopTimer()
+	count := 1000
+	b.N = 5000
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[testStruct2](&world)
+	rotID := ecs.ComponentID[testStruct3](&world)
+
+	for i := 0; i < count; i++ {
+		entity := world.NewEntity()
+		world.Add(entity, posID, rotID)
+	}
+	query := Query2[testStruct2, testStruct3]()
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		q := query.Build(&world)
+		b.StartTimer()
+		for q.Next() {
+			s1 := q.Get1()
+			s2 := q.Get2()
+			_ = s1
+			_ = s2
+		}
+	}
 }
