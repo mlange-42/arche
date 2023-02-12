@@ -95,15 +95,23 @@ func (w *World) RemEntity(entity Entity) {
 	w.entities[entity.id].arch = nil
 }
 
-// Filter creates an advanced [Filter] iterator.
+// Query creates a [Query] iterator.
 //
 // Locks the world to prevent changes to component compositions.
 //
-// There is no generic alternative for filters.
-func (w *World) Filter(filter MaskFilter) Filter {
+// # Example:
+//
+//	query := world.Query(All(idA, idB).Not(idC))
+//	for query.Next() {
+//	    pos := (*position)(query.Get(posID))
+//	    pos.X += 1.0
+//	}
+//
+// For advanced filtering, see package [filter]
+func (w *World) Query(filter Filter) Query {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newFilter(w, filter, lock)
+	return newQuery(w, filter, lock)
 }
 
 // Alive reports whether an entity is still alive.
@@ -363,7 +371,7 @@ func (w *World) nextArchetype(mask, exclude bitMask, index int) (int, archetypeI
 	return len, archetypeIter{}, false
 }
 
-func (w *World) nextArchetypeFilter(filter MaskFilter, index int) (int, archetypeIter, bool) {
+func (w *World) nextArchetypeFilter(filter Filter, index int) (int, archetypeIter, bool) {
 	len := w.archetypes.Len()
 	if index >= len {
 		panic("exceeded end of query")

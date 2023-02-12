@@ -35,7 +35,7 @@ func TestQuery(t *testing.T) {
 	w.Add(e3, rotID)
 	w.Add(e4, rotID)
 
-	q := w.Filter(All(posID, rotID))
+	q := w.Query(All(posID, rotID))
 	cnt := 0
 	for q.Next() {
 		ent := q.Entity()
@@ -48,7 +48,7 @@ func TestQuery(t *testing.T) {
 	}
 	assert.Equal(t, 2, cnt)
 
-	q = w.Filter(All(posID))
+	q = w.Query(All(posID))
 	cnt = 0
 	for q.Next() {
 		ent := q.Entity()
@@ -59,7 +59,7 @@ func TestQuery(t *testing.T) {
 	}
 	assert.Equal(t, 3, cnt)
 
-	q = w.Filter(All(rotID))
+	q = w.Query(All(rotID))
 	cnt = 0
 	for q.Next() {
 		ent := q.Entity()
@@ -74,7 +74,7 @@ func TestQuery(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Filter(All(rotID).Not(posID))
+	q = w.Query(All(rotID).Not(posID))
 
 	cnt = 0
 	for q.Next() {
@@ -90,7 +90,7 @@ func TestInterface(t *testing.T) {
 	posID := ComponentID[position](&w)
 	rotID := ComponentID[rotation](&w)
 
-	q := w.Filter(All(posID, rotID))
+	q := w.Query(All(posID, rotID))
 	var q2 EntityIter = &q
 	_ = q2
 }

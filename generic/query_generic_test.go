@@ -472,8 +472,6 @@ func TestQuery8(t *testing.T) {
 }
 
 func TestGenericMask(t *testing.T) {
-	w := ecs.NewWorld()
-
 	assert.Equal(t,
 		Mask1[testStruct0](),
 		[]reflect.Type{
@@ -482,7 +480,7 @@ func TestGenericMask(t *testing.T) {
 	)
 
 	assert.Equal(t,
-		Mask2[testStruct0, testStruct1](&w),
+		Mask2[testStruct0, testStruct1](),
 		[]reflect.Type{
 			typeOf[testStruct0](),
 			typeOf[testStruct1](),
@@ -490,7 +488,7 @@ func TestGenericMask(t *testing.T) {
 	)
 
 	assert.Equal(t,
-		Mask3[testStruct0, testStruct1, testStruct2](&w),
+		Mask3[testStruct0, testStruct1, testStruct2](),
 		[]reflect.Type{
 			typeOf[testStruct0](),
 			typeOf[testStruct1](),
@@ -499,7 +497,7 @@ func TestGenericMask(t *testing.T) {
 	)
 
 	assert.Equal(t,
-		Mask4[testStruct0, testStruct1, testStruct2, testStruct3](&w),
+		Mask4[testStruct0, testStruct1, testStruct2, testStruct3](),
 		[]reflect.Type{
 			typeOf[testStruct0](),
 			typeOf[testStruct1](),
@@ -510,7 +508,7 @@ func TestGenericMask(t *testing.T) {
 
 	assert.Equal(t,
 		Mask5[testStruct0, testStruct1, testStruct2, testStruct3,
-			testStruct4](&w),
+			testStruct4](),
 		[]reflect.Type{
 			typeOf[testStruct0](),
 			typeOf[testStruct1](),
@@ -522,7 +520,7 @@ func TestGenericMask(t *testing.T) {
 
 	assert.Equal(t,
 		Mask6[testStruct0, testStruct1, testStruct2, testStruct3,
-			testStruct4, testStruct5](&w),
+			testStruct4, testStruct5](),
 		[]reflect.Type{
 			typeOf[testStruct0](),
 			typeOf[testStruct1](),
@@ -535,7 +533,7 @@ func TestGenericMask(t *testing.T) {
 
 	assert.Equal(t,
 		Mask7[testStruct0, testStruct1, testStruct2, testStruct3,
-			testStruct4, testStruct5, testStruct6](&w),
+			testStruct4, testStruct5, testStruct6](),
 		[]reflect.Type{
 			typeOf[testStruct0](),
 			typeOf[testStruct1](),
@@ -549,7 +547,7 @@ func TestGenericMask(t *testing.T) {
 
 	assert.Equal(t,
 		Mask8[testStruct0, testStruct1, testStruct2, testStruct3,
-			testStruct4, testStruct5, testStruct6, testStruct7](&w),
+			testStruct4, testStruct5, testStruct6, testStruct7](),
 		[]reflect.Type{
 			typeOf[testStruct0](),
 			typeOf[testStruct1](),

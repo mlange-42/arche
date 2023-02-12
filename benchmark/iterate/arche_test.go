@@ -23,7 +23,7 @@ func runArcheQuery(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := world.Filter(ecs.All(posID, rotID))
+		query := world.Query(ecs.All(posID, rotID))
 		b.StartTimer()
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
@@ -47,7 +47,7 @@ func runArcheFilter(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := world.Filter(filter.All(posID, rotID))
+		query := world.Query(filter.All(posID, rotID))
 		b.StartTimer()
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
@@ -98,7 +98,7 @@ func runArcheQuery5C(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := world.Filter(ecs.All(id0, id1, id2, id3, id4))
+		query := world.Query(ecs.All(id0, id1, id2, id3, id4))
 		b.StartTimer()
 		for query.Next() {
 			t1 := (*testStruct0)(query.Get(id0))
@@ -167,7 +167,7 @@ func runArcheQuery1kArch(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := world.Filter(ecs.All(6))
+		query := world.Query(ecs.All(6))
 		b.StartTimer()
 		for query.Next() {
 			pos := (*position)(query.Get(6))
@@ -203,7 +203,7 @@ func runArcheFilter1kArch(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := world.Filter(filter.All(6))
+		query := world.Query(filter.All(6))
 		b.StartTimer()
 		for query.Next() {
 			pos := (*position)(query.Get(6))
@@ -227,7 +227,7 @@ func runArcheWorld(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := world.Filter(ecs.All(posID, rotID))
+		query := world.Query(ecs.All(posID, rotID))
 		b.StartTimer()
 		for query.Next() {
 			entity := query.Entity()
@@ -254,7 +254,7 @@ func runArcheWorldGeneric(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := world.Filter(ecs.All(posID, rotID))
+		query := world.Query(ecs.All(posID, rotID))
 		b.StartTimer()
 		for query.Next() {
 			entity := query.Entity()

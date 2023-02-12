@@ -51,7 +51,7 @@ func TestGenericMap(t *testing.T) {
 
 	e0 := w.NewEntity()
 
-	Add[testStruct0](&w, e0)
+	Add1[testStruct0](&w, e0)
 	has := get.Has(e0)
 	_ = get.Get(e0)
 	assert.True(t, has)
@@ -71,10 +71,10 @@ func TestGenericAddRemove(t *testing.T) {
 
 	e0 := w.NewEntity()
 
-	Add[testStruct0](&w, e0)
+	Add1[testStruct0](&w, e0)
 	_ = get.Has(e0)
 	_ = get.Get(e0)
-	Remove[testStruct0](&w, e0)
+	Remove1[testStruct0](&w, e0)
 
 	Add2[testStruct0, testStruct1](&w, e0)
 	Remove2[testStruct0, testStruct1](&w, e0)
@@ -94,8 +94,8 @@ func TestGenericAssignRemove(t *testing.T) {
 
 	e0 := w.NewEntity()
 
-	Assign(&w, e0, &testStruct0{})
-	Remove[testStruct0](&w, e0)
+	Assign1(&w, e0, &testStruct0{})
+	Remove1[testStruct0](&w, e0)
 
 	Assign2(&w, e0, &testStruct0{}, &testStruct1{})
 	Remove2[testStruct0, testStruct1](&w, e0)

@@ -24,12 +24,12 @@ func OneOf(compA base.ID, compB base.ID) *OR {
 
 // AND is a filter for ANDing together components
 type AND struct {
-	L ecs.MaskFilter
-	R ecs.MaskFilter
+	L ecs.Filter
+	R ecs.Filter
 }
 
 // And constructs a pointer to a AND filter
-func And(l, r ecs.MaskFilter) *AND {
+func And(l, r ecs.Filter) *AND {
 	return &AND{L: l, R: r}
 }
 
@@ -40,12 +40,12 @@ func (f *AND) Matches(mask base.BitMask) bool {
 
 // OR is a filter for ORing together components
 type OR struct {
-	L ecs.MaskFilter
-	R ecs.MaskFilter
+	L ecs.Filter
+	R ecs.Filter
 }
 
 // Or constructs a pointer to a OR filter
-func Or(l, r ecs.MaskFilter) *OR {
+func Or(l, r ecs.Filter) *OR {
 	return &OR{L: l, R: r}
 }
 
@@ -56,12 +56,12 @@ func (f *OR) Matches(mask base.BitMask) bool {
 
 // XOR is a filter for XORing together components
 type XOR struct {
-	L ecs.MaskFilter
-	R ecs.MaskFilter
+	L ecs.Filter
+	R ecs.Filter
 }
 
 // XOr constructs a pointer to a XOR filter
-func XOr(l, r ecs.MaskFilter) *XOR {
+func XOr(l, r ecs.Filter) *XOR {
 	return &XOR{L: l, R: r}
 }
 

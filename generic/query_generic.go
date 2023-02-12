@@ -50,7 +50,7 @@ func (q Q0Builder) Not(mask []reflect.Type) Q0Builder {
 // Build builds a Q0 query for iteration.
 func (q Q0Builder) Build(w *ecs.World) Q0 {
 	return Q0{
-		w.Filter(ecs.MaskPair{
+		w.Query(ecs.MaskPair{
 			Mask:    ecs.NewMask(),
 			Exclude: toMask(w, q.exclude),
 		}),
@@ -61,7 +61,7 @@ func (q Q0Builder) Build(w *ecs.World) Q0 {
 //
 // Create one with [Query0]
 type Q0 struct {
-	ecs.Filter
+	ecs.Query
 }
 
 // Q1Builder builds a Q1 query
@@ -91,7 +91,7 @@ func (q Q1Builder[A]) Not(mask []reflect.Type) Q1Builder[A] {
 func (q Q1Builder[A]) Build(w *ecs.World) Q1[A] {
 	id := ecs.TypeID(w, q.include)
 	return Q1[A]{
-		w.Filter(ecs.MaskPair{
+		w.Query(ecs.MaskPair{
 			Mask:    ecs.NewMask(id),
 			Exclude: toMask(w, q.exclude),
 		}),
@@ -103,13 +103,13 @@ func (q Q1Builder[A]) Build(w *ecs.World) Q1[A] {
 //
 // Create one with [Query1]
 type Q1[A any] struct {
-	ecs.Filter
+	ecs.Query
 	id ecs.ID
 }
 
 // Get1 returns the first queried component for the current query position
 func (q *Q1[A]) Get1() *A {
-	return (*A)(q.Filter.Get(q.id))
+	return (*A)(q.Query.Get(q.id))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -141,7 +141,7 @@ func (q Q2Builder[A, B]) Not(mask []reflect.Type) Q2Builder[A, B] {
 func (q Q2Builder[A, B]) Build(w *ecs.World) Q2[A, B] {
 	ids := toIds(w, q.include)
 	return Q2[A, B]{
-		w.Filter(ecs.MaskPair{
+		w.Query(ecs.MaskPair{
 			Mask:    ecs.NewMask(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
@@ -153,23 +153,23 @@ func (q Q2Builder[A, B]) Build(w *ecs.World) Q2[A, B] {
 //
 // Create one with [Query2]
 type Q2[A any, B any] struct {
-	ecs.Filter
+	ecs.Query
 	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
 func (q *Q2[A, B]) GetAll() (*A, *B) {
-	return (*A)(q.Filter.Get(q.ids[0])), (*B)(q.Filter.Get(q.ids[1]))
+	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get1 returns the first queried component for the current query position
 func (q *Q2[A, B]) Get1() *A {
-	return (*A)(q.Filter.Get(q.ids[0]))
+	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get2 returns the second queried component for the current query position
 func (q *Q2[A, B]) Get2() *B {
-	return (*B)(q.Filter.Get(q.ids[1]))
+	return (*B)(q.Query.Get(q.ids[1]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -201,7 +201,7 @@ func (q Q3Builder[A, B, C]) Not(mask []reflect.Type) Q3Builder[A, B, C] {
 func (q Q3Builder[A, B, C]) Build(w *ecs.World) Q3[A, B, C] {
 	ids := toIds(w, q.include)
 	return Q3[A, B, C]{
-		w.Filter(ecs.MaskPair{
+		w.Query(ecs.MaskPair{
 			Mask:    ecs.NewMask(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
@@ -213,28 +213,28 @@ func (q Q3Builder[A, B, C]) Build(w *ecs.World) Q3[A, B, C] {
 //
 // Create one with [Query3]
 type Q3[A any, B any, C any] struct {
-	ecs.Filter
+	ecs.Query
 	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
 func (q *Q3[A, B, C]) GetAll() (*A, *B, *C) {
-	return (*A)(q.Filter.Get(q.ids[0])), (*B)(q.Filter.Get(q.ids[1])), (*C)(q.Filter.Get(q.ids[2]))
+	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
 }
 
 // Get1 returns the first queried component for the current query position
 func (q *Q3[A, B, C]) Get1() *A {
-	return (*A)(q.Filter.Get(q.ids[0]))
+	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get2 returns the second queried component for the current query position
 func (q *Q3[A, B, C]) Get2() *B {
-	return (*B)(q.Filter.Get(q.ids[1]))
+	return (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get3 returns the third queried component for the current query position
 func (q *Q3[A, B, C]) Get3() *C {
-	return (*C)(q.Filter.Get(q.ids[2]))
+	return (*C)(q.Query.Get(q.ids[2]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -266,7 +266,7 @@ func (q Q4Builder[A, B, C, D]) Not(mask []reflect.Type) Q4Builder[A, B, C, D] {
 func (q Q4Builder[A, B, C, D]) Build(w *ecs.World) Q4[A, B, C, D] {
 	ids := toIds(w, q.include)
 	return Q4[A, B, C, D]{
-		w.Filter(ecs.MaskPair{
+		w.Query(ecs.MaskPair{
 			Mask:    ecs.NewMask(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
@@ -278,36 +278,36 @@ func (q Q4Builder[A, B, C, D]) Build(w *ecs.World) Q4[A, B, C, D] {
 //
 // Create one with [Query4]
 type Q4[A any, B any, C any, D any] struct {
-	ecs.Filter
+	ecs.Query
 	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
 func (q *Q4[A, B, C, D]) GetAll() (*A, *B, *C, *D) {
-	return (*A)(q.Filter.Get(q.ids[0])),
-		(*B)(q.Filter.Get(q.ids[1])),
-		(*C)(q.Filter.Get(q.ids[2])),
-		(*D)(q.Filter.Get(q.ids[3]))
+	return (*A)(q.Query.Get(q.ids[0])),
+		(*B)(q.Query.Get(q.ids[1])),
+		(*C)(q.Query.Get(q.ids[2])),
+		(*D)(q.Query.Get(q.ids[3]))
 }
 
 // Get1 returns the first queried component for the current query position
 func (q *Q4[A, B, C, D]) Get1() *A {
-	return (*A)(q.Filter.Get(q.ids[0]))
+	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get2 returns the second queried component for the current query position
 func (q *Q4[A, B, C, D]) Get2() *B {
-	return (*B)(q.Filter.Get(q.ids[1]))
+	return (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get3 returns the third queried component for the current query position
 func (q *Q4[A, B, C, D]) Get3() *C {
-	return (*C)(q.Filter.Get(q.ids[2]))
+	return (*C)(q.Query.Get(q.ids[2]))
 }
 
 // Get4 returns the fourth queried component for the current query position
 func (q *Q4[A, B, C, D]) Get4() *D {
-	return (*D)(q.Filter.Get(q.ids[3]))
+	return (*D)(q.Query.Get(q.ids[3]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -342,7 +342,7 @@ func (q Q5Builder[A, B, C, D, E]) Not(mask []reflect.Type) Q5Builder[A, B, C, D,
 func (q Q5Builder[A, B, C, D, E]) Build(w *ecs.World) Q5[A, B, C, D, E] {
 	ids := toIds(w, q.include)
 	return Q5[A, B, C, D, E]{
-		w.Filter(ecs.MaskPair{
+		w.Query(ecs.MaskPair{
 			Mask:    ecs.NewMask(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
@@ -354,42 +354,42 @@ func (q Q5Builder[A, B, C, D, E]) Build(w *ecs.World) Q5[A, B, C, D, E] {
 //
 // Create one with [Query5]
 type Q5[A any, B any, C any, D any, E any] struct {
-	ecs.Filter
+	ecs.Query
 	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
 func (q *Q5[A, B, C, D, E]) GetAll() (*A, *B, *C, *D, *E) {
-	return (*A)(q.Filter.Get(q.ids[0])),
-		(*B)(q.Filter.Get(q.ids[1])),
-		(*C)(q.Filter.Get(q.ids[2])),
-		(*D)(q.Filter.Get(q.ids[3])),
-		(*E)(q.Filter.Get(q.ids[4]))
+	return (*A)(q.Query.Get(q.ids[0])),
+		(*B)(q.Query.Get(q.ids[1])),
+		(*C)(q.Query.Get(q.ids[2])),
+		(*D)(q.Query.Get(q.ids[3])),
+		(*E)(q.Query.Get(q.ids[4]))
 }
 
 // Get1 returns the first queried component for the current query position
 func (q *Q5[A, B, C, D, E]) Get1() *A {
-	return (*A)(q.Filter.Get(q.ids[0]))
+	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get2 returns the second queried component for the current query position
 func (q *Q5[A, B, C, D, E]) Get2() *B {
-	return (*B)(q.Filter.Get(q.ids[1]))
+	return (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get3 returns the third queried component for the current query position
 func (q *Q5[A, B, C, D, E]) Get3() *C {
-	return (*C)(q.Filter.Get(q.ids[2]))
+	return (*C)(q.Query.Get(q.ids[2]))
 }
 
 // Get4 returns the fourth queried component for the current query position
 func (q *Q5[A, B, C, D, E]) Get4() *D {
-	return (*D)(q.Filter.Get(q.ids[3]))
+	return (*D)(q.Query.Get(q.ids[3]))
 }
 
 // Get5 returns the fifth queried component for the current query position
 func (q *Q5[A, B, C, D, E]) Get5() *E {
-	return (*E)(q.Filter.Get(q.ids[4]))
+	return (*E)(q.Query.Get(q.ids[4]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -424,7 +424,7 @@ func (q Q6Builder[A, B, C, D, E, F]) Not(mask []reflect.Type) Q6Builder[A, B, C,
 func (q Q6Builder[A, B, C, D, E, F]) Build(w *ecs.World) Q6[A, B, C, D, E, F] {
 	ids := toIds(w, q.include)
 	return Q6[A, B, C, D, E, F]{
-		w.Filter(ecs.MaskPair{
+		w.Query(ecs.MaskPair{
 			Mask:    ecs.NewMask(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
@@ -436,48 +436,48 @@ func (q Q6Builder[A, B, C, D, E, F]) Build(w *ecs.World) Q6[A, B, C, D, E, F] {
 //
 // Create one with [Query6]
 type Q6[A any, B any, C any, D any, E any, F any] struct {
-	ecs.Filter
+	ecs.Query
 	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
 func (q *Q6[A, B, C, D, E, F]) GetAll() (*A, *B, *C, *D, *E, *F) {
-	return (*A)(q.Filter.Get(q.ids[0])),
-		(*B)(q.Filter.Get(q.ids[1])),
-		(*C)(q.Filter.Get(q.ids[2])),
-		(*D)(q.Filter.Get(q.ids[3])),
-		(*E)(q.Filter.Get(q.ids[4])),
-		(*F)(q.Filter.Get(q.ids[5]))
+	return (*A)(q.Query.Get(q.ids[0])),
+		(*B)(q.Query.Get(q.ids[1])),
+		(*C)(q.Query.Get(q.ids[2])),
+		(*D)(q.Query.Get(q.ids[3])),
+		(*E)(q.Query.Get(q.ids[4])),
+		(*F)(q.Query.Get(q.ids[5]))
 }
 
 // Get1 returns the first queried component for the current query position
 func (q *Q6[A, B, C, D, E, F]) Get1() *A {
-	return (*A)(q.Filter.Get(q.ids[0]))
+	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get2 returns the second queried component for the current query position
 func (q *Q6[A, B, C, D, E, F]) Get2() *B {
-	return (*B)(q.Filter.Get(q.ids[1]))
+	return (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get3 returns the third queried component for the current query position
 func (q *Q6[A, B, C, D, E, F]) Get3() *C {
-	return (*C)(q.Filter.Get(q.ids[2]))
+	return (*C)(q.Query.Get(q.ids[2]))
 }
 
 // Get4 returns the fourth queried component for the current query position
 func (q *Q6[A, B, C, D, E, F]) Get4() *D {
-	return (*D)(q.Filter.Get(q.ids[3]))
+	return (*D)(q.Query.Get(q.ids[3]))
 }
 
 // Get5 returns the fifth queried component for the current query position
 func (q *Q6[A, B, C, D, E, F]) Get5() *E {
-	return (*E)(q.Filter.Get(q.ids[4]))
+	return (*E)(q.Query.Get(q.ids[4]))
 }
 
 // Get6 returns the sixth queried component for the current query position
 func (q *Q6[A, B, C, D, E, F]) Get6() *F {
-	return (*F)(q.Filter.Get(q.ids[5]))
+	return (*F)(q.Query.Get(q.ids[5]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -512,7 +512,7 @@ func (q Q7Builder[A, B, C, D, E, F, G]) Not(mask []reflect.Type) Q7Builder[A, B,
 func (q Q7Builder[A, B, C, D, E, F, G]) Build(w *ecs.World) Q7[A, B, C, D, E, F, G] {
 	ids := toIds(w, q.include)
 	return Q7[A, B, C, D, E, F, G]{
-		w.Filter(ecs.MaskPair{
+		w.Query(ecs.MaskPair{
 			Mask:    ecs.NewMask(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
@@ -524,54 +524,54 @@ func (q Q7Builder[A, B, C, D, E, F, G]) Build(w *ecs.World) Q7[A, B, C, D, E, F,
 //
 // Create one with [Query7]
 type Q7[A any, B any, C any, D any, E any, F any, G any] struct {
-	ecs.Filter
+	ecs.Query
 	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
 func (q *Q7[A, B, C, D, E, F, G]) GetAll() (*A, *B, *C, *D, *E, *F, *G) {
-	return (*A)(q.Filter.Get(q.ids[0])),
-		(*B)(q.Filter.Get(q.ids[1])),
-		(*C)(q.Filter.Get(q.ids[2])),
-		(*D)(q.Filter.Get(q.ids[3])),
-		(*E)(q.Filter.Get(q.ids[4])),
-		(*F)(q.Filter.Get(q.ids[5])),
-		(*G)(q.Filter.Get(q.ids[6]))
+	return (*A)(q.Query.Get(q.ids[0])),
+		(*B)(q.Query.Get(q.ids[1])),
+		(*C)(q.Query.Get(q.ids[2])),
+		(*D)(q.Query.Get(q.ids[3])),
+		(*E)(q.Query.Get(q.ids[4])),
+		(*F)(q.Query.Get(q.ids[5])),
+		(*G)(q.Query.Get(q.ids[6]))
 }
 
 // Get1 returns the first queried component for the current query position
 func (q *Q7[A, B, C, D, E, F, G]) Get1() *A {
-	return (*A)(q.Filter.Get(q.ids[0]))
+	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get2 returns the second queried component for the current query position
 func (q *Q7[A, B, C, D, E, F, G]) Get2() *B {
-	return (*B)(q.Filter.Get(q.ids[1]))
+	return (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get3 returns the third queried component for the current query position
 func (q *Q7[A, B, C, D, E, F, G]) Get3() *C {
-	return (*C)(q.Filter.Get(q.ids[2]))
+	return (*C)(q.Query.Get(q.ids[2]))
 }
 
 // Get4 returns the fourth queried component for the current query position
 func (q *Q7[A, B, C, D, E, F, G]) Get4() *D {
-	return (*D)(q.Filter.Get(q.ids[3]))
+	return (*D)(q.Query.Get(q.ids[3]))
 }
 
 // Get5 returns the fifth queried component for the current query position
 func (q *Q7[A, B, C, D, E, F, G]) Get5() *E {
-	return (*E)(q.Filter.Get(q.ids[4]))
+	return (*E)(q.Query.Get(q.ids[4]))
 }
 
 // Get6 returns the sixth queried component for the current query position
 func (q *Q7[A, B, C, D, E, F, G]) Get6() *F {
-	return (*F)(q.Filter.Get(q.ids[5]))
+	return (*F)(q.Query.Get(q.ids[5]))
 }
 
 // Get7 returns the seventh queried component for the current query position
 func (q *Q7[A, B, C, D, E, F, G]) Get7() *G {
-	return (*G)(q.Filter.Get(q.ids[6]))
+	return (*G)(q.Query.Get(q.ids[6]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -606,7 +606,7 @@ func (q Q8Builder[A, B, C, D, E, F, G, H]) Not(mask []reflect.Type) Q8Builder[A,
 func (q Q8Builder[A, B, C, D, E, F, G, H]) Build(w *ecs.World) Q8[A, B, C, D, E, F, G, H] {
 	ids := toIds(w, q.include)
 	return Q8[A, B, C, D, E, F, G, H]{
-		w.Filter(ecs.MaskPair{
+		w.Query(ecs.MaskPair{
 			Mask:    ecs.NewMask(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
@@ -618,60 +618,60 @@ func (q Q8Builder[A, B, C, D, E, F, G, H]) Build(w *ecs.World) Q8[A, B, C, D, E,
 //
 // Create one with [Query8]
 type Q8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
-	ecs.Filter
+	ecs.Query
 	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) GetAll() (*A, *B, *C, *D, *E, *F, *G, *H) {
-	return (*A)(q.Filter.Get(q.ids[0])),
-		(*B)(q.Filter.Get(q.ids[1])),
-		(*C)(q.Filter.Get(q.ids[2])),
-		(*D)(q.Filter.Get(q.ids[3])),
-		(*E)(q.Filter.Get(q.ids[4])),
-		(*F)(q.Filter.Get(q.ids[5])),
-		(*G)(q.Filter.Get(q.ids[6])),
-		(*H)(q.Filter.Get(q.ids[7]))
+	return (*A)(q.Query.Get(q.ids[0])),
+		(*B)(q.Query.Get(q.ids[1])),
+		(*C)(q.Query.Get(q.ids[2])),
+		(*D)(q.Query.Get(q.ids[3])),
+		(*E)(q.Query.Get(q.ids[4])),
+		(*F)(q.Query.Get(q.ids[5])),
+		(*G)(q.Query.Get(q.ids[6])),
+		(*H)(q.Query.Get(q.ids[7]))
 }
 
 // Get1 returns the first queried component for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) Get1() *A {
-	return (*A)(q.Filter.Get(q.ids[0]))
+	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get2 returns the second queried component for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) Get2() *B {
-	return (*B)(q.Filter.Get(q.ids[1]))
+	return (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get3 returns the third queried component for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) Get3() *C {
-	return (*C)(q.Filter.Get(q.ids[2]))
+	return (*C)(q.Query.Get(q.ids[2]))
 }
 
 // Get4 returns the fourth queried component for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) Get4() *D {
-	return (*D)(q.Filter.Get(q.ids[3]))
+	return (*D)(q.Query.Get(q.ids[3]))
 }
 
 // Get5 returns the fifth queried component for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) Get5() *E {
-	return (*E)(q.Filter.Get(q.ids[4]))
+	return (*E)(q.Query.Get(q.ids[4]))
 }
 
 // Get6 returns the sixth queried component for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) Get6() *F {
-	return (*F)(q.Filter.Get(q.ids[5]))
+	return (*F)(q.Query.Get(q.ids[5]))
 }
 
 // Get7 returns the seventh queried component for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) Get7() *G {
-	return (*G)(q.Filter.Get(q.ids[6]))
+	return (*G)(q.Query.Get(q.ids[6]))
 }
 
 // Get8 returns the eighth queried component for the current query position
 func (q *Q8[A, B, C, D, E, F, G, H]) Get8() *H {
-	return (*H)(q.Filter.Get(q.ids[7]))
+	return (*H)(q.Query.Get(q.ids[7]))
 }
 
 // Mask1 creates a component type list for one component type.
@@ -680,26 +680,26 @@ func Mask1[A any]() []reflect.Type {
 }
 
 // Mask2 creates a component type list for two component types.
-func Mask2[A any, B any](w *ecs.World) []reflect.Type {
+func Mask2[A any, B any]() []reflect.Type {
 	return []reflect.Type{typeOf[A](), typeOf[B]()}
 }
 
 // Mask3 creates a component type list for three component types.
-func Mask3[A any, B any, C any](w *ecs.World) []reflect.Type {
+func Mask3[A any, B any, C any]() []reflect.Type {
 	return []reflect.Type{
 		typeOf[A](), typeOf[B](), typeOf[C](),
 	}
 }
 
 // Mask4 creates a component type list for four component types.
-func Mask4[A any, B any, C any, D any](w *ecs.World) []reflect.Type {
+func Mask4[A any, B any, C any, D any]() []reflect.Type {
 	return []reflect.Type{
 		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
 	}
 }
 
 // Mask5 creates a component type list for five component types.
-func Mask5[A any, B any, C any, D any, E any](w *ecs.World) []reflect.Type {
+func Mask5[A any, B any, C any, D any, E any]() []reflect.Type {
 	return []reflect.Type{
 		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
 		typeOf[E](),
@@ -707,7 +707,7 @@ func Mask5[A any, B any, C any, D any, E any](w *ecs.World) []reflect.Type {
 }
 
 // Mask6 creates a component type list for six component types.
-func Mask6[A any, B any, C any, D any, E any, F any](w *ecs.World) []reflect.Type {
+func Mask6[A any, B any, C any, D any, E any, F any]() []reflect.Type {
 	return []reflect.Type{
 		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
 		typeOf[E](), typeOf[F](),
@@ -715,7 +715,7 @@ func Mask6[A any, B any, C any, D any, E any, F any](w *ecs.World) []reflect.Typ
 }
 
 // Mask7 creates a component type list for seven component types.
-func Mask7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) []reflect.Type {
+func Mask7[A any, B any, C any, D any, E any, F any, G any]() []reflect.Type {
 	return []reflect.Type{
 		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
 		typeOf[E](), typeOf[F](), typeOf[G](),
@@ -723,7 +723,7 @@ func Mask7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) []refl
 }
 
 // Mask8 creates a component type list for eight component types.
-func Mask8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World) []reflect.Type {
+func Mask8[A any, B any, C any, D any, E any, F any, G any, H any]() []reflect.Type {
 	return []reflect.Type{
 		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
 		typeOf[E](), typeOf[F](), typeOf[G](), typeOf[H](),
