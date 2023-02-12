@@ -48,7 +48,7 @@ type MaskPair struct {
 // Matches matches a filter against a mask
 func (f MaskPair) Matches(bits BitMask) bool {
 	ex := f.Exclude.BitMask
-	return bits.Contains(f.Mask.BitMask) && (ex == 0 || !bits.Contains(ex))
+	return bits.Contains(f.Mask.BitMask) && (ex == 0 || !bits.ContainsAny(ex))
 }
 
 // EntityIter is the interface for iterable queries

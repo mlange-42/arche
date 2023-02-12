@@ -21,6 +21,7 @@ func TestQuery(t *testing.T) {
 
 	posID := ComponentID[position](&w)
 	rotID := ComponentID[rotation](&w)
+	velID := ComponentID[velocity](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -31,7 +32,7 @@ func TestQuery(t *testing.T) {
 	w.Add(e0, posID)
 	w.Add(e1, posID, rotID)
 	w.Add(e2, posID, rotID)
-	w.Add(e3, rotID)
+	w.Add(e3, rotID, velID)
 	w.Add(e4, rotID)
 
 	q := w.Query(All(posID, rotID))
@@ -81,6 +82,15 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 2, cnt)
+
+	q = w.Query(All(rotID).Without(posID, velID))
+
+	cnt = 0
+	for q.Next() {
+		_ = q.Entity()
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
 }
 
 func TestInterface(t *testing.T) {

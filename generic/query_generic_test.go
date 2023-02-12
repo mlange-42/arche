@@ -23,6 +23,7 @@ func TestQueryOptionalNot(t *testing.T) {
 	w.Assign(e1, 0, &testStruct0{2})
 	w.Assign(e1, 1, &testStruct1{2})
 	w.Assign(e1, 2, &testStruct2{1, 1})
+	w.Assign(e1, 8, &testStruct8{})
 
 	w.Assign(e2, 0, &testStruct0{3})
 	w.Assign(e2, 1, &testStruct1{3})
@@ -42,6 +43,13 @@ func TestQueryOptionalNot(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 2, cnt)
+
+	query2 = Query2[testStruct0, testStruct1]().Without(Mask2[testStruct8, testStruct9]()).Build(&w)
+	cnt = 0
+	for query2.Next() {
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
 
 	query2 = Query2[testStruct0, testStruct1]().With(Mask1[testStruct2]()).Without(Mask1[testStruct9]()).Build(&w)
 	cnt = 0
