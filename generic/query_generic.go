@@ -1,9 +1,8 @@
 package generic
 
 import (
-	"internal/base"
-
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/internal/base"
 )
 
 // Q0 is a generic query for no components.

@@ -32,7 +32,7 @@ func runArcheQuery(b *testing.B, count int) {
 	}
 }
 
-func runArcheQueryFilter(b *testing.B, count int) {
+func runArcheFilter(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -173,6 +173,42 @@ func runArcheQuery1kArch(b *testing.B, count int) {
 	}
 }
 
+func runArcheFilter1kArch(b *testing.B, count int) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+	registerAll(&world)
+
+	perArch := 2 * count / 1000
+
+	for i := 0; i < 1024; i++ {
+		mask := i
+		add := make([]ecs.ID, 0, 10)
+		for j := 0; j < 10; j++ {
+			id := ecs.ID(j)
+			m := 1 << j
+			if mask&m == m {
+				add = append(add, id)
+			}
+		}
+		for j := 0; j < perArch; j++ {
+			entity := world.NewEntity()
+			world.Add(entity, add...)
+		}
+	}
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		query := world.Filter(filter.All(6))
+		b.StartTimer()
+		for query.Next() {
+			pos := (*position)(query.Get(6))
+			_ = pos
+		}
+	}
+}
+
 func runArcheWorld(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
@@ -237,16 +273,16 @@ func BenchmarkArcheIterQueryID_100_000(b *testing.B) {
 	runArcheQuery(b, 100000)
 }
 
-func BenchmarkArcheIterQueryFilter_1_000(b *testing.B) {
-	runArcheQueryFilter(b, 1000)
+func BenchmarkArcheIterFilter_1_000(b *testing.B) {
+	runArcheFilter(b, 1000)
 }
 
-func BenchmarkArcheIterQueryFilter_10_000(b *testing.B) {
-	runArcheQueryFilter(b, 10000)
+func BenchmarkArcheIterFilter_10_000(b *testing.B) {
+	runArcheFilter(b, 10000)
 }
 
-func BenchmarkArcheIterQueryFilter_100_000(b *testing.B) {
-	runArcheQueryFilter(b, 100000)
+func BenchmarkArcheIterFilter_100_000(b *testing.B) {
+	runArcheFilter(b, 100000)
 }
 
 func BenchmarkArcheIterQueryGeneric_1_000(b *testing.B) {
@@ -319,4 +355,16 @@ func BenchmarkArcheIter1kArchID_10_000(b *testing.B) {
 
 func BenchmarkArcheIter1kArchID_100_000(b *testing.B) {
 	runArcheQuery1kArch(b, 100000)
+}
+
+func BenchmarkArcheFilter1kArchID_1_000(b *testing.B) {
+	runArcheFilter1kArch(b, 1000)
+}
+
+func BenchmarkArcheFilter1kArchID_10_000(b *testing.B) {
+	runArcheFilter1kArch(b, 10000)
+}
+
+func BenchmarkArcheFilter1kArchID_100_000(b *testing.B) {
+	runArcheFilter1kArch(b, 100000)
 }

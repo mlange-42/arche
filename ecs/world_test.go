@@ -2,10 +2,10 @@ package ecs
 
 import (
 	"fmt"
-	"internal/base"
 	"reflect"
 	"testing"
 
+	"github.com/mlange-42/arche/internal/base"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -264,7 +264,7 @@ func TestWorldIter(t *testing.T) {
 		assert.Panics(t, func() { query.Next() })
 	}
 
-	for i := 0; i < MaskTotalBits-1; i++ {
+	for i := 0; i < maskTotalBits-1; i++ {
 		query := world.Query(posID, rotID)
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
@@ -393,7 +393,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[base.PagedArr32[archetype]]("PagedArr32")
 	printTypeSize[archetype]()
 	printTypeSize[base.Storage]()
-	printTypeSize[Query]()
+	printTypeSize[EntityIter]()
 	printTypeSize[archetypeIter]()
 }
 

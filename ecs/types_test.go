@@ -1,9 +1,9 @@
 package ecs
 
 import (
-	"internal/base"
 	"testing"
 
+	"github.com/mlange-42/arche/internal/base"
 	"github.com/stretchr/testify/assert"
 )
 

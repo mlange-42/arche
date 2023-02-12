@@ -11,6 +11,9 @@
 [Department for Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
 [Helmholtz Centre for Environmental Research](https://www.ufz.de).
 
+**:warning: Arche is still under rapid development! Be prepared for frequent API changes. :warning:**  
+
+
 ## Installations
 
 ```shell
@@ -33,7 +36,8 @@ For details on Arche's architecture, see section [Architecture](#architecture).
 Here is a minimal usage example.
 You will likely create systems with a method that takes a pointer to the `World` as argument.
 
-See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) for details.
+See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
+[examples](https://github.com/mlange-42/arche/tree/main/examples) for details.
 
 ```go
 package main
@@ -42,6 +46,7 @@ import (
 	"math/rand"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/generic"
 )
 
 // Position component
@@ -65,7 +70,7 @@ func main() {
 		// Create a new Entity.
 		entity := world.NewEntity()
 		// Add components to it.
-		pos, vel := ecs.Add2[Position, Velocity](&world, entity)
+		pos, vel := generic.Add2[Position, Velocity](&world, entity)
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
@@ -80,7 +85,7 @@ func main() {
 		// Get a fresh query.
 		// Generic queries support up to 8 components.
 		// For more components, use World.Query()
-		query := ecs.Query2[Position, Velocity](&world)
+		query := generic.Query2[Position, Velocity](&world)
 		// Iterate it
 		for query.Next() {
 			// Component access through a Query.
@@ -147,7 +152,8 @@ Component IDs are retrieved like this:
 posID := ComponentID[Position](&world)
 ```
 
-For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
+For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
+[examples](https://github.com/mlange-42/arche/tree/main/examples).
 
 ## Benchmarks
 

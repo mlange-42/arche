@@ -1,9 +1,10 @@
 package ecs
 
 import (
-	"internal/base"
 	"reflect"
 	"unsafe"
+
+	"github.com/mlange-42/arche/internal/base"
 )
 
 // archetype represents an ECS archetype
@@ -12,7 +13,7 @@ type archetype struct {
 	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
-	indices    [MaskTotalBits]uint8
+	indices    [maskTotalBits]uint8
 	entities   base.Storage
 	components []base.Storage
 	toAdd      map[ID]*archetype

@@ -1,7 +1,7 @@
 package filter
 
 import (
-	"internal/base"
+	"github.com/mlange-42/arche/internal/base"
 )
 
 // Mask is a mask for a combination of components.
@@ -22,47 +22,80 @@ func All(comps ...base.ID) Mask {
 // OneOf matches any of the two components.
 //
 // Like [Or] for combining individual components.
-func OneOf(compA base.ID, compB base.ID) Or {
-	return Or{base.NewMask(compA), base.NewMask(compB)}
+func OneOf(compA base.ID, compB base.ID) *OR {
+	return &OR{base.NewMask(compA), base.NewMask(compB)}
 }
 
-// And is a filter for ANDing together components
-type And struct {
-	a MaskFilter
-	b MaskFilter
+// AND is a filter for ANDing together components
+type AND struct {
+	L MaskFilter
+	R MaskFilter
 }
 
-// Or is a filter for ORing together components
-type Or struct {
-	a MaskFilter
-	b MaskFilter
-}
-
-// XOr is a filter for XORing together components
-type XOr struct {
-	a MaskFilter
-	b MaskFilter
-}
-
-// Not is a filter for excluding components
-type Not Mask
-
-// Matches matches a filter against a mask
-func (f *And) Matches(mask base.BitMask) bool {
-	return f.a.Matches(mask) && f.b.Matches(mask)
+// And constructs a pointer to a AND filter
+func And(l, r MaskFilter) *AND {
+	return &AND{L: l, R: r}
 }
 
 // Matches matches a filter against a mask
-func (f *Or) Matches(mask base.BitMask) bool {
-	return f.a.Matches(mask) || f.b.Matches(mask)
+func (f *AND) Matches(mask base.BitMask) bool {
+	return f.L.Matches(mask) && f.R.Matches(mask)
+}
+
+// OR is a filter for ORing together components
+type OR struct {
+	L MaskFilter
+	R MaskFilter
+}
+
+// Or constructs a pointer to a OR filter
+func Or(l, r MaskFilter) *OR {
+	return &OR{L: l, R: r}
 }
 
 // Matches matches a filter against a mask
-func (f *XOr) Matches(mask base.BitMask) bool {
-	return f.a.Matches(mask) != f.b.Matches(mask)
+func (f *OR) Matches(mask base.BitMask) bool {
+	return f.L.Matches(mask) || f.R.Matches(mask)
+}
+
+// XOR is a filter for XORing together components
+type XOR struct {
+	L MaskFilter
+	R MaskFilter
+}
+
+// XOr constructs a pointer to a XOR filter
+func XOr(l, r MaskFilter) *XOR {
+	return &XOR{L: l, R: r}
 }
 
 // Matches matches a filter against a mask
-func (f Not) Matches(mask base.BitMask) bool {
+func (f *XOR) Matches(mask base.BitMask) bool {
+	return f.L.Matches(mask) != f.R.Matches(mask)
+}
+
+// NOT is a filter for excluding entities with all given components
+type NOT Mask
+
+// Not constructs a NOT filter
+func Not(comps ...base.ID) NOT {
+	return NOT(base.NewMask(comps...))
+}
+
+// Matches matches a filter against a mask
+func (f NOT) Matches(mask base.BitMask) bool {
+	return !mask.Contains(f.BitMask)
+}
+
+// NotANY is a filter for excluding entities with any of the the given components
+type NotANY Mask
+
+// NotAny constructs a NotANY filter
+func NotAny(comps ...base.ID) NotANY {
+	return NotANY(base.NewMask(comps...))
+}
+
+// Matches matches a filter against a mask
+func (f NotANY) Matches(mask base.BitMask) bool {
 	return !mask.ContainsAny(f.BitMask)
 }

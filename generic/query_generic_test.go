@@ -1,10 +1,10 @@
 package generic
 
 import (
-	"internal/base"
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/internal/base"
 	"github.com/stretchr/testify/assert"
 )
 

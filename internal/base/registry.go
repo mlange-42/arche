@@ -2,6 +2,11 @@ package base
 
 import "reflect"
 
+// MaskTotalBits is the size of Mask in bits.
+//
+// It is the maximum number of component types that may exist in any [World].
+const MaskTotalBits = 64
+
 // ComponentRegistry keeps track of component IDs
 type ComponentRegistry struct {
 	Components map[reflect.Type]ID

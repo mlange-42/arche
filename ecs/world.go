@@ -1,11 +1,11 @@
 package ecs
 
 import (
-	"internal/base"
 	"reflect"
 	"unsafe"
 
 	f "github.com/mlange-42/arche/filter"
+	"github.com/mlange-42/arche/internal/base"
 )
 
 // ComponentID returns the ID for a component type. Registers the type if it is not already registered.
@@ -339,7 +339,7 @@ func (w *World) createArchetype(mask bitMask) *archetype {
 	types := make([]base.ComponentType, count)
 
 	idx := 0
-	for i := 0; i < MaskTotalBits; i++ {
+	for i := 0; i < maskTotalBits; i++ {
 		id := ID(i)
 		if mask.Get(id) {
 			types[idx] = base.ComponentType{ID: id, Type: w.registry.Types[id]}
