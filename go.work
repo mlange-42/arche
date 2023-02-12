@@ -4,5 +4,6 @@ use (
 	.
 	./benchmark
 	./profile
+	./examples
 	./internal/base
 )
