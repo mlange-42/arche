@@ -564,6 +564,7 @@ func TestGenericMask(t *testing.T) {
 func BenchmarkQueryGeneric(b *testing.B) {
 	b.StopTimer()
 	count := 1000
+	//lint:ignore SA3001 takes too long otherwise
 	b.N = 5000
 	world := ecs.NewWorld()
 

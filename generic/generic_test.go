@@ -7,23 +7,34 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//lint:ignore U1000 test type
 type testStruct0 struct{ val int8 }
+
+//lint:ignore U1000 test type
 type testStruct1 struct{ val int32 }
+
+//lint:ignore U1000 test type
 type testStruct2 struct {
 	val  int32
 	val2 int32
 }
+
+//lint:ignore U1000 test type
 type testStruct3 struct {
 	val  int32
 	val2 int32
 	val3 int32
 }
+
+//lint:ignore U1000 test type
 type testStruct4 struct {
 	val  int32
 	val2 int32
 	val3 int32
 	val4 int32
 }
+
+//lint:ignore U1000 test type
 type testStruct5 struct {
 	val  int32
 	val2 int32
@@ -31,6 +42,8 @@ type testStruct5 struct {
 	val4 int32
 	val5 int32
 }
+
+//lint:ignore U1000 test type
 type testStruct6 struct {
 	val  int32
 	val2 int32
@@ -39,6 +52,8 @@ type testStruct6 struct {
 	val5 int32
 	val6 int32
 }
+
+//lint:ignore U1000 test type
 type testStruct7 struct {
 	val  int32
 	val2 int32
@@ -48,6 +63,8 @@ type testStruct7 struct {
 	val6 int32
 	val7 int32
 }
+
+//lint:ignore U1000 test type
 type testStruct8 struct {
 	val  int32
 	val2 int32
@@ -58,6 +75,8 @@ type testStruct8 struct {
 	val7 int32
 	val8 int32
 }
+
+//lint:ignore U1000 test type
 type testStruct9 struct {
 	val  int32
 	val2 int32
