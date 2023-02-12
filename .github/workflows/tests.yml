@@ -38,7 +38,7 @@ jobs:
           go test -v ./internal/base ./... -covermode=count -coverprofile="coverage.out"
           go tool cover -func="coverage.out"
 
-  test:
+  examples:
     name: Run examples
     runs-on: ubuntu-latest
     steps:
