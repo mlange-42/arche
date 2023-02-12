@@ -561,11 +561,8 @@ func TestGenericMask(t *testing.T) {
 	)
 }
 
-func BenchmarkQueryGeneric(b *testing.B) {
-	b.StopTimer()
+func TestQueryGeneric(t *testing.T) {
 	count := 1000
-	//lint:ignore SA3001 takes too long otherwise
-	b.N = 5000
 	world := ecs.NewWorld()
 
 	posID := ecs.ComponentID[testStruct2](&world)
@@ -576,17 +573,15 @@ func BenchmarkQueryGeneric(b *testing.B) {
 		world.Add(entity, posID, rotID)
 	}
 	query := Query2[testStruct2, testStruct3]()
-	b.StartTimer()
 
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		q := query.Build(&world)
-		b.StartTimer()
-		for q.Next() {
-			s1 := q.Get1()
-			s2 := q.Get2()
-			_ = s1
-			_ = s2
-		}
+	q := query.Build(&world)
+	cnt := 0
+	for q.Next() {
+		s1 := q.Get1()
+		s2 := q.Get2()
+		_ = s1
+		_ = s2
+		cnt++
 	}
+	assert.Equal(t, count, cnt)
 }
