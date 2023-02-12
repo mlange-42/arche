@@ -3,8 +3,19 @@ package ecs
 import (
 	"testing"
 
+	"github.com/mlange-42/arche/internal/base"
 	"github.com/stretchr/testify/assert"
 )
+
+func TestMask(t *testing.T) {
+	filter := NewMask(0, 2, 4)
+	other := base.NewBitMask(0, 1, 2)
+
+	assert.False(t, filter.Matches(other))
+
+	other = base.NewBitMask(0, 1, 2, 3, 4)
+	assert.True(t, filter.Matches(other))
+}
 
 func TestQuery(t *testing.T) {
 	w := NewWorld()

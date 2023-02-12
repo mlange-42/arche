@@ -6,20 +6,20 @@ import (
 )
 
 // Mask is a mask for a combination of components.
-type Mask = base.Mask
+type Mask = ecs.Mask
 
 // All matches all the given components.
 //
 // Like [And] for combining individual components.
 func All(comps ...base.ID) Mask {
-	return base.NewMask(comps...)
+	return ecs.NewMask(comps...)
 }
 
 // OneOf matches any of the two components.
 //
 // Like [Or] for combining individual components.
 func OneOf(compA base.ID, compB base.ID) *OR {
-	return &OR{base.NewMask(compA), base.NewMask(compB)}
+	return &OR{ecs.NewMask(compA), ecs.NewMask(compB)}
 }
 
 // AND is a filter for ANDing together components
@@ -75,7 +75,7 @@ type NOT Mask
 
 // Not constructs a NOT filter
 func Not(comps ...base.ID) NOT {
-	return NOT(base.NewMask(comps...))
+	return NOT(ecs.NewMask(comps...))
 }
 
 // Matches matches a filter against a mask
@@ -88,7 +88,7 @@ type NotANY Mask
 
 // NotAny constructs a NotANY filter
 func NotAny(comps ...base.ID) NotANY {
-	return NotANY(base.NewMask(comps...))
+	return NotANY(ecs.NewMask(comps...))
 }
 
 // Matches matches a filter against a mask

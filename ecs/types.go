@@ -18,9 +18,6 @@ type bitMask = base.BitMask
 // It is the maximum number of component types that may exist in any [World].
 const maskTotalBits = base.MaskTotalBits
 
-// Mask is a mask for a combination of components.
-type Mask = base.Mask
-
 // Component is a Component ID/Component pointer pair
 type Component struct {
 	ID

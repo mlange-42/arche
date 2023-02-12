@@ -45,7 +45,7 @@ func main() {
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query.
-		query := world.Query(posID, velID)
+		query := world.Filter(ecs.All(posID, velID))
 		// Iterate it
 		for query.Next() {
 			// Component access through a Query.

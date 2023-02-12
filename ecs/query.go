@@ -11,6 +11,51 @@ type MaskFilter interface {
 	Matches(mask base.BitMask) bool
 }
 
+// Mask is a mask for a combination of components.
+type Mask struct {
+	BitMask bitMask
+}
+
+// NewMask creates a new Mask from a list of IDs.
+//
+// If any ID is bigger or equal [MaskTotalBits], it'll not be added to the mask.
+func NewMask(ids ...ID) Mask {
+	var mask bitMask
+	for _, id := range ids {
+		mask.Set(id, true)
+	}
+	return Mask{mask}
+}
+
+// Matches matches a filter against a mask
+func (f Mask) Matches(mask bitMask) bool {
+	return mask.Contains(f.BitMask)
+}
+
+// All matches all the given components.
+func All(comps ...base.ID) Mask {
+	return NewMask(comps...)
+}
+
+// Not excludes the given components.
+func (f Mask) Not(comps ...base.ID) MaskPair {
+	return MaskPair{
+		mask:    f,
+		exclude: NewMask(comps...),
+	}
+}
+
+// MaskPair is a filter for including an excluding components
+type MaskPair struct {
+	mask    Mask
+	exclude Mask
+}
+
+// Matches matches a filter against a mask
+func (f MaskPair) Matches(mask base.BitMask) bool {
+	return mask.Contains(f.mask.BitMask) && !mask.Contains(f.exclude.BitMask)
+}
+
 // EntityIter is the interface for iterable queries
 type EntityIter interface {
 	// Next proceeds to the next [Entity] in the Query.

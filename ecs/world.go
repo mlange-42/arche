@@ -363,7 +363,7 @@ func (w *World) nextArchetype(mask, exclude bitMask, index int) (int, archetypeI
 	}
 	for i := index + 1; i < len; i++ {
 		a := w.archetypes.Get(i)
-		if a.Len() > 0 && a.Mask.Contains(mask) && !a.Mask.ContainsAny(exclude) {
+		if a.Len() > 0 && a.Mask.Contains(mask) && (exclude == 0 || !a.Mask.Contains(exclude)) {
 			return i, newArchetypeIter(a), true
 		}
 	}
