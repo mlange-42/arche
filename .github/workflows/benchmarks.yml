@@ -17,7 +17,6 @@ jobs:
         run: go get .
       - name: Benchmarks
         run: |
-          go test -benchmem -run=^$ -bench ^.*$ ./internal/base
           go test -benchmem -run=^$ -bench ^.*$ ./...
           cd benchmark
           go test -benchmem -run=^$ -bench ^.*$ ./...
