@@ -2,7 +2,6 @@ package filter
 
 import (
 	"github.com/mlange-42/arche/ecs"
-	"github.com/mlange-42/arche/internal/base"
 )
 
 // Mask is a mask for a combination of components.
@@ -11,14 +10,14 @@ type Mask = ecs.Mask
 // All matches all the given components.
 //
 // Like [And] for combining individual components.
-func All(comps ...base.ID) Mask {
+func All(comps ...ecs.ID) Mask {
 	return ecs.NewMask(comps...)
 }
 
 // OneOf matches any of the two components.
 //
 // Like [Or] for combining individual components.
-func OneOf(compA base.ID, compB base.ID) *OR {
+func OneOf(compA ecs.ID, compB ecs.ID) *OR {
 	return &OR{ecs.NewMask(compA), ecs.NewMask(compB)}
 }
 
@@ -34,7 +33,7 @@ func And(l, r ecs.Filter) *AND {
 }
 
 // Matches matches a filter against a mask
-func (f *AND) Matches(mask base.BitMask) bool {
+func (f *AND) Matches(mask ecs.BitMask) bool {
 	return f.L.Matches(mask) && f.R.Matches(mask)
 }
 
@@ -50,7 +49,7 @@ func Or(l, r ecs.Filter) *OR {
 }
 
 // Matches matches a filter against a mask
-func (f *OR) Matches(mask base.BitMask) bool {
+func (f *OR) Matches(mask ecs.BitMask) bool {
 	return f.L.Matches(mask) || f.R.Matches(mask)
 }
 
@@ -66,7 +65,7 @@ func XOr(l, r ecs.Filter) *XOR {
 }
 
 // Matches matches a filter against a mask
-func (f *XOR) Matches(mask base.BitMask) bool {
+func (f *XOR) Matches(mask ecs.BitMask) bool {
 	return f.L.Matches(mask) != f.R.Matches(mask)
 }
 
@@ -74,12 +73,12 @@ func (f *XOR) Matches(mask base.BitMask) bool {
 type NOT Mask
 
 // Not constructs a NOT filter
-func Not(comps ...base.ID) NOT {
+func Not(comps ...ecs.ID) NOT {
 	return NOT(ecs.NewMask(comps...))
 }
 
 // Matches matches a filter against a mask
-func (f NOT) Matches(mask base.BitMask) bool {
+func (f NOT) Matches(mask ecs.BitMask) bool {
 	return !mask.Contains(f.BitMask)
 }
 
@@ -87,11 +86,11 @@ func (f NOT) Matches(mask base.BitMask) bool {
 type NotANY Mask
 
 // NotAny constructs a NotANY filter
-func NotAny(comps ...base.ID) NotANY {
+func NotAny(comps ...ecs.ID) NotANY {
 	return NotANY(ecs.NewMask(comps...))
 }
 
 // Matches matches a filter against a mask
-func (f NotANY) Matches(mask base.BitMask) bool {
+func (f NotANY) Matches(mask ecs.BitMask) bool {
 	return !mask.ContainsAny(f.BitMask)
 }

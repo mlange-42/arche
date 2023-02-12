@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/mlange-42/arche/internal/base"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -62,10 +61,10 @@ func TestWorldComponents(t *testing.T) {
 
 	w.Remove(e2, posID)
 
-	maskNone := base.NewBitMask()
-	maskPos := base.NewBitMask(posID)
-	maskRot := base.NewBitMask(rotID)
-	maskPosRot := base.NewBitMask(posID, rotID)
+	maskNone := NewBitMask()
+	maskPos := NewBitMask(posID)
+	maskRot := NewBitMask(rotID)
+	maskPosRot := NewBitMask(posID, rotID)
 
 	archNone, ok := w.findArchetype(maskNone)
 	assert.True(t, ok)
@@ -366,7 +365,7 @@ func Test1000Archetypes(t *testing.T) {
 	ids[9] = ComponentID[testStruct9](&w)
 
 	for i := 0; i < 1024; i++ {
-		mask := bitMask(i)
+		mask := BitMask(i)
 		add := make([]ID, 0, 10)
 		for j := 0; j < 10; j++ {
 			id := ID(j)

@@ -4,15 +4,14 @@ import (
 	"reflect"
 
 	"github.com/mlange-42/arche/ecs"
-	"github.com/mlange-42/arche/internal/base"
 )
 
 func typeOf[T any]() reflect.Type {
 	return reflect.TypeOf((*T)(nil)).Elem()
 }
 
-func toIds(w *ecs.World, types []reflect.Type) []base.ID {
-	ids := make([]base.ID, len(types))
+func toIds(w *ecs.World, types []reflect.Type) []ecs.ID {
+	ids := make([]ecs.ID, len(types))
 	for i, t := range types {
 		ids[i] = ecs.TypeID(w, t)
 	}
@@ -20,7 +19,7 @@ func toIds(w *ecs.World, types []reflect.Type) []base.ID {
 }
 
 func toMask(w *ecs.World, types []reflect.Type) ecs.Mask {
-	ids := make([]base.ID, len(types))
+	ids := make([]ecs.ID, len(types))
 	for i, t := range types {
 		ids[i] = ecs.TypeID(w, t)
 	}
