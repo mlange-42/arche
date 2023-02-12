@@ -47,10 +47,10 @@ func (g *Map[T]) Set(entity ecs.Entity, comp *T) *T {
 	return (*T)(g.world.Set(entity, g.id, comp))
 }
 
-// Add adds a component type to an entity.
+// Add1 adds a component type to an entity.
 //
-// See also [World.Add].
-func Add[A any](w *ecs.World, entity ecs.Entity) *A {
+// See also [World.Add1].
+func Add1[A any](w *ecs.World, entity ecs.Entity) *A {
 	id := ecs.ComponentID[A](w)
 	w.Add(entity, id)
 	return (*A)(w.Get(entity, id))
@@ -102,10 +102,10 @@ func Add5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity) (*
 	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD)), (*E)(w.Get(entity, idE))
 }
 
-// Assign adds a components to an entity.
+// Assign1 adds a components to an entity.
 //
-// See also [World.Assign] and [World.AssignN].
-func Assign[A any](w *ecs.World, entity ecs.Entity, a *A) *A {
+// See also [World.Assign1] and [World.AssignN].
+func Assign1[A any](w *ecs.World, entity ecs.Entity, a *A) *A {
 	idA := ecs.ComponentID[A](w)
 	w.Assign(entity, idA, a)
 	return (*A)(w.Get(entity, idA))
@@ -157,10 +157,10 @@ func Assign5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity,
 	return (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD)), (*E)(w.Get(entity, idE))
 }
 
-// Remove removes a component from an entity.
+// Remove1 removes a component from an entity.
 //
-// See also [World.Remove].
-func Remove[A any](w *ecs.World, entity ecs.Entity) {
+// See also [World.Remove1].
+func Remove1[A any](w *ecs.World, entity ecs.Entity) {
 	w.Remove(entity, ecs.ComponentID[A](w))
 }
 

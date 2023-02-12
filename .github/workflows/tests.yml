@@ -12,7 +12,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.19.x'
+          go-version: '1.20.x'
       - name: Install dependencies
         run: go get .
       - name: Build Linux
@@ -30,12 +30,12 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.19.x'
+          go-version: '1.20.x'
       - name: Install dependencies
         run: go get .
       - name: Test
         run: |
-          go test -v ./internal/base ./... -covermode=count -coverprofile="coverage.out"
+          go test -v ./... -covermode=count -coverprofile="coverage.out"
           go tool cover -func="coverage.out"
 
   examples:
@@ -46,7 +46,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.19.x'
+          go-version: '1.20.x'
       - name: Install dependencies
         run: go get .
       - name: Test
@@ -63,7 +63,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.19.x'
+          go-version: '1.20.x'
       - name: Install dependencies
         run: |
           go get .
@@ -74,6 +74,6 @@ jobs:
             exit 1
           fi
       - name: Lint with vet
-        run: go vet ./internal/base ./...
+        run: go vet ./...
       - name: Lint with staticcheck
-        run: staticcheck ./internal/base ./...
+        run: staticcheck ./...

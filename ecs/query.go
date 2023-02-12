@@ -2,13 +2,52 @@ package ecs
 
 import (
 	"unsafe"
-
-	"github.com/mlange-42/arche/internal/base"
 )
 
-// MaskFilter is the interface for logic filters
-type MaskFilter interface {
-	Matches(mask base.BitMask) bool
+// Filter is the interface for logic filters
+type Filter interface {
+	Matches(bits BitMask) bool
+}
+
+// Mask is a mask for a combination of components.
+type Mask struct {
+	BitMask BitMask
+}
+
+// All creates a new Mask from a list of IDs.
+//
+// If any ID is bigger or equal [MaskTotalBits], it'll not be added to the mask.
+func All(ids ...ID) Mask {
+	var mask BitMask
+	for _, id := range ids {
+		mask.Set(id, true)
+	}
+	return Mask{mask}
+}
+
+// Matches matches a filter against a bitmask
+func (f Mask) Matches(bits BitMask) bool {
+	return bits.Contains(f.BitMask)
+}
+
+// ButNot excludes the given components.
+func (f Mask) ButNot(comps ...ID) MaskPair {
+	return MaskPair{
+		Mask:    f,
+		Exclude: All(comps...),
+	}
+}
+
+// MaskPair is a filter for including an excluding components
+type MaskPair struct {
+	Mask    Mask
+	Exclude Mask
+}
+
+// Matches matches a filter against a mask
+func (f MaskPair) Matches(bits BitMask) bool {
+	ex := f.Exclude.BitMask
+	return bits.Contains(f.Mask.BitMask) && (ex == 0 || !bits.Contains(ex))
 }
 
 // EntityIter is the interface for iterable queries
@@ -28,89 +67,20 @@ type EntityIter interface {
 	Close()
 }
 
-// Query is a simple iterator to iterate entities.
+// Query is an advanced iterator to iterate entities.
 //
 // Create queries through the [World] using [World.Query].
-// See also the generic alternatives [Query1], [Query2], [Query3], ...
+// See also the generic alternatives [generic.Query1],  [generic.Query2], etc.
 //
-// # Example:
-//
-//	Query := world.Query(posID, rotID)
-//	for Query.Next() {
-//	    pos := (*position)(Query.Get(posID))
-//	    pos.X += 1.0
-//	}
+// For advanced filtering, see package [filter]
 type Query struct {
 	queryIter
-	Mask    bitMask
-	Exclude bitMask
+	filter Filter
 }
 
-// newQuery creates a new Query
-func newQuery(world *World, mask, exclude bitMask, lockBit uint8) Query {
+// newQuery creates a new Filter
+func newQuery(world *World, filter Filter, lockBit uint8) Query {
 	return Query{
-		queryIter: queryIter{
-			world:   world,
-			index:   -1,
-			lockBit: lockBit,
-		},
-		Mask:    mask,
-		Exclude: exclude,
-	}
-}
-
-// Not excludes components from the query.
-// Entities with these components will be skipped.
-//
-// # Example:
-//
-//	query := world.Query(idA, isB).Not(idC, isD)
-func (q Query) Not(comps ...ID) Query {
-	q.Exclude = base.NewBitMask(comps...)
-	return q
-}
-
-// Next proceeds to the next [Entity] in the Query.
-func (q *Query) Next() bool {
-	if q.archetype.Next() {
-		return true
-	}
-	i, a, ok := q.world.nextArchetype(q.Mask, q.Exclude, q.index)
-	q.index = i
-	if ok {
-		q.archetype = a
-		return true
-	}
-	q.done = true
-	q.world.closeQuery(&q.queryIter)
-	return false
-}
-
-// Filter is an advanced iterator to iterate entities.
-//
-// Create filter through the [World] using [World.Query].
-// There is no generic alternative for filters.
-//
-// # Example:
-//
-//	filter := world.Filter(
-//	    And {
-//	        All(idA, idB, idC),
-//	        Not(OneOf(idD, idE)),
-//	    }
-//	)
-//	for filter.Next() {
-//	    pos := (*position)(filter.Get(posID))
-//	    pos.X += 1.0
-//	}
-type Filter struct {
-	queryIter
-	filter MaskFilter
-}
-
-// newFilter creates a new Filter
-func newFilter(world *World, filter MaskFilter, lockBit uint8) Filter {
-	return Filter{
 		queryIter: queryIter{
 			world:   world,
 			index:   -1,
@@ -121,11 +91,11 @@ func newFilter(world *World, filter MaskFilter, lockBit uint8) Filter {
 }
 
 // Next proceeds to the next [Entity] in the Query.
-func (q *Filter) Next() bool {
+func (q *Query) Next() bool {
 	if q.archetype.Next() {
 		return true
 	}
-	i, a, ok := q.world.nextArchetypeFilter(q.filter, q.index)
+	i, a, ok := q.world.nextArchetype(q.filter, q.index)
 	q.index = i
 	if ok {
 		q.archetype = a

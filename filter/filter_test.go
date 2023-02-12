@@ -18,12 +18,12 @@ type rotation struct {
 
 func TestLogicFilters(t *testing.T) {
 
-	hasA := All(0)
-	hasB := All(1)
-	hasAll := All(0, 1)
-	hasNone := All()
+	hasA := ecs.All(0)
+	hasB := ecs.All(1)
+	hasAll := ecs.All(0, 1)
+	hasNone := ecs.All()
 
-	var filter ecs.MaskFilter
+	var filter ecs.Filter
 	filter = hasA
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
@@ -117,7 +117,7 @@ func TestFilter(t *testing.T) {
 	w.Add(e3, rotID)
 	w.Add(e4, rotID)
 
-	q := w.Filter(All(posID, rotID))
+	q := w.Query(All(posID, rotID))
 	cnt := 0
 	for q.Next() {
 		ent := q.Entity()
@@ -130,7 +130,7 @@ func TestFilter(t *testing.T) {
 	}
 	assert.Equal(t, 2, cnt)
 
-	q = w.Filter(All(posID))
+	q = w.Query(All(posID))
 	cnt = 0
 	for q.Next() {
 		ent := q.Entity()
@@ -141,7 +141,7 @@ func TestFilter(t *testing.T) {
 	}
 	assert.Equal(t, 3, cnt)
 
-	q = w.Filter(All(rotID))
+	q = w.Query(All(rotID))
 	cnt = 0
 	for q.Next() {
 		ent := q.Entity()
@@ -156,7 +156,7 @@ func TestFilter(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Filter(&AND{L: All(rotID), R: NotANY(All(posID))})
+	q = w.Query(&AND{L: All(rotID), R: NotANY(All(posID))})
 
 	cnt = 0
 	for q.Next() {
@@ -166,7 +166,7 @@ func TestFilter(t *testing.T) {
 	assert.Equal(t, 2, cnt)
 }
 
-func match(f ecs.MaskFilter, m Mask) bool {
+func match(f ecs.Filter, m Mask) bool {
 	return f.Matches(m.BitMask)
 }
 
@@ -175,7 +175,7 @@ func TestInterface(t *testing.T) {
 
 	posID := ecs.ComponentID[position](&w)
 
-	f := w.Filter(All(posID))
+	f := w.Query(All(posID))
 	var f2 ecs.EntityIter = &f
 	_ = f2
 }

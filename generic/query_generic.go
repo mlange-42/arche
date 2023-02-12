@@ -1,9 +1,60 @@
 package generic
 
 import (
+	"reflect"
+
 	"github.com/mlange-42/arche/ecs"
-	"github.com/mlange-42/arche/internal/base"
 )
+
+func typeOf[T any]() reflect.Type {
+	return reflect.TypeOf((*T)(nil)).Elem()
+}
+
+func toIds(w *ecs.World, types []reflect.Type) []ecs.ID {
+	ids := make([]ecs.ID, len(types))
+	for i, t := range types {
+		ids[i] = ecs.TypeID(w, t)
+	}
+	return ids
+}
+
+func toMask(w *ecs.World, types []reflect.Type) ecs.Mask {
+	mask := ecs.BitMask(0)
+	for _, t := range types {
+		mask.Set(ecs.TypeID(w, t), true)
+	}
+	return ecs.Mask{BitMask: mask}
+}
+
+// Q0Builder builds a Q0 query
+type Q0Builder struct {
+	exclude []reflect.Type
+}
+
+// Query0 creates a generic query for no components.
+//
+// See also [World.Query].
+func Query0() Q0Builder {
+	return Q0Builder{}
+}
+
+// Not excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q0Builder) Not(mask []reflect.Type) Q0Builder {
+	q.exclude = append(q.exclude, mask...)
+	return q
+}
+
+// Build builds a Q0 query for iteration.
+func (q Q0Builder) Build(w *ecs.World) Q0 {
+	return Q0{
+		w.Query(ecs.MaskPair{
+			Mask:    ecs.All(),
+			Exclude: toMask(w, q.exclude),
+		}),
+	}
+}
 
 // Q0 is a generic query for no components.
 //
@@ -12,21 +63,39 @@ type Q0 struct {
 	ecs.Query
 }
 
-// Query0 creates a generic query for no components.
+// Q1Builder builds a Q1 query
+type Q1Builder[A any] struct {
+	include reflect.Type
+	exclude []reflect.Type
+}
+
+// Query1 creates a generic query for one component.
 //
 // See also [World.Query].
-func Query0(w *ecs.World) Q0 {
-	return Q0{
-		Query: w.Query(),
+func Query1[A any]() Q1Builder[A] {
+	return Q1Builder[A]{
+		include: typeOf[A](),
 	}
 }
 
 // Not excludes entities with the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q0) Not(mask ecs.Mask) Q0 {
-	q.Exclude = q.Exclude | mask.BitMask
+func (q Q1Builder[A]) Not(mask []reflect.Type) Q1Builder[A] {
+	q.exclude = append(q.exclude, mask...)
 	return q
+}
+
+// Build builds a Q1 query for iteration.
+func (q Q1Builder[A]) Build(w *ecs.World) Q1[A] {
+	id := ecs.TypeID(w, q.include)
+	return Q1[A]{
+		w.Query(ecs.MaskPair{
+			Mask:    ecs.All(id),
+			Exclude: toMask(w, q.exclude),
+		}),
+		id,
+	}
 }
 
 // Q1 is a generic query for one component.
@@ -37,25 +106,6 @@ type Q1[A any] struct {
 	id ecs.ID
 }
 
-// Query1 creates a generic query for one component.
-//
-// See also [World.Query].
-func Query1[A any](w *ecs.World) Q1[A] {
-	id := ecs.ComponentID[A](w)
-	return Q1[A]{
-		Query: w.Query(id),
-		id:    id,
-	}
-}
-
-// Not excludes entities with the given components from the query.
-//
-// Create the required mask with [Mask1], [Mask2], etc.
-func (q Q1[A]) Not(mask ecs.Mask) Q1[A] {
-	q.Exclude = q.Exclude | mask.BitMask
-	return q
-}
-
 // Get1 returns the first queried component for the current query position
 func (q *Q1[A]) Get1() *A {
 	return (*A)(q.Query.Get(q.id))
@@ -63,31 +113,47 @@ func (q *Q1[A]) Get1() *A {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q2 is a generic query for two components.
-//
-// Create one with [Query2]
-type Q2[A any, B any] struct {
-	ecs.Query
-	ids [2]ecs.ID
+// Q2Builder builds a Q2 query
+type Q2Builder[A any, B any] struct {
+	include []reflect.Type
+	exclude []reflect.Type
 }
 
 // Query2 creates a generic query for two components.
 //
 // See also [World.Query].
-func Query2[A any, B any](w *ecs.World) Q2[A, B] {
-	ids := [2]ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w)}
-	return Q2[A, B]{
-		Query: w.Query(ids[:]...),
-		ids:   ids,
+func Query2[A any, B any]() Q2Builder[A, B] {
+	return Q2Builder[A, B]{
+		include: []reflect.Type{typeOf[A](), typeOf[B]()},
 	}
 }
 
 // Not excludes entities with the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q2[A, B]) Not(mask ecs.Mask) Q2[A, B] {
-	q.Exclude = q.Exclude | mask.BitMask
+func (q Q2Builder[A, B]) Not(mask []reflect.Type) Q2Builder[A, B] {
+	q.exclude = append(q.exclude, mask...)
 	return q
+}
+
+// Build builds a Q2 query for iteration.
+func (q Q2Builder[A, B]) Build(w *ecs.World) Q2[A, B] {
+	ids := toIds(w, q.include)
+	return Q2[A, B]{
+		w.Query(ecs.MaskPair{
+			Mask:    ecs.All(ids...),
+			Exclude: toMask(w, q.exclude),
+		}),
+		ids,
+	}
+}
+
+// Q2 is a generic query for two components.
+//
+// Create one with [Query2]
+type Q2[A any, B any] struct {
+	ecs.Query
+	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
@@ -107,31 +173,47 @@ func (q *Q2[A, B]) Get2() *B {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q3 is a generic query for three components.
-//
-// Create one with [Query3]
-type Q3[A any, B any, C any] struct {
-	ecs.Query
-	ids [3]ecs.ID
+// Q3Builder builds a Q3 query
+type Q3Builder[A any, B any, C any] struct {
+	include []reflect.Type
+	exclude []reflect.Type
 }
 
 // Query3 creates a generic query for three components.
 //
 // See also [World.Query].
-func Query3[A any, B any, C any](w *ecs.World) Q3[A, B, C] {
-	ids := [3]ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w)}
-	return Q3[A, B, C]{
-		Query: w.Query(ids[:]...),
-		ids:   ids,
+func Query3[A any, B any, C any]() Q3Builder[A, B, C] {
+	return Q3Builder[A, B, C]{
+		include: []reflect.Type{typeOf[A](), typeOf[B](), typeOf[C]()},
 	}
 }
 
 // Not excludes entities with the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q3[A, B, C]) Not(mask ecs.Mask) Q3[A, B, C] {
-	q.Exclude = q.Exclude | mask.BitMask
+func (q Q3Builder[A, B, C]) Not(mask []reflect.Type) Q3Builder[A, B, C] {
+	q.exclude = append(q.exclude, mask...)
 	return q
+}
+
+// Build builds a Q3 query for iteration.
+func (q Q3Builder[A, B, C]) Build(w *ecs.World) Q3[A, B, C] {
+	ids := toIds(w, q.include)
+	return Q3[A, B, C]{
+		w.Query(ecs.MaskPair{
+			Mask:    ecs.All(ids...),
+			Exclude: toMask(w, q.exclude),
+		}),
+		ids,
+	}
+}
+
+// Q3 is a generic query for three components.
+//
+// Create one with [Query3]
+type Q3[A any, B any, C any] struct {
+	ecs.Query
+	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
@@ -156,31 +238,47 @@ func (q *Q3[A, B, C]) Get3() *C {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q4 is a generic query for four components.
-//
-// Create one with [Query4]
-type Q4[A any, B any, C any, D any] struct {
-	ecs.Query
-	ids [4]ecs.ID
+// Q4Builder builds a Q4 query
+type Q4Builder[A any, B any, C any, D any] struct {
+	include []reflect.Type
+	exclude []reflect.Type
 }
 
 // Query4 creates a generic query for four components.
 //
 // See also [World.Query].
-func Query4[A any, B any, C any, D any](w *ecs.World) Q4[A, B, C, D] {
-	ids := [4]ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w)}
-	return Q4[A, B, C, D]{
-		Query: w.Query(ids[:]...),
-		ids:   ids,
+func Query4[A any, B any, C any, D any]() Q4Builder[A, B, C, D] {
+	return Q4Builder[A, B, C, D]{
+		include: []reflect.Type{typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D]()},
 	}
 }
 
 // Not excludes entities with the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q4[A, B, C, D]) Not(mask ecs.Mask) Q4[A, B, C, D] {
-	q.Exclude = q.Exclude | mask.BitMask
+func (q Q4Builder[A, B, C, D]) Not(mask []reflect.Type) Q4Builder[A, B, C, D] {
+	q.exclude = append(q.exclude, mask...)
 	return q
+}
+
+// Build builds a Q4 query for iteration.
+func (q Q4Builder[A, B, C, D]) Build(w *ecs.World) Q4[A, B, C, D] {
+	ids := toIds(w, q.include)
+	return Q4[A, B, C, D]{
+		w.Query(ecs.MaskPair{
+			Mask:    ecs.All(ids...),
+			Exclude: toMask(w, q.exclude),
+		}),
+		ids,
+	}
+}
+
+// Q4 is a generic query for four components.
+//
+// Create one with [Query4]
+type Q4[A any, B any, C any, D any] struct {
+	ecs.Query
+	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
@@ -213,31 +311,50 @@ func (q *Q4[A, B, C, D]) Get4() *D {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q5 is a generic query for five components.
-//
-// Create one with [Query5]
-type Q5[A any, B any, C any, D any, E any] struct {
-	ecs.Query
-	ids [5]ecs.ID
+// Q5Builder builds a Q5 query
+type Q5Builder[A any, B any, C any, D any, E any] struct {
+	include []reflect.Type
+	exclude []reflect.Type
 }
 
 // Query5 creates a generic query for five components.
 //
 // See also [World.Query].
-func Query5[A any, B any, C any, D any, E any](w *ecs.World) Q5[A, B, C, D, E] {
-	ids := [5]ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w)}
-	return Q5[A, B, C, D, E]{
-		Query: w.Query(ids[:]...),
-		ids:   ids,
+func Query5[A any, B any, C any, D any, E any]() Q5Builder[A, B, C, D, E] {
+	return Q5Builder[A, B, C, D, E]{
+		include: []reflect.Type{
+			typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+			typeOf[E](),
+		},
 	}
 }
 
 // Not excludes entities with the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q5[A, B, C, D, E]) Not(mask ecs.Mask) Q5[A, B, C, D, E] {
-	q.Exclude = q.Exclude | mask.BitMask
+func (q Q5Builder[A, B, C, D, E]) Not(mask []reflect.Type) Q5Builder[A, B, C, D, E] {
+	q.exclude = append(q.exclude, mask...)
 	return q
+}
+
+// Build builds a Q5 query for iteration.
+func (q Q5Builder[A, B, C, D, E]) Build(w *ecs.World) Q5[A, B, C, D, E] {
+	ids := toIds(w, q.include)
+	return Q5[A, B, C, D, E]{
+		w.Query(ecs.MaskPair{
+			Mask:    ecs.All(ids...),
+			Exclude: toMask(w, q.exclude),
+		}),
+		ids,
+	}
+}
+
+// Q5 is a generic query for five components.
+//
+// Create one with [Query5]
+type Q5[A any, B any, C any, D any, E any] struct {
+	ecs.Query
+	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
@@ -276,34 +393,50 @@ func (q *Q5[A, B, C, D, E]) Get5() *E {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q6 is a generic query for six components.
-//
-// Create one with [Query6]
-type Q6[A any, B any, C any, D any, E any, F any] struct {
-	ecs.Query
-	ids [6]ecs.ID
+// Q6Builder builds a Q6 query
+type Q6Builder[A any, B any, C any, D any, E any, F any] struct {
+	include []reflect.Type
+	exclude []reflect.Type
 }
 
 // Query6 creates a generic query for six components.
 //
 // See also [World.Query].
-func Query6[A any, B any, C any, D any, E any, F any](w *ecs.World) Q6[A, B, C, D, E, F] {
-	ids := [6]ecs.ID{
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w),
-	}
-	return Q6[A, B, C, D, E, F]{
-		Query: w.Query(ids[:]...),
-		ids:   ids,
+func Query6[A any, B any, C any, D any, E any, F any]() Q6Builder[A, B, C, D, E, F] {
+	return Q6Builder[A, B, C, D, E, F]{
+		include: []reflect.Type{
+			typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+			typeOf[E](), typeOf[F](),
+		},
 	}
 }
 
 // Not excludes entities with the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q6[A, B, C, D, E, F]) Not(mask ecs.Mask) Q6[A, B, C, D, E, F] {
-	q.Exclude = q.Exclude | mask.BitMask
+func (q Q6Builder[A, B, C, D, E, F]) Not(mask []reflect.Type) Q6Builder[A, B, C, D, E, F] {
+	q.exclude = append(q.exclude, mask...)
 	return q
+}
+
+// Build builds a Q6 query for iteration.
+func (q Q6Builder[A, B, C, D, E, F]) Build(w *ecs.World) Q6[A, B, C, D, E, F] {
+	ids := toIds(w, q.include)
+	return Q6[A, B, C, D, E, F]{
+		w.Query(ecs.MaskPair{
+			Mask:    ecs.All(ids...),
+			Exclude: toMask(w, q.exclude),
+		}),
+		ids,
+	}
+}
+
+// Q6 is a generic query for six components.
+//
+// Create one with [Query6]
+type Q6[A any, B any, C any, D any, E any, F any] struct {
+	ecs.Query
+	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
@@ -348,27 +481,50 @@ func (q *Q6[A, B, C, D, E, F]) Get6() *F {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q7 is a generic query for seven components.
-//
-// Create one with [Query7]
-type Q7[A any, B any, C any, D any, E any, F any, G any] struct {
-	ecs.Query
-	ids [7]ecs.ID
+// Q7Builder builds a Q7 query
+type Q7Builder[A any, B any, C any, D any, E any, F any, G any] struct {
+	include []reflect.Type
+	exclude []reflect.Type
 }
 
 // Query7 creates a generic query for seven components.
 //
 // See also [World.Query].
-func Query7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Q7[A, B, C, D, E, F, G] {
-	ids := [7]ecs.ID{
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w),
-		ecs.ComponentID[G](w),
+func Query7[A any, B any, C any, D any, E any, F any, G any]() Q7Builder[A, B, C, D, E, F, G] {
+	return Q7Builder[A, B, C, D, E, F, G]{
+		include: []reflect.Type{
+			typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+			typeOf[E](), typeOf[F](), typeOf[G](),
+		},
 	}
+}
+
+// Not excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q7Builder[A, B, C, D, E, F, G]) Not(mask []reflect.Type) Q7Builder[A, B, C, D, E, F, G] {
+	q.exclude = append(q.exclude, mask...)
+	return q
+}
+
+// Build builds a Q7 query for iteration.
+func (q Q7Builder[A, B, C, D, E, F, G]) Build(w *ecs.World) Q7[A, B, C, D, E, F, G] {
+	ids := toIds(w, q.include)
 	return Q7[A, B, C, D, E, F, G]{
-		Query: w.Query(ids[:]...),
-		ids:   ids,
+		w.Query(ecs.MaskPair{
+			Mask:    ecs.All(ids...),
+			Exclude: toMask(w, q.exclude),
+		}),
+		ids,
 	}
+}
+
+// Q7 is a generic query for seven components.
+//
+// Create one with [Query7]
+type Q7[A any, B any, C any, D any, E any, F any, G any] struct {
+	ecs.Query
+	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
@@ -380,14 +536,6 @@ func (q *Q7[A, B, C, D, E, F, G]) GetAll() (*A, *B, *C, *D, *E, *F, *G) {
 		(*E)(q.Query.Get(q.ids[4])),
 		(*F)(q.Query.Get(q.ids[5])),
 		(*G)(q.Query.Get(q.ids[6]))
-}
-
-// Not excludes entities with the given components from the query.
-//
-// Create the required mask with [Mask1], [Mask2], etc.
-func (q Q7[A, B, C, D, E, F, G]) Not(mask ecs.Mask) Q7[A, B, C, D, E, F, G] {
-	q.Exclude = q.Exclude | mask.BitMask
-	return q
 }
 
 // Get1 returns the first queried component for the current query position
@@ -427,35 +575,50 @@ func (q *Q7[A, B, C, D, E, F, G]) Get7() *G {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q8 is a generic query for seven components.
-//
-// Create one with [Query8]
-type Q8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
-	ecs.Query
-	ids [8]ecs.ID
+// Q8Builder builds a Q8 query
+type Q8Builder[A any, B any, C any, D any, E any, F any, G any, H any] struct {
+	include []reflect.Type
+	exclude []reflect.Type
 }
 
-// Query8 creates a generic query for seven components.
+// Query8 creates a generic query for eight components.
 //
 // See also [World.Query].
-func Query8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World) Q8[A, B, C, D, E, F, G, H] {
-	ids := [8]ecs.ID{
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w),
-		ecs.ComponentID[G](w), ecs.ComponentID[H](w),
-	}
-	return Q8[A, B, C, D, E, F, G, H]{
-		Query: w.Query(ids[:]...),
-		ids:   ids,
+func Query8[A any, B any, C any, D any, E any, F any, G any, H any]() Q8Builder[A, B, C, D, E, F, G, H] {
+	return Q8Builder[A, B, C, D, E, F, G, H]{
+		include: []reflect.Type{
+			typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+			typeOf[E](), typeOf[F](), typeOf[G](), typeOf[H](),
+		},
 	}
 }
 
 // Not excludes entities with the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q8[A, B, C, D, E, F, G, H]) Not(mask ecs.Mask) Q8[A, B, C, D, E, F, G, H] {
-	q.Exclude = q.Exclude | mask.BitMask
+func (q Q8Builder[A, B, C, D, E, F, G, H]) Not(mask []reflect.Type) Q8Builder[A, B, C, D, E, F, G, H] {
+	q.exclude = append(q.exclude, mask...)
 	return q
+}
+
+// Build builds a Q8 query for iteration.
+func (q Q8Builder[A, B, C, D, E, F, G, H]) Build(w *ecs.World) Q8[A, B, C, D, E, F, G, H] {
+	ids := toIds(w, q.include)
+	return Q8[A, B, C, D, E, F, G, H]{
+		w.Query(ecs.MaskPair{
+			Mask:    ecs.All(ids...),
+			Exclude: toMask(w, q.exclude),
+		}),
+		ids,
+	}
+}
+
+// Q8 is a generic query for seven components.
+//
+// Create one with [Query8]
+type Q8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
+	ecs.Query
+	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
@@ -510,63 +673,58 @@ func (q *Q8[A, B, C, D, E, F, G, H]) Get8() *H {
 	return (*H)(q.Query.Get(q.ids[7]))
 }
 
-// Mask1 creates a component [Mask] for one component type.
-func Mask1[A any](w *ecs.World) ecs.Mask {
-	return base.NewMask(ecs.ComponentID[A](w))
+// Mask1 creates a component type list for one component type.
+func Mask1[A any]() []reflect.Type {
+	return []reflect.Type{typeOf[A]()}
 }
 
-// Mask2 creates a component [Mask] for two component types.
-func Mask2[A any, B any](w *ecs.World) ecs.Mask {
-	return base.NewMask(
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w),
-	)
+// Mask2 creates a component type list for two component types.
+func Mask2[A any, B any]() []reflect.Type {
+	return []reflect.Type{typeOf[A](), typeOf[B]()}
 }
 
-// Mask3 creates a component [Mask] for three component types.
-func Mask3[A any, B any, C any](w *ecs.World) ecs.Mask {
-	return base.NewMask(
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w),
-	)
+// Mask3 creates a component type list for three component types.
+func Mask3[A any, B any, C any]() []reflect.Type {
+	return []reflect.Type{
+		typeOf[A](), typeOf[B](), typeOf[C](),
+	}
 }
 
-// Mask4 creates a component [Mask] for four component types.
-func Mask4[A any, B any, C any, D any](w *ecs.World) ecs.Mask {
-	return base.NewMask(
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w),
-	)
+// Mask4 creates a component type list for four component types.
+func Mask4[A any, B any, C any, D any]() []reflect.Type {
+	return []reflect.Type{
+		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+	}
 }
 
-// Mask5 creates a component [Mask] for five component types.
-func Mask5[A any, B any, C any, D any, E any](w *ecs.World) ecs.Mask {
-	return base.NewMask(
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w), ecs.ComponentID[E](w),
-	)
+// Mask5 creates a component type list for five component types.
+func Mask5[A any, B any, C any, D any, E any]() []reflect.Type {
+	return []reflect.Type{
+		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+		typeOf[E](),
+	}
 }
 
-// Mask6 creates a component [Mask] for six component types.
-func Mask6[A any, B any, C any, D any, E any, F any](w *ecs.World) ecs.Mask {
-	return base.NewMask(
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w),
-	)
+// Mask6 creates a component type list for six component types.
+func Mask6[A any, B any, C any, D any, E any, F any]() []reflect.Type {
+	return []reflect.Type{
+		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+		typeOf[E](), typeOf[F](),
+	}
 }
 
-// Mask7 creates a component [Mask] for seven component types.
-func Mask7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) ecs.Mask {
-	return base.NewMask(
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w),
-		ecs.ComponentID[G](w),
-	)
+// Mask7 creates a component type list for seven component types.
+func Mask7[A any, B any, C any, D any, E any, F any, G any]() []reflect.Type {
+	return []reflect.Type{
+		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+		typeOf[E](), typeOf[F](), typeOf[G](),
+	}
 }
 
-// Mask8 creates a component [Mask] for eight component types.
-func Mask8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World) ecs.Mask {
-	return base.NewMask(
-		ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w),
-		ecs.ComponentID[G](w), ecs.ComponentID[H](w),
-	)
+// Mask8 creates a component type list for eight component types.
+func Mask8[A any, B any, C any, D any, E any, F any, G any, H any]() []reflect.Type {
+	return []reflect.Type{
+		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+		typeOf[E](), typeOf[F](), typeOf[G](), typeOf[H](),
+	}
 }

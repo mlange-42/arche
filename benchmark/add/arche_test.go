@@ -31,7 +31,7 @@ func addArcheGeneric(b *testing.B, count int) {
 
 		for i := 0; i < count; i++ {
 			entity := world.NewEntity()
-			generic.Add[position](&world, entity)
+			generic.Add1[position](&world, entity)
 		}
 	}
 }

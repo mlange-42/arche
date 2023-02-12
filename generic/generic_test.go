@@ -7,28 +7,99 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type testStruct0 struct{ val int32 }
+//lint:ignore U1000 test type
+type testStruct0 struct{ val int8 }
+
+//lint:ignore U1000 test type
 type testStruct1 struct{ val int32 }
-type testStruct2 struct{ val int32 }
-type testStruct3 struct{ val int32 }
-type testStruct4 struct{ val int32 }
-type testStruct5 struct{ val int32 }
-type testStruct6 struct{ val int32 }
-type testStruct7 struct{ val int32 }
-type testStruct8 struct{ val int32 }
-type testStruct9 struct{ val int32 }
+
+//lint:ignore U1000 test type
+type testStruct2 struct {
+	val  int32
+	val2 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct3 struct {
+	val  int32
+	val2 int32
+	val3 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct4 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct5 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct6 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct7 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+	val7 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct8 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+	val7 int32
+	val8 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct9 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+	val7 int32
+	val8 int32
+	val9 int32
+}
 
 func registerAll(w *ecs.World) []ecs.ID {
-	_ = testStruct0{1}
-	_ = testStruct1{1}
-	_ = testStruct2{1}
-	_ = testStruct3{1}
-	_ = testStruct4{1}
-	_ = testStruct5{1}
-	_ = testStruct6{1}
-	_ = testStruct7{1}
-	_ = testStruct8{1}
-	_ = testStruct9{1}
+	_ = testStruct0{}
+	_ = testStruct1{}
+	_ = testStruct2{}
+	_ = testStruct3{}
+	_ = testStruct4{}
+	_ = testStruct5{}
+	_ = testStruct6{}
+	_ = testStruct7{}
+	_ = testStruct8{}
+	_ = testStruct9{}
 
 	ids := make([]ecs.ID, 10)
 	ids[0] = ecs.ComponentID[testStruct0](w)
@@ -51,7 +122,7 @@ func TestGenericMap(t *testing.T) {
 
 	e0 := w.NewEntity()
 
-	Add[testStruct0](&w, e0)
+	Add1[testStruct0](&w, e0)
 	has := get.Has(e0)
 	_ = get.Get(e0)
 	assert.True(t, has)
@@ -71,10 +142,10 @@ func TestGenericAddRemove(t *testing.T) {
 
 	e0 := w.NewEntity()
 
-	Add[testStruct0](&w, e0)
+	Add1[testStruct0](&w, e0)
 	_ = get.Has(e0)
 	_ = get.Get(e0)
-	Remove[testStruct0](&w, e0)
+	Remove1[testStruct0](&w, e0)
 
 	Add2[testStruct0, testStruct1](&w, e0)
 	Remove2[testStruct0, testStruct1](&w, e0)
@@ -94,8 +165,8 @@ func TestGenericAssignRemove(t *testing.T) {
 
 	e0 := w.NewEntity()
 
-	Assign(&w, e0, &testStruct0{})
-	Remove[testStruct0](&w, e0)
+	Assign1(&w, e0, &testStruct0{})
+	Remove1[testStruct0](&w, e0)
 
 	Assign2(&w, e0, &testStruct0{}, &testStruct1{})
 	Remove2[testStruct0, testStruct1](&w, e0)

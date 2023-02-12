@@ -3,13 +3,11 @@ package ecs
 import (
 	"reflect"
 	"unsafe"
-
-	"github.com/mlange-42/arche/internal/base"
 )
 
 // archetype represents an ECS archetype
 type archetype struct {
-	Mask base.BitMask
+	Mask BitMask
 	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
@@ -23,8 +21,8 @@ type archetype struct {
 var entityType = reflect.TypeOf(Entity{})
 
 // Init initializes an archetype
-func (a *archetype) Init(capacityIncrement int, components ...base.ComponentType) {
-	var mask base.BitMask
+func (a *archetype) Init(capacityIncrement int, components ...componentType) {
+	var mask BitMask
 	a.Ids = make([]ID, len(components))
 	comps := make([]storage, len(components))
 
@@ -84,7 +82,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 }
 
 // AddPointer adds an entity with components to the archetype, using pointers
-func (a *archetype) AddPointer(entity Entity, components ...base.ComponentPointer) uint32 {
+func (a *archetype) AddPointer(entity Entity, components ...componentPointer) uint32 {
 	if len(components) != len(a.Ids) {
 		panic("Invalid number of components")
 	}

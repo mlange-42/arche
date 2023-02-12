@@ -5,7 +5,6 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/mlange-42/arche/internal/base"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -62,10 +61,10 @@ func TestWorldComponents(t *testing.T) {
 
 	w.Remove(e2, posID)
 
-	maskNone := base.NewBitMask()
-	maskPos := base.NewBitMask(posID)
-	maskRot := base.NewBitMask(rotID)
-	maskPosRot := base.NewBitMask(posID, rotID)
+	maskNone := NewBitMask()
+	maskPos := NewBitMask(posID)
+	maskRot := NewBitMask(rotID)
+	maskPosRot := NewBitMask(posID, rotID)
 
 	archNone, ok := w.findArchetype(maskNone)
 	assert.True(t, ok)
@@ -256,7 +255,7 @@ func TestWorldIter(t *testing.T) {
 	}
 
 	for i := 0; i < 100; i++ {
-		query := world.Query(posID, rotID)
+		query := world.Query(All(posID, rotID))
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
 			_ = pos
@@ -265,16 +264,16 @@ func TestWorldIter(t *testing.T) {
 	}
 
 	for i := 0; i < maskTotalBits-1; i++ {
-		query := world.Query(posID, rotID)
+		query := world.Query(All(posID, rotID))
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
 			_ = pos
 			break
 		}
 	}
-	query := world.Query(posID, rotID)
+	query := world.Query(All(posID, rotID))
 
-	assert.Panics(t, func() { world.Query(posID, rotID) })
+	assert.Panics(t, func() { world.Query(All(posID, rotID)) })
 
 	query.Close()
 	assert.Panics(t, func() { query.Close() })
@@ -292,15 +291,15 @@ func TestWorldLock(t *testing.T) {
 		world.Add(entity, posID)
 	}
 
-	query1 := world.Query(posID)
-	query2 := world.Query(posID)
+	query1 := world.Query(All(posID))
+	query2 := world.Query(All(posID))
 	assert.True(t, world.IsLocked())
 	query1.Close()
 	assert.True(t, world.IsLocked())
 	query2.Close()
 	assert.False(t, world.IsLocked())
 
-	query1 = world.Query(posID)
+	query1 = world.Query(All(posID))
 
 	assert.Panics(t, func() { world.NewEntity() })
 	assert.Panics(t, func() { world.RemEntity(entity) })
@@ -366,7 +365,7 @@ func Test1000Archetypes(t *testing.T) {
 	ids[9] = ComponentID[testStruct9](&w)
 
 	for i := 0; i < 1024; i++ {
-		mask := bitMask(i)
+		mask := BitMask(i)
 		add := make([]ID, 0, 10)
 		for j := 0; j < 10; j++ {
 			id := ID(j)
@@ -380,7 +379,7 @@ func Test1000Archetypes(t *testing.T) {
 	assert.Equal(t, 1024, w.archetypes.Len())
 
 	cnt := 0
-	query := w.Query(0, 7)
+	query := w.Query(All(0, 7))
 	for query.Next() {
 		cnt++
 	}

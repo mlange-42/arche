@@ -3,13 +3,16 @@ package ecs
 import (
 	"reflect"
 	"unsafe"
-
-	"github.com/mlange-42/arche/internal/base"
 )
 
-// ComponentID returns the ID for a component type. Registers the type if it is not already registered.
+// ComponentID returns the ID for a component type via generics. Registers the type if it is not already registered.
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
+	return w.componentID(tp)
+}
+
+// TypeID returns the ID for a component type. Registers the type if it is not already registered.
+func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
@@ -21,7 +24,7 @@ type World struct {
 	entityPool entityPool
 	bitPool    bitPool
 	registry   componentRegistry
-	locks      bitMask
+	locks      BitMask
 }
 
 // NewWorld creates a new [World]
@@ -42,7 +45,7 @@ func FromConfig(conf Config) World {
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
 		archetypes: arches,
-		locks:      bitMask(0),
+		locks:      BitMask(0),
 	}
 }
 
@@ -90,27 +93,23 @@ func (w *World) RemEntity(entity Entity) {
 	w.entities[entity.id].arch = nil
 }
 
-// Query creates a [Query] iterator for the given components.
+// Query creates a [Query] iterator.
 //
 // Locks the world to prevent changes to component compositions.
 //
-// See also the generic alternatives [Query1], [Query2], [Query3], ...
-func (w *World) Query(comps ...ID) Query {
-	mask := base.NewBitMask(comps...)
+// # Example:
+//
+//	query := world.Query(All(idA, idB).Not(idC))
+//	for query.Next() {
+//	    pos := (*position)(query.Get(posID))
+//	    pos.X += 1.0
+//	}
+//
+// For advanced filtering, see package [filter]
+func (w *World) Query(filter Filter) Query {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newQuery(w, mask, 0, lock)
-}
-
-// Filter creates an advanced [Filter] iterator.
-//
-// Locks the world to prevent changes to component compositions.
-//
-// There is no generic alternative for filters.
-func (w *World) Filter(filter MaskFilter) Filter {
-	lock := w.bitPool.Get()
-	w.locks.Set(ID(lock), true)
-	return newFilter(w, filter, lock)
+	return newQuery(w, filter, lock)
 }
 
 // Alive reports whether an entity is still alive.
@@ -254,13 +253,13 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 
 	arch := w.findOrCreateArchetype(oldArch, addIDs, rem)
 
-	allComps := make([]base.ComponentPointer, 0, len(keepIDs)+len(addIDs))
+	allComps := make([]componentPointer, 0, len(keepIDs)+len(addIDs))
 	for _, id := range keepIDs {
 		comp := oldArch.Get(int(index.index), id)
-		allComps = append(allComps, base.ComponentPointer{ID: id, Pointer: comp})
+		allComps = append(allComps, componentPointer{ID: id, Pointer: comp})
 	}
 	for _, id := range addIDs {
-		allComps = append(allComps, base.ComponentPointer{ID: id, Pointer: nil})
+		allComps = append(allComps, componentPointer{ID: id, Pointer: nil})
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
@@ -315,14 +314,14 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *arc
 	return curr
 }
 
-func (w *World) findOrCreateArchetypeSlow(mask bitMask) (*archetype, bool) {
+func (w *World) findOrCreateArchetypeSlow(mask BitMask) (*archetype, bool) {
 	if arch, ok := w.findArchetype(mask); ok {
 		return arch, false
 	}
 	return w.createArchetype(mask), true
 }
 
-func (w *World) findArchetype(mask bitMask) (*archetype, bool) {
+func (w *World) findArchetype(mask BitMask) (*archetype, bool) {
 	length := w.archetypes.Len()
 	for i := 0; i < length; i++ {
 		arch := w.archetypes.Get(i)
@@ -333,15 +332,15 @@ func (w *World) findArchetype(mask bitMask) (*archetype, bool) {
 	return nil, false
 }
 
-func (w *World) createArchetype(mask bitMask) *archetype {
+func (w *World) createArchetype(mask BitMask) *archetype {
 	count := int(mask.TotalBitsSet())
-	types := make([]base.ComponentType, count)
+	types := make([]componentType, count)
 
 	idx := 0
 	for i := 0; i < maskTotalBits; i++ {
 		id := ID(i)
 		if mask.Get(id) {
-			types[idx] = base.ComponentType{ID: id, Type: w.registry.Types[id]}
+			types[idx] = componentType{ID: id, Type: w.registry.Types[id]}
 			idx++
 		}
 	}
@@ -356,21 +355,7 @@ func (w *World) componentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
 }
 
-func (w *World) nextArchetype(mask, exclude bitMask, index int) (int, archetypeIter, bool) {
-	len := w.archetypes.Len()
-	if index >= len {
-		panic("exceeded end of query")
-	}
-	for i := index + 1; i < len; i++ {
-		a := w.archetypes.Get(i)
-		if a.Len() > 0 && a.Mask.Contains(mask) && !a.Mask.ContainsAny(exclude) {
-			return i, newArchetypeIter(a), true
-		}
-	}
-	return len, archetypeIter{}, false
-}
-
-func (w *World) nextArchetypeFilter(filter MaskFilter, index int) (int, archetypeIter, bool) {
+func (w *World) nextArchetype(filter Filter, index int) (int, archetypeIter, bool) {
 	len := w.archetypes.Len()
 	if index >= len {
 		panic("exceeded end of query")

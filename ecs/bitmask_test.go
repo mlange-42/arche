@@ -1,4 +1,4 @@
-package base
+package ecs
 
 import (
 	"testing"

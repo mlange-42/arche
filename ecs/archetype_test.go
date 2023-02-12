@@ -4,12 +4,11 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/mlange-42/arche/internal/base"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestArchetype(t *testing.T) {
-	comps := []base.ComponentType{
+	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
@@ -74,14 +73,14 @@ func TestArchetype(t *testing.T) {
 }
 
 func TestNewArchetype(t *testing.T) {
-	comps := []base.ComponentType{
+	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 	arch := archetype{}
 	arch.Init(32, comps...)
 
-	comps = []base.ComponentType{
+	comps = []componentType{
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 		{ID: 0, Type: reflect.TypeOf(position{})},
 	}
@@ -93,7 +92,7 @@ func TestNewArchetype(t *testing.T) {
 
 func BenchmarkArchetypeAccess_1000(b *testing.B) {
 	b.StopTimer()
-	comps := []base.ComponentType{
+	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(testStruct0{})},
 	}
 
@@ -120,7 +119,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 
 func BenchmarkArchetypeAccessUnsafe_1000(b *testing.B) {
 	b.StopTimer()
-	comps := []base.ComponentType{
+	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(testStruct0{})},
 	}
 
