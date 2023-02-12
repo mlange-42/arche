@@ -14,8 +14,8 @@ type archetype struct {
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
 	indices    [maskTotalBits]uint8
-	entities   base.Storage
-	components []base.Storage
+	entities   storage
+	components []storage
 	toAdd      map[ID]*archetype
 	toRemove   map[ID]*archetype
 }
@@ -26,7 +26,7 @@ var entityType = reflect.TypeOf(Entity{})
 func (a *archetype) Init(capacityIncrement int, components ...base.ComponentType) {
 	var mask base.BitMask
 	a.Ids = make([]ID, len(components))
-	comps := make([]base.Storage, len(components))
+	comps := make([]storage, len(components))
 
 	prev := -1
 	for i, c := range components {
@@ -38,13 +38,13 @@ func (a *archetype) Init(capacityIncrement int, components ...base.ComponentType
 		mask.Set(c.ID, true)
 		a.Ids[i] = c.ID
 		a.indices[c.ID] = uint8(i)
-		comps[i] = base.Storage{}
+		comps[i] = storage{}
 		comps[i].Init(c.Type, capacityIncrement)
 	}
 
 	a.Mask = mask
 	a.components = comps
-	a.entities = base.Storage{}
+	a.entities = storage{}
 	a.toAdd = map[ID]*archetype{}
 	a.toRemove = map[ID]*archetype{}
 	a.entities.Init(entityType, capacityIncrement)

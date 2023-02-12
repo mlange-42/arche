@@ -1,4 +1,4 @@
-package base
+package ecs
 
 import (
 	"testing"
@@ -7,7 +7,7 @@ import (
 )
 
 func TestPagedArr32(t *testing.T) {
-	a := PagedArr32[int]{}
+	a := pagedArr32[int]{}
 
 	for i := 0; i < 66; i++ {
 		a.Add(i)

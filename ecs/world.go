@@ -4,7 +4,6 @@ import (
 	"reflect"
 	"unsafe"
 
-	f "github.com/mlange-42/arche/filter"
 	"github.com/mlange-42/arche/internal/base"
 )
 
@@ -18,10 +17,10 @@ func ComponentID[T any](w *World) ID {
 type World struct {
 	config     Config
 	entities   []entityIndex
-	archetypes base.PagedArr32[archetype]
+	archetypes pagedArr32[archetype]
 	entityPool entityPool
-	bitPool    base.BitPool
-	registry   base.ComponentRegistry
+	bitPool    bitPool
+	registry   componentRegistry
 	locks      bitMask
 }
 
@@ -34,14 +33,14 @@ func NewWorld() World {
 func FromConfig(conf Config) World {
 	arch := archetype{}
 	arch.Init(conf.CapacityIncrement)
-	arches := base.PagedArr32[archetype]{}
+	arches := pagedArr32[archetype]{}
 	arches.Add(arch)
 	return World{
 		config:     conf,
 		entities:   []entityIndex{{arch: nil, index: 0}},
 		entityPool: newEntityPool(conf.CapacityIncrement),
-		bitPool:    base.NewBitPool(),
-		registry:   base.NewComponentRegistry(),
+		bitPool:    newBitPool(),
+		registry:   newComponentRegistry(),
 		archetypes: arches,
 		locks:      bitMask(0),
 	}
@@ -108,7 +107,7 @@ func (w *World) Query(comps ...ID) Query {
 // Locks the world to prevent changes to component compositions.
 //
 // There is no generic alternative for filters.
-func (w *World) Filter(filter f.MaskFilter) Filter {
+func (w *World) Filter(filter MaskFilter) Filter {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
 	return newFilter(w, filter, lock)
@@ -371,7 +370,7 @@ func (w *World) nextArchetype(mask, exclude bitMask, index int) (int, archetypeI
 	return len, archetypeIter{}, false
 }
 
-func (w *World) nextArchetypeFilter(filter f.MaskFilter, index int) (int, archetypeIter, bool) {
+func (w *World) nextArchetypeFilter(filter MaskFilter, index int) (int, archetypeIter, bool) {
 	len := w.archetypes.Len()
 	if index >= len {
 		panic("exceeded end of query")

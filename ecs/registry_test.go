@@ -1,4 +1,4 @@
-package base
+package ecs
 
 import (
 	"reflect"
@@ -7,22 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type position struct {
-	X int
-	Y int
-}
-
-type rotation struct {
-	Angle int
-}
-
 func TestComponentRegistry(t *testing.T) {
-	reg := NewComponentRegistry()
+	reg := newComponentRegistry()
 
 	posType := reflect.TypeOf((*position)(nil)).Elem()
 	rotType := reflect.TypeOf((*rotation)(nil)).Elem()
 
-	reg.RegisterComponent(posType, MaskTotalBits)
+	reg.RegisterComponent(posType, maskTotalBits)
 
 	assert.Equal(t, ID(0), reg.ComponentID(posType))
 	assert.Equal(t, ID(1), reg.ComponentID(rotType))
@@ -32,7 +23,7 @@ func TestComponentRegistry(t *testing.T) {
 }
 
 func TestComponentRegistryOverflow(t *testing.T) {
-	reg := NewComponentRegistry()
+	reg := newComponentRegistry()
 
 	reg.RegisterComponent(reflect.TypeOf((*position)(nil)).Elem(), 1)
 

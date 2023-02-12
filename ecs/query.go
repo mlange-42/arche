@@ -3,9 +3,13 @@ package ecs
 import (
 	"unsafe"
 
-	f "github.com/mlange-42/arche/filter"
 	"github.com/mlange-42/arche/internal/base"
 )
+
+// MaskFilter is the interface for logic filters
+type MaskFilter interface {
+	Matches(mask base.BitMask) bool
+}
 
 // EntityIter is the interface for iterable queries
 type EntityIter interface {
@@ -101,11 +105,11 @@ func (q *Query) Next() bool {
 //	}
 type Filter struct {
 	queryIter
-	filter f.MaskFilter
+	filter MaskFilter
 }
 
 // newFilter creates a new Filter
-func newFilter(world *World, filter f.MaskFilter, lockBit uint8) Filter {
+func newFilter(world *World, filter MaskFilter, lockBit uint8) Filter {
 	return Filter{
 		queryIter: queryIter{
 			world:   world,
