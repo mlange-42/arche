@@ -150,26 +150,28 @@ func TestQuery2(t *testing.T) {
 
 	w.Assign(e2, 9, &testStruct9{})
 
-	cnt := 0
 	query :=
 		Query2[testStruct0, testStruct1]().
 			Optional(Mask1[testStruct1]()).
 			With(Mask1[testStruct8]()).
-			Without(Mask1[testStruct9]()).
-			Build(&w)
+			Without(Mask1[testStruct9]())
 
-	for query.Next() {
-		c1 := query.Get1()
-		c2 := query.Get2()
-		assert.Equal(t, cnt+1, int(c1.val))
-		assert.Equal(t, cnt+2, int(c2.val))
+	for i := 0; i < 10; i++ {
+		cnt := 0
+		q := query.Build(&w)
+		for q.Next() {
+			c1 := q.Get1()
+			c2 := q.Get2()
+			assert.Equal(t, cnt+1, int(c1.val))
+			assert.Equal(t, cnt+2, int(c2.val))
 
-		c12, c22 := query.GetAll()
-		assert.Equal(t, c1, c12)
-		assert.Equal(t, c2, c22)
-		cnt++
+			c12, c22 := q.GetAll()
+			assert.Equal(t, c1, c12)
+			assert.Equal(t, c2, c22)
+			cnt++
+		}
+		assert.Equal(t, 1, cnt)
 	}
-	assert.Equal(t, 1, cnt)
 }
 
 func TestQuery3(t *testing.T) {
