@@ -7,13 +7,6 @@ import (
 // Mask is a mask for a combination of components.
 type Mask = ecs.Mask
 
-// OneOf matches any of the two components.
-//
-// Like [Or] for combining individual components.
-func OneOf(compA ecs.ID, compB ecs.ID) *OR {
-	return &OR{ecs.All(compA), ecs.All(compB)}
-}
-
 // ALL is a filter including entities with all the given components
 type ALL Mask
 
@@ -43,8 +36,8 @@ func Any(comps ...ecs.ID) ANY {
 }
 
 // Not inverts this filter to exclude entities with any of the given components
-func (f ANY) Not() NOT {
-	return NOT(f)
+func (f ANY) Not() NotANY {
+	return NotANY(f)
 }
 
 // Matches matches a filter against a bitmask

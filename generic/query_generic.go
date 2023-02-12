@@ -26,22 +26,30 @@ func toMask(w *ecs.World, types []reflect.Type) ecs.Mask {
 	return ecs.Mask{BitMask: mask}
 }
 
-// Q0Builder builds a Q0 query
+func toMaskOptional(w *ecs.World, include []ecs.ID, optional []reflect.Type) ecs.Mask {
+	mask := ecs.NewBitMask(include...)
+	for _, t := range optional {
+		mask.Set(ecs.TypeID(w, t), false)
+	}
+	return ecs.Mask{BitMask: mask}
+}
+
+// Q0Builder builds a [Q0] query
 type Q0Builder struct {
 	exclude []reflect.Type
 }
 
 // Query0 creates a generic query for no components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query0() Q0Builder {
 	return Q0Builder{}
 }
 
-// Not excludes entities with the given components from the query.
+// ButNot excludes entities with the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q0Builder) Not(mask []reflect.Type) Q0Builder {
+func (q Q0Builder) ButNot(mask []reflect.Type) Q0Builder {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
@@ -63,35 +71,46 @@ type Q0 struct {
 	ecs.Query
 }
 
-// Q1Builder builds a Q1 query
+// Q1Builder builds a [Q1] query
 type Q1Builder[A any] struct {
-	include reflect.Type
-	exclude []reflect.Type
+	include  []reflect.Type
+	optional []reflect.Type
+	exclude  []reflect.Type
 }
 
 // Query1 creates a generic query for one component.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query1[A any]() Q1Builder[A] {
 	return Q1Builder[A]{
-		include: typeOf[A](),
+		include: []reflect.Type{typeOf[A]()},
 	}
 }
 
-// Not excludes entities with the given components from the query.
+// Optional makes some of the query's components optional.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q1Builder[A]) Not(mask []reflect.Type) Q1Builder[A] {
+//
+// Only affects component types that were specified in the query.
+func (q Q1Builder[A]) Optional(mask []reflect.Type) Q1Builder[A] {
+	q.optional = append(q.optional, mask...)
+	return q
+}
+
+// ButNot excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q1Builder[A]) ButNot(mask []reflect.Type) Q1Builder[A] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
 
 // Build builds a Q1 query for iteration.
 func (q Q1Builder[A]) Build(w *ecs.World) Q1[A] {
-	id := ecs.TypeID(w, q.include)
+	id := ecs.TypeID(w, q.include[0])
 	return Q1[A]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.All(id),
+			Mask:    toMaskOptional(w, []ecs.ID{id}, q.optional),
 			Exclude: toMask(w, q.exclude),
 		}),
 		id,
@@ -113,25 +132,36 @@ func (q *Q1[A]) Get1() *A {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q2Builder builds a Q2 query
+// Q2Builder builds a [Q2] query
 type Q2Builder[A any, B any] struct {
-	include []reflect.Type
-	exclude []reflect.Type
+	include  []reflect.Type
+	optional []reflect.Type
+	exclude  []reflect.Type
 }
 
 // Query2 creates a generic query for two components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query2[A any, B any]() Q2Builder[A, B] {
 	return Q2Builder[A, B]{
 		include: []reflect.Type{typeOf[A](), typeOf[B]()},
 	}
 }
 
-// Not excludes entities with the given components from the query.
+// Optional makes some of the query's components optional.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q2Builder[A, B]) Not(mask []reflect.Type) Q2Builder[A, B] {
+//
+// Only affects component types that were specified in the query.
+func (q Q2Builder[A, B]) Optional(mask []reflect.Type) Q2Builder[A, B] {
+	q.optional = append(q.optional, mask...)
+	return q
+}
+
+// ButNot excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q2Builder[A, B]) ButNot(mask []reflect.Type) Q2Builder[A, B] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
@@ -141,7 +171,7 @@ func (q Q2Builder[A, B]) Build(w *ecs.World) Q2[A, B] {
 	ids := toIds(w, q.include)
 	return Q2[A, B]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.All(ids...),
+			Mask:    toMaskOptional(w, ids, q.optional),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -173,25 +203,36 @@ func (q *Q2[A, B]) Get2() *B {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q3Builder builds a Q3 query
+// Q3Builder builds a [Q3] query
 type Q3Builder[A any, B any, C any] struct {
-	include []reflect.Type
-	exclude []reflect.Type
+	include  []reflect.Type
+	optional []reflect.Type
+	exclude  []reflect.Type
 }
 
 // Query3 creates a generic query for three components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query3[A any, B any, C any]() Q3Builder[A, B, C] {
 	return Q3Builder[A, B, C]{
 		include: []reflect.Type{typeOf[A](), typeOf[B](), typeOf[C]()},
 	}
 }
 
-// Not excludes entities with the given components from the query.
+// Optional makes some of the query's components optional.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q3Builder[A, B, C]) Not(mask []reflect.Type) Q3Builder[A, B, C] {
+//
+// Only affects component types that were specified in the query.
+func (q Q3Builder[A, B, C]) Optional(mask []reflect.Type) Q3Builder[A, B, C] {
+	q.optional = append(q.optional, mask...)
+	return q
+}
+
+// ButNot excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q3Builder[A, B, C]) ButNot(mask []reflect.Type) Q3Builder[A, B, C] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
@@ -201,7 +242,7 @@ func (q Q3Builder[A, B, C]) Build(w *ecs.World) Q3[A, B, C] {
 	ids := toIds(w, q.include)
 	return Q3[A, B, C]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.All(ids...),
+			Mask:    toMaskOptional(w, ids, q.optional),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -238,25 +279,36 @@ func (q *Q3[A, B, C]) Get3() *C {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q4Builder builds a Q4 query
+// Q4Builder builds a [Q4] query
 type Q4Builder[A any, B any, C any, D any] struct {
-	include []reflect.Type
-	exclude []reflect.Type
+	include  []reflect.Type
+	optional []reflect.Type
+	exclude  []reflect.Type
 }
 
 // Query4 creates a generic query for four components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query4[A any, B any, C any, D any]() Q4Builder[A, B, C, D] {
 	return Q4Builder[A, B, C, D]{
 		include: []reflect.Type{typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D]()},
 	}
 }
 
-// Not excludes entities with the given components from the query.
+// Optional makes some of the query's components optional.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q4Builder[A, B, C, D]) Not(mask []reflect.Type) Q4Builder[A, B, C, D] {
+//
+// Only affects component types that were specified in the query.
+func (q Q4Builder[A, B, C, D]) Optional(mask []reflect.Type) Q4Builder[A, B, C, D] {
+	q.optional = append(q.optional, mask...)
+	return q
+}
+
+// ButNot excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q4Builder[A, B, C, D]) ButNot(mask []reflect.Type) Q4Builder[A, B, C, D] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
@@ -266,7 +318,7 @@ func (q Q4Builder[A, B, C, D]) Build(w *ecs.World) Q4[A, B, C, D] {
 	ids := toIds(w, q.include)
 	return Q4[A, B, C, D]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.All(ids...),
+			Mask:    toMaskOptional(w, ids, q.optional),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -311,15 +363,16 @@ func (q *Q4[A, B, C, D]) Get4() *D {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q5Builder builds a Q5 query
+// Q5Builder builds a [Q5] query
 type Q5Builder[A any, B any, C any, D any, E any] struct {
-	include []reflect.Type
-	exclude []reflect.Type
+	include  []reflect.Type
+	optional []reflect.Type
+	exclude  []reflect.Type
 }
 
 // Query5 creates a generic query for five components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query5[A any, B any, C any, D any, E any]() Q5Builder[A, B, C, D, E] {
 	return Q5Builder[A, B, C, D, E]{
 		include: []reflect.Type{
@@ -329,10 +382,20 @@ func Query5[A any, B any, C any, D any, E any]() Q5Builder[A, B, C, D, E] {
 	}
 }
 
-// Not excludes entities with the given components from the query.
+// Optional makes some of the query's components optional.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q5Builder[A, B, C, D, E]) Not(mask []reflect.Type) Q5Builder[A, B, C, D, E] {
+//
+// Only affects component types that were specified in the query.
+func (q Q5Builder[A, B, C, D, E]) Optional(mask []reflect.Type) Q5Builder[A, B, C, D, E] {
+	q.optional = append(q.optional, mask...)
+	return q
+}
+
+// ButNot excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q5Builder[A, B, C, D, E]) ButNot(mask []reflect.Type) Q5Builder[A, B, C, D, E] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
@@ -342,7 +405,7 @@ func (q Q5Builder[A, B, C, D, E]) Build(w *ecs.World) Q5[A, B, C, D, E] {
 	ids := toIds(w, q.include)
 	return Q5[A, B, C, D, E]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.All(ids...),
+			Mask:    toMaskOptional(w, ids, q.optional),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -393,15 +456,16 @@ func (q *Q5[A, B, C, D, E]) Get5() *E {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q6Builder builds a Q6 query
+// Q6Builder builds a [Q6] query
 type Q6Builder[A any, B any, C any, D any, E any, F any] struct {
-	include []reflect.Type
-	exclude []reflect.Type
+	include  []reflect.Type
+	optional []reflect.Type
+	exclude  []reflect.Type
 }
 
 // Query6 creates a generic query for six components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query6[A any, B any, C any, D any, E any, F any]() Q6Builder[A, B, C, D, E, F] {
 	return Q6Builder[A, B, C, D, E, F]{
 		include: []reflect.Type{
@@ -411,10 +475,20 @@ func Query6[A any, B any, C any, D any, E any, F any]() Q6Builder[A, B, C, D, E,
 	}
 }
 
-// Not excludes entities with the given components from the query.
+// Optional makes some of the query's components optional.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q6Builder[A, B, C, D, E, F]) Not(mask []reflect.Type) Q6Builder[A, B, C, D, E, F] {
+//
+// Only affects component types that were specified in the query.
+func (q Q6Builder[A, B, C, D, E, F]) Optional(mask []reflect.Type) Q6Builder[A, B, C, D, E, F] {
+	q.optional = append(q.optional, mask...)
+	return q
+}
+
+// ButNot excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q6Builder[A, B, C, D, E, F]) ButNot(mask []reflect.Type) Q6Builder[A, B, C, D, E, F] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
@@ -424,7 +498,7 @@ func (q Q6Builder[A, B, C, D, E, F]) Build(w *ecs.World) Q6[A, B, C, D, E, F] {
 	ids := toIds(w, q.include)
 	return Q6[A, B, C, D, E, F]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.All(ids...),
+			Mask:    toMaskOptional(w, ids, q.optional),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -481,15 +555,16 @@ func (q *Q6[A, B, C, D, E, F]) Get6() *F {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q7Builder builds a Q7 query
+// Q7Builder builds a [Q7] query
 type Q7Builder[A any, B any, C any, D any, E any, F any, G any] struct {
-	include []reflect.Type
-	exclude []reflect.Type
+	include  []reflect.Type
+	optional []reflect.Type
+	exclude  []reflect.Type
 }
 
 // Query7 creates a generic query for seven components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query7[A any, B any, C any, D any, E any, F any, G any]() Q7Builder[A, B, C, D, E, F, G] {
 	return Q7Builder[A, B, C, D, E, F, G]{
 		include: []reflect.Type{
@@ -499,10 +574,20 @@ func Query7[A any, B any, C any, D any, E any, F any, G any]() Q7Builder[A, B, C
 	}
 }
 
-// Not excludes entities with the given components from the query.
+// Optional makes some of the query's components optional.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q7Builder[A, B, C, D, E, F, G]) Not(mask []reflect.Type) Q7Builder[A, B, C, D, E, F, G] {
+//
+// Only affects component types that were specified in the query.
+func (q Q7Builder[A, B, C, D, E, F, G]) Optional(mask []reflect.Type) Q7Builder[A, B, C, D, E, F, G] {
+	q.optional = append(q.optional, mask...)
+	return q
+}
+
+// ButNot excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q7Builder[A, B, C, D, E, F, G]) ButNot(mask []reflect.Type) Q7Builder[A, B, C, D, E, F, G] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
@@ -512,7 +597,7 @@ func (q Q7Builder[A, B, C, D, E, F, G]) Build(w *ecs.World) Q7[A, B, C, D, E, F,
 	ids := toIds(w, q.include)
 	return Q7[A, B, C, D, E, F, G]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.All(ids...),
+			Mask:    toMaskOptional(w, ids, q.optional),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -575,15 +660,16 @@ func (q *Q7[A, B, C, D, E, F, G]) Get7() *G {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q8Builder builds a Q8 query
+// Q8Builder builds a [Q8] query
 type Q8Builder[A any, B any, C any, D any, E any, F any, G any, H any] struct {
-	include []reflect.Type
-	exclude []reflect.Type
+	include  []reflect.Type
+	optional []reflect.Type
+	exclude  []reflect.Type
 }
 
 // Query8 creates a generic query for eight components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query8[A any, B any, C any, D any, E any, F any, G any, H any]() Q8Builder[A, B, C, D, E, F, G, H] {
 	return Q8Builder[A, B, C, D, E, F, G, H]{
 		include: []reflect.Type{
@@ -593,10 +679,20 @@ func Query8[A any, B any, C any, D any, E any, F any, G any, H any]() Q8Builder[
 	}
 }
 
-// Not excludes entities with the given components from the query.
+// Optional makes some of the query's components optional.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q Q8Builder[A, B, C, D, E, F, G, H]) Not(mask []reflect.Type) Q8Builder[A, B, C, D, E, F, G, H] {
+//
+// Only affects component types that were specified in the query.
+func (q Q8Builder[A, B, C, D, E, F, G, H]) Optional(mask []reflect.Type) Q8Builder[A, B, C, D, E, F, G, H] {
+	q.optional = append(q.optional, mask...)
+	return q
+}
+
+// ButNot excludes entities with the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q Q8Builder[A, B, C, D, E, F, G, H]) ButNot(mask []reflect.Type) Q8Builder[A, B, C, D, E, F, G, H] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
@@ -606,7 +702,7 @@ func (q Q8Builder[A, B, C, D, E, F, G, H]) Build(w *ecs.World) Q8[A, B, C, D, E,
 	ids := toIds(w, q.include)
 	return Q8[A, B, C, D, E, F, G, H]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.All(ids...),
+			Mask:    toMaskOptional(w, ids, q.optional),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,

@@ -9,7 +9,7 @@ import (
 func TestBitPool(t *testing.T) {
 	p := newBitPool()
 
-	for i := 0; i < maskTotalBits; i++ {
+	for i := 0; i < MaskTotalBits; i++ {
 		assert.Equal(t, i, int(p.Get()))
 	}
 

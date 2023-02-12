@@ -6,10 +6,11 @@ import (
 
 // Filter is the interface for logic filters
 type Filter interface {
+	// Matches the filter against a bitmask, i.e. a component composition.
 	Matches(bits BitMask) bool
 }
 
-// Mask is a mask for a combination of components.
+// Mask for a combination of components.
 type Mask struct {
 	BitMask BitMask
 }
@@ -70,9 +71,11 @@ type EntityIter interface {
 // Query is an advanced iterator to iterate entities.
 //
 // Create queries through the [World] using [World.Query].
-// See also the generic alternatives [generic.Query1],  [generic.Query2], etc.
 //
-// For advanced filtering, see package [filter]
+// See also the generic alternatives [github.com/mlange-42/arche/generic.Query1],
+// [github.com/mlange-42/arche/generic.Query2], etc.
+//
+// For advanced filtering, see package [github.com/mlange-42/arche/filter]
 type Query struct {
 	queryIter
 	filter Filter

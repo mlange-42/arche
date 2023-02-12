@@ -5,7 +5,7 @@ import "reflect"
 // componentRegistry keeps track of component IDs
 type componentRegistry struct {
 	Components map[reflect.Type]ID
-	Types      [maskTotalBits]reflect.Type
+	Types      [MaskTotalBits]reflect.Type
 }
 
 // newComponentRegistry creates a new ComponentRegistry
@@ -31,7 +31,7 @@ func (r *componentRegistry) ComponentID(tp reflect.Type) ID {
 	if id, ok := r.Components[tp]; ok {
 		return id
 	}
-	return r.RegisterComponent(tp, maskTotalBits)
+	return r.RegisterComponent(tp, MaskTotalBits)
 }
 
 // ComponentType returns the type of a component by ID

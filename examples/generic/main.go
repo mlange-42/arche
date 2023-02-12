@@ -38,15 +38,15 @@ func main() {
 		vel.Y = rand.NormFloat64()
 	}
 
+	// Generic queries support up to 8 components.
+	// For more components, use World.Query() directly.
 	query := generic.Query2[Position, Velocity]()
 
 	// Time loop.
 	for t := 0; t < 1000; t++ {
-		// Get a fresh query.
-		// Generic queries support up to 8 components.
-		// For more components, use World.Query()
+		// Get a fresh query iterator.
 		q := query.Build(&world)
-		// Iterate it
+		// Iterate it.
 		for q.Next() {
 			// Component access through a Query.
 			pos, vel := q.GetAll()

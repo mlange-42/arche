@@ -44,7 +44,7 @@ func main() {
 
 	// Time loop.
 	for t := 0; t < 1000; t++ {
-		// Get a fresh query.
+		// Get a fresh query iterator.
 		query := world.Query(ecs.All(posID, velID))
 		// Iterate it
 		for query.Next() {

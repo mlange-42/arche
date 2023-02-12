@@ -1,2 +1,2 @@
-// Package ecs contains all of Arche's API.
+// Package ecs contains Arche's core API.
 package ecs

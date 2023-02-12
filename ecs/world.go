@@ -105,7 +105,8 @@ func (w *World) RemEntity(entity Entity) {
 //	    pos.X += 1.0
 //	}
 //
-// For advanced filtering, see package [filter]
+// For the use of generics for queries, see package [github.com/mlange-42/arche/generic].
+// For advanced filtering, see package [github.com/mlange-42/arche/filter].
 func (w *World) Query(filter Filter) Query {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
@@ -122,7 +123,7 @@ func (w *World) Alive(entity Entity) bool {
 // Returns `nil` if the entity has no such component.
 // Panics when called for an already removed entity.
 //
-// See also [Map.Get] for a generic variant.
+// See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
 	return index.arch.Get(int(index.index), comp)
@@ -132,7 +133,7 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 //
 // Panics when called for an already removed entity.
 //
-// See also [Map.Has] for a generic variant.
+// See also [github.com/mlange-42/arche/generic.Map.Has] for a generic variant.
 func (w *World) Has(entity Entity, comp ID) bool {
 	return w.entities[entity.id].arch.HasComponent(comp)
 }
@@ -142,7 +143,7 @@ func (w *World) Has(entity Entity, comp ID) bool {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants [Add], [Add2], [Add3], ...
+// See also the generic variants [github.com/mlange-42/arche/generic.Add1], [github.com/mlange-42/arche/generic.Add2], [github.com/mlange-42/arche/generic.Add3], ...
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, []ID{})
 }
@@ -157,7 +158,7 @@ func (w *World) Add(entity Entity, comps ...ID) {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants [Assign], [Assign2], [Assign3], ...
+// See also the generic variants [github.com/mlange-42/arche/generic.Assign1], [github.com/mlange-42/arche/generic.Assign2], [github.com/mlange-42/arche/generic.Assign3], ...
 func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	w.Exchange(entity, []ID{id}, []ID{})
 	return w.copyTo(entity, id, comp)
@@ -174,7 +175,7 @@ func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 //
 // Panics if the entity does not have a component of that type.
 //
-// See also [Map.Set] for a generic variant.
+// See also [github.com/mlange-42/arche/generic.Map.Set] for a generic variant.
 func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	return w.copyTo(entity, id, comp)
 }
@@ -188,7 +189,7 @@ func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants [Assign], [Assign2], [Assign3], ...
+// See also the generic variants [github.com/mlange-42/arche/generic.Assign1], [github.com/mlange-42/arche/generic.Assign2], [github.com/mlange-42/arche/generic.Assign3], ...
 func (w *World) AssignN(entity Entity, comps ...Component) {
 	ids := make([]ID, len(comps))
 	for i, c := range comps {
@@ -206,7 +207,7 @@ func (w *World) AssignN(entity Entity, comps ...Component) {
 //
 // Do not use during [Query] iteration!
 //
-// See also the generic variants [Remove], [Remove2], [Remove3], ...
+// See also the generic variants [github.com/mlange-42/arche/generic.Remove1], [github.com/mlange-42/arche/generic.Remove2], [github.com/mlange-42/arche/generic.Remove3], ...
 func (w *World) Remove(entity Entity, comps ...ID) {
 	w.Exchange(entity, []ID{}, comps)
 }
@@ -337,7 +338,7 @@ func (w *World) createArchetype(mask BitMask) *archetype {
 	types := make([]componentType, count)
 
 	idx := 0
-	for i := 0; i < maskTotalBits; i++ {
+	for i := 0; i < MaskTotalBits; i++ {
 		id := ID(i)
 		if mask.Get(id) {
 			types[idx] = componentType{ID: id, Type: w.registry.Types[id]}

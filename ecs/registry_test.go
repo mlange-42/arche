@@ -13,7 +13,7 @@ func TestComponentRegistry(t *testing.T) {
 	posType := reflect.TypeOf((*position)(nil)).Elem()
 	rotType := reflect.TypeOf((*rotation)(nil)).Elem()
 
-	reg.RegisterComponent(posType, maskTotalBits)
+	reg.RegisterComponent(posType, MaskTotalBits)
 
 	assert.Equal(t, ID(0), reg.ComponentID(posType))
 	assert.Equal(t, ID(1), reg.ComponentID(rotType))

@@ -1,11 +1,11 @@
 package ecs
 
-// maskTotalBits is the size of Mask in bits.
+// MaskTotalBits is the size of Mask in bits.
 //
 // It is the maximum number of component types that may exist in any [World].
-const maskTotalBits = 64
+const MaskTotalBits = 64
 
-// BitMask is a bitmask.
+// BitMask is a 64 bit bitmask.
 type BitMask uint64
 
 var nibbleToBitsSet = [16]uint{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4}
@@ -13,8 +13,6 @@ var nibbleToBitsSet = [16]uint{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4}
 // NewBitMask creates a new bitmask from a list of IDs.
 //
 // If any ID is bigger or equal [MaskTotalBits], it'll not be added to the mask.
-//
-// Implementation taken from https://github.com/marioolofo/go-gameengine-ecs.
 func NewBitMask(ids ...ID) BitMask {
 	var mask BitMask
 	for _, id := range ids {

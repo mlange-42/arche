@@ -46,6 +46,12 @@ func TestWorldComponents(t *testing.T) {
 	posID := ComponentID[position](&w)
 	rotID := ComponentID[rotation](&w)
 
+	tPosID := TypeID(&w, reflect.TypeOf(position{}))
+	tRotID := TypeID(&w, reflect.TypeOf(rotation{}))
+
+	assert.Equal(t, posID, tPosID)
+	assert.Equal(t, rotID, tRotID)
+
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
@@ -263,7 +269,7 @@ func TestWorldIter(t *testing.T) {
 		assert.Panics(t, func() { query.Next() })
 	}
 
-	for i := 0; i < maskTotalBits-1; i++ {
+	for i := 0; i < MaskTotalBits-1; i++ {
 		query := world.Query(All(posID, rotID))
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
