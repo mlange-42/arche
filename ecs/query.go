@@ -1,10 +1,10 @@
 package ecs
 
 import (
-	"internal/base"
 	"unsafe"
 
 	f "github.com/mlange-42/arche/filter"
+	"github.com/mlange-42/arche/internal/base"
 )
 
 // EntityIter is the interface for iterable queries

@@ -1,7 +1,7 @@
 package ecs
 
 import (
-	"internal/base"
+	"github.com/mlange-42/arche/internal/base"
 )
 
 // eid is the entity identifier/index type

@@ -2,10 +2,10 @@ package ecs
 
 import (
 	"fmt"
-	"internal/base"
 	"reflect"
 	"testing"
 
+	"github.com/mlange-42/arche/internal/base"
 	"github.com/stretchr/testify/assert"
 )
 

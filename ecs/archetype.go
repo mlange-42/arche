@@ -1,9 +1,10 @@
 package ecs
 
 import (
-	"internal/base"
 	"reflect"
 	"unsafe"
+
+	"github.com/mlange-42/arche/internal/base"
 )
 
 // archetype represents an ECS archetype

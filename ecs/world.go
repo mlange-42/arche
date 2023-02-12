@@ -1,11 +1,11 @@
 package ecs
 
 import (
-	"internal/base"
 	"reflect"
 	"unsafe"
 
 	f "github.com/mlange-42/arche/filter"
+	"github.com/mlange-42/arche/internal/base"
 )
 
 // ComponentID returns the ID for a component type. Registers the type if it is not already registered.

@@ -1,7 +1,7 @@
 package filter
 
 import (
-	"internal/base"
+	"github.com/mlange-42/arche/internal/base"
 )
 
 // Mask is a mask for a combination of components.
