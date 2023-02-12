@@ -6,7 +6,7 @@ import (
 
 // Filter is the interface for logic filters
 type Filter interface {
-	Matches(mask BitMask) bool
+	Matches(bits BitMask) bool
 }
 
 // Mask is a mask for a combination of components.
@@ -14,10 +14,10 @@ type Mask struct {
 	BitMask BitMask
 }
 
-// NewMask creates a new Mask from a list of IDs.
+// All creates a new Mask from a list of IDs.
 //
 // If any ID is bigger or equal [MaskTotalBits], it'll not be added to the mask.
-func NewMask(ids ...ID) Mask {
+func All(ids ...ID) Mask {
 	var mask BitMask
 	for _, id := range ids {
 		mask.Set(id, true)
@@ -25,21 +25,16 @@ func NewMask(ids ...ID) Mask {
 	return Mask{mask}
 }
 
-// Matches matches a filter against a mask
-func (f Mask) Matches(mask BitMask) bool {
-	return mask.Contains(f.BitMask)
+// Matches matches a filter against a bitmask
+func (f Mask) Matches(bits BitMask) bool {
+	return bits.Contains(f.BitMask)
 }
 
-// All matches all the given components.
-func All(comps ...ID) Mask {
-	return NewMask(comps...)
-}
-
-// Not excludes the given components.
-func (f Mask) Not(comps ...ID) MaskPair {
+// ButNot excludes the given components.
+func (f Mask) ButNot(comps ...ID) MaskPair {
 	return MaskPair{
 		Mask:    f,
-		Exclude: NewMask(comps...),
+		Exclude: All(comps...),
 	}
 }
 

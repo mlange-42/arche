@@ -7,7 +7,7 @@ import (
 )
 
 func TestMask(t *testing.T) {
-	filter := NewMask(0, 2, 4)
+	filter := All(0, 2, 4)
 	other := NewBitMask(0, 1, 2)
 
 	assert.False(t, filter.Matches(other))
@@ -73,7 +73,7 @@ func TestQuery(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Query(All(rotID).Not(posID))
+	q = w.Query(All(rotID).ButNot(posID))
 
 	cnt = 0
 	for q.Next() {

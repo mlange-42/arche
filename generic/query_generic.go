@@ -23,7 +23,7 @@ func toMask(w *ecs.World, types []reflect.Type) ecs.Mask {
 	for i, t := range types {
 		ids[i] = ecs.TypeID(w, t)
 	}
-	return ecs.NewMask(ids...)
+	return ecs.All(ids...)
 }
 
 // Q0Builder builds a Q0 query
@@ -50,7 +50,7 @@ func (q Q0Builder) Not(mask []reflect.Type) Q0Builder {
 func (q Q0Builder) Build(w *ecs.World) Q0 {
 	return Q0{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.NewMask(),
+			Mask:    ecs.All(),
 			Exclude: toMask(w, q.exclude),
 		}),
 	}
@@ -91,7 +91,7 @@ func (q Q1Builder[A]) Build(w *ecs.World) Q1[A] {
 	id := ecs.TypeID(w, q.include)
 	return Q1[A]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.NewMask(id),
+			Mask:    ecs.All(id),
 			Exclude: toMask(w, q.exclude),
 		}),
 		id,
@@ -141,7 +141,7 @@ func (q Q2Builder[A, B]) Build(w *ecs.World) Q2[A, B] {
 	ids := toIds(w, q.include)
 	return Q2[A, B]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.NewMask(ids...),
+			Mask:    ecs.All(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -201,7 +201,7 @@ func (q Q3Builder[A, B, C]) Build(w *ecs.World) Q3[A, B, C] {
 	ids := toIds(w, q.include)
 	return Q3[A, B, C]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.NewMask(ids...),
+			Mask:    ecs.All(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -266,7 +266,7 @@ func (q Q4Builder[A, B, C, D]) Build(w *ecs.World) Q4[A, B, C, D] {
 	ids := toIds(w, q.include)
 	return Q4[A, B, C, D]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.NewMask(ids...),
+			Mask:    ecs.All(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -342,7 +342,7 @@ func (q Q5Builder[A, B, C, D, E]) Build(w *ecs.World) Q5[A, B, C, D, E] {
 	ids := toIds(w, q.include)
 	return Q5[A, B, C, D, E]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.NewMask(ids...),
+			Mask:    ecs.All(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -424,7 +424,7 @@ func (q Q6Builder[A, B, C, D, E, F]) Build(w *ecs.World) Q6[A, B, C, D, E, F] {
 	ids := toIds(w, q.include)
 	return Q6[A, B, C, D, E, F]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.NewMask(ids...),
+			Mask:    ecs.All(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -512,7 +512,7 @@ func (q Q7Builder[A, B, C, D, E, F, G]) Build(w *ecs.World) Q7[A, B, C, D, E, F,
 	ids := toIds(w, q.include)
 	return Q7[A, B, C, D, E, F, G]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.NewMask(ids...),
+			Mask:    ecs.All(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,
@@ -606,7 +606,7 @@ func (q Q8Builder[A, B, C, D, E, F, G, H]) Build(w *ecs.World) Q8[A, B, C, D, E,
 	ids := toIds(w, q.include)
 	return Q8[A, B, C, D, E, F, G, H]{
 		w.Query(ecs.MaskPair{
-			Mask:    ecs.NewMask(ids...),
+			Mask:    ecs.All(ids...),
 			Exclude: toMask(w, q.exclude),
 		}),
 		ids,

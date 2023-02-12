@@ -18,10 +18,10 @@ type rotation struct {
 
 func TestLogicFilters(t *testing.T) {
 
-	hasA := All(0)
-	hasB := All(1)
-	hasAll := All(0, 1)
-	hasNone := All()
+	hasA := ecs.All(0)
+	hasB := ecs.All(1)
+	hasAll := ecs.All(0, 1)
+	hasNone := ecs.All()
 
 	var filter ecs.Filter
 	filter = hasA
