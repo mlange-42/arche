@@ -22,7 +22,8 @@ go get github.com/mlange-42/arche
 
 ## Features
 
-* Minimal API. See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
+* Minimal core API. See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
+* Optional rich filtering and generic query API.
 * Fast iteration and component access via queries (≈2.5ns iterate + get).
 * Fast random access for components of arbitrary entities. Useful for hierarchies.
 * No systems. Use your own structure.
@@ -80,16 +81,18 @@ func main() {
 		vel.Y = rand.NormFloat64()
 	}
 
+	// Generic queries support up to 8 components.
+	// For more components, use World.Query() directly.
+	query := generic.Query2[Position, Velocity]()
+
 	// Time loop.
 	for t := 0; t < 1000; t++ {
-		// Get a fresh query.
-		// Generic queries support up to 8 components.
-		// For more components, use World.Query()
-		query := generic.Query2[Position, Velocity](&world)
-		// Iterate it
-		for query.Next() {
+		// Get a fresh query iterator.
+		q := query.Build(&world)
+		// Iterate it.
+		for q.Next() {
 			// Component access through a Query.
-			pos, vel := query.GetAll()
+			pos, vel := q.GetAll()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y

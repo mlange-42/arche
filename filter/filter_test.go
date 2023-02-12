@@ -102,13 +102,11 @@ func TestLogicFilters(t *testing.T) {
 	assert.False(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = Or(OneOf(0, 1), NotANY(hasB))
+	filter = Or(Any(0, 1), NotANY(hasB))
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
-
-	assert.Equal(t, Or(hasA, hasB), OneOf(0, 1))
 
 	assert.Equal(t, NotAny(0, 1), Any(0, 1).Not())
 	assert.Equal(t, Not(0, 1), All(0, 1).Not())
