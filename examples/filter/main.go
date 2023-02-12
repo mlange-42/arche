@@ -68,7 +68,7 @@ func main() {
 		fi.All(posID, velID),
 		fi.Or(
 			fi.All(rotID),
-			fi.Not(eleID),
+			fi.NoneOf(eleID),
 		),
 	)
 

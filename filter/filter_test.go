@@ -36,6 +36,12 @@ func TestLogicFilters(t *testing.T) {
 	assert.False(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
+	filter = Not(All(0, 1))
+	assert.False(t, match(filter, hasAll))
+	assert.True(t, match(filter, hasA))
+	assert.True(t, match(filter, hasB))
+	assert.True(t, match(filter, hasNone))
+
 	filter = Any(0, 1)
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
@@ -66,50 +72,50 @@ func TestLogicFilters(t *testing.T) {
 	assert.False(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = NotAny(1)
+	filter = AnyNot(1)
 	assert.False(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = NotAny(0, 1)
-	assert.False(t, match(filter, hasAll))
-	assert.False(t, match(filter, hasA))
-	assert.False(t, match(filter, hasB))
-	assert.True(t, match(filter, hasNone))
-
-	filter = Not(0)
-	assert.False(t, match(filter, hasAll))
-	assert.False(t, match(filter, hasA))
-	assert.True(t, match(filter, hasB))
-	assert.True(t, match(filter, hasNone))
-
-	filter = Not(0, 1)
+	filter = AnyNot(0, 1)
 	assert.False(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = And(hasA, NotANY(hasB))
+	filter = NoneOf(0)
+	assert.False(t, match(filter, hasAll))
+	assert.False(t, match(filter, hasA))
+	assert.True(t, match(filter, hasB))
+	assert.True(t, match(filter, hasNone))
+
+	filter = NoneOf(0, 1)
+	assert.False(t, match(filter, hasAll))
+	assert.False(t, match(filter, hasA))
+	assert.False(t, match(filter, hasB))
+	assert.True(t, match(filter, hasNone))
+
+	filter = And(hasA, AnyNOT(hasB))
 	assert.False(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = Or(hasAll, NotAny(1))
+	filter = Or(hasAll, AnyNot(1))
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = Or(Any(0, 1), NotANY(hasB))
+	filter = Or(Any(0, 1), AnyNOT(hasB))
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	assert.Equal(t, NotAny(0, 1), Any(0, 1).Not())
-	assert.Equal(t, Not(0, 1), All(0, 1).Not())
+	assert.Equal(t, AnyNot(0, 1), Any(0, 1).Not())
+	assert.Equal(t, NoneOf(0, 1), All(0, 1).Not())
 }
 
 func TestFilter(t *testing.T) {
@@ -169,7 +175,7 @@ func TestFilter(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Query(&AND{L: All(rotID), R: NotANY(All(posID))})
+	q = w.Query(&AND{L: All(rotID), R: AnyNOT(All(posID))})
 
 	cnt = 0
 	for q.Next() {

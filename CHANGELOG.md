@@ -4,8 +4,8 @@
 
 ### Features
 
-* Generic queries support optional and excluded components (#53, #56, #58, #59)
-* Logic filters for complex queries (#54, #58)
+* Generic queries support optional, additional and excluded components (#53, #56, #58, #59, #60)
+* Logic filters for complex queries (#54, #58, #61)
 
 ### Other
 
