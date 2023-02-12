@@ -37,6 +37,11 @@ func And(l, r MaskFilter) *AND {
 	return &AND{L: l, R: r}
 }
 
+// Matches matches a filter against a mask
+func (f *AND) Matches(mask base.BitMask) bool {
+	return f.L.Matches(mask) && f.R.Matches(mask)
+}
+
 // OR is a filter for ORing together components
 type OR struct {
 	L MaskFilter
@@ -46,6 +51,11 @@ type OR struct {
 // Or constructs a pointer to a OR filter
 func Or(l, r MaskFilter) *OR {
 	return &OR{L: l, R: r}
+}
+
+// Matches matches a filter against a mask
+func (f *OR) Matches(mask base.BitMask) bool {
+	return f.L.Matches(mask) || f.R.Matches(mask)
 }
 
 // XOR is a filter for XORing together components
@@ -59,7 +69,12 @@ func XOr(l, r MaskFilter) *XOR {
 	return &XOR{L: l, R: r}
 }
 
-// NOT is a filter for excluding components
+// Matches matches a filter against a mask
+func (f *XOR) Matches(mask base.BitMask) bool {
+	return f.L.Matches(mask) != f.R.Matches(mask)
+}
+
+// NOT is a filter for excluding entities with all given components
 type NOT Mask
 
 // Not constructs a NOT filter
@@ -68,21 +83,19 @@ func Not(comps ...base.ID) NOT {
 }
 
 // Matches matches a filter against a mask
-func (f *AND) Matches(mask base.BitMask) bool {
-	return f.L.Matches(mask) && f.R.Matches(mask)
-}
-
-// Matches matches a filter against a mask
-func (f *OR) Matches(mask base.BitMask) bool {
-	return f.L.Matches(mask) || f.R.Matches(mask)
-}
-
-// Matches matches a filter against a mask
-func (f *XOR) Matches(mask base.BitMask) bool {
-	return f.L.Matches(mask) != f.R.Matches(mask)
-}
-
-// Matches matches a filter against a mask
 func (f NOT) Matches(mask base.BitMask) bool {
+	return !mask.Contains(f.BitMask)
+}
+
+// NotANY is a filter for excluding entities with any of the the given components
+type NotANY Mask
+
+// NotAny constructs a NotANY filter
+func NotAny(comps ...base.ID) NotANY {
+	return NotANY(base.NewMask(comps...))
+}
+
+// Matches matches a filter against a mask
+func (f NotANY) Matches(mask base.BitMask) bool {
 	return !mask.ContainsAny(f.BitMask)
 }
