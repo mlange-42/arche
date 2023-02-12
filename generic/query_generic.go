@@ -34,14 +34,14 @@ func toMaskOptional(w *ecs.World, include []ecs.ID, optional []reflect.Type) ecs
 	return ecs.Mask{BitMask: mask}
 }
 
-// Q0Builder builds a Q0 query
+// Q0Builder builds a [Q0] query
 type Q0Builder struct {
 	exclude []reflect.Type
 }
 
 // Query0 creates a generic query for no components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query0() Q0Builder {
 	return Q0Builder{}
 }
@@ -71,7 +71,7 @@ type Q0 struct {
 	ecs.Query
 }
 
-// Q1Builder builds a Q1 query
+// Q1Builder builds a [Q1] query
 type Q1Builder[A any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
@@ -80,7 +80,7 @@ type Q1Builder[A any] struct {
 
 // Query1 creates a generic query for one component.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query1[A any]() Q1Builder[A] {
 	return Q1Builder[A]{
 		include: []reflect.Type{typeOf[A]()},
@@ -132,7 +132,7 @@ func (q *Q1[A]) Get1() *A {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q2Builder builds a Q2 query
+// Q2Builder builds a [Q2] query
 type Q2Builder[A any, B any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
@@ -141,7 +141,7 @@ type Q2Builder[A any, B any] struct {
 
 // Query2 creates a generic query for two components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query2[A any, B any]() Q2Builder[A, B] {
 	return Q2Builder[A, B]{
 		include: []reflect.Type{typeOf[A](), typeOf[B]()},
@@ -203,7 +203,7 @@ func (q *Q2[A, B]) Get2() *B {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q3Builder builds a Q3 query
+// Q3Builder builds a [Q3] query
 type Q3Builder[A any, B any, C any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
@@ -212,7 +212,7 @@ type Q3Builder[A any, B any, C any] struct {
 
 // Query3 creates a generic query for three components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query3[A any, B any, C any]() Q3Builder[A, B, C] {
 	return Q3Builder[A, B, C]{
 		include: []reflect.Type{typeOf[A](), typeOf[B](), typeOf[C]()},
@@ -279,7 +279,7 @@ func (q *Q3[A, B, C]) Get3() *C {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q4Builder builds a Q4 query
+// Q4Builder builds a [Q4] query
 type Q4Builder[A any, B any, C any, D any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
@@ -288,7 +288,7 @@ type Q4Builder[A any, B any, C any, D any] struct {
 
 // Query4 creates a generic query for four components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query4[A any, B any, C any, D any]() Q4Builder[A, B, C, D] {
 	return Q4Builder[A, B, C, D]{
 		include: []reflect.Type{typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D]()},
@@ -363,7 +363,7 @@ func (q *Q4[A, B, C, D]) Get4() *D {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q5Builder builds a Q5 query
+// Q5Builder builds a [Q5] query
 type Q5Builder[A any, B any, C any, D any, E any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
@@ -372,7 +372,7 @@ type Q5Builder[A any, B any, C any, D any, E any] struct {
 
 // Query5 creates a generic query for five components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query5[A any, B any, C any, D any, E any]() Q5Builder[A, B, C, D, E] {
 	return Q5Builder[A, B, C, D, E]{
 		include: []reflect.Type{
@@ -456,7 +456,7 @@ func (q *Q5[A, B, C, D, E]) Get5() *E {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q6Builder builds a Q6 query
+// Q6Builder builds a [Q6] query
 type Q6Builder[A any, B any, C any, D any, E any, F any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
@@ -465,7 +465,7 @@ type Q6Builder[A any, B any, C any, D any, E any, F any] struct {
 
 // Query6 creates a generic query for six components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query6[A any, B any, C any, D any, E any, F any]() Q6Builder[A, B, C, D, E, F] {
 	return Q6Builder[A, B, C, D, E, F]{
 		include: []reflect.Type{
@@ -555,7 +555,7 @@ func (q *Q6[A, B, C, D, E, F]) Get6() *F {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q7Builder builds a Q7 query
+// Q7Builder builds a [Q7] query
 type Q7Builder[A any, B any, C any, D any, E any, F any, G any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
@@ -564,7 +564,7 @@ type Q7Builder[A any, B any, C any, D any, E any, F any, G any] struct {
 
 // Query7 creates a generic query for seven components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query7[A any, B any, C any, D any, E any, F any, G any]() Q7Builder[A, B, C, D, E, F, G] {
 	return Q7Builder[A, B, C, D, E, F, G]{
 		include: []reflect.Type{
@@ -660,7 +660,7 @@ func (q *Q7[A, B, C, D, E, F, G]) Get7() *G {
 
 //////////////////////////////////////////////////////////////////////////
 
-// Q8Builder builds a Q8 query
+// Q8Builder builds a [Q8] query
 type Q8Builder[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
@@ -669,7 +669,7 @@ type Q8Builder[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 
 // Query8 creates a generic query for eight components.
 //
-// See also [World.Query].
+// See also [ecs.World.Query].
 func Query8[A any, B any, C any, D any, E any, F any, G any, H any]() Q8Builder[A, B, C, D, E, F, G, H] {
 	return Q8Builder[A, B, C, D, E, F, G, H]{
 		include: []reflect.Type{

@@ -16,7 +16,7 @@ type Map[T any] struct {
 //
 // Map provides a type-safe way to access a component type by entity ID.
 //
-// See also [World.Get], [World.Has] and [World.Set].
+// See also [ecs.World.Get], [ecs.World.Has] and [ecs.World.Set].
 func NewMap[T any](w *ecs.World) Map[T] {
 	return Map[T]{
 		id:    ecs.ComponentID[T](w),
@@ -26,14 +26,14 @@ func NewMap[T any](w *ecs.World) Map[T] {
 
 // Get gets the component for the given entity.
 //
-// See also [World.Get].
+// See also [ecs.World.Get].
 func (g *Map[T]) Get(entity ecs.Entity) *T {
 	return (*T)(g.world.Get(entity, g.id))
 }
 
 // Has returns whether the entity has the component.
 //
-// See also [World.Has].
+// See also [ecs.World.Has].
 func (g *Map[T]) Has(entity ecs.Entity) bool {
 	return g.world.Has(entity, g.id)
 }
@@ -42,14 +42,14 @@ func (g *Map[T]) Has(entity ecs.Entity) bool {
 //
 // Panics if the entity does not have a component of that type.
 //
-// See also [World.Set].
+// See also [ecs.World.Set].
 func (g *Map[T]) Set(entity ecs.Entity, comp *T) *T {
 	return (*T)(g.world.Set(entity, g.id, comp))
 }
 
 // Add1 adds a component type to an entity.
 //
-// See also [World.Add1].
+// See also [ecs.World.Add].
 func Add1[A any](w *ecs.World, entity ecs.Entity) *A {
 	id := ecs.ComponentID[A](w)
 	w.Add(entity, id)
@@ -58,7 +58,7 @@ func Add1[A any](w *ecs.World, entity ecs.Entity) *A {
 
 // Add2 adds two component types to an entity.
 //
-// See also [World.Add].
+// See also [ecs.World.Add].
 func Add2[A any, B any](w *ecs.World, entity ecs.Entity) (*A, *B) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
@@ -68,7 +68,7 @@ func Add2[A any, B any](w *ecs.World, entity ecs.Entity) (*A, *B) {
 
 // Add3 adds three component types to an entity.
 //
-// See also [World.Add].
+// See also [ecs.World.Add].
 func Add3[A any, B any, C any](w *ecs.World, entity ecs.Entity) (*A, *B, *C) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
@@ -79,7 +79,7 @@ func Add3[A any, B any, C any](w *ecs.World, entity ecs.Entity) (*A, *B, *C) {
 
 // Add4 adds four component types to an entity.
 //
-// See also [World.Add].
+// See also [ecs.World.Add].
 func Add4[A any, B any, C any, D any](w *ecs.World, entity ecs.Entity) (*A, *B, *C, *D) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
@@ -91,7 +91,7 @@ func Add4[A any, B any, C any, D any](w *ecs.World, entity ecs.Entity) (*A, *B, 
 
 // Add5 adds five component types to an entity.
 //
-// See also [World.Add].
+// See also [ecs.World.Add].
 func Add5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity) (*A, *B, *C, *D, *E) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
@@ -104,7 +104,7 @@ func Add5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity) (*
 
 // Assign1 adds a components to an entity.
 //
-// See also [World.Assign1] and [World.AssignN].
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
 func Assign1[A any](w *ecs.World, entity ecs.Entity, a *A) *A {
 	idA := ecs.ComponentID[A](w)
 	w.Assign(entity, idA, a)
@@ -113,7 +113,7 @@ func Assign1[A any](w *ecs.World, entity ecs.Entity, a *A) *A {
 
 // Assign2 adds two components to an entity.
 //
-// See also [World.Assign] and [World.AssignN].
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
 func Assign2[A any, B any](w *ecs.World, entity ecs.Entity, a *A, b *B) (*A, *B) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
@@ -123,7 +123,7 @@ func Assign2[A any, B any](w *ecs.World, entity ecs.Entity, a *A, b *B) (*A, *B)
 
 // Assign3 adds three components to an entity.
 //
-// See also [World.Assign] and [World.AssignN].
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
 func Assign3[A any, B any, C any](w *ecs.World, entity ecs.Entity, a *A, b *B, c *C) (*A, *B, *C) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
@@ -134,7 +134,7 @@ func Assign3[A any, B any, C any](w *ecs.World, entity ecs.Entity, a *A, b *B, c
 
 // Assign4 adds four components to an entity.
 //
-// See also [World.Assign] and [World.AssignN].
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
 func Assign4[A any, B any, C any, D any](w *ecs.World, entity ecs.Entity, a *A, b *B, c *C, d *D) (*A, *B, *C, *D) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
@@ -146,7 +146,7 @@ func Assign4[A any, B any, C any, D any](w *ecs.World, entity ecs.Entity, a *A, 
 
 // Assign5 adds four components to an entity.
 //
-// See also [World.Assign] and [World.AssignN].
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
 func Assign5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity, a *A, b *B, c *C, d *D, e *E) (*A, *B, *C, *D, *E) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
@@ -159,35 +159,35 @@ func Assign5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity,
 
 // Remove1 removes a component from an entity.
 //
-// See also [World.Remove1].
+// See also [ecs.World.Remove].
 func Remove1[A any](w *ecs.World, entity ecs.Entity) {
 	w.Remove(entity, ecs.ComponentID[A](w))
 }
 
 // Remove2 removes two components from an entity.
 //
-// See also [World.Remove].
+// See also [ecs.World.Remove].
 func Remove2[A any, B any](w *ecs.World, entity ecs.Entity) {
 	w.Remove(entity, ecs.ComponentID[A](w), ecs.ComponentID[B](w))
 }
 
 // Remove3 removes three components from an entity.
 //
-// See also [World.Remove].
+// See also [ecs.World.Remove].
 func Remove3[A any, B any, C any](w *ecs.World, entity ecs.Entity) {
 	w.Remove(entity, ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w))
 }
 
 // Remove4 removes four components from an entity.
 //
-// See also [World.Remove].
+// See also [ecs.World.Remove].
 func Remove4[A any, B any, C any, D any](w *ecs.World, entity ecs.Entity) {
 	w.Remove(entity, ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w))
 }
 
 // Remove5 removes five components from an entity.
 //
-// See also [World.Remove].
+// See also [ecs.World.Remove].
 func Remove5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity) {
 	w.Remove(entity, ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w))
 }

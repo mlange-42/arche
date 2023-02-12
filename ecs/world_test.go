@@ -269,7 +269,7 @@ func TestWorldIter(t *testing.T) {
 		assert.Panics(t, func() { query.Next() })
 	}
 
-	for i := 0; i < maskTotalBits-1; i++ {
+	for i := 0; i < MaskTotalBits-1; i++ {
 		query := world.Query(All(posID, rotID))
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
