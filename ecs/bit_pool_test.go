@@ -1,4 +1,4 @@
-package base
+package ecs
 
 import (
 	"testing"
@@ -7,9 +7,9 @@ import (
 )
 
 func TestBitPool(t *testing.T) {
-	p := NewBitPool()
+	p := newBitPool()
 
-	for i := 0; i < MaskTotalBits; i++ {
+	for i := 0; i < maskTotalBits; i++ {
 		assert.Equal(t, i, int(p.Get()))
 	}
 
