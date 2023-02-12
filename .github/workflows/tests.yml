@@ -38,6 +38,23 @@ jobs:
           go test -v ./internal/base ./... -covermode=count -coverprofile="coverage.out"
           go tool cover -func="coverage.out"
 
+  test:
+    name: Run examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.19.x'
+      - name: Install dependencies
+        run: go get .
+      - name: Test
+        run: |
+          go run ./examples/base
+          go run ./examples/generic
+          go run ./examples/filter
+
   lint:
     name: Run linters
     runs-on: ubuntu-latest

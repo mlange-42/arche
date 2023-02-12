@@ -42,6 +42,8 @@ func main() {
 		vel.Y = rand.NormFloat64()
 	}
 
+	panic("CI test panic")
+
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query.
