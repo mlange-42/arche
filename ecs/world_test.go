@@ -46,6 +46,12 @@ func TestWorldComponents(t *testing.T) {
 	posID := ComponentID[position](&w)
 	rotID := ComponentID[rotation](&w)
 
+	tPosID := TypeID(&w, reflect.TypeOf(position{}))
+	tRotID := TypeID(&w, reflect.TypeOf(rotation{}))
+
+	assert.Equal(t, posID, tPosID)
+	assert.Equal(t, rotID, tRotID)
+
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()

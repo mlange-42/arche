@@ -8,6 +8,54 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestQueryOptionalNot(t *testing.T) {
+	w := ecs.NewWorld()
+
+	registerAll(&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Assign(e0, 0, &testStruct0{1})
+	w.Assign(e0, 1, &testStruct1{1})
+
+	w.Assign(e1, 0, &testStruct0{2})
+	w.Assign(e1, 1, &testStruct1{2})
+
+	w.Assign(e2, 0, &testStruct0{3})
+	w.Assign(e2, 1, &testStruct1{3})
+	w.Assign(e2, 9, &testStruct9{})
+
+	query2 := Query2[testStruct0, testStruct1]().Build(&w)
+	cnt := 0
+	for query2.Next() {
+		cnt++
+	}
+	assert.Equal(t, 3, cnt)
+
+	query2 = Query2[testStruct0, testStruct1]().ButNot(Mask1[testStruct9]()).Build(&w)
+	cnt = 0
+	for query2.Next() {
+		cnt++
+	}
+	assert.Equal(t, 2, cnt)
+
+	query3 := Query3[testStruct0, testStruct1, testStruct9]().Build(&w)
+	cnt = 0
+	for query3.Next() {
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
+
+	query3 = Query3[testStruct0, testStruct1, testStruct9]().Optional(Mask1[testStruct9]()).Build(&w)
+	cnt = 0
+	for query3.Next() {
+		cnt++
+	}
+	assert.Equal(t, 3, cnt)
+}
+
 func TestQuery0(t *testing.T) {
 	w := ecs.NewWorld()
 
@@ -23,7 +71,7 @@ func TestQuery0(t *testing.T) {
 	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query0().Not(Mask1[testStruct9]()).Build(&w)
+	query := Query0().ButNot(Mask1[testStruct9]()).Build(&w)
 
 	for query.Next() {
 		cnt++
@@ -46,7 +94,11 @@ func TestQuery1(t *testing.T) {
 	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query1[testStruct0]().Not(Mask1[testStruct9]()).Build(&w)
+	query :=
+		Query1[testStruct0]().
+			Optional(Mask1[testStruct8]()).
+			ButNot(Mask1[testStruct9]()).
+			Build(&w)
 
 	for query.Next() {
 		c0 := query.Get1()
@@ -76,7 +128,11 @@ func TestQuery2(t *testing.T) {
 	w.Assign(e2, 9, &testStruct9{})
 
 	cnt := 0
-	query := Query2[testStruct0, testStruct1]().Not(Mask1[testStruct9]()).Build(&w)
+	query :=
+		Query2[testStruct0, testStruct1]().
+			Optional(Mask1[testStruct1]()).
+			ButNot(Mask1[testStruct9]()).
+			Build(&w)
 
 	for query.Next() {
 		c1 := query.Get1()
@@ -118,7 +174,8 @@ func TestQuery3(t *testing.T) {
 	cnt := 0
 	query :=
 		Query3[testStruct0, testStruct1, testStruct2]().
-			Not(Mask1[testStruct9]()).
+			Optional(Mask1[testStruct1]()).
+			ButNot(Mask1[testStruct9]()).
 			Build(&w)
 
 	for query.Next() {
@@ -168,7 +225,8 @@ func TestQuery4(t *testing.T) {
 	cnt := 0
 	query :=
 		Query4[testStruct0, testStruct1, testStruct2, testStruct3]().
-			Not(Mask1[testStruct9]()).
+			Optional(Mask1[testStruct1]()).
+			ButNot(Mask1[testStruct9]()).
 			Build(&w)
 
 	for query.Next() {
@@ -225,7 +283,8 @@ func TestQuery5(t *testing.T) {
 	cnt := 0
 	query :=
 		Query5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4]().
-			Not(Mask1[testStruct9]()).
+			Optional(Mask1[testStruct1]()).
+			ButNot(Mask1[testStruct9]()).
 			Build(&w)
 
 	for query.Next() {
@@ -289,7 +348,8 @@ func TestQuery6(t *testing.T) {
 	cnt := 0
 	query :=
 		Query6[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4, testStruct5]().
-			Not(Mask1[testStruct9]()).
+			Optional(Mask1[testStruct1]()).
+			ButNot(Mask1[testStruct9]()).
 			Build(&w)
 
 	for query.Next() {
@@ -363,7 +423,8 @@ func TestQuery7(t *testing.T) {
 			testStruct0, testStruct1, testStruct2, testStruct3, testStruct4,
 			testStruct5, testStruct6,
 		]().
-			Not(Mask1[testStruct9]()).
+			Optional(Mask1[testStruct1]()).
+			ButNot(Mask1[testStruct9]()).
 			Build(&w)
 
 	for query.Next() {
@@ -436,7 +497,8 @@ func TestQuery8(t *testing.T) {
 			testStruct0, testStruct1, testStruct2, testStruct3,
 			testStruct4, testStruct5, testStruct6, testStruct7,
 		]().
-			Not(Mask1[testStruct9]()).
+			Optional(Mask1[testStruct1]()).
+			ButNot(Mask1[testStruct9]()).
 			Build(&w)
 
 	for query.Next() {
