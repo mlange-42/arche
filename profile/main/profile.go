@@ -50,7 +50,7 @@ func run(rounds, iters, entities int) {
 		}
 
 		for j := 0; j < iters; j++ {
-			query := world.Query(posID, rotID)
+			query := world.Filter(ecs.All(posID, rotID))
 			for query.Next() {
 				pos := (*position)(query.Get(posID))
 				_ = pos

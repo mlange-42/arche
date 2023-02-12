@@ -40,20 +40,20 @@ func All(comps ...base.ID) Mask {
 // Not excludes the given components.
 func (f Mask) Not(comps ...base.ID) MaskPair {
 	return MaskPair{
-		mask:    f,
-		exclude: NewMask(comps...),
+		Mask:    f,
+		Exclude: NewMask(comps...),
 	}
 }
 
 // MaskPair is a filter for including an excluding components
 type MaskPair struct {
-	mask    Mask
-	exclude Mask
+	Mask    Mask
+	Exclude Mask
 }
 
 // Matches matches a filter against a mask
 func (f MaskPair) Matches(mask base.BitMask) bool {
-	return mask.Contains(f.mask.BitMask) && !mask.Contains(f.exclude.BitMask)
+	return mask.Contains(f.Mask.BitMask) && !mask.Contains(f.Exclude.BitMask)
 }
 
 // EntityIter is the interface for iterable queries

@@ -7,9 +7,14 @@ import (
 	"github.com/mlange-42/arche/internal/base"
 )
 
-// ComponentID returns the ID for a component type. Registers the type if it is not already registered.
+// ComponentID returns the ID for a component type via generics. Registers the type if it is not already registered.
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
+	return w.componentID(tp)
+}
+
+// TypeID returns the ID for a component type. Registers the type if it is not already registered.
+func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
@@ -88,18 +93,6 @@ func (w *World) RemEntity(entity Entity) {
 	}
 
 	w.entities[entity.id].arch = nil
-}
-
-// Query creates a [Query] iterator for the given components.
-//
-// Locks the world to prevent changes to component compositions.
-//
-// See also the generic alternatives [Query1], [Query2], [Query3], ...
-func (w *World) Query(comps ...ID) Query {
-	mask := base.NewBitMask(comps...)
-	lock := w.bitPool.Get()
-	w.locks.Set(ID(lock), true)
-	return newQuery(w, mask, 0, lock)
 }
 
 // Filter creates an advanced [Filter] iterator.

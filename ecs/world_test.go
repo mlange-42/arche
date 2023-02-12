@@ -256,7 +256,7 @@ func TestWorldIter(t *testing.T) {
 	}
 
 	for i := 0; i < 100; i++ {
-		query := world.Query(posID, rotID)
+		query := world.Filter(All(posID, rotID))
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
 			_ = pos
@@ -265,16 +265,16 @@ func TestWorldIter(t *testing.T) {
 	}
 
 	for i := 0; i < maskTotalBits-1; i++ {
-		query := world.Query(posID, rotID)
+		query := world.Filter(All(posID, rotID))
 		for query.Next() {
 			pos := (*position)(query.Get(posID))
 			_ = pos
 			break
 		}
 	}
-	query := world.Query(posID, rotID)
+	query := world.Filter(All(posID, rotID))
 
-	assert.Panics(t, func() { world.Query(posID, rotID) })
+	assert.Panics(t, func() { world.Filter(All(posID, rotID)) })
 
 	query.Close()
 	assert.Panics(t, func() { query.Close() })
@@ -292,15 +292,15 @@ func TestWorldLock(t *testing.T) {
 		world.Add(entity, posID)
 	}
 
-	query1 := world.Query(posID)
-	query2 := world.Query(posID)
+	query1 := world.Filter(All(posID))
+	query2 := world.Filter(All(posID))
 	assert.True(t, world.IsLocked())
 	query1.Close()
 	assert.True(t, world.IsLocked())
 	query2.Close()
 	assert.False(t, world.IsLocked())
 
-	query1 = world.Query(posID)
+	query1 = world.Filter(All(posID))
 
 	assert.Panics(t, func() { world.NewEntity() })
 	assert.Panics(t, func() { world.RemEntity(entity) })
@@ -380,7 +380,7 @@ func Test1000Archetypes(t *testing.T) {
 	assert.Equal(t, 1024, w.archetypes.Len())
 
 	cnt := 0
-	query := w.Query(0, 7)
+	query := w.Filter(All(0, 7))
 	for query.Next() {
 		cnt++
 	}
