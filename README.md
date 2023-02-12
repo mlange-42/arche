@@ -36,7 +36,8 @@ For details on Arche's architecture, see section [Architecture](#architecture).
 Here is a minimal usage example.
 You will likely create systems with a method that takes a pointer to the `World` as argument.
 
-See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) for details.
+See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
+[examples](https://github.com/mlange-42/arche/tree/main/examples) for details.
 
 ```go
 package main
@@ -151,7 +152,8 @@ Component IDs are retrieved like this:
 posID := ComponentID[Position](&world)
 ```
 
-For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
+For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
+[examples](https://github.com/mlange-42/arche/tree/main/examples).
 
 ## Benchmarks
 
