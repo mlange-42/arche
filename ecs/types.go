@@ -13,10 +13,10 @@ type ID = base.ID
 // bitMask is a bitmask.
 type bitMask = base.BitMask
 
-// MaskTotalBits is the size of Mask in bits.
+// maskTotalBits is the size of Mask in bits.
 //
 // It is the maximum number of component types that may exist in any [World].
-const MaskTotalBits = base.MaskTotalBits
+const maskTotalBits = base.MaskTotalBits
 
 // Mask is a mask for a combination of components.
 type Mask = base.Mask

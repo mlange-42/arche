@@ -13,7 +13,7 @@ type archetype struct {
 	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
-	indices    [MaskTotalBits]uint8
+	indices    [maskTotalBits]uint8
 	entities   base.Storage
 	components []base.Storage
 	toAdd      map[ID]*archetype
