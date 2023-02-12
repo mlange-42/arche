@@ -103,10 +103,10 @@ func runArcheQuery5C(b *testing.B, count int) {
 		b.StartTimer()
 		for query.Next() {
 			t1 := (*testStruct0)(query.Get(id0))
-			t2 := (*testStruct0)(query.Get(id1))
-			t3 := (*testStruct0)(query.Get(id2))
-			t4 := (*testStruct0)(query.Get(id3))
-			t5 := (*testStruct0)(query.Get(id4))
+			t2 := (*testStruct1)(query.Get(id1))
+			t3 := (*testStruct2)(query.Get(id2))
+			t4 := (*testStruct3)(query.Get(id3))
+			t5 := (*testStruct4)(query.Get(id4))
 			_, _, _, _, _ = t1, t2, t3, t4, t5
 		}
 	}
@@ -135,7 +135,12 @@ func runArcheQueryGeneric5C(b *testing.B, count int) {
 		q := query.Build(&world)
 		b.StartTimer()
 		for q.Next() {
-			t1, t2, t3, t4, t5 := q.GetAll()
+			t1 := q.Get1()
+			t2 := q.Get2()
+			t3 := q.Get3()
+			t4 := q.Get4()
+			t5 := q.Get5()
+			_, _, _, _, _ = t1, t2, t3, t4, t5
 			_, _, _, _, _ = t1, t2, t3, t4, t5
 		}
 	}
