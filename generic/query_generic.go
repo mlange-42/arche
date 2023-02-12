@@ -6,38 +6,35 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-func typeOf[T any]() reflect.Type {
-	return reflect.TypeOf((*T)(nil)).Elem()
+type compiledQuery struct {
+	mask     ecs.Mask
+	exclude  ecs.Mask
+	Ids      []ecs.ID
+	compiled bool
 }
 
-func toIds(w *ecs.World, types []reflect.Type) []ecs.ID {
-	ids := make([]ecs.ID, len(types))
-	for i, t := range types {
-		ids[i] = ecs.TypeID(w, t)
+func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []reflect.Type) {
+	if q.compiled {
+		return
 	}
-	return ids
+	q.Ids = toIds(w, include)
+	q.mask = toMaskOptional(w, q.Ids, optional)
+	q.exclude = toMask(w, exclude)
+	q.compiled = true
 }
 
-func toMask(w *ecs.World, types []reflect.Type) ecs.Mask {
-	mask := ecs.BitMask(0)
-	for _, t := range types {
-		mask.Set(ecs.TypeID(w, t), true)
+func (q *compiledQuery) MaskPair() ecs.MaskPair {
+	return ecs.MaskPair{
+		Mask:    q.mask,
+		Exclude: q.exclude,
 	}
-	return ecs.Mask{BitMask: mask}
-}
-
-func toMaskOptional(w *ecs.World, include []ecs.ID, optional []reflect.Type) ecs.Mask {
-	mask := ecs.NewBitMask(include...)
-	for _, t := range optional {
-		mask.Set(ecs.TypeID(w, t), false)
-	}
-	return ecs.Mask{BitMask: mask}
 }
 
 // Q0Builder builds a [Q0] query
 type Q0Builder struct {
-	include []reflect.Type
-	exclude []reflect.Type
+	include  []reflect.Type
+	exclude  []reflect.Type
+	compiled compiledQuery
 }
 
 // Query0 creates a generic query for no components.
@@ -63,14 +60,17 @@ func (q Q0Builder) Without(mask []reflect.Type) Q0Builder {
 	return q
 }
 
+// Compile compiles the query for lower overhead in method Build.
+func (q Q0Builder) Compile(w *ecs.World) Q0Builder {
+	q.compiled.Compile(w, q.include, []reflect.Type{}, q.exclude)
+	return q
+}
+
 // Build builds a Q0 query for iteration.
 func (q Q0Builder) Build(w *ecs.World) Q0 {
-	ids := toIds(w, q.include)
+	q.compiled.Compile(w, q.include, []reflect.Type{}, q.exclude)
 	return Q0{
-		w.Query(ecs.MaskPair{
-			Mask:    ecs.Mask{BitMask: ecs.NewBitMask(ids...)},
-			Exclude: toMask(w, q.exclude),
-		}),
+		w.Query(q.compiled.MaskPair()),
 	}
 }
 
@@ -86,6 +86,7 @@ type Q1Builder[A any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
+	compiled compiledQuery
 }
 
 // Query1 creates a generic query for one component.
@@ -123,15 +124,18 @@ func (q Q1Builder[A]) Without(mask []reflect.Type) Q1Builder[A] {
 	return q
 }
 
+// Compile compiles the query for lower overhead in method Build.
+func (q Q1Builder[A]) Compile(w *ecs.World) Q1Builder[A] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q
+}
+
 // Build builds a Q1 query for iteration.
 func (q Q1Builder[A]) Build(w *ecs.World) Q1[A] {
-	ids := toIds(w, q.include)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Q1[A]{
-		w.Query(ecs.MaskPair{
-			Mask:    toMaskOptional(w, ids, q.optional),
-			Exclude: toMask(w, q.exclude),
-		}),
-		ids[0],
+		w.Query(q.compiled.MaskPair()),
+		q.compiled.Ids[0],
 	}
 }
 
@@ -155,6 +159,7 @@ type Q2Builder[A any, B any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
+	compiled compiledQuery
 }
 
 // Query2 creates a generic query for two components.
@@ -192,15 +197,18 @@ func (q Q2Builder[A, B]) Without(mask []reflect.Type) Q2Builder[A, B] {
 	return q
 }
 
+// Compile compiles the query for lower overhead in method Build.
+func (q Q2Builder[A, B]) Compile(w *ecs.World) Q2Builder[A, B] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q
+}
+
 // Build builds a Q2 query for iteration.
 func (q Q2Builder[A, B]) Build(w *ecs.World) Q2[A, B] {
-	ids := toIds(w, q.include)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Q2[A, B]{
-		w.Query(ecs.MaskPair{
-			Mask:    toMaskOptional(w, ids, q.optional),
-			Exclude: toMask(w, q.exclude),
-		}),
-		ids,
+		w.Query(q.compiled.MaskPair()),
+		q.compiled.Ids,
 	}
 }
 
@@ -234,6 +242,7 @@ type Q3Builder[A any, B any, C any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
+	compiled compiledQuery
 }
 
 // Query3 creates a generic query for three components.
@@ -271,15 +280,18 @@ func (q Q3Builder[A, B, C]) Without(mask []reflect.Type) Q3Builder[A, B, C] {
 	return q
 }
 
+// Compile compiles the query for lower overhead in method Build.
+func (q Q3Builder[A, B, C]) Compile(w *ecs.World) Q3Builder[A, B, C] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q
+}
+
 // Build builds a Q3 query for iteration.
 func (q Q3Builder[A, B, C]) Build(w *ecs.World) Q3[A, B, C] {
-	ids := toIds(w, q.include)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Q3[A, B, C]{
-		w.Query(ecs.MaskPair{
-			Mask:    toMaskOptional(w, ids, q.optional),
-			Exclude: toMask(w, q.exclude),
-		}),
-		ids,
+		w.Query(q.compiled.MaskPair()),
+		q.compiled.Ids,
 	}
 }
 
@@ -318,6 +330,7 @@ type Q4Builder[A any, B any, C any, D any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
+	compiled compiledQuery
 }
 
 // Query4 creates a generic query for four components.
@@ -355,15 +368,18 @@ func (q Q4Builder[A, B, C, D]) Without(mask []reflect.Type) Q4Builder[A, B, C, D
 	return q
 }
 
+// Compile compiles the query for lower overhead in method Build.
+func (q Q4Builder[A, B, C, D]) Compile(w *ecs.World) Q4Builder[A, B, C, D] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q
+}
+
 // Build builds a Q4 query for iteration.
 func (q Q4Builder[A, B, C, D]) Build(w *ecs.World) Q4[A, B, C, D] {
-	ids := toIds(w, q.include)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Q4[A, B, C, D]{
-		w.Query(ecs.MaskPair{
-			Mask:    toMaskOptional(w, ids, q.optional),
-			Exclude: toMask(w, q.exclude),
-		}),
-		ids,
+		w.Query(q.compiled.MaskPair()),
+		q.compiled.Ids,
 	}
 }
 
@@ -410,6 +426,7 @@ type Q5Builder[A any, B any, C any, D any, E any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
+	compiled compiledQuery
 }
 
 // Query5 creates a generic query for five components.
@@ -450,15 +467,18 @@ func (q Q5Builder[A, B, C, D, E]) Without(mask []reflect.Type) Q5Builder[A, B, C
 	return q
 }
 
+// Compile compiles the query for lower overhead in method Build.
+func (q Q5Builder[A, B, C, D, E]) Compile(w *ecs.World) Q5Builder[A, B, C, D, E] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q
+}
+
 // Build builds a Q5 query for iteration.
 func (q Q5Builder[A, B, C, D, E]) Build(w *ecs.World) Q5[A, B, C, D, E] {
-	ids := toIds(w, q.include)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Q5[A, B, C, D, E]{
-		w.Query(ecs.MaskPair{
-			Mask:    toMaskOptional(w, ids, q.optional),
-			Exclude: toMask(w, q.exclude),
-		}),
-		ids,
+		w.Query(q.compiled.MaskPair()),
+		q.compiled.Ids,
 	}
 }
 
@@ -511,6 +531,7 @@ type Q6Builder[A any, B any, C any, D any, E any, F any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
+	compiled compiledQuery
 }
 
 // Query6 creates a generic query for six components.
@@ -551,15 +572,18 @@ func (q Q6Builder[A, B, C, D, E, F]) Without(mask []reflect.Type) Q6Builder[A, B
 	return q
 }
 
+// Compile compiles the query for lower overhead in method Build.
+func (q Q6Builder[A, B, C, D, E, F]) Compile(w *ecs.World) Q6Builder[A, B, C, D, E, F] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q
+}
+
 // Build builds a Q6 query for iteration.
 func (q Q6Builder[A, B, C, D, E, F]) Build(w *ecs.World) Q6[A, B, C, D, E, F] {
-	ids := toIds(w, q.include)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Q6[A, B, C, D, E, F]{
-		w.Query(ecs.MaskPair{
-			Mask:    toMaskOptional(w, ids, q.optional),
-			Exclude: toMask(w, q.exclude),
-		}),
-		ids,
+		w.Query(q.compiled.MaskPair()),
+		q.compiled.Ids,
 	}
 }
 
@@ -618,6 +642,7 @@ type Q7Builder[A any, B any, C any, D any, E any, F any, G any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
+	compiled compiledQuery
 }
 
 // Query7 creates a generic query for seven components.
@@ -658,15 +683,18 @@ func (q Q7Builder[A, B, C, D, E, F, G]) Without(mask []reflect.Type) Q7Builder[A
 	return q
 }
 
+// Compile compiles the query for lower overhead in method Build.
+func (q Q7Builder[A, B, C, D, E, F, G]) Compile(w *ecs.World) Q7Builder[A, B, C, D, E, F, G] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q
+}
+
 // Build builds a Q7 query for iteration.
 func (q Q7Builder[A, B, C, D, E, F, G]) Build(w *ecs.World) Q7[A, B, C, D, E, F, G] {
-	ids := toIds(w, q.include)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Q7[A, B, C, D, E, F, G]{
-		w.Query(ecs.MaskPair{
-			Mask:    toMaskOptional(w, ids, q.optional),
-			Exclude: toMask(w, q.exclude),
-		}),
-		ids,
+		w.Query(q.compiled.MaskPair()),
+		q.compiled.Ids,
 	}
 }
 
@@ -731,6 +759,7 @@ type Q8Builder[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
+	compiled compiledQuery
 }
 
 // Query8 creates a generic query for eight components.
@@ -771,15 +800,18 @@ func (q Q8Builder[A, B, C, D, E, F, G, H]) Without(mask []reflect.Type) Q8Builde
 	return q
 }
 
+// Compile compiles the query for lower overhead in method Build.
+func (q Q8Builder[A, B, C, D, E, F, G, H]) Compile(w *ecs.World) Q8Builder[A, B, C, D, E, F, G, H] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q
+}
+
 // Build builds a Q8 query for iteration.
 func (q Q8Builder[A, B, C, D, E, F, G, H]) Build(w *ecs.World) Q8[A, B, C, D, E, F, G, H] {
-	ids := toIds(w, q.include)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Q8[A, B, C, D, E, F, G, H]{
-		w.Query(ecs.MaskPair{
-			Mask:    toMaskOptional(w, ids, q.optional),
-			Exclude: toMask(w, q.exclude),
-		}),
-		ids,
+		w.Query(q.compiled.MaskPair()),
+		q.compiled.Ids,
 	}
 }
 
