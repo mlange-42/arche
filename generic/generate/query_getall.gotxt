@@ -1,3 +1,4 @@
+
 // GetAll returns all queried components for the current query position
 func (q *Query{{ .Index }}{{ .Types }}) GetAll() {{ .TypesReturn }} {
 	return {{ .ReturnAll }}
