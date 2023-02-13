@@ -195,7 +195,7 @@ func TestInterface(t *testing.T) {
 	posID := ecs.ComponentID[position](&w)
 
 	f := w.Query(All(posID))
-	var f2 ecs.EntityIter = &f
+	var f2 ecs.QueryIter = &f
 	_ = f2
 }
 

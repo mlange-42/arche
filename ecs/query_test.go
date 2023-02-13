@@ -100,6 +100,6 @@ func TestInterface(t *testing.T) {
 	rotID := ComponentID[rotation](&w)
 
 	q := w.Query(All(posID, rotID))
-	var q2 EntityIter = &q
+	var q2 QueryIter = &q
 	_ = q2
 }
