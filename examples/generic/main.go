@@ -55,11 +55,11 @@ func main() {
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query iterator.
-		q := filter.Query(&world)
+		query := filter.Query(&world)
 		// Iterate it.
-		for q.Next() {
+		for query.Next() {
 			// Component access through a Query.
-			pos, vel := q.GetAll()
+			pos, vel := query.GetAll()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y
