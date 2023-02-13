@@ -65,6 +65,9 @@ func TestWorldComponents(t *testing.T) {
 	w.Add(e2, posID, rotID)
 	assert.Equal(t, 3, w.archetypes.Len())
 
+	assert.Equal(t, All(posID).BitMask, w.Mask(e0))
+	assert.Equal(t, All(posID, rotID).BitMask, w.Mask(e1))
+
 	w.Remove(e2, posID)
 
 	maskNone := NewBitMask()

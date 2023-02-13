@@ -54,12 +54,12 @@ func main() {
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query iterator.
-		q := world.Query(filter)
+		query := world.Query(filter)
 		// Iterate it
-		for q.Next() {
+		for query.Next() {
 			// Component access through a Query.
-			pos := (*Position)(q.Get(posID))
-			vel := (*Position)(q.Get(velID))
+			pos := (*Position)(query.Get(posID))
+			vel := (*Velocity)(query.Get(velID))
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y

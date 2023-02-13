@@ -117,12 +117,12 @@ type queryIter struct {
 	lockBit   uint8
 }
 
-// Has returns whether the current [Entity] has the given component
+// Has returns whether the current [Entity] has the given component.
 func (q *queryIter) Has(comp ID) bool {
 	return q.archetype.Has(comp)
 }
 
-// Get returns the pointer to the given component at the iterator's current [Entity]
+// Get returns the pointer to the given component at the iterator's current [Entity].
 func (q *queryIter) Get(comp ID) unsafe.Pointer {
 	return q.archetype.Get(comp)
 }
@@ -130,6 +130,13 @@ func (q *queryIter) Get(comp ID) unsafe.Pointer {
 // Entity returns the [Entity] at the iterator's position
 func (q *queryIter) Entity() Entity {
 	return q.archetype.Entity()
+}
+
+// Mask returns the archetype [BitMask] for the [Entity] at the iterator's current position.
+//
+// Can be used for fast checks of the entity composition, e.g. using a [Filter].
+func (q *queryIter) Mask() BitMask {
+	return q.archetype.Archetype.Mask
 }
 
 // Close closes the Query and unlocks the world.

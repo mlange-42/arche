@@ -80,7 +80,7 @@ func main() {
 		for query.Next() {
 			// Component access through a Query.
 			pos := (*Position)(query.Get(posID))
-			vel := (*Position)(query.Get(velID))
+			vel := (*Velocity)(query.Get(velID))
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y

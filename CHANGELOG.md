@@ -6,6 +6,7 @@
 
 * Generic queries support optional, additional and excluded components (#53, #56, #58, #59, #60, #63)
 * Logic filters for complex queries (#54, #58, #61)
+* `Query` and `World` have a method `Mask(Entity)` to access archetype masks (#65)
 
 ### Other
 

@@ -138,6 +138,13 @@ func (w *World) Has(entity Entity, comp ID) bool {
 	return w.entities[entity.id].arch.HasComponent(comp)
 }
 
+// Mask returns the archetype [BitMask] for the given [Entity].
+//
+// Can be used for fast checks of the entity composition, e.g. using a [Filter].
+func (w *World) Mask(entity Entity) BitMask {
+	return w.entities[entity.id].arch.Mask
+}
+
 // Add adds components to an [Entity].
 //
 // Panics when called on a locked world or for an already removed entity.
