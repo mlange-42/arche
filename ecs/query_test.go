@@ -41,6 +41,7 @@ func TestQuery(t *testing.T) {
 		ent := q.Entity()
 		pos := (*position)(q.Get(posID))
 		rot := (*rotation)(q.Get(rotID))
+		assert.Equal(t, w.Mask(ent), q.Mask())
 		_ = ent
 		_ = pos
 		_ = rot
