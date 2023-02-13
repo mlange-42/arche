@@ -41,7 +41,7 @@ func main() {
 		panic(err)
 	}
 
-	filters, err := template.ParseFiles("./generate/filter.gotxt")
+	filters, err := template.ParseFiles("./generate/query.gotxt")
 	if err != nil {
 		panic(err)
 	}
@@ -106,8 +106,7 @@ func main() {
 			}
 		}
 	}
-	if err := os.WriteFile("filter.go", text.Bytes(), 0666); err != nil {
+	if err := os.WriteFile("query_generated.go", text.Bytes(), 0666); err != nil {
 		panic(err)
 	}
-
 }

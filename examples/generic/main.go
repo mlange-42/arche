@@ -50,7 +50,7 @@ func main() {
 
 	// Generic queries support up to 8 components.
 	// For more components, use World.Query() directly.
-	query := generic.NewQuery2[Position, Velocity]()
+	query := generic.NewFilter2[Position, Velocity]()
 
 	// Time loop.
 	for t := 0; t < 1000; t++ {
@@ -69,7 +69,7 @@ func main() {
 	// A more complex generic query using optional and excluded components:
 	query =
 		generic.
-			NewQuery2[Position, Velocity]().     // Components provided through Get... methods
+			NewFilter2[Position, Velocity]().    // Components provided through Get... methods
 			Optional(generic.Mask1[Velocity]()). // but those may be nil
 			With(generic.Mask1[Elevation]()).    // additional required components
 			Without(generic.Mask1[Rotation]())   // and entities with any of these are excluded.
