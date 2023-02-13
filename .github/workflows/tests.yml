@@ -5,7 +5,7 @@ on: [push]
 jobs:
 
   build:
-    name: Build binaries
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -16,11 +16,11 @@ jobs:
       - name: Install dependencies
         run: go get .
       - name: Build Linux
-        run: GOOS=linux GOARCH=amd64 go build .
+        run: GOOS=linux GOARCH=amd64 go build ./...
       - name: Build Windows
-        run: GOOS=windows GOARCH=amd64 go build .
+        run: GOOS=windows GOARCH=amd64 go build ./...
       - name: Build MacOS
-        run: GOOS=darwin GOARCH=amd64 go build .
+        run: GOOS=darwin GOARCH=amd64 go build ./...
 
   test:
     name: Run tests
@@ -37,23 +37,6 @@ jobs:
         run: |
           go test -v ./... -covermode=count -coverprofile="coverage.out"
           go tool cover -func="coverage.out"
-
-  examples:
-    name: Run examples
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.20.x'
-      - name: Install dependencies
-        run: go get .
-      - name: Test
-        run: |
-          go run ./examples/base
-          go run ./examples/generic
-          go run ./examples/filter
 
   lint:
     name: Run linters
@@ -77,3 +60,20 @@ jobs:
         run: go vet ./...
       - name: Lint with staticcheck
         run: staticcheck ./...
+
+  examples:
+    name: Run examples
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.20.x'
+      - name: Install dependencies
+        run: go get .
+      - name: Test
+        run: |
+          go run ./examples/base
+          go run ./examples/generic
+          go run ./examples/filter
