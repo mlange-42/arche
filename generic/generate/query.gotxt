@@ -25,6 +25,7 @@ func NewFilter{{ .Index }}{{ .TypesFull }}() *Filter{{ .Index }}{{ .Types }} {
 // Only affects component types that were specified in the query.
 func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask []reflect.Type) *Filter{{ .Index }}{{ .Types }} {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -33,6 +34,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask []reflect.Type) *Filter{{
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter{{ .Index }}{{ .Types }}) With(mask []reflect.Type) *Filter{{ .Index }}{{ .Types }} {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -41,6 +43,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) With(mask []reflect.Type) *Filter{{ .In
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter{{ .Index }}{{ .Types }}) Without(mask []reflect.Type) *Filter{{ .Index }}{{ .Types }} {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -48,9 +51,18 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask []reflect.Type) *Filter{{ 
 func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{ .Types }} {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query{{ .Index }}{{ .Types }}{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter{{ .Index }}.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter{{ .Index }}.Query].
+func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query{{ .Index }} is a generic query iterator for two components.

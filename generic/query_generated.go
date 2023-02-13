@@ -32,6 +32,7 @@ func NewFilter0() *Filter0 {
 // Only affects component types that were specified in the query.
 func (q *Filter0) Optional(mask []reflect.Type) *Filter0 {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -40,6 +41,7 @@ func (q *Filter0) Optional(mask []reflect.Type) *Filter0 {
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter0) With(mask []reflect.Type) *Filter0 {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -48,6 +50,7 @@ func (q *Filter0) With(mask []reflect.Type) *Filter0 {
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter0) Without(mask []reflect.Type) *Filter0 {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -55,9 +58,18 @@ func (q *Filter0) Without(mask []reflect.Type) *Filter0 {
 func (q *Filter0) Query(w *ecs.World) Query0 {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query0{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter0.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter0.Query].
+func (q *Filter0) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query0 is a generic query iterator for two components.
@@ -94,6 +106,7 @@ func NewFilter1[A any]() *Filter1[A] {
 // Only affects component types that were specified in the query.
 func (q *Filter1[A]) Optional(mask []reflect.Type) *Filter1[A] {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -102,6 +115,7 @@ func (q *Filter1[A]) Optional(mask []reflect.Type) *Filter1[A] {
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter1[A]) With(mask []reflect.Type) *Filter1[A] {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -110,6 +124,7 @@ func (q *Filter1[A]) With(mask []reflect.Type) *Filter1[A] {
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter1[A]) Without(mask []reflect.Type) *Filter1[A] {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -117,9 +132,18 @@ func (q *Filter1[A]) Without(mask []reflect.Type) *Filter1[A] {
 func (q *Filter1[A]) Query(w *ecs.World) Query1[A] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query1[A]{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter1.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter1.Query].
+func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query1 is a generic query iterator for two components.
@@ -166,6 +190,7 @@ func NewFilter2[A any, B any]() *Filter2[A, B] {
 // Only affects component types that were specified in the query.
 func (q *Filter2[A, B]) Optional(mask []reflect.Type) *Filter2[A, B] {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -174,6 +199,7 @@ func (q *Filter2[A, B]) Optional(mask []reflect.Type) *Filter2[A, B] {
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter2[A, B]) With(mask []reflect.Type) *Filter2[A, B] {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -182,6 +208,7 @@ func (q *Filter2[A, B]) With(mask []reflect.Type) *Filter2[A, B] {
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter2[A, B]) Without(mask []reflect.Type) *Filter2[A, B] {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -189,9 +216,18 @@ func (q *Filter2[A, B]) Without(mask []reflect.Type) *Filter2[A, B] {
 func (q *Filter2[A, B]) Query(w *ecs.World) Query2[A, B] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query2[A, B]{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter2.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter2.Query].
+func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query2 is a generic query iterator for two components.
@@ -243,6 +279,7 @@ func NewFilter3[A any, B any, C any]() *Filter3[A, B, C] {
 // Only affects component types that were specified in the query.
 func (q *Filter3[A, B, C]) Optional(mask []reflect.Type) *Filter3[A, B, C] {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -251,6 +288,7 @@ func (q *Filter3[A, B, C]) Optional(mask []reflect.Type) *Filter3[A, B, C] {
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter3[A, B, C]) With(mask []reflect.Type) *Filter3[A, B, C] {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -259,6 +297,7 @@ func (q *Filter3[A, B, C]) With(mask []reflect.Type) *Filter3[A, B, C] {
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter3[A, B, C]) Without(mask []reflect.Type) *Filter3[A, B, C] {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -266,9 +305,18 @@ func (q *Filter3[A, B, C]) Without(mask []reflect.Type) *Filter3[A, B, C] {
 func (q *Filter3[A, B, C]) Query(w *ecs.World) Query3[A, B, C] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query3[A, B, C]{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter3.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter3.Query].
+func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query3 is a generic query iterator for two components.
@@ -325,6 +373,7 @@ func NewFilter4[A any, B any, C any, D any]() *Filter4[A, B, C, D] {
 // Only affects component types that were specified in the query.
 func (q *Filter4[A, B, C, D]) Optional(mask []reflect.Type) *Filter4[A, B, C, D] {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -333,6 +382,7 @@ func (q *Filter4[A, B, C, D]) Optional(mask []reflect.Type) *Filter4[A, B, C, D]
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter4[A, B, C, D]) With(mask []reflect.Type) *Filter4[A, B, C, D] {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -341,6 +391,7 @@ func (q *Filter4[A, B, C, D]) With(mask []reflect.Type) *Filter4[A, B, C, D] {
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter4[A, B, C, D]) Without(mask []reflect.Type) *Filter4[A, B, C, D] {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -348,9 +399,18 @@ func (q *Filter4[A, B, C, D]) Without(mask []reflect.Type) *Filter4[A, B, C, D] 
 func (q *Filter4[A, B, C, D]) Query(w *ecs.World) Query4[A, B, C, D] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query4[A, B, C, D]{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter4.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter4.Query].
+func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query4 is a generic query iterator for two components.
@@ -412,6 +472,7 @@ func NewFilter5[A any, B any, C any, D any, E any]() *Filter5[A, B, C, D, E] {
 // Only affects component types that were specified in the query.
 func (q *Filter5[A, B, C, D, E]) Optional(mask []reflect.Type) *Filter5[A, B, C, D, E] {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -420,6 +481,7 @@ func (q *Filter5[A, B, C, D, E]) Optional(mask []reflect.Type) *Filter5[A, B, C,
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter5[A, B, C, D, E]) With(mask []reflect.Type) *Filter5[A, B, C, D, E] {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -428,6 +490,7 @@ func (q *Filter5[A, B, C, D, E]) With(mask []reflect.Type) *Filter5[A, B, C, D, 
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter5[A, B, C, D, E]) Without(mask []reflect.Type) *Filter5[A, B, C, D, E] {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -435,9 +498,18 @@ func (q *Filter5[A, B, C, D, E]) Without(mask []reflect.Type) *Filter5[A, B, C, 
 func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World) Query5[A, B, C, D, E] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query5[A, B, C, D, E]{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter5.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter5.Query].
+func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query5 is a generic query iterator for two components.
@@ -504,6 +576,7 @@ func NewFilter6[A any, B any, C any, D any, E any, F any]() *Filter6[A, B, C, D,
 // Only affects component types that were specified in the query.
 func (q *Filter6[A, B, C, D, E, F]) Optional(mask []reflect.Type) *Filter6[A, B, C, D, E, F] {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -512,6 +585,7 @@ func (q *Filter6[A, B, C, D, E, F]) Optional(mask []reflect.Type) *Filter6[A, B,
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter6[A, B, C, D, E, F]) With(mask []reflect.Type) *Filter6[A, B, C, D, E, F] {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -520,6 +594,7 @@ func (q *Filter6[A, B, C, D, E, F]) With(mask []reflect.Type) *Filter6[A, B, C, 
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter6[A, B, C, D, E, F]) Without(mask []reflect.Type) *Filter6[A, B, C, D, E, F] {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -527,9 +602,18 @@ func (q *Filter6[A, B, C, D, E, F]) Without(mask []reflect.Type) *Filter6[A, B, 
 func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World) Query6[A, B, C, D, E, F] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query6[A, B, C, D, E, F]{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter6.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter6.Query].
+func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query6 is a generic query iterator for two components.
@@ -601,6 +685,7 @@ func NewFilter7[A any, B any, C any, D any, E any, F any, G any]() *Filter7[A, B
 // Only affects component types that were specified in the query.
 func (q *Filter7[A, B, C, D, E, F, G]) Optional(mask []reflect.Type) *Filter7[A, B, C, D, E, F, G] {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -609,6 +694,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Optional(mask []reflect.Type) *Filter7[A,
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter7[A, B, C, D, E, F, G]) With(mask []reflect.Type) *Filter7[A, B, C, D, E, F, G] {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -617,6 +703,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) With(mask []reflect.Type) *Filter7[A, B, 
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter7[A, B, C, D, E, F, G]) Without(mask []reflect.Type) *Filter7[A, B, C, D, E, F, G] {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -624,9 +711,18 @@ func (q *Filter7[A, B, C, D, E, F, G]) Without(mask []reflect.Type) *Filter7[A, 
 func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World) Query7[A, B, C, D, E, F, G] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query7[A, B, C, D, E, F, G]{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter7.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter7.Query].
+func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query7 is a generic query iterator for two components.
@@ -703,6 +799,7 @@ func NewFilter8[A any, B any, C any, D any, E any, F any, G any, H any]() *Filte
 // Only affects component types that were specified in the query.
 func (q *Filter8[A, B, C, D, E, F, G, H]) Optional(mask []reflect.Type) *Filter8[A, B, C, D, E, F, G, H] {
 	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -711,6 +808,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Optional(mask []reflect.Type) *Filter8
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter8[A, B, C, D, E, F, G, H]) With(mask []reflect.Type) *Filter8[A, B, C, D, E, F, G, H] {
 	q.include = append(q.include, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -719,6 +817,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) With(mask []reflect.Type) *Filter8[A, 
 // Create the required mask with [Mask1], [Mask2], etc.
 func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask []reflect.Type) *Filter8[A, B, C, D, E, F, G, H] {
 	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
 	return q
 }
 
@@ -726,9 +825,18 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask []reflect.Type) *Filter8[
 func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World) Query8[A, B, C, D, E, F, G, H] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query8[A, B, C, D, E, F, G, H]{
-		w.Query(q.compiled.MaskPair()),
+		w.Query(q.compiled.Filter()),
 		q.compiled.Ids,
 	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter8.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter8.Query].
+func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
 }
 
 // Query8 is a generic query iterator for two components.

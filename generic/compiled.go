@@ -23,9 +23,13 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []refle
 	q.compiled = true
 }
 
-func (q *compiledQuery) MaskPair() ecs.MaskPair {
+func (q *compiledQuery) Filter() ecs.MaskPair {
 	return ecs.MaskPair{
 		Mask:    q.mask,
 		Exclude: q.exclude,
 	}
+}
+
+func (q *compiledQuery) Reset() {
+	q.compiled = false
 }
