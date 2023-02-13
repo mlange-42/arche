@@ -23,3 +23,10 @@ func (c Config) WithCapacityIncrement(inc int) Config {
 func (c Config) Build() World {
 	return FromConfig(c)
 }
+
+// Uncovered temporary test function
+func Uncovered() int {
+	a := 0
+	b := 1
+	return a + b
+}
