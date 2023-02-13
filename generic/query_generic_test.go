@@ -58,14 +58,14 @@ func TestQueryOptionalNot(t *testing.T) {
 	}
 	assert.Equal(t, 1, cnt)
 
-	query3 := NewQuery3[testStruct0, testStruct1, testStruct9]().Build(&w)
+	query3 := NewFilter3[testStruct0, testStruct1, testStruct9]().Build(&w)
 	cnt = 0
 	for query3.Next() {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
-	query3 = NewQuery3[testStruct0, testStruct1, testStruct9]().Optional(Mask1[testStruct9]()).Build(&w)
+	query3 = NewFilter3[testStruct0, testStruct1, testStruct9]().Optional(Mask1[testStruct9]()).Build(&w)
 	cnt = 0
 	for query3.Next() {
 		cnt++
@@ -92,7 +92,7 @@ func TestQuery0(t *testing.T) {
 
 	cnt := 0
 	query :=
-		NewQuery0().
+		NewFilter0().
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]()).
 			Build(&w)
@@ -123,7 +123,7 @@ func TestQuery1(t *testing.T) {
 
 	cnt := 0
 	query :=
-		NewQuery1[testStruct0]().
+		NewFilter1[testStruct0]().
 			Optional(Mask1[testStruct9]()).
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]()).
@@ -209,7 +209,7 @@ func TestQuery3(t *testing.T) {
 
 	cnt := 0
 	query :=
-		NewQuery3[testStruct0, testStruct1, testStruct2]().
+		NewFilter3[testStruct0, testStruct1, testStruct2]().
 			Optional(Mask1[testStruct1]()).
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]()).

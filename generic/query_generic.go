@@ -30,24 +30,24 @@ func (q *compiledQuery) MaskPair() ecs.MaskPair {
 	}
 }
 
-// Query0 builds a [Q0] query
-type Query0 struct {
+// Filter0 builds a [Query0] query
+type Filter0 struct {
 	include  []reflect.Type
 	exclude  []reflect.Type
 	compiled compiledQuery
 }
 
-// NewQuery0 creates a generic query for no components.
+// NewFilter0 creates a generic filter for no components.
 //
 // See also [ecs.World.Query].
-func NewQuery0() *Query0 {
-	return &Query0{}
+func NewFilter0() *Filter0 {
+	return &Filter0{}
 }
 
 // With adds more required components that are not accessible using Get... methods.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q *Query0) With(mask []reflect.Type) *Query0 {
+func (q *Filter0) With(mask []reflect.Type) *Filter0 {
 	q.include = append(q.include, mask...)
 	return q
 }
@@ -55,39 +55,39 @@ func (q *Query0) With(mask []reflect.Type) *Query0 {
 // Without excludes entities with any of the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q *Query0) Without(mask []reflect.Type) *Query0 {
+func (q *Filter0) Without(mask []reflect.Type) *Filter0 {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
 
-// Build builds a Q0 query for iteration.
-func (q *Query0) Build(w *ecs.World) Q0 {
+// Build builds a [Query0] query for iteration.
+func (q *Filter0) Build(w *ecs.World) Query0 {
 	q.compiled.Compile(w, q.include, []reflect.Type{}, q.exclude)
-	return Q0{
+	return Query0{
 		w.Query(q.compiled.MaskPair()),
 	}
 }
 
-// Q0 is a generic query for no components.
+// Query0 is a generic query iterator for no components.
 //
-// Create one with [Query0]
-type Q0 struct {
+// Create one with [NewFilter0] and [Filter0.Build].
+type Query0 struct {
 	ecs.Query
 }
 
-// Query1 builds a [Q1] query
-type Query1[A any] struct {
+// Filter1 builds a [Query1] query
+type Filter1[A any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
 	compiled compiledQuery
 }
 
-// NewQuery1 creates a generic query for one component.
+// NewFilter1 creates a generic filter for one component.
 //
 // See also [ecs.World.Query].
-func NewQuery1[A any]() *Query1[A] {
-	return &Query1[A]{
+func NewFilter1[A any]() *Filter1[A] {
+	return &Filter1[A]{
 		include: []reflect.Type{typeOf[A]()},
 	}
 }
@@ -97,7 +97,7 @@ func NewQuery1[A any]() *Query1[A] {
 // Create the required mask with [Mask1], [Mask2], etc.
 //
 // Only affects component types that were specified in the query.
-func (q *Query1[A]) Optional(mask []reflect.Type) *Query1[A] {
+func (q *Filter1[A]) Optional(mask []reflect.Type) *Filter1[A] {
 	q.optional = append(q.optional, mask...)
 	return q
 }
@@ -105,7 +105,7 @@ func (q *Query1[A]) Optional(mask []reflect.Type) *Query1[A] {
 // With adds more required components that are not accessible using Get... methods.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q *Query1[A]) With(mask []reflect.Type) *Query1[A] {
+func (q *Filter1[A]) With(mask []reflect.Type) *Filter1[A] {
 	q.include = append(q.include, mask...)
 	return q
 }
@@ -113,48 +113,48 @@ func (q *Query1[A]) With(mask []reflect.Type) *Query1[A] {
 // Without excludes entities with any of the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q *Query1[A]) Without(mask []reflect.Type) *Query1[A] {
+func (q *Filter1[A]) Without(mask []reflect.Type) *Filter1[A] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
 
-// Build builds a Q1 query for iteration.
-func (q *Query1[A]) Build(w *ecs.World) Q1[A] {
+// Build builds a [Query1] query for iteration.
+func (q *Filter1[A]) Build(w *ecs.World) Query1[A] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return Q1[A]{
+	return Query1[A]{
 		w.Query(q.compiled.MaskPair()),
 		q.compiled.Ids[0],
 	}
 }
 
-// Q1 is a generic query for one component.
+// Query1 is a generic query iterator for one component.
 //
-// Create one with [Query1]
-type Q1[A any] struct {
+// Create one with [NewFilter1] and [Filter1.Build]
+type Query1[A any] struct {
 	ecs.Query
 	id ecs.ID
 }
 
 // Get1 returns the first queried component for the current query position
-func (q *Q1[A]) Get1() *A {
+func (q *Query1[A]) Get1() *A {
 	return (*A)(q.Query.Get(q.id))
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// Query2 builds a [Q2] query
-type Query2[A any, B any] struct {
+// Filter2 builds a [Query2] query
+type Filter2[A any, B any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
 	compiled compiledQuery
 }
 
-// NewQuery2 creates a generic query for two components.
+// NewQuery2 creates a generic filter for two components.
 //
 // See also [ecs.World.Query].
-func NewQuery2[A any, B any]() *Query2[A, B] {
-	return &Query2[A, B]{
+func NewQuery2[A any, B any]() *Filter2[A, B] {
+	return &Filter2[A, B]{
 		include: []reflect.Type{typeOf[A](), typeOf[B]()},
 	}
 }
@@ -164,7 +164,7 @@ func NewQuery2[A any, B any]() *Query2[A, B] {
 // Create the required mask with [Mask1], [Mask2], etc.
 //
 // Only affects component types that were specified in the query.
-func (q *Query2[A, B]) Optional(mask []reflect.Type) *Query2[A, B] {
+func (q *Filter2[A, B]) Optional(mask []reflect.Type) *Filter2[A, B] {
 	q.optional = append(q.optional, mask...)
 	return q
 }
@@ -172,7 +172,7 @@ func (q *Query2[A, B]) Optional(mask []reflect.Type) *Query2[A, B] {
 // With adds more required components that are not accessible using Get... methods.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q *Query2[A, B]) With(mask []reflect.Type) *Query2[A, B] {
+func (q *Filter2[A, B]) With(mask []reflect.Type) *Filter2[A, B] {
 	q.include = append(q.include, mask...)
 	return q
 }
@@ -180,58 +180,58 @@ func (q *Query2[A, B]) With(mask []reflect.Type) *Query2[A, B] {
 // Without excludes entities with any of the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q *Query2[A, B]) Without(mask []reflect.Type) *Query2[A, B] {
+func (q *Filter2[A, B]) Without(mask []reflect.Type) *Filter2[A, B] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
 
-// Build builds a Q2 query for iteration.
-func (q *Query2[A, B]) Build(w *ecs.World) Q2[A, B] {
+// Build builds a [Query2] query for iteration.
+func (q *Filter2[A, B]) Build(w *ecs.World) Query2[A, B] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return Q2[A, B]{
+	return Query2[A, B]{
 		w.Query(q.compiled.MaskPair()),
 		q.compiled.Ids,
 	}
 }
 
-// Q2 is a generic query for two components.
+// Query2 is a generic query iterator for two components.
 //
-// Create one with [Query2]
-type Q2[A any, B any] struct {
+// Create one with [NewFilter2] and [Filter2.Build]
+type Query2[A any, B any] struct {
 	ecs.Query
 	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
-func (q *Q2[A, B]) GetAll() (*A, *B) {
+func (q *Query2[A, B]) GetAll() (*A, *B) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get1 returns the first queried component for the current query position
-func (q *Q2[A, B]) Get1() *A {
+func (q *Query2[A, B]) Get1() *A {
 	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get2 returns the second queried component for the current query position
-func (q *Q2[A, B]) Get2() *B {
+func (q *Query2[A, B]) Get2() *B {
 	return (*B)(q.Query.Get(q.ids[1]))
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// Query3 builds a [Q3] query
-type Query3[A any, B any, C any] struct {
+// Filter3 builds a [Query3] query
+type Filter3[A any, B any, C any] struct {
 	include  []reflect.Type
 	optional []reflect.Type
 	exclude  []reflect.Type
 	compiled compiledQuery
 }
 
-// NewQuery3 creates a generic query for three components.
+// NewFilter3 creates a generic filter for three components.
 //
 // See also [ecs.World.Query].
-func NewQuery3[A any, B any, C any]() *Query3[A, B, C] {
-	return &Query3[A, B, C]{
+func NewFilter3[A any, B any, C any]() *Filter3[A, B, C] {
+	return &Filter3[A, B, C]{
 		include: []reflect.Type{typeOf[A](), typeOf[B](), typeOf[C]()},
 	}
 }
@@ -241,7 +241,7 @@ func NewQuery3[A any, B any, C any]() *Query3[A, B, C] {
 // Create the required mask with [Mask1], [Mask2], etc.
 //
 // Only affects component types that were specified in the query.
-func (q *Query3[A, B, C]) Optional(mask []reflect.Type) *Query3[A, B, C] {
+func (q *Filter3[A, B, C]) Optional(mask []reflect.Type) *Filter3[A, B, C] {
 	q.optional = append(q.optional, mask...)
 	return q
 }
@@ -249,7 +249,7 @@ func (q *Query3[A, B, C]) Optional(mask []reflect.Type) *Query3[A, B, C] {
 // With adds more required components that are not accessible using Get... methods.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q *Query3[A, B, C]) With(mask []reflect.Type) *Query3[A, B, C] {
+func (q *Filter3[A, B, C]) With(mask []reflect.Type) *Filter3[A, B, C] {
 	q.include = append(q.include, mask...)
 	return q
 }
@@ -257,45 +257,45 @@ func (q *Query3[A, B, C]) With(mask []reflect.Type) *Query3[A, B, C] {
 // Without excludes entities with any of the given components from the query.
 //
 // Create the required mask with [Mask1], [Mask2], etc.
-func (q *Query3[A, B, C]) Without(mask []reflect.Type) *Query3[A, B, C] {
+func (q *Filter3[A, B, C]) Without(mask []reflect.Type) *Filter3[A, B, C] {
 	q.exclude = append(q.exclude, mask...)
 	return q
 }
 
-// Build builds a Q3 query for iteration.
-func (q *Query3[A, B, C]) Build(w *ecs.World) Q3[A, B, C] {
+// Build builds a [Query3] query for iteration.
+func (q *Filter3[A, B, C]) Build(w *ecs.World) Query3[A, B, C] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return Q3[A, B, C]{
+	return Query3[A, B, C]{
 		w.Query(q.compiled.MaskPair()),
 		q.compiled.Ids,
 	}
 }
 
-// Q3 is a generic query for three components.
+// Query3 is a generic query iterator for three components.
 //
-// Create one with [Query3]
-type Q3[A any, B any, C any] struct {
+// Create one with [NewFilter3] and [Filter3.Build]
+type Query3[A any, B any, C any] struct {
 	ecs.Query
 	ids []ecs.ID
 }
 
 // GetAll returns all queried components for the current query position
-func (q *Q3[A, B, C]) GetAll() (*A, *B, *C) {
+func (q *Query3[A, B, C]) GetAll() (*A, *B, *C) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
 }
 
 // Get1 returns the first queried component for the current query position
-func (q *Q3[A, B, C]) Get1() *A {
+func (q *Query3[A, B, C]) Get1() *A {
 	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get2 returns the second queried component for the current query position
-func (q *Q3[A, B, C]) Get2() *B {
+func (q *Query3[A, B, C]) Get2() *B {
 	return (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get3 returns the third queried component for the current query position
-func (q *Q3[A, B, C]) Get3() *C {
+func (q *Query3[A, B, C]) Get3() *C {
 	return (*C)(q.Query.Get(q.ids[2]))
 }
 
