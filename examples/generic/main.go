@@ -72,7 +72,7 @@ func main() {
 			NewFilter2[Position, Velocity]().    // Components provided through Get... methods
 			Optional(generic.Mask1[Velocity]()). // but those may be nil
 			With(generic.Mask1[Elevation]()).    // additional required components
-			Without(generic.Mask1[Rotation]())   // and entities with any of these are excluded.
+			Without(generic.Mask1[Rotation]())   // entities with any of these are excluded.
 
 	q := filter.Query(&world)
 

@@ -11,9 +11,6 @@
 [Department for Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
 [Helmholtz Centre for Environmental Research](https://www.ufz.de).
 
-**:warning: Arche is still under rapid development. Be prepared for frequent API changes! :warning:**  
-
-
 ## Installations
 
 ```shell
@@ -81,18 +78,19 @@ func main() {
 		vel.Y = rand.NormFloat64()
 	}
 
-	// Generic queries support up to 8 components.
-	// For more components, use World.Query() directly.
-	query := generic.Query2[Position, Velocity]()
+	// Create a generic filter.
+	// Generic filter support up to 5 components.
+	// For more components, use World.Query()
+	filter := generic.NewFilter2[Position, Velocity]()
 
 	// Time loop.
 	for t := 0; t < 1000; t++ {
-		// Get a fresh query iterator.
-		q := query.Build(&world)
-		// Iterate it.
-		for q.Next() {
+		// Get a fresh query.
+		query := filter.Query(&world)
+		// Iterate it
+		for query.Next() {
 			// Component access through a Query.
-			pos, vel := q.GetAll()
+			pos, vel := query.GetAll()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y
@@ -147,13 +145,7 @@ Generic functions and types provide type-safety and are more user-friendly than 
 Depending on the machine the code is running on, generics may or may not incur an overhead.
 The worst to expect is a doubling of iteration + access time (from 2.5ns/op to 4ns/op),
 while on other machines both approaches are equally fast.
-
 For performance-critical code, the use of the ID-based methods of `ecs.World` may be worth testing.
-Component IDs are retrieved like this:
-
-```go
-posID := ComponentID[Position](&world)
-```
 
 For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
 [examples](https://github.com/mlange-42/arche/tree/main/examples).
