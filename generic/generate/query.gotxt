@@ -1,0 +1,74 @@
+
+//////////////////////////////////////////////////////////////////////////
+
+// Filter{{ .Index }} builds a [Query{{ .Index }}] query
+type Filter{{ .Index }}{{ .TypesFull }} struct {
+	include  []reflect.Type
+	optional []reflect.Type
+	exclude  []reflect.Type
+	compiled compiledQuery
+}
+
+// NewQuery{{ .Index }} creates a generic filter for two components.
+//
+// See also [ecs.World.Query].
+func NewFilter{{ .Index }}{{ .TypesFull }}() *Filter{{ .Index }}{{ .Types }} {
+	return &Filter{{ .Index }}{{ .Types }}{
+		{{ .Include }}
+	}
+}
+
+// Optional makes some of the query's components optional.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+//
+// Only affects component types that were specified in the query.
+func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask []reflect.Type) *Filter{{ .Index }}{{ .Types }} {
+	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// With adds more required components that are not accessible using Get... methods.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q *Filter{{ .Index }}{{ .Types }}) With(mask []reflect.Type) *Filter{{ .Index }}{{ .Types }} {
+	q.include = append(q.include, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// Without excludes entities with any of the given components from the query.
+//
+// Create the required mask with [Mask1], [Mask2], etc.
+func (q *Filter{{ .Index }}{{ .Types }}) Without(mask []reflect.Type) *Filter{{ .Index }}{{ .Types }} {
+	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// Query builds a [Query{{ .Index }}] query for iteration.
+func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{ .Types }} {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return Query{{ .Index }}{{ .Types }}{
+		w.Query(q.compiled.Filter()),
+		q.compiled.Ids,
+	}
+}
+
+// Filter generates and return the [ecs.Filter] used after [Filter{{ .Index }}.Query].
+//
+// Can be passed to [ecs.World.Query].
+// For the intended generic use, however, generate a generic query with [Filter{{ .Index }}.Query].
+func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskPair {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	return q.compiled.Filter()
+}
+
+// Query{{ .Index }} is a generic query iterator for two components.
+//
+// Create one with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query]
+type Query{{ .Index }}{{ .TypesFull }} struct {
+	ecs.Query
+	ids []ecs.ID
+}

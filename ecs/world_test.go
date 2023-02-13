@@ -398,7 +398,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
 	printTypeSize[archetype]()
 	printTypeSize[storage]()
-	printTypeSize[EntityIter]()
+	printTypeSize[QueryIter]()
 	printTypeSize[archetypeIter]()
 }
 

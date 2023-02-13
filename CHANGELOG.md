@@ -9,7 +9,7 @@
 
 ### Other
 
-* Overhaul of the module structure, with generics and filters in separate packages (#55, #57)
+* Overhaul of the module structure, with generics and filters in separate packages (#55, #57, #61, #64)
 * Generic queries are compiled to masks and cached on first build (#62)
 
 ## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)

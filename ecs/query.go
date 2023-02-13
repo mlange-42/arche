@@ -51,8 +51,8 @@ func (f MaskPair) Matches(bits BitMask) bool {
 	return bits.Contains(f.Mask.BitMask) && (ex == 0 || !bits.ContainsAny(ex))
 }
 
-// EntityIter is the interface for iterable queries
-type EntityIter interface {
+// QueryIter is the interface for iterable queries
+type QueryIter interface {
 	// Next proceeds to the next [Entity] in the Query.
 	Next() bool
 	// Has returns whether the current [Entity] has the given component
