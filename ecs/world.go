@@ -3,6 +3,8 @@ package ecs
 import (
 	"reflect"
 	"unsafe"
+
+	"github.com/mlange-42/arche/ecs/stats"
 )
 
 // ComponentID returns the ID for a component type via generics. Registers the type if it is not already registered.
@@ -284,8 +286,8 @@ func (w *World) IsLocked() bool {
 }
 
 // Stats reports statistics for inspecting the World.
-func (w *World) Stats() *WorldStats {
-	entities := EntityStats{
+func (w *World) Stats() *stats.WorldStats {
+	entities := stats.EntityStats{
 		Used:     w.entityPool.Len(),
 		Capacity: w.entityPool.Cap(),
 		Recycled: w.entityPool.Available(),
@@ -294,7 +296,7 @@ func (w *World) Stats() *WorldStats {
 	compCount := len(w.registry.Components)
 	types := append([]reflect.Type{}, w.registry.Types[:compCount]...)
 
-	archetypes := make([]ArchetypeStats, w.archetypes.Len())
+	archetypes := make([]stats.ArchetypeStats, w.archetypes.Len())
 	for i := 0; i < w.archetypes.Len(); i++ {
 		arch := w.archetypes.Get(i)
 
@@ -305,7 +307,7 @@ func (w *World) Stats() *WorldStats {
 			aTypes[j] = w.registry.ComponentType(id)
 		}
 
-		stats := ArchetypeStats{
+		stats := stats.ArchetypeStats{
 			Size:           int(arch.Len()),
 			Capacity:       int(arch.Cap()),
 			Components:     aCompCount,
@@ -316,7 +318,7 @@ func (w *World) Stats() *WorldStats {
 		archetypes[i] = stats
 	}
 
-	return &WorldStats{
+	return &stats.WorldStats{
 		Entities:       entities,
 		ComponentCount: compCount,
 		ComponentTypes: types,

@@ -1,4 +1,4 @@
-package ecs
+package stats
 
 import (
 	"fmt"
@@ -27,7 +27,7 @@ type ArchetypeStats struct {
 	Size           int
 	Capacity       int
 	Components     int
-	ComponentIDs   []ID
+	ComponentIDs   []uint8
 	ComponentTypes []reflect.Type
 }
 
