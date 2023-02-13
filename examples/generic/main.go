@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 
 	"github.com/mlange-42/arche/ecs"
@@ -81,4 +82,5 @@ func main() {
 		pos.X += vel.X
 		pos.Y += vel.Y
 	}
+	fmt.Println(world.Stats().String())
 }

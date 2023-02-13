@@ -34,19 +34,17 @@ func NewWorld() World {
 
 // FromConfig creates a new [World] from a [Config]
 func FromConfig(conf Config) World {
-	arch := archetype{}
-	arch.Init(conf.CapacityIncrement)
-	arches := pagedArr32[archetype]{}
-	arches.Add(arch)
-	return World{
+	w := World{
 		config:     conf,
 		entities:   []entityIndex{{arch: nil, index: 0}},
 		entityPool: newEntityPool(conf.CapacityIncrement),
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
-		archetypes: arches,
+		archetypes: pagedArr32[archetype]{},
 		locks:      BitMask(0),
 	}
+	w.createArchetype(0)
+	return w
 }
 
 // NewEntity returns a new or recycled [Entity].
@@ -283,6 +281,48 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 // IsLocked returns whether the world is locked by any queries.
 func (w *World) IsLocked() bool {
 	return w.locks != 0
+}
+
+// Stats reports statistics for inspecting the World.
+func (w *World) Stats() *WorldStats {
+	entities := EntityStats{
+		Used:     w.entityPool.Len(),
+		Capacity: w.entityPool.Cap(),
+		Recycled: w.entityPool.Available(),
+	}
+
+	compCount := len(w.registry.Components)
+	types := append([]reflect.Type{}, w.registry.Types[:compCount]...)
+
+	archetypes := make([]ArchetypeStats, w.archetypes.Len())
+	for i := 0; i < w.archetypes.Len(); i++ {
+		arch := w.archetypes.Get(i)
+
+		ids := arch.Components()
+		aCompCount := int(len(ids))
+		aTypes := make([]reflect.Type, aCompCount)
+		for j, id := range ids {
+			aTypes[j] = w.registry.ComponentType(id)
+		}
+
+		stats := ArchetypeStats{
+			Size:           int(arch.Len()),
+			Capacity:       int(arch.Cap()),
+			Components:     aCompCount,
+			ComponentIDs:   ids,
+			ComponentTypes: aTypes,
+		}
+
+		archetypes[i] = stats
+	}
+
+	return &WorldStats{
+		Entities:       entities,
+		ComponentCount: compCount,
+		ComponentTypes: types,
+		Locked:         w.IsLocked(),
+		Archetypes:     archetypes,
+	}
 }
 
 func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {

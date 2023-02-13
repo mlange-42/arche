@@ -122,6 +122,11 @@ func (a *archetype) Len() uint32 {
 	return a.entities.Len()
 }
 
+// Cap reports the current capacity of the archetype
+func (a *archetype) Cap() uint32 {
+	return a.entities.Cap()
+}
+
 // Set overwrites a component with the data behind the given pointer
 func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
 	return a.components[a.indices[id]].Set(index, comp)
