@@ -50,8 +50,8 @@ func (q *Filter0) Without(mask []reflect.Type) *Filter0 {
 	return q
 }
 
-// Build builds a [Query0] query for iteration.
-func (q *Filter0) Build(w *ecs.World) Query0 {
+// Query builds a [Query0] query for iteration.
+func (q *Filter0) Query(w *ecs.World) Query0 {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query0{
 		w.Query(q.compiled.MaskPair()),
@@ -61,7 +61,7 @@ func (q *Filter0) Build(w *ecs.World) Query0 {
 
 // Query0 is a generic query iterator for two components.
 //
-// Create one with [NewFilter0] and [Filter0.Build]
+// Create one with [NewFilter0] and [Filter0.Query]
 type Query0 struct {
 	ecs.Query
 	ids []ecs.ID
@@ -112,8 +112,8 @@ func (q *Filter1[A]) Without(mask []reflect.Type) *Filter1[A] {
 	return q
 }
 
-// Build builds a [Query1] query for iteration.
-func (q *Filter1[A]) Build(w *ecs.World) Query1[A] {
+// Query builds a [Query1] query for iteration.
+func (q *Filter1[A]) Query(w *ecs.World) Query1[A] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query1[A]{
 		w.Query(q.compiled.MaskPair()),
@@ -123,7 +123,7 @@ func (q *Filter1[A]) Build(w *ecs.World) Query1[A] {
 
 // Query1 is a generic query iterator for two components.
 //
-// Create one with [NewFilter1] and [Filter1.Build]
+// Create one with [NewFilter1] and [Filter1.Query]
 type Query1[A any] struct {
 	ecs.Query
 	ids []ecs.ID
@@ -184,8 +184,8 @@ func (q *Filter2[A, B]) Without(mask []reflect.Type) *Filter2[A, B] {
 	return q
 }
 
-// Build builds a [Query2] query for iteration.
-func (q *Filter2[A, B]) Build(w *ecs.World) Query2[A, B] {
+// Query builds a [Query2] query for iteration.
+func (q *Filter2[A, B]) Query(w *ecs.World) Query2[A, B] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query2[A, B]{
 		w.Query(q.compiled.MaskPair()),
@@ -195,7 +195,7 @@ func (q *Filter2[A, B]) Build(w *ecs.World) Query2[A, B] {
 
 // Query2 is a generic query iterator for two components.
 //
-// Create one with [NewFilter2] and [Filter2.Build]
+// Create one with [NewFilter2] and [Filter2.Query]
 type Query2[A any, B any] struct {
 	ecs.Query
 	ids []ecs.ID
@@ -261,8 +261,8 @@ func (q *Filter3[A, B, C]) Without(mask []reflect.Type) *Filter3[A, B, C] {
 	return q
 }
 
-// Build builds a [Query3] query for iteration.
-func (q *Filter3[A, B, C]) Build(w *ecs.World) Query3[A, B, C] {
+// Query builds a [Query3] query for iteration.
+func (q *Filter3[A, B, C]) Query(w *ecs.World) Query3[A, B, C] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query3[A, B, C]{
 		w.Query(q.compiled.MaskPair()),
@@ -272,7 +272,7 @@ func (q *Filter3[A, B, C]) Build(w *ecs.World) Query3[A, B, C] {
 
 // Query3 is a generic query iterator for two components.
 //
-// Create one with [NewFilter3] and [Filter3.Build]
+// Create one with [NewFilter3] and [Filter3.Query]
 type Query3[A any, B any, C any] struct {
 	ecs.Query
 	ids []ecs.ID
@@ -343,8 +343,8 @@ func (q *Filter4[A, B, C, D]) Without(mask []reflect.Type) *Filter4[A, B, C, D] 
 	return q
 }
 
-// Build builds a [Query4] query for iteration.
-func (q *Filter4[A, B, C, D]) Build(w *ecs.World) Query4[A, B, C, D] {
+// Query builds a [Query4] query for iteration.
+func (q *Filter4[A, B, C, D]) Query(w *ecs.World) Query4[A, B, C, D] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query4[A, B, C, D]{
 		w.Query(q.compiled.MaskPair()),
@@ -354,7 +354,7 @@ func (q *Filter4[A, B, C, D]) Build(w *ecs.World) Query4[A, B, C, D] {
 
 // Query4 is a generic query iterator for two components.
 //
-// Create one with [NewFilter4] and [Filter4.Build]
+// Create one with [NewFilter4] and [Filter4.Query]
 type Query4[A any, B any, C any, D any] struct {
 	ecs.Query
 	ids []ecs.ID
@@ -430,8 +430,8 @@ func (q *Filter5[A, B, C, D, E]) Without(mask []reflect.Type) *Filter5[A, B, C, 
 	return q
 }
 
-// Build builds a [Query5] query for iteration.
-func (q *Filter5[A, B, C, D, E]) Build(w *ecs.World) Query5[A, B, C, D, E] {
+// Query builds a [Query5] query for iteration.
+func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World) Query5[A, B, C, D, E] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query5[A, B, C, D, E]{
 		w.Query(q.compiled.MaskPair()),
@@ -441,7 +441,7 @@ func (q *Filter5[A, B, C, D, E]) Build(w *ecs.World) Query5[A, B, C, D, E] {
 
 // Query5 is a generic query iterator for two components.
 //
-// Create one with [NewFilter5] and [Filter5.Build]
+// Create one with [NewFilter5] and [Filter5.Query]
 type Query5[A any, B any, C any, D any, E any] struct {
 	ecs.Query
 	ids []ecs.ID
@@ -522,8 +522,8 @@ func (q *Filter6[A, B, C, D, E, F]) Without(mask []reflect.Type) *Filter6[A, B, 
 	return q
 }
 
-// Build builds a [Query6] query for iteration.
-func (q *Filter6[A, B, C, D, E, F]) Build(w *ecs.World) Query6[A, B, C, D, E, F] {
+// Query builds a [Query6] query for iteration.
+func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World) Query6[A, B, C, D, E, F] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query6[A, B, C, D, E, F]{
 		w.Query(q.compiled.MaskPair()),
@@ -533,7 +533,7 @@ func (q *Filter6[A, B, C, D, E, F]) Build(w *ecs.World) Query6[A, B, C, D, E, F]
 
 // Query6 is a generic query iterator for two components.
 //
-// Create one with [NewFilter6] and [Filter6.Build]
+// Create one with [NewFilter6] and [Filter6.Query]
 type Query6[A any, B any, C any, D any, E any, F any] struct {
 	ecs.Query
 	ids []ecs.ID
@@ -619,8 +619,8 @@ func (q *Filter7[A, B, C, D, E, F, G]) Without(mask []reflect.Type) *Filter7[A, 
 	return q
 }
 
-// Build builds a [Query7] query for iteration.
-func (q *Filter7[A, B, C, D, E, F, G]) Build(w *ecs.World) Query7[A, B, C, D, E, F, G] {
+// Query builds a [Query7] query for iteration.
+func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World) Query7[A, B, C, D, E, F, G] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query7[A, B, C, D, E, F, G]{
 		w.Query(q.compiled.MaskPair()),
@@ -630,7 +630,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Build(w *ecs.World) Query7[A, B, C, D, E,
 
 // Query7 is a generic query iterator for two components.
 //
-// Create one with [NewFilter7] and [Filter7.Build]
+// Create one with [NewFilter7] and [Filter7.Query]
 type Query7[A any, B any, C any, D any, E any, F any, G any] struct {
 	ecs.Query
 	ids []ecs.ID
@@ -721,8 +721,8 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask []reflect.Type) *Filter8[
 	return q
 }
 
-// Build builds a [Query8] query for iteration.
-func (q *Filter8[A, B, C, D, E, F, G, H]) Build(w *ecs.World) Query8[A, B, C, D, E, F, G, H] {
+// Query builds a [Query8] query for iteration.
+func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World) Query8[A, B, C, D, E, F, G, H] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query8[A, B, C, D, E, F, G, H]{
 		w.Query(q.compiled.MaskPair()),
@@ -732,7 +732,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Build(w *ecs.World) Query8[A, B, C, D,
 
 // Query8 is a generic query iterator for two components.
 //
-// Create one with [NewFilter8] and [Filter8.Build]
+// Create one with [NewFilter8] and [Filter8.Query]
 type Query8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	ecs.Query
 	ids []ecs.ID

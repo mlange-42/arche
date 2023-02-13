@@ -43,8 +43,8 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask []reflect.Type) *Filter{{ 
 	return q
 }
 
-// Build builds a [Query{{ .Index }}] query for iteration.
-func (q *Filter{{ .Index }}{{ .Types }}) Build(w *ecs.World) Query{{ .Index }}{{ .Types }} {
+// Query builds a [Query{{ .Index }}] query for iteration.
+func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{ .Types }} {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query{{ .Index }}{{ .Types }}{
 		w.Query(q.compiled.MaskPair()),
@@ -54,7 +54,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Build(w *ecs.World) Query{{ .Index }}{{
 
 // Query{{ .Index }} is a generic query iterator for two components.
 //
-// Create one with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Build]
+// Create one with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query]
 type Query{{ .Index }}{{ .TypesFull }} struct {
 	ecs.Query
 	ids []ecs.ID

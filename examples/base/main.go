@@ -48,13 +48,13 @@ func main() {
 		vel.Y = rand.NormFloat64()
 	}
 
-	// Create a query
-	query := ecs.All(posID, velID).Without(rotID)
+	// Create a filter
+	filter := ecs.All(posID, velID).Without(rotID)
 
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query iterator.
-		q := world.Query(query)
+		q := world.Query(filter)
 		// Iterate it
 		for q.Next() {
 			// Component access through a Query.
