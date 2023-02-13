@@ -55,3 +55,13 @@ func (p *entityPool) Recycle(e Entity) {
 func (p *entityPool) Alive(e Entity) bool {
 	return e.id != 0 && e.gen == p.entities[e.id].gen
 }
+
+func (p *entityPool) Len() int {
+	return len(p.entities) - 1 - int(p.available)
+}
+func (p *entityPool) Cap() int {
+	return len(p.entities) - 1
+}
+func (p *entityPool) Available() int {
+	return int(p.available)
+}

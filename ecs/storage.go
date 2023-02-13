@@ -23,12 +23,12 @@ func (s *storage) Init(tp reflect.Type, increment int) {
 	align := uintptr(tp.Align())
 	size = (size + (align - 1)) / align * align
 
-	s.buffer = reflect.New(reflect.ArrayOf(increment, tp)).Elem()
+	s.buffer = reflect.New(reflect.ArrayOf(0, tp)).Elem()
 	s.bufferAddress = s.buffer.Addr().UnsafePointer()
 	s.typeOf = tp
 	s.itemSize = size
 	s.len = 0
-	s.cap = uint32(increment)
+	s.cap = 0
 	s.capacityIncrement = uint32(increment)
 }
 
@@ -136,6 +136,11 @@ func (s *storage) Zero(index uint32) {
 // Len returns the number of items in the storage
 func (s *storage) Len() uint32 {
 	return s.len
+}
+
+// Cap returns the capacity of the storage
+func (s *storage) Cap() uint32 {
+	return s.cap
 }
 
 // toSlice converts the content of a storage to a slice of structs

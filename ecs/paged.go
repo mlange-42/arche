@@ -10,7 +10,7 @@ type pagedArr32[T any] struct {
 }
 
 func (p *pagedArr32[T]) Add(value T) {
-	if len(p.pages) == 0 || p.lenLast == fixedPageSize {
+	if p.len == 0 || p.lenLast == fixedPageSize {
 		p.pages = append(p.pages, [fixedPageSize]T{})
 		p.lenLast = 0
 	}

@@ -316,6 +316,24 @@ func TestWorldLock(t *testing.T) {
 	assert.Panics(t, func() { world.Remove(entity, posID) })
 }
 
+func TestWorldStats(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Add(e0, posID)
+	w.Add(e1, posID, rotID)
+	w.Add(e2, posID, rotID)
+
+	stats := w.Stats()
+	fmt.Println(stats.String())
+}
+
 func TestRegisterComponents(t *testing.T) {
 	world := NewWorld()
 
