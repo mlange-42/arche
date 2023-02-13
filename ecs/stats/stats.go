@@ -8,26 +8,39 @@ import (
 
 // WorldStats provide statistics for a [World].
 type WorldStats struct {
-	Entities       EntityStats
+	// Entity statistics
+	Entities EntityStats
+	// Total number of components
 	ComponentCount int
+	// Component types, indexed by component ID
 	ComponentTypes []reflect.Type
-	Locked         bool
-	Archetypes     []ArchetypeStats
+	// Locked state of the world
+	Locked bool
+	// Archetype statistics
+	Archetypes []ArchetypeStats
 }
 
 // EntityStats provide statistics about [World] entities.
 type EntityStats struct {
-	Used     int
+	// Currently used/alive entities
+	Used int
+	// Current capacity of the entity pool
 	Capacity int
+	// Recycled/available entities
 	Recycled int
 }
 
 // ArchetypeStats provide statistics for an archetype.
 type ArchetypeStats struct {
-	Size           int
-	Capacity       int
-	Components     int
-	ComponentIDs   []uint8
+	// Number of entities in the archetype
+	Size int
+	// Capacity of the archetype
+	Capacity int
+	// Number of components
+	Components int
+	// Component IDs
+	ComponentIDs []uint8
+	// Component types for ComponentIDs
 	ComponentTypes []reflect.Type
 }
 

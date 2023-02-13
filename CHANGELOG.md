@@ -7,11 +7,13 @@
 * Generic queries support optional, additional and excluded components (#53, #56, #58, #59, #60, #63)
 * Logic filters for complex queries (#54, #58, #61)
 * `Query` and `World` have a method `Mask(Entity)` to access archetype masks (#65)
+* Added method `World.Stats()` for inspecting otherwise inaccessible world statistics (#67)
 
 ### Other
 
 * Overhaul of the module structure, with generics and filters in separate packages (#55, #57, #61, #64)
 * Generic queries are compiled to masks and cached on first build (#62)
+* Boilerplate code for generic filters and queries is auto-generated with `go generate` (#64)
 
 ## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)
 
