@@ -30,42 +30,42 @@ func TestQueryOptionalNot(t *testing.T) {
 	w.Assign(e2, 2, &testStruct2{1, 1})
 	w.Assign(e2, 9, &testStruct9{})
 
-	query2 := Query2[testStruct0, testStruct1]().Build(&w)
+	query2 := NewQuery2[testStruct0, testStruct1]().Build(&w)
 	cnt := 0
 	for query2.Next() {
 		cnt++
 	}
 	assert.Equal(t, 3, cnt)
 
-	query2 = Query2[testStruct0, testStruct1]().Without(Mask1[testStruct9]()).Build(&w)
+	query2 = NewQuery2[testStruct0, testStruct1]().Without(Mask1[testStruct9]()).Build(&w)
 	cnt = 0
 	for query2.Next() {
 		cnt++
 	}
 	assert.Equal(t, 2, cnt)
 
-	query2 = Query2[testStruct0, testStruct1]().Without(Mask2[testStruct8, testStruct9]()).Build(&w)
+	query2 = NewQuery2[testStruct0, testStruct1]().Without(Mask2[testStruct8, testStruct9]()).Build(&w)
 	cnt = 0
 	for query2.Next() {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
-	query2 = Query2[testStruct0, testStruct1]().With(Mask1[testStruct2]()).Without(Mask1[testStruct9]()).Build(&w)
+	query2 = NewQuery2[testStruct0, testStruct1]().With(Mask1[testStruct2]()).Without(Mask1[testStruct9]()).Build(&w)
 	cnt = 0
 	for query2.Next() {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
-	query3 := Query3[testStruct0, testStruct1, testStruct9]().Build(&w)
+	query3 := NewQuery3[testStruct0, testStruct1, testStruct9]().Build(&w)
 	cnt = 0
 	for query3.Next() {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
-	query3 = Query3[testStruct0, testStruct1, testStruct9]().Optional(Mask1[testStruct9]()).Build(&w)
+	query3 = NewQuery3[testStruct0, testStruct1, testStruct9]().Optional(Mask1[testStruct9]()).Build(&w)
 	cnt = 0
 	for query3.Next() {
 		cnt++
@@ -92,7 +92,7 @@ func TestQuery0(t *testing.T) {
 
 	cnt := 0
 	query :=
-		Query0().
+		NewQuery0().
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]()).
 			Build(&w)
@@ -123,7 +123,7 @@ func TestQuery1(t *testing.T) {
 
 	cnt := 0
 	query :=
-		Query1[testStruct0]().
+		NewQuery1[testStruct0]().
 			Optional(Mask1[testStruct9]()).
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]()).
@@ -159,7 +159,7 @@ func TestQuery2(t *testing.T) {
 	w.Assign(e2, 9, &testStruct9{})
 
 	query :=
-		Query2[testStruct0, testStruct1]().
+		NewQuery2[testStruct0, testStruct1]().
 			Optional(Mask1[testStruct1]()).
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]())
@@ -209,7 +209,7 @@ func TestQuery3(t *testing.T) {
 
 	cnt := 0
 	query :=
-		Query3[testStruct0, testStruct1, testStruct2]().
+		NewQuery3[testStruct0, testStruct1, testStruct2]().
 			Optional(Mask1[testStruct1]()).
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]()).
@@ -263,7 +263,7 @@ func TestQuery4(t *testing.T) {
 
 	cnt := 0
 	query :=
-		Query4[testStruct0, testStruct1, testStruct2, testStruct3]().
+		NewQuery4[testStruct0, testStruct1, testStruct2, testStruct3]().
 			Optional(Mask1[testStruct1]()).
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]()).
@@ -324,7 +324,7 @@ func TestQuery5(t *testing.T) {
 
 	cnt := 0
 	query :=
-		Query5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4]().
+		NewQuery5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4]().
 			Optional(Mask1[testStruct1]()).
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]()).
@@ -392,7 +392,7 @@ func TestQuery6(t *testing.T) {
 
 	cnt := 0
 	query :=
-		Query6[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4, testStruct5]().
+		NewQuery6[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4, testStruct5]().
 			Optional(Mask1[testStruct1]()).
 			With(Mask1[testStruct8]()).
 			Without(Mask1[testStruct9]()).
@@ -467,7 +467,7 @@ func TestQuery7(t *testing.T) {
 
 	cnt := 0
 	query :=
-		Query7[
+		NewQuery7[
 			testStruct0, testStruct1, testStruct2, testStruct3, testStruct4,
 			testStruct5, testStruct6,
 		]().
@@ -544,7 +544,7 @@ func TestQuery8(t *testing.T) {
 
 	cnt := 0
 	query :=
-		Query8[
+		NewQuery8[
 			testStruct0, testStruct1, testStruct2, testStruct3,
 			testStruct4, testStruct5, testStruct6, testStruct7,
 		]().
@@ -686,7 +686,7 @@ func TestQueryGeneric(t *testing.T) {
 		entity := world.NewEntity()
 		world.Add(entity, posID, rotID)
 	}
-	query := Query2[testStruct2, testStruct3]()
+	query := NewQuery2[testStruct2, testStruct3]()
 
 	q := query.Build(&world)
 	cnt := 0
