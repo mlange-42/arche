@@ -23,12 +23,12 @@ func (s *storage) Init(tp reflect.Type, increment int) {
 	align := uintptr(tp.Align())
 	size = (size + (align - 1)) / align * align
 
-	s.buffer = reflect.New(reflect.ArrayOf(0, tp)).Elem()
+	s.buffer = reflect.New(reflect.ArrayOf(1, tp)).Elem()
 	s.bufferAddress = s.buffer.Addr().UnsafePointer()
 	s.typeOf = tp
 	s.itemSize = size
 	s.len = 0
-	s.cap = 0
+	s.cap = 1
 	s.capacityIncrement = uint32(increment)
 }
 
@@ -65,7 +65,7 @@ func (s *storage) Alloc() (index uint32) {
 func (s *storage) extend() {
 	if s.cap < s.len+1 {
 		old := s.buffer
-		s.cap = s.cap + s.capacityIncrement
+		s.cap = s.capacityIncrement * ((s.cap + s.capacityIncrement) / s.capacityIncrement)
 		s.buffer = reflect.New(reflect.ArrayOf(int(s.cap), s.typeOf)).Elem()
 		s.bufferAddress = s.buffer.Addr().UnsafePointer()
 		reflect.Copy(s.buffer, old)
