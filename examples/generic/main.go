@@ -1,3 +1,4 @@
+// Demonstrates the generic API, which provides type-safety and convenience over the ID-based core API.
 package main
 
 import (
@@ -34,7 +35,7 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
-	// Create entities
+	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity.
 		entity := world.NewEntity()
@@ -59,7 +60,7 @@ func main() {
 		query := filter.Query(&world)
 		// Iterate it.
 		for query.Next() {
-			// Component access through a Query.
+			// Component access through the Query.
 			pos, vel := query.GetAll()
 			// Update component fields.
 			pos.X += vel.X

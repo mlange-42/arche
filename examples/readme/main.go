@@ -1,10 +1,13 @@
-// Demonstrates the core API that uses component IDs for access.
+// The minimal example from the README using generic access.
+//
+// For automatic testing by the GitHub CI.
 package main
 
 import (
 	"math/rand"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/generic"
 )
 
 // Position component
@@ -19,27 +22,16 @@ type Velocity struct {
 	Y float64
 }
 
-// Rotation component
-type Rotation struct {
-	A float64
-}
-
 func main() {
 	// Create a World.
 	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
-	rotID := ecs.ComponentID[Rotation](&world)
 
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity.
 		entity := world.NewEntity()
 		// Add components to it.
-		world.Add(entity, posID, velID)
-		pos := (*Position)(world.Get(entity, posID))
-		vel := (*Position)(world.Get(entity, velID))
+		pos, vel := generic.Add2[Position, Velocity](&world, entity)
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
@@ -49,18 +41,19 @@ func main() {
 		vel.Y = rand.NormFloat64()
 	}
 
-	// Create a filter, demanding and excluding components.
-	filter := ecs.All(posID, velID).Without(rotID)
+	// Create a generic filter.
+	// Generic filter support up to 8 components.
+	// For more components, use World.Query().
+	filter := generic.NewFilter2[Position, Velocity]()
 
 	// Time loop.
 	for t := 0; t < 1000; t++ {
-		// Get a fresh query iterator.
-		query := world.Query(filter)
+		// Get a fresh query.
+		query := filter.Query(&world)
 		// Iterate it
 		for query.Next() {
 			// Component access through the Query.
-			pos := (*Position)(query.Get(posID))
-			vel := (*Velocity)(query.Get(velID))
+			pos, vel := query.GetAll()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y

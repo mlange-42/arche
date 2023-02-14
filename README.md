@@ -64,7 +64,7 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
-	// Create entities
+	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity.
 		entity := world.NewEntity()
@@ -80,8 +80,8 @@ func main() {
 	}
 
 	// Create a generic filter.
-	// Generic filter support up to 5 components.
-	// For more components, use World.Query()
+	// Generic filter support up to 8 components.
+	// For more components, use World.Query().
 	filter := generic.NewFilter2[Position, Velocity]()
 
 	// Time loop.
@@ -90,7 +90,7 @@ func main() {
 		query := filter.Query(&world)
 		// Iterate it
 		for query.Next() {
-			// Component access through a Query.
+			// Component access through the Query.
 			pos, vel := query.GetAll()
 			// Update component fields.
 			pos.X += vel.X

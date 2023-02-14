@@ -1,3 +1,4 @@
+// Demonstrates the logic filter API, which provides additional query flexibility on top of the core API.
 package main
 
 import (
@@ -38,7 +39,7 @@ func main() {
 	rotID := ecs.ComponentID[Rotation](&world)
 	eleID := ecs.ComponentID[Elevation](&world)
 
-	// Create entities
+	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity.
 		entity := world.NewEntity()
@@ -63,7 +64,7 @@ func main() {
 		vel.Y = rand.NormFloat64()
 	}
 
-	// Create a logic filter
+	// Create a logic filter.
 	filter := fi.And(
 		fi.All(posID, velID),
 		fi.Or(
@@ -78,7 +79,7 @@ func main() {
 		query := world.Query(filter)
 		// Iterate it.
 		for query.Next() {
-			// Component access through a Query.
+			// Component access through the Query.
 			pos := (*Position)(query.Get(posID))
 			vel := (*Velocity)(query.Get(velID))
 			// Update component fields.
