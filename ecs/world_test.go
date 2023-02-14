@@ -420,6 +420,90 @@ func TestArchetypeGraph(t *testing.T) {
 	assert.Equal(t, archEmpty, archEmpty3)
 }
 
+func TestWorldListener(t *testing.T) {
+	events := []ChangeEvent{}
+	listen := func(e ChangeEvent) {
+		events = append(events, e)
+	}
+
+	w := NewWorld()
+
+	err := w.RegisterListener(listen)
+	assert.Nil(t, err)
+
+	err = w.RegisterListener(listen)
+	assert.NotNil(t, err)
+
+	posID := ComponentID[position](&w)
+	velID := ComponentID[velocity](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	assert.Equal(t, 1, len(events))
+	assert.Equal(t, ChangeEvent{
+		Entity: e0, AddedRemoved: 1,
+	}, events[len(events)-1])
+
+	w.RemEntity(e0)
+	assert.Equal(t, 2, len(events))
+	assert.Equal(t, ChangeEvent{
+		Entity: e0, AddedRemoved: -1,
+	}, events[len(events)-1])
+
+	e0 = w.NewEntity(posID, velID)
+	assert.Equal(t, 3, len(events))
+	assert.Equal(t, ChangeEvent{
+		Entity:       e0,
+		NewMask:      NewBitMask(posID, velID),
+		Added:        []ID{posID, velID},
+		Current:      []ID{posID, velID},
+		AddedRemoved: 1,
+	}, events[len(events)-1])
+
+	w.RemEntity(e0)
+	assert.Equal(t, 4, len(events))
+	assert.Equal(t, ChangeEvent{
+		Entity:       e0,
+		OldMask:      NewBitMask(posID, velID),
+		NewMask:      NewBitMask(posID, velID),
+		Current:      []ID{posID, velID},
+		AddedRemoved: -1,
+	}, events[len(events)-1])
+
+	e0 = w.NewEntityWith(Component{posID, &position{}}, Component{velID, &velocity{}})
+	assert.Equal(t, 5, len(events))
+	assert.Equal(t, ChangeEvent{
+		Entity:       e0,
+		NewMask:      NewBitMask(posID, velID),
+		Added:        []ID{posID, velID},
+		Current:      []ID{posID, velID},
+		AddedRemoved: 1,
+	}, events[len(events)-1])
+
+	w.Add(e0, rotID)
+	assert.Equal(t, 6, len(events))
+	assert.Equal(t, ChangeEvent{
+		Entity:       e0,
+		OldMask:      NewBitMask(posID, velID),
+		NewMask:      NewBitMask(posID, velID, rotID),
+		Added:        []ID{rotID},
+		Current:      []ID{posID, velID, rotID},
+		AddedRemoved: 0,
+	}, events[len(events)-1])
+
+	w.Remove(e0, posID)
+	assert.Equal(t, 7, len(events))
+	assert.Equal(t, ChangeEvent{
+		Entity:       e0,
+		OldMask:      NewBitMask(posID, velID, rotID),
+		NewMask:      NewBitMask(velID, rotID),
+		Removed:      []ID{posID},
+		Current:      []ID{velID, rotID},
+		AddedRemoved: 0,
+	}, events[len(events)-1])
+
+}
+
 func Test1000Archetypes(t *testing.T) {
 	_ = testStruct0{1}
 	_ = testStruct1{1}
