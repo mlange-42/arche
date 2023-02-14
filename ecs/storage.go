@@ -22,6 +22,9 @@ func (s *storage) Init(tp reflect.Type, increment int) {
 	size := tp.Size()
 	align := uintptr(tp.Align())
 	size = (size + (align - 1)) / align * align
+	if size == 0 {
+		size = align
+	}
 
 	s.buffer = reflect.New(reflect.ArrayOf(1, tp)).Elem()
 	s.bufferAddress = s.buffer.Addr().UnsafePointer()

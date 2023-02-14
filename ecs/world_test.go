@@ -40,6 +40,57 @@ func TestWorldEntites(t *testing.T) {
 	assert.Panics(t, func() { w.RemEntity(newEntityGen(1, 0)) })
 }
 
+func TestWorldNewEntites(t *testing.T) {
+	w := NewConfig().WithCapacityIncrement(32).Build()
+
+	posID := ComponentID[position](&w)
+	velID := ComponentID[velocity](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity(posID, velID, rotID)
+	e2 := w.NewEntityWith(
+		Component{posID, &position{1, 2}},
+		Component{velID, &velocity{3, 4}},
+		Component{rotID, &rotation{5}},
+	)
+	e3 := w.NewEntityWith()
+
+	assert.Equal(t, NewBitMask(), w.Mask(e0))
+	assert.Equal(t, NewBitMask(posID, velID, rotID), w.Mask(e1))
+	assert.Equal(t, NewBitMask(posID, velID, rotID), w.Mask(e2))
+	assert.Equal(t, NewBitMask(), w.Mask(e3))
+
+	pos := (*position)(w.Get(e2, posID))
+	vel := (*velocity)(w.Get(e2, velID))
+	rot := (*rotation)(w.Get(e2, rotID))
+
+	assert.Equal(t, &position{1, 2}, pos)
+	assert.Equal(t, &velocity{3, 4}, vel)
+	assert.Equal(t, &rotation{5}, rot)
+
+	w.RemEntity(e0)
+	w.RemEntity(e1)
+	w.RemEntity(e2)
+	w.RemEntity(e3)
+
+	for i := 0; i < 35; i++ {
+		e := w.NewEntityWith(
+			Component{posID, &position{i + 1, i + 2}},
+			Component{velID, &velocity{i + 3, i + 4}},
+			Component{rotID, &rotation{i + 5}},
+		)
+
+		pos := (*position)(w.Get(e, posID))
+		vel := (*velocity)(w.Get(e, velID))
+		rot := (*rotation)(w.Get(e, rotID))
+
+		assert.Equal(t, &position{i + 1, i + 2}, pos)
+		assert.Equal(t, &velocity{i + 3, i + 4}, vel)
+		assert.Equal(t, &rotation{i + 5}, rot)
+	}
+}
+
 func TestWorldComponents(t *testing.T) {
 	w := NewWorld()
 
@@ -200,16 +251,20 @@ func TestWorldAssignSet(t *testing.T) {
 
 	e2 := w.NewEntity()
 	w.AssignN(e2,
+		Component{posID, &position{4, 5}},
 		Component{velID, &velocity{1, 2}},
 		Component{rotID, &rotation{3}},
-		Component{posID, &position{4, 5}},
 	)
 	assert.True(t, w.Has(e2, velID))
 	assert.True(t, w.Has(e2, rotID))
 	assert.True(t, w.Has(e2, posID))
 
 	pos = (*position)(w.Get(e2, posID))
-	assert.Equal(t, 4, pos.X)
+	rot := (*rotation)(w.Get(e2, rotID))
+	vel := (*velocity)(w.Get(e2, velID))
+	assert.Equal(t, &position{4, 5}, pos)
+	assert.Equal(t, &rotation{3}, rot)
+	assert.Equal(t, &velocity{1, 2}, vel)
 
 	_ = (*position)(w.Set(e2, posID, &position{7, 8}))
 	pos = (*position)(w.Get(e2, posID))

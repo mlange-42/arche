@@ -22,6 +22,11 @@ func NewMap[T any](w *ecs.World) Map[T] {
 	}
 }
 
+// ID returns the component ID for this Map.
+func (g *Map[T]) ID() ecs.ID {
+	return g.id
+}
+
 // Get gets the component for the given entity.
 //
 // See also [ecs.World.Get].
