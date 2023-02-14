@@ -111,7 +111,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 		len := int(arch.Len())
 		id := ID(0)
 		for j := 0; j < len; j++ {
-			pos := (*testStruct0)(arch.Get(i, id))
+			pos := (*testStruct0)(arch.Get(uint32(i), id))
 			_ = pos
 		}
 	}
@@ -138,7 +138,7 @@ func BenchmarkArchetypeAccessUnsafe_1000(b *testing.B) {
 		len := int(arch.Len())
 		id := ID(0)
 		for j := 0; j < len; j++ {
-			pos := (*testStruct0)(arch.GetUnsafe(i, id))
+			pos := (*testStruct0)(arch.GetUnsafe(uint32(i), id))
 			_ = pos
 		}
 	}

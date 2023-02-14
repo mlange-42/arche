@@ -98,10 +98,10 @@ func (q *Query) Next() bool {
 	if q.archetype.Next() {
 		return true
 	}
-	i, a, ok := q.world.nextArchetype(q.filter, q.index)
-	q.index = i
+	index, archetype, ok := q.world.nextArchetype(q.filter, q.index)
+	q.index = index
 	if ok {
-		q.archetype = a
+		q.archetype = archetype
 		return true
 	}
 	q.world.closeQuery(&q.queryIter)
@@ -147,14 +147,14 @@ func (q *queryIter) Close() {
 
 type archetypeIter struct {
 	Archetype *archetype
-	Length    int
-	Index     int
+	Length    uint32
+	Index     uint32
 }
 
 func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
-		Length:    int(arch.Len()),
+		Length:    arch.Len(),
 	}
 }
 

@@ -146,8 +146,9 @@ func (s *storage) Cap() uint32 {
 // toSlice converts the content of a storage to a slice of structs
 func toSlice[T any](s storage) []T {
 	res := make([]T, s.Len())
-	for i := 0; i < int(s.Len()); i++ {
-		ptr := (*T)(s.Get(uint32(i)))
+	var i uint32
+	for i = 0; i < s.Len(); i++ {
+		ptr := (*T)(s.Get(i))
 		res[i] = *ptr
 	}
 	return res
