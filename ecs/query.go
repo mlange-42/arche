@@ -104,7 +104,6 @@ func (q *Query) Next() bool {
 		q.archetype = a
 		return true
 	}
-	q.done = true
 	q.world.closeQuery(&q.queryIter)
 	return false
 }
@@ -113,7 +112,6 @@ type queryIter struct {
 	world     *World
 	archetype archetypeIter
 	index     int
-	done      bool
 	lockBit   uint8
 }
 
@@ -144,7 +142,6 @@ func (q *queryIter) Mask() BitMask {
 // Automatically called when iteration finishes.
 // Needs to be called only if breaking out of the query iteration.
 func (q *queryIter) Close() {
-	q.done = true
 	q.world.closeQuery(q)
 }
 
