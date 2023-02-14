@@ -1,14 +1,14 @@
 package ecs
 
-// MaskTotalBits is the size of Mask in bits.
+import "math/bits"
+
+// MaskTotalBits is the size of BitMask in bits.
 //
 // It is the maximum number of component types that may exist in any [World].
 const MaskTotalBits = 64
 
 // BitMask is a 64 bit bitmask.
 type BitMask uint64
-
-var nibbleToBitsSet = [16]uint{0, 1, 1, 2, 1, 2, 2, 3, 1, 2, 2, 3, 2, 3, 3, 4}
 
 // NewBitMask creates a new bitmask from a list of IDs.
 //
@@ -56,12 +56,6 @@ func (e BitMask) ContainsAny(other BitMask) bool {
 }
 
 // TotalBitsSet returns how many bits are set in this mask.
-func (e BitMask) TotalBitsSet() uint {
-	var count uint
-
-	for e != 0 {
-		count += nibbleToBitsSet[e&0xf]
-		e >>= 4
-	}
-	return count
+func (e BitMask) TotalBitsSet() int {
+	return bits.OnesCount64(uint64(e))
 }
