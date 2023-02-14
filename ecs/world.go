@@ -50,14 +50,21 @@ func FromConfig(conf Config) World {
 }
 
 // NewEntity returns a new or recycled [Entity].
+// The given component types are added to the entity.
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
-func (w *World) NewEntity() Entity {
+func (w *World) NewEntity(comps ...ID) Entity {
 	w.checkLocked()
 
 	entity := w.entityPool.Get()
-	idx := w.archetypes.Get(0).Add(entity)
+
+	arch := w.archetypes.Get(0)
+	if len(comps) > 0 {
+		arch = w.findOrCreateArchetype(arch, comps, nil)
+	}
+
+	idx := arch.Alloc(entity)
 	len := len(w.entities)
 	if int(entity.id) == len {
 		if len == cap(w.entities) {
@@ -65,10 +72,51 @@ func (w *World) NewEntity() Entity {
 			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
 			copy(w.entities, old)
 		}
-		w.entities = append(w.entities, entityIndex{arch: w.archetypes.Get(0), index: idx})
+		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
 	} else {
-		w.entities[entity.id] = entityIndex{arch: w.archetypes.Get(0), index: idx}
+		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
 	}
+	return entity
+}
+
+// NewEntityWith returns a new or recycled [Entity].
+// The given component values are assigned to the entity.
+//
+// Panics when called on a locked world.
+// Do not use during [Query] iteration!
+func (w *World) NewEntityWith(comps ...Component) Entity {
+	w.checkLocked()
+
+	if len(comps) == 0 {
+		return w.NewEntity()
+	}
+
+	ids := make([]ID, len(comps))
+	for i, c := range comps {
+		ids[i] = c.ID
+	}
+
+	entity := w.entityPool.Get()
+	arch := w.archetypes.Get(0)
+	arch = w.findOrCreateArchetype(arch, ids, nil)
+
+	idx := arch.Alloc(entity)
+	len := len(w.entities)
+	if int(entity.id) == len {
+		if len == cap(w.entities) {
+			old := w.entities
+			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
+			copy(w.entities, old)
+		}
+		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
+	} else {
+		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
+	}
+
+	for _, c := range comps {
+		w.copyTo(entity, c.ID, c.Component)
+	}
+
 	return entity
 }
 
@@ -126,6 +174,7 @@ func (w *World) Alive(entity Entity) bool {
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
+
 	return index.arch.Get(index.index, comp)
 }
 
@@ -338,6 +387,7 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	}
 	index := w.entities[entity.id]
 	arch := index.arch
+
 	return arch.Set(index.index, id, comp)
 }
 
