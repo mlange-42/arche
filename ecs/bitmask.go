@@ -2,13 +2,17 @@ package ecs
 
 import "math/bits"
 
-// MaskTotalBits is the size of BitMask in bits.
+// MaskTotalBits is the size of Mask in bits.
 //
 // It is the maximum number of component types that may exist in any [World].
-const MaskTotalBits = 64
+const MaskTotalBits = 128
+const wordSize = 64
 
-// BitMask is a 64 bit bitmask.
-type BitMask uint64
+// BitMask is a 128 bit bitmask.
+type BitMask struct {
+	lo uint64
+	hi uint64
+}
 
 // NewBitMask creates a new bitmask from a list of IDs.
 //
@@ -24,38 +28,55 @@ func NewBitMask(ids ...ID) BitMask {
 // Get reports if bit index defined by ID is true or false.
 //
 // The return will be always false for bit >= [MaskTotalBits].
-func (e BitMask) Get(bit ID) bool {
-	mask := BitMask(1 << bit)
-	return e&mask == mask
+func (b BitMask) Get(bit ID) bool {
+	if bit < wordSize {
+		mask := uint64(1 << bit)
+		return b.lo&mask == mask
+	}
+	mask := uint64(1 << (bit - wordSize))
+	return b.hi&mask == mask
 }
 
 // Set sets the state of bit index to true or false.
 //
 // This function has no effect for bit >= [MaskTotalBits].
-func (e *BitMask) Set(bit ID, value bool) {
+func (b *BitMask) Set(bit ID, value bool) {
+	if bit < wordSize {
+		if value {
+			b.lo |= uint64(1 << bit)
+		} else {
+			b.lo &= uint64(^(1 << bit))
+		}
+	}
 	if value {
-		*e |= BitMask(1 << bit)
+		b.hi |= uint64(1 << (bit - wordSize))
 	} else {
-		*e &= BitMask(^(1 << bit))
+		b.hi &= uint64(^(1 << (bit - wordSize)))
 	}
 }
 
+// IsZero returns whether no bits are set in the bitmask.
+func (b BitMask) IsZero() bool {
+	return b.lo == 0 && b.hi == 0
+}
+
 // Reset changes the state of all bits to false.
-func (e *BitMask) Reset() {
-	*e = 0
+func (b *BitMask) Reset() {
+	b.lo = 0
+	b.hi = 0
 }
 
 // Contains reports if other mask is a subset of this mask.
-func (e BitMask) Contains(other BitMask) bool {
-	return e&other == other
+func (b BitMask) Contains(other BitMask) bool {
+	return b.lo&other.lo == other.lo && b.hi&other.hi == other.hi
 }
 
 // ContainsAny reports if any bit of other mask is a subset of this mask.
-func (e BitMask) ContainsAny(other BitMask) bool {
-	return e&other != 0
+func (b BitMask) ContainsAny(other BitMask) bool {
+	return b.lo&other.lo != 0 || b.hi&other.hi != 0
 }
 
 // TotalBitsSet returns how many bits are set in this mask.
-func (e BitMask) TotalBitsSet() int {
-	return bits.OnesCount64(uint64(e))
+func (b BitMask) TotalBitsSet() int {
+	return bits.OnesCount64(uint64(b.hi)) + bits.OnesCount64(uint64(b.lo))
 }

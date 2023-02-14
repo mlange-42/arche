@@ -19,7 +19,7 @@ func newComponentRegistry() componentRegistry {
 func (r *componentRegistry) RegisterComponent(tp reflect.Type, totalBits int) ID {
 	id := ID(len(r.Components))
 	if int(id) >= totalBits {
-		panic("maximum of 64 component types exceeded")
+		panic("maximum of 128 component types exceeded")
 	}
 	r.Components[tp] = id
 	r.Types[id] = tp

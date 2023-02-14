@@ -23,7 +23,7 @@ func newBitPool() bitPool {
 func (p *bitPool) Get() uint8 {
 	if p.available == 0 {
 		if p.length >= MaskTotalBits {
-			panic("run out of the maximum of 64 bits")
+			panic("run out of the maximum of 128 bits")
 		}
 		b := p.length
 		p.bits[p.length] = b

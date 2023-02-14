@@ -10,6 +10,7 @@
 * Added method `World.Stats()` for inspecting otherwise inaccessible world statistics (#67)
 * Entities can be initialized with components, via ID as well as using generics (#76)
 * A listener function can be registered to the world, for notification on entity changes (#77)
+* Support for up to 128 distinct component types per world (was limited to 64 before) (#78)
 
 ### Other
 
