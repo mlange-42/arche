@@ -19,7 +19,7 @@ func toIds(w *ecs.World, types []reflect.Type) []ecs.ID {
 }
 
 func toMask(w *ecs.World, types []reflect.Type) ecs.Mask {
-	mask := ecs.BitMask(0)
+	mask := ecs.BitMask{}
 	for _, t := range types {
 		mask.Set(ecs.TypeID(w, t), true)
 	}

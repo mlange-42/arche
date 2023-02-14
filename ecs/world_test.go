@@ -531,7 +531,7 @@ func Test1000Archetypes(t *testing.T) {
 	ids[9] = ComponentID[testStruct9](&w)
 
 	for i := 0; i < 1024; i++ {
-		mask := BitMask(i)
+		mask := BitMask{uint64(i), 0}
 		add := make([]ID, 0, 10)
 		for j := 0; j < 10; j++ {
 			id := ID(j)
@@ -554,6 +554,8 @@ func Test1000Archetypes(t *testing.T) {
 }
 
 func TestTypeSizes(t *testing.T) {
+	printTypeSize[Entity]()
+	printTypeSize[BitMask]()
 	printTypeSize[World]()
 	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
 	printTypeSize[archetype]()

@@ -59,10 +59,10 @@ func FromConfig(conf Config) World {
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
 		archetypes: pagedArr32[archetype]{},
-		locks:      BitMask(0),
+		locks:      BitMask{},
 		listener:   nil,
 	}
-	w.createArchetype(0)
+	w.createArchetype(BitMask{})
 	return w
 }
 
@@ -95,7 +95,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 	}
 
 	if w.listener != nil {
-		w.listener(ChangeEvent{entity, 0, arch.Mask, comps, nil, arch.Ids, 1})
+		w.listener(ChangeEvent{entity, BitMask{}, arch.Mask, comps, nil, arch.Ids, 1})
 	}
 	return entity
 }
@@ -139,7 +139,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	if w.listener != nil {
-		w.listener(ChangeEvent{entity, 0, arch.Mask, ids, nil, arch.Ids, 1})
+		w.listener(ChangeEvent{entity, BitMask{}, arch.Mask, ids, nil, arch.Ids, 1})
 	}
 	return entity
 }
@@ -364,7 +364,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 
 // IsLocked returns whether the world is locked by any queries.
 func (w *World) IsLocked() bool {
-	return w.locks != 0
+	return !w.locks.IsZero()
 }
 
 // RegisterListener registers a func(e ChangeEvent) to the world.
@@ -527,7 +527,7 @@ func (w *World) closeQuery(query *queryIter) {
 }
 
 func (w *World) checkLocked() {
-	if w.locks != 0 {
+	if !w.locks.IsZero() {
 		panic("attempt to modify a locked world")
 	}
 }
