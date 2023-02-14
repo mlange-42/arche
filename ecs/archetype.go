@@ -49,24 +49,24 @@ func (a *archetype) Init(capacityIncrement int, components ...componentType) {
 }
 
 // GetEntity returns the entity at the given index
-func (a *archetype) GetEntity(index int) Entity {
-	return *(*Entity)(a.entities.Get(uint32(index)))
+func (a *archetype) GetEntity(index uint32) Entity {
+	return *(*Entity)(a.entities.Get(index))
 }
 
 // Get returns the component with the given ID at the given index
-func (a *archetype) Get(index int, id ID) unsafe.Pointer {
+func (a *archetype) Get(index uint32, id ID) unsafe.Pointer {
 	if !a.Mask.Get(id) {
 		return nil
 	}
-	return a.components[a.indices[id]].Get(uint32(index))
+	return a.components[a.indices[id]].Get(index)
 }
 
 // GetUnsafe returns the component with the given ID at the given index,
 // without checking if the entity contains that component.
 //
 // This is used by queries, where the entity is guaranteed to be in the archetype.
-func (a *archetype) GetUnsafe(index int, id ID) unsafe.Pointer {
-	return a.components[a.indices[id]].Get(uint32(index))
+func (a *archetype) GetUnsafe(index uint32, id ID) unsafe.Pointer {
+	return a.components[a.indices[id]].Get(index)
 }
 
 // Add adds an entity with components to the archetype
@@ -98,11 +98,11 @@ func (a *archetype) AddPointer(entity Entity, components ...componentPointer) ui
 }
 
 // Remove removes an entity from the archetype
-func (a *archetype) Remove(index int) bool {
-	swapped := a.entities.Remove(uint32(index))
+func (a *archetype) Remove(index uint32) bool {
+	swapped := a.entities.Remove(index)
 	len := len(a.components)
 	for i := 0; i < len; i++ {
-		a.components[i].Remove(uint32(index))
+		a.components[i].Remove(index)
 	}
 	return swapped
 }

@@ -98,13 +98,12 @@ func (q *Query) Next() bool {
 	if q.archetype.Next() {
 		return true
 	}
-	i, a, ok := q.world.nextArchetype(q.filter, q.index)
-	q.index = i
+	index, archetype, ok := q.world.nextArchetype(q.filter, q.index)
+	q.index = index
 	if ok {
-		q.archetype = a
+		q.archetype = archetype
 		return true
 	}
-	q.done = true
 	q.world.closeQuery(&q.queryIter)
 	return false
 }
@@ -113,7 +112,6 @@ type queryIter struct {
 	world     *World
 	archetype archetypeIter
 	index     int
-	done      bool
 	lockBit   uint8
 }
 
@@ -144,20 +142,19 @@ func (q *queryIter) Mask() BitMask {
 // Automatically called when iteration finishes.
 // Needs to be called only if breaking out of the query iteration.
 func (q *queryIter) Close() {
-	q.done = true
 	q.world.closeQuery(q)
 }
 
 type archetypeIter struct {
 	Archetype *archetype
-	Length    int
-	Index     int
+	Length    uint32
+	Index     uint32
 }
 
 func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
-		Length:    int(arch.Len()),
+		Length:    arch.Len(),
 	}
 }
 

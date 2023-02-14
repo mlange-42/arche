@@ -81,12 +81,12 @@ func (w *World) RemEntity(entity Entity) {
 
 	index := w.entities[entity.id]
 	oldArch := index.arch
-	swapped := oldArch.Remove(int(index.index))
+	swapped := oldArch.Remove(index.index)
 
 	w.entityPool.Recycle(entity)
 
 	if swapped {
-		swapEntity := oldArch.GetEntity(int(index.index))
+		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
 
@@ -126,7 +126,7 @@ func (w *World) Alive(entity Entity) bool {
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := w.entities[entity.id]
-	return index.arch.Get(int(index.index), comp)
+	return index.arch.Get(index.index, comp)
 }
 
 // Has returns whether an [Entity] has a given component.
@@ -263,7 +263,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 
 	allComps := make([]componentPointer, 0, len(keepIDs)+len(addIDs))
 	for _, id := range keepIDs {
-		comp := oldArch.Get(int(index.index), id)
+		comp := oldArch.Get(index.index, id)
 		allComps = append(allComps, componentPointer{ID: id, Pointer: comp})
 	}
 	for _, id := range addIDs {
@@ -271,10 +271,10 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 
 	newIndex := arch.AddPointer(entity, allComps...)
-	swapped := oldArch.Remove(int(index.index))
+	swapped := oldArch.Remove(index.index)
 
 	if swapped {
-		swapEntity := oldArch.GetEntity(int(index.index))
+		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
@@ -301,7 +301,7 @@ func (w *World) Stats() *stats.WorldStats {
 		arch := w.archetypes.Get(i)
 
 		ids := arch.Components()
-		aCompCount := int(len(ids))
+		aCompCount := len(ids)
 		aTypes := make([]reflect.Type, aCompCount)
 		for j, id := range ids {
 			aTypes[j] = w.registry.ComponentType(id)
@@ -406,7 +406,7 @@ func (w *World) componentID(tp reflect.Type) ID {
 }
 
 func (w *World) nextArchetype(filter Filter, index int) (int, archetypeIter, bool) {
-	len := w.archetypes.Len()
+	len := int(w.archetypes.Len())
 	if index >= len {
 		panic("exceeded end of query")
 	}
