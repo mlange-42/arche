@@ -8,17 +8,18 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
-// ChangeListener is a function for listening to component changes.
-//
-// When registered with [World.RegisterListener], it is called in component changes immediately.
-type ChangeListener func(e ChangeEvent)
-
 // ChangeEvent contains information about component changes.
+//
+// To receive change events, register a function func(e ChangeEvent) with [World.RegisterListener].
 type ChangeEvent struct {
-	Entity                  Entity
-	OldMask, NewMask        BitMask
+	// The entity that was changed.
+	Entity Entity
+	// The old and new component masks.
+	OldMask, NewMask BitMask
+	// Components added, removed, and after the change.
 	Added, Removed, Current []ID
-	AddedRemoved            int
+	// Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
+	AddedRemoved int
 }
 
 // ComponentID returns the ID for a component type via generics. Registers the type if it is not already registered.
@@ -41,7 +42,7 @@ type World struct {
 	bitPool    bitPool
 	registry   componentRegistry
 	locks      BitMask
-	listener   ChangeListener
+	listener   func(e ChangeEvent)
 }
 
 // NewWorld creates a new [World]
@@ -152,6 +153,11 @@ func (w *World) RemEntity(entity Entity) {
 
 	index := w.entities[entity.id]
 	oldArch := index.arch
+
+	if w.listener != nil {
+		w.listener(ChangeEvent{entity, oldArch.Mask, oldArch.Mask, nil, nil, oldArch.Ids, -1})
+	}
+
 	swapped := oldArch.Remove(index.index)
 
 	w.entityPool.Recycle(entity)
@@ -162,10 +168,6 @@ func (w *World) RemEntity(entity Entity) {
 	}
 
 	w.entities[entity.id].arch = nil
-
-	if w.listener != nil {
-		w.listener(ChangeEvent{entity, oldArch.Mask, oldArch.Mask, nil, nil, oldArch.Ids, -1})
-	}
 }
 
 // Query creates a [Query] iterator.
@@ -365,10 +367,13 @@ func (w *World) IsLocked() bool {
 	return w.locks != 0
 }
 
-// RegisterListener registers a [ChangeListener] to the world.
+// RegisterListener registers a func(e ChangeEvent) to the world.
+// The listener function is immediately called on every entity change.
+//
+// Events notified are entity creation, removal and changes to the component composition.
 //
 // Returns an error if there is already a listener registered.
-func (w *World) RegisterListener(listener ChangeListener) error {
+func (w *World) RegisterListener(listener func(e ChangeEvent)) error {
 	if w.listener != nil {
 		return fmt.Errorf("the world already has a change listener registered")
 	}
