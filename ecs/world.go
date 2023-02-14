@@ -147,6 +147,7 @@ func (w *World) Mask(entity Entity) BitMask {
 
 // Add adds components to an [Entity].
 //
+// Panics when called with component that can't be added because they are already present.
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
@@ -162,6 +163,7 @@ func (w *World) Add(entity Entity, comps ...ID) {
 // Returns a pointer to the assigned memory.
 // The passed in pointer is not a valid reference to that memory!
 //
+// Panics when called with a component that can't be added because it is already present.
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
@@ -193,6 +195,7 @@ func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 // The passed components must be pointers.
 // The passed in pointers are no valid references to the assigned memory!
 //
+// Panics when called with components that can't be added because they are already present.
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
@@ -210,8 +213,8 @@ func (w *World) AssignN(entity Entity, comps ...Component) {
 
 // Remove removes components from an entity.
 //
+// Panics when called with components that can't be removed because they are not present.
 // Panics when called on a locked world or for an already removed entity.
-//
 // Do not use during [Query] iteration!
 //
 // See also the generic variants [github.com/mlange-42/arche/generic.Remove1], [github.com/mlange-42/arche/generic.Remove2], [github.com/mlange-42/arche/generic.Remove3], ...
@@ -221,6 +224,8 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 
 // Exchange adds and removes components in one pass
 //
+// Panics when called with components that can't be added or removed because
+// they are already present/not present, respectively.
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
