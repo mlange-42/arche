@@ -8,6 +8,7 @@
 * Logic filters for complex queries (#54, #58, #61)
 * `Query` and `World` have a method `Mask(Entity)` to access archetype masks (#65)
 * Added method `World.Stats()` for inspecting otherwise inaccessible world statistics (#67)
+* Entities can be initialized with components, via ID as well as using generics (#76)
 
 ### Other
 

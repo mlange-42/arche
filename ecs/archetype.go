@@ -72,8 +72,9 @@ func (a *archetype) GetUnsafe(index uint32, id ID) unsafe.Pointer {
 // Add adds an entity with zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity) uint32 {
 	idx := a.entities.Add(&entity)
-	for _, c := range a.components {
-		c.Alloc()
+	len := len(a.components)
+	for i := 0; i < len; i++ {
+		a.components[i].Alloc()
 	}
 	return idx
 }
