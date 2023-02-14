@@ -16,8 +16,7 @@ func runArcheQuery(b *testing.B, count int) {
 	rotID := ecs.ComponentID[rotation](&world)
 
 	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Add(entity, posID, rotID)
+		_ = world.NewEntity(posID, rotID)
 	}
 	b.StartTimer()
 
@@ -40,8 +39,7 @@ func runArcheFilter(b *testing.B, count int) {
 	rotID := ecs.ComponentID[rotation](&world)
 
 	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Add(entity, posID, rotID)
+		_ = world.NewEntity(posID, rotID)
 	}
 	b.StartTimer()
 
@@ -64,8 +62,7 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 	rotID := ecs.ComponentID[rotation](&world)
 
 	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Add(entity, posID, rotID)
+		_ = world.NewEntity(posID, rotID)
 	}
 	query := generic.NewFilter2[position, rotation]()
 	b.StartTimer()
@@ -92,8 +89,7 @@ func runArcheQuery5C(b *testing.B, count int) {
 	id4 := ecs.ComponentID[testStruct4](&world)
 
 	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Add(entity, id0, id1, id2, id3, id4)
+		_ = world.NewEntity(id0, id1, id2, id3, id4)
 	}
 	b.StartTimer()
 
@@ -123,8 +119,7 @@ func runArcheQueryGeneric5C(b *testing.B, count int) {
 	id4 := ecs.ComponentID[testStruct4](&world)
 
 	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Add(entity, id0, id1, id2, id3, id4)
+		_ = world.NewEntity(id0, id1, id2, id3, id4)
 	}
 
 	query := generic.NewFilter5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4]()
@@ -226,8 +221,7 @@ func runArcheWorld(b *testing.B, count int) {
 	rotID := ecs.ComponentID[rotation](&world)
 
 	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Add(entity, posID, rotID)
+		_ = world.NewEntity(posID, rotID)
 	}
 	b.StartTimer()
 
@@ -253,8 +247,7 @@ func runArcheWorldGeneric(b *testing.B, count int) {
 	get := generic.NewMap[position](&world)
 
 	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Add(entity, posID, rotID)
+		_ = world.NewEntity(posID, rotID)
 	}
 	b.StartTimer()
 

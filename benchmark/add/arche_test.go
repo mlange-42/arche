@@ -17,8 +17,7 @@ func addArcheWorld(b *testing.B, count int) {
 		b.StartTimer()
 
 		for i := 0; i < count; i++ {
-			entity := world.NewEntity()
-			world.Add(entity, posID, rotID)
+			_ = world.NewEntity(posID, rotID)
 		}
 	}
 }
@@ -30,8 +29,7 @@ func addArcheGeneric(b *testing.B, count int) {
 		b.StartTimer()
 
 		for i := 0; i < count; i++ {
-			entity := world.NewEntity()
-			generic.Add1[position](&world, entity)
+			_, _, _ = generic.NewEntity2[position, rotation](&world)
 		}
 	}
 }
