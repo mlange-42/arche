@@ -23,7 +23,9 @@ var entityType = reflect.TypeOf(Entity{})
 // Init initializes an archetype
 func (a *archetype) Init(capacityIncrement int, components ...componentType) {
 	var mask BitMask
-	a.Ids = make([]ID, len(components))
+	if len(components) > 0 {
+		a.Ids = make([]ID, len(components))
+	}
 	comps := make([]storage, len(components))
 
 	prev := -1

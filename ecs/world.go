@@ -1,11 +1,26 @@
 package ecs
 
 import (
+	"fmt"
 	"reflect"
 	"unsafe"
 
 	"github.com/mlange-42/arche/ecs/stats"
 )
+
+// ChangeEvent contains information about component changes.
+//
+// To receive change events, register a function func(e ChangeEvent) with [World.RegisterListener].
+type ChangeEvent struct {
+	// The entity that was changed.
+	Entity Entity
+	// The old and new component masks.
+	OldMask, NewMask BitMask
+	// Components added, removed, and after the change.
+	Added, Removed, Current []ID
+	// Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
+	AddedRemoved int
+}
 
 // ComponentID returns the ID for a component type via generics. Registers the type if it is not already registered.
 func ComponentID[T any](w *World) ID {
@@ -27,6 +42,7 @@ type World struct {
 	bitPool    bitPool
 	registry   componentRegistry
 	locks      BitMask
+	listener   func(e ChangeEvent)
 }
 
 // NewWorld creates a new [World]
@@ -44,6 +60,7 @@ func FromConfig(conf Config) World {
 		registry:   newComponentRegistry(),
 		archetypes: pagedArr32[archetype]{},
 		locks:      BitMask(0),
+		listener:   nil,
 	}
 	w.createArchetype(0)
 	return w
@@ -75,6 +92,10 @@ func (w *World) NewEntity(comps ...ID) Entity {
 		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
 	} else {
 		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
+	}
+
+	if w.listener != nil {
+		w.listener(ChangeEvent{entity, 0, arch.Mask, comps, nil, arch.Ids, 1})
 	}
 	return entity
 }
@@ -117,6 +138,9 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 		w.copyTo(entity, c.ID, c.Component)
 	}
 
+	if w.listener != nil {
+		w.listener(ChangeEvent{entity, 0, arch.Mask, ids, nil, arch.Ids, 1})
+	}
 	return entity
 }
 
@@ -129,6 +153,11 @@ func (w *World) RemEntity(entity Entity) {
 
 	index := w.entities[entity.id]
 	oldArch := index.arch
+
+	if w.listener != nil {
+		w.listener(ChangeEvent{entity, oldArch.Mask, oldArch.Mask, nil, nil, oldArch.Ids, -1})
+	}
+
 	swapped := oldArch.Remove(index.index)
 
 	w.entityPool.Recycle(entity)
@@ -202,7 +231,7 @@ func (w *World) Mask(entity Entity) BitMask {
 //
 // See also the generic variants [github.com/mlange-42/arche/generic.Add1], [github.com/mlange-42/arche/generic.Add2], [github.com/mlange-42/arche/generic.Add3], ...
 func (w *World) Add(entity Entity, comps ...ID) {
-	w.Exchange(entity, comps, []ID{})
+	w.Exchange(entity, comps, nil)
 }
 
 // Assign assigns a component to an [Entity], using a given pointer for the content.
@@ -218,7 +247,7 @@ func (w *World) Add(entity Entity, comps ...ID) {
 //
 // See also the generic variants [github.com/mlange-42/arche/generic.Assign1], [github.com/mlange-42/arche/generic.Assign2], [github.com/mlange-42/arche/generic.Assign3], ...
 func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
-	w.Exchange(entity, []ID{id}, []ID{})
+	w.Exchange(entity, []ID{id}, nil)
 	return w.copyTo(entity, id, comp)
 }
 
@@ -254,7 +283,7 @@ func (w *World) AssignN(entity Entity, comps ...Component) {
 	for i, c := range comps {
 		ids[i] = c.ID
 	}
-	w.Exchange(entity, ids, []ID{})
+	w.Exchange(entity, ids, nil)
 	for _, c := range comps {
 		w.copyTo(entity, c.ID, c.Component)
 	}
@@ -268,7 +297,7 @@ func (w *World) AssignN(entity Entity, comps ...Component) {
 //
 // See also the generic variants [github.com/mlange-42/arche/generic.Remove1], [github.com/mlange-42/arche/generic.Remove2], [github.com/mlange-42/arche/generic.Remove3], ...
 func (w *World) Remove(entity Entity, comps ...ID) {
-	w.Exchange(entity, []ID{}, comps)
+	w.Exchange(entity, nil, comps)
 }
 
 // Exchange adds and removes components in one pass
@@ -286,14 +315,15 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	index := w.entities[entity.id]
 	oldArch := index.arch
 	mask := oldArch.Mask
+	oldMask := mask
 	for _, comp := range add {
-		if mask.Get(comp) {
+		if oldMask.Get(comp) {
 			panic("entity already has this component, can't add")
 		}
 		mask.Set(comp, true)
 	}
 	for _, comp := range rem {
-		if !mask.Get(comp) {
+		if !oldMask.Get(comp) {
 			panic("entity does not have this component, can't remove")
 		}
 		mask.Set(comp, false)
@@ -306,21 +336,15 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 			keepIDs = append(keepIDs, id)
 		}
 	}
-	addIDs := make([]ID, 0, len(add))
-	for _, id := range add {
-		if mask.Get(id) {
-			addIDs = append(addIDs, id)
-		}
-	}
 
-	arch := w.findOrCreateArchetype(oldArch, addIDs, rem)
+	arch := w.findOrCreateArchetype(oldArch, add, rem)
 
-	allComps := make([]componentPointer, 0, len(keepIDs)+len(addIDs))
+	allComps := make([]componentPointer, 0, len(keepIDs)+len(add))
 	for _, id := range keepIDs {
 		comp := oldArch.Get(index.index, id)
 		allComps = append(allComps, componentPointer{ID: id, Pointer: comp})
 	}
-	for _, id := range addIDs {
+	for _, id := range add {
 		allComps = append(allComps, componentPointer{ID: id, Pointer: nil})
 	}
 
@@ -332,11 +356,29 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 		w.entities[swapEntity.id].index = index.index
 	}
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
+
+	if w.listener != nil {
+		w.listener(ChangeEvent{entity, oldMask, arch.Mask, add, rem, arch.Ids, 0})
+	}
 }
 
 // IsLocked returns whether the world is locked by any queries.
 func (w *World) IsLocked() bool {
 	return w.locks != 0
+}
+
+// RegisterListener registers a func(e ChangeEvent) to the world.
+// The listener function is immediately called on every entity change.
+//
+// Events notified are entity creation, removal and changes to the component composition.
+//
+// Returns an error if there is already a listener registered.
+func (w *World) RegisterListener(listener func(e ChangeEvent)) error {
+	if w.listener != nil {
+		return fmt.Errorf("the world already has a change listener registered")
+	}
+	w.listener = listener
+	return nil
 }
 
 // Stats reports statistics for inspecting the World.
