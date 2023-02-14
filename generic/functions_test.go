@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/stretchr/testify/assert"
 )
 
 //lint:ignore U1000 test type
@@ -158,4 +159,51 @@ func TestGenericAssignRemove(t *testing.T) {
 
 	Assign5(&w, e0, &testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{}, &testStruct4{})
 	Remove5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4](&w, e0)
+}
+
+func TestGenericNewEntity(t *testing.T) {
+	w := ecs.NewConfig().WithCapacityIncrement(32).Build()
+
+	id0 := ecs.ComponentID[testStruct0](&w)
+	id1 := ecs.ComponentID[testStruct1](&w)
+	id2 := ecs.ComponentID[testStruct2](&w)
+
+	e0 := w.NewEntity()
+	e1, _, _, _ := New3[testStruct0, testStruct1, testStruct2](&w)
+	e2, _, _, _ := NewWith3(&w, &testStruct0{1}, &testStruct1{2}, &testStruct2{3, 4})
+	e3 := w.NewEntityWith()
+
+	assert.Equal(t, ecs.NewBitMask(), w.Mask(e0))
+	assert.Equal(t, ecs.NewBitMask(id0, id1, id2), w.Mask(e1))
+	assert.Equal(t, ecs.NewBitMask(id0, id1, id2), w.Mask(e2))
+	assert.Equal(t, ecs.NewBitMask(), w.Mask(e3))
+
+	s0 := (*testStruct0)(w.Get(e2, id0))
+	s1 := (*testStruct1)(w.Get(e2, id1))
+	s2 := (*testStruct2)(w.Get(e2, id2))
+
+	assert.Equal(t, &testStruct0{1}, s0)
+	assert.Equal(t, &testStruct1{2}, s1)
+	assert.Equal(t, &testStruct2{3, 4}, s2)
+
+	w.RemEntity(e0)
+	w.RemEntity(e1)
+	w.RemEntity(e2)
+	w.RemEntity(e3)
+
+	for i := 0; i < 35; i++ {
+		e, _, _, _ := NewWith3(&w,
+			&testStruct0{int8(i + 1)},
+			&testStruct1{int32(i + 2)},
+			&testStruct2{int32(i + 3), int32(i + 4)},
+		)
+
+		s0 := (*testStruct0)(w.Get(e, id0))
+		s1 := (*testStruct1)(w.Get(e, id1))
+		s2 := (*testStruct2)(w.Get(e, id2))
+
+		assert.Equal(t, &testStruct0{int8(i + 1)}, s0)
+		assert.Equal(t, &testStruct1{int32(i + 2)}, s1)
+		assert.Equal(t, &testStruct2{int32(i + 3), int32(i + 4)}, s2)
+	}
 }

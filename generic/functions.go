@@ -8,9 +8,9 @@ import (
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func New1[A any](w *ecs.World, entity ecs.Entity) (ecs.Entity, *A) {
+func New1[A any](w *ecs.World) (ecs.Entity, *A) {
 	idA := ecs.ComponentID[A](w)
-	entity = w.NewEntity(idA)
+	entity := w.NewEntity(idA)
 	return entity, (*A)(w.Get(entity, idA))
 }
 
@@ -18,10 +18,10 @@ func New1[A any](w *ecs.World, entity ecs.Entity) (ecs.Entity, *A) {
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func New2[A any, B any](w *ecs.World, entity ecs.Entity) (ecs.Entity, *A, *B) {
+func New2[A any, B any](w *ecs.World) (ecs.Entity, *A, *B) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
-	entity = w.NewEntity(idA, idB)
+	entity := w.NewEntity(idA, idB)
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB))
 }
 
@@ -29,11 +29,11 @@ func New2[A any, B any](w *ecs.World, entity ecs.Entity) (ecs.Entity, *A, *B) {
 // Returns the entity and the new components.
 //
 // See also and [ecs.World.NewEntity].
-func New3[A any, B any, C any](w *ecs.World, entity ecs.Entity) (ecs.Entity, *A, *B, *C) {
+func New3[A any, B any, C any](w *ecs.World) (ecs.Entity, *A, *B, *C) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
-	entity = w.NewEntity(idA, idB, idC)
+	entity := w.NewEntity(idA, idB, idC)
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC))
 }
 
@@ -41,12 +41,12 @@ func New3[A any, B any, C any](w *ecs.World, entity ecs.Entity) (ecs.Entity, *A,
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func New4[A any, B any, C any, D any](w *ecs.World, entity ecs.Entity) (ecs.Entity, *A, *B, *C, *D) {
+func New4[A any, B any, C any, D any](w *ecs.World) (ecs.Entity, *A, *B, *C, *D) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
 	idD := ecs.ComponentID[D](w)
-	entity = w.NewEntity(idA, idB, idC, idD)
+	entity := w.NewEntity(idA, idB, idC, idD)
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD))
 }
 
@@ -54,13 +54,13 @@ func New4[A any, B any, C any, D any](w *ecs.World, entity ecs.Entity) (ecs.Enti
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func New5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity) (ecs.Entity, *A, *B, *C, *D, *E) {
+func New5[A any, B any, C any, D any, E any](w *ecs.World) (ecs.Entity, *A, *B, *C, *D, *E) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
 	idD := ecs.ComponentID[D](w)
 	idE := ecs.ComponentID[E](w)
-	entity = w.NewEntity(idA, idB, idC, idD, idE)
+	entity := w.NewEntity(idA, idB, idC, idD, idE)
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD)), (*E)(w.Get(entity, idE))
 }
 
@@ -68,9 +68,9 @@ func New5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity) (e
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith1[A any](w *ecs.World, entity ecs.Entity, a *A) (ecs.Entity, *A) {
+func NewWith1[A any](w *ecs.World, a *A) (ecs.Entity, *A) {
 	idA := ecs.ComponentID[A](w)
-	entity = w.NewEntityWith(ecs.Component{ID: idA, Component: a})
+	entity := w.NewEntityWith(ecs.Component{ID: idA, Component: a})
 	return entity, (*A)(w.Get(entity, idA))
 }
 
@@ -78,10 +78,10 @@ func NewWith1[A any](w *ecs.World, entity ecs.Entity, a *A) (ecs.Entity, *A) {
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith2[A any, B any](w *ecs.World, entity ecs.Entity, a *A, b *B) (ecs.Entity, *A, *B) {
+func NewWith2[A any, B any](w *ecs.World, a *A, b *B) (ecs.Entity, *A, *B) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
-	entity = w.NewEntityWith(ecs.Component{ID: idA, Component: a}, ecs.Component{ID: idB, Component: b})
+	entity := w.NewEntityWith(ecs.Component{ID: idA, Component: a}, ecs.Component{ID: idB, Component: b})
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB))
 }
 
@@ -89,11 +89,11 @@ func NewWith2[A any, B any](w *ecs.World, entity ecs.Entity, a *A, b *B) (ecs.En
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith3[A any, B any, C any](w *ecs.World, entity ecs.Entity, a *A, b *B, c *C) (ecs.Entity, *A, *B, *C) {
+func NewWith3[A any, B any, C any](w *ecs.World, a *A, b *B, c *C) (ecs.Entity, *A, *B, *C) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
-	entity = w.NewEntityWith(ecs.Component{ID: idA, Component: a}, ecs.Component{ID: idB, Component: b}, ecs.Component{ID: idC, Component: c})
+	entity := w.NewEntityWith(ecs.Component{ID: idA, Component: a}, ecs.Component{ID: idB, Component: b}, ecs.Component{ID: idC, Component: c})
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC))
 }
 
@@ -101,12 +101,12 @@ func NewWith3[A any, B any, C any](w *ecs.World, entity ecs.Entity, a *A, b *B, 
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith4[A any, B any, C any, D any](w *ecs.World, entity ecs.Entity, a *A, b *B, c *C, d *D) (ecs.Entity, *A, *B, *C, *D) {
+func NewWith4[A any, B any, C any, D any](w *ecs.World, a *A, b *B, c *C, d *D) (ecs.Entity, *A, *B, *C, *D) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
 	idD := ecs.ComponentID[D](w)
-	entity = w.NewEntityWith(ecs.Component{ID: idA, Component: a}, ecs.Component{ID: idB, Component: b}, ecs.Component{ID: idC, Component: c}, ecs.Component{ID: idD, Component: d})
+	entity := w.NewEntityWith(ecs.Component{ID: idA, Component: a}, ecs.Component{ID: idB, Component: b}, ecs.Component{ID: idC, Component: c}, ecs.Component{ID: idD, Component: d})
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD))
 }
 
@@ -114,13 +114,13 @@ func NewWith4[A any, B any, C any, D any](w *ecs.World, entity ecs.Entity, a *A,
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith5[A any, B any, C any, D any, E any](w *ecs.World, entity ecs.Entity, a *A, b *B, c *C, d *D, e *E) (ecs.Entity, *A, *B, *C, *D, *E) {
+func NewWith5[A any, B any, C any, D any, E any](w *ecs.World, a *A, b *B, c *C, d *D, e *E) (ecs.Entity, *A, *B, *C, *D, *E) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
 	idD := ecs.ComponentID[D](w)
 	idE := ecs.ComponentID[E](w)
-	entity = w.NewEntityWith(ecs.Component{ID: idA, Component: a}, ecs.Component{ID: idB, Component: b}, ecs.Component{ID: idC, Component: c}, ecs.Component{ID: idD, Component: d}, ecs.Component{ID: idE, Component: e})
+	entity := w.NewEntityWith(ecs.Component{ID: idA, Component: a}, ecs.Component{ID: idB, Component: b}, ecs.Component{ID: idC, Component: c}, ecs.Component{ID: idD, Component: d}, ecs.Component{ID: idE, Component: e})
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD)), (*E)(w.Get(entity, idE))
 }
 
