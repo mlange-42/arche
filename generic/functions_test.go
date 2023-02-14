@@ -169,8 +169,8 @@ func TestGenericNewEntity(t *testing.T) {
 	id2 := ecs.ComponentID[testStruct2](&w)
 
 	e0 := w.NewEntity()
-	e1, _, _, _ := New3[testStruct0, testStruct1, testStruct2](&w)
-	e2, _, _, _ := NewWith3(&w, &testStruct0{1}, &testStruct1{2}, &testStruct2{3, 4})
+	e1, _, _, _ := NewEntity3[testStruct0, testStruct1, testStruct2](&w)
+	e2, _, _, _ := NewEntityWith3(&w, &testStruct0{1}, &testStruct1{2}, &testStruct2{3, 4})
 	e3 := w.NewEntityWith()
 
 	assert.Equal(t, ecs.NewBitMask(), w.Mask(e0))
@@ -192,7 +192,7 @@ func TestGenericNewEntity(t *testing.T) {
 	w.RemEntity(e3)
 
 	for i := 0; i < 35; i++ {
-		e, _, _, _ := NewWith3(&w,
+		e, _, _, _ := NewEntityWith3(&w,
 			&testStruct0{int8(i + 1)},
 			&testStruct1{int32(i + 2)},
 			&testStruct2{int32(i + 3), int32(i + 4)},
@@ -206,4 +206,52 @@ func TestGenericNewEntity(t *testing.T) {
 		assert.Equal(t, &testStruct1{int32(i + 2)}, s1)
 		assert.Equal(t, &testStruct2{int32(i + 3), int32(i + 4)}, s2)
 	}
+}
+
+func TestGenericNewEntityAll(t *testing.T) {
+	w := ecs.NewWorld()
+
+	e, _ := NewEntity1[testStruct0](&w)
+	Remove1[testStruct0](&w, e)
+	w.Remove(e)
+
+	e, _, _ = NewEntity2[testStruct0, testStruct1](&w)
+	Remove2[testStruct0, testStruct1](&w, e)
+	w.Remove(e)
+
+	e, _, _, _ = NewEntity3[testStruct0, testStruct1, testStruct2](&w)
+	Remove3[testStruct0, testStruct1, testStruct2](&w, e)
+	w.Remove(e)
+
+	e, _, _, _, _ = NewEntity4[testStruct0, testStruct1, testStruct2, testStruct3](&w)
+	Remove4[testStruct0, testStruct1, testStruct2, testStruct3](&w, e)
+	w.Remove(e)
+
+	e, _, _, _, _, _ = NewEntity5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4](&w)
+	Remove5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4](&w, e)
+	w.Remove(e)
+}
+
+func TestGenericNewEntityWithAll(t *testing.T) {
+	w := ecs.NewWorld()
+
+	e, _ := NewEntityWith1(&w, &testStruct0{})
+	Remove1[testStruct0](&w, e)
+	w.Remove(e)
+
+	e, _, _ = NewEntityWith2(&w, &testStruct0{}, &testStruct1{})
+	Remove2[testStruct0, testStruct1](&w, e)
+	w.Remove(e)
+
+	e, _, _, _ = NewEntityWith3(&w, &testStruct0{}, &testStruct1{}, &testStruct2{})
+	Remove3[testStruct0, testStruct1, testStruct2](&w, e)
+	w.Remove(e)
+
+	e, _, _, _, _ = NewEntityWith4(&w, &testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{})
+	Remove4[testStruct0, testStruct1, testStruct2, testStruct3](&w, e)
+	w.Remove(e)
+
+	e, _, _, _, _, _ = NewEntityWith5(&w, &testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{}, &testStruct4{})
+	Remove5[testStruct0, testStruct1, testStruct2, testStruct3, testStruct4](&w, e)
+	w.Remove(e)
 }

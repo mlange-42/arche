@@ -4,32 +4,32 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-// New1 creates a new entity with two component types.
+// NewEntity1 creates a new entity with two component types.
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func New1[A any](w *ecs.World) (ecs.Entity, *A) {
+func NewEntity1[A any](w *ecs.World) (ecs.Entity, *A) {
 	idA := ecs.ComponentID[A](w)
 	entity := w.NewEntity(idA)
 	return entity, (*A)(w.Get(entity, idA))
 }
 
-// New2 creates a new entity with two component types.
+// NewEntity2 creates a new entity with two component types.
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func New2[A any, B any](w *ecs.World) (ecs.Entity, *A, *B) {
+func NewEntity2[A any, B any](w *ecs.World) (ecs.Entity, *A, *B) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	entity := w.NewEntity(idA, idB)
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB))
 }
 
-// New3 creates a new entity with three component types.
+// NewEntity3 creates a new entity with three component types.
 // Returns the entity and the new components.
 //
 // See also and [ecs.World.NewEntity].
-func New3[A any, B any, C any](w *ecs.World) (ecs.Entity, *A, *B, *C) {
+func NewEntity3[A any, B any, C any](w *ecs.World) (ecs.Entity, *A, *B, *C) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
@@ -37,11 +37,11 @@ func New3[A any, B any, C any](w *ecs.World) (ecs.Entity, *A, *B, *C) {
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC))
 }
 
-// New4 creates a new entity with four component types.
+// NewEntity4 creates a new entity with four component types.
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func New4[A any, B any, C any, D any](w *ecs.World) (ecs.Entity, *A, *B, *C, *D) {
+func NewEntity4[A any, B any, C any, D any](w *ecs.World) (ecs.Entity, *A, *B, *C, *D) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
@@ -50,11 +50,11 @@ func New4[A any, B any, C any, D any](w *ecs.World) (ecs.Entity, *A, *B, *C, *D)
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD))
 }
 
-// New5 creates a new entity with five component types.
+// NewEntity5 creates a new entity with five component types.
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func New5[A any, B any, C any, D any, E any](w *ecs.World) (ecs.Entity, *A, *B, *C, *D, *E) {
+func NewEntity5[A any, B any, C any, D any, E any](w *ecs.World) (ecs.Entity, *A, *B, *C, *D, *E) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
@@ -64,32 +64,32 @@ func New5[A any, B any, C any, D any, E any](w *ecs.World) (ecs.Entity, *A, *B, 
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD)), (*E)(w.Get(entity, idE))
 }
 
-// NewWith1 creates a new entity with one component, taken from a pointer.
+// NewEntityWith1 creates a new entity with one component, taken from a pointer.
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith1[A any](w *ecs.World, a *A) (ecs.Entity, *A) {
+func NewEntityWith1[A any](w *ecs.World, a *A) (ecs.Entity, *A) {
 	idA := ecs.ComponentID[A](w)
 	entity := w.NewEntityWith(ecs.Component{ID: idA, Component: a})
 	return entity, (*A)(w.Get(entity, idA))
 }
 
-// NewWith2 creates a new entity with two components, taken from pointers.
+// NewEntityWith2 creates a new entity with two components, taken from pointers.
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith2[A any, B any](w *ecs.World, a *A, b *B) (ecs.Entity, *A, *B) {
+func NewEntityWith2[A any, B any](w *ecs.World, a *A, b *B) (ecs.Entity, *A, *B) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	entity := w.NewEntityWith(ecs.Component{ID: idA, Component: a}, ecs.Component{ID: idB, Component: b})
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB))
 }
 
-// NewWith3 creates a new entity with three components, taken from pointers.
+// NewEntityWith3 creates a new entity with three components, taken from pointers.
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith3[A any, B any, C any](w *ecs.World, a *A, b *B, c *C) (ecs.Entity, *A, *B, *C) {
+func NewEntityWith3[A any, B any, C any](w *ecs.World, a *A, b *B, c *C) (ecs.Entity, *A, *B, *C) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
@@ -97,11 +97,11 @@ func NewWith3[A any, B any, C any](w *ecs.World, a *A, b *B, c *C) (ecs.Entity, 
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC))
 }
 
-// NewWith4 creates a new entity with four components, taken from pointers.
+// NewEntityWith4 creates a new entity with four components, taken from pointers.
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith4[A any, B any, C any, D any](w *ecs.World, a *A, b *B, c *C, d *D) (ecs.Entity, *A, *B, *C, *D) {
+func NewEntityWith4[A any, B any, C any, D any](w *ecs.World, a *A, b *B, c *C, d *D) (ecs.Entity, *A, *B, *C, *D) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
@@ -110,11 +110,11 @@ func NewWith4[A any, B any, C any, D any](w *ecs.World, a *A, b *B, c *C, d *D) 
 	return entity, (*A)(w.Get(entity, idA)), (*B)(w.Get(entity, idB)), (*C)(w.Get(entity, idC)), (*D)(w.Get(entity, idD))
 }
 
-// NewWith5 creates a new entity with five components, taken from pointers.
+// NewEntityWith5 creates a new entity with five components, taken from pointers.
 // Returns the entity and the new components.
 //
 // See also [ecs.World.NewEntity].
-func NewWith5[A any, B any, C any, D any, E any](w *ecs.World, a *A, b *B, c *C, d *D, e *E) (ecs.Entity, *A, *B, *C, *D, *E) {
+func NewEntityWith5[A any, B any, C any, D any, E any](w *ecs.World, a *A, b *B, c *C, d *D, e *E) (ecs.Entity, *A, *B, *C, *D, *E) {
 	idA := ecs.ComponentID[A](w)
 	idB := ecs.ComponentID[B](w)
 	idC := ecs.ComponentID[C](w)
