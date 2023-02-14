@@ -66,22 +66,17 @@ func main() {
 
 	// Create entities.
 	for i := 0; i < 1000; i++ {
-		// Create a new Entity.
-		entity := world.NewEntity()
-		// Add components to it.
-		pos, vel := generic.Add2[Position, Velocity](&world, entity)
+		// Create a new Entity with components.
+		_, pos, vel := generic.NewEntity2[Position, Velocity](&world)
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
 		pos.Y = rand.Float64() * 100
-
 		vel.X = rand.NormFloat64()
 		vel.Y = rand.NormFloat64()
 	}
 
 	// Create a generic filter.
-	// Generic filter support up to 8 components.
-	// For more components, use World.Query().
 	filter := generic.NewFilter2[Position, Velocity]()
 
 	// Time loop.
@@ -99,6 +94,41 @@ func main() {
 	}
 }
 ```
+
+## Design decisions
+
+Unlike most other ECS implementations, *Arche* is designed for the development of scientific,
+individual-based models rather than for game development.
+This motivates some design decisions, with a focus on simplicity, safety and performance.
+
+### Minimal core API
+
+The `ecs.World` object is a pure and minimal ECS implementation in the sense of a data store
+for entities and components, with query and iteration capabilities.
+There is neither an update loop nor systems.
+These should be implemented by the user.
+
+The packages `filter` and `generic` provide a layer around the core for richer and/or safer queries and operations. They are built on top of the `ecs` package, so they could also be implemented by users.
+
+### Determinism
+
+Iteration order in *Arche* is deterministic and reproducible.
+This does not mean that entities are iterated in their order of insertion, nor in the same order in successive iterations.
+However, given the same operations on the `ecs.World`, iteration order will always be the same.
+
+### Strict and panic
+
+*Arche* puts an emphasis on safety and on avoiding undefined behavior.
+It panics on unexpected operations, like removing a dead entity,
+adding a component that is already present, or attempting to change a locked world.
+This may seem not idiomatic for Go.
+However, explicit error handling in performance hotspots is not an option.
+Neither is silent failure, given the scientific background.
+
+### Other limitations
+
+* The number of component types per `World` is limited to 128. This is mainly a performance decision.
+* The number of entities alive at any one time is limited to just under 5 billion (`uint32` ID).
 
 ## Architecture
 
