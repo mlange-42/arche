@@ -75,5 +75,6 @@ jobs:
       - name: Test
         run: |
           go run ./examples/base
-          go run ./examples/generic
           go run ./examples/filter
+          go run ./examples/generic
+          go run ./examples/readme
