@@ -10,8 +10,8 @@ const wordSize = 64
 
 // BitMask is a 128 bit bitmask.
 type BitMask struct {
-	lo uint64
-	hi uint64
+	Lo uint64
+	Hi uint64
 }
 
 // NewBitMask creates a new bitmask from a list of IDs.
@@ -31,10 +31,10 @@ func NewBitMask(ids ...ID) BitMask {
 func (b BitMask) Get(bit ID) bool {
 	if bit < wordSize {
 		mask := uint64(1 << bit)
-		return b.lo&mask == mask
+		return b.Lo&mask == mask
 	}
 	mask := uint64(1 << (bit - wordSize))
-	return b.hi&mask == mask
+	return b.Hi&mask == mask
 }
 
 // Set sets the state of bit index to true or false.
@@ -43,40 +43,40 @@ func (b BitMask) Get(bit ID) bool {
 func (b *BitMask) Set(bit ID, value bool) {
 	if bit < wordSize {
 		if value {
-			b.lo |= uint64(1 << bit)
+			b.Lo |= uint64(1 << bit)
 		} else {
-			b.lo &= uint64(^(1 << bit))
+			b.Lo &= uint64(^(1 << bit))
 		}
 	}
 	if value {
-		b.hi |= uint64(1 << (bit - wordSize))
+		b.Hi |= uint64(1 << (bit - wordSize))
 	} else {
-		b.hi &= uint64(^(1 << (bit - wordSize)))
+		b.Hi &= uint64(^(1 << (bit - wordSize)))
 	}
 }
 
 // IsZero returns whether no bits are set in the bitmask.
 func (b BitMask) IsZero() bool {
-	return b.lo == 0 && b.hi == 0
+	return b.Lo == 0 && b.Hi == 0
 }
 
 // Reset changes the state of all bits to false.
 func (b *BitMask) Reset() {
-	b.lo = 0
-	b.hi = 0
+	b.Lo = 0
+	b.Hi = 0
 }
 
 // Contains reports if other mask is a subset of this mask.
 func (b BitMask) Contains(other BitMask) bool {
-	return b.lo&other.lo == other.lo && b.hi&other.hi == other.hi
+	return b.Lo&other.Lo == other.Lo && b.Hi&other.Hi == other.Hi
 }
 
 // ContainsAny reports if any bit of other mask is a subset of this mask.
 func (b BitMask) ContainsAny(other BitMask) bool {
-	return b.lo&other.lo != 0 || b.hi&other.hi != 0
+	return b.Lo&other.Lo != 0 || b.Hi&other.Hi != 0
 }
 
 // TotalBitsSet returns how many bits are set in this mask.
 func (b BitMask) TotalBitsSet() int {
-	return bits.OnesCount64(uint64(b.hi)) + bits.OnesCount64(uint64(b.lo))
+	return bits.OnesCount64(b.Hi) + bits.OnesCount64(b.Lo)
 }
