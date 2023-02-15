@@ -6,14 +6,6 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-// Comp is an alias for component types.
-type Comp reflect.Type
-
-// T provides a component type from a generic type argument.
-func T[A any]() Comp {
-	return Comp(typeOf[A]())
-}
-
 func typeOf[T any]() Comp {
 	return reflect.TypeOf((*T)(nil)).Elem()
 }

@@ -56,15 +56,24 @@ func generateMutates() {
 		panic(err)
 	}
 
-	for i := 1; i <= maxIndex; i++ {
+	for i := 0; i <= maxIndex; i++ {
+		types := ""
+		returnTypes := ""
+		fullTypes := ""
 		returnAll := ""
+		include := ""
 		components := ""
 		arguments := ""
 
-		types := "[" + strings.Join(typeLetters[:i], ", ") + "]"
-		returnTypes := "*" + strings.Join(typeLetters[:i], ", *")
-		fullTypes := "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-		include := "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](w), ecs.ComponentID[") + "](w)}"
+		if i > 0 {
+			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
+			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
+			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
+			include = "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](w), ecs.ComponentID[") + "](w)}"
+		} else {
+			include = "[]ecs.ID{}"
+		}
+
 		for j := 0; j < i; j++ {
 			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.ids[%d]))", typeLetters[j], j)
 			arguments += fmt.Sprintf("%s *%s", strings.ToLower(typeLetters[j]), typeLetters[j])

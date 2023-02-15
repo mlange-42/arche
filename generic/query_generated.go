@@ -25,17 +25,6 @@ func NewFilter0() *Filter0 {
 	}
 }
 
-// Optional makes some of the query's components optional.
-//
-// Create the required mask items with [T].
-//
-// Only affects component types that were specified in the query.
-func (q *Filter0) Optional(mask ...Comp) *Filter0 {
-	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
-	return q
-}
-
 // With adds more required components that are not accessible using Get... methods.
 //
 // Create the required mask items with [T].

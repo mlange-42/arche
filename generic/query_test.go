@@ -92,7 +92,6 @@ func TestQuery0(t *testing.T) {
 	cnt := 0
 	filter :=
 		NewFilter0().
-			Optional(T[testStruct1]()).
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 

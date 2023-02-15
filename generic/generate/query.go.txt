@@ -18,6 +18,7 @@ func NewFilter{{ .Index }}{{ .TypesFull }}() *Filter{{ .Index }}{{ .Types }} {
 	}
 }
 
+{{if .Types}}
 // Optional makes some of the query's components optional.
 //
 // Create the required mask items with [T].
@@ -28,6 +29,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask ...Comp) *Filter{{ .Index
 	q.compiled.Reset()
 	return q
 }
+{{ end }}
 
 // With adds more required components that are not accessible using Get... methods.
 //
