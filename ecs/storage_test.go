@@ -123,6 +123,29 @@ func TestStoragePointer(t *testing.T) {
 	assert.Equal(t, 10, s.Index)
 }
 
+func TestStorageZeroSize(t *testing.T) {
+	a := storage{}
+	a.Init(reflect.TypeOf(label{}), 32)
+	a.Add(&label{})
+	a.Add(&label{})
+	s := (*label)(a.Get(0))
+	assert.NotNil(t, s)
+	s = (*label)(a.Get(1))
+	assert.NotNil(t, s)
+
+	b := storage{}
+	b.Init(reflect.TypeOf(label{}), 32)
+
+	ptr := a.Get(0)
+	b.AddPointer(ptr)
+	ptr = a.Get(1)
+	b.AddPointer(ptr)
+	s = (*label)(b.Get(0))
+	assert.NotNil(t, s)
+	s = (*label)(a.Get(1))
+	assert.NotNil(t, s)
+}
+
 func BenchmarkIterStorage_1000(b *testing.B) {
 	b.StopTimer()
 	ref := testStruct{}

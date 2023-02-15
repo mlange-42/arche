@@ -22,9 +22,6 @@ func (s *storage) Init(tp reflect.Type, increment int) {
 	size := tp.Size()
 	align := uintptr(tp.Align())
 	size = (size + (align - 1)) / align * align
-	if size == 0 {
-		size = align
-	}
 
 	s.buffer = reflect.New(reflect.ArrayOf(1, tp)).Elem()
 	s.bufferAddress = s.buffer.Addr().UnsafePointer()
@@ -66,7 +63,7 @@ func (s *storage) Alloc() (index uint32) {
 }
 
 func (s *storage) extend() {
-	if s.cap < s.len+1 {
+	if s.itemSize > 0 && s.cap < s.len+1 {
 		old := s.buffer
 		s.cap = s.capacityIncrement * ((s.cap + s.capacityIncrement) / s.capacityIncrement)
 		s.buffer = reflect.New(reflect.ArrayOf(int(s.cap), s.typeOf)).Elem()
@@ -81,7 +78,7 @@ func (s *storage) Remove(index uint32) bool {
 	n := index
 
 	// TODO shrink the underlying data arrays
-	if n < o {
+	if s.itemSize > 0 && n < o {
 		size := s.itemSize
 
 		src := unsafe.Add(s.bufferAddress, uintptr(o)*s.itemSize)
@@ -104,6 +101,11 @@ func (s *storage) Remove(index uint32) bool {
 func (s *storage) Set(index uint32, value interface{}) unsafe.Pointer {
 	rValue := reflect.ValueOf(value)
 	dst := s.Get(index)
+
+	if s.itemSize == 0 {
+		return dst
+	}
+
 	var src unsafe.Pointer
 	size := s.itemSize
 
@@ -117,6 +119,10 @@ func (s *storage) Set(index uint32, value interface{}) unsafe.Pointer {
 }
 
 func (s *storage) setPointer(index uint32, value unsafe.Pointer) {
+	if s.itemSize == 0 {
+		return
+	}
+
 	dst := s.Get(index)
 	size := s.itemSize
 
@@ -128,6 +134,10 @@ func (s *storage) setPointer(index uint32, value unsafe.Pointer) {
 
 // Zero resets a block of storage
 func (s *storage) Zero(index uint32) {
+	if s.itemSize == 0 {
+		return
+	}
+
 	dst := s.Get(index)
 
 	for i := uintptr(0); i < s.itemSize; i++ {
