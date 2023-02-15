@@ -22,11 +22,54 @@ func NewMap1[A any](w *ecs.World) Map1[A] {
 	}
 }
 
-// Get all the Map1's components to the given entity.
+// Get all the Map1's components for the given entity.
 //
 // See also [ecs.World.Get].
 func (m *Map1[A]) Get(entity ecs.Entity) *A {
 	return (*A)(m.world.Get(entity, m.ids[0]))
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate1's components.
+//
+// See also [ecs.World.NewEntity].
+func (m *Map1[A]) NewEntity() (ecs.Entity, *A) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity, (*A)(m.world.Get(entity, m.ids[0]))
+}
+
+// NewEntityWith creates a new [ecs.Entity] with the Map1's components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map1[A]) NewEntityWith(a *A) (ecs.Entity, *A) {
+	entity := m.world.NewEntityWith(
+		ecs.Component{ID: m.ids[0], Component: a},
+	)
+	return entity, (*A)(m.world.Get(entity, m.ids[0]))
+}
+
+// Add the Map1's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map1[A]) Add(entity ecs.Entity) *A {
+	m.world.Add(entity, m.ids...)
+	return (*A)(m.world.Get(entity, m.ids[0]))
+}
+
+// Assign the Map1's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
+func (m *Map1[A]) Assign(entity ecs.Entity, a *A) *A {
+	m.world.AssignN(entity,
+		ecs.Component{ID: m.ids[0], Component: a},
+	)
+	return (*A)(m.world.Get(entity, m.ids[0]))
+}
+
+// Remove the components set via [Map1.WithRemove] from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map1[A]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -45,11 +88,56 @@ func NewMap2[A any, B any](w *ecs.World) Map2[A, B] {
 	}
 }
 
-// Get all the Map2's components to the given entity.
+// Get all the Map2's components for the given entity.
 //
 // See also [ecs.World.Get].
 func (m *Map2[A, B]) Get(entity ecs.Entity) (*A, *B) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate2's components.
+//
+// See also [ecs.World.NewEntity].
+func (m *Map2[A, B]) NewEntity() (ecs.Entity, *A, *B) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
+}
+
+// NewEntityWith creates a new [ecs.Entity] with the Map2's components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map2[A, B]) NewEntityWith(a *A, b *B) (ecs.Entity, *A, *B) {
+	entity := m.world.NewEntityWith(
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+	)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
+}
+
+// Add the Map2's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map2[A, B]) Add(entity ecs.Entity) (*A, *B) {
+	m.world.Add(entity, m.ids...)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
+}
+
+// Assign the Map2's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
+func (m *Map2[A, B]) Assign(entity ecs.Entity, a *A, b *B) (*A, *B) {
+	m.world.AssignN(entity,
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+	)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
+}
+
+// Remove the components set via [Map2.WithRemove] from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map2[A, B]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -68,11 +156,58 @@ func NewMap3[A any, B any, C any](w *ecs.World) Map3[A, B, C] {
 	}
 }
 
-// Get all the Map3's components to the given entity.
+// Get all the Map3's components for the given entity.
 //
 // See also [ecs.World.Get].
 func (m *Map3[A, B, C]) Get(entity ecs.Entity) (*A, *B, *C) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate3's components.
+//
+// See also [ecs.World.NewEntity].
+func (m *Map3[A, B, C]) NewEntity() (ecs.Entity, *A, *B, *C) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
+}
+
+// NewEntityWith creates a new [ecs.Entity] with the Map3's components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map3[A, B, C]) NewEntityWith(a *A, b *B, c *C) (ecs.Entity, *A, *B, *C) {
+	entity := m.world.NewEntityWith(
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+	)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
+}
+
+// Add the Map3's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map3[A, B, C]) Add(entity ecs.Entity) (*A, *B, *C) {
+	m.world.Add(entity, m.ids...)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
+}
+
+// Assign the Map3's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
+func (m *Map3[A, B, C]) Assign(entity ecs.Entity, a *A, b *B, c *C) (*A, *B, *C) {
+	m.world.AssignN(entity,
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+	)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
+}
+
+// Remove the components set via [Map3.WithRemove] from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -91,11 +226,60 @@ func NewMap4[A any, B any, C any, D any](w *ecs.World) Map4[A, B, C, D] {
 	}
 }
 
-// Get all the Map4's components to the given entity.
+// Get all the Map4's components for the given entity.
 //
 // See also [ecs.World.Get].
 func (m *Map4[A, B, C, D]) Get(entity ecs.Entity) (*A, *B, *C, *D) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate4's components.
+//
+// See also [ecs.World.NewEntity].
+func (m *Map4[A, B, C, D]) NewEntity() (ecs.Entity, *A, *B, *C, *D) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
+}
+
+// NewEntityWith creates a new [ecs.Entity] with the Map4's components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map4[A, B, C, D]) NewEntityWith(a *A, b *B, c *C, d *D) (ecs.Entity, *A, *B, *C, *D) {
+	entity := m.world.NewEntityWith(
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+	)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
+}
+
+// Add the Map4's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map4[A, B, C, D]) Add(entity ecs.Entity) (*A, *B, *C, *D) {
+	m.world.Add(entity, m.ids...)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
+}
+
+// Assign the Map4's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
+func (m *Map4[A, B, C, D]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D) (*A, *B, *C, *D) {
+	m.world.AssignN(entity,
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+	)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
+}
+
+// Remove the components set via [Map4.WithRemove] from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -114,11 +298,62 @@ func NewMap5[A any, B any, C any, D any, E any](w *ecs.World) Map5[A, B, C, D, E
 	}
 }
 
-// Get all the Map5's components to the given entity.
+// Get all the Map5's components for the given entity.
 //
 // See also [ecs.World.Get].
 func (m *Map5[A, B, C, D, E]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate5's components.
+//
+// See also [ecs.World.NewEntity].
+func (m *Map5[A, B, C, D, E]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
+}
+
+// NewEntityWith creates a new [ecs.Entity] with the Map5's components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map5[A, B, C, D, E]) NewEntityWith(a *A, b *B, c *C, d *D, e *E) (ecs.Entity, *A, *B, *C, *D, *E) {
+	entity := m.world.NewEntityWith(
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+		ecs.Component{ID: m.ids[4], Component: e},
+	)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
+}
+
+// Add the Map5's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map5[A, B, C, D, E]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E) {
+	m.world.Add(entity, m.ids...)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
+}
+
+// Assign the Map5's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
+func (m *Map5[A, B, C, D, E]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E) (*A, *B, *C, *D, *E) {
+	m.world.AssignN(entity,
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+		ecs.Component{ID: m.ids[4], Component: e},
+	)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
+}
+
+// Remove the components set via [Map5.WithRemove] from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -137,11 +372,64 @@ func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World) Map6[A, B, 
 	}
 }
 
-// Get all the Map6's components to the given entity.
+// Get all the Map6's components for the given entity.
 //
 // See also [ecs.World.Get].
 func (m *Map6[A, B, C, D, E, F]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate6's components.
+//
+// See also [ecs.World.NewEntity].
+func (m *Map6[A, B, C, D, E, F]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
+}
+
+// NewEntityWith creates a new [ecs.Entity] with the Map6's components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map6[A, B, C, D, E, F]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F) (ecs.Entity, *A, *B, *C, *D, *E, *F) {
+	entity := m.world.NewEntityWith(
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+		ecs.Component{ID: m.ids[4], Component: e},
+		ecs.Component{ID: m.ids[5], Component: f},
+	)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
+}
+
+// Add the Map6's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map6[A, B, C, D, E, F]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E, *F) {
+	m.world.Add(entity, m.ids...)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
+}
+
+// Assign the Map6's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
+func (m *Map6[A, B, C, D, E, F]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F) (*A, *B, *C, *D, *E, *F) {
+	m.world.AssignN(entity,
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+		ecs.Component{ID: m.ids[4], Component: e},
+		ecs.Component{ID: m.ids[5], Component: f},
+	)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
+}
+
+// Remove the components set via [Map6.WithRemove] from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -160,11 +448,66 @@ func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Map7
 	}
 }
 
-// Get all the Map7's components to the given entity.
+// Get all the Map7's components for the given entity.
 //
 // See also [ecs.World.Get].
 func (m *Map7[A, B, C, D, E, F, G]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate7's components.
+//
+// See also [ecs.World.NewEntity].
+func (m *Map7[A, B, C, D, E, F, G]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
+}
+
+// NewEntityWith creates a new [ecs.Entity] with the Map7's components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map7[A, B, C, D, E, F, G]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G) (ecs.Entity, *A, *B, *C, *D, *E, *F, *G) {
+	entity := m.world.NewEntityWith(
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+		ecs.Component{ID: m.ids[4], Component: e},
+		ecs.Component{ID: m.ids[5], Component: f},
+		ecs.Component{ID: m.ids[6], Component: g},
+	)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
+}
+
+// Add the Map7's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map7[A, B, C, D, E, F, G]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G) {
+	m.world.Add(entity, m.ids...)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
+}
+
+// Assign the Map7's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
+func (m *Map7[A, B, C, D, E, F, G]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G) (*A, *B, *C, *D, *E, *F, *G) {
+	m.world.AssignN(entity,
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+		ecs.Component{ID: m.ids[4], Component: e},
+		ecs.Component{ID: m.ids[5], Component: f},
+		ecs.Component{ID: m.ids[6], Component: g},
+	)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
+}
+
+// Remove the components set via [Map7.WithRemove] from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -183,9 +526,66 @@ func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.Worl
 	}
 }
 
-// Get all the Map8's components to the given entity.
+// Get all the Map8's components for the given entity.
 //
 // See also [ecs.World.Get].
 func (m *Map8[A, B, C, D, E, F, G, H]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate8's components.
+//
+// See also [ecs.World.NewEntity].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G, *H) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
+}
+
+// NewEntityWith creates a new [ecs.Entity] with the Map8's components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) (ecs.Entity, *A, *B, *C, *D, *E, *F, *G, *H) {
+	entity := m.world.NewEntityWith(
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+		ecs.Component{ID: m.ids[4], Component: e},
+		ecs.Component{ID: m.ids[5], Component: f},
+		ecs.Component{ID: m.ids[6], Component: g},
+		ecs.Component{ID: m.ids[7], Component: h},
+	)
+	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
+}
+
+// Add the Map8's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map8[A, B, C, D, E, F, G, H]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H) {
+	m.world.Add(entity, m.ids...)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
+}
+
+// Assign the Map8's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
+func (m *Map8[A, B, C, D, E, F, G, H]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) (*A, *B, *C, *D, *E, *F, *G, *H) {
+	m.world.AssignN(entity,
+		ecs.Component{ID: m.ids[0], Component: a},
+		ecs.Component{ID: m.ids[1], Component: b},
+		ecs.Component{ID: m.ids[2], Component: c},
+		ecs.Component{ID: m.ids[3], Component: d},
+		ecs.Component{ID: m.ids[4], Component: e},
+		ecs.Component{ID: m.ids[5], Component: f},
+		ecs.Component{ID: m.ids[6], Component: g},
+		ecs.Component{ID: m.ids[7], Component: h},
+	)
+	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
+}
+
+// Remove the components set via [Map8.WithRemove] from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
 }

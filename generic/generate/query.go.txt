@@ -69,7 +69,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskPair {
 
 // Query{{ .Index }} is a generic query iterator for {{ .NumberStr }} components.
 //
-// Create one with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query]
+// Create it with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query]
 type Query{{ .Index }}{{ .TypesFull }} struct {
 	ecs.Query
 	ids []ecs.ID
