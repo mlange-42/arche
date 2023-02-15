@@ -42,7 +42,7 @@ func generateMutates() {
 	maxIndex := len(typeLetters)
 	text := bytes.Buffer{}
 
-	header, err := template.ParseFiles("./generate/mutate_header.gotxt")
+	header, err := template.ParseFiles("./generate/mutate_header.go.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -51,7 +51,7 @@ func generateMutates() {
 		panic(err)
 	}
 
-	mutate, err := template.ParseFiles("./generate/mutate.gotxt")
+	mutate, err := template.ParseFiles("./generate/mutate.go.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -104,7 +104,7 @@ func generateQueries() {
 
 	text := bytes.Buffer{}
 
-	header, err := template.ParseFiles("./generate/query_header.gotxt")
+	header, err := template.ParseFiles("./generate/query_header.go.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -113,15 +113,15 @@ func generateQueries() {
 		panic(err)
 	}
 
-	filters, err := template.ParseFiles("./generate/query.gotxt")
+	filters, err := template.ParseFiles("./generate/query.go.txt")
 	if err != nil {
 		panic(err)
 	}
-	queryGetAll, err := template.ParseFiles("./generate/query_getall.gotxt")
+	queryGetAll, err := template.ParseFiles("./generate/query_getall.go.txt")
 	if err != nil {
 		panic(err)
 	}
-	queryGet, err := template.ParseFiles("./generate/query_get.gotxt")
+	queryGet, err := template.ParseFiles("./generate/query_get.go.txt")
 	if err != nil {
 		panic(err)
 	}
