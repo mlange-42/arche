@@ -15,7 +15,7 @@ func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }
 	}
 }
 
-// Get all the Map{{ .Index }}'s components to the given entity.
+// Get all the Map{{ .Index }}'s components for the given entity.
 //
 // See also [ecs.World.Get].
 func (m *Map{{ .Index }}{{ .Types }}) Get(entity ecs.Entity) ({{ .TypesReturn }}) {
