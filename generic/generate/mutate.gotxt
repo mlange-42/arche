@@ -1,0 +1,52 @@
+
+//////////////////////////////////////////////////////////////////////////
+
+// Mutate{{ .Index }} is a helper for mutating {{ .NumberStr }} components.
+//
+// It can be used to create entities ([Mutate{{ .Index }}.NewEntity] and [Mutate{{ .Index }}.NewEntityWith]),
+// and to add or remove components ([Mutate{{ .Index }}.Add], [Mutate{{ .Index }}.Assign] and [Mutate{{ .Index }}.Remove]).
+type Mutate{{ .Index }}{{ .TypesFull }} struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
+
+// NewMutate{{ .Index }} creates a new Mutate{{ .Index }} object.
+func NewMutate{{ .Index }}{{ .TypesFull }}(w *ecs.World) Mutate{{ .Index }}{{ .Types }} {
+	return Mutate{{ .Index }}{{ .Types }}{
+		ids:   {{ .Include }},
+		world: w,
+	}
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate{{ .Index }}'s components.
+func (m *Mutate{{ .Index }}{{ .Types }}) NewEntity() (ecs.Entity, {{ .TypesReturn }}) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity, {{ .ReturnAll }}
+}
+
+// NewEntityWith creates a new [ecs.Entity] with the Mutate{{ .Index }}'s components, using the supplied values.
+func (m *Mutate{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) (ecs.Entity, {{ .TypesReturn }}) {
+	entity := m.world.NewEntityWith(
+		{{ .Components }}
+	)
+	return entity, {{ .ReturnAll }}
+}
+
+// Add the Mutate{{ .Index }}'s components to the given entity.
+func (m *Mutate{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) ({{ .TypesReturn }}) {
+	m.world.Add(entity, m.ids...)
+	return {{ .ReturnAll }}
+}
+
+// Assign the Mutate{{ .Index }}'s components to the given entity, using the supplied values.
+func (m *Mutate{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) ({{ .TypesReturn }}) {
+	m.world.AssignN(entity,
+		{{ .Components }}
+	)
+	return {{ .ReturnAll }}
+}
+
+// Remove the Mutate{{ .Index }}'s components from the given entity.
+func (m *Mutate{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
+}

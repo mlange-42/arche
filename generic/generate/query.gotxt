@@ -1,7 +1,7 @@
 
 //////////////////////////////////////////////////////////////////////////
 
-// Filter{{ .Index }} builds a [Query{{ .Index }}] query
+// Filter{{ .Index }} is a helper for building [Query{{ .Index }}] query iterators.
 type Filter{{ .Index }}{{ .TypesFull }} struct {
 	include  []reflect.Type
 	optional []reflect.Type
@@ -9,12 +9,12 @@ type Filter{{ .Index }}{{ .TypesFull }} struct {
 	compiled compiledQuery
 }
 
-// NewQuery{{ .Index }} creates a generic filter for two components.
+// NewFilter{{ .Index }} creates a generic Filter{{ .Index }} for {{ .NumberStr }} components.
 //
 // See also [ecs.World.Query].
 func NewFilter{{ .Index }}{{ .TypesFull }}() *Filter{{ .Index }}{{ .Types }} {
 	return &Filter{{ .Index }}{{ .Types }}{
-		{{ .Include }}
+		include: {{ .Include }},
 	}
 }
 
@@ -65,7 +65,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskPair {
 	return q.compiled.Filter()
 }
 
-// Query{{ .Index }} is a generic query iterator for two components.
+// Query{{ .Index }} is a generic query iterator for {{ .NumberStr }} components.
 //
 // Create one with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query]
 type Query{{ .Index }}{{ .TypesFull }} struct {

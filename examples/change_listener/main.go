@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/mlange-42/arche/ecs"
-	"github.com/mlange-42/arche/generic"
 )
 
 // Position component
@@ -43,17 +42,22 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
+	// Get component IDs
+	posID := ecs.ComponentID[Position](&world)
+	velID := ecs.ComponentID[Velocity](&world)
+	rotID := ecs.ComponentID[Rotation](&world)
+
 	// Register a listener function.
 	world.RegisterListener(Listen)
 
 	// Create/manipulate/delete entities and observe the listener's output
-	e0, _ := generic.NewEntity1[Position](&world)
-	e1, _, _ := generic.NewEntity2[Position, Velocity](&world)
+	e0 := world.NewEntity(posID)
+	e1 := world.NewEntity(posID, velID)
 
-	generic.Add1[Velocity](&world, e0)
-	generic.Add1[Rotation](&world, e1)
+	world.Add(e0, velID)
+	world.Add(e1, rotID)
 
-	generic.Remove2[Position, Velocity](&world, e1)
+	world.Remove(e1, posID, velID)
 
 	world.RemEntity(e0)
 	world.RemEntity(e1)
