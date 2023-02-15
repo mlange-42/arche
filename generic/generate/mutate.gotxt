@@ -17,32 +17,28 @@ func NewMutate{{ .Index }}{{ .TypesFull }}(w *ecs.World) Mutate{{ .Index }}{{ .T
 
 func (m *Mutate{{ .Index }}{{ .Types }}) NewEntity() (ecs.Entity, {{ .TypesReturn }}) {
 	entity := m.world.NewEntity(m.ids...)
-	return m.getAll(entity)
+	return entity, {{ .ReturnAll }}
 }
 
 func (m *Mutate{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) (ecs.Entity, {{ .TypesReturn }}) {
 	entity := m.world.NewEntityWith(
 		{{ .Components }}
 	)
-	return m.getAll(entity)
+	return entity, {{ .ReturnAll }}
 }
 
-func (m *Mutate{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) (ecs.Entity, {{ .TypesReturn }}) {
+func (m *Mutate{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) ({{ .TypesReturn }}) {
 	m.world.Add(entity, m.ids...)
-	return m.getAll(entity)
+	return {{ .ReturnAll }}
 }
 
-func (m *Mutate{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) (ecs.Entity, {{ .TypesReturn }}) {
+func (m *Mutate{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) ({{ .TypesReturn }}) {
 	m.world.AssignN(entity,
 		{{ .Components }}
 	)
-	return m.getAll(entity)
+	return {{ .ReturnAll }}
 }
 
 func (m *Mutate{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
-}
-
-func (m *Mutate{{ .Index }}{{ .Types }}) getAll(entity ecs.Entity) (ecs.Entity, {{ .TypesReturn }}) {
-	return entity, {{ .ReturnAll }}
 }

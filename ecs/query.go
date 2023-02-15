@@ -140,7 +140,7 @@ func (q *queryIter) Mask() BitMask {
 // IDs returns the archetype's component IDs for the [Entity] at the iterator's current position.
 //
 // Makes a copy of the slice for immutability, so there is a certain overhead involved.
-func (q *queryIter) IDs(entity Entity) []ID {
+func (q *queryIter) IDs() []ID {
 	var ids []ID
 	return append(ids, q.archetype.Archetype.Ids...)
 }

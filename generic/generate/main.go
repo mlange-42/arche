@@ -63,7 +63,7 @@ func generateMutates() {
 		include := "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](w), ecs.ComponentID[") + "](w)}"
 		for j := 0; j < i; j++ {
 			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.ids[%d]))", typeLetters[j], j)
-			arguments += fmt.Sprintf("%s %s", strings.ToLower(typeLetters[j]), typeLetters[j])
+			arguments += fmt.Sprintf("%s *%s", strings.ToLower(typeLetters[j]), typeLetters[j])
 			if j < i-1 {
 				returnAll += ", "
 				arguments += ", "
