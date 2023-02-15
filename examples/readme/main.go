@@ -28,22 +28,17 @@ func main() {
 
 	// Create entities.
 	for i := 0; i < 1000; i++ {
-		// Create a new Entity.
-		entity := world.NewEntity()
-		// Add components to it.
-		pos, vel := generic.Add2[Position, Velocity](&world, entity)
+		// Create a new Entity with components.
+		_, pos, vel := generic.NewEntity2[Position, Velocity](&world)
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
 		pos.Y = rand.Float64() * 100
-
 		vel.X = rand.NormFloat64()
 		vel.Y = rand.NormFloat64()
 	}
 
 	// Create a generic filter.
-	// Generic filter support up to 8 components.
-	// For more components, use World.Query().
 	filter := generic.NewFilter2[Position, Velocity]()
 
 	// Time loop.

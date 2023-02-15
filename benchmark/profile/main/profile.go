@@ -1,10 +1,10 @@
 package main
 
 // Profiling:
-// go build ./main/profile.go
-// profile
-// go tool pprof -http=":8000" -nodefraction=0.001 profile cpu.pprof
-// go tool pprof -http=":8000" -nodefraction=0.001 profile mem.pprof
+// go build ./benchmark/profile/main
+// main
+// go tool pprof -http=":8000" -nodefraction=0.001 main cpu.pprof
+// go tool pprof -http=":8000" -nodefraction=0.001 main mem.pprof
 
 import (
 	"github.com/mlange-42/arche/ecs"
