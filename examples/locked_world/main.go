@@ -34,12 +34,17 @@ func main() {
 	world := ecs.NewWorld()
 
 	// Create a generic entity mutation helper.
-	mutator := generic.NewMutate2[Position, Energy](&world)
+	mutator := generic.NewMutate(&world).WithAdd(generic.T2[Position, Energy]()...)
+	// Create a component mapper.
+	mapper := generic.NewMap2[Position, Energy](&world)
 
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity.
-		_, pos, en := mutator.NewEntity()
+		e := mutator.NewEntity()
+		// Get the components
+		pos, en := mapper.Get(e)
+
 		pos.X = rand.Float64() * 100
 		pos.Y = rand.Float64() * 100
 		en.Value = rand.Float64()
@@ -100,7 +105,9 @@ func main() {
 			// Create offspring entities.
 			for i := 0; i < repro.Offspring; i++ {
 				// Create a new Entity and initialize it.
-				_, pos, en := mutator.NewEntity()
+				e := mutator.NewEntity()
+				pos, en := mapper.Get(e)
+
 				pos.X = repro.X + rand.NormFloat64()
 				pos.Y = repro.Y + rand.NormFloat64()
 				en.Value = rand.Float64() * 0.5
