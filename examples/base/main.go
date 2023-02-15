@@ -34,10 +34,9 @@ func main() {
 
 	// Create entities.
 	for i := 0; i < 1000; i++ {
-		// Create a new Entity.
-		entity := world.NewEntity()
-		// Add components to it.
-		world.Add(entity, posID, velID)
+		// Create a new Entity with components.
+		entity := world.NewEntity(posID, velID)
+		// Get the components.
 		pos := (*Position)(world.Get(entity, posID))
 		vel := (*Position)(world.Get(entity, velID))
 

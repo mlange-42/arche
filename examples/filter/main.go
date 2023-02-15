@@ -41,9 +41,7 @@ func main() {
 
 	// Create entities.
 	for i := 0; i < 1000; i++ {
-		// Create a new Entity.
-		entity := world.NewEntity()
-		// Add components to it.
+		// Determine components to add.
 		comps := []ecs.ID{posID, velID}
 		if i%2 == 0 {
 			comps = append(comps, rotID)
@@ -51,8 +49,10 @@ func main() {
 		if i%3 == 0 {
 			comps = append(comps, eleID)
 		}
-		world.Add(entity, comps...)
+		// Create an Entity wth these components.
+		entity := world.NewEntity(comps...)
 
+		// Get the components
 		pos := (*Position)(world.Get(entity, posID))
 		vel := (*Position)(world.Get(entity, velID))
 
