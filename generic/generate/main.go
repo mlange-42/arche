@@ -136,7 +136,7 @@ func generateQueries() {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-			include = "[]reflect.Type{typeOf[" + strings.Join(typeLetters[:i], "](), typeOf[") + "]()}"
+			include = "[]Comp{typeOf[" + strings.Join(typeLetters[:i], "](), typeOf[") + "]()}"
 			for j := 0; j < i; j++ {
 				returnAll += fmt.Sprintf("(*%s)(q.Query.Get(q.ids[%d]))", typeLetters[j], j)
 				if j < i-1 {
@@ -144,7 +144,7 @@ func generateQueries() {
 				}
 			}
 		} else {
-			include = "[]reflect.Type{}"
+			include = "[]Comp{}"
 		}
 		data := query{
 			Index:       i,

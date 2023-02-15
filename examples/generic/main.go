@@ -71,10 +71,10 @@ func main() {
 	// A more complex generic query using optional and excluded components:
 	filter =
 		generic.
-			NewFilter2[Position, Velocity]().    // Components provided through Get... methods
-			Optional(generic.Mask1[Velocity]()). // but those may be nil
-			With(generic.Mask1[Elevation]()).    // additional required components
-			Without(generic.Mask1[Rotation]())   // entities with any of these are excluded.
+			NewFilter2[Position, Velocity](). // Components provided through Get... methods
+			Optional(generic.T[Velocity]()).  // but those may be nil
+			With(generic.T[Elevation]()).     // additional required components
+			Without(generic.T[Rotation]())    // entities with any of these are excluded.
 
 	q := filter.Query(&world)
 

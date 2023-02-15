@@ -21,8 +21,8 @@ func NewMutate{{ .Index }}{{ .TypesFull }}(w *ecs.World) *Mutate{{ .Index }}{{ .
 
 // WithExchange sets components to remove in calls to [Mutate{{ .Index }}.Exchange].
 //
-// Create the required mask with [Mask1], [Mask2], etc.
-func (m *Mutate{{ .Index }}{{ .Types }}) WithExchange(remove []reflect.Type) *Mutate{{ .Index }}{{ .Types }} {
+// Create the required mask items with [T].
+func (m *Mutate{{ .Index }}{{ .Types }}) WithExchange(remove ...Comp) *Mutate{{ .Index }}{{ .Types }} {
 	m.exchange = toIds(m.world, remove)
 	return m
 }
