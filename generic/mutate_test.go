@@ -11,11 +11,11 @@ func TestMutate(t *testing.T) {
 	w := ecs.NewWorld()
 	registerAll(&w)
 
-	mut := NewMutate(&w).WithAdd(T2[testStruct0, testStruct1]()...)
-	mutR := NewMutate(&w).WithRemove(T2[testStruct0, testStruct1]()...)
+	mut := NewMutate(&w).Adds(T2[testStruct0, testStruct1]()...)
+	mutR := NewMutate(&w).Removes(T2[testStruct0, testStruct1]()...)
 	mutEx := NewMutate(&w).
-		WithRemove(T2[testStruct0, testStruct1]()...).
-		WithAdd(T2[testStruct2, testStruct3]()...)
+		Removes(T2[testStruct0, testStruct1]()...).
+		Adds(T2[testStruct2, testStruct3]()...)
 
 	mapper := NewMap2[testStruct0, testStruct1](&w)
 	mapper2 := NewMap2[testStruct2, testStruct3](&w)

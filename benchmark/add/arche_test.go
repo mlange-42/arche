@@ -26,11 +26,11 @@ func addArcheGeneric(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		world := ecs.NewWorld()
-		mut := generic.NewMutate(&world).WithAdd(generic.T2[position, rotation]()...)
+		mut := generic.NewMap2[position, rotation](&world)
 		b.StartTimer()
 
 		for i := 0; i < count; i++ {
-			_ = mut.NewEntity()
+			_, _, _ = mut.NewEntity()
 		}
 	}
 }
