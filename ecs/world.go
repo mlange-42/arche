@@ -1,26 +1,11 @@
 package ecs
 
 import (
-	"fmt"
 	"reflect"
 	"unsafe"
 
 	"github.com/mlange-42/arche/ecs/stats"
 )
-
-// ChangeEvent contains information about component changes.
-//
-// To receive change events, register a function func(e ChangeEvent) with [World.RegisterListener].
-type ChangeEvent struct {
-	// The entity that was changed.
-	Entity Entity
-	// The old and new component masks.
-	OldMask, NewMask BitMask
-	// Components added, removed, and after the change.
-	Added, Removed, Current []ID
-	// Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
-	AddedRemoved int
-}
 
 // ComponentID returns the ID for a component type via generics. Registers the type if it is not already registered.
 func ComponentID[T any](w *World) ID {
@@ -372,13 +357,12 @@ func (w *World) IsLocked() bool {
 //
 // Events notified are entity creation, removal and changes to the component composition.
 //
-// Returns an error if there is already a listener registered.
-func (w *World) RegisterListener(listener func(e ChangeEvent)) error {
+// Panics if there is already a listener registered.
+func (w *World) RegisterListener(listener func(e ChangeEvent)) {
 	if w.listener != nil {
-		return fmt.Errorf("the world already has a change listener registered")
+		panic("the world already has a change listener registered")
 	}
 	w.listener = listener
-	return nil
 }
 
 // Stats reports statistics for inspecting the World.
