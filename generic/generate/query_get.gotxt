@@ -1,5 +1,5 @@
 
-// Get{{ .ID }} returns the first queried component for the current query position
+// Get{{ .ID }} returns the {{ .IndexStr }} queried component for the current query iterator position.
 func (q *Query{{ .Query.Index }}{{ .Query.Types }}) Get{{ .ID }}() *{{ .Type }} {
 	return (*{{ .Type }})(q.Query.Get(q.ids[{{ .Index }}]))
 }

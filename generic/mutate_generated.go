@@ -8,13 +8,16 @@ import (
 
 //////////////////////////////////////////////////////////////////////////
 
-// Mutate1 mutates 1 components
+// Mutate1 is a helper for mutating one components.
+//
+// It can be used to create entities ([Mutate1.NewEntity] and [Mutate1.NewEntityWith]),
+// and to add or remove components ([Mutate1.Add], [Mutate1.Assign] and [Mutate1.Remove]).
 type Mutate1[A any] struct {
 	ids   []ecs.ID
 	world *ecs.World
 }
 
-// NewMutate1 creates a new Mutate1
+// NewMutate1 creates a new Mutate1 object.
 func NewMutate1[A any](w *ecs.World) Mutate1[A] {
 	return Mutate1[A]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w)},
@@ -22,11 +25,13 @@ func NewMutate1[A any](w *ecs.World) Mutate1[A] {
 	}
 }
 
+// NewEntity creates a new [ecs.Entity] with the Mutate1's components.
 func (m *Mutate1[A]) NewEntity() (ecs.Entity, *A) {
 	entity := m.world.NewEntity(m.ids...)
 	return entity, (*A)(m.world.Get(entity, m.ids[0]))
 }
 
+// NewEntityWith creates a new [ecs.Entity] with the Mutate1's components, using the supplied values.
 func (m *Mutate1[A]) NewEntityWith(a *A) (ecs.Entity, *A) {
 	entity := m.world.NewEntityWith(
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -34,11 +39,13 @@ func (m *Mutate1[A]) NewEntityWith(a *A) (ecs.Entity, *A) {
 	return entity, (*A)(m.world.Get(entity, m.ids[0]))
 }
 
+// Add the Mutate1's components to the given entity.
 func (m *Mutate1[A]) Add(entity ecs.Entity) *A {
 	m.world.Add(entity, m.ids...)
 	return (*A)(m.world.Get(entity, m.ids[0]))
 }
 
+// Assign the Mutate1's components to the given entity, using the supplied values.
 func (m *Mutate1[A]) Assign(entity ecs.Entity, a *A) *A {
 	m.world.AssignN(entity,
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -46,19 +53,23 @@ func (m *Mutate1[A]) Assign(entity ecs.Entity, a *A) *A {
 	return (*A)(m.world.Get(entity, m.ids[0]))
 }
 
+// Remove the Mutate1's components from the given entity.
 func (m *Mutate1[A]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// Mutate2 mutates 2 components
+// Mutate2 is a helper for mutating two components.
+//
+// It can be used to create entities ([Mutate2.NewEntity] and [Mutate2.NewEntityWith]),
+// and to add or remove components ([Mutate2.Add], [Mutate2.Assign] and [Mutate2.Remove]).
 type Mutate2[A any, B any] struct {
 	ids   []ecs.ID
 	world *ecs.World
 }
 
-// NewMutate2 creates a new Mutate2
+// NewMutate2 creates a new Mutate2 object.
 func NewMutate2[A any, B any](w *ecs.World) Mutate2[A, B] {
 	return Mutate2[A, B]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w)},
@@ -66,11 +77,13 @@ func NewMutate2[A any, B any](w *ecs.World) Mutate2[A, B] {
 	}
 }
 
+// NewEntity creates a new [ecs.Entity] with the Mutate2's components.
 func (m *Mutate2[A, B]) NewEntity() (ecs.Entity, *A, *B) {
 	entity := m.world.NewEntity(m.ids...)
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
 }
 
+// NewEntityWith creates a new [ecs.Entity] with the Mutate2's components, using the supplied values.
 func (m *Mutate2[A, B]) NewEntityWith(a *A, b *B) (ecs.Entity, *A, *B) {
 	entity := m.world.NewEntityWith(
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -79,11 +92,13 @@ func (m *Mutate2[A, B]) NewEntityWith(a *A, b *B) (ecs.Entity, *A, *B) {
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
 }
 
+// Add the Mutate2's components to the given entity.
 func (m *Mutate2[A, B]) Add(entity ecs.Entity) (*A, *B) {
 	m.world.Add(entity, m.ids...)
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
 }
 
+// Assign the Mutate2's components to the given entity, using the supplied values.
 func (m *Mutate2[A, B]) Assign(entity ecs.Entity, a *A, b *B) (*A, *B) {
 	m.world.AssignN(entity,
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -92,19 +107,23 @@ func (m *Mutate2[A, B]) Assign(entity ecs.Entity, a *A, b *B) (*A, *B) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
 }
 
+// Remove the Mutate2's components from the given entity.
 func (m *Mutate2[A, B]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// Mutate3 mutates 3 components
+// Mutate3 is a helper for mutating three components.
+//
+// It can be used to create entities ([Mutate3.NewEntity] and [Mutate3.NewEntityWith]),
+// and to add or remove components ([Mutate3.Add], [Mutate3.Assign] and [Mutate3.Remove]).
 type Mutate3[A any, B any, C any] struct {
 	ids   []ecs.ID
 	world *ecs.World
 }
 
-// NewMutate3 creates a new Mutate3
+// NewMutate3 creates a new Mutate3 object.
 func NewMutate3[A any, B any, C any](w *ecs.World) Mutate3[A, B, C] {
 	return Mutate3[A, B, C]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w)},
@@ -112,11 +131,13 @@ func NewMutate3[A any, B any, C any](w *ecs.World) Mutate3[A, B, C] {
 	}
 }
 
+// NewEntity creates a new [ecs.Entity] with the Mutate3's components.
 func (m *Mutate3[A, B, C]) NewEntity() (ecs.Entity, *A, *B, *C) {
 	entity := m.world.NewEntity(m.ids...)
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
 }
 
+// NewEntityWith creates a new [ecs.Entity] with the Mutate3's components, using the supplied values.
 func (m *Mutate3[A, B, C]) NewEntityWith(a *A, b *B, c *C) (ecs.Entity, *A, *B, *C) {
 	entity := m.world.NewEntityWith(
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -126,11 +147,13 @@ func (m *Mutate3[A, B, C]) NewEntityWith(a *A, b *B, c *C) (ecs.Entity, *A, *B, 
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
 }
 
+// Add the Mutate3's components to the given entity.
 func (m *Mutate3[A, B, C]) Add(entity ecs.Entity) (*A, *B, *C) {
 	m.world.Add(entity, m.ids...)
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
 }
 
+// Assign the Mutate3's components to the given entity, using the supplied values.
 func (m *Mutate3[A, B, C]) Assign(entity ecs.Entity, a *A, b *B, c *C) (*A, *B, *C) {
 	m.world.AssignN(entity,
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -140,19 +163,23 @@ func (m *Mutate3[A, B, C]) Assign(entity ecs.Entity, a *A, b *B, c *C) (*A, *B, 
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
 }
 
+// Remove the Mutate3's components from the given entity.
 func (m *Mutate3[A, B, C]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// Mutate4 mutates 4 components
+// Mutate4 is a helper for mutating four components.
+//
+// It can be used to create entities ([Mutate4.NewEntity] and [Mutate4.NewEntityWith]),
+// and to add or remove components ([Mutate4.Add], [Mutate4.Assign] and [Mutate4.Remove]).
 type Mutate4[A any, B any, C any, D any] struct {
 	ids   []ecs.ID
 	world *ecs.World
 }
 
-// NewMutate4 creates a new Mutate4
+// NewMutate4 creates a new Mutate4 object.
 func NewMutate4[A any, B any, C any, D any](w *ecs.World) Mutate4[A, B, C, D] {
 	return Mutate4[A, B, C, D]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w)},
@@ -160,11 +187,13 @@ func NewMutate4[A any, B any, C any, D any](w *ecs.World) Mutate4[A, B, C, D] {
 	}
 }
 
+// NewEntity creates a new [ecs.Entity] with the Mutate4's components.
 func (m *Mutate4[A, B, C, D]) NewEntity() (ecs.Entity, *A, *B, *C, *D) {
 	entity := m.world.NewEntity(m.ids...)
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
 }
 
+// NewEntityWith creates a new [ecs.Entity] with the Mutate4's components, using the supplied values.
 func (m *Mutate4[A, B, C, D]) NewEntityWith(a *A, b *B, c *C, d *D) (ecs.Entity, *A, *B, *C, *D) {
 	entity := m.world.NewEntityWith(
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -175,11 +204,13 @@ func (m *Mutate4[A, B, C, D]) NewEntityWith(a *A, b *B, c *C, d *D) (ecs.Entity,
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
 }
 
+// Add the Mutate4's components to the given entity.
 func (m *Mutate4[A, B, C, D]) Add(entity ecs.Entity) (*A, *B, *C, *D) {
 	m.world.Add(entity, m.ids...)
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
 }
 
+// Assign the Mutate4's components to the given entity, using the supplied values.
 func (m *Mutate4[A, B, C, D]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D) (*A, *B, *C, *D) {
 	m.world.AssignN(entity,
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -190,19 +221,23 @@ func (m *Mutate4[A, B, C, D]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D) 
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
 }
 
+// Remove the Mutate4's components from the given entity.
 func (m *Mutate4[A, B, C, D]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// Mutate5 mutates 5 components
+// Mutate5 is a helper for mutating five components.
+//
+// It can be used to create entities ([Mutate5.NewEntity] and [Mutate5.NewEntityWith]),
+// and to add or remove components ([Mutate5.Add], [Mutate5.Assign] and [Mutate5.Remove]).
 type Mutate5[A any, B any, C any, D any, E any] struct {
 	ids   []ecs.ID
 	world *ecs.World
 }
 
-// NewMutate5 creates a new Mutate5
+// NewMutate5 creates a new Mutate5 object.
 func NewMutate5[A any, B any, C any, D any, E any](w *ecs.World) Mutate5[A, B, C, D, E] {
 	return Mutate5[A, B, C, D, E]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w)},
@@ -210,11 +245,13 @@ func NewMutate5[A any, B any, C any, D any, E any](w *ecs.World) Mutate5[A, B, C
 	}
 }
 
+// NewEntity creates a new [ecs.Entity] with the Mutate5's components.
 func (m *Mutate5[A, B, C, D, E]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E) {
 	entity := m.world.NewEntity(m.ids...)
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
 }
 
+// NewEntityWith creates a new [ecs.Entity] with the Mutate5's components, using the supplied values.
 func (m *Mutate5[A, B, C, D, E]) NewEntityWith(a *A, b *B, c *C, d *D, e *E) (ecs.Entity, *A, *B, *C, *D, *E) {
 	entity := m.world.NewEntityWith(
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -226,11 +263,13 @@ func (m *Mutate5[A, B, C, D, E]) NewEntityWith(a *A, b *B, c *C, d *D, e *E) (ec
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
 }
 
+// Add the Mutate5's components to the given entity.
 func (m *Mutate5[A, B, C, D, E]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E) {
 	m.world.Add(entity, m.ids...)
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
 }
 
+// Assign the Mutate5's components to the given entity, using the supplied values.
 func (m *Mutate5[A, B, C, D, E]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E) (*A, *B, *C, *D, *E) {
 	m.world.AssignN(entity,
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -242,19 +281,23 @@ func (m *Mutate5[A, B, C, D, E]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
 }
 
+// Remove the Mutate5's components from the given entity.
 func (m *Mutate5[A, B, C, D, E]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// Mutate6 mutates 6 components
+// Mutate6 is a helper for mutating six components.
+//
+// It can be used to create entities ([Mutate6.NewEntity] and [Mutate6.NewEntityWith]),
+// and to add or remove components ([Mutate6.Add], [Mutate6.Assign] and [Mutate6.Remove]).
 type Mutate6[A any, B any, C any, D any, E any, F any] struct {
 	ids   []ecs.ID
 	world *ecs.World
 }
 
-// NewMutate6 creates a new Mutate6
+// NewMutate6 creates a new Mutate6 object.
 func NewMutate6[A any, B any, C any, D any, E any, F any](w *ecs.World) Mutate6[A, B, C, D, E, F] {
 	return Mutate6[A, B, C, D, E, F]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w)},
@@ -262,11 +305,13 @@ func NewMutate6[A any, B any, C any, D any, E any, F any](w *ecs.World) Mutate6[
 	}
 }
 
+// NewEntity creates a new [ecs.Entity] with the Mutate6's components.
 func (m *Mutate6[A, B, C, D, E, F]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F) {
 	entity := m.world.NewEntity(m.ids...)
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
 }
 
+// NewEntityWith creates a new [ecs.Entity] with the Mutate6's components, using the supplied values.
 func (m *Mutate6[A, B, C, D, E, F]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F) (ecs.Entity, *A, *B, *C, *D, *E, *F) {
 	entity := m.world.NewEntityWith(
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -279,11 +324,13 @@ func (m *Mutate6[A, B, C, D, E, F]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, 
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
 }
 
+// Add the Mutate6's components to the given entity.
 func (m *Mutate6[A, B, C, D, E, F]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E, *F) {
 	m.world.Add(entity, m.ids...)
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
 }
 
+// Assign the Mutate6's components to the given entity, using the supplied values.
 func (m *Mutate6[A, B, C, D, E, F]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F) (*A, *B, *C, *D, *E, *F) {
 	m.world.AssignN(entity,
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -296,19 +343,23 @@ func (m *Mutate6[A, B, C, D, E, F]) Assign(entity ecs.Entity, a *A, b *B, c *C, 
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
 }
 
+// Remove the Mutate6's components from the given entity.
 func (m *Mutate6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// Mutate7 mutates 7 components
+// Mutate7 is a helper for mutating seven components.
+//
+// It can be used to create entities ([Mutate7.NewEntity] and [Mutate7.NewEntityWith]),
+// and to add or remove components ([Mutate7.Add], [Mutate7.Assign] and [Mutate7.Remove]).
 type Mutate7[A any, B any, C any, D any, E any, F any, G any] struct {
 	ids   []ecs.ID
 	world *ecs.World
 }
 
-// NewMutate7 creates a new Mutate7
+// NewMutate7 creates a new Mutate7 object.
 func NewMutate7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Mutate7[A, B, C, D, E, F, G] {
 	return Mutate7[A, B, C, D, E, F, G]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w), ecs.ComponentID[G](w)},
@@ -316,11 +367,13 @@ func NewMutate7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) M
 	}
 }
 
+// NewEntity creates a new [ecs.Entity] with the Mutate7's components.
 func (m *Mutate7[A, B, C, D, E, F, G]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G) {
 	entity := m.world.NewEntity(m.ids...)
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
 }
 
+// NewEntityWith creates a new [ecs.Entity] with the Mutate7's components, using the supplied values.
 func (m *Mutate7[A, B, C, D, E, F, G]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G) (ecs.Entity, *A, *B, *C, *D, *E, *F, *G) {
 	entity := m.world.NewEntityWith(
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -334,11 +387,13 @@ func (m *Mutate7[A, B, C, D, E, F, G]) NewEntityWith(a *A, b *B, c *C, d *D, e *
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
 }
 
+// Add the Mutate7's components to the given entity.
 func (m *Mutate7[A, B, C, D, E, F, G]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G) {
 	m.world.Add(entity, m.ids...)
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
 }
 
+// Assign the Mutate7's components to the given entity, using the supplied values.
 func (m *Mutate7[A, B, C, D, E, F, G]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G) (*A, *B, *C, *D, *E, *F, *G) {
 	m.world.AssignN(entity,
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -352,19 +407,23 @@ func (m *Mutate7[A, B, C, D, E, F, G]) Assign(entity ecs.Entity, a *A, b *B, c *
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
 }
 
+// Remove the Mutate7's components from the given entity.
 func (m *Mutate7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
 //////////////////////////////////////////////////////////////////////////
 
-// Mutate8 mutates 8 components
+// Mutate8 is a helper for mutating eight components.
+//
+// It can be used to create entities ([Mutate8.NewEntity] and [Mutate8.NewEntityWith]),
+// and to add or remove components ([Mutate8.Add], [Mutate8.Assign] and [Mutate8.Remove]).
 type Mutate8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	ids   []ecs.ID
 	world *ecs.World
 }
 
-// NewMutate8 creates a new Mutate8
+// NewMutate8 creates a new Mutate8 object.
 func NewMutate8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World) Mutate8[A, B, C, D, E, F, G, H] {
 	return Mutate8[A, B, C, D, E, F, G, H]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w), ecs.ComponentID[G](w), ecs.ComponentID[H](w)},
@@ -372,11 +431,13 @@ func NewMutate8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.W
 	}
 }
 
+// NewEntity creates a new [ecs.Entity] with the Mutate8's components.
 func (m *Mutate8[A, B, C, D, E, F, G, H]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G, *H) {
 	entity := m.world.NewEntity(m.ids...)
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
 }
 
+// NewEntityWith creates a new [ecs.Entity] with the Mutate8's components, using the supplied values.
 func (m *Mutate8[A, B, C, D, E, F, G, H]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) (ecs.Entity, *A, *B, *C, *D, *E, *F, *G, *H) {
 	entity := m.world.NewEntityWith(
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -391,11 +452,13 @@ func (m *Mutate8[A, B, C, D, E, F, G, H]) NewEntityWith(a *A, b *B, c *C, d *D, 
 	return entity, (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
 }
 
+// Add the Mutate8's components to the given entity.
 func (m *Mutate8[A, B, C, D, E, F, G, H]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H) {
 	m.world.Add(entity, m.ids...)
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
 }
 
+// Assign the Mutate8's components to the given entity, using the supplied values.
 func (m *Mutate8[A, B, C, D, E, F, G, H]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) (*A, *B, *C, *D, *E, *F, *G, *H) {
 	m.world.AssignN(entity,
 		ecs.Component{ID: m.ids[0], Component: a},
@@ -410,6 +473,7 @@ func (m *Mutate8[A, B, C, D, E, F, G, H]) Assign(entity ecs.Entity, a *A, b *B, 
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
 }
 
+// Remove the Mutate8's components from the given entity.
 func (m *Mutate8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }

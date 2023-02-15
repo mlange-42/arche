@@ -9,9 +9,12 @@ import (
 )
 
 var typeLetters = []string{"A", "B", "C", "D", "E", "F", "G", "H"}
+var numbers = []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight"}
+var indices = []string{"zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth"}
 
 type query struct {
 	Index       int
+	NumberStr   string
 	Types       string
 	TypesFull   string
 	TypesReturn string
@@ -21,10 +24,11 @@ type query struct {
 	Arguments   string
 }
 type getter struct {
-	Query query
-	ID    int
-	Index int
-	Type  string
+	Query    query
+	ID       int
+	Index    int
+	IndexStr string
+	Type     string
 }
 
 func main() {
@@ -73,6 +77,7 @@ func generateMutates() {
 
 		data := query{
 			Index:       i,
+			NumberStr:   numbers[i],
 			Types:       types,
 			TypesReturn: returnTypes,
 			TypesFull:   fullTypes,
@@ -143,6 +148,7 @@ func generateQueries() {
 		}
 		data := query{
 			Index:       i,
+			NumberStr:   numbers[i],
 			Types:       types,
 			TypesReturn: returnTypes,
 			TypesFull:   fullTypes,
@@ -164,10 +170,11 @@ func generateQueries() {
 
 		for j := 0; j < i; j++ {
 			getterData := getter{
-				Query: data,
-				ID:    j + 1,
-				Index: j,
-				Type:  typeLetters[j],
+				Query:    data,
+				ID:       j + 1,
+				Index:    j,
+				IndexStr: indices[j+1],
+				Type:     typeLetters[j],
 			}
 			err = queryGet.Execute(&text, getterData)
 			if err != nil {

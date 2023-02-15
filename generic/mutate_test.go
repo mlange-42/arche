@@ -24,10 +24,10 @@ func TestMutate1(t *testing.T) {
 	assert.NotNil(t, s0)
 
 	e = w.NewEntity()
-	s0 = mut.Assign(e, &testStruct0{})
+	_ = mut.Assign(e, &testStruct0{})
 	assert.True(t, map0.Has(e))
 
-	e, s0 = mut.NewEntityWith(&testStruct0{})
+	e, _ = mut.NewEntityWith(&testStruct0{})
 	assert.True(t, map0.Has(e))
 }
 
@@ -52,11 +52,11 @@ func TestMutate2(t *testing.T) {
 	assert.NotNil(t, s1)
 
 	e = w.NewEntity()
-	s0, s1 = mut.Assign(e, &testStruct0{}, &testStruct1{})
+	_, _ = mut.Assign(e, &testStruct0{}, &testStruct1{})
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e, s0, s1 = mut.NewEntityWith(&testStruct0{}, &testStruct1{})
+	e, _, _ = mut.NewEntityWith(&testStruct0{}, &testStruct1{})
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 }
@@ -84,13 +84,13 @@ func TestMutate3(t *testing.T) {
 	assert.NotNil(t, s1)
 
 	e = w.NewEntity()
-	s0, s1, _ = mut.Assign(e,
+	_, _, _ = mut.Assign(e,
 		&testStruct0{}, &testStruct1{}, &testStruct2{},
 	)
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e, s0, s1, _ = mut.NewEntityWith(
+	e, _, _, _ = mut.NewEntityWith(
 		&testStruct0{}, &testStruct1{}, &testStruct2{},
 	)
 	assert.True(t, map0.Has(e))
@@ -120,13 +120,13 @@ func TestMutate4(t *testing.T) {
 	assert.NotNil(t, s1)
 
 	e = w.NewEntity()
-	s0, s1, _, _ = mut.Assign(e,
+	_, _, _, _ = mut.Assign(e,
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 	)
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e, s0, s1, _, _ = mut.NewEntityWith(
+	e, _, _, _, _ = mut.NewEntityWith(
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 	)
 	assert.True(t, map0.Has(e))
@@ -157,14 +157,14 @@ func TestMutate5(t *testing.T) {
 	assert.NotNil(t, s1)
 
 	e = w.NewEntity()
-	s0, s1, _, _, _ = mut.Assign(e,
+	_, _, _, _, _ = mut.Assign(e,
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 		&testStruct4{},
 	)
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e, s0, s1, _, _, _ = mut.NewEntityWith(
+	e, _, _, _, _, _ = mut.NewEntityWith(
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 		&testStruct4{},
 	)
@@ -196,14 +196,14 @@ func TestMutate6(t *testing.T) {
 	assert.NotNil(t, s1)
 
 	e = w.NewEntity()
-	s0, s1, _, _, _, _ = mut.Assign(e,
+	_, _, _, _, _, _ = mut.Assign(e,
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 		&testStruct4{}, &testStruct5{},
 	)
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e, s0, s1, _, _, _, _ = mut.NewEntityWith(
+	e, _, _, _, _, _, _ = mut.NewEntityWith(
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 		&testStruct4{}, &testStruct5{},
 	)
@@ -235,14 +235,14 @@ func TestMutate7(t *testing.T) {
 	assert.NotNil(t, s1)
 
 	e = w.NewEntity()
-	s0, s1, _, _, _, _, _ = mut.Assign(e,
+	_, _, _, _, _, _, _ = mut.Assign(e,
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 		&testStruct4{}, &testStruct5{}, &testStruct6{},
 	)
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e, s0, s1, _, _, _, _, _ = mut.NewEntityWith(
+	e, _, _, _, _, _, _, _ = mut.NewEntityWith(
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 		&testStruct4{}, &testStruct5{}, &testStruct6{},
 	)
@@ -274,14 +274,14 @@ func TestMutate8(t *testing.T) {
 	assert.NotNil(t, s1)
 
 	e = w.NewEntity()
-	s0, s1, _, _, _, _, _, _ = mut.Assign(e,
+	_, _, _, _, _, _, _, _ = mut.Assign(e,
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
 	)
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e, s0, s1, _, _, _, _, _, _ = mut.NewEntityWith(
+	e, _, _, _, _, _, _, _, _ = mut.NewEntityWith(
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
 	)
