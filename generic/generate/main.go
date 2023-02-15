@@ -17,6 +17,8 @@ type query struct {
 	TypesReturn string
 	ReturnAll   string
 	Include     string
+	Components  string
+	Arguments   string
 }
 type getter struct {
 	Query query
@@ -26,7 +28,72 @@ type getter struct {
 }
 
 func main() {
-	fmt.Println("Generating code")
+	generateQueries()
+	generateMutates()
+}
+
+func generateMutates() {
+	fmt.Println("Generating mutates")
+
+	maxIndex := len(typeLetters)
+	text := bytes.Buffer{}
+
+	header, err := template.ParseFiles("./generate/mutate_header.gotxt")
+	if err != nil {
+		panic(err)
+	}
+	err = header.Execute(&text, struct{}{})
+	if err != nil {
+		panic(err)
+	}
+
+	mutate, err := template.ParseFiles("./generate/mutate.gotxt")
+	if err != nil {
+		panic(err)
+	}
+
+	for i := 1; i <= maxIndex; i++ {
+		returnAll := ""
+		components := ""
+		arguments := ""
+
+		types := "[" + strings.Join(typeLetters[:i], ", ") + "]"
+		returnTypes := "*" + strings.Join(typeLetters[:i], ", *")
+		fullTypes := "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
+		include := "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](w), ecs.ComponentID[") + "](w)}"
+		for j := 0; j < i; j++ {
+			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.ids[%d]))", typeLetters[j], j)
+			arguments += fmt.Sprintf("%s %s", strings.ToLower(typeLetters[j]), typeLetters[j])
+			if j < i-1 {
+				returnAll += ", "
+				arguments += ", "
+			}
+			components += fmt.Sprintf("ecs.Component{ID: m.ids[%d], Component: %s},\n", j, strings.ToLower(typeLetters[j]))
+		}
+
+		data := query{
+			Index:       i,
+			Types:       types,
+			TypesReturn: returnTypes,
+			TypesFull:   fullTypes,
+			ReturnAll:   returnAll,
+			Include:     include,
+			Components:  components,
+			Arguments:   arguments,
+		}
+		err = mutate.Execute(&text, data)
+		if err != nil {
+			panic(err)
+		}
+	}
+
+	if err := os.WriteFile("mutate_generated.go", text.Bytes(), 0666); err != nil {
+		panic(err)
+	}
+}
+
+func generateQueries() {
+	fmt.Println("Generating queries")
 
 	maxIndex := len(typeLetters)
 
@@ -64,13 +131,15 @@ func main() {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-			include = "include: []reflect.Type{typeOf[" + strings.Join(typeLetters[:i], "](), typeOf[") + "]()},"
+			include = "[]reflect.Type{typeOf[" + strings.Join(typeLetters[:i], "](), typeOf[") + "]()}"
 			for j := 0; j < i; j++ {
 				returnAll += fmt.Sprintf("(*%s)(q.Query.Get(q.ids[%d]))", typeLetters[j], j)
 				if j < i-1 {
 					returnAll += ", "
 				}
 			}
+		} else {
+			include = "[]reflect.Type{}"
 		}
 		data := query{
 			Index:       i,

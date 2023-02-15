@@ -14,7 +14,7 @@ type Filter{{ .Index }}{{ .TypesFull }} struct {
 // See also [ecs.World.Query].
 func NewFilter{{ .Index }}{{ .TypesFull }}() *Filter{{ .Index }}{{ .Types }} {
 	return &Filter{{ .Index }}{{ .Types }}{
-		{{ .Include }}
+		include: {{ .Include }},
 	}
 }
 

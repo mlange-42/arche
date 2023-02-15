@@ -22,7 +22,9 @@ type Filter0 struct {
 //
 // See also [ecs.World.Query].
 func NewFilter0() *Filter0 {
-	return &Filter0{}
+	return &Filter0{
+		include: []reflect.Type{},
+	}
 }
 
 // Optional makes some of the query's components optional.

@@ -1,0 +1,48 @@
+
+//////////////////////////////////////////////////////////////////////////
+
+// Mutate{{ .Index }} mutates {{ .Index }} components
+type Mutate{{ .Index }}{{ .TypesFull }} struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
+
+// NewMutate{{ .Index }} creates a new Mutate{{ .Index }}
+func NewMutate{{ .Index }}{{ .TypesFull }}(w *ecs.World) Mutate{{ .Index }}{{ .Types }} {
+	return Mutate{{ .Index }}{{ .Types }}{
+		ids:   {{ .Include }},
+		world: w,
+	}
+}
+
+func (m *Mutate{{ .Index }}{{ .Types }}) NewEntity() (ecs.Entity, {{ .TypesReturn }}) {
+	entity := m.world.NewEntity(m.ids...)
+	return m.getAll(entity)
+}
+
+func (m *Mutate{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) (ecs.Entity, {{ .TypesReturn }}) {
+	entity := m.world.NewEntityWith(
+		{{ .Components }}
+	)
+	return m.getAll(entity)
+}
+
+func (m *Mutate{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) (ecs.Entity, {{ .TypesReturn }}) {
+	m.world.Add(entity, m.ids...)
+	return m.getAll(entity)
+}
+
+func (m *Mutate{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) (ecs.Entity, {{ .TypesReturn }}) {
+	m.world.AssignN(entity,
+		{{ .Components }}
+	)
+	return m.getAll(entity)
+}
+
+func (m *Mutate{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
+}
+
+func (m *Mutate{{ .Index }}{{ .Types }}) getAll(entity ecs.Entity) (ecs.Entity, {{ .TypesReturn }}) {
+	return entity, {{ .ReturnAll }}
+}
