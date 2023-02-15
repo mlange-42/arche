@@ -48,7 +48,7 @@ func main() {
 		// Iterate it
 		for query.Next() {
 			// Component access through the Query.
-			pos, vel := query.GetAll()
+			_, pos, vel := query.GetAll()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y

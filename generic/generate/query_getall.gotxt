@@ -1,5 +1,5 @@
 
-// GetAll returns all queried components for the current query position
-func (q *Query{{ .Index }}{{ .Types }}) GetAll() {{ .TypesReturn }} {
-	return {{ .ReturnAll }}
+// GetAll returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query{{ .Index }}{{ .Types }}) GetAll() (ecs.Entity, {{ .TypesReturn }}) {
+	return q.Entity(), {{ .ReturnAll }}
 }
