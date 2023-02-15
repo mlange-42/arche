@@ -66,7 +66,7 @@ func main() {
 		// Thus, it is not possible to add or remove entities or components.
 		for query.Next() {
 			// Component access through the Query.
-			entity, pos, ene := query.GetAll()
+			entity, pos, ene := query.Get()
 			// Do model logic.
 			ene.Value += rand.NormFloat64() * 0.05
 

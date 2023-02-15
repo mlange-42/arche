@@ -7,12 +7,12 @@
 * Generic queries support optional, additional and excluded components (#53, #56, #58, #59, #60, #63)
 * Logic filters for complex queries (#54, #58, #61)
 * `Query` and `World` have a method `Mask(Entity)` to access archetype masks (#65)
-* Generic query `GetAll` methods return the entity as first element (#83)
+* Generic query `Get` method returns the entity as first element (#83)
 * Added method `World.Stats()` for inspecting otherwise inaccessible world statistics (#67)
 * Entities can be initialized with components, via ID as well as using generics (#76)
 * A listener function can be registered to the world, for notification on entity changes (#77)
 * Support for up to 128 distinct component types per world (was limited to 64 before) (#78)
-* Generic entity manipulation through types `Mutate1`, `Mutate2`, ... (#79)
+* Generic entity manipulation through types `Map1`, `Map2`, ... and `Mutate` (#79, #84, #87)
 
 ### Other
 
