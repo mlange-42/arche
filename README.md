@@ -64,10 +64,13 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
+	// Create a generic entity mutation helper.
+	mutator := generic.NewMutate2[Position, Velocity](&world)
+
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity with components.
-		_, pos, vel := generic.NewEntity2[Position, Velocity](&world)
+		_, pos, vel := mutator.NewEntity()
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100

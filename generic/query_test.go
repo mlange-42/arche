@@ -622,3 +622,112 @@ func TestQueryGeneric(t *testing.T) {
 	}
 	assert.Equal(t, count, cnt)
 }
+
+func registerAll(w *ecs.World) []ecs.ID {
+	_ = testStruct0{}
+	_ = testStruct1{}
+	_ = testStruct2{}
+	_ = testStruct3{}
+	_ = testStruct4{}
+	_ = testStruct5{}
+	_ = testStruct6{}
+	_ = testStruct7{}
+	_ = testStruct8{}
+	_ = testStruct9{}
+
+	ids := make([]ecs.ID, 10)
+	ids[0] = ecs.ComponentID[testStruct0](w)
+	ids[1] = ecs.ComponentID[testStruct1](w)
+	ids[2] = ecs.ComponentID[testStruct2](w)
+	ids[3] = ecs.ComponentID[testStruct3](w)
+	ids[4] = ecs.ComponentID[testStruct4](w)
+	ids[5] = ecs.ComponentID[testStruct5](w)
+	ids[6] = ecs.ComponentID[testStruct6](w)
+	ids[7] = ecs.ComponentID[testStruct7](w)
+	ids[8] = ecs.ComponentID[testStruct8](w)
+	ids[9] = ecs.ComponentID[testStruct9](w)
+
+	return ids
+}
+
+//lint:ignore U1000 test type
+type testStruct0 struct{ val int8 }
+
+//lint:ignore U1000 test type
+type testStruct1 struct{ val int32 }
+
+//lint:ignore U1000 test type
+type testStruct2 struct {
+	val  int32
+	val2 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct3 struct {
+	val  int32
+	val2 int32
+	val3 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct4 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct5 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct6 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct7 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+	val7 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct8 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+	val7 int32
+	val8 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct9 struct {
+	val  int32
+	val2 int32
+	val3 int32
+	val4 int32
+	val5 int32
+	val6 int32
+	val7 int32
+	val8 int32
+	val9 int32
+}

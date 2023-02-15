@@ -10,12 +10,13 @@ import (
 func TestGenericMap(t *testing.T) {
 	w := ecs.NewWorld()
 	get := NewMap[testStruct0](&w)
+	mut := NewMutate1[testStruct0](&w)
 
 	assert.Equal(t, ecs.ComponentID[testStruct0](&w), get.ID())
 
 	e0 := w.NewEntity()
 
-	Add1[testStruct0](&w, e0)
+	mut.Add(e0)
 	has := get.Has(e0)
 	_ = get.Get(e0)
 	assert.True(t, has)
