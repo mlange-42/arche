@@ -33,16 +33,16 @@ type getter struct {
 
 func main() {
 	generateQueries()
-	generateMutates()
+	generateMaps()
 }
 
-func generateMutates() {
-	fmt.Println("Generating mutates")
+func generateMaps() {
+	fmt.Println("Generating maps")
 
 	maxIndex := len(typeLetters)
 	text := bytes.Buffer{}
 
-	header, err := template.ParseFiles("./generate/mutate_header.go.txt")
+	header, err := template.ParseFiles("./generate/map_header.go.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -51,12 +51,12 @@ func generateMutates() {
 		panic(err)
 	}
 
-	mutate, err := template.ParseFiles("./generate/mutate.go.txt")
+	mutate, err := template.ParseFiles("./generate/map.go.txt")
 	if err != nil {
 		panic(err)
 	}
 
-	for i := 0; i <= maxIndex; i++ {
+	for i := 1; i <= maxIndex; i++ {
 		types := ""
 		returnTypes := ""
 		fullTypes := ""
@@ -101,7 +101,7 @@ func generateMutates() {
 		}
 	}
 
-	if err := os.WriteFile("mutate_generated.go", text.Bytes(), 0666); err != nil {
+	if err := os.WriteFile("map_generated.go", text.Bytes(), 0666); err != nil {
 		panic(err)
 	}
 }
