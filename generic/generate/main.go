@@ -32,7 +32,7 @@ func main() {
 
 	text := bytes.Buffer{}
 
-	header, err := template.ParseFiles("./generate/header.gotxt")
+	header, err := template.ParseFiles("./generate/query_header.gotxt")
 	if err != nil {
 		panic(err)
 	}
