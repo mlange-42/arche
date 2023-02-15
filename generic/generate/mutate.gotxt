@@ -19,12 +19,16 @@ func NewMutate{{ .Index }}{{ .TypesFull }}(w *ecs.World) Mutate{{ .Index }}{{ .T
 }
 
 // NewEntity creates a new [ecs.Entity] with the Mutate{{ .Index }}'s components.
+//
+// See also [ecs.World.NewEntity].
 func (m *Mutate{{ .Index }}{{ .Types }}) NewEntity() (ecs.Entity, {{ .TypesReturn }}) {
 	entity := m.world.NewEntity(m.ids...)
 	return entity, {{ .ReturnAll }}
 }
 
 // NewEntityWith creates a new [ecs.Entity] with the Mutate{{ .Index }}'s components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
 func (m *Mutate{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) (ecs.Entity, {{ .TypesReturn }}) {
 	entity := m.world.NewEntityWith(
 		{{ .Components }}
@@ -33,12 +37,16 @@ func (m *Mutate{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) (ecs.En
 }
 
 // Add the Mutate{{ .Index }}'s components to the given entity.
+//
+// See also [ecs.World.Add].
 func (m *Mutate{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) ({{ .TypesReturn }}) {
 	m.world.Add(entity, m.ids...)
 	return {{ .ReturnAll }}
 }
 
 // Assign the Mutate{{ .Index }}'s components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
 func (m *Mutate{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) ({{ .TypesReturn }}) {
 	m.world.AssignN(entity,
 		{{ .Components }}
@@ -47,6 +55,8 @@ func (m *Mutate{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments
 }
 
 // Remove the Mutate{{ .Index }}'s components from the given entity.
+//
+// See also [ecs.World.Remove].
 func (m *Mutate{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }

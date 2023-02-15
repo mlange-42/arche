@@ -56,6 +56,8 @@ func FromConfig(conf Config) World {
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
+//
+// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
 func (w *World) NewEntity(comps ...ID) Entity {
 	w.checkLocked()
 
@@ -90,6 +92,8 @@ func (w *World) NewEntity(comps ...ID) Entity {
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
+//
+// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
 func (w *World) NewEntityWith(comps ...Component) Entity {
 	w.checkLocked()
 
@@ -222,7 +226,7 @@ func (w *World) IDs(entity Entity) []ID {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants [github.com/mlange-42/arche/generic.Add1], [github.com/mlange-42/arche/generic.Add2], [github.com/mlange-42/arche/generic.Add3], ...
+// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
 }
@@ -238,7 +242,7 @@ func (w *World) Add(entity Entity, comps ...ID) {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants [github.com/mlange-42/arche/generic.Assign1], [github.com/mlange-42/arche/generic.Assign2], [github.com/mlange-42/arche/generic.Assign3], ...
+// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
 func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	w.Exchange(entity, []ID{id}, nil)
 	return w.copyTo(entity, id, comp)
@@ -270,7 +274,7 @@ func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants [github.com/mlange-42/arche/generic.Assign1], [github.com/mlange-42/arche/generic.Assign2], [github.com/mlange-42/arche/generic.Assign3], ...
+// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
 func (w *World) AssignN(entity Entity, comps ...Component) {
 	ids := make([]ID, len(comps))
 	for i, c := range comps {
@@ -288,7 +292,7 @@ func (w *World) AssignN(entity Entity, comps ...Component) {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants [github.com/mlange-42/arche/generic.Remove1], [github.com/mlange-42/arche/generic.Remove2], [github.com/mlange-42/arche/generic.Remove3], ...
+// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
 func (w *World) Remove(entity Entity, comps ...ID) {
 	w.Exchange(entity, nil, comps)
 }
