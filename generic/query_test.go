@@ -134,7 +134,7 @@ func TestQuery1(t *testing.T) {
 	query := filter.Query(&w)
 	for query.Next() {
 		c0 := query.Get1()
-		c02 := query.GetAll()
+		_, c02 := query.GetAll()
 		assert.Equal(t, c0, c02)
 		assert.Equal(t, cnt+1, int(c0.val))
 		cnt++
@@ -180,7 +180,7 @@ func TestQuery2(t *testing.T) {
 			assert.Equal(t, cnt+1, int(c1.val))
 			assert.Equal(t, cnt+2, int(c2.val))
 
-			c12, c22 := q.GetAll()
+			_, c12, c22 := q.GetAll()
 			assert.Equal(t, c1, c12)
 			assert.Equal(t, c2, c22)
 			cnt++
@@ -231,7 +231,7 @@ func TestQuery3(t *testing.T) {
 		assert.Equal(t, cnt+2, int(c2.val))
 		assert.Equal(t, cnt+3, int(c3.val))
 
-		c12, c22, c32 := query.GetAll()
+		_, c12, c22, c32 := query.GetAll()
 		assert.Equal(t, c1, c12)
 		assert.Equal(t, c2, c22)
 		assert.Equal(t, c3, c32)
@@ -288,7 +288,7 @@ func TestQuery4(t *testing.T) {
 		assert.Equal(t, cnt+3, int(c3.val))
 		assert.Equal(t, cnt+4, int(c4.val))
 
-		c12, c22, c32, c42 := query.GetAll()
+		_, c12, c22, c32, c42 := query.GetAll()
 		assert.Equal(t, c1, c12)
 		assert.Equal(t, c2, c22)
 		assert.Equal(t, c3, c32)
@@ -352,7 +352,7 @@ func TestQuery5(t *testing.T) {
 		assert.Equal(t, cnt+4, int(c4.val))
 		assert.Equal(t, cnt+5, int(c5.val))
 
-		c12, c22, c32, c42, c52 := query.GetAll()
+		_, c12, c22, c32, c42, c52 := query.GetAll()
 		assert.Equal(t, c1, c12)
 		assert.Equal(t, c2, c22)
 		assert.Equal(t, c3, c32)
@@ -423,7 +423,7 @@ func TestQuery6(t *testing.T) {
 		assert.Equal(t, cnt+5, int(c5.val))
 		assert.Equal(t, cnt+6, int(c6.val))
 
-		c12, c22, c32, c42, c52, c62 := query.GetAll()
+		_, c12, c22, c32, c42, c52, c62 := query.GetAll()
 		assert.Equal(t, c1, c12)
 		assert.Equal(t, c2, c22)
 		assert.Equal(t, c3, c32)
@@ -504,7 +504,7 @@ func TestQuery7(t *testing.T) {
 		assert.Equal(t, cnt+6, int(c6.val))
 		assert.Equal(t, cnt+7, int(c7.val))
 
-		c12, c22, c32, c42, c52, c62, c72 := query.GetAll()
+		_, c12, c22, c32, c42, c52, c62, c72 := query.GetAll()
 		assert.Equal(t, c1, c12)
 		assert.Equal(t, c2, c22)
 		assert.Equal(t, c3, c32)
@@ -584,7 +584,7 @@ func TestQuery8(t *testing.T) {
 		assert.Equal(t, cnt+7, int(c7.val))
 		assert.Equal(t, cnt+8, int(c8.val))
 
-		c12, c22, c32, c42, c52, c62, c72, c82 := query.GetAll()
+		_, c12, c22, c32, c42, c52, c62, c72, c82 := query.GetAll()
 		assert.Equal(t, c1, c12)
 		assert.Equal(t, c2, c22)
 		assert.Equal(t, c3, c32)

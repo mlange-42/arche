@@ -62,7 +62,7 @@ func main() {
 		returnAll := ""
 		if i > 0 {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
-			returnTypes = "(*" + strings.Join(typeLetters[:i], ", *") + ")"
+			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
 			include = "include: []reflect.Type{typeOf[" + strings.Join(typeLetters[:i], "](), typeOf[") + "]()},"
 			for j := 0; j < i; j++ {

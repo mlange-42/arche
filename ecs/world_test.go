@@ -428,11 +428,8 @@ func TestWorldListener(t *testing.T) {
 
 	w := NewWorld()
 
-	err := w.RegisterListener(listen)
-	assert.Nil(t, err)
-
-	err = w.RegisterListener(listen)
-	assert.NotNil(t, err)
+	w.RegisterListener(listen)
+	assert.Panics(t, func() { w.RegisterListener(listen) })
 
 	posID := ComponentID[position](&w)
 	velID := ComponentID[velocity](&w)

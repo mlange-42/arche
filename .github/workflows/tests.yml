@@ -75,6 +75,8 @@ jobs:
       - name: Run examples
         run: |
           go run ./examples/base
+          go run ./examples/change_listener
           go run ./examples/filter
           go run ./examples/generic
+          go run ./examples/locked_world
           go run ./examples/readme

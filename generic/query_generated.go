@@ -154,9 +154,9 @@ type Query1[A any] struct {
 	ids []ecs.ID
 }
 
-// GetAll returns all queried components for the current query position
-func (q *Query1[A]) GetAll() *A {
-	return (*A)(q.Query.Get(q.ids[0]))
+// GetAll returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query1[A]) GetAll() (ecs.Entity, *A) {
+	return q.Entity(), (*A)(q.Query.Get(q.ids[0]))
 }
 
 // Get1 returns the first queried component for the current query position
@@ -238,9 +238,9 @@ type Query2[A any, B any] struct {
 	ids []ecs.ID
 }
 
-// GetAll returns all queried components for the current query position
-func (q *Query2[A, B]) GetAll() (*A, *B) {
-	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
+// GetAll returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query2[A, B]) GetAll() (ecs.Entity, *A, *B) {
+	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
 }
 
 // Get1 returns the first queried component for the current query position
@@ -327,9 +327,9 @@ type Query3[A any, B any, C any] struct {
 	ids []ecs.ID
 }
 
-// GetAll returns all queried components for the current query position
-func (q *Query3[A, B, C]) GetAll() (*A, *B, *C) {
-	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
+// GetAll returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query3[A, B, C]) GetAll() (ecs.Entity, *A, *B, *C) {
+	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
 }
 
 // Get1 returns the first queried component for the current query position
@@ -421,9 +421,9 @@ type Query4[A any, B any, C any, D any] struct {
 	ids []ecs.ID
 }
 
-// GetAll returns all queried components for the current query position
-func (q *Query4[A, B, C, D]) GetAll() (*A, *B, *C, *D) {
-	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3]))
+// GetAll returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query4[A, B, C, D]) GetAll() (ecs.Entity, *A, *B, *C, *D) {
+	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3]))
 }
 
 // Get1 returns the first queried component for the current query position
@@ -520,9 +520,9 @@ type Query5[A any, B any, C any, D any, E any] struct {
 	ids []ecs.ID
 }
 
-// GetAll returns all queried components for the current query position
-func (q *Query5[A, B, C, D, E]) GetAll() (*A, *B, *C, *D, *E) {
-	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4]))
+// GetAll returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query5[A, B, C, D, E]) GetAll() (ecs.Entity, *A, *B, *C, *D, *E) {
+	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4]))
 }
 
 // Get1 returns the first queried component for the current query position
@@ -624,9 +624,9 @@ type Query6[A any, B any, C any, D any, E any, F any] struct {
 	ids []ecs.ID
 }
 
-// GetAll returns all queried components for the current query position
-func (q *Query6[A, B, C, D, E, F]) GetAll() (*A, *B, *C, *D, *E, *F) {
-	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5]))
+// GetAll returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query6[A, B, C, D, E, F]) GetAll() (ecs.Entity, *A, *B, *C, *D, *E, *F) {
+	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5]))
 }
 
 // Get1 returns the first queried component for the current query position
@@ -733,9 +733,9 @@ type Query7[A any, B any, C any, D any, E any, F any, G any] struct {
 	ids []ecs.ID
 }
 
-// GetAll returns all queried components for the current query position
-func (q *Query7[A, B, C, D, E, F, G]) GetAll() (*A, *B, *C, *D, *E, *F, *G) {
-	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6]))
+// GetAll returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query7[A, B, C, D, E, F, G]) GetAll() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G) {
+	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6]))
 }
 
 // Get1 returns the first queried component for the current query position
@@ -847,9 +847,9 @@ type Query8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	ids []ecs.ID
 }
 
-// GetAll returns all queried components for the current query position
-func (q *Query8[A, B, C, D, E, F, G, H]) GetAll() (*A, *B, *C, *D, *E, *F, *G, *H) {
-	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6])), (*H)(q.Query.Get(q.ids[7]))
+// GetAll returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query8[A, B, C, D, E, F, G, H]) GetAll() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G, *H) {
+	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6])), (*H)(q.Query.Get(q.ids[7]))
 }
 
 // Get1 returns the first queried component for the current query position
