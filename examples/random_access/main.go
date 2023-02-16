@@ -1,4 +1,4 @@
-// Demonstrates the generic API, which provides type-safety and convenience over the ID-based core API.
+// Demonstrates generic access to arbitrary entities.
 package main
 
 import (

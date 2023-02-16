@@ -18,6 +18,8 @@ type WorldStats struct {
 	Locked bool
 	// Archetype statistics
 	Archetypes []ArchetypeStats
+	// Memory used by entities and components
+	Memory int
 }
 
 // EntityStats provide statistics about [World] entities.
@@ -42,12 +44,17 @@ type ArchetypeStats struct {
 	ComponentIDs []uint8
 	// Component types for ComponentIDs
 	ComponentTypes []reflect.Type
+	// Total reserved memory for entities and components, in bytes
+	Memory int
 }
 
 func (s *WorldStats) String() string {
 	b := strings.Builder{}
 
-	fmt.Fprintf(&b, "World -- Components: %d, Archetypes: %d, Locked: %t\n", s.ComponentCount, len(s.Archetypes), s.Locked)
+	fmt.Fprintf(
+		&b, "World -- Components: %d, Archetypes: %d, Memory: %.1f kb, Locked: %t\n",
+		s.ComponentCount, len(s.Archetypes), float64(s.Memory)/1024.0, s.Locked,
+	)
 
 	typeNames := make([]string, len(s.ComponentTypes))
 	for i, tp := range s.ComponentTypes {
@@ -73,7 +80,7 @@ func (s *ArchetypeStats) String() string {
 		typeNames[i] = tp.Name()
 	}
 	return fmt.Sprintf(
-		"Archetype -- Components: %d, Entities: %d, Capacity: %d\n  Components: %s\n",
-		s.Components, s.Size, s.Capacity, strings.Join(typeNames, ", "),
+		"Archetype -- Components: %2d, Entities: %6d, Capacity: %6d, Memory: %7.1f kb\n  Components: %s\n",
+		s.Components, s.Size, s.Capacity, float64(s.Memory)/1024.0, strings.Join(typeNames, ", "),
 	)
 }
