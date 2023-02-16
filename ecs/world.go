@@ -193,8 +193,7 @@ func (w *World) Alive(entity Entity) bool {
 //
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
-	index := w.entities[entity.id]
-
+	index := &w.entities[entity.id]
 	return index.arch.Get(index.index, comp)
 }
 
