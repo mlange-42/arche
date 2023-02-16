@@ -96,10 +96,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 	arch.Init(32, true, comps...)
 
 	for i := 0; i < 1000; i++ {
-		arch.Add(
-			newEntity(eid(i)),
-			Component{ID: 0, Component: &testStruct0{}},
-		)
+		arch.Alloc(newEntity(eid(i)), true)
 	}
 	b.StartTimer()
 
@@ -107,8 +104,8 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 		len := int(arch.Len())
 		id := ID(0)
 		for j := 0; j < len; j++ {
-			pos := (*testStruct0)(arch.Get(uint32(i), id))
-			_ = pos
+			pos := (*testStruct0)(arch.Get(uint32(j), id))
+			pos.Val = 1
 		}
 	}
 }
@@ -123,10 +120,7 @@ func BenchmarkArchetypeAccessUnsafe_1000(b *testing.B) {
 	arch.Init(32, true, comps...)
 
 	for i := 0; i < 1000; i++ {
-		arch.Add(
-			newEntity(eid(i)),
-			Component{ID: 0, Component: &testStruct0{}},
-		)
+		arch.Alloc(newEntity(eid(i)), true)
 	}
 	b.StartTimer()
 
@@ -134,8 +128,8 @@ func BenchmarkArchetypeAccessUnsafe_1000(b *testing.B) {
 		len := int(arch.Len())
 		id := ID(0)
 		for j := 0; j < len; j++ {
-			pos := (*testStruct0)(arch.GetUnsafe(uint32(i), id))
-			_ = pos
+			pos := (*testStruct0)(arch.GetUnsafe(uint32(j), id))
+			pos.Val = 1
 		}
 	}
 }
