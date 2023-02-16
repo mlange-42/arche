@@ -315,13 +315,13 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	mask := oldArch.Mask
 	oldMask := mask
 	for _, comp := range add {
-		if oldMask.Get(comp) {
+		if oldArch.HasComponent(comp) {
 			panic("entity already has this component, can't add")
 		}
 		mask.Set(comp, true)
 	}
 	for _, comp := range rem {
-		if !oldMask.Get(comp) {
+		if !oldArch.HasComponent(comp) {
 			panic("entity does not have this component, can't remove")
 		}
 		mask.Set(comp, false)
