@@ -1,8 +1,8 @@
 package main
 
 // Profiling:
-// go build ./benchmark/profile/main
-// main
+// go build ./benchmark/profile/iter
+// iter
 // go tool pprof -http=":8000" -nodefraction=0.001 main cpu.pprof
 // go tool pprof -http=":8000" -nodefraction=0.001 main mem.pprof
 

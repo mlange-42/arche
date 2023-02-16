@@ -1,4 +1,4 @@
-package iterate
+package common
 
 import (
 	"testing"
@@ -8,5 +8,5 @@ import (
 
 func TestRegisterAll(t *testing.T) {
 	w := ecs.NewWorld()
-	registerAll(&w)
+	RegisterAll(&w)
 }

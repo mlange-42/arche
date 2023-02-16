@@ -13,6 +13,13 @@ func TestGenericMask(t *testing.T) {
 	)
 
 	assert.Equal(t,
+		T1[testStruct0](),
+		[]Comp{
+			typeOf[testStruct0](),
+		},
+	)
+
+	assert.Equal(t,
 		T2[testStruct0, testStruct1](),
 		[]Comp{
 			typeOf[testStruct0](),

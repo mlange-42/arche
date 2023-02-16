@@ -4,13 +4,14 @@ import (
 	"testing"
 
 	ecs "github.com/marioolofo/go-gameengine-ecs"
+	c "github.com/mlange-42/arche/benchmark/common"
 )
 
 func addGameEngineEcs(b *testing.B, count int) {
 	b.StopTimer()
 	comps := []ecs.ComponentConfig{
-		{ID: 0, Component: position{}},
-		{ID: 1, Component: rotation{}},
+		{ID: 0, Component: c.Position{}},
+		{ID: 1, Component: c.Rotation{}},
 	}
 	b.StartTimer()
 
