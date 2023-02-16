@@ -1,10 +1,10 @@
 package main
 
 // Profiling:
-// go build ./benchmark/profile/iter
-// iter
-// go tool pprof -http=":8000" -nodefraction=0.001 iter cpu.pprof
-// go tool pprof -http=":8000" -nodefraction=0.001 iter mem.pprof
+// go build ./benchmark/profile/world
+// world
+// go tool pprof -http=":8000" -nodefraction=0.001 world cpu.pprof
+// go tool pprof -http=":8000" -nodefraction=0.001 world mem.pprof
 
 import (
 	"github.com/mlange-42/arche/ecs"
@@ -35,7 +35,7 @@ func main() {
 	stop.Stop()
 }
 
-func run(rounds, iters, entities int) {
+func run(rounds, iters, entityCount int) {
 	for i := 0; i < rounds; i++ {
 		world := ecs.NewConfig().
 			WithCapacityIncrement(1024).
@@ -44,14 +44,14 @@ func run(rounds, iters, entities int) {
 		posID := ecs.ComponentID[position](&world)
 		rotID := ecs.ComponentID[rotation](&world)
 
-		for j := 0; j < entities; j++ {
-			_ = world.NewEntity(posID, rotID)
+		entities := make([]ecs.Entity, entityCount)
+		for i := 0; i < entityCount; i++ {
+			entities[i] = world.NewEntity(posID, rotID)
 		}
 
 		for j := 0; j < iters; j++ {
-			query := world.Query(ecs.All(posID, rotID))
-			for query.Next() {
-				pos := (*position)(query.Get(posID))
+			for _, e := range entities {
+				pos := (*position)(world.Get(e, posID))
 				_ = pos
 			}
 		}

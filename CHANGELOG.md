@@ -22,6 +22,7 @@
 * Ensure 100% test coverage by adding a CI check for it (#68)
 * `World.RemEntity(Entity)` is now `World.RemoveEntity(Entity)` (#87)
 * Optimization of adding/removing components, with 2-3x speedup and vast reduction of (number of) allocations (#93)
+* More examples as user documentation (#83, #95)
 
 ## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)
 

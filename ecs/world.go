@@ -193,8 +193,7 @@ func (w *World) Alive(entity Entity) bool {
 //
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
-	index := w.entities[entity.id]
-
+	index := &w.entities[entity.id]
 	return index.arch.Get(index.index, comp)
 }
 
@@ -378,33 +377,19 @@ func (w *World) RegisterListener(listener func(e ChangeEvent)) {
 func (w *World) Stats() *stats.WorldStats {
 	entities := stats.EntityStats{
 		Used:     w.entityPool.Len(),
-		Capacity: w.entityPool.Cap(),
+		Total:    w.entityPool.Cap(),
 		Recycled: w.entityPool.Available(),
+		Capacity: w.entityPool.TotalCap(),
 	}
 
 	compCount := len(w.registry.Components)
 	types := append([]reflect.Type{}, w.registry.Types[:compCount]...)
 
+	memory := cap(w.entities)*int(entityIndexSize) + w.entityPool.TotalCap()*int(entitySize)
 	archetypes := make([]stats.ArchetypeStats, w.archetypes.Len())
 	for i := 0; i < w.archetypes.Len(); i++ {
-		arch := w.archetypes.Get(i)
-
-		ids := arch.Components()
-		aCompCount := len(ids)
-		aTypes := make([]reflect.Type, aCompCount)
-		for j, id := range ids {
-			aTypes[j] = w.registry.ComponentType(id)
-		}
-
-		stats := stats.ArchetypeStats{
-			Size:           int(arch.Len()),
-			Capacity:       int(arch.Cap()),
-			Components:     aCompCount,
-			ComponentIDs:   ids,
-			ComponentTypes: aTypes,
-		}
-
-		archetypes[i] = stats
+		archetypes[i] = w.archetypes.Get(i).Stats(&w.registry)
+		memory += archetypes[i].Memory
 	}
 
 	return &stats.WorldStats{
@@ -413,6 +398,7 @@ func (w *World) Stats() *stats.WorldStats {
 		ComponentTypes: types,
 		Locked:         w.IsLocked(),
 		Archetypes:     archetypes,
+		Memory:         memory,
 	}
 }
 

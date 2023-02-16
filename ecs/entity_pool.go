@@ -64,6 +64,9 @@ func (p *entityPool) Len() int {
 func (p *entityPool) Cap() int {
 	return len(p.entities) - 1
 }
+func (p *entityPool) TotalCap() int {
+	return cap(p.entities)
+}
 func (p *entityPool) Available() int {
 	return int(p.available)
 }

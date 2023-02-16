@@ -1,5 +1,13 @@
 package ecs
 
+import "reflect"
+
+// Size of an Entity in memory.
+var entitySize = reflect.TypeOf(Entity{}).Size()
+
+// Size of an entitySize in memory.
+var entityIndexSize = reflect.TypeOf(entityIndex{}).Size()
+
 // Entity identifier.
 // Holds an entity ID and it's generation for recycling.
 //

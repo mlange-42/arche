@@ -215,18 +215,15 @@ func runArcheWorld(b *testing.B, count int) {
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
+	entities := make([]ecs.Entity, count)
 	for i := 0; i < count; i++ {
-		_ = world.NewEntity(posID, rotID)
+		entities[i] = world.NewEntity(posID, rotID)
 	}
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(ecs.All(posID, rotID))
-		b.StartTimer()
-		for query.Next() {
-			entity := query.Entity()
-			pos := (*c.Position)(world.Get(entity, posID))
+		for _, e := range entities {
+			pos := (*c.Position)(world.Get(e, posID))
 			_ = pos
 		}
 	}
@@ -241,18 +238,15 @@ func runArcheWorldGeneric(b *testing.B, count int) {
 
 	get := generic.NewMap[c.Position](&world)
 
+	entities := make([]ecs.Entity, count)
 	for i := 0; i < count; i++ {
-		_ = world.NewEntity(posID, rotID)
+		entities[i] = world.NewEntity(posID, rotID)
 	}
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(ecs.All(posID, rotID))
-		b.StartTimer()
-		for query.Next() {
-			entity := query.Entity()
-			pos := get.Get(entity)
+		for _, e := range entities {
+			pos := get.Get(e)
 			_ = pos
 		}
 	}

@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -64,4 +65,49 @@ func TestBitMask128(t *testing.T) {
 
 	assert.True(t, mask.ContainsAny(NewBitMask(ID(6), ID(65), ID(111))))
 	assert.False(t, mask.ContainsAny(NewBitMask(ID(6), ID(66), ID(90))))
+}
+
+func TestBitMask64(t *testing.T) {
+	mask := newBitMask64(ID(1))
+	assert.True(t, mask.Get(ID(1)))
+	for i := 0; i < wordSize; i++ {
+		mask.Set(ID(i), true)
+		assert.True(t, mask.Get(ID(i)))
+		mask.Set(ID(i), false)
+		assert.False(t, mask.Get(ID(i)))
+	}
+}
+
+func BenchmarkBitmask64Get(b *testing.B) {
+	b.StopTimer()
+	mask := newBitMask64()
+	for i := 0; i < MaskTotalBits; i++ {
+		if rand.Float64() < 0.5 {
+			mask.Set(ID(i), true)
+		}
+	}
+	idx := ID(rand.Intn(wordSize))
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		v := mask.Get(idx)
+		_ = v
+	}
+}
+
+func BenchmarkBitmask128Get(b *testing.B) {
+	b.StopTimer()
+	mask := NewBitMask()
+	for i := 0; i < MaskTotalBits; i++ {
+		if rand.Float64() < 0.5 {
+			mask.Set(ID(i), true)
+		}
+	}
+	idx := ID(rand.Intn(MaskTotalBits))
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		v := mask.Get(idx)
+		_ = v
+	}
 }

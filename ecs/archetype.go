@@ -1,7 +1,10 @@
 package ecs
 
 import (
+	"reflect"
 	"unsafe"
+
+	"github.com/mlange-42/arche/ecs/stats"
 )
 
 // archetype represents an ECS archetype
@@ -160,4 +163,30 @@ func (a *archetype) SetTransitionAdd(id ID, to *archetype) {
 // SetTransitionRemove sets the archetype resulting from removing a component
 func (a *archetype) SetTransitionRemove(id ID, to *archetype) {
 	a.toRemove[id] = to
+}
+
+// Stats generates statistics for an archetype
+func (a *archetype) Stats(reg *componentRegistry) stats.ArchetypeStats {
+	ids := a.Components()
+	aCompCount := len(ids)
+	aTypes := make([]reflect.Type, aCompCount)
+	for j, id := range ids {
+		aTypes[j] = reg.ComponentType(id)
+	}
+
+	cap := int(a.Cap())
+	memory := cap * int(entitySize)
+	for i := 0; i < len(a.components); i++ {
+		comp := &a.components[i]
+		memory += int(comp.itemSize) * cap
+	}
+
+	return stats.ArchetypeStats{
+		Size:           int(a.Len()),
+		Capacity:       cap,
+		Components:     aCompCount,
+		ComponentIDs:   ids,
+		ComponentTypes: aTypes,
+		Memory:         memory,
+	}
 }
