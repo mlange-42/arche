@@ -27,7 +27,10 @@ type Rotation struct {
 
 func main() {
 	// Create a World.
-	world := ecs.NewWorld()
+	world :=
+		ecs.NewConfig().
+			WithCapacityIncrement(4096).
+			Build()
 
 	ids := []ecs.ID{
 		ecs.ComponentID[Position](&world),
@@ -35,16 +38,20 @@ func main() {
 		ecs.ComponentID[Rotation](&world),
 	}
 
-	// Create entities.
-	for i := 0; i < 100000; i++ {
+	currIDs := make([]ecs.ID, 0, len(ids))
+	// Create 1 million entities.
+	for i := 0; i < 1000000; i++ {
 		// Create a new Entity.
 		entity := world.NewEntity()
-		// Add some random components
+		// Select some random components
 		for _, id := range ids {
 			if rand.Float64() < 0.7 {
-				world.Add(entity, id)
+				currIDs = append(currIDs, id)
 			}
 		}
+		// Add the components
+		world.Add(entity, currIDs...)
+		currIDs = currIDs[:0]
 	}
 
 	fmt.Println(world.Stats().String())

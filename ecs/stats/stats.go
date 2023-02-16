@@ -27,9 +27,11 @@ type EntityStats struct {
 	// Currently used/alive entities
 	Used int
 	// Current capacity of the entity pool
-	Capacity int
+	Total int
 	// Recycled/available entities
 	Recycled int
+	// Current capacity of the entities list
+	Capacity int
 }
 
 // ArchetypeStats provide statistics for an archetype.
@@ -71,7 +73,7 @@ func (s *WorldStats) String() string {
 }
 
 func (s *EntityStats) String() string {
-	return fmt.Sprintf("Entities -- Used: %d, Recycled: %d, Capacity: %d\n", s.Used, s.Recycled, s.Capacity)
+	return fmt.Sprintf("Entities -- Used: %d, Recycled: %d, Total: %d, Capacity: %d\n", s.Used, s.Recycled, s.Total, s.Capacity)
 }
 
 func (s *ArchetypeStats) String() string {

@@ -378,14 +378,15 @@ func (w *World) RegisterListener(listener func(e ChangeEvent)) {
 func (w *World) Stats() *stats.WorldStats {
 	entities := stats.EntityStats{
 		Used:     w.entityPool.Len(),
-		Capacity: w.entityPool.Cap(),
+		Total:    w.entityPool.Cap(),
 		Recycled: w.entityPool.Available(),
+		Capacity: w.entityPool.TotalCap(),
 	}
 
 	compCount := len(w.registry.Components)
 	types := append([]reflect.Type{}, w.registry.Types[:compCount]...)
 
-	memory := cap(w.entities) * int(entityIndexSize)
+	memory := cap(w.entities)*int(entityIndexSize) + w.entityPool.TotalCap()*int(entitySize)
 	archetypes := make([]stats.ArchetypeStats, w.archetypes.Len())
 	for i := 0; i < w.archetypes.Len(); i++ {
 		archetypes[i] = w.archetypes.Get(i).Stats(&w.registry)
