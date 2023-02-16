@@ -3,9 +3,9 @@
 
 // Filter{{ .Index }} is a helper for building [Query{{ .Index }}] query iterators.
 type Filter{{ .Index }}{{ .TypesFull }} struct {
-	include  []reflect.Type
-	optional []reflect.Type
-	exclude  []reflect.Type
+	include  []Comp
+	optional []Comp
+	exclude  []Comp
 	compiled compiledQuery
 }
 
@@ -18,21 +18,23 @@ func NewFilter{{ .Index }}{{ .TypesFull }}() *Filter{{ .Index }}{{ .Types }} {
 	}
 }
 
+{{if .Types}}
 // Optional makes some of the query's components optional.
 //
-// Create the required mask with [Mask1], [Mask2], etc.
+// Create the required mask items with [T].
 //
 // Only affects component types that were specified in the query.
-func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask []reflect.Type) *Filter{{ .Index }}{{ .Types }} {
+func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
 	q.optional = append(q.optional, mask...)
 	q.compiled.Reset()
 	return q
 }
+{{ end }}
 
 // With adds more required components that are not accessible using Get... methods.
 //
-// Create the required mask with [Mask1], [Mask2], etc.
-func (q *Filter{{ .Index }}{{ .Types }}) With(mask []reflect.Type) *Filter{{ .Index }}{{ .Types }} {
+// Create the required mask items with [T].
+func (q *Filter{{ .Index }}{{ .Types }}) With(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -40,8 +42,8 @@ func (q *Filter{{ .Index }}{{ .Types }}) With(mask []reflect.Type) *Filter{{ .In
 
 // Without excludes entities with any of the given components from the query.
 //
-// Create the required mask with [Mask1], [Mask2], etc.
-func (q *Filter{{ .Index }}{{ .Types }}) Without(mask []reflect.Type) *Filter{{ .Index }}{{ .Types }} {
+// Create the required mask items with [T].
+func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -67,7 +69,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskPair {
 
 // Query{{ .Index }} is a generic query iterator for {{ .NumberStr }} components.
 //
-// Create one with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query]
+// Create it with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query]
 type Query{{ .Index }}{{ .TypesFull }} struct {
 	ecs.Query
 	ids []ecs.ID

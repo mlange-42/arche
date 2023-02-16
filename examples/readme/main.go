@@ -26,13 +26,13 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
-	// Create a generic entity mutation helper.
-	mutator := generic.NewMutate2[Position, Velocity](&world)
+	// Create a component mapper.
+	mapper := generic.NewMap2[Position, Velocity](&world)
 
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity with components.
-		_, pos, vel := mutator.NewEntity()
+		_, pos, vel := mapper.NewEntity()
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
@@ -51,7 +51,7 @@ func main() {
 		// Iterate it
 		for query.Next() {
 			// Component access through the Query.
-			_, pos, vel := query.GetAll()
+			_, pos, vel := query.Get()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y

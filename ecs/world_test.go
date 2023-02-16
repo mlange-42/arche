@@ -19,7 +19,7 @@ func TestWorldEntites(t *testing.T) {
 	assert.Equal(t, 0, int(w.entities[1].index))
 	assert.Equal(t, 1, int(w.entities[2].index))
 	assert.Equal(t, 2, int(w.entities[3].index))
-	w.RemEntity(newEntityGen(2, 0))
+	w.RemoveEntity(newEntityGen(2, 0))
 	assert.False(t, w.Alive(newEntityGen(2, 0)))
 
 	assert.Equal(t, 0, int(w.entities[1].index))
@@ -31,13 +31,13 @@ func TestWorldEntites(t *testing.T) {
 
 	assert.Equal(t, 2, int(w.entities[2].index))
 
-	w.RemEntity(newEntityGen(3, 0))
-	w.RemEntity(newEntityGen(2, 1))
-	w.RemEntity(newEntityGen(1, 0))
+	w.RemoveEntity(newEntityGen(3, 0))
+	w.RemoveEntity(newEntityGen(2, 1))
+	w.RemoveEntity(newEntityGen(1, 0))
 
-	assert.Panics(t, func() { w.RemEntity(newEntityGen(3, 0)) })
-	assert.Panics(t, func() { w.RemEntity(newEntityGen(2, 1)) })
-	assert.Panics(t, func() { w.RemEntity(newEntityGen(1, 0)) })
+	assert.Panics(t, func() { w.RemoveEntity(newEntityGen(3, 0)) })
+	assert.Panics(t, func() { w.RemoveEntity(newEntityGen(2, 1)) })
+	assert.Panics(t, func() { w.RemoveEntity(newEntityGen(1, 0)) })
 }
 
 func TestWorldNewEntites(t *testing.T) {
@@ -69,10 +69,10 @@ func TestWorldNewEntites(t *testing.T) {
 	assert.Equal(t, &velocity{3, 4}, vel)
 	assert.Equal(t, &rotation{5}, rot)
 
-	w.RemEntity(e0)
-	w.RemEntity(e1)
-	w.RemEntity(e2)
-	w.RemEntity(e3)
+	w.RemoveEntity(e0)
+	w.RemoveEntity(e1)
+	w.RemoveEntity(e2)
+	w.RemoveEntity(e3)
 
 	for i := 0; i < 35; i++ {
 		e := w.NewEntityWith(
@@ -156,7 +156,7 @@ func TestWorldComponents(t *testing.T) {
 	w.Add(e0)
 	w.Remove(e0)
 
-	w.RemEntity(e0)
+	w.RemoveEntity(e0)
 	assert.Panics(t, func() { w.Has(newEntityGen(1, 0), posID) })
 	assert.Panics(t, func() { w.Get(newEntityGen(1, 0), posID) })
 }
@@ -298,7 +298,7 @@ func TestWorldGetComponents(t *testing.T) {
 	assert.Equal(t, &position{}, pos0)
 	assert.Equal(t, &position{100, 101}, pos1)
 
-	w.RemEntity(e0)
+	w.RemoveEntity(e0)
 
 	pos1 = (*position)(w.Get(e1, posID))
 	assert.Equal(t, &position{100, 101}, pos1)
@@ -366,7 +366,7 @@ func TestWorldLock(t *testing.T) {
 	query1 = world.Query(All(posID))
 
 	assert.Panics(t, func() { world.NewEntity() })
-	assert.Panics(t, func() { world.RemEntity(entity) })
+	assert.Panics(t, func() { world.RemoveEntity(entity) })
 	assert.Panics(t, func() { world.Add(entity, rotID) })
 	assert.Panics(t, func() { world.Remove(entity, posID) })
 }
@@ -441,7 +441,7 @@ func TestWorldListener(t *testing.T) {
 		Entity: e0, AddedRemoved: 1,
 	}, events[len(events)-1])
 
-	w.RemEntity(e0)
+	w.RemoveEntity(e0)
 	assert.Equal(t, 2, len(events))
 	assert.Equal(t, ChangeEvent{
 		Entity: e0, AddedRemoved: -1,
@@ -457,7 +457,7 @@ func TestWorldListener(t *testing.T) {
 		AddedRemoved: 1,
 	}, events[len(events)-1])
 
-	w.RemEntity(e0)
+	w.RemoveEntity(e0)
 	assert.Equal(t, 4, len(events))
 	assert.Equal(t, ChangeEvent{
 		Entity:       e0,

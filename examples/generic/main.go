@@ -34,13 +34,13 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
-	// Create a generic entity mutation helper.
-	mutator := generic.NewMutate4[Position, Velocity, Rotation, Elevation](&world)
+	// Create a component mapper.
+	mapper := generic.NewMap4[Position, Velocity, Rotation, Elevation](&world)
 
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity with components.
-		_, pos, vel, _, _ := mutator.NewEntity()
+		_, pos, vel, _, _ := mapper.NewEntity()
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
@@ -61,7 +61,7 @@ func main() {
 		// Iterate it.
 		for query.Next() {
 			// Component access through the Query.
-			_, pos, vel := query.GetAll()
+			_, pos, vel := query.Get()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y
@@ -71,15 +71,15 @@ func main() {
 	// A more complex generic query using optional and excluded components:
 	filter =
 		generic.
-			NewFilter2[Position, Velocity]().    // Components provided through Get... methods
-			Optional(generic.Mask1[Velocity]()). // but those may be nil
-			With(generic.Mask1[Elevation]()).    // additional required components
-			Without(generic.Mask1[Rotation]())   // entities with any of these are excluded.
+			NewFilter2[Position, Velocity](). // Components provided through Get... methods
+			Optional(generic.T[Velocity]()).  // but those may be nil
+			With(generic.T[Elevation]()).     // additional required components
+			Without(generic.T[Rotation]())    // entities with any of these are excluded.
 
 	q := filter.Query(&world)
 
 	for q.Next() {
-		_, pos, vel := q.GetAll()
+		_, pos, vel := q.Get()
 		pos.X += vel.X
 		pos.Y += vel.Y
 	}

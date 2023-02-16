@@ -33,13 +33,14 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 
-	// Create a generic entity mutation helper.
-	mutator := generic.NewMutate2[Position, Energy](&world)
+	// Create a component mapper.
+	mapper := generic.NewMap2[Position, Energy](&world)
 
 	// Create entities.
 	for i := 0; i < 1000; i++ {
-		// Create a new Entity.
-		_, pos, en := mutator.NewEntity()
+		// Create a new Entity with components.
+		_, pos, en := mapper.NewEntity()
+
 		pos.X = rand.Float64() * 100
 		pos.Y = rand.Float64() * 100
 		en.Value = rand.Float64()
@@ -65,7 +66,7 @@ func main() {
 		// Thus, it is not possible to add or remove entities or components.
 		for query.Next() {
 			// Component access through the Query.
-			entity, pos, ene := query.GetAll()
+			entity, pos, ene := query.Get()
 			// Do model logic.
 			ene.Value += rand.NormFloat64() * 0.05
 
@@ -92,7 +93,7 @@ func main() {
 
 		// Remove entities that are to die
 		for _, entity := range toDie {
-			world.RemEntity(entity)
+			world.RemoveEntity(entity)
 		}
 
 		// Create entities through reproduction
@@ -100,7 +101,8 @@ func main() {
 			// Create offspring entities.
 			for i := 0; i < repro.Offspring; i++ {
 				// Create a new Entity and initialize it.
-				_, pos, en := mutator.NewEntity()
+				_, pos, en := mapper.NewEntity()
+
 				pos.X = repro.X + rand.NormFloat64()
 				pos.Y = repro.Y + rand.NormFloat64()
 				en.Value = rand.Float64() * 0.5

@@ -133,11 +133,11 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	return entity
 }
 
-// RemEntity removes and recycles an [Entity].
+// RemoveEntity removes and recycles an [Entity].
 //
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
-func (w *World) RemEntity(entity Entity) {
+func (w *World) RemoveEntity(entity Entity) {
 	w.checkLocked()
 
 	index := w.entities[entity.id]

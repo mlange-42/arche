@@ -33,16 +33,16 @@ type getter struct {
 
 func main() {
 	generateQueries()
-	generateMutates()
+	generateMaps()
 }
 
-func generateMutates() {
-	fmt.Println("Generating mutates")
+func generateMaps() {
+	fmt.Println("Generating maps")
 
 	maxIndex := len(typeLetters)
 	text := bytes.Buffer{}
 
-	header, err := template.ParseFiles("./generate/mutate_header.go.txt")
+	header, err := template.ParseFiles("./generate/map_header.go.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -51,20 +51,29 @@ func generateMutates() {
 		panic(err)
 	}
 
-	mutate, err := template.ParseFiles("./generate/mutate.go.txt")
+	mutate, err := template.ParseFiles("./generate/map.go.txt")
 	if err != nil {
 		panic(err)
 	}
 
 	for i := 1; i <= maxIndex; i++ {
+		types := ""
+		returnTypes := ""
+		fullTypes := ""
 		returnAll := ""
+		include := ""
 		components := ""
 		arguments := ""
 
-		types := "[" + strings.Join(typeLetters[:i], ", ") + "]"
-		returnTypes := "*" + strings.Join(typeLetters[:i], ", *")
-		fullTypes := "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-		include := "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](w), ecs.ComponentID[") + "](w)}"
+		if i > 0 {
+			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
+			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
+			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
+			include = "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](w), ecs.ComponentID[") + "](w)}"
+		} else {
+			include = "[]ecs.ID{}"
+		}
+
 		for j := 0; j < i; j++ {
 			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.ids[%d]))", typeLetters[j], j)
 			arguments += fmt.Sprintf("%s *%s", strings.ToLower(typeLetters[j]), typeLetters[j])
@@ -92,7 +101,7 @@ func generateMutates() {
 		}
 	}
 
-	if err := os.WriteFile("mutate_generated.go", text.Bytes(), 0666); err != nil {
+	if err := os.WriteFile("map_generated.go", text.Bytes(), 0666); err != nil {
 		panic(err)
 	}
 }
@@ -136,7 +145,7 @@ func generateQueries() {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-			include = "[]reflect.Type{typeOf[" + strings.Join(typeLetters[:i], "](), typeOf[") + "]()}"
+			include = "[]Comp{typeOf[" + strings.Join(typeLetters[:i], "](), typeOf[") + "]()}"
 			for j := 0; j < i; j++ {
 				returnAll += fmt.Sprintf("(*%s)(q.Query.Get(q.ids[%d]))", typeLetters[j], j)
 				if j < i-1 {
@@ -144,7 +153,7 @@ func generateQueries() {
 				}
 			}
 		} else {
-			include = "[]reflect.Type{}"
+			include = "[]Comp{}"
 		}
 		data := query{
 			Index:       i,

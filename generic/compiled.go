@@ -1,8 +1,6 @@
 package generic
 
 import (
-	"reflect"
-
 	"github.com/mlange-42/arche/ecs"
 )
 
@@ -13,7 +11,7 @@ type compiledQuery struct {
 	compiled bool
 }
 
-func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []reflect.Type) {
+func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp) {
 	if q.compiled {
 		return
 	}

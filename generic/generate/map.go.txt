@@ -1,0 +1,68 @@
+
+//////////////////////////////////////////////////////////////////////////
+
+// Map{{ .Index }} is a helper for mapping {{ .NumberStr }} components.
+type Map{{ .Index }}{{ .TypesFull }} struct {
+	ids    []ecs.ID
+	world  *ecs.World
+}
+
+// NewMap{{ .Index }} creates a new Map{{ .Index }} object.
+func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }} {
+	return Map{{ .Index }}{{ .Types }}{
+		ids:   {{ .Include }},
+		world: w,
+	}
+}
+
+// Get all the Map{{ .Index }}'s components for the given entity.
+//
+// See also [ecs.World.Get].
+func (m *Map{{ .Index }}{{ .Types }}) Get(entity ecs.Entity) ({{ .TypesReturn }}) {
+	return {{ .ReturnAll }}
+}
+
+// NewEntity creates a new [ecs.Entity] with the Mutate{{ .Index }}'s components.
+//
+// See also [ecs.World.NewEntity].
+func (m *Map{{ .Index }}{{ .Types }}) NewEntity() (ecs.Entity, {{ .TypesReturn }}) {
+	entity := m.world.NewEntity(m.ids...)
+	return entity{{if .ReturnAll}}, {{ .ReturnAll }}{{ end }}
+}
+
+{{if .ReturnAll}}
+// NewEntityWith creates a new [ecs.Entity] with the Map{{ .Index }}'s components, using the supplied values.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) (ecs.Entity, {{ .TypesReturn }}) {
+	entity := m.world.NewEntityWith(
+		{{ .Components }}
+	)
+	return entity{{if .ReturnAll}}, {{ .ReturnAll }}{{ end }}
+}
+
+// Add the Map{{ .Index }}'s components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) ({{ .TypesReturn }}) {
+	m.world.Add(entity, m.ids...)
+	return {{ .ReturnAll }}
+}
+
+// Assign the Map{{ .Index }}'s components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign] and [ecs.World.AssignN].
+func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) ({{ .TypesReturn }}) {
+	m.world.AssignN(entity,
+		{{ .Components }}
+	)
+	return {{ .ReturnAll }}
+}
+{{ end }}
+
+// Remove the components set via [Map{{ .Index }}.WithRemove] from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
+}
