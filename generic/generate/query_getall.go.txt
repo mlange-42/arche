@@ -1,5 +1,0 @@
-
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query{{ .Index }}{{ .Types }}) Get() (ecs.Entity, {{ .TypesReturn }}) {
-	return q.Entity(), {{ .ReturnAll }}
-}

@@ -31,7 +31,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask ...Comp) *Filter{{ .Index
 }
 {{ end }}
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query{{ .Index }}.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter{{ .Index }}{{ .Types }}) With(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
@@ -73,4 +73,9 @@ func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskPair {
 type Query{{ .Index }}{{ .TypesFull }} struct {
 	ecs.Query
 	ids []ecs.ID
+}
+
+// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query{{ .Index }}{{ .Types }}) Get() (ecs.Entity, {{ .TypesReturn }}) {
+	return q.Entity(){{if .ReturnAll}}, {{ .ReturnAll }}{{ end }}
 }

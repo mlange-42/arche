@@ -25,7 +25,7 @@ func NewFilter0() *Filter0 {
 	}
 }
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query0.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter0) With(mask ...Comp) *Filter0 {
@@ -69,6 +69,11 @@ type Query0 struct {
 	ids []ecs.ID
 }
 
+// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+func (q *Query0) Get() ecs.Entity {
+	return q.Entity()
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // Filter1 is a helper for building [Query1] query iterators.
@@ -99,7 +104,7 @@ func (q *Filter1[A]) Optional(mask ...Comp) *Filter1[A] {
 	return q
 }
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query1.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter1[A]) With(mask ...Comp) *Filter1[A] {
@@ -148,11 +153,6 @@ func (q *Query1[A]) Get() (ecs.Entity, *A) {
 	return q.Entity(), (*A)(q.Query.Get(q.ids[0]))
 }
 
-// Get1 returns the first queried component for the current query iterator position.
-func (q *Query1[A]) Get1() *A {
-	return (*A)(q.Query.Get(q.ids[0]))
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 // Filter2 is a helper for building [Query2] query iterators.
@@ -183,7 +183,7 @@ func (q *Filter2[A, B]) Optional(mask ...Comp) *Filter2[A, B] {
 	return q
 }
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query2.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter2[A, B]) With(mask ...Comp) *Filter2[A, B] {
@@ -232,16 +232,6 @@ func (q *Query2[A, B]) Get() (ecs.Entity, *A, *B) {
 	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
 }
 
-// Get1 returns the first queried component for the current query iterator position.
-func (q *Query2[A, B]) Get1() *A {
-	return (*A)(q.Query.Get(q.ids[0]))
-}
-
-// Get2 returns the second queried component for the current query iterator position.
-func (q *Query2[A, B]) Get2() *B {
-	return (*B)(q.Query.Get(q.ids[1]))
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 // Filter3 is a helper for building [Query3] query iterators.
@@ -272,7 +262,7 @@ func (q *Filter3[A, B, C]) Optional(mask ...Comp) *Filter3[A, B, C] {
 	return q
 }
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query3.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter3[A, B, C]) With(mask ...Comp) *Filter3[A, B, C] {
@@ -321,21 +311,6 @@ func (q *Query3[A, B, C]) Get() (ecs.Entity, *A, *B, *C) {
 	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
 }
 
-// Get1 returns the first queried component for the current query iterator position.
-func (q *Query3[A, B, C]) Get1() *A {
-	return (*A)(q.Query.Get(q.ids[0]))
-}
-
-// Get2 returns the second queried component for the current query iterator position.
-func (q *Query3[A, B, C]) Get2() *B {
-	return (*B)(q.Query.Get(q.ids[1]))
-}
-
-// Get3 returns the third queried component for the current query iterator position.
-func (q *Query3[A, B, C]) Get3() *C {
-	return (*C)(q.Query.Get(q.ids[2]))
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 // Filter4 is a helper for building [Query4] query iterators.
@@ -366,7 +341,7 @@ func (q *Filter4[A, B, C, D]) Optional(mask ...Comp) *Filter4[A, B, C, D] {
 	return q
 }
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query4.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter4[A, B, C, D]) With(mask ...Comp) *Filter4[A, B, C, D] {
@@ -415,26 +390,6 @@ func (q *Query4[A, B, C, D]) Get() (ecs.Entity, *A, *B, *C, *D) {
 	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3]))
 }
 
-// Get1 returns the first queried component for the current query iterator position.
-func (q *Query4[A, B, C, D]) Get1() *A {
-	return (*A)(q.Query.Get(q.ids[0]))
-}
-
-// Get2 returns the second queried component for the current query iterator position.
-func (q *Query4[A, B, C, D]) Get2() *B {
-	return (*B)(q.Query.Get(q.ids[1]))
-}
-
-// Get3 returns the third queried component for the current query iterator position.
-func (q *Query4[A, B, C, D]) Get3() *C {
-	return (*C)(q.Query.Get(q.ids[2]))
-}
-
-// Get4 returns the fourth queried component for the current query iterator position.
-func (q *Query4[A, B, C, D]) Get4() *D {
-	return (*D)(q.Query.Get(q.ids[3]))
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 // Filter5 is a helper for building [Query5] query iterators.
@@ -465,7 +420,7 @@ func (q *Filter5[A, B, C, D, E]) Optional(mask ...Comp) *Filter5[A, B, C, D, E] 
 	return q
 }
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query5.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter5[A, B, C, D, E]) With(mask ...Comp) *Filter5[A, B, C, D, E] {
@@ -514,31 +469,6 @@ func (q *Query5[A, B, C, D, E]) Get() (ecs.Entity, *A, *B, *C, *D, *E) {
 	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4]))
 }
 
-// Get1 returns the first queried component for the current query iterator position.
-func (q *Query5[A, B, C, D, E]) Get1() *A {
-	return (*A)(q.Query.Get(q.ids[0]))
-}
-
-// Get2 returns the second queried component for the current query iterator position.
-func (q *Query5[A, B, C, D, E]) Get2() *B {
-	return (*B)(q.Query.Get(q.ids[1]))
-}
-
-// Get3 returns the third queried component for the current query iterator position.
-func (q *Query5[A, B, C, D, E]) Get3() *C {
-	return (*C)(q.Query.Get(q.ids[2]))
-}
-
-// Get4 returns the fourth queried component for the current query iterator position.
-func (q *Query5[A, B, C, D, E]) Get4() *D {
-	return (*D)(q.Query.Get(q.ids[3]))
-}
-
-// Get5 returns the fifth queried component for the current query iterator position.
-func (q *Query5[A, B, C, D, E]) Get5() *E {
-	return (*E)(q.Query.Get(q.ids[4]))
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 // Filter6 is a helper for building [Query6] query iterators.
@@ -569,7 +499,7 @@ func (q *Filter6[A, B, C, D, E, F]) Optional(mask ...Comp) *Filter6[A, B, C, D, 
 	return q
 }
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query6.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter6[A, B, C, D, E, F]) With(mask ...Comp) *Filter6[A, B, C, D, E, F] {
@@ -618,36 +548,6 @@ func (q *Query6[A, B, C, D, E, F]) Get() (ecs.Entity, *A, *B, *C, *D, *E, *F) {
 	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5]))
 }
 
-// Get1 returns the first queried component for the current query iterator position.
-func (q *Query6[A, B, C, D, E, F]) Get1() *A {
-	return (*A)(q.Query.Get(q.ids[0]))
-}
-
-// Get2 returns the second queried component for the current query iterator position.
-func (q *Query6[A, B, C, D, E, F]) Get2() *B {
-	return (*B)(q.Query.Get(q.ids[1]))
-}
-
-// Get3 returns the third queried component for the current query iterator position.
-func (q *Query6[A, B, C, D, E, F]) Get3() *C {
-	return (*C)(q.Query.Get(q.ids[2]))
-}
-
-// Get4 returns the fourth queried component for the current query iterator position.
-func (q *Query6[A, B, C, D, E, F]) Get4() *D {
-	return (*D)(q.Query.Get(q.ids[3]))
-}
-
-// Get5 returns the fifth queried component for the current query iterator position.
-func (q *Query6[A, B, C, D, E, F]) Get5() *E {
-	return (*E)(q.Query.Get(q.ids[4]))
-}
-
-// Get6 returns the sixth queried component for the current query iterator position.
-func (q *Query6[A, B, C, D, E, F]) Get6() *F {
-	return (*F)(q.Query.Get(q.ids[5]))
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 // Filter7 is a helper for building [Query7] query iterators.
@@ -678,7 +578,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Optional(mask ...Comp) *Filter7[A, B, C, 
 	return q
 }
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query7.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter7[A, B, C, D, E, F, G]) With(mask ...Comp) *Filter7[A, B, C, D, E, F, G] {
@@ -727,41 +627,6 @@ func (q *Query7[A, B, C, D, E, F, G]) Get() (ecs.Entity, *A, *B, *C, *D, *E, *F,
 	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6]))
 }
 
-// Get1 returns the first queried component for the current query iterator position.
-func (q *Query7[A, B, C, D, E, F, G]) Get1() *A {
-	return (*A)(q.Query.Get(q.ids[0]))
-}
-
-// Get2 returns the second queried component for the current query iterator position.
-func (q *Query7[A, B, C, D, E, F, G]) Get2() *B {
-	return (*B)(q.Query.Get(q.ids[1]))
-}
-
-// Get3 returns the third queried component for the current query iterator position.
-func (q *Query7[A, B, C, D, E, F, G]) Get3() *C {
-	return (*C)(q.Query.Get(q.ids[2]))
-}
-
-// Get4 returns the fourth queried component for the current query iterator position.
-func (q *Query7[A, B, C, D, E, F, G]) Get4() *D {
-	return (*D)(q.Query.Get(q.ids[3]))
-}
-
-// Get5 returns the fifth queried component for the current query iterator position.
-func (q *Query7[A, B, C, D, E, F, G]) Get5() *E {
-	return (*E)(q.Query.Get(q.ids[4]))
-}
-
-// Get6 returns the sixth queried component for the current query iterator position.
-func (q *Query7[A, B, C, D, E, F, G]) Get6() *F {
-	return (*F)(q.Query.Get(q.ids[5]))
-}
-
-// Get7 returns the seventh queried component for the current query iterator position.
-func (q *Query7[A, B, C, D, E, F, G]) Get7() *G {
-	return (*G)(q.Query.Get(q.ids[6]))
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 // Filter8 is a helper for building [Query8] query iterators.
@@ -792,7 +657,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Optional(mask ...Comp) *Filter8[A, B, 
 	return q
 }
 
-// With adds more required components that are not accessible using Get... methods.
+// With adds components that are required, but not accessible via [Query8.Get].
 //
 // Create the required mask items with [T].
 func (q *Filter8[A, B, C, D, E, F, G, H]) With(mask ...Comp) *Filter8[A, B, C, D, E, F, G, H] {
@@ -839,44 +704,4 @@ type Query8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 // Get returns the [ecs.Entity] and all queried components for the current query iterator position.
 func (q *Query8[A, B, C, D, E, F, G, H]) Get() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G, *H) {
 	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6])), (*H)(q.Query.Get(q.ids[7]))
-}
-
-// Get1 returns the first queried component for the current query iterator position.
-func (q *Query8[A, B, C, D, E, F, G, H]) Get1() *A {
-	return (*A)(q.Query.Get(q.ids[0]))
-}
-
-// Get2 returns the second queried component for the current query iterator position.
-func (q *Query8[A, B, C, D, E, F, G, H]) Get2() *B {
-	return (*B)(q.Query.Get(q.ids[1]))
-}
-
-// Get3 returns the third queried component for the current query iterator position.
-func (q *Query8[A, B, C, D, E, F, G, H]) Get3() *C {
-	return (*C)(q.Query.Get(q.ids[2]))
-}
-
-// Get4 returns the fourth queried component for the current query iterator position.
-func (q *Query8[A, B, C, D, E, F, G, H]) Get4() *D {
-	return (*D)(q.Query.Get(q.ids[3]))
-}
-
-// Get5 returns the fifth queried component for the current query iterator position.
-func (q *Query8[A, B, C, D, E, F, G, H]) Get5() *E {
-	return (*E)(q.Query.Get(q.ids[4]))
-}
-
-// Get6 returns the sixth queried component for the current query iterator position.
-func (q *Query8[A, B, C, D, E, F, G, H]) Get6() *F {
-	return (*F)(q.Query.Get(q.ids[5]))
-}
-
-// Get7 returns the seventh queried component for the current query iterator position.
-func (q *Query8[A, B, C, D, E, F, G, H]) Get7() *G {
-	return (*G)(q.Query.Get(q.ids[6]))
-}
-
-// Get8 returns the eighth queried component for the current query iterator position.
-func (q *Query8[A, B, C, D, E, F, G, H]) Get8() *H {
-	return (*H)(q.Query.Get(q.ids[7]))
 }
