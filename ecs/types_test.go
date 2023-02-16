@@ -16,7 +16,7 @@ type rotation struct {
 	Angle int
 }
 
-type testStruct0 struct{ val int32 }
+type testStruct0 struct{ Val int32 }
 type testStruct1 struct{ val int32 }
 type testStruct2 struct{ val int32 }
 type testStruct3 struct{ val int32 }

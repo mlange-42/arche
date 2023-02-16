@@ -176,11 +176,11 @@ func TestGenericStorage(t *testing.T) {
 
 func BenchmarkIterStorage_1000(b *testing.B) {
 	b.StopTimer()
-	ref := testStruct{}
+	ref := testStruct0{}
 	s := storage{}
 	s.Init(reflect.TypeOf(ref), 128, true)
 	for i := 0; i < 1000; i++ {
-		s.Add(&testStruct{})
+		s.Add(&testStruct0{})
 	}
 	assert.Equal(b, 1000, int(s.Len()))
 	b.StartTimer()
@@ -188,17 +188,17 @@ func BenchmarkIterStorage_1000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		len := int(s.Len())
 		for j := 0; j < len; j++ {
-			a := (*testStruct)(s.Get(uint32(j)))
-			_ = a
+			a := (*testStruct0)(s.Get(uint32(j)))
+			a.Val = 1
 		}
 	}
 }
 
 func BenchmarkIterSlice_1000(b *testing.B) {
 	b.StopTimer()
-	s := []testStruct{}
+	s := []testStruct0{}
 	for i := 0; i < 1000; i++ {
-		s = append(s, testStruct{})
+		s = append(s, testStruct0{})
 	}
 	assert.Equal(b, 1000, len(s))
 	b.StartTimer()
@@ -206,7 +206,7 @@ func BenchmarkIterSlice_1000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < len(s); j++ {
 			a := s[j]
-			_ = a
+			a.Val = 1
 		}
 	}
 }
@@ -215,21 +215,21 @@ func BenchmarkIterSliceInterface_1000(b *testing.B) {
 	b.StopTimer()
 	s := []interface{}{}
 	for i := 0; i < 1000; i++ {
-		s = append(s, testStruct{})
+		s = append(s, testStruct0{})
 	}
 	assert.Equal(b, 1000, len(s))
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		for j := 0; j < len(s); j++ {
-			a := s[j].(testStruct)
-			_ = a
+			a := s[j].(testStruct0)
+			a.Val = 1
 		}
 	}
 }
 
 func BenchmarkAddStorage_1000(b *testing.B) {
-	ref := testStruct{}
+	ref := testStruct0{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		s := storage{}
@@ -243,10 +243,10 @@ func BenchmarkAddStorage_1000(b *testing.B) {
 }
 
 func BenchmarkAddSlice_1000(b *testing.B) {
-	ref := testStruct{}
+	ref := testStruct0{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		s := make([]testStruct, 0)
+		s := make([]testStruct0, 0)
 		b.StartTimer()
 
 		for i := 0; i < 1000; i++ {
@@ -260,7 +260,7 @@ func BenchmarkAddSlice_1000(b *testing.B) {
 }
 
 func BenchmarkAddSliceInterface_1000(b *testing.B) {
-	ref := testStruct{}
+	ref := testStruct0{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		s := make([]interface{}, 0)
@@ -277,7 +277,7 @@ func BenchmarkAddSliceInterface_1000(b *testing.B) {
 }
 
 func BenchmarkRemoveStorage_1000(b *testing.B) {
-	ref := testStruct{}
+	ref := testStruct0{}
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		s := storage{}
@@ -295,15 +295,15 @@ func BenchmarkRemoveStorage_1000(b *testing.B) {
 
 func BenchmarkRemoveSlice_1000(b *testing.B) {
 	b.StopTimer()
-	ref := testStruct{}
-	template := make([]testStruct, 0)
+	ref := testStruct0{}
+	template := make([]testStruct0, 0)
 	for i := 0; i < 1000; i++ {
 		template = append(template, ref)
 	}
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		s := append([]testStruct{}, template...)
+		s := append([]testStruct0{}, template...)
 		b.StartTimer()
 
 		l := len(s) - 1
@@ -321,7 +321,7 @@ func BenchmarkRemoveSlice_1000(b *testing.B) {
 
 func BenchmarkRemoveSliceInterface_1000(b *testing.B) {
 	b.StopTimer()
-	ref := testStruct{}
+	ref := testStruct0{}
 	template := make([]interface{}, 0)
 	for i := 0; i < 1000; i++ {
 		template = append(template, ref)
