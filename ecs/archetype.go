@@ -10,7 +10,7 @@ type archetype struct {
 	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
-	indices    [MaskTotalBits]uint8
+	references [MaskTotalBits]*storage
 	entities   genericStorage[Entity]
 	components []storage
 	toAdd      []*archetype
@@ -34,9 +34,9 @@ func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...c
 
 		mask.Set(c.ID, true)
 		a.Ids[i] = c.ID
-		a.indices[c.ID] = uint8(i)
 		comps[i] = storage{}
 		comps[i].Init(c.Type, capacityIncrement, forStorage)
+		a.references[c.ID] = &comps[i]
 	}
 
 	a.Mask = mask
@@ -57,7 +57,7 @@ func (a *archetype) Get(index uint32, id ID) unsafe.Pointer {
 	if !a.Mask.Get(id) {
 		return nil
 	}
-	return a.components[a.indices[id]].Get(index)
+	return a.references[id].Get(index)
 }
 
 // GetUnsafe returns the component with the given ID at the given index,
@@ -65,7 +65,7 @@ func (a *archetype) Get(index uint32, id ID) unsafe.Pointer {
 //
 // This is used by queries, where the entity is guaranteed to be in the archetype.
 func (a *archetype) GetUnsafe(index uint32, id ID) unsafe.Pointer {
-	return a.components[a.indices[id]].Get(index)
+	return a.references[id].Get(index)
 }
 
 // Add adds an entity with zeroed components to the archetype
@@ -90,7 +90,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	}
 	idx := a.entities.Add(entity)
 	for _, c := range components {
-		a.components[a.indices[c.ID]].Add(c.Component)
+		a.references[c.ID].Add(c.Component)
 	}
 	return idx
 }
@@ -127,17 +127,17 @@ func (a *archetype) Cap() uint32 {
 
 // Set overwrites a component with the data behind the given pointer
 func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
-	return a.components[a.indices[id]].Set(index, comp)
+	return a.references[id].Set(index, comp)
 }
 
 // SetPointer overwrites a component with the data behind the given pointer
 func (a *archetype) SetPointer(index uint32, id ID, comp unsafe.Pointer) unsafe.Pointer {
-	return a.components[a.indices[id]].SetPointer(index, comp)
+	return a.references[id].SetPointer(index, comp)
 }
 
 // Zero resets th memory at the given position
 func (a *archetype) Zero(index uint32, id ID) {
-	a.components[a.indices[id]].Zero(index)
+	a.references[id].Zero(index)
 }
 
 // GetTransitionAdd returns the archetype resulting from adding a component
