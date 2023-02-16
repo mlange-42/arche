@@ -98,6 +98,11 @@ func (q *Query) Next() bool {
 	if q.archetype.Next() {
 		return true
 	}
+	// outline to allow inlining of the fast path
+	return q.slowNext()
+}
+
+func (q *Query) slowNext() bool {
 	index, archetype, ok := q.world.nextArchetype(q.filter, q.index)
 	q.index = index
 	if ok {
