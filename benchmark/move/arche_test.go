@@ -10,30 +10,28 @@ import (
 
 func runArcheMove(b *testing.B, count int, add, rem []g.Comp) {
 	for i := 0; i < b.N; i++ {
-		for i := 0; i < b.N; i++ {
-			b.StopTimer()
-			world := ecs.NewConfig().WithCapacityIncrement(1024).Build()
-			c.RegisterAll(&world)
+		b.StopTimer()
+		world := ecs.NewConfig().WithCapacityIncrement(1024).Build()
+		c.RegisterAll(&world)
 
-			addIDs := make([]ecs.ID, len(add))
-			remIDs := make([]ecs.ID, len(rem))
-			for i, t := range add {
-				addIDs[i] = ecs.TypeID(&world, t)
-			}
-			for i, t := range rem {
-				remIDs[i] = ecs.TypeID(&world, t)
-			}
+		addIDs := make([]ecs.ID, len(add))
+		remIDs := make([]ecs.ID, len(rem))
+		for i, t := range add {
+			addIDs[i] = ecs.TypeID(&world, t)
+		}
+		for i, t := range rem {
+			remIDs[i] = ecs.TypeID(&world, t)
+		}
 
-			entities := make([]ecs.Entity, count)
-			for i := 0; i < count; i++ {
-				e := world.NewEntity(addIDs...)
-				entities[i] = e
-			}
-			b.StartTimer()
+		entities := make([]ecs.Entity, count)
+		for i := 0; i < count; i++ {
+			e := world.NewEntity(addIDs...)
+			entities[i] = e
+		}
+		b.StartTimer()
 
-			for _, e := range entities {
-				world.Remove(e, remIDs...)
-			}
+		for _, e := range entities {
+			world.Remove(e, remIDs...)
 		}
 	}
 }
