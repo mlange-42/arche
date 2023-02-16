@@ -20,6 +20,7 @@
 * Generic queries are compiled to masks and cached on first build (#62)
 * Boilerplate code for generic filters and queries is auto-generated with `go generate` (#64)
 * Ensure 100% test coverage by adding a CI check for it (#68)
+* `World.RemEntity(Entity)` is now `World.RemoveEntity(Entity)` (#87)
 
 ## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)
 

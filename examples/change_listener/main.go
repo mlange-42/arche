@@ -59,6 +59,6 @@ func main() {
 
 	world.Remove(e1, posID, velID)
 
-	world.RemEntity(e0)
-	world.RemEntity(e1)
+	world.RemoveEntity(e0)
+	world.RemoveEntity(e1)
 }

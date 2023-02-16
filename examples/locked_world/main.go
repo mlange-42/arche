@@ -93,7 +93,7 @@ func main() {
 
 		// Remove entities that are to die
 		for _, entity := range toDie {
-			world.RemEntity(entity)
+			world.RemoveEntity(entity)
 		}
 
 		// Create entities through reproduction
