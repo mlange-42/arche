@@ -7,7 +7,7 @@
 * Generic queries support optional, additional and excluded components (#53, #56, #58, #59, #60, #63)
 * Logic filters for complex queries (#54, #58, #61)
 * `Query` and `World` have a method `Mask(Entity)` to access archetype masks (#65)
-* Generic query `Get` method returns the entity as first element (#83)
+* Generic query `Get` method returns all queried components (#83)
 * Added method `World.Stats()` for inspecting otherwise inaccessible world statistics (#67)
 * Entities can be initialized with components, via ID as well as using generics (#76)
 * A listener function can be registered to the world, for notification on entity changes (#77)
@@ -21,6 +21,7 @@
 * Boilerplate code for generic filters and queries is auto-generated with `go generate` (#64)
 * Ensure 100% test coverage by adding a CI check for it (#68)
 * `World.RemEntity(Entity)` is now `World.RemoveEntity(Entity)` (#87)
+* Optimization of adding/removing components, with 2-3x speedup and vast reduction of (number of) allocations (#93)
 
 ## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)
 

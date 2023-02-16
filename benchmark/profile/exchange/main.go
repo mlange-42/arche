@@ -3,8 +3,8 @@ package main
 // Profiling:
 // go build ./benchmark/profile/exchange
 // exchange
-// go tool pprof -http=":8000" -nodefraction=0.001 main cpu.pprof
-// go tool pprof -http=":8000" -nodefraction=0.001 main mem.pprof
+// go tool pprof -http=":8000" -nodefraction=0.001 exchange cpu.pprof
+// go tool pprof -http=":8000" -nodefraction=0.001 exchange mem.pprof
 
 import (
 	"github.com/mlange-42/arche/ecs"
@@ -28,7 +28,7 @@ type rotation struct {
 func main() {
 
 	count := 100
-	iters := 250
+	iters := 1000
 	entities := 1000
 
 	stop := profile.Start(profile.CPUProfile, profile.ProfilePath("."))

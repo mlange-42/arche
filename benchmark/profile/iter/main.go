@@ -3,8 +3,8 @@ package main
 // Profiling:
 // go build ./benchmark/profile/iter
 // iter
-// go tool pprof -http=":8000" -nodefraction=0.001 main cpu.pprof
-// go tool pprof -http=":8000" -nodefraction=0.001 main mem.pprof
+// go tool pprof -http=":8000" -nodefraction=0.001 iter cpu.pprof
+// go tool pprof -http=":8000" -nodefraction=0.001 iter mem.pprof
 
 import (
 	"github.com/mlange-42/arche/ecs"

@@ -68,7 +68,11 @@ func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query]
 type Query{{ .Index }}{{ .TypesFull }} query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query{{ .Index }}{{ .Types }}) Get() (ecs.Entity, {{ .TypesReturn }}) {
-	return q.Entity(){{if .ReturnAll}}, {{ .ReturnAll }}{{ end }}
+{{if .ReturnAll}}
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query{{ .Index }}.Entity] to get the current Entity.
+func (q *Query{{ .Index }}{{ .Types }}) Get() ({{ .TypesReturn }}) {
+	return {{ .ReturnAll }}
 }
+{{ end }}

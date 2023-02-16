@@ -73,7 +73,7 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 		q := query.Query(&world)
 		b.StartTimer()
 		for q.Next() {
-			_, pos := q.Get()
+			pos := q.Get()
 			_ = pos
 		}
 	}
@@ -131,7 +131,7 @@ func runArcheQueryGeneric5C(b *testing.B, count int) {
 		q := query.Query(&world)
 		b.StartTimer()
 		for q.Next() {
-			_, _, _, _, _, _ = q.Get()
+			_, _, _, _, _ = q.Get()
 		}
 	}
 }

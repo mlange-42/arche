@@ -62,11 +62,6 @@ func (q *Filter0) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter0] and [Filter0.Query]
 type Query0 query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query0) Get() ecs.Entity {
-	return q.Entity()
-}
-
 //////////////////////////////////////////////////////////////////////////
 
 // Filter1 is a helper for building [Query1] query iterators.
@@ -135,8 +130,8 @@ func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskPair {
 type Query1[A any] query
 
 // Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query1[A]) Get() (ecs.Entity, *A) {
-	return q.Entity(), (*A)(q.Query.Get(q.ids[0]))
+func (q *Query1[A]) Get() *A {
+	return (*A)(q.Query.Get(q.ids[0]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -207,8 +202,8 @@ func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskPair {
 type Query2[A any, B any] query
 
 // Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query2[A, B]) Get() (ecs.Entity, *A, *B) {
-	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
+func (q *Query2[A, B]) Get() (*A, *B) {
+	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -279,8 +274,8 @@ func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskPair {
 type Query3[A any, B any, C any] query
 
 // Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query3[A, B, C]) Get() (ecs.Entity, *A, *B, *C) {
-	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
+func (q *Query3[A, B, C]) Get() (*A, *B, *C) {
+	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -351,8 +346,8 @@ func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskPair {
 type Query4[A any, B any, C any, D any] query
 
 // Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query4[A, B, C, D]) Get() (ecs.Entity, *A, *B, *C, *D) {
-	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3]))
+func (q *Query4[A, B, C, D]) Get() (*A, *B, *C, *D) {
+	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -423,8 +418,8 @@ func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskPair {
 type Query5[A any, B any, C any, D any, E any] query
 
 // Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query5[A, B, C, D, E]) Get() (ecs.Entity, *A, *B, *C, *D, *E) {
-	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4]))
+func (q *Query5[A, B, C, D, E]) Get() (*A, *B, *C, *D, *E) {
+	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -495,8 +490,8 @@ func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskPair {
 type Query6[A any, B any, C any, D any, E any, F any] query
 
 // Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query6[A, B, C, D, E, F]) Get() (ecs.Entity, *A, *B, *C, *D, *E, *F) {
-	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5]))
+func (q *Query6[A, B, C, D, E, F]) Get() (*A, *B, *C, *D, *E, *F) {
+	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -567,8 +562,8 @@ func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskPair {
 type Query7[A any, B any, C any, D any, E any, F any, G any] query
 
 // Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query7[A, B, C, D, E, F, G]) Get() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G) {
-	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6]))
+func (q *Query7[A, B, C, D, E, F, G]) Get() (*A, *B, *C, *D, *E, *F, *G) {
+	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6]))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -639,6 +634,6 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskPair {
 type Query8[A any, B any, C any, D any, E any, F any, G any, H any] query
 
 // Get returns the [ecs.Entity] and all queried components for the current query iterator position.
-func (q *Query8[A, B, C, D, E, F, G, H]) Get() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G, *H) {
-	return q.Entity(), (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6])), (*H)(q.Query.Get(q.ids[7]))
+func (q *Query8[A, B, C, D, E, F, G, H]) Get() (*A, *B, *C, *D, *E, *F, *G, *H) {
+	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6])), (*H)(q.Query.Get(q.ids[7]))
 }

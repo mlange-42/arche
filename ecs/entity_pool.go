@@ -6,8 +6,10 @@ import (
 
 // newEntityPool creates a new, initialized Entity pool
 func newEntityPool(capacityIncrement int) entityPool {
+	entities := make([]Entity, 1, capacityIncrement)
+	entities[0] = Entity{0, math.MaxUint16}
 	return entityPool{
-		entities:          []Entity{{0, math.MaxUint16}},
+		entities:          entities,
 		next:              0,
 		available:         0,
 		capacityIncrement: capacityIncrement,

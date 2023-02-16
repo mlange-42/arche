@@ -98,7 +98,7 @@ func TestQuery0(t *testing.T) {
 	assert.Equal(t, ecs.All(8).Without(9), filter.Filter(&w))
 	query := filter.Query(&w)
 	for query.Next() {
-		_ = query.Get()
+		_ = query.Entity()
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
@@ -133,7 +133,7 @@ func TestQuery1(t *testing.T) {
 	assert.Equal(t, ecs.All(0, 8).Without(9), filter.Filter(&w))
 	query := filter.Query(&w)
 	for query.Next() {
-		_, c0 := query.Get()
+		c0 := query.Get()
 		assert.Equal(t, cnt+1, int(c0.val))
 		cnt++
 	}
@@ -173,7 +173,7 @@ func TestQuery2(t *testing.T) {
 		cnt := 0
 		q := filter.Query(&w)
 		for q.Next() {
-			_, c1, c2 := q.Get()
+			c1, c2 := q.Get()
 			assert.Equal(t, cnt+1, int(c1.val))
 			assert.Equal(t, cnt+2, int(c2.val))
 			cnt++
@@ -217,7 +217,7 @@ func TestQuery3(t *testing.T) {
 	assert.Equal(t, ecs.All(0, 2, 8).Without(9), filter.Filter(&w))
 	query := filter.Query(&w)
 	for query.Next() {
-		_, c1, c2, c3 := query.Get()
+		c1, c2, c3 := query.Get()
 		assert.Equal(t, cnt+1, int(c1.val))
 		assert.Equal(t, cnt+2, int(c2.val))
 		assert.Equal(t, cnt+3, int(c3.val))
@@ -265,7 +265,7 @@ func TestQuery4(t *testing.T) {
 	assert.Equal(t, ecs.All(0, 2, 3, 8).Without(9), filter.Filter(&w))
 	query := filter.Query(&w)
 	for query.Next() {
-		_, c1, c2, c3, c4 := query.Get()
+		c1, c2, c3, c4 := query.Get()
 		assert.Equal(t, cnt+1, int(c1.val))
 		assert.Equal(t, cnt+2, int(c2.val))
 		assert.Equal(t, cnt+3, int(c3.val))
@@ -318,7 +318,7 @@ func TestQuery5(t *testing.T) {
 	assert.Equal(t, ecs.All(0, 2, 3, 4, 8).Without(9), filter.Filter(&w))
 	query := filter.Query(&w)
 	for query.Next() {
-		_, c1, c2, c3, c4, c5 := query.Get()
+		c1, c2, c3, c4, c5 := query.Get()
 		assert.Equal(t, cnt+1, int(c1.val))
 		assert.Equal(t, cnt+2, int(c2.val))
 		assert.Equal(t, cnt+3, int(c3.val))
@@ -376,7 +376,7 @@ func TestQuery6(t *testing.T) {
 	assert.Equal(t, ecs.All(0, 2, 3, 4, 5, 8).Without(9), filter.Filter(&w))
 	query := filter.Query(&w)
 	for query.Next() {
-		_, c1, c2, c3, c4, c5, c6 := query.Get()
+		c1, c2, c3, c4, c5, c6 := query.Get()
 		assert.Equal(t, cnt+1, int(c1.val))
 		assert.Equal(t, cnt+2, int(c2.val))
 		assert.Equal(t, cnt+3, int(c3.val))
@@ -442,7 +442,7 @@ func TestQuery7(t *testing.T) {
 	assert.Equal(t, ecs.All(0, 2, 3, 4, 5, 6, 8).Without(9), filter.Filter(&w))
 	query := filter.Query(&w)
 	for query.Next() {
-		_, c1, c2, c3, c4, c5, c6, c7 := query.Get()
+		c1, c2, c3, c4, c5, c6, c7 := query.Get()
 		assert.Equal(t, cnt+1, int(c1.val))
 		assert.Equal(t, cnt+2, int(c2.val))
 		assert.Equal(t, cnt+3, int(c3.val))
@@ -505,7 +505,7 @@ func TestQuery8(t *testing.T) {
 	assert.Equal(t, ecs.All(0, 2, 3, 4, 5, 6, 7, 8).Without(9), filter.Filter(&w))
 	query := filter.Query(&w)
 	for query.Next() {
-		_, c1, c2, c3, c4, c5, c6, c7, c8 := query.Get()
+		c1, c2, c3, c4, c5, c6, c7, c8 := query.Get()
 		assert.Equal(t, cnt+1, int(c1.val))
 		assert.Equal(t, cnt+2, int(c2.val))
 		assert.Equal(t, cnt+3, int(c3.val))
@@ -535,7 +535,7 @@ func TestQueryGeneric(t *testing.T) {
 	q := query.Query(&world)
 	cnt := 0
 	for q.Next() {
-		_, s1, s2 := q.Get()
+		s1, s2 := q.Get()
 		_ = s1
 		_ = s2
 		cnt++
