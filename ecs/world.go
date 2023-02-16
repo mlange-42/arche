@@ -37,9 +37,11 @@ func NewWorld() World {
 
 // FromConfig creates a new [World] from a [Config]
 func FromConfig(conf Config) World {
+	entities := make([]entityIndex, 1, conf.CapacityIncrement)
+	entities[0] = entityIndex{arch: nil, index: 0}
 	w := World{
 		config:     conf,
-		entities:   []entityIndex{{arch: nil, index: 0}},
+		entities:   entities,
 		entityPool: newEntityPool(conf.CapacityIncrement),
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),

@@ -23,8 +23,8 @@ func TestStorageAddGet(t *testing.T) {
 	s := storage{}
 	s.Init(reflect.TypeOf(obj1), 1, true)
 
-	assert.Equal(t, 1, s.Cap())
-	assert.Equal(t, 0, s.Len())
+	assert.Equal(t, 1, int(s.Cap()))
+	assert.Equal(t, 0, int(s.Len()))
 
 	storageAddGet(t, s)
 }
