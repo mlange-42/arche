@@ -68,7 +68,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 		arch = w.findOrCreateArchetype(arch, comps, nil)
 	}
 
-	idx := arch.Alloc(entity)
+	idx := arch.Alloc(entity, true)
 	len := len(w.entities)
 	if int(entity.id) == len {
 		if len == cap(w.entities) {
@@ -110,7 +110,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	arch := w.archetypes.Get(0)
 	arch = w.findOrCreateArchetype(arch, ids, nil)
 
-	idx := arch.Alloc(entity)
+	idx := arch.Alloc(entity, false)
 	len := len(w.entities)
 	if int(entity.id) == len {
 		if len == cap(w.entities) {
@@ -329,13 +329,16 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	oldIDs := oldArch.Components()
 
 	arch := w.findOrCreateArchetype(oldArch, add, rem)
-	newIndex := arch.Alloc(entity)
+	newIndex := arch.Alloc(entity, false)
 
 	for _, id := range oldIDs {
 		if mask.Get(id) {
 			comp := oldArch.Get(index.index, id)
 			arch.SetPointer(newIndex, id, comp)
 		}
+	}
+	for _, id := range add {
+		arch.Zero(newIndex, id)
 	}
 
 	swapped := oldArch.Remove(index.index)

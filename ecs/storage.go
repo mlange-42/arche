@@ -35,7 +35,7 @@ func (s *storage) Init(tp reflect.Type, increment int) {
 // Get retrieves an unsafe pointer to an element
 func (s *storage) Get(index uint32) unsafe.Pointer {
 	ptr := unsafe.Add(s.bufferAddress, uintptr(index)*s.itemSize)
-	return unsafe.Pointer(ptr)
+	return ptr
 }
 
 // Add adds an element to the end of the storage
@@ -54,22 +54,25 @@ func (s *storage) AddPointer(value unsafe.Pointer) (index uint32) {
 	return s.len - 1
 }
 
-// Alloc adds an empty element to the end of the storage
+// Alloc adds an empty element to the end of the storage.
+// It does not zero the storage!
 func (s *storage) Alloc() (index uint32) {
 	s.extend()
 	s.len++
-	s.Zero(s.len - 1)
+	//s.Zero(s.len - 1)
 	return s.len - 1
 }
 
 func (s *storage) extend() {
-	if s.itemSize > 0 && s.cap < s.len+1 {
-		old := s.buffer
-		s.cap = s.capacityIncrement * ((s.cap + s.capacityIncrement) / s.capacityIncrement)
-		s.buffer = reflect.New(reflect.ArrayOf(int(s.cap), s.typeOf)).Elem()
-		s.bufferAddress = s.buffer.Addr().UnsafePointer()
-		reflect.Copy(s.buffer, old)
+	if s.cap > s.len || s.itemSize == 0 {
+		return
 	}
+
+	old := s.buffer
+	s.cap = s.capacityIncrement * ((s.cap + s.capacityIncrement) / s.capacityIncrement)
+	s.buffer = reflect.New(reflect.ArrayOf(int(s.cap), s.typeOf)).Elem()
+	s.bufferAddress = s.buffer.Addr().UnsafePointer()
+	reflect.Copy(s.buffer, old)
 }
 
 // Remove swap-removes an element
@@ -77,24 +80,24 @@ func (s *storage) Remove(index uint32) bool {
 	o := s.len - 1
 	n := index
 
-	// TODO shrink the underlying data arrays
-	if s.itemSize > 0 && n < o {
-		size := s.itemSize
-
-		src := unsafe.Add(s.bufferAddress, uintptr(o)*s.itemSize)
-		dst := unsafe.Add(s.bufferAddress, uintptr(n)*s.itemSize)
-
-		dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
-		srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
-
-		copy(dstSlice, srcSlice)
-
+	if n == o || s.itemSize == 0 {
 		s.len--
-		return true
+		return false
 	}
 
+	// TODO shrink the underlying data arrays?
+	size := s.itemSize
+
+	src := unsafe.Add(s.bufferAddress, uintptr(o)*s.itemSize)
+	dst := unsafe.Add(s.bufferAddress, uintptr(n)*s.itemSize)
+
+	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
+	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
+
+	copy(dstSlice, srcSlice)
+
 	s.len--
-	return false
+	return true
 }
 
 // Set sets the storage at the given index

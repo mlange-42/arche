@@ -28,7 +28,7 @@ type rotation struct {
 func main() {
 
 	count := 100
-	iters := 250
+	iters := 1000
 	entities := 1000
 
 	stop := profile.Start(profile.CPUProfile, profile.ProfilePath("."))

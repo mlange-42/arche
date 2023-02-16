@@ -72,9 +72,18 @@ func (a *archetype) GetUnsafe(index uint32, id ID) unsafe.Pointer {
 }
 
 // Add adds an entity with zeroed components to the archetype
-func (a *archetype) Alloc(entity Entity) uint32 {
+func (a *archetype) Alloc(entity Entity, zero bool) uint32 {
 	idx := a.entities.Add(&entity)
 	len := len(a.components)
+
+	if zero {
+		for i := 0; i < len; i++ {
+			comp := &a.components[i]
+			idx := comp.Alloc()
+			comp.Zero(idx)
+		}
+		return idx
+	}
 	for i := 0; i < len; i++ {
 		a.components[i].Alloc()
 	}
@@ -89,22 +98,6 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	idx := a.entities.Add(&entity)
 	for _, c := range components {
 		a.components[a.indices[c.ID]].Add(c.Component)
-	}
-	return idx
-}
-
-// AddPointer adds an entity with components to the archetype, using pointers
-func (a *archetype) AddPointer(entity Entity, components ...componentPointer) uint32 {
-	if len(components) != len(a.Ids) {
-		panic("Invalid number of components")
-	}
-	idx := a.entities.Add(&entity)
-	for _, c := range components {
-		if c.Pointer == nil {
-			a.components[a.indices[c.ID]].Alloc()
-		} else {
-			a.components[a.indices[c.ID]].AddPointer(c.Pointer)
-		}
 	}
 	return idx
 }
@@ -147,6 +140,11 @@ func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
 // SetPointer overwrites a component with the data behind the given pointer
 func (a *archetype) SetPointer(index uint32, id ID, comp unsafe.Pointer) unsafe.Pointer {
 	return a.components[a.indices[id]].SetPointer(index, comp)
+}
+
+// Zero resets th memory at the given position
+func (a *archetype) Zero(index uint32, id ID) {
+	a.components[a.indices[id]].Zero(index)
 }
 
 // GetTransitionAdd returns the archetype resulting from adding a component
