@@ -10,7 +10,6 @@ import (
 
 var typeLetters = []string{"A", "B", "C", "D", "E", "F", "G", "H"}
 var numbers = []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight"}
-var indices = []string{"zeroth", "first", "second", "third", "fourth", "fifth", "sixth", "seventh", "eighth"}
 
 type query struct {
 	Index       int
@@ -22,13 +21,6 @@ type query struct {
 	Include     string
 	Components  string
 	Arguments   string
-}
-type getter struct {
-	Query    query
-	ID       int
-	Index    int
-	IndexStr string
-	Type     string
 }
 
 func main() {
@@ -126,14 +118,6 @@ func generateQueries() {
 	if err != nil {
 		panic(err)
 	}
-	queryGetAll, err := template.ParseFiles("./generate/query_getall.go.txt")
-	if err != nil {
-		panic(err)
-	}
-	queryGet, err := template.ParseFiles("./generate/query_get.go.txt")
-	if err != nil {
-		panic(err)
-	}
 
 	for i := 0; i <= maxIndex; i++ {
 		types := ""
@@ -170,25 +154,6 @@ func generateQueries() {
 		}
 		if i == 0 {
 			continue
-		}
-
-		err = queryGetAll.Execute(&text, data)
-		if err != nil {
-			panic(err)
-		}
-
-		for j := 0; j < i; j++ {
-			getterData := getter{
-				Query:    data,
-				ID:       j + 1,
-				Index:    j,
-				IndexStr: indices[j+1],
-				Type:     typeLetters[j],
-			}
-			err = queryGet.Execute(&text, getterData)
-			if err != nil {
-				panic(err)
-			}
 		}
 	}
 	if err := os.WriteFile("query_generated.go", text.Bytes(), 0666); err != nil {

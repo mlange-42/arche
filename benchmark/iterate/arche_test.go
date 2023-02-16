@@ -64,7 +64,7 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 	for i := 0; i < count; i++ {
 		_ = world.NewEntity(posID, rotID)
 	}
-	query := generic.NewFilter2[position, rotation]()
+	query := generic.NewFilter1[position]()
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -72,7 +72,7 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 		q := query.Query(&world)
 		b.StartTimer()
 		for q.Next() {
-			pos := q.Get1()
+			_, pos := q.Get()
 			_ = pos
 		}
 	}
@@ -130,13 +130,7 @@ func runArcheQueryGeneric5C(b *testing.B, count int) {
 		q := query.Query(&world)
 		b.StartTimer()
 		for q.Next() {
-			t1 := q.Get1()
-			t2 := q.Get2()
-			t3 := q.Get3()
-			t4 := q.Get4()
-			t5 := q.Get5()
-			_, _, _, _, _ = t1, t2, t3, t4, t5
-			_, _, _, _, _ = t1, t2, t3, t4, t5
+			_, _, _, _, _, _ = q.Get()
 		}
 	}
 }

@@ -6,6 +6,23 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
+type filter struct {
+	include  []Comp
+	optional []Comp
+	exclude  []Comp
+	compiled compiledQuery
+}
+
+type query struct {
+	ecs.Query
+	ids []ecs.ID
+}
+
+type mapper struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
+
 func typeOf[T any]() Comp {
 	return reflect.TypeOf((*T)(nil)).Elem()
 }
