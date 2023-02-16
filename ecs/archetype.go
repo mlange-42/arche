@@ -21,7 +21,7 @@ type archetype struct {
 var entityType = reflect.TypeOf(Entity{})
 
 // Init initializes an archetype
-func (a *archetype) Init(capacityIncrement int, components ...componentType) {
+func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...componentType) {
 	var mask BitMask
 	if len(components) > 0 {
 		a.Ids = make([]ID, len(components))
@@ -39,7 +39,7 @@ func (a *archetype) Init(capacityIncrement int, components ...componentType) {
 		a.Ids[i] = c.ID
 		a.indices[c.ID] = uint8(i)
 		comps[i] = storage{}
-		comps[i].Init(c.Type, capacityIncrement)
+		comps[i].Init(c.Type, capacityIncrement, forStorage)
 	}
 
 	a.Mask = mask
@@ -47,7 +47,7 @@ func (a *archetype) Init(capacityIncrement int, components ...componentType) {
 	a.entities = storage{}
 	a.toAdd = make([]*archetype, MaskTotalBits)
 	a.toRemove = make([]*archetype, MaskTotalBits)
-	a.entities.Init(entityType, capacityIncrement)
+	a.entities.Init(entityType, capacityIncrement, forStorage)
 }
 
 // GetEntity returns the entity at the given index

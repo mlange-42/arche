@@ -18,17 +18,21 @@ type storage struct {
 }
 
 // Init initializes a storage
-func (s *storage) Init(tp reflect.Type, increment int) {
+func (s *storage) Init(tp reflect.Type, increment int, forStorage bool) {
 	size := tp.Size()
 	align := uintptr(tp.Align())
 	size = (size + (align - 1)) / align * align
 
-	s.buffer = reflect.New(reflect.ArrayOf(1, tp)).Elem()
+	cap := 1
+	if forStorage {
+		cap = increment
+	}
+	s.buffer = reflect.New(reflect.ArrayOf(cap, tp)).Elem()
 	s.bufferAddress = s.buffer.Addr().UnsafePointer()
 	s.typeOf = tp
 	s.itemSize = size
 	s.len = 0
-	s.cap = 1
+	s.cap = uint32(cap)
 	s.capacityIncrement = uint32(increment)
 }
 

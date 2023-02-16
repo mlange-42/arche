@@ -47,7 +47,7 @@ func FromConfig(conf Config) World {
 		locks:      BitMask{},
 		listener:   nil,
 	}
-	w.createArchetype(BitMask{})
+	w.createArchetype(BitMask{}, false)
 	return w
 }
 
@@ -427,23 +427,25 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *archetype {
 	curr := start
 	mask := start.Mask
-	for _, id := range rem {
+	maxRem := len(rem) - 1
+	maxAdd := len(add) - 1
+	for i, id := range rem {
 		mask.Set(id, false)
 		if next, ok := curr.GetTransitionRemove(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask)
+			next, _ := w.findOrCreateArchetypeSlow(mask, i == maxRem && maxAdd == 0)
 			next.SetTransitionAdd(id, curr)
 			curr.SetTransitionRemove(id, next)
 			curr = next
 		}
 	}
-	for _, id := range add {
+	for i, id := range add {
 		mask.Set(id, true)
 		if next, ok := curr.GetTransitionAdd(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask)
+			next, _ := w.findOrCreateArchetypeSlow(mask, i == maxAdd)
 			next.SetTransitionRemove(id, curr)
 			curr.SetTransitionAdd(id, next)
 			curr = next
@@ -452,11 +454,11 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *arc
 	return curr
 }
 
-func (w *World) findOrCreateArchetypeSlow(mask BitMask) (*archetype, bool) {
+func (w *World) findOrCreateArchetypeSlow(mask BitMask, forStorage bool) (*archetype, bool) {
 	if arch, ok := w.findArchetype(mask); ok {
 		return arch, false
 	}
-	return w.createArchetype(mask), true
+	return w.createArchetype(mask, forStorage), true
 }
 
 func (w *World) findArchetype(mask BitMask) (*archetype, bool) {
@@ -470,7 +472,7 @@ func (w *World) findArchetype(mask BitMask) (*archetype, bool) {
 	return nil, false
 }
 
-func (w *World) createArchetype(mask BitMask) *archetype {
+func (w *World) createArchetype(mask BitMask, forStorage bool) *archetype {
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 
@@ -484,7 +486,7 @@ func (w *World) createArchetype(mask BitMask) *archetype {
 	}
 	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
-	arch.Init(w.config.CapacityIncrement, types...)
+	arch.Init(w.config.CapacityIncrement, forStorage, types...)
 	return arch
 }
 

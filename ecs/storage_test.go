@@ -21,7 +21,7 @@ type simpleStruct struct {
 func TestStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
 	s := storage{}
-	s.Init(reflect.TypeOf(obj1), 1)
+	s.Init(reflect.TypeOf(obj1), 1, true)
 	storageAddGet(t, s)
 }
 
@@ -54,7 +54,7 @@ func storageAddGet(t *testing.T, s storage) {
 func TestStorageRemove(t *testing.T) {
 	ref := simpleStruct{}
 	s := storage{}
-	s.Init(reflect.TypeOf(ref), 32)
+	s.Init(reflect.TypeOf(ref), 32, false)
 
 	storageRemove(t, s)
 }
@@ -79,7 +79,7 @@ func storageRemove(t *testing.T, s storage) {
 func TestStorageDataSize(t *testing.T) {
 	ref := simpleStruct{}
 	s := storage{}
-	s.Init(reflect.TypeOf(ref), 1)
+	s.Init(reflect.TypeOf(ref), 1, true)
 
 	for i := 0; i < 5; i++ {
 		obj := simpleStruct{i}
@@ -104,18 +104,18 @@ func TestStorageDataSize(t *testing.T) {
 
 func TestNewStorage(t *testing.T) {
 	s := storage{}
-	s.Init(reflect.TypeOf(simpleStruct{}), 32)
+	s.Init(reflect.TypeOf(simpleStruct{}), 32, true)
 }
 
 func TestStoragePointer(t *testing.T) {
 	a := storage{}
-	a.Init(reflect.TypeOf(simpleStruct{}), 32)
+	a.Init(reflect.TypeOf(simpleStruct{}), 32, true)
 	a.Add(&simpleStruct{})
 	s := (*simpleStruct)(a.Get(0))
 	s.Index = 10
 
 	b := storage{}
-	b.Init(reflect.TypeOf(simpleStruct{}), 32)
+	b.Init(reflect.TypeOf(simpleStruct{}), 32, true)
 
 	ptr := a.Get(0)
 	b.AddPointer(ptr)
@@ -125,7 +125,7 @@ func TestStoragePointer(t *testing.T) {
 
 func TestStorageZeroSize(t *testing.T) {
 	a := storage{}
-	a.Init(reflect.TypeOf(label{}), 32)
+	a.Init(reflect.TypeOf(label{}), 32, true)
 	a.Add(&label{})
 	a.Add(&label{})
 	s := (*label)(a.Get(0))
@@ -134,7 +134,7 @@ func TestStorageZeroSize(t *testing.T) {
 	assert.NotNil(t, s)
 
 	b := storage{}
-	b.Init(reflect.TypeOf(label{}), 32)
+	b.Init(reflect.TypeOf(label{}), 32, true)
 
 	ptr := a.Get(0)
 	b.AddPointer(ptr)
@@ -150,7 +150,7 @@ func BenchmarkIterStorage_1000(b *testing.B) {
 	b.StopTimer()
 	ref := testStruct{}
 	s := storage{}
-	s.Init(reflect.TypeOf(ref), 128)
+	s.Init(reflect.TypeOf(ref), 128, true)
 	for i := 0; i < 1000; i++ {
 		s.Add(&testStruct{})
 	}
@@ -205,7 +205,7 @@ func BenchmarkAddStorage_1000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		s := storage{}
-		s.Init(reflect.TypeOf(ref), 1024)
+		s.Init(reflect.TypeOf(ref), 1024, true)
 		b.StartTimer()
 
 		for i := 0; i < 1000; i++ {
@@ -253,7 +253,7 @@ func BenchmarkRemoveStorage_1000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		s := storage{}
-		s.Init(reflect.TypeOf(ref), 1024)
+		s.Init(reflect.TypeOf(ref), 1024, true)
 		for i := 0; i < 1000; i++ {
 			s.Add(&ref)
 		}
