@@ -1,7 +1,6 @@
 package ecs
 
 import (
-	"reflect"
 	"unsafe"
 )
 
@@ -12,13 +11,11 @@ type archetype struct {
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
 	indices    [MaskTotalBits]uint8
-	entities   storage
+	entities   genericStorage[Entity]
 	components []storage
 	toAdd      []*archetype
 	toRemove   []*archetype
 }
-
-var entityType = reflect.TypeOf(Entity{})
 
 // Init initializes an archetype
 func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...componentType) {
@@ -44,15 +41,15 @@ func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...c
 
 	a.Mask = mask
 	a.components = comps
-	a.entities = storage{}
+	a.entities = genericStorage[Entity]{}
 	a.toAdd = make([]*archetype, MaskTotalBits)
 	a.toRemove = make([]*archetype, MaskTotalBits)
-	a.entities.Init(entityType, capacityIncrement, forStorage)
+	a.entities.Init(capacityIncrement, forStorage)
 }
 
 // GetEntity returns the entity at the given index
 func (a *archetype) GetEntity(index uint32) Entity {
-	return *(*Entity)(a.entities.Get(index))
+	return a.entities.Get(index)
 }
 
 // Get returns the component with the given ID at the given index
@@ -73,7 +70,7 @@ func (a *archetype) GetUnsafe(index uint32, id ID) unsafe.Pointer {
 
 // Add adds an entity with zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity, zero bool) uint32 {
-	idx := a.entities.Add(&entity)
+	idx := a.entities.Add(entity)
 	len := len(a.components)
 
 	for i := 0; i < len; i++ {
@@ -91,7 +88,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	if len(components) != len(a.Ids) {
 		panic("Invalid number of components")
 	}
-	idx := a.entities.Add(&entity)
+	idx := a.entities.Add(entity)
 	for _, c := range components {
 		a.components[a.indices[c.ID]].Add(c.Component)
 	}

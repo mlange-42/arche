@@ -22,6 +22,10 @@ func TestStorageAddGet(t *testing.T) {
 	obj1 := testStruct{}
 	s := storage{}
 	s.Init(reflect.TypeOf(obj1), 1, true)
+
+	assert.Equal(t, 1, s.Cap())
+	assert.Equal(t, 0, s.Len())
+
 	storageAddGet(t, s)
 }
 
@@ -121,6 +125,10 @@ func TestStoragePointer(t *testing.T) {
 	b.AddPointer(ptr)
 	s = (*simpleStruct)(b.Get(0))
 	assert.Equal(t, 10, s.Index)
+
+	a.Set(0, &simpleStruct{20})
+	s = (*simpleStruct)(a.Get(0))
+	assert.Equal(t, 20, s.Index)
 }
 
 func TestStorageZeroSize(t *testing.T) {
@@ -144,6 +152,26 @@ func TestStorageZeroSize(t *testing.T) {
 	assert.NotNil(t, s)
 	s = (*label)(a.Get(1))
 	assert.NotNil(t, s)
+}
+
+func TestGenericStorage(t *testing.T) {
+	s := genericStorage[Entity]{}
+	s.Init(32, false)
+
+	assert.Equal(t, 1, int(s.Cap()))
+	assert.Equal(t, 0, int(s.Len()))
+
+	s.Add(Entity{})
+	s.Add(Entity{})
+
+	assert.Equal(t, 32, int(s.Cap()))
+	assert.Equal(t, 2, int(s.Len()))
+
+	s.Set(0, Entity{1, 2})
+	assert.Equal(t, Entity{1, 2}, s.Get(0))
+	s.Remove(0)
+
+	assert.Equal(t, Entity{}, s.Get(0))
 }
 
 func BenchmarkIterStorage_1000(b *testing.B) {

@@ -175,3 +175,74 @@ func toSlice[T any](s storage) []T {
 	}
 	return res
 }
+
+type genericStorage[T any] struct {
+	buffer            []T
+	capacityIncrement uint32
+}
+
+// Init initializes a genericStorage
+func (s *genericStorage[T]) Init(increment int, forStorage bool) {
+	cap := 1
+	if forStorage {
+		cap = increment
+	}
+	s.buffer = make([]T, 0, cap)
+	s.capacityIncrement = uint32(increment)
+}
+
+// Get retrieves an element
+func (s *genericStorage[T]) Get(index uint32) T {
+	return s.buffer[index]
+}
+
+// Set sets an element
+func (s *genericStorage[T]) Set(index uint32, value T) {
+	s.buffer[index] = value
+}
+
+// Add adds an element to the end of the genericStorage
+func (s *genericStorage[T]) Add(value T) (index uint32) {
+	s.extend()
+	s.buffer = append(s.buffer, value)
+	return s.Len() - 1
+}
+
+func (s *genericStorage[T]) extend() {
+	currLen := len(s.buffer)
+	currCap := cap(s.buffer)
+	if currCap > currLen {
+		return
+	}
+
+	inc := int(s.capacityIncrement)
+	old := s.buffer
+	cap := inc * ((currCap + inc) / inc)
+	s.buffer = make([]T, currLen, cap)
+	copy(s.buffer, old)
+}
+
+// Remove swap-removes an element
+func (s *genericStorage[T]) Remove(index uint32) bool {
+	o := len(s.buffer) - 1
+	n := int(index)
+
+	if n == o {
+		s.buffer = s.buffer[:o]
+		return false
+	}
+
+	s.buffer[n] = s.buffer[o]
+	s.buffer = s.buffer[:o]
+	return true
+}
+
+// Len returns the number of items in the genericStorage
+func (s *genericStorage[T]) Len() uint32 {
+	return uint32(len(s.buffer))
+}
+
+// Cap returns the capacity of the genericStorage
+func (s *genericStorage[T]) Cap() uint32 {
+	return uint32(cap(s.buffer))
+}
