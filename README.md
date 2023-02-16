@@ -175,9 +175,7 @@ It is therefore recommended to add/remove/exchange multiple components at the sa
 
 Generic access is built on top of ID-based access used by the `ecs.World`.
 Generic functions and types provide type-safety and are more user-friendly than ID-based access.
-
-From Go 1.20 onwards, generics incur a runtime overhead of 0-25%, depending on the machine(?).
-On earlier versions of Go, the worst to expect is a doubling of iteration + access time (from 2.5ns/op to 4ns/op).
+However, when querying many components, generic queries have a runtime overhead of around 10-20%.
 For performance-critical code, the use of the ID-based methods of `ecs.World` may be worth testing.
 
 For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
