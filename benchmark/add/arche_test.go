@@ -3,6 +3,7 @@ package add
 import (
 	"testing"
 
+	c "github.com/mlange-42/arche/benchmark/common"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/generic"
 )
@@ -12,8 +13,8 @@ func addArcheWorld(b *testing.B, count int) {
 		b.StopTimer()
 		world := ecs.NewWorld()
 
-		posID := ecs.ComponentID[position](&world)
-		rotID := ecs.ComponentID[rotation](&world)
+		posID := ecs.ComponentID[c.Position](&world)
+		rotID := ecs.ComponentID[c.Rotation](&world)
 		b.StartTimer()
 
 		for i := 0; i < count; i++ {
@@ -26,7 +27,7 @@ func addArcheGeneric(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		world := ecs.NewWorld()
-		mut := generic.NewMap2[position, rotation](&world)
+		mut := generic.NewMap2[c.Position, c.Rotation](&world)
 		b.StartTimer()
 
 		for i := 0; i < count; i++ {
