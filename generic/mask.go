@@ -10,6 +10,11 @@ func T[A any]() Comp {
 	return Comp(typeOf[A]())
 }
 
+// T1 creates a component type list for one component types.
+func T1[A any]() []Comp {
+	return []Comp{typeOf[A]()}
+}
+
 // T2 creates a component type list for two component types.
 func T2[A any, B any]() []Comp {
 	return []Comp{typeOf[A](), typeOf[B]()}
