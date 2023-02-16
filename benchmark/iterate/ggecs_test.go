@@ -26,7 +26,7 @@ func runGameEngineEcs(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		for _, e := range filter.Entities() {
 			pos := (*c.Position)(world.Component(e, 0))
-			_ = pos
+			pos.X = 1.0
 		}
 	}
 }
@@ -57,7 +57,7 @@ func runGameEngineEcs5C(b *testing.B, count int) {
 			t3 := (*c.TestStruct2)(world.Component(e, 2))
 			t4 := (*c.TestStruct3)(world.Component(e, 3))
 			t5 := (*c.TestStruct4)(world.Component(e, 4))
-			_, _, _, _, _ = t1, t2, t3, t4, t5
+			t1.Val, t2.Val, t3.Val, t4.Val, t5.Val = 1, 1, 1, 1, 1
 		}
 	}
 }
@@ -103,7 +103,7 @@ func runGameEngineEcs1kArch(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		for _, e := range filter.Entities() {
 			pos := (*c.Position)(world.Component(e, 6))
-			_ = pos
+			pos.X = 1
 		}
 	}
 }
