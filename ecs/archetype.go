@@ -76,16 +76,12 @@ func (a *archetype) Alloc(entity Entity, zero bool) uint32 {
 	idx := a.entities.Add(&entity)
 	len := len(a.components)
 
-	if zero {
-		for i := 0; i < len; i++ {
-			comp := &a.components[i]
-			idx := comp.Alloc()
+	for i := 0; i < len; i++ {
+		comp := &a.components[i]
+		idx := comp.Alloc()
+		if zero {
 			comp.Zero(idx)
 		}
-		return idx
-	}
-	for i := 0; i < len; i++ {
-		a.components[i].Alloc()
 	}
 	return idx
 }

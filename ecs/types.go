@@ -1,9 +1,6 @@
 package ecs
 
-import (
-	"reflect"
-	"unsafe"
-)
+import "reflect"
 
 // Eid is the entity identifier/index type
 type eid uint32
@@ -21,10 +18,4 @@ type Component struct {
 type componentType struct {
 	ID
 	Type reflect.Type
-}
-
-// componentPointer is a component ID with a pointer in a storage
-type componentPointer struct {
-	ID
-	Pointer unsafe.Pointer
 }
