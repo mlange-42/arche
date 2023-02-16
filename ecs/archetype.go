@@ -14,8 +14,8 @@ type archetype struct {
 	indices    [MaskTotalBits]uint8
 	entities   storage
 	components []storage
-	toAdd      map[ID]*archetype
-	toRemove   map[ID]*archetype
+	toAdd      []*archetype
+	toRemove   []*archetype
 }
 
 var entityType = reflect.TypeOf(Entity{})
@@ -45,8 +45,8 @@ func (a *archetype) Init(capacityIncrement int, components ...componentType) {
 	a.Mask = mask
 	a.components = comps
 	a.entities = storage{}
-	a.toAdd = map[ID]*archetype{}
-	a.toRemove = map[ID]*archetype{}
+	a.toAdd = make([]*archetype, MaskTotalBits)
+	a.toRemove = make([]*archetype, MaskTotalBits)
 	a.entities.Init(entityType, capacityIncrement)
 }
 
@@ -146,14 +146,14 @@ func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
 
 // GetTransitionAdd returns the archetype resulting from adding a component
 func (a *archetype) GetTransitionAdd(id ID) (*archetype, bool) {
-	p, ok := a.toAdd[id]
-	return p, ok
+	p := a.toAdd[id]
+	return p, p != nil
 }
 
 // GetTransitionRemove returns the archetype resulting from removing a component
 func (a *archetype) GetTransitionRemove(id ID) (*archetype, bool) {
-	p, ok := a.toRemove[id]
-	return p, ok
+	p := a.toRemove[id]
+	return p, p != nil
 }
 
 // SetTransitionAdd sets the archetype resulting from adding a component
