@@ -61,7 +61,7 @@ func main() {
 		// Iterate it.
 		for query.Next() {
 			// Component access through the Query.
-			_, pos, vel := query.Get()
+			pos, vel := query.Get()
 			// Update component fields.
 			pos.X += vel.X
 			pos.Y += vel.Y
@@ -79,7 +79,7 @@ func main() {
 	q := filter.Query(&world)
 
 	for q.Next() {
-		_, pos, vel := q.Get()
+		pos, vel := q.Get()
 		pos.X += vel.X
 		pos.Y += vel.Y
 	}
