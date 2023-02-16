@@ -23,6 +23,7 @@
 * `World.RemEntity(Entity)` is now `World.RemoveEntity(Entity)` (#87)
 * Optimization of adding/removing components, with 2-3x speedup and vast reduction of (number of) allocations (#93)
 * More examples as user documentation (#83, #95)
+* Speed up component world access by use of nil pointer check instead of bitmask (#96)
 
 ## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)
 

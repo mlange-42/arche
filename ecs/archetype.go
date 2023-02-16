@@ -57,7 +57,7 @@ func (a *archetype) GetEntity(index uint32) Entity {
 
 // Get returns the component with the given ID at the given index
 func (a *archetype) Get(index uint32, id ID) unsafe.Pointer {
-	if !a.Mask.Get(id) {
+	if a.references[id] == nil {
 		return nil
 	}
 	return a.references[id].Get(index)
@@ -115,7 +115,7 @@ func (a *archetype) Components() []ID {
 
 // HasComponent returns whether the archetype contains the given component ID
 func (a *archetype) HasComponent(id ID) bool {
-	return a.Mask.Get(id)
+	return a.references[id] != nil
 }
 
 // Len reports the number of entities in the archetype

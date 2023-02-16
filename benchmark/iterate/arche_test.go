@@ -9,6 +9,55 @@ import (
 	"github.com/mlange-42/arche/generic"
 )
 
+func runArcheIter(b *testing.B, count int) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[c.Position](&world)
+	rotID := ecs.ComponentID[c.Rotation](&world)
+
+	for i := 0; i < count; i++ {
+		_ = world.NewEntity(posID, rotID)
+	}
+
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		query := world.Query(ecs.All(posID, rotID))
+		cnt := 0
+		b.StartTimer()
+		for query.Next() {
+			cnt++
+		}
+		_ = cnt
+	}
+}
+
+func runArcheGet(b *testing.B, count int) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[c.Position](&world)
+	rotID := ecs.ComponentID[c.Rotation](&world)
+
+	for i := 0; i < count; i++ {
+		_ = world.NewEntity(posID, rotID)
+	}
+
+	query := world.Query(ecs.All(posID, rotID))
+	for query.Next() {
+		b.StartTimer()
+		for i := 0; i < b.N; i++ {
+			for i := 0; i < count; i++ {
+				pos := (*c.Position)(query.Get(posID))
+				pos.X = 1.0
+			}
+		}
+		b.StopTimer()
+		query.Close()
+		break
+	}
+}
+
 func runArcheQuery(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
@@ -19,7 +68,6 @@ func runArcheQuery(b *testing.B, count int) {
 	for i := 0; i < count; i++ {
 		_ = world.NewEntity(posID, rotID)
 	}
-	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -27,7 +75,7 @@ func runArcheQuery(b *testing.B, count int) {
 		b.StartTimer()
 		for query.Next() {
 			pos := (*c.Position)(query.Get(posID))
-			_ = pos
+			pos.X = 1.0
 		}
 	}
 }
@@ -42,7 +90,6 @@ func runArcheFilter(b *testing.B, count int) {
 	for i := 0; i < count; i++ {
 		_ = world.NewEntity(posID, rotID)
 	}
-	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -50,7 +97,7 @@ func runArcheFilter(b *testing.B, count int) {
 		b.StartTimer()
 		for query.Next() {
 			pos := (*c.Position)(query.Get(posID))
-			_ = pos
+			pos.X = 1.0
 		}
 	}
 }
@@ -66,7 +113,6 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 		_ = world.NewEntity(posID, rotID)
 	}
 	query := generic.NewFilter1[c.Position]()
-	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -74,7 +120,7 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 		b.StartTimer()
 		for q.Next() {
 			pos := q.Get()
-			_ = pos
+			pos.X = 1.0
 		}
 	}
 }
@@ -92,7 +138,6 @@ func runArcheQuery5C(b *testing.B, count int) {
 	for i := 0; i < count; i++ {
 		_ = world.NewEntity(id0, id1, id2, id3, id4)
 	}
-	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -104,7 +149,7 @@ func runArcheQuery5C(b *testing.B, count int) {
 			t3 := (*c.TestStruct2)(query.Get(id2))
 			t4 := (*c.TestStruct3)(query.Get(id3))
 			t5 := (*c.TestStruct4)(query.Get(id4))
-			_, _, _, _, _ = t1, t2, t3, t4, t5
+			t1.Val, t2.Val, t3.Val, t4.Val, t5.Val = 1, 1, 1, 1, 1
 		}
 	}
 }
@@ -124,14 +169,14 @@ func runArcheQueryGeneric5C(b *testing.B, count int) {
 	}
 
 	query := generic.NewFilter5[c.TestStruct0, c.TestStruct1, c.TestStruct2, c.TestStruct3, c.TestStruct4]()
-	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		q := query.Query(&world)
 		b.StartTimer()
 		for q.Next() {
-			_, _, _, _, _ = q.Get()
+			t1, t2, t3, t4, t5 := q.Get()
+			t1.Val, t2.Val, t3.Val, t4.Val, t5.Val = 1, 1, 1, 1, 1
 		}
 	}
 }
@@ -159,15 +204,13 @@ func runArcheQuery1kArch(b *testing.B, count int) {
 		}
 	}
 
-	b.StartTimer()
-
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		query := world.Query(ecs.All(6))
 		b.StartTimer()
 		for query.Next() {
 			pos := (*c.Position)(query.Get(6))
-			_ = pos
+			pos.X = 1
 		}
 	}
 }
@@ -195,20 +238,18 @@ func runArcheFilter1kArch(b *testing.B, count int) {
 		}
 	}
 
-	b.StartTimer()
-
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		query := world.Query(filter.All(6))
 		b.StartTimer()
 		for query.Next() {
 			pos := (*c.Position)(query.Get(6))
-			_ = pos
+			pos.X = 1
 		}
 	}
 }
 
-func runArcheWorld(b *testing.B, count int) {
+func runArcheWorldGet(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -224,12 +265,12 @@ func runArcheWorld(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		for _, e := range entities {
 			pos := (*c.Position)(world.Get(e, posID))
-			_ = pos
+			pos.X = 1
 		}
 	}
 }
 
-func runArcheWorldGeneric(b *testing.B, count int) {
+func runArcheWorldGetGeneric(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -247,9 +288,33 @@ func runArcheWorldGeneric(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		for _, e := range entities {
 			pos := get.Get(e)
-			_ = pos
+			pos.X = 1
 		}
 	}
+}
+
+func BenchmarkArcheIter_1_000(b *testing.B) {
+	runArcheIter(b, 1000)
+}
+
+func BenchmarkArcheIter_10_000(b *testing.B) {
+	runArcheIter(b, 10000)
+}
+
+func BenchmarkArcheIter_100_000(b *testing.B) {
+	runArcheIter(b, 100000)
+}
+
+func BenchmarkArcheGet_1_000(b *testing.B) {
+	runArcheGet(b, 1000)
+}
+
+func BenchmarkArcheGet_10_000(b *testing.B) {
+	runArcheGet(b, 10000)
+}
+
+func BenchmarkArcheGet_100_000(b *testing.B) {
+	runArcheGet(b, 100000)
 }
 
 func BenchmarkArcheIterQueryID_1_000(b *testing.B) {
@@ -313,27 +378,27 @@ func BenchmarkArcheIterQueryGeneric_5C_100_000(b *testing.B) {
 }
 
 func BenchmarkArcheIterWorldID_1_000(b *testing.B) {
-	runArcheWorld(b, 1000)
+	runArcheWorldGet(b, 1000)
 }
 
 func BenchmarkArcheIterWorldID_10_000(b *testing.B) {
-	runArcheWorld(b, 10000)
+	runArcheWorldGet(b, 10000)
 }
 
 func BenchmarkArcheIterWorldID_100_000(b *testing.B) {
-	runArcheWorld(b, 100000)
+	runArcheWorldGet(b, 100000)
 }
 
 func BenchmarkArcheIterWorldGeneric_1_000(b *testing.B) {
-	runArcheWorldGeneric(b, 1000)
+	runArcheWorldGetGeneric(b, 1000)
 }
 
 func BenchmarkArcheIterWorldGeneric_10_000(b *testing.B) {
-	runArcheWorldGeneric(b, 10000)
+	runArcheWorldGetGeneric(b, 10000)
 }
 
 func BenchmarkArcheIterWorldGeneric_100_000(b *testing.B) {
-	runArcheWorldGeneric(b, 100000)
+	runArcheWorldGetGeneric(b, 100000)
 }
 
 func BenchmarkArcheIter1kArchID_1_000(b *testing.B) {

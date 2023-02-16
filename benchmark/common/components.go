@@ -11,16 +11,16 @@ type Rotation struct {
 	Angle int
 }
 
-type TestStruct0 struct{ val int32 }
-type TestStruct1 struct{ val int32 }
-type TestStruct2 struct{ val int32 }
-type TestStruct3 struct{ val int32 }
-type TestStruct4 struct{ val int32 }
-type TestStruct5 struct{ val int32 }
-type TestStruct6 struct{ val int32 }
-type TestStruct7 struct{ val int32 }
-type TestStruct8 struct{ val int32 }
-type TestStruct9 struct{ val int32 }
+type TestStruct0 struct{ Val int32 }
+type TestStruct1 struct{ Val int32 }
+type TestStruct2 struct{ Val int32 }
+type TestStruct3 struct{ Val int32 }
+type TestStruct4 struct{ Val int32 }
+type TestStruct5 struct{ Val int32 }
+type TestStruct6 struct{ Val int32 }
+type TestStruct7 struct{ Val int32 }
+type TestStruct8 struct{ Val int32 }
+type TestStruct9 struct{ Val int32 }
 
 func RegisterAll(w *ecs.World) []ecs.ID {
 	_ = TestStruct0{1}
