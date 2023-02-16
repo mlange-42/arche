@@ -144,6 +144,11 @@ func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
 	return a.components[a.indices[id]].Set(index, comp)
 }
 
+// SetPointer overwrites a component with the data behind the given pointer
+func (a *archetype) SetPointer(index uint32, id ID, comp unsafe.Pointer) unsafe.Pointer {
+	return a.components[a.indices[id]].SetPointer(index, comp)
+}
+
 // GetTransitionAdd returns the archetype resulting from adding a component
 func (a *archetype) GetTransitionAdd(id ID) (*archetype, bool) {
 	p := a.toAdd[id]

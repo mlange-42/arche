@@ -327,25 +327,17 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 
 	oldIDs := oldArch.Components()
-	keepIDs := make([]ID, 0, len(oldIDs))
+
+	arch := w.findOrCreateArchetype(oldArch, add, rem)
+	newIndex := arch.Alloc(entity)
+
 	for _, id := range oldIDs {
 		if mask.Get(id) {
-			keepIDs = append(keepIDs, id)
+			comp := oldArch.Get(index.index, id)
+			arch.SetPointer(newIndex, id, comp)
 		}
 	}
 
-	arch := w.findOrCreateArchetype(oldArch, add, rem)
-
-	allComps := make([]componentPointer, 0, len(keepIDs)+len(add))
-	for _, id := range keepIDs {
-		comp := oldArch.Get(index.index, id)
-		allComps = append(allComps, componentPointer{ID: id, Pointer: comp})
-	}
-	for _, id := range add {
-		allComps = append(allComps, componentPointer{ID: id, Pointer: nil})
-	}
-
-	newIndex := arch.AddPointer(entity, allComps...)
 	swapped := oldArch.Remove(index.index)
 
 	if swapped {

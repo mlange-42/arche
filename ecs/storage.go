@@ -50,7 +50,7 @@ func (s *storage) Add(value interface{}) (index uint32) {
 func (s *storage) AddPointer(value unsafe.Pointer) (index uint32) {
 	s.extend()
 	s.len++
-	s.setPointer(s.len-1, value)
+	s.SetPointer(s.len-1, value)
 	return s.len - 1
 }
 
@@ -118,9 +118,9 @@ func (s *storage) Set(index uint32, value interface{}) unsafe.Pointer {
 	return dst
 }
 
-func (s *storage) setPointer(index uint32, value unsafe.Pointer) {
+func (s *storage) SetPointer(index uint32, value unsafe.Pointer) unsafe.Pointer {
 	if s.itemSize == 0 {
-		return
+		return s.Get(index)
 	}
 
 	dst := s.Get(index)
@@ -130,6 +130,8 @@ func (s *storage) setPointer(index uint32, value unsafe.Pointer) {
 	srcSlice := (*[math.MaxInt32]byte)(value)[:size:size]
 
 	copy(dstSlice, srcSlice)
+
+	return dst
 }
 
 // Zero resets a block of storage
