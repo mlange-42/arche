@@ -163,18 +163,21 @@ func (w *World) RemoveEntity(entity Entity) {
 
 // Query creates a [Query] iterator.
 //
-// Locks the world to prevent changes to component compositions.
+// The [ecs] core package provides only the filter [All] for querying the given components.
+// Further, it can be chained with [Mask.Without] (see the examples) to exclude components.
 //
-// # Example:
+// Example:
 //
-//	query := world.Query(All(idA, idB).Not(idC))
+//	query := world.Query(All(idA, idB).Without(idC))
 //	for query.Next() {
 //	    pos := (*position)(query.Get(posID))
 //	    pos.X += 1.0
 //	}
 //
-// For the use of generics for queries, see package [github.com/mlange-42/arche/generic].
+// For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
+//
+// Locks the world to prevent changes to component compositions.
 func (w *World) Query(filter Filter) Query {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)

@@ -94,14 +94,3 @@ func TestQuery(t *testing.T) {
 	}
 	assert.Equal(t, 1, cnt)
 }
-
-func TestInterface(t *testing.T) {
-	w := NewWorld()
-
-	posID := ComponentID[position](&w)
-	rotID := ComponentID[rotation](&w)
-
-	q := w.Query(All(posID, rotID))
-	var q2 QueryIter = &q
-	_ = q2
-}

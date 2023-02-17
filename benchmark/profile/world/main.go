@@ -52,7 +52,7 @@ func run(rounds, iters, entityCount int) {
 		for j := 0; j < iters; j++ {
 			for _, e := range entities {
 				pos := (*position)(world.Get(e, posID))
-				_ = pos
+				pos.X = 1
 			}
 		}
 	}

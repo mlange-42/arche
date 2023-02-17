@@ -7,13 +7,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestMutate(t *testing.T) {
+func TestExchange(t *testing.T) {
 	w := ecs.NewWorld()
 	registerAll(&w)
 
-	mut := NewMutate(&w).Adds(T2[testStruct0, testStruct1]()...)
-	mutR := NewMutate(&w).Removes(T2[testStruct0, testStruct1]()...)
-	mutEx := NewMutate(&w).
+	mut := NewExchange(&w).Adds(T2[testStruct0, testStruct1]()...)
+	mutR := NewExchange(&w).Removes(T2[testStruct0, testStruct1]()...)
+	mutEx := NewExchange(&w).
 		Removes(T2[testStruct0, testStruct1]()...).
 		Adds(T2[testStruct2, testStruct3]()...)
 

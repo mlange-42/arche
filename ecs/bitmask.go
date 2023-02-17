@@ -71,7 +71,7 @@ func (b BitMask) Contains(other BitMask) bool {
 	return b.Lo&other.Lo == other.Lo && b.Hi&other.Hi == other.Hi
 }
 
-// ContainsAny reports if any bit of other mask is a subset of this mask.
+// ContainsAny reports if any bit of other mask is in this mask.
 func (b BitMask) ContainsAny(other BitMask) bool {
 	return b.Lo&other.Lo != 0 || b.Hi&other.Hi != 0
 }

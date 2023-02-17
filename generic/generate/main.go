@@ -43,7 +43,7 @@ func generateMaps() {
 		panic(err)
 	}
 
-	mutate, err := template.ParseFiles("./generate/map.go.txt")
+	maps, err := template.ParseFiles("./generate/map.go.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -87,7 +87,7 @@ func generateMaps() {
 			Components:  components,
 			Arguments:   arguments,
 		}
-		err = mutate.Execute(&text, data)
+		err = maps.Execute(&text, data)
 		if err != nil {
 			panic(err)
 		}

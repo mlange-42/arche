@@ -6,7 +6,7 @@
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
 [![MIT license](https://img.shields.io/github/license/mlange-42/arche)](https://github.com/mlange-42/arche/blob/main/LICENSE)
 
-*Arche* is an archetype-based Entity Component System for Go.
+*Arche* is an archetype-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
 
 *Arche* is designed for the use in simulation models of the
 [Department for Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
@@ -163,10 +163,11 @@ In the illustration, the first archetype holds all components for all entities w
 The exact composition of each archetype is encoded in a bitmask for fast comparison.
 Thus, queries can easily identify their relevant archetypes (i.e. query bitmask contained in archetype bitmask), and then iterate entities linearly, and very fast. Components can be accessed through the query in a very efficient way.
 
-For getting components by entity ID, e.g. for hierarchies, the world contains a list that is indexed by the entity ID, and references the entity's archetype and index in the archetype. This way, getting components for entity IDs (i.e. random access) is fast, although not as fast as in queries.
+For getting components by entity ID, e.g. for hierarchies, the world contains a list that is indexed by the entity ID, and references the entity's archetype and index in the archetype. This way, getting components for entity IDs (i.e. random access) is fast, although not as fast as in queries (≈2ns vs. 1ns).
 
 Obviously, archetypes are an optimization for iteration speed.
 But they also come with a downside. Adding or removing components to/from an entity requires moving all the components of the entity to another archetype.
+This takes around 20ns per involved component.
 It is therefore recommended to add/remove/exchange multiple components at the same time rather than one after the other.
 
 ## Generic vs. ID access
