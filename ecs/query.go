@@ -51,23 +51,6 @@ func (f MaskPair) Matches(bits BitMask) bool {
 	return bits.Contains(f.Mask.BitMask) && (ex.IsZero() || !bits.ContainsAny(ex))
 }
 
-// QueryIter is the interface for iterable queries
-type QueryIter interface {
-	// Next proceeds to the next [Entity] in the Query.
-	Next() bool
-	// Has returns whether the current [Entity] has the given component
-	Has(comp ID) bool
-	// Get returns the pointer to the given component at the iterator's current [Entity]
-	Get(comp ID) unsafe.Pointer
-	// Entity returns the [Entity] at the iterator's position
-	Entity() Entity
-	// Close closes the Query and unlocks the world.
-	//
-	// Automatically called when iteration finishes.
-	// Needs to be called only if breaking out of the query iteration.
-	Close()
-}
-
 // Query is an advanced iterator to iterate entities.
 //
 // Create queries through the [World] using [World.Query].
