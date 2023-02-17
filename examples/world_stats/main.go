@@ -1,4 +1,4 @@
-// Demonstrates the core API that uses component IDs for access.
+// Demonstrates using world and archetype statistics.
 package main
 
 import (

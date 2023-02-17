@@ -1,4 +1,4 @@
 // Package examples contains examples for Arche.
 //
-// See package [github.com/mlange-42/arche/ecs] for Arche's API.
+// See the top level module [github.com/mlange-42/arche] for an overview.
 package examples

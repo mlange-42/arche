@@ -1,4 +1,5 @@
-// Demonstrates the use of a ChangeEvent listener.
+// Demonstrates the use of a ChangeEvent listener,
+// notifying on changes to the component composition of entities.
 package main
 
 import (

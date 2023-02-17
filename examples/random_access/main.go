@@ -1,4 +1,4 @@
-// Demonstrates generic access to arbitrary entities.
+// Demonstrates generic access to arbitrary/random entities.
 package main
 
 import (
