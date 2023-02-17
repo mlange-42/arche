@@ -378,19 +378,15 @@ func (w *World) IsLocked() bool {
 	return !w.locks.IsZero()
 }
 
-// RegisterListener registers a listener callback func(e EntityEvent) to the world.
+// SetListener sets a listener callback func(e EntityEvent) for the world.
 // The listener is immediately called on every [ecs.Entity] change.
+// Replaces the current listener. Call with `nil` to remove a listener.
 //
 // Events notified are entity creation, removal and changes to the component composition.
 // Events are emitted immediately after the change is applied.
 // Except for removal of an entity, where the event is emitted before removal.
 // This allows for inspection of the to-be-removed Entity.
-//
-// Panics if there is already a listener registered.
-func (w *World) RegisterListener(listener func(e EntityEvent)) {
-	if w.listener != nil {
-		panic("the world already has a change listener registered")
-	}
+func (w *World) SetListener(listener func(e EntityEvent)) {
 	w.listener = listener
 }
 

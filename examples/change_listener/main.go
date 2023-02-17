@@ -49,7 +49,7 @@ func main() {
 	rotID := ecs.ComponentID[Rotation](&world)
 
 	// Register a listener function.
-	world.RegisterListener(Listen)
+	world.SetListener(Listen)
 
 	// Create/manipulate/delete entities and observe the listener's output
 	e0 := world.NewEntity(posID)
