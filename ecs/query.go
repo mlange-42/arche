@@ -125,14 +125,6 @@ func (q *queryIter) Mask() BitMask {
 	return q.archetype.Archetype.Mask
 }
 
-// IDs returns the archetype's component IDs for the [Entity] at the iterator's current position.
-//
-// Makes a copy of the slice for immutability, so there is a certain overhead involved.
-func (q *queryIter) IDs() []ID {
-	var ids []ID
-	return append(ids, q.archetype.Archetype.Ids...)
-}
-
 // Close closes the Query and unlocks the world.
 //
 // Automatically called when iteration finishes.

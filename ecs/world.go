@@ -228,14 +228,6 @@ func (w *World) Mask(entity Entity) BitMask {
 	return w.entities[entity.id].arch.Mask
 }
 
-// IDs returns the archetype's component IDs for the given [Entity].
-//
-// Makes a copy of the slice for immutability, so there is a certain overhead involved.
-func (w *World) IDs(entity Entity) []ID {
-	var ids []ID
-	return append(ids, w.entities[entity.id].arch.Ids...)
-}
-
 // Add adds components to an [Entity].
 //
 // Panics when called with component that can't be added because they are already present.
