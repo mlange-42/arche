@@ -269,6 +269,10 @@ func TestWorldAssignSet(t *testing.T) {
 	_ = (*position)(w.Set(e2, posID, &position{7, 8}))
 	pos = (*position)(w.Get(e2, posID))
 	assert.Equal(t, 7, pos.X)
+
+	*pos = position{8, 9}
+	pos = (*position)(w.Get(e2, posID))
+	assert.Equal(t, 8, pos.X)
 }
 func TestWorldGetComponents(t *testing.T) {
 	w := NewWorld()
@@ -421,8 +425,8 @@ func TestArchetypeGraph(t *testing.T) {
 }
 
 func TestWorldListener(t *testing.T) {
-	events := []ChangeEvent{}
-	listen := func(e ChangeEvent) {
+	events := []EntityEvent{}
+	listen := func(e EntityEvent) {
 		events = append(events, e)
 	}
 
@@ -437,19 +441,19 @@ func TestWorldListener(t *testing.T) {
 
 	e0 := w.NewEntity()
 	assert.Equal(t, 1, len(events))
-	assert.Equal(t, ChangeEvent{
+	assert.Equal(t, EntityEvent{
 		Entity: e0, AddedRemoved: 1,
 	}, events[len(events)-1])
 
 	w.RemoveEntity(e0)
 	assert.Equal(t, 2, len(events))
-	assert.Equal(t, ChangeEvent{
+	assert.Equal(t, EntityEvent{
 		Entity: e0, AddedRemoved: -1,
 	}, events[len(events)-1])
 
 	e0 = w.NewEntity(posID, velID)
 	assert.Equal(t, 3, len(events))
-	assert.Equal(t, ChangeEvent{
+	assert.Equal(t, EntityEvent{
 		Entity:       e0,
 		NewMask:      NewBitMask(posID, velID),
 		Added:        []ID{posID, velID},
@@ -459,7 +463,7 @@ func TestWorldListener(t *testing.T) {
 
 	w.RemoveEntity(e0)
 	assert.Equal(t, 4, len(events))
-	assert.Equal(t, ChangeEvent{
+	assert.Equal(t, EntityEvent{
 		Entity:       e0,
 		OldMask:      NewBitMask(posID, velID),
 		NewMask:      NewBitMask(posID, velID),
@@ -469,7 +473,7 @@ func TestWorldListener(t *testing.T) {
 
 	e0 = w.NewEntityWith(Component{posID, &position{}}, Component{velID, &velocity{}})
 	assert.Equal(t, 5, len(events))
-	assert.Equal(t, ChangeEvent{
+	assert.Equal(t, EntityEvent{
 		Entity:       e0,
 		NewMask:      NewBitMask(posID, velID),
 		Added:        []ID{posID, velID},
@@ -479,7 +483,7 @@ func TestWorldListener(t *testing.T) {
 
 	w.Add(e0, rotID)
 	assert.Equal(t, 6, len(events))
-	assert.Equal(t, ChangeEvent{
+	assert.Equal(t, EntityEvent{
 		Entity:       e0,
 		OldMask:      NewBitMask(posID, velID),
 		NewMask:      NewBitMask(posID, velID, rotID),
@@ -490,7 +494,7 @@ func TestWorldListener(t *testing.T) {
 
 	w.Remove(e0, posID)
 	assert.Equal(t, 7, len(events))
-	assert.Equal(t, ChangeEvent{
+	assert.Equal(t, EntityEvent{
 		Entity:       e0,
 		OldMask:      NewBitMask(posID, velID, rotID),
 		NewMask:      NewBitMask(velID, rotID),

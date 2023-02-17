@@ -129,7 +129,9 @@ func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter1] and [Filter1.Query]
 type Query1[A any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query1.Entity] to get the current Entity.
 func (q *Query1[A]) Get() *A {
 	return (*A)(q.Query.Get(q.ids[0]))
 }
@@ -201,7 +203,9 @@ func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter2] and [Filter2.Query]
 type Query2[A any, B any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query2.Entity] to get the current Entity.
 func (q *Query2[A, B]) Get() (*A, *B) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
 }
@@ -273,7 +277,9 @@ func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter3] and [Filter3.Query]
 type Query3[A any, B any, C any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query3.Entity] to get the current Entity.
 func (q *Query3[A, B, C]) Get() (*A, *B, *C) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
 }
@@ -345,7 +351,9 @@ func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter4] and [Filter4.Query]
 type Query4[A any, B any, C any, D any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query4.Entity] to get the current Entity.
 func (q *Query4[A, B, C, D]) Get() (*A, *B, *C, *D) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3]))
 }
@@ -417,7 +425,9 @@ func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter5] and [Filter5.Query]
 type Query5[A any, B any, C any, D any, E any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query5.Entity] to get the current Entity.
 func (q *Query5[A, B, C, D, E]) Get() (*A, *B, *C, *D, *E) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4]))
 }
@@ -489,7 +499,9 @@ func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter6] and [Filter6.Query]
 type Query6[A any, B any, C any, D any, E any, F any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query6.Entity] to get the current Entity.
 func (q *Query6[A, B, C, D, E, F]) Get() (*A, *B, *C, *D, *E, *F) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5]))
 }
@@ -561,7 +573,9 @@ func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter7] and [Filter7.Query]
 type Query7[A any, B any, C any, D any, E any, F any, G any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query7.Entity] to get the current Entity.
 func (q *Query7[A, B, C, D, E, F, G]) Get() (*A, *B, *C, *D, *E, *F, *G) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6]))
 }
@@ -633,7 +647,9 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter8] and [Filter8.Query]
 type Query8[A any, B any, C any, D any, E any, F any, G any, H any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query8.Entity] to get the current Entity.
 func (q *Query8[A, B, C, D, E, F, G, H]) Get() (*A, *B, *C, *D, *E, *F, *G, *H) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6])), (*H)(q.Query.Get(q.ids[7]))
 }

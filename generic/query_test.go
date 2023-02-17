@@ -535,9 +535,11 @@ func TestQueryGeneric(t *testing.T) {
 	q := query.Query(&world)
 	cnt := 0
 	for q.Next() {
-		s1, s2 := q.Get()
-		_ = s1
-		_ = s2
+		s1, _ := q.Get()
+		*s1 = testStruct2{int32(cnt), int32(cnt)}
+
+		s1, _ = q.Get()
+		assert.Equal(t, &testStruct2{int32(cnt), int32(cnt)}, s1)
 		cnt++
 	}
 	assert.Equal(t, count, cnt)

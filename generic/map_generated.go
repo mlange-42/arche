@@ -26,7 +26,7 @@ func (m *Map1[A]) Get(entity ecs.Entity) *A {
 	return (*A)(m.world.Get(entity, m.ids[0]))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Mutate1's components.
+// NewEntity creates a new [ecs.Entity] with the Map1's components.
 //
 // See also [ecs.World.NewEntity].
 func (m *Map1[A]) NewEntity() (ecs.Entity, *A) {
@@ -89,7 +89,7 @@ func (m *Map2[A, B]) Get(entity ecs.Entity) (*A, *B) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1]))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Mutate2's components.
+// NewEntity creates a new [ecs.Entity] with the Map2's components.
 //
 // See also [ecs.World.NewEntity].
 func (m *Map2[A, B]) NewEntity() (ecs.Entity, *A, *B) {
@@ -154,7 +154,7 @@ func (m *Map3[A, B, C]) Get(entity ecs.Entity) (*A, *B, *C) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2]))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Mutate3's components.
+// NewEntity creates a new [ecs.Entity] with the Map3's components.
 //
 // See also [ecs.World.NewEntity].
 func (m *Map3[A, B, C]) NewEntity() (ecs.Entity, *A, *B, *C) {
@@ -221,7 +221,7 @@ func (m *Map4[A, B, C, D]) Get(entity ecs.Entity) (*A, *B, *C, *D) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3]))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Mutate4's components.
+// NewEntity creates a new [ecs.Entity] with the Map4's components.
 //
 // See also [ecs.World.NewEntity].
 func (m *Map4[A, B, C, D]) NewEntity() (ecs.Entity, *A, *B, *C, *D) {
@@ -290,7 +290,7 @@ func (m *Map5[A, B, C, D, E]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E) {
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4]))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Mutate5's components.
+// NewEntity creates a new [ecs.Entity] with the Map5's components.
 //
 // See also [ecs.World.NewEntity].
 func (m *Map5[A, B, C, D, E]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E) {
@@ -361,7 +361,7 @@ func (m *Map6[A, B, C, D, E, F]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F)
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5]))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Mutate6's components.
+// NewEntity creates a new [ecs.Entity] with the Map6's components.
 //
 // See also [ecs.World.NewEntity].
 func (m *Map6[A, B, C, D, E, F]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F) {
@@ -434,7 +434,7 @@ func (m *Map7[A, B, C, D, E, F, G]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, 
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6]))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Mutate7's components.
+// NewEntity creates a new [ecs.Entity] with the Map7's components.
 //
 // See also [ecs.World.NewEntity].
 func (m *Map7[A, B, C, D, E, F, G]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G) {
@@ -509,7 +509,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Get(entity ecs.Entity) (*A, *B, *C, *D, *
 	return (*A)(m.world.Get(entity, m.ids[0])), (*B)(m.world.Get(entity, m.ids[1])), (*C)(m.world.Get(entity, m.ids[2])), (*D)(m.world.Get(entity, m.ids[3])), (*E)(m.world.Get(entity, m.ids[4])), (*F)(m.world.Get(entity, m.ids[5])), (*G)(m.world.Get(entity, m.ids[6])), (*H)(m.world.Get(entity, m.ids[7]))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Mutate8's components.
+// NewEntity creates a new [ecs.Entity] with the Map8's components.
 //
 // See also [ecs.World.NewEntity].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G, *H) {

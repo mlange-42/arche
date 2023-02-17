@@ -27,16 +27,19 @@ type World struct {
 	bitPool    bitPool
 	registry   componentRegistry
 	locks      BitMask
-	listener   func(e ChangeEvent)
+	listener   func(e EntityEvent)
 }
 
-// NewWorld creates a new [World]
+// NewWorld creates a new [World].
 func NewWorld() World {
 	return FromConfig(NewConfig())
 }
 
-// FromConfig creates a new [World] from a [Config]
+// FromConfig creates a new [World] from a [Config].
 func FromConfig(conf Config) World {
+	if conf.CapacityIncrement < 1 {
+		panic("invalid CapacityIncrement in config, must be > 0")
+	}
 	entities := make([]entityIndex, 1, conf.CapacityIncrement)
 	entities[0] = entityIndex{arch: nil, index: 0}
 	w := World{
@@ -59,7 +62,7 @@ func FromConfig(conf Config) World {
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
+// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) NewEntity(comps ...ID) Entity {
 	w.checkLocked()
 
@@ -84,7 +87,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 	}
 
 	if w.listener != nil {
-		w.listener(ChangeEvent{entity, BitMask{}, arch.Mask, comps, nil, arch.Ids, 1})
+		w.listener(EntityEvent{entity, BitMask{}, arch.Mask, comps, nil, arch.Ids, 1})
 	}
 	return entity
 }
@@ -95,7 +98,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
+// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) NewEntityWith(comps ...Component) Entity {
 	w.checkLocked()
 
@@ -130,7 +133,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	if w.listener != nil {
-		w.listener(ChangeEvent{entity, BitMask{}, arch.Mask, ids, nil, arch.Ids, 1})
+		w.listener(EntityEvent{entity, BitMask{}, arch.Mask, ids, nil, arch.Ids, 1})
 	}
 	return entity
 }
@@ -146,7 +149,7 @@ func (w *World) RemoveEntity(entity Entity) {
 	oldArch := index.arch
 
 	if w.listener != nil {
-		w.listener(ChangeEvent{entity, oldArch.Mask, oldArch.Mask, nil, nil, oldArch.Ids, -1})
+		w.listener(EntityEvent{entity, oldArch.Mask, oldArch.Mask, nil, nil, oldArch.Ids, -1})
 	}
 
 	swapped := oldArch.Remove(index.index)
@@ -230,7 +233,7 @@ func (w *World) IDs(entity Entity) []ID {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
+// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
 }
@@ -246,10 +249,42 @@ func (w *World) Add(entity Entity, comps ...ID) {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
+// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	w.Exchange(entity, []ID{id}, nil)
 	return w.copyTo(entity, id, comp)
+}
+
+// AssignN assigns multiple components to an [Entity], using pointers for the content.
+// See also [World.Assign].
+//
+// The passed components must be pointers.
+// The passed in pointers are no valid references to the assigned memory!
+//
+// Panics when called with components that can't be added because they are already present.
+// Panics when called on a locked world or for an already removed entity.
+// Do not use during [Query] iteration!
+//
+// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+func (w *World) AssignN(entity Entity, comps ...Component) {
+	len := len(comps)
+	if len == 0 {
+		return
+	}
+	if len == 1 {
+		c := comps[0]
+		w.Exchange(entity, []ID{c.ID}, nil)
+		w.copyTo(entity, c.ID, c.Component)
+		return
+	}
+	ids := make([]ID, len)
+	for i, c := range comps {
+		ids[i] = c.ID
+	}
+	w.Exchange(entity, ids, nil)
+	for _, c := range comps {
+		w.copyTo(entity, c.ID, c.Component)
+	}
 }
 
 // Set overwrites a component for an [Entity], using a given pointer for the content.
@@ -268,35 +303,13 @@ func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	return w.copyTo(entity, id, comp)
 }
 
-// AssignN assigns multiple components to an [Entity], using pointers for the content.
-// See also [World.Assign].
-//
-// The passed components must be pointers.
-// The passed in pointers are no valid references to the assigned memory!
-//
-// Panics when called with components that can't be added because they are already present.
-// Panics when called on a locked world or for an already removed entity.
-// Do not use during [Query] iteration!
-//
-// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
-func (w *World) AssignN(entity Entity, comps ...Component) {
-	ids := make([]ID, len(comps))
-	for i, c := range comps {
-		ids[i] = c.ID
-	}
-	w.Exchange(entity, ids, nil)
-	for _, c := range comps {
-		w.copyTo(entity, c.ID, c.Component)
-	}
-}
-
 // Remove removes components from an entity.
 //
 // Panics when called with components that can't be removed because they are not present.
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants under [github.com/mlange-42/arche/generic.Mutate1], etc.
+// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Remove(entity Entity, comps ...ID) {
 	w.Exchange(entity, nil, comps)
 }
@@ -307,6 +320,8 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 // they are already present/not present, respectively.
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
+//
+// See also the generic variants under [github.com/mlange-42/arche/generic.Exchange].
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.checkLocked()
 
@@ -354,7 +369,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
 
 	if w.listener != nil {
-		w.listener(ChangeEvent{entity, oldMask, arch.Mask, add, rem, arch.Ids, 0})
+		w.listener(EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.Ids, 0})
 	}
 }
 
@@ -363,8 +378,8 @@ func (w *World) IsLocked() bool {
 	return !w.locks.IsZero()
 }
 
-// RegisterListener registers a func(e ChangeEvent) to the world.
-// The listener function is immediately called on every [ecs.Entity] change.
+// RegisterListener registers a listener callback func(e EntityEvent) to the world.
+// The listener is immediately called on every [ecs.Entity] change.
 //
 // Events notified are entity creation, removal and changes to the component composition.
 // Events are emitted immediately after the change is applied.
@@ -372,7 +387,7 @@ func (w *World) IsLocked() bool {
 // This allows for inspection of the to-be-removed Entity.
 //
 // Panics if there is already a listener registered.
-func (w *World) RegisterListener(listener func(e ChangeEvent)) {
+func (w *World) RegisterListener(listener func(e EntityEvent)) {
 	if w.listener != nil {
 		panic("the world already has a change listener registered")
 	}
