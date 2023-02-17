@@ -5,7 +5,7 @@ type Config struct {
 	CapacityIncrement int
 }
 
-// NewConfig creates a new default [World] config.
+// NewConfig creates a new default [World] configuration.
 func NewConfig() Config {
 	return Config{
 		CapacityIncrement: 128,
@@ -17,9 +17,4 @@ func NewConfig() Config {
 func (c Config) WithCapacityIncrement(inc int) Config {
 	c.CapacityIncrement = inc
 	return c
-}
-
-// Build creates a [World] from this Config.
-func (c Config) Build() World {
-	return FromConfig(c)
 }

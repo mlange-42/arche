@@ -41,7 +41,7 @@ func TestWorldEntites(t *testing.T) {
 }
 
 func TestWorldNewEntites(t *testing.T) {
-	w := NewConfig().WithCapacityIncrement(32).Build()
+	w := NewWorld(NewConfig().WithCapacityIncrement(32))
 
 	posID := ComponentID[position](&w)
 	velID := ComponentID[velocity](&w)

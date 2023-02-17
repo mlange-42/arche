@@ -30,13 +30,22 @@ type World struct {
 	listener   func(e EntityEvent)
 }
 
-// NewWorld creates a new [World].
-func NewWorld() World {
-	return FromConfig(NewConfig())
+// NewWorld creates a new [World] from an optional [Config].
+//
+// Uses the default [Config] if called without an argument.
+// Accepts maximum one argument.
+func NewWorld(config ...Config) World {
+	if len(config) > 1 {
+		panic("can't use more than one Config")
+	}
+	if len(config) == 1 {
+		return fromConfig(config[0])
+	}
+	return fromConfig(NewConfig())
 }
 
-// FromConfig creates a new [World] from a [Config].
-func FromConfig(conf Config) World {
+// fromConfig creates a new [World] from a [Config].
+func fromConfig(conf Config) World {
 	if conf.CapacityIncrement < 1 {
 		panic("invalid CapacityIncrement in config, must be > 0")
 	}

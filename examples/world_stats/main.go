@@ -27,10 +27,10 @@ type Rotation struct {
 
 func main() {
 	// Create a World.
-	world :=
+	world := ecs.NewWorld(
 		ecs.NewConfig().
-			WithCapacityIncrement(4096).
-			Build()
+			WithCapacityIncrement(4096),
+	)
 
 	ids := []ecs.ID{
 		ecs.ComponentID[Position](&world),
