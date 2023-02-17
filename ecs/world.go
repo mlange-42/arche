@@ -138,7 +138,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	for _, c := range comps {
-		w.copyTo(entity, c.ID, c.Component)
+		w.copyTo(entity, c.ID, c.Comp)
 	}
 
 	if w.listener != nil {
@@ -239,25 +239,7 @@ func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
 }
 
-// Assign assigns a component to an [Entity], using a given pointer for the content.
-// See also [World.AssignN].
-//
-// The passed component must be a pointer.
-// Returns a pointer to the assigned memory.
-// The passed in pointer is not a valid reference to that memory!
-//
-// Panics when called with a component that can't be added because it is already present.
-// Panics when called on a locked world or for an already removed entity.
-// Do not use during [Query] iteration!
-//
-// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
-func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
-	w.Exchange(entity, []ID{id}, nil)
-	return w.copyTo(entity, id, comp)
-}
-
-// AssignN assigns multiple components to an [Entity], using pointers for the content.
-// See also [World.Assign].
+// Assign assigns multiple components to an [Entity], using pointers for the content.
 //
 // The passed components must be pointers.
 // The passed in pointers are no valid references to the assigned memory!
@@ -267,15 +249,15 @@ func (w *World) Assign(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
-func (w *World) AssignN(entity Entity, comps ...Component) {
+func (w *World) Assign(entity Entity, comps ...Component) {
 	len := len(comps)
 	if len == 0 {
-		return
+		panic("no components given to assign")
 	}
 	if len == 1 {
 		c := comps[0]
 		w.Exchange(entity, []ID{c.ID}, nil)
-		w.copyTo(entity, c.ID, c.Component)
+		w.copyTo(entity, c.ID, c.Comp)
 		return
 	}
 	ids := make([]ID, len)
@@ -284,7 +266,7 @@ func (w *World) AssignN(entity Entity, comps ...Component) {
 	}
 	w.Exchange(entity, ids, nil)
 	for _, c := range comps {
-		w.copyTo(entity, c.ID, c.Component)
+		w.copyTo(entity, c.ID, c.Comp)
 	}
 }
 

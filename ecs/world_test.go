@@ -8,6 +8,13 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestWorldConfig(t *testing.T) {
+	_ = NewWorld(NewConfig())
+
+	assert.Panics(t, func() { _ = NewWorld(Config{}) })
+	assert.Panics(t, func() { _ = NewWorld(Config{}, Config{}) })
+}
+
 func TestWorldEntites(t *testing.T) {
 	w := NewWorld()
 
@@ -239,18 +246,21 @@ func TestWorldAssignSet(t *testing.T) {
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 
-	pos := (*position)(w.Assign(e0, posID, &position{2, 3}))
+	assert.Panics(t, func() { w.Assign(e0) })
+
+	w.Assign(e0, Component{posID, &position{2, 3}})
+	pos := (*position)(w.Get(e0, posID))
 	assert.Equal(t, 2, pos.X)
 	pos.X = 5
 
 	pos = (*position)(w.Get(e0, posID))
 	assert.Equal(t, 5, pos.X)
 
-	assert.Panics(t, func() { _ = (*position)(w.Assign(e0, posID, &position{2, 3})) })
+	assert.Panics(t, func() { w.Assign(e0, Component{posID, &position{2, 3}}) })
 	assert.Panics(t, func() { _ = (*position)(w.copyTo(e1, posID, &position{2, 3})) })
 
 	e2 := w.NewEntity()
-	w.AssignN(e2,
+	w.Assign(e2,
 		Component{posID, &position{4, 5}},
 		Component{velID, &velocity{1, 2}},
 		Component{rotID, &rotation{3}},

@@ -93,7 +93,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	}
 	idx := a.entities.Add(entity)
 	for _, c := range components {
-		a.references[c.ID].Add(c.Component)
+		a.references[c.ID].Add(c.Comp)
 	}
 	return idx
 }

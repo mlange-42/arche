@@ -11,7 +11,7 @@ type ID = uint8
 // Component is a Component ID/Component pointer pair
 type Component struct {
 	ID
-	Component interface{}
+	Comp interface{}
 }
 
 // componentType is a component ID with a data type
