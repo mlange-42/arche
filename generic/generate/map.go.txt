@@ -19,7 +19,7 @@ func (m *Map{{ .Index }}{{ .Types }}) Get(entity ecs.Entity) ({{ .TypesReturn }}
 	return {{ .ReturnAll }}
 }
 
-// NewEntity creates a new [ecs.Entity] with the Mutate{{ .Index }}'s components.
+// NewEntity creates a new [ecs.Entity] with the Map{{ .Index }}'s components.
 //
 // See also [ecs.World.NewEntity].
 func (m *Map{{ .Index }}{{ .Types }}) NewEntity() (ecs.Entity, {{ .TypesReturn }}) {

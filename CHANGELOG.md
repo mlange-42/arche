@@ -12,7 +12,7 @@
 * Entities can be initialized with components, via ID as well as using generics (#76)
 * A listener function can be registered to the world, for notification on entity changes (#77)
 * Support for up to 128 distinct component types per world (was limited to 64 before) (#78)
-* Generic entity manipulation through types `Map1`, `Map2`, ... and `Mutate` (#79, #84, #87)
+* Generic entity manipulation through types `Map1`, `Map2`, ... and `Exchange` (#79, #84, #87)
 
 ### Other
 
