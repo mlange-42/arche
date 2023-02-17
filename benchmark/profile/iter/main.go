@@ -52,7 +52,7 @@ func run(rounds, iters, entities int) {
 			query := world.Query(ecs.All(posID, rotID))
 			for query.Next() {
 				pos := (*position)(query.Get(posID))
-				_ = pos
+				pos.X = 1
 			}
 		}
 	}
