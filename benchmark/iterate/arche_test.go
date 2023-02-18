@@ -211,8 +211,8 @@ func runArcheQuery1kArch(b *testing.B, count int) {
 		query := world.Query(ecs.All(6))
 		b.StartTimer()
 		for query.Next() {
-			pos := (*c.Position)(query.Get(6))
-			pos.X = 1
+			pos := (*c.TestStruct6)(query.Get(6))
+			pos.Val = 1
 		}
 	}
 }
@@ -245,8 +245,8 @@ func runArcheFilter1kArch(b *testing.B, count int) {
 		query := world.Query(filter.All(6))
 		b.StartTimer()
 		for query.Next() {
-			pos := (*c.Position)(query.Get(6))
-			pos.X = 1
+			pos := (*c.TestStruct6)(query.Get(6))
+			pos.Val = 1
 		}
 	}
 }

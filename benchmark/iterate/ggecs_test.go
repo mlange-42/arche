@@ -102,8 +102,8 @@ func runGameEngineEcs1kArch(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		for _, e := range filter.Entities() {
-			pos := (*c.Position)(world.Component(e, 6))
-			pos.X = 1
+			pos := (*c.TestStruct6)(world.Component(e, 6))
+			pos.Val = 1
 		}
 	}
 }

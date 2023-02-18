@@ -112,10 +112,13 @@ func BenchmarkBitmask64Get(b *testing.B) {
 	idx := ID(rand.Intn(wordSize))
 	b.StartTimer()
 
+	var v bool
 	for i := 0; i < b.N; i++ {
-		v := mask.Get(idx)
-		_ = v
+		v = mask.Get(idx)
 	}
+	b.StopTimer()
+	v = !v
+	_ = v
 }
 
 func BenchmarkBitmask128Get(b *testing.B) {
@@ -129,10 +132,14 @@ func BenchmarkBitmask128Get(b *testing.B) {
 	idx := ID(rand.Intn(MaskTotalBits))
 	b.StartTimer()
 
+	var v bool
 	for i := 0; i < b.N; i++ {
-		v := mask.Get(idx)
-		_ = v
+		v = mask.Get(idx)
 	}
+
+	b.StopTimer()
+	v = !v
+	_ = v
 }
 
 func BenchmarkMaskPair(b *testing.B) {
