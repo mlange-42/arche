@@ -148,6 +148,7 @@ func BenchmarkMaskPairNoPointer(b *testing.B) {
 	}
 	b.StopTimer()
 	v = !v
+	_ = v
 }
 
 func BenchmarkMask(b *testing.B) {
@@ -161,6 +162,7 @@ func BenchmarkMask(b *testing.B) {
 	}
 	b.StopTimer()
 	v = !v
+	_ = v
 }
 
 type maskPointer Mask
@@ -181,4 +183,5 @@ func BenchmarkMaskPointer(b *testing.B) {
 	}
 	b.StopTimer()
 	v = !v
+	_ = v
 }

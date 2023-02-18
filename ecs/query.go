@@ -4,7 +4,12 @@ import (
 	"unsafe"
 )
 
-// Filter is the interface for logic filters
+// Filter is the interface for logic filters.
+// Filters are required to query entities using [World.Query].
+//
+// See [All] and [Mask.Without] for basic filters.
+// For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
+// For advanced filtering, see package [github.com/mlange-42/arche/filter].
 type Filter interface {
 	// Matches the filter against a bitmask, i.e. a component composition.
 	Matches(bits Mask) bool
@@ -16,7 +21,6 @@ type Filter interface {
 //
 // See also the generic alternatives [github.com/mlange-42/arche/generic.Query1],
 // [github.com/mlange-42/arche/generic.Query2], etc.
-//
 // For advanced filtering, see package [github.com/mlange-42/arche/filter]
 type Query struct {
 	queryIter

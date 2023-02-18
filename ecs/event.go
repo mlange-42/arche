@@ -2,7 +2,7 @@ package ecs
 
 // EntityEvent contains information about component changes.
 //
-// To receive change events, register a function func(e EntityEvent) with [World.RegisterListener].
+// To receive change events, register a function func(e EntityEvent) with [World.SetListener].
 type EntityEvent struct {
 	// The entity that was changed.
 	Entity Entity

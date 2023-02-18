@@ -17,7 +17,7 @@ type Mask struct {
 
 // All creates a new Mask from a list of IDs.
 //
-// If any ID is bigger or equal [MaskTotalBits], it'll not be added to the mask.
+// If any [ID] is bigger or equal [MaskTotalBits], it'll not be added to the mask.
 func All(ids ...ID) Mask {
 	var mask Mask
 	for _, id := range ids {
@@ -35,7 +35,7 @@ func (b Mask) Without(comps ...ID) MaskPair {
 	}
 }
 
-// Get reports if bit index defined by ID is true or false.
+// Get reports if bit index defined by [ID] is true or false.
 //
 // The return will be always false for bit >= [MaskTotalBits].
 func (b *Mask) Get(bit ID) bool {

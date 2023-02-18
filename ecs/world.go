@@ -7,13 +7,13 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
-// ComponentID returns the ID for a component type via generics. Registers the type if it is not already registered.
+// ComponentID returns the [ID] for a component type via generics. Registers the type if it is not already registered.
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.componentID(tp)
 }
 
-// TypeID returns the ID for a component type. Registers the type if it is not already registered.
+// TypeID returns the [ID] for a component type. Registers the type if it is not already registered.
 func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
@@ -33,7 +33,7 @@ type World struct {
 // NewWorld creates a new [World] from an optional [Config].
 //
 // Uses the default [Config] if called without an argument.
-// Accepts maximum one argument.
+// Accepts zero or one arguments.
 func NewWorld(config ...Config) World {
 	if len(config) > 1 {
 		panic("can't use more than one Config")
@@ -103,6 +103,9 @@ func (w *World) NewEntity(comps ...ID) Entity {
 
 // NewEntityWith returns a new or recycled [Entity].
 // The given component values are assigned to the entity.
+//
+// The components in the `Comp` field of [Component] must be pointers.
+// The passed pointers are no valid references to the assigned memory!
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
@@ -241,8 +244,8 @@ func (w *World) Add(entity Entity, comps ...ID) {
 
 // Assign assigns multiple components to an [Entity], using pointers for the content.
 //
-// The passed components must be pointers.
-// The passed in pointers are no valid references to the assigned memory!
+// The components in the `Comp` field of [Component] must be pointers.
+// The passed pointers are no valid references to the assigned memory!
 //
 // Panics when called with components that can't be added because they are already present.
 // Panics when called on a locked world or for an already removed entity.
@@ -297,7 +300,7 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 	w.Exchange(entity, nil, comps)
 }
 
-// Exchange adds and removes components in one pass
+// Exchange adds and removes components in one pass.
 //
 // Panics when called with components that can't be added or removed because
 // they are already present/not present, respectively.

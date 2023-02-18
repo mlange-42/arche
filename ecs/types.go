@@ -2,15 +2,18 @@ package ecs
 
 import "reflect"
 
-// Eid is the entity identifier/index type
+// Eid is the entity identifier/index type.
 type eid uint32
 
-// ID is the component identifier type
+// ID is the component identifier type.
 type ID = uint8
 
 // Component is a component ID/pointer pair.
+//
+// It is a helper for [World.NewEntityWith] and [World.Assign].
+// It is not related to how components are implemented in Arche.
 type Component struct {
-	ID
+	ID   ID
 	Comp interface{}
 }
 
