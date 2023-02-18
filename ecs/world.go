@@ -26,7 +26,7 @@ type World struct {
 	entityPool entityPool
 	bitPool    bitPool
 	registry   componentRegistry
-	locks      BitMask
+	locks      Mask
 	listener   func(e EntityEvent)
 }
 
@@ -58,10 +58,10 @@ func fromConfig(conf Config) World {
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
 		archetypes: pagedArr32[archetype]{},
-		locks:      BitMask{},
+		locks:      Mask{},
 		listener:   nil,
 	}
-	w.createArchetype(BitMask{}, false)
+	w.createArchetype(Mask{}, false)
 	return w
 }
 
@@ -96,7 +96,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 	}
 
 	if w.listener != nil {
-		w.listener(EntityEvent{entity, BitMask{}, arch.Mask, comps, nil, arch.Ids, 1})
+		w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
 	}
 	return entity
 }
@@ -142,7 +142,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	if w.listener != nil {
-		w.listener(EntityEvent{entity, BitMask{}, arch.Mask, ids, nil, arch.Ids, 1})
+		w.listener(EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
 	}
 	return entity
 }
@@ -224,7 +224,7 @@ func (w *World) Has(entity Entity, comp ID) bool {
 // Mask returns the archetype [BitMask] for the given [Entity].
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
-func (w *World) Mask(entity Entity) BitMask {
+func (w *World) Mask(entity Entity) Mask {
 	return w.entities[entity.id].arch.Mask
 }
 
@@ -442,14 +442,14 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *arc
 	return curr
 }
 
-func (w *World) findOrCreateArchetypeSlow(mask BitMask, forStorage bool) (*archetype, bool) {
+func (w *World) findOrCreateArchetypeSlow(mask Mask, forStorage bool) (*archetype, bool) {
 	if arch, ok := w.findArchetype(mask); ok {
 		return arch, false
 	}
 	return w.createArchetype(mask, forStorage), true
 }
 
-func (w *World) findArchetype(mask BitMask) (*archetype, bool) {
+func (w *World) findArchetype(mask Mask) (*archetype, bool) {
 	length := w.archetypes.Len()
 	for i := 0; i < length; i++ {
 		arch := w.archetypes.Get(i)
@@ -460,7 +460,7 @@ func (w *World) findArchetype(mask BitMask) (*archetype, bool) {
 	return nil, false
 }
 
-func (w *World) createArchetype(mask BitMask, forStorage bool) *archetype {
+func (w *World) createArchetype(mask Mask, forStorage bool) *archetype {
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 

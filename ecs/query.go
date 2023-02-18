@@ -7,52 +7,7 @@ import (
 // Filter is the interface for logic filters
 type Filter interface {
 	// Matches the filter against a bitmask, i.e. a component composition.
-	Matches(bits BitMask) bool
-}
-
-// Mask for a combination of components.
-// Mask is a [Filter].
-//
-// Mask wraps [BitMask] for adding [Filter] functionality to it.
-type Mask struct {
-	BitMask BitMask
-}
-
-// All creates a new Mask from a list of IDs.
-//
-// If any ID is bigger or equal [MaskTotalBits], it'll not be added to the mask.
-func All(ids ...ID) Mask {
-	var mask BitMask
-	for _, id := range ids {
-		mask.Set(id, true)
-	}
-	return Mask{mask}
-}
-
-// Matches matches a filter against a bitmask.
-func (f Mask) Matches(bits BitMask) bool {
-	return bits.Contains(f.BitMask)
-}
-
-// Without excludes the given components.
-func (f Mask) Without(comps ...ID) MaskPair {
-	return MaskPair{
-		Include: f,
-		Exclude: All(comps...),
-	}
-}
-
-// MaskPair is a filter for including and excluding components.
-// MaskPair is a [Filter].
-type MaskPair struct {
-	Include Mask
-	Exclude Mask
-}
-
-// Matches matches a filter against a mask.
-func (f *MaskPair) Matches(bits BitMask) bool {
-	return bits.Contains(f.Include.BitMask) &&
-		(f.Exclude.BitMask.IsZero() || !bits.ContainsAny(f.Exclude.BitMask))
+	Matches(bits Mask) bool
 }
 
 // Query is an advanced iterator to iterate entities.
@@ -125,7 +80,7 @@ func (q *queryIter) Entity() Entity {
 // Mask returns the archetype [BitMask] for the [Entity] at the iterator's current position.
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
-func (q *queryIter) Mask() BitMask {
+func (q *queryIter) Mask() Mask {
 	return q.archetype.Archetype.Mask
 }
 

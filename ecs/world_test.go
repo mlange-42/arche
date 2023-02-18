@@ -63,10 +63,10 @@ func TestWorldNewEntites(t *testing.T) {
 	)
 	e3 := w.NewEntityWith()
 
-	assert.Equal(t, NewBitMask(), w.Mask(e0))
-	assert.Equal(t, NewBitMask(posID, velID, rotID), w.Mask(e1))
-	assert.Equal(t, NewBitMask(posID, velID, rotID), w.Mask(e2))
-	assert.Equal(t, NewBitMask(), w.Mask(e3))
+	assert.Equal(t, All(), w.Mask(e0))
+	assert.Equal(t, All(posID, velID, rotID), w.Mask(e1))
+	assert.Equal(t, All(posID, velID, rotID), w.Mask(e2))
+	assert.Equal(t, All(), w.Mask(e3))
 
 	pos := (*position)(w.Get(e2, posID))
 	vel := (*velocity)(w.Get(e2, velID))
@@ -123,15 +123,15 @@ func TestWorldComponents(t *testing.T) {
 	w.Add(e2, posID, rotID)
 	assert.Equal(t, 3, w.archetypes.Len())
 
-	assert.Equal(t, All(posID).BitMask, w.Mask(e0))
-	assert.Equal(t, All(posID, rotID).BitMask, w.Mask(e1))
+	assert.Equal(t, All(posID), w.Mask(e0))
+	assert.Equal(t, All(posID, rotID), w.Mask(e1))
 
 	w.Remove(e2, posID)
 
-	maskNone := NewBitMask()
-	maskPos := NewBitMask(posID)
-	maskRot := NewBitMask(rotID)
-	maskPosRot := NewBitMask(posID, rotID)
+	maskNone := All()
+	maskPos := All(posID)
+	maskRot := All(rotID)
+	maskPosRot := All(posID, rotID)
 
 	archNone, ok := w.findArchetype(maskNone)
 	assert.True(t, ok)
@@ -464,7 +464,7 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 3, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		NewMask:      NewBitMask(posID, velID),
+		NewMask:      All(posID, velID),
 		Added:        []ID{posID, velID},
 		Current:      []ID{posID, velID},
 		AddedRemoved: 1,
@@ -474,8 +474,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 4, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		OldMask:      NewBitMask(posID, velID),
-		NewMask:      NewBitMask(posID, velID),
+		OldMask:      All(posID, velID),
+		NewMask:      All(posID, velID),
 		Current:      []ID{posID, velID},
 		AddedRemoved: -1,
 	}, events[len(events)-1])
@@ -484,7 +484,7 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 5, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		NewMask:      NewBitMask(posID, velID),
+		NewMask:      All(posID, velID),
 		Added:        []ID{posID, velID},
 		Current:      []ID{posID, velID},
 		AddedRemoved: 1,
@@ -494,8 +494,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 6, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		OldMask:      NewBitMask(posID, velID),
-		NewMask:      NewBitMask(posID, velID, rotID),
+		OldMask:      All(posID, velID),
+		NewMask:      All(posID, velID, rotID),
 		Added:        []ID{rotID},
 		Current:      []ID{posID, velID, rotID},
 		AddedRemoved: 0,
@@ -505,8 +505,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 7, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		OldMask:      NewBitMask(posID, velID, rotID),
-		NewMask:      NewBitMask(velID, rotID),
+		OldMask:      All(posID, velID, rotID),
+		NewMask:      All(velID, rotID),
 		Removed:      []ID{posID},
 		Current:      []ID{velID, rotID},
 		AddedRemoved: 0,
@@ -541,7 +541,7 @@ func Test1000Archetypes(t *testing.T) {
 	ids[9] = ComponentID[testStruct9](&w)
 
 	for i := 0; i < 1024; i++ {
-		mask := BitMask{uint64(i), 0}
+		mask := Mask{uint64(i), 0}
 		add := make([]ID, 0, 10)
 		for j := 0; j < 10; j++ {
 			id := ID(j)
@@ -565,7 +565,7 @@ func Test1000Archetypes(t *testing.T) {
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[Entity]()
-	printTypeSize[BitMask]()
+	printTypeSize[Mask]()
 	printTypeSize[World]()
 	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
 	printTypeSize[archetype]()

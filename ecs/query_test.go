@@ -8,11 +8,11 @@ import (
 
 func TestMask(t *testing.T) {
 	filter := All(0, 2, 4)
-	other := NewBitMask(0, 1, 2)
+	other := All(0, 1, 2)
 
 	assert.False(t, filter.Matches(other))
 
-	other = NewBitMask(0, 1, 2, 3, 4)
+	other = All(0, 1, 2, 3, 4)
 	assert.True(t, filter.Matches(other))
 }
 
@@ -94,77 +94,4 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
-}
-
-func BenchmarkMaskPair(b *testing.B) {
-	b.StopTimer()
-	mask := All(0, 1, 2).Without()
-	bits := NewBitMask(0, 1, 2)
-	b.StartTimer()
-	var v bool
-	for i := 0; i < b.N; i++ {
-		v = mask.Matches(bits)
-	}
-	b.StopTimer()
-	v = !v
-	_ = v
-}
-
-type maskPairPointer struct {
-	Mask    Mask
-	Exclude Mask
-}
-
-// Matches matches a filter against a mask.
-func (f maskPairPointer) Matches(bits BitMask) bool {
-	return bits.Contains(f.Mask.BitMask) &&
-		(f.Exclude.BitMask.IsZero() || !bits.ContainsAny(f.Exclude.BitMask))
-}
-
-func BenchmarkMaskPairNoPointer(b *testing.B) {
-	b.StopTimer()
-	mask := maskPairPointer{All(0, 1, 2), All()}
-	bits := NewBitMask(0, 1, 2)
-	b.StartTimer()
-	var v bool
-	for i := 0; i < b.N; i++ {
-		v = mask.Matches(bits)
-	}
-	b.StopTimer()
-	v = !v
-}
-
-func BenchmarkMask(b *testing.B) {
-	b.StopTimer()
-	mask := All(0, 1, 2)
-	bits := NewBitMask(0, 1, 2)
-	b.StartTimer()
-	var v bool
-	for i := 0; i < b.N; i++ {
-		v = mask.Matches(bits)
-	}
-	b.StopTimer()
-	v = !v
-}
-
-type maskPointer struct {
-	BitMask BitMask
-}
-
-// Matches matches a filter against a mask.
-func (f *maskPointer) Matches(bits BitMask) bool {
-	return bits.Contains(f.BitMask)
-}
-
-func BenchmarkMaskPointer(b *testing.B) {
-	b.StopTimer()
-	mask := maskPointer(All(0, 1, 2))
-	bits := NewBitMask(0, 1, 2)
-	b.StartTimer()
-	var v bool
-	for i := 0; i < b.N; i++ {
-		v = mask.Matches(bits)
-	}
-	b.StopTimer()
-	v = !v
 }

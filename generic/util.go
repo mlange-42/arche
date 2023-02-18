@@ -36,17 +36,17 @@ func toIds(w *ecs.World, types []Comp) []ecs.ID {
 }
 
 func toMask(w *ecs.World, types []Comp) ecs.Mask {
-	mask := ecs.BitMask{}
+	mask := ecs.Mask{}
 	for _, t := range types {
 		mask.Set(ecs.TypeID(w, t), true)
 	}
-	return ecs.Mask{BitMask: mask}
+	return mask
 }
 
 func toMaskOptional(w *ecs.World, include []ecs.ID, optional []Comp) ecs.Mask {
-	mask := ecs.NewBitMask(include...)
+	mask := ecs.All(include...)
 	for _, t := range optional {
 		mask.Set(ecs.TypeID(w, t), false)
 	}
-	return ecs.Mask{BitMask: mask}
+	return mask
 }

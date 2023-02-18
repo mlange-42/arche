@@ -7,7 +7,7 @@ type EntityEvent struct {
 	// The entity that was changed.
 	Entity Entity
 	// The old and new component masks.
-	OldMask, NewMask BitMask
+	OldMask, NewMask Mask
 	// Components added, removed, and after the change.
 	Added, Removed, Current []ID
 	// Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).

@@ -8,7 +8,7 @@ type eid uint32
 // ID is the component identifier type
 type ID = uint8
 
-// Component is a Component ID/Component pointer pair
+// Component is a component ID/pointer pair.
 type Component struct {
 	ID
 	Comp interface{}
