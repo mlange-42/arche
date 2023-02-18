@@ -13,7 +13,7 @@ type archetype struct {
 	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
-	references [MaskTotalBits]*storage
+	references []*storage
 	entities   genericStorage[Entity]
 	components []storage
 	toAdd      []*archetype
@@ -26,7 +26,8 @@ func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...c
 	if len(components) > 0 {
 		a.Ids = make([]ID, len(components))
 	}
-	comps := make([]storage, len(components))
+	a.components = make([]storage, len(components))
+	a.references = make([]*storage, MaskTotalBits)
 
 	prev := -1
 	for i, c := range components {
@@ -37,13 +38,12 @@ func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...c
 
 		mask.Set(c.ID, true)
 		a.Ids[i] = c.ID
-		comps[i] = storage{}
-		comps[i].Init(c.Type, capacityIncrement, forStorage)
-		a.references[c.ID] = &comps[i]
+		a.components[i] = storage{}
+		a.components[i].Init(c.Type, capacityIncrement, forStorage)
+		a.references[c.ID] = &a.components[i]
 	}
 
 	a.Mask = mask
-	a.components = comps
 	a.entities = genericStorage[Entity]{}
 	a.toAdd = make([]*archetype, MaskTotalBits)
 	a.toRemove = make([]*archetype, MaskTotalBits)
