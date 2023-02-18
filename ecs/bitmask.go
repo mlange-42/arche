@@ -28,7 +28,7 @@ func NewBitMask(ids ...ID) BitMask {
 // Get reports if bit index defined by ID is true or false.
 //
 // The return will be always false for bit >= [MaskTotalBits].
-func (b BitMask) Get(bit ID) bool {
+func (b *BitMask) Get(bit ID) bool {
 	if bit < wordSize {
 		mask := uint64(1 << bit)
 		return b.Lo&mask == mask
@@ -56,7 +56,7 @@ func (b *BitMask) Set(bit ID, value bool) {
 }
 
 // IsZero returns whether no bits are set in the bitmask.
-func (b BitMask) IsZero() bool {
+func (b *BitMask) IsZero() bool {
 	return b.Lo == 0 && b.Hi == 0
 }
 
@@ -67,16 +67,16 @@ func (b *BitMask) Reset() {
 }
 
 // Contains reports if other mask is a subset of this mask.
-func (b BitMask) Contains(other BitMask) bool {
+func (b *BitMask) Contains(other BitMask) bool {
 	return b.Lo&other.Lo == other.Lo && b.Hi&other.Hi == other.Hi
 }
 
 // ContainsAny reports if any bit of other mask is in this mask.
-func (b BitMask) ContainsAny(other BitMask) bool {
+func (b *BitMask) ContainsAny(other BitMask) bool {
 	return b.Lo&other.Lo != 0 || b.Hi&other.Hi != 0
 }
 
 // TotalBitsSet returns how many bits are set in this mask.
-func (b BitMask) TotalBitsSet() int {
+func (b *BitMask) TotalBitsSet() int {
 	return bits.OnesCount64(b.Hi) + bits.OnesCount64(b.Lo)
 }

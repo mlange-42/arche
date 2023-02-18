@@ -26,7 +26,7 @@ func All(ids ...ID) Mask {
 	return Mask{mask}
 }
 
-// Matches matches a filter against a bitmask
+// Matches matches a filter against a bitmask.
 func (f Mask) Matches(bits BitMask) bool {
 	return bits.Contains(f.BitMask)
 }
@@ -39,13 +39,13 @@ func (f Mask) Without(comps ...ID) MaskPair {
 	}
 }
 
-// MaskPair is a filter for including an excluding components
+// MaskPair is a filter for including ans excluding components.
 type MaskPair struct {
 	Mask    Mask
 	Exclude Mask
 }
 
-// Matches matches a filter against a mask
+// Matches matches a filter against a mask.
 func (f MaskPair) Matches(bits BitMask) bool {
 	ex := f.Exclude.BitMask
 	return bits.Contains(f.Mask.BitMask) && (ex.IsZero() || !bits.ContainsAny(ex))
