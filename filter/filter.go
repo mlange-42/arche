@@ -118,15 +118,15 @@ func (f *XOR) Matches(bits ecs.Mask) bool {
 
 // NOT inverts a filter. It matches if the inner filter does not.
 type NOT struct {
-	f ecs.Filter
+	F ecs.Filter
 }
 
 // Not inverts a filter. It matches if the inner filter does not.
 func Not(f ecs.Filter) *NOT {
-	return &NOT{f: f}
+	return &NOT{F: f}
 }
 
 // Matches matches a filter against a bitmask
 func (f *NOT) Matches(bits ecs.Mask) bool {
-	return !f.f.Matches(bits)
+	return !f.F.Matches(bits)
 }
