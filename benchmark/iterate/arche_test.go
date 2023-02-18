@@ -54,7 +54,9 @@ func runArcheGet(b *testing.B, count int) {
 		}
 		b.StopTimer()
 		query.Close()
-		break
+		if true {
+			break
+		}
 	}
 }
 

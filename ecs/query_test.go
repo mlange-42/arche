@@ -107,6 +107,7 @@ func BenchmarkMaskPair(b *testing.B) {
 	}
 	b.StopTimer()
 	v = !v
+	_ = v
 }
 
 type maskPairPointer struct {

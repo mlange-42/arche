@@ -16,7 +16,7 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp)
 	}
 	q.Ids = toIds(w, include)
 	q.filter = ecs.MaskPair{
-		Mask:    toMaskOptional(w, q.Ids, optional),
+		Include: toMaskOptional(w, q.Ids, optional),
 		Exclude: toMask(w, exclude),
 	}
 	q.compiled = true

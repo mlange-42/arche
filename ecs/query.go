@@ -11,6 +11,9 @@ type Filter interface {
 }
 
 // Mask for a combination of components.
+// Mask is a [Filter].
+//
+// Mask wraps [BitMask] for adding [Filter] functionality to it.
 type Mask struct {
 	BitMask BitMask
 }
@@ -34,20 +37,21 @@ func (f Mask) Matches(bits BitMask) bool {
 // Without excludes the given components.
 func (f Mask) Without(comps ...ID) MaskPair {
 	return MaskPair{
-		Mask:    f,
+		Include: f,
 		Exclude: All(comps...),
 	}
 }
 
-// MaskPair is a filter for including ans excluding components.
+// MaskPair is a filter for including and excluding components.
+// MaskPair is a [Filter].
 type MaskPair struct {
-	Mask    Mask
+	Include Mask
 	Exclude Mask
 }
 
 // Matches matches a filter against a mask.
 func (f *MaskPair) Matches(bits BitMask) bool {
-	return bits.Contains(f.Mask.BitMask) &&
+	return bits.Contains(f.Include.BitMask) &&
 		(f.Exclude.BitMask.IsZero() || !bits.ContainsAny(f.Exclude.BitMask))
 }
 
