@@ -10,7 +10,7 @@ type ID = uint8
 
 // Component is a component ID/pointer pair.
 //
-// It is a helper for [World.NewEntityWith] and [World.Assign].
+// It is a helper for [World.Assign] and [World.NewEntityWith].
 // It is not related to how components are implemented in Arche.
 type Component struct {
 	ID   ID

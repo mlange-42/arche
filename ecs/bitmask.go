@@ -9,7 +9,7 @@ const MaskTotalBits = 128
 const wordSize = 64
 
 // Mask is a 128 bit bitmask.
-// It is also a [Filter] for including certain components (see [All]).
+// It is also a [Filter] for including certain components (see [All] and [Mask.Without]).
 type Mask struct {
 	Lo uint64
 	Hi uint64
@@ -26,10 +26,10 @@ func All(ids ...ID) Mask {
 	return mask
 }
 
-// Without creates a [MaskPair] which filters for including the mask's components,
+// Without creates a [MaskFilter] which filters for including the mask's components,
 // and excludes the components given as arguments.
-func (b Mask) Without(comps ...ID) MaskPair {
-	return MaskPair{
+func (b Mask) Without(comps ...ID) MaskFilter {
+	return MaskFilter{
 		Include: b,
 		Exclude: All(comps...),
 	}
@@ -89,22 +89,4 @@ func (b *Mask) ContainsAny(other Mask) bool {
 // TotalBitsSet returns how many bits are set in this mask.
 func (b *Mask) TotalBitsSet() int {
 	return bits.OnesCount64(b.Hi) + bits.OnesCount64(b.Lo)
-}
-
-// MaskPair is a filter for including and excluding components.
-// It is a [Filter] for including and excluding certain components (see [Mask.Without]).
-type MaskPair struct {
-	Include Mask
-	Exclude Mask
-}
-
-// Matches matches a filter against a mask.
-func (f *MaskPair) Matches(bits Mask) bool {
-	return bits.Contains(f.Include) &&
-		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
-}
-
-// Matches matches a filter against a bitmask.
-func (b Mask) Matches(bits Mask) bool {
-	return bits.Contains(b)
 }

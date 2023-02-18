@@ -7,7 +7,7 @@ import (
 // Filter is the interface for logic filters.
 // Filters are required to query entities using [World.Query].
 //
-// See [All] and [Mask.Without] for basic filters.
+// See [Mask] and [MaskFilter] for basic filters.
 // For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
 type Filter interface {
@@ -15,7 +15,25 @@ type Filter interface {
 	Matches(bits Mask) bool
 }
 
-// Query is an advanced iterator to iterate entities.
+// MaskFilter is a [Filter] for including and excluding certain components.
+// See [All] and [Mask.Without].
+type MaskFilter struct {
+	Include Mask
+	Exclude Mask
+}
+
+// Matches matches a filter against a mask.
+func (f *MaskFilter) Matches(bits Mask) bool {
+	return bits.Contains(f.Include) &&
+		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
+}
+
+// Matches matches a filter against a bitmask.
+func (b Mask) Matches(bits Mask) bool {
+	return bits.Contains(b)
+}
+
+// Query is an iterator to iterate entities, filtered by a [Filter].
 //
 // Create queries through the [World] using [World.Query].
 //
@@ -45,10 +63,10 @@ func (q *Query) Next() bool {
 		return true
 	}
 	// outline to allow inlining of the fast path
-	return q.slowNext()
+	return q.nextArchetype()
 }
 
-func (q *Query) slowNext() bool {
+func (q *Query) nextArchetype() bool {
 	index, archetype, ok := q.world.nextArchetype(q.filter, q.index)
 	q.index = index
 	if ok {

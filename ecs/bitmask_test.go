@@ -142,7 +142,7 @@ func BenchmarkBitmask128Get(b *testing.B) {
 	_ = v
 }
 
-func BenchmarkMaskPair(b *testing.B) {
+func BenchmarkMaskFilter(b *testing.B) {
 	b.StopTimer()
 	mask := All(0, 1, 2).Without()
 	bits := All(0, 1, 2)
@@ -156,20 +156,20 @@ func BenchmarkMaskPair(b *testing.B) {
 	_ = v
 }
 
-type maskPairPointer struct {
+type maskFilterPointer struct {
 	Mask    Mask
 	Exclude Mask
 }
 
 // Matches matches a filter against a mask.
-func (f maskPairPointer) Matches(bits Mask) bool {
+func (f maskFilterPointer) Matches(bits Mask) bool {
 	return bits.Contains(f.Mask) &&
 		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
-func BenchmarkMaskPairNoPointer(b *testing.B) {
+func BenchmarkMaskFilterNoPointer(b *testing.B) {
 	b.StopTimer()
-	mask := maskPairPointer{All(0, 1, 2), All()}
+	mask := maskFilterPointer{All(0, 1, 2), All()}
 	bits := All(0, 1, 2)
 	b.StartTimer()
 	var v bool
