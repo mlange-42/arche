@@ -67,29 +67,6 @@ func TestBitMask128(t *testing.T) {
 	assert.False(t, mask.ContainsAny(All(ID(6), ID(66), ID(90))))
 }
 
-// bitMask64 is there just for performance comparison with the new 128 bit Mask.
-type bitMask64 uint64
-
-func newBitMask64(ids ...ID) bitMask64 {
-	var mask bitMask64
-	for _, id := range ids {
-		mask.Set(id, true)
-	}
-	return mask
-}
-func (e bitMask64) Get(bit ID) bool {
-	mask := bitMask64(1 << bit)
-	return e&mask == mask
-}
-
-func (e *bitMask64) Set(bit ID, value bool) {
-	if value {
-		*e |= bitMask64(1 << bit)
-	} else {
-		*e &= bitMask64(^(1 << bit))
-	}
-}
-
 func TestBitMask64(t *testing.T) {
 	mask := newBitMask64(ID(1))
 	assert.True(t, mask.Get(ID(1)))
@@ -142,6 +119,48 @@ func BenchmarkBitmask128Get(b *testing.B) {
 	_ = v
 }
 
+func BenchmarkBitmaskContains(b *testing.B) {
+	b.StopTimer()
+	mask := All()
+	for i := 0; i < MaskTotalBits; i++ {
+		if rand.Float64() < 0.5 {
+			mask.Set(ID(i), true)
+		}
+	}
+	filter := All(ID(rand.Intn(MaskTotalBits)))
+	b.StartTimer()
+
+	var v bool
+	for i := 0; i < b.N; i++ {
+		v = mask.Contains(filter)
+	}
+
+	b.StopTimer()
+	v = !v
+	_ = v
+}
+
+func BenchmarkBitmaskContainsAny(b *testing.B) {
+	b.StopTimer()
+	mask := All()
+	for i := 0; i < MaskTotalBits; i++ {
+		if rand.Float64() < 0.5 {
+			mask.Set(ID(i), true)
+		}
+	}
+	filter := All(ID(rand.Intn(MaskTotalBits)))
+	b.StartTimer()
+
+	var v bool
+	for i := 0; i < b.N; i++ {
+		v = mask.ContainsAny(filter)
+	}
+
+	b.StopTimer()
+	v = !v
+	_ = v
+}
+
 func BenchmarkMaskFilter(b *testing.B) {
 	b.StopTimer()
 	mask := All(0, 1, 2).Without()
@@ -156,20 +175,23 @@ func BenchmarkMaskFilter(b *testing.B) {
 	_ = v
 }
 
-type maskFilterPointer struct {
-	Mask    Mask
-	Exclude Mask
-}
-
-// Matches matches a filter against a mask.
-func (f maskFilterPointer) Matches(bits Mask) bool {
-	return bits.Contains(f.Mask) &&
-		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
-}
-
 func BenchmarkMaskFilterNoPointer(b *testing.B) {
 	b.StopTimer()
 	mask := maskFilterPointer{All(0, 1, 2), All()}
+	bits := All(0, 1, 2)
+	b.StartTimer()
+	var v bool
+	for i := 0; i < b.N; i++ {
+		v = mask.Matches(bits)
+	}
+	b.StopTimer()
+	v = !v
+	_ = v
+}
+
+func BenchmarkMaskPointer(b *testing.B) {
+	b.StopTimer()
+	mask := maskPointer(All(0, 1, 2))
 	bits := All(0, 1, 2)
 	b.StartTimer()
 	var v bool
@@ -195,23 +217,43 @@ func BenchmarkMask(b *testing.B) {
 	_ = v
 }
 
+// bitMask64 is there just for performance comparison with the new 128 bit Mask.
+type bitMask64 uint64
+
+func newBitMask64(ids ...ID) bitMask64 {
+	var mask bitMask64
+	for _, id := range ids {
+		mask.Set(id, true)
+	}
+	return mask
+}
+func (e bitMask64) Get(bit ID) bool {
+	mask := bitMask64(1 << bit)
+	return e&mask == mask
+}
+
+func (e *bitMask64) Set(bit ID, value bool) {
+	if value {
+		*e |= bitMask64(1 << bit)
+	} else {
+		*e &= bitMask64(^(1 << bit))
+	}
+}
+
+type maskFilterPointer struct {
+	Mask    Mask
+	Exclude Mask
+}
+
+// Matches matches a filter against a mask.
+func (f maskFilterPointer) Matches(bits Mask) bool {
+	return bits.Contains(f.Mask) &&
+		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
+}
+
 type maskPointer Mask
 
 // Matches matches a filter against a mask.
 func (f *maskPointer) Matches(bits Mask) bool {
 	return bits.Contains(Mask(*f))
-}
-
-func BenchmarkMaskPointer(b *testing.B) {
-	b.StopTimer()
-	mask := maskPointer(All(0, 1, 2))
-	bits := All(0, 1, 2)
-	b.StartTimer()
-	var v bool
-	for i := 0; i < b.N; i++ {
-		v = mask.Matches(bits)
-	}
-	b.StopTimer()
-	v = !v
-	_ = v
 }
