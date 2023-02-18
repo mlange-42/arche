@@ -67,6 +67,29 @@ func TestBitMask128(t *testing.T) {
 	assert.False(t, mask.ContainsAny(All(ID(6), ID(66), ID(90))))
 }
 
+// bitMask64 is there just for performance comparison with the new 128 bit Mask.
+type bitMask64 uint64
+
+func newBitMask64(ids ...ID) bitMask64 {
+	var mask bitMask64
+	for _, id := range ids {
+		mask.Set(id, true)
+	}
+	return mask
+}
+func (e bitMask64) Get(bit ID) bool {
+	mask := bitMask64(1 << bit)
+	return e&mask == mask
+}
+
+func (e *bitMask64) Set(bit ID, value bool) {
+	if value {
+		*e |= bitMask64(1 << bit)
+	} else {
+		*e &= bitMask64(^(1 << bit))
+	}
+}
+
 func TestBitMask64(t *testing.T) {
 	mask := newBitMask64(ID(1))
 	assert.True(t, mask.Get(ID(1)))
