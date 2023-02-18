@@ -14,10 +14,10 @@ func BenchmarkArche(b *testing.B) {
 	posMap := generic.NewMap1[Position](&world)
 	posVelMap := generic.NewMap2[Position, Velocity](&world)
 
-	for i := 0; i < 9000; i++ {
+	for i := 0; i < nPos; i++ {
 		posMap.NewEntity()
 	}
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < nPosVel; i++ {
 		posVelMap.NewEntity()
 	}
 

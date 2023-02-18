@@ -14,11 +14,11 @@ func BenchmarkGGEcs(b *testing.B) {
 	}
 	world := ecs.NewWorld(comps...)
 
-	for i := 0; i < 9000; i++ {
+	for i := 0; i < nPos; i++ {
 		entity := world.NewEntity()
 		world.Assign(entity, 0)
 	}
-	for i := 0; i < 1000; i++ {
+	for i := 0; i < nPosVel; i++ {
 		entity := world.NewEntity()
 		world.Assign(entity, 0, 1)
 	}
