@@ -26,6 +26,11 @@ func All(ids ...ID) Mask {
 	return mask
 }
 
+// Matches matches a filter against a bitmask.
+func (b Mask) Matches(bits Mask) bool {
+	return bits.Contains(b)
+}
+
 // Without creates a [MaskFilter] which filters for including the mask's components,
 // and excludes the components given as arguments.
 func (b Mask) Without(comps ...ID) MaskFilter {
