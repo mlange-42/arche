@@ -4,7 +4,7 @@ import (
 	"testing"
 
 	ecs "github.com/marioolofo/go-gameengine-ecs"
-	c "github.com/mlange-42/arche/benchmark/common"
+	c "github.com/mlange-42/arche/benchmark/arche/common"
 )
 
 func runGameEngineEcsMove(b *testing.B, count int, add, rem []ecs.ID) {

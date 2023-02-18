@@ -3,7 +3,7 @@ package add
 import (
 	"testing"
 
-	c "github.com/mlange-42/arche/benchmark/common"
+	c "github.com/mlange-42/arche/benchmark/arche/common"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/generic"
 )
