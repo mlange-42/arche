@@ -1,3 +1,4 @@
+// Package generate is for generating the boilerplate code required for the generic API.
 package main
 
 import (

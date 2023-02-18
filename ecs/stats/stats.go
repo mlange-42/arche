@@ -1,3 +1,4 @@
+// Package stats provides the structs returned by ecs.World.Stats().
 package stats
 
 import (
