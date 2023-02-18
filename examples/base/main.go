@@ -54,7 +54,7 @@ func main() {
 	// Time loop.
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query iterator.
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		// Iterate it
 		for query.Next() {
 			// Component access through the Query.

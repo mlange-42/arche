@@ -49,7 +49,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{ .Types }} {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query{{ .Index }}{{ .Types }}(query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -60,7 +60,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{
 // For the intended generic use, however, generate a generic query with [Filter{{ .Index }}.Query].
 func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskPair {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query{{ .Index }} is a generic query iterator for {{ .NumberStr }} components.

@@ -75,7 +75,8 @@ func TestQuery(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Query(All(rotID).Without(posID))
+	filter := All(rotID).Without(posID)
+	q = w.Query(&filter)
 
 	cnt = 0
 	for q.Next() {
@@ -84,7 +85,8 @@ func TestQuery(t *testing.T) {
 	}
 	assert.Equal(t, 2, cnt)
 
-	q = w.Query(All(rotID).Without(posID, velID))
+	filter = All(rotID).Without(posID, velID)
+	q = w.Query(&filter)
 
 	cnt = 0
 	for q.Next() {
@@ -92,4 +94,76 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
+}
+
+func BenchmarkMaskPair(b *testing.B) {
+	b.StopTimer()
+	mask := All(0, 1, 2).Without()
+	bits := NewBitMask(0, 1, 2)
+	b.StartTimer()
+	var v bool
+	for i := 0; i < b.N; i++ {
+		v = mask.Matches(bits)
+	}
+	b.StopTimer()
+	v = !v
+}
+
+type maskPairPointer struct {
+	Mask    Mask
+	Exclude Mask
+}
+
+// Matches matches a filter against a mask.
+func (f maskPairPointer) Matches(bits BitMask) bool {
+	return bits.Contains(f.Mask.BitMask) &&
+		(f.Exclude.BitMask.IsZero() || !bits.ContainsAny(f.Exclude.BitMask))
+}
+
+func BenchmarkMaskPairNoPointer(b *testing.B) {
+	b.StopTimer()
+	mask := maskPairPointer{All(0, 1, 2), All()}
+	bits := NewBitMask(0, 1, 2)
+	b.StartTimer()
+	var v bool
+	for i := 0; i < b.N; i++ {
+		v = mask.Matches(bits)
+	}
+	b.StopTimer()
+	v = !v
+}
+
+func BenchmarkMask(b *testing.B) {
+	b.StopTimer()
+	mask := All(0, 1, 2)
+	bits := NewBitMask(0, 1, 2)
+	b.StartTimer()
+	var v bool
+	for i := 0; i < b.N; i++ {
+		v = mask.Matches(bits)
+	}
+	b.StopTimer()
+	v = !v
+}
+
+type maskPointer struct {
+	BitMask BitMask
+}
+
+// Matches matches a filter against a mask.
+func (f *maskPointer) Matches(bits BitMask) bool {
+	return bits.Contains(f.BitMask)
+}
+
+func BenchmarkMaskPointer(b *testing.B) {
+	b.StopTimer()
+	mask := maskPointer(All(0, 1, 2))
+	bits := NewBitMask(0, 1, 2)
+	b.StartTimer()
+	var v bool
+	for i := 0; i < b.N; i++ {
+		v = mask.Matches(bits)
+	}
+	b.StopTimer()
+	v = !v
 }

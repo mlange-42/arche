@@ -46,9 +46,9 @@ type MaskPair struct {
 }
 
 // Matches matches a filter against a mask.
-func (f MaskPair) Matches(bits BitMask) bool {
-	ex := f.Exclude.BitMask
-	return bits.Contains(f.Mask.BitMask) && (ex.IsZero() || !bits.ContainsAny(ex))
+func (f *MaskPair) Matches(bits BitMask) bool {
+	return bits.Contains(f.Mask.BitMask) &&
+		(f.Exclude.BitMask.IsZero() || !bits.ContainsAny(f.Exclude.BitMask))
 }
 
 // Query is an advanced iterator to iterate entities.
