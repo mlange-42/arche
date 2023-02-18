@@ -4,11 +4,8 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-// Mask is a mask for a combination of components.
-type Mask = ecs.Mask
-
 // ALL matches entities that have all the given components.
-type ALL Mask
+type ALL ecs.Mask
 
 // All matches entities that have all the given components.
 //
@@ -23,12 +20,12 @@ func (f ALL) Not() NoneOF {
 }
 
 // Matches matches a filter against a bitmask
-func (f ALL) Matches(bits ecs.BitMask) bool {
-	return bits.Contains(f.BitMask)
+func (f ALL) Matches(bits ecs.Mask) bool {
+	return bits.Contains(ecs.Mask(f))
 }
 
 // ANY matches entities that have any of the given components.
-type ANY Mask
+type ANY ecs.Mask
 
 // Any matches entities that have any of the given components.
 func Any(comps ...ecs.ID) ANY {
@@ -41,12 +38,12 @@ func (f ANY) Not() AnyNOT {
 }
 
 // Matches matches a filter against a bitmask
-func (f ANY) Matches(bits ecs.BitMask) bool {
-	return bits.ContainsAny(f.BitMask)
+func (f ANY) Matches(bits ecs.Mask) bool {
+	return bits.ContainsAny(ecs.Mask(f))
 }
 
 // NoneOF matches entities that are missing all the given components.
-type NoneOF Mask
+type NoneOF ecs.Mask
 
 // NoneOf matches entities that are missing all the given components.
 func NoneOf(comps ...ecs.ID) NoneOF {
@@ -54,12 +51,12 @@ func NoneOf(comps ...ecs.ID) NoneOF {
 }
 
 // Matches matches a filter against a bitmask
-func (f NoneOF) Matches(bits ecs.BitMask) bool {
-	return !bits.ContainsAny(f.BitMask)
+func (f NoneOF) Matches(bits ecs.Mask) bool {
+	return !bits.ContainsAny(ecs.Mask(f))
 }
 
 // AnyNOT matches entities that are missing any of the given components.
-type AnyNOT Mask
+type AnyNOT ecs.Mask
 
 // AnyNot matches entities that are missing any of the given components.
 func AnyNot(comps ...ecs.ID) AnyNOT {
@@ -67,8 +64,8 @@ func AnyNot(comps ...ecs.ID) AnyNOT {
 }
 
 // Matches matches a filter against a bitmask
-func (f AnyNOT) Matches(bits ecs.BitMask) bool {
-	return !bits.Contains(f.BitMask)
+func (f AnyNOT) Matches(bits ecs.Mask) bool {
+	return !bits.Contains(ecs.Mask(f))
 }
 
 // AND combines two filters using AND.
@@ -83,7 +80,7 @@ func And(l, r ecs.Filter) *AND {
 }
 
 // Matches matches a filter against a bitmask
-func (f *AND) Matches(bits ecs.BitMask) bool {
+func (f *AND) Matches(bits ecs.Mask) bool {
 	return f.L.Matches(bits) && f.R.Matches(bits)
 }
 
@@ -99,7 +96,7 @@ func Or(l, r ecs.Filter) *OR {
 }
 
 // Matches matches a filter against a bitmask
-func (f *OR) Matches(bits ecs.BitMask) bool {
+func (f *OR) Matches(bits ecs.Mask) bool {
 	return f.L.Matches(bits) || f.R.Matches(bits)
 }
 
@@ -115,7 +112,7 @@ func XOr(l, r ecs.Filter) *XOR {
 }
 
 // Matches matches a filter against a bitmask
-func (f *XOR) Matches(bits ecs.BitMask) bool {
+func (f *XOR) Matches(bits ecs.Mask) bool {
 	return f.L.Matches(bits) != f.R.Matches(bits)
 }
 
@@ -130,6 +127,6 @@ func Not(f ecs.Filter) *NOT {
 }
 
 // Matches matches a filter against a bitmask
-func (f *NOT) Matches(bits ecs.BitMask) bool {
+func (f *NOT) Matches(bits ecs.Mask) bool {
 	return !f.f.Matches(bits)
 }

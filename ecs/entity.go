@@ -11,7 +11,7 @@ var entityIndexSize = reflect.TypeOf(entityIndex{}).Size()
 // Entity identifier.
 // Holds an entity ID and it's generation for recycling.
 //
-// Entities should only be created via the [World], using [World.NewEntity].
+// Entities should only be created via the [World], using [World.NewEntity] or [World.NewEntityWith].
 type Entity struct {
 	id  eid
 	gen uint16

@@ -24,6 +24,7 @@
 * Optimization of adding/removing components, with 2-3x speedup and vast reduction of (number of) allocations (#93)
 * More examples as user documentation (#83, #95)
 * Speed up component world access by use of nil pointer check instead of bitmask (#96)
+* General API cleanup with renaming of several types and methods (#100)
 
 ## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)
 

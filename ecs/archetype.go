@@ -9,11 +9,11 @@ import (
 
 // archetype represents an ECS archetype
 type archetype struct {
-	Mask BitMask
+	Mask Mask
 	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
-	references [MaskTotalBits]*storage
+	references []*storage
 	entities   genericStorage[Entity]
 	components []storage
 	toAdd      []*archetype
@@ -22,11 +22,12 @@ type archetype struct {
 
 // Init initializes an archetype
 func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...componentType) {
-	var mask BitMask
+	var mask Mask
 	if len(components) > 0 {
 		a.Ids = make([]ID, len(components))
 	}
-	comps := make([]storage, len(components))
+	a.components = make([]storage, len(components))
+	a.references = make([]*storage, MaskTotalBits)
 
 	prev := -1
 	for i, c := range components {
@@ -37,13 +38,12 @@ func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...c
 
 		mask.Set(c.ID, true)
 		a.Ids[i] = c.ID
-		comps[i] = storage{}
-		comps[i].Init(c.Type, capacityIncrement, forStorage)
-		a.references[c.ID] = &comps[i]
+		a.components[i] = storage{}
+		a.components[i].Init(c.Type, capacityIncrement, forStorage)
+		a.references[c.ID] = &a.components[i]
 	}
 
 	a.Mask = mask
-	a.components = comps
 	a.entities = genericStorage[Entity]{}
 	a.toAdd = make([]*archetype, MaskTotalBits)
 	a.toRemove = make([]*archetype, MaskTotalBits)
@@ -93,7 +93,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	}
 	idx := a.entities.Add(entity)
 	for _, c := range components {
-		a.references[c.ID].Add(c.Component)
+		a.references[c.ID].Add(c.Comp)
 	}
 	return idx
 }

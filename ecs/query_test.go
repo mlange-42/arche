@@ -8,11 +8,11 @@ import (
 
 func TestMask(t *testing.T) {
 	filter := All(0, 2, 4)
-	other := NewBitMask(0, 1, 2)
+	other := All(0, 1, 2)
 
 	assert.False(t, filter.Matches(other))
 
-	other = NewBitMask(0, 1, 2, 3, 4)
+	other = All(0, 1, 2, 3, 4)
 	assert.True(t, filter.Matches(other))
 }
 
@@ -42,7 +42,6 @@ func TestQuery(t *testing.T) {
 		pos := (*position)(q.Get(posID))
 		rot := (*rotation)(q.Get(rotID))
 		assert.Equal(t, w.Mask(ent), q.Mask())
-		assert.Equal(t, w.IDs(ent), q.IDs())
 		_ = ent
 		_ = pos
 		_ = rot
@@ -76,7 +75,8 @@ func TestQuery(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Query(All(rotID).Without(posID))
+	filter := All(rotID).Without(posID)
+	q = w.Query(&filter)
 
 	cnt = 0
 	for q.Next() {
@@ -85,7 +85,8 @@ func TestQuery(t *testing.T) {
 	}
 	assert.Equal(t, 2, cnt)
 
-	q = w.Query(All(rotID).Without(posID, velID))
+	filter = All(rotID).Without(posID, velID)
+	q = w.Query(&filter)
 
 	cnt = 0
 	for q.Next() {

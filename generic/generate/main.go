@@ -73,7 +73,7 @@ func generateMaps() {
 				returnAll += ", "
 				arguments += ", "
 			}
-			components += fmt.Sprintf("ecs.Component{ID: m.ids[%d], Component: %s},\n", j, strings.ToLower(typeLetters[j]))
+			components += fmt.Sprintf("ecs.Component{ID: m.ids[%d], Comp: %s},\n", j, strings.ToLower(typeLetters[j]))
 		}
 
 		data := query{

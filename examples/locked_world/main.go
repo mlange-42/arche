@@ -1,5 +1,5 @@
 // Demonstrates how to create, remove or alter entities,
-// despite the locked World during query iteration.
+// despite the World is locked during query iteration.
 package main
 
 import (

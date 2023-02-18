@@ -4,60 +4,41 @@ import (
 	"unsafe"
 )
 
-// Filter is the interface for logic filters
+// Filter is the interface for logic filters.
+// Filters are required to query entities using [World.Query].
+//
+// See [Mask] and [MaskFilter] for basic filters.
+// For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
+// For advanced filtering, see package [github.com/mlange-42/arche/filter].
 type Filter interface {
 	// Matches the filter against a bitmask, i.e. a component composition.
-	Matches(bits BitMask) bool
+	Matches(bits Mask) bool
 }
 
-// Mask for a combination of components.
-type Mask struct {
-	BitMask BitMask
-}
-
-// All creates a new Mask from a list of IDs.
-//
-// If any ID is bigger or equal [MaskTotalBits], it'll not be added to the mask.
-func All(ids ...ID) Mask {
-	var mask BitMask
-	for _, id := range ids {
-		mask.Set(id, true)
-	}
-	return Mask{mask}
-}
-
-// Matches matches a filter against a bitmask
-func (f Mask) Matches(bits BitMask) bool {
-	return bits.Contains(f.BitMask)
-}
-
-// Without excludes the given components.
-func (f Mask) Without(comps ...ID) MaskPair {
-	return MaskPair{
-		Mask:    f,
-		Exclude: All(comps...),
-	}
-}
-
-// MaskPair is a filter for including an excluding components
-type MaskPair struct {
-	Mask    Mask
+// MaskFilter is a [Filter] for including and excluding certain components.
+// See [All] and [Mask.Without].
+type MaskFilter struct {
+	Include Mask
 	Exclude Mask
 }
 
-// Matches matches a filter against a mask
-func (f MaskPair) Matches(bits BitMask) bool {
-	ex := f.Exclude.BitMask
-	return bits.Contains(f.Mask.BitMask) && (ex.IsZero() || !bits.ContainsAny(ex))
+// Matches matches a filter against a mask.
+func (f *MaskFilter) Matches(bits Mask) bool {
+	return bits.Contains(f.Include) &&
+		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
-// Query is an advanced iterator to iterate entities.
+// Matches matches a filter against a bitmask.
+func (b Mask) Matches(bits Mask) bool {
+	return bits.Contains(b)
+}
+
+// Query is an iterator to iterate entities, filtered by a [Filter].
 //
 // Create queries through the [World] using [World.Query].
 //
 // See also the generic alternatives [github.com/mlange-42/arche/generic.Query1],
 // [github.com/mlange-42/arche/generic.Query2], etc.
-//
 // For advanced filtering, see package [github.com/mlange-42/arche/filter]
 type Query struct {
 	queryIter
@@ -82,10 +63,10 @@ func (q *Query) Next() bool {
 		return true
 	}
 	// outline to allow inlining of the fast path
-	return q.slowNext()
+	return q.nextArchetype()
 }
 
-func (q *Query) slowNext() bool {
+func (q *Query) nextArchetype() bool {
 	index, archetype, ok := q.world.nextArchetype(q.filter, q.index)
 	q.index = index
 	if ok {
@@ -121,16 +102,8 @@ func (q *queryIter) Entity() Entity {
 // Mask returns the archetype [BitMask] for the [Entity] at the iterator's current position.
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
-func (q *queryIter) Mask() BitMask {
+func (q *queryIter) Mask() Mask {
 	return q.archetype.Archetype.Mask
-}
-
-// IDs returns the archetype's component IDs for the [Entity] at the iterator's current position.
-//
-// Makes a copy of the slice for immutability, so there is a certain overhead involved.
-func (q *queryIter) IDs() []ID {
-	var ids []ID
-	return append(ids, q.archetype.Archetype.Ids...)
 }
 
 // Close closes the Query and unlocks the world.

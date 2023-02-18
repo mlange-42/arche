@@ -43,7 +43,7 @@ func (q *Filter0) Without(mask ...Comp) *Filter0 {
 func (q *Filter0) Query(w *ecs.World) Query0 {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query0(query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -52,9 +52,9 @@ func (q *Filter0) Query(w *ecs.World) Query0 {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter0.Query].
-func (q *Filter0) Filter(w *ecs.World) ecs.MaskPair {
+func (q *Filter0) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query0 is a generic query iterator for zero components.
@@ -110,7 +110,7 @@ func (q *Filter1[A]) Without(mask ...Comp) *Filter1[A] {
 func (q *Filter1[A]) Query(w *ecs.World) Query1[A] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query1[A](query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -119,9 +119,9 @@ func (q *Filter1[A]) Query(w *ecs.World) Query1[A] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter1.Query].
-func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskPair {
+func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query1 is a generic query iterator for one components.
@@ -129,7 +129,9 @@ func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter1] and [Filter1.Query]
 type Query1[A any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query1.Entity] to get the current Entity.
 func (q *Query1[A]) Get() *A {
 	return (*A)(q.Query.Get(q.ids[0]))
 }
@@ -182,7 +184,7 @@ func (q *Filter2[A, B]) Without(mask ...Comp) *Filter2[A, B] {
 func (q *Filter2[A, B]) Query(w *ecs.World) Query2[A, B] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query2[A, B](query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -191,9 +193,9 @@ func (q *Filter2[A, B]) Query(w *ecs.World) Query2[A, B] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter2.Query].
-func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskPair {
+func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query2 is a generic query iterator for two components.
@@ -201,7 +203,9 @@ func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter2] and [Filter2.Query]
 type Query2[A any, B any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query2.Entity] to get the current Entity.
 func (q *Query2[A, B]) Get() (*A, *B) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1]))
 }
@@ -254,7 +258,7 @@ func (q *Filter3[A, B, C]) Without(mask ...Comp) *Filter3[A, B, C] {
 func (q *Filter3[A, B, C]) Query(w *ecs.World) Query3[A, B, C] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query3[A, B, C](query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -263,9 +267,9 @@ func (q *Filter3[A, B, C]) Query(w *ecs.World) Query3[A, B, C] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter3.Query].
-func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskPair {
+func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query3 is a generic query iterator for three components.
@@ -273,7 +277,9 @@ func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter3] and [Filter3.Query]
 type Query3[A any, B any, C any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query3.Entity] to get the current Entity.
 func (q *Query3[A, B, C]) Get() (*A, *B, *C) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2]))
 }
@@ -326,7 +332,7 @@ func (q *Filter4[A, B, C, D]) Without(mask ...Comp) *Filter4[A, B, C, D] {
 func (q *Filter4[A, B, C, D]) Query(w *ecs.World) Query4[A, B, C, D] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query4[A, B, C, D](query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -335,9 +341,9 @@ func (q *Filter4[A, B, C, D]) Query(w *ecs.World) Query4[A, B, C, D] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter4.Query].
-func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskPair {
+func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query4 is a generic query iterator for four components.
@@ -345,7 +351,9 @@ func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter4] and [Filter4.Query]
 type Query4[A any, B any, C any, D any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query4.Entity] to get the current Entity.
 func (q *Query4[A, B, C, D]) Get() (*A, *B, *C, *D) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3]))
 }
@@ -398,7 +406,7 @@ func (q *Filter5[A, B, C, D, E]) Without(mask ...Comp) *Filter5[A, B, C, D, E] {
 func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World) Query5[A, B, C, D, E] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query5[A, B, C, D, E](query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -407,9 +415,9 @@ func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World) Query5[A, B, C, D, E] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter5.Query].
-func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskPair {
+func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query5 is a generic query iterator for five components.
@@ -417,7 +425,9 @@ func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter5] and [Filter5.Query]
 type Query5[A any, B any, C any, D any, E any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query5.Entity] to get the current Entity.
 func (q *Query5[A, B, C, D, E]) Get() (*A, *B, *C, *D, *E) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4]))
 }
@@ -470,7 +480,7 @@ func (q *Filter6[A, B, C, D, E, F]) Without(mask ...Comp) *Filter6[A, B, C, D, E
 func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World) Query6[A, B, C, D, E, F] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query6[A, B, C, D, E, F](query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -479,9 +489,9 @@ func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World) Query6[A, B, C, D, E, F]
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter6.Query].
-func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskPair {
+func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query6 is a generic query iterator for six components.
@@ -489,7 +499,9 @@ func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter6] and [Filter6.Query]
 type Query6[A any, B any, C any, D any, E any, F any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query6.Entity] to get the current Entity.
 func (q *Query6[A, B, C, D, E, F]) Get() (*A, *B, *C, *D, *E, *F) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5]))
 }
@@ -542,7 +554,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Without(mask ...Comp) *Filter7[A, B, C, D
 func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World) Query7[A, B, C, D, E, F, G] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query7[A, B, C, D, E, F, G](query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -551,9 +563,9 @@ func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World) Query7[A, B, C, D, E,
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter7.Query].
-func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskPair {
+func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query7 is a generic query iterator for seven components.
@@ -561,7 +573,9 @@ func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter7] and [Filter7.Query]
 type Query7[A any, B any, C any, D any, E any, F any, G any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query7.Entity] to get the current Entity.
 func (q *Query7[A, B, C, D, E, F, G]) Get() (*A, *B, *C, *D, *E, *F, *G) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6]))
 }
@@ -614,7 +628,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask ...Comp) *Filter8[A, B, C
 func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World) Query8[A, B, C, D, E, F, G, H] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query8[A, B, C, D, E, F, G, H](query{
-		w.Query(q.compiled.Filter()),
+		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	})
 }
@@ -623,9 +637,9 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World) Query8[A, B, C, D,
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter8.Query].
-func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskPair {
+func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.Filter()
+	return q.compiled.filter
 }
 
 // Query8 is a generic query iterator for eight components.
@@ -633,7 +647,9 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskPair {
 // Create it with [NewFilter8] and [Filter8.Query]
 type Query8[A any, B any, C any, D any, E any, F any, G any, H any] query
 
-// Get returns the [ecs.Entity] and all queried components for the current query iterator position.
+// Get returns all queried components for the current query iterator position.
+//
+// Use [Query8.Entity] to get the current Entity.
 func (q *Query8[A, B, C, D, E, F, G, H]) Get() (*A, *B, *C, *D, *E, *F, *G, *H) {
 	return (*A)(q.Query.Get(q.ids[0])), (*B)(q.Query.Get(q.ids[1])), (*C)(q.Query.Get(q.ids[2])), (*D)(q.Query.Get(q.ids[3])), (*E)(q.Query.Get(q.ids[4])), (*F)(q.Query.Get(q.ids[5])), (*G)(q.Query.Get(q.ids[6])), (*H)(q.Query.Get(q.ids[7]))
 }

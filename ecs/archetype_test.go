@@ -18,14 +18,14 @@ func TestArchetype(t *testing.T) {
 
 	arch.Add(
 		newEntity(0),
-		Component{ID: 0, Component: &position{1, 2}},
-		Component{ID: 1, Component: &rotation{3}},
+		Component{ID: 0, Comp: &position{1, 2}},
+		Component{ID: 1, Comp: &rotation{3}},
 	)
 
 	arch.Add(
 		newEntity(1),
-		Component{ID: 0, Component: &position{4, 5}},
-		Component{ID: 1, Component: &rotation{6}},
+		Component{ID: 0, Comp: &position{4, 5}},
+		Component{ID: 1, Comp: &rotation{6}},
 	)
 
 	assert.Equal(t, 2, int(arch.entities.Len()))
@@ -63,7 +63,7 @@ func TestArchetype(t *testing.T) {
 	assert.Panics(t, func() {
 		arch.Add(
 			newEntity(1),
-			Component{ID: 0, Component: &position{4, 5}},
+			Component{ID: 0, Comp: &position{4, 5}},
 		)
 	})
 }
