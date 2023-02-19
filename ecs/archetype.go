@@ -57,10 +57,11 @@ func (a *archetype) GetEntity(index uint32) Entity {
 
 // Get returns the component with the given ID at the given index
 func (a *archetype) Get(index uint32, id ID) unsafe.Pointer {
-	if a.references[id] == nil {
-		return nil
+	ref := a.references[id]
+	if ref != nil {
+		return ref.Get(index)
 	}
-	return a.references[id].Get(index)
+	return nil
 }
 
 // Add adds an entity with zeroed components to the archetype
