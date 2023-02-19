@@ -7,7 +7,7 @@ import (
 	"github.com/yohamta/donburi/filter"
 )
 
-func BenchmarkDonburi(b *testing.B) {
+func BenchmarkIterDonburi(b *testing.B) {
 	b.StopTimer()
 	world := donburi.NewWorld()
 
@@ -32,5 +32,21 @@ func BenchmarkDonburi(b *testing.B) {
 			pos.X += vel.X
 			pos.Y += vel.Y
 		})
+	}
+}
+
+func BenchmarkBuildDonburi(b *testing.B) {
+	var position = donburi.NewComponentType[Position]()
+	var velocity = donburi.NewComponentType[Velocity]()
+
+	for i := 0; i < b.N; i++ {
+		world := donburi.NewWorld()
+
+		for i := 0; i < nPos; i++ {
+			world.Create(position)
+		}
+		for i := 0; i < nPosVel; i++ {
+			world.Create(position, velocity)
+		}
 	}
 }
