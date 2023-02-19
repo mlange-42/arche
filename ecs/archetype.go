@@ -63,14 +63,6 @@ func (a *archetype) Get(index uint32, id ID) unsafe.Pointer {
 	return a.references[id].Get(index)
 }
 
-// GetUnsafe returns the component with the given ID at the given index,
-// without checking if the entity contains that component.
-//
-// This is used by queries, where the entity is guaranteed to be in the archetype.
-func (a *archetype) GetUnsafe(index uint32, id ID) unsafe.Pointer {
-	return a.references[id].Get(index)
-}
-
 // Add adds an entity with zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity, zero bool) uint32 {
 	idx := a.entities.Add(entity)

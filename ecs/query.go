@@ -134,7 +134,7 @@ func (it *archetypeIter) Has(comp ID) bool {
 
 // Get returns the pointer to the given component at the iterator's position
 func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
-	return it.Archetype.GetUnsafe(it.Index, comp)
+	return it.Archetype.Get(it.Index, comp)
 }
 
 // Entity returns the entity at the iterator's position
