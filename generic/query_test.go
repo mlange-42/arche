@@ -32,6 +32,7 @@ func TestQueryOptionalNot(t *testing.T) {
 	query2 := NewFilter2[testStruct0, testStruct1]().Query(&w)
 	cnt := 0
 	for query2.Next() {
+		_, _ = query2.Get()
 		cnt++
 	}
 	assert.Equal(t, 3, cnt)
@@ -39,6 +40,7 @@ func TestQueryOptionalNot(t *testing.T) {
 	query2 = NewFilter2[testStruct0, testStruct1]().Without(T[testStruct9]()).Query(&w)
 	cnt = 0
 	for query2.Next() {
+		_, _ = query2.Get()
 		cnt++
 	}
 	assert.Equal(t, 2, cnt)
@@ -46,6 +48,7 @@ func TestQueryOptionalNot(t *testing.T) {
 	query2 = NewFilter2[testStruct0, testStruct1]().Without(T[testStruct8](), T[testStruct9]()).Query(&w)
 	cnt = 0
 	for query2.Next() {
+		_, _ = query2.Get()
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
@@ -53,6 +56,7 @@ func TestQueryOptionalNot(t *testing.T) {
 	query2 = NewFilter2[testStruct0, testStruct1]().With(T[testStruct2]()).Without(T[testStruct9]()).Query(&w)
 	cnt = 0
 	for query2.Next() {
+		_, _ = query2.Get()
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
@@ -60,6 +64,7 @@ func TestQueryOptionalNot(t *testing.T) {
 	query3 := NewFilter3[testStruct0, testStruct1, testStruct9]().Query(&w)
 	cnt = 0
 	for query3.Next() {
+		_, _, _ = query3.Get()
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
@@ -67,6 +72,7 @@ func TestQueryOptionalNot(t *testing.T) {
 	query3 = NewFilter3[testStruct0, testStruct1, testStruct9]().Optional(T[testStruct9]()).Query(&w)
 	cnt = 0
 	for query3.Next() {
+		_, _, _ = query3.Get()
 		cnt++
 	}
 	assert.Equal(t, 3, cnt)
