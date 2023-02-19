@@ -24,7 +24,7 @@ go get github.com/mlange-42/arche
 * Optional rich filtering and generic query API.
 * Fast iteration and component access via queries (≈2.5ns iterate + get).
 * Fast random access for components of arbitrary entities. Useful for hierarchies.
-* No systems. Use your own structure.
+* No systems. Just queries. Use your own structure!
 * Not thread-safe. On purpose.
 * No dependencies. Except for unit tests ([100% coverage](https://github.com/mlange-42/arche/actions/workflows/coverage.yml)).
 
