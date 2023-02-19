@@ -188,13 +188,9 @@ For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arc
 
 For now, see the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
 
-## References
+## Cite as
 
-Information and inspiration taken from:
-
-* [Sander Mertens](https://ajmmertens.medium.com/)' blog
-* Michele "skypjack" Caini's blog [skypjack on software](https://skypjack.github.io/)
-* [marioolofo/go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs) "Fast Entity Component System in Golang"
+Lange, M. (2023): Arche &ndash; An archetype-based Entity Component System for Go. GitHub repository: https://github.com/mlange-42/arche
 
 ## License
 
