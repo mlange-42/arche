@@ -15,8 +15,14 @@ jobs:
           go-version: '1.20.x'
       - name: Install dependencies
         run: go get .
-      - name: Run benchmarks
+      - name: Run internal benchmarks
         run: |
           go test -benchmem -run=^$ -bench ^.*$ ./...
+      - name: Run Arche benchmarks
+        run: |
           cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./...
+          go test -benchmem -run=^$ -bench ^.*$ ./arche/...
+      - name: Run competition benchmarks
+        run: |
+          cd benchmark
+          go test -benchmem -run=^$ -bench ^.*$ ./competition/...

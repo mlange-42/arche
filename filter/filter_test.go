@@ -211,6 +211,18 @@ func BenchmarkFilterStackOr(b *testing.B) {
 	}
 }
 
+func BenchmarkFilterHeapOr(b *testing.B) {
+	b.StopTimer()
+	mask := All(1, 2, 3, 4, 5)
+
+	filter := Or(All(1), All(2))
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		_ = filter.Matches(ecs.Mask(mask))
+	}
+}
+
 func BenchmarkFilterStack5And(b *testing.B) {
 	b.StopTimer()
 	mask := All(1, 2, 3, 4, 5)
@@ -219,18 +231,6 @@ func BenchmarkFilterStack5And(b *testing.B) {
 	a2 := AND{&a1, All(3)}
 	a3 := AND{&a2, All(4)}
 	filter := AND{&a3, All(5)}
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
-		_ = filter.Matches(ecs.Mask(mask))
-	}
-}
-
-func BenchmarkFilterHeapOr(b *testing.B) {
-	b.StopTimer()
-	mask := All(1, 2, 3, 4, 5)
-
-	filter := Or(All(1), All(2))
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {

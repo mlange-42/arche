@@ -28,11 +28,6 @@ func (f *MaskFilter) Matches(bits Mask) bool {
 		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
-// Matches matches a filter against a bitmask.
-func (b Mask) Matches(bits Mask) bool {
-	return bits.Contains(b)
-}
-
 // Query is an iterator to iterate entities, filtered by a [Filter].
 //
 // Create queries through the [World] using [World.Query].

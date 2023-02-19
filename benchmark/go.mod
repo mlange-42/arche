@@ -6,6 +6,7 @@ require (
 	github.com/marioolofo/go-gameengine-ecs v0.0.0-20230205000850-cead1cc4bf6a
 	github.com/mlange-42/arche v0.0.0
 	github.com/pkg/profile v1.7.0
+	github.com/yohamta/donburi v1.3.4
 )
 
 require (
