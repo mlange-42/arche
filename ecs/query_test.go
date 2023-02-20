@@ -22,6 +22,7 @@ func TestQuery(t *testing.T) {
 	posID := ComponentID[position](&w)
 	rotID := ComponentID[rotation](&w)
 	velID := ComponentID[velocity](&w)
+	s0ID := ComponentID[testStruct0](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -94,4 +95,14 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
+
+	filter = All(rotID, s0ID).Without()
+	q = w.Query(&filter)
+
+	cnt = 0
+	for q.Next() {
+		_ = q.Entity()
+		cnt++
+	}
+	assert.Equal(t, 0, cnt)
 }

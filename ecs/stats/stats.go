@@ -55,7 +55,7 @@ func (s *WorldStats) String() string {
 	b := strings.Builder{}
 
 	fmt.Fprintf(
-		&b, "World -- Components: %d, Archetypes: %d, Memory: %.1f kb, Locked: %t\n",
+		&b, "World -- Components: %d, Archetypes: %d, Memory: %.1f kB, Locked: %t\n",
 		s.ComponentCount, len(s.Archetypes), float64(s.Memory)/1024.0, s.Locked,
 	)
 
@@ -83,7 +83,7 @@ func (s *ArchetypeStats) String() string {
 		typeNames[i] = tp.Name()
 	}
 	return fmt.Sprintf(
-		"Archetype -- Components: %2d, Entities: %6d, Capacity: %6d, Memory: %7.1f kb\n  Components: %s\n",
+		"Archetype -- Components: %2d, Entities: %6d, Capacity: %6d, Memory: %7.1f kB\n  Components: %s\n",
 		s.Components, s.Size, s.Capacity, float64(s.Memory)/1024.0, strings.Join(typeNames, ", "),
 	)
 }

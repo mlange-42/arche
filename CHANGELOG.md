@@ -1,6 +1,14 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.0...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.1...main)
+
+Nothing
+
+## [[v0.4.1]](https://github.com/mlange-42/arche/compare/v0.4.0...v0.4.1)
+
+## Bugfixes
+
+* Fix units symbol for bytes from `b` to `B` in string formatting of world statistics (#111)
 
 ## Other
 
