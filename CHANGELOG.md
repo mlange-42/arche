@@ -2,7 +2,9 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.0...main)
 
-Nothing
+## Other
+
+* Adds [github.com/wfranczyk/ento](https://github.com/wfranczyk/ento) to benchmarks (#110)
 
 ## [[v0.4.0]](https://github.com/mlange-42/arche/compare/v0.3.1...v0.4.0)
 
