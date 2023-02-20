@@ -1,6 +1,12 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.3.1...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.0...main)
+
+Nothing
+
+## [[v0.4.0]](https://github.com/mlange-42/arche/compare/v0.3.1...v0.4.0)
+
+API revision, split out generics and filters into separate packages.
 
 ### Features
 
