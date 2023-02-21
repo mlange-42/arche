@@ -38,8 +38,7 @@ func (s *storage) Init(tp reflect.Type, increment int, forStorage bool) {
 
 // Get retrieves an unsafe pointer to an element
 func (s *storage) Get(index uint32) unsafe.Pointer {
-	ptr := unsafe.Add(s.bufferAddress, uintptr(index)*s.itemSize)
-	return ptr
+	return unsafe.Add(s.bufferAddress, uintptr(index)*s.itemSize)
 }
 
 // Add adds an element to the end of the storage
