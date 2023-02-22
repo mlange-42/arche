@@ -5,13 +5,14 @@ import "reflect"
 // componentRegistry keeps track of component IDs
 type componentRegistry struct {
 	Components map[reflect.Type]ID
-	Types      [MaskTotalBits]reflect.Type
+	Types      []reflect.Type
 }
 
 // newComponentRegistry creates a new ComponentRegistry
 func newComponentRegistry() componentRegistry {
 	return componentRegistry{
 		Components: map[reflect.Type]ID{},
+		Types:      make([]reflect.Type, MaskTotalBits),
 	}
 }
 

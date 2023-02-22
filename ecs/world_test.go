@@ -571,22 +571,26 @@ func Test1000Archetypes(t *testing.T) {
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[Entity]()
+	printTypeSize[entityIndex]()
 	printTypeSize[Mask]()
 	printTypeSize[World]()
 	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
 	printTypeSize[archetype]()
 	printTypeSize[archetypeNode]()
 	printTypeSize[storage]()
+	printTypeSize[entityPool]()
+	printTypeSize[componentRegistry]()
+	printTypeSize[bitPool]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
 }
 
 func printTypeSize[T any]() {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
-	fmt.Printf("%16s: %5d B\n", tp.Name(), tp.Size())
+	fmt.Printf("%18s: %5d B\n", tp.Name(), tp.Size())
 }
 
 func printTypeSizeName[T any](name string) {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
-	fmt.Printf("%16s: %5d B\n", name, tp.Size())
+	fmt.Printf("%18s: %5d B\n", name, tp.Size())
 }
