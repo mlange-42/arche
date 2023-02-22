@@ -11,28 +11,33 @@ import (
 func addArcheWorld(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld()
+		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
 
 		posID := ecs.ComponentID[c.Position](&world)
 		rotID := ecs.ComponentID[c.Rotation](&world)
+		comps := []ecs.ID{posID, rotID}
 		b.StartTimer()
 
+		var e ecs.Entity
 		for i := 0; i < count; i++ {
-			_ = world.NewEntity(posID, rotID)
+			e = world.NewEntity(comps...)
 		}
+		_ = e
 	}
 }
 
 func addArcheGeneric(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld()
+		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
 		mut := generic.NewMap2[c.Position, c.Rotation](&world)
 		b.StartTimer()
 
+		var e ecs.Entity
 		for i := 0; i < count; i++ {
-			_, _, _ = mut.NewEntity()
+			e, _, _ = mut.NewEntity()
 		}
+		_ = e
 	}
 }
 
