@@ -62,8 +62,8 @@ func fromConfig(conf Config) World {
 		locks:      Mask{},
 		listener:   nil,
 	}
-	entry := w.createArchetypeEntry()
-	w.createArchetype(entry, Mask{})
+	entry := w.createArchetypeEntry(Mask{})
+	w.createArchetype(entry, false)
 	return w
 }
 
@@ -443,7 +443,7 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *arc
 		}
 	}
 	if curr.archetype == nil {
-		w.createArchetype(curr, mask)
+		w.createArchetype(curr, true)
 	}
 	return curr.archetype
 }
@@ -452,27 +452,28 @@ func (w *World) findOrCreateArchetypeSlow(mask Mask) (*archetypeEntry, bool) {
 	if arch, ok := w.findArchetype(mask); ok {
 		return arch, false
 	}
-	return w.createArchetypeEntry(), true
+	return w.createArchetypeEntry(mask), true
 }
 
 func (w *World) findArchetype(mask Mask) (*archetypeEntry, bool) {
-	length := w.archetypes.Len()
+	length := w.graph.Len()
 	for i := 0; i < length; i++ {
-		arch := w.archetypes.Get(i)
-		if arch.Mask == mask {
-			return arch.graphEntry, true
+		arch := w.graph.Get(i)
+		if arch.mask == mask {
+			return arch, true
 		}
 	}
 	return nil, false
 }
 
-func (w *World) createArchetypeEntry() *archetypeEntry {
-	w.graph.Add(newArchetypeEntry())
+func (w *World) createArchetypeEntry(mask Mask) *archetypeEntry {
+	w.graph.Add(newArchetypeEntry(mask))
 	entry := w.graph.Get(w.graph.Len() - 1)
 	return entry
 }
 
-func (w *World) createArchetype(entry *archetypeEntry, mask Mask) *archetype {
+func (w *World) createArchetype(entry *archetypeEntry, forStorage bool) *archetype {
+	mask := entry.mask
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 
@@ -487,7 +488,7 @@ func (w *World) createArchetype(entry *archetypeEntry, mask Mask) *archetype {
 
 	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
-	arch.Init(entry, w.config.CapacityIncrement, true, types...)
+	arch.Init(entry, w.config.CapacityIncrement, forStorage, types...)
 	entry.archetype = arch
 	return arch
 }

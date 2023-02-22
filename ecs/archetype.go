@@ -8,13 +8,15 @@ import (
 )
 
 type archetypeEntry struct {
+	mask      Mask
 	archetype *archetype
 	toAdd     []*archetypeEntry
 	toRemove  []*archetypeEntry
 }
 
-func newArchetypeEntry() archetypeEntry {
+func newArchetypeEntry(mask Mask) archetypeEntry {
 	return archetypeEntry{
+		mask:     mask,
 		toAdd:    make([]*archetypeEntry, MaskTotalBits),
 		toRemove: make([]*archetypeEntry, MaskTotalBits),
 	}
