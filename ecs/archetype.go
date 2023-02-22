@@ -7,6 +7,35 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
+type archetypeEntry struct {
+	archetype *archetype
+	toAdd     []*archetypeEntry
+	toRemove  []*archetypeEntry
+}
+
+func newArchetypeEntry() archetypeEntry {
+	return archetypeEntry{
+		toAdd:    make([]*archetypeEntry, MaskTotalBits),
+		toRemove: make([]*archetypeEntry, MaskTotalBits),
+	}
+}
+
+// GetTransitionRemove returns the archetype resulting from removing a component
+func (a *archetypeEntry) GetTransitionRemove(id ID) (*archetypeEntry, bool) {
+	p := a.toRemove[id]
+	return p, p != nil
+}
+
+// SetTransitionAdd sets the archetype resulting from adding a component
+func (a *archetypeEntry) SetTransitionAdd(id ID, to *archetypeEntry) {
+	a.toAdd[id] = to
+}
+
+// SetTransitionRemove sets the archetype resulting from removing a component
+func (a *archetypeEntry) SetTransitionRemove(id ID, to *archetypeEntry) {
+	a.toRemove[id] = to
+}
+
 // archetype represents an ECS archetype
 type archetype struct {
 	Mask Mask
@@ -16,12 +45,11 @@ type archetype struct {
 	references []*storage
 	entities   genericStorage[Entity]
 	components []storage
-	toAdd      []*archetype
-	toRemove   []*archetype
+	graphEntry *archetypeEntry
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...componentType) {
+func (a *archetype) Init(entry *archetypeEntry, capacityIncrement int, forStorage bool, components ...componentType) {
 	var mask Mask
 	if len(components) > 0 {
 		a.Ids = make([]ID, len(components))
@@ -43,10 +71,9 @@ func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...c
 		a.references[c.ID] = &a.components[i]
 	}
 
+	a.graphEntry = entry
 	a.Mask = mask
 	a.entities = genericStorage[Entity]{}
-	a.toAdd = make([]*archetype, MaskTotalBits)
-	a.toRemove = make([]*archetype, MaskTotalBits)
 	a.entities.Init(capacityIncrement, forStorage)
 }
 
@@ -137,25 +164,9 @@ func (a *archetype) Zero(index uint32, id ID) {
 }
 
 // GetTransitionAdd returns the archetype resulting from adding a component
-func (a *archetype) GetTransitionAdd(id ID) (*archetype, bool) {
+func (a *archetypeEntry) GetTransitionAdd(id ID) (*archetypeEntry, bool) {
 	p := a.toAdd[id]
 	return p, p != nil
-}
-
-// GetTransitionRemove returns the archetype resulting from removing a component
-func (a *archetype) GetTransitionRemove(id ID) (*archetype, bool) {
-	p := a.toRemove[id]
-	return p, p != nil
-}
-
-// SetTransitionAdd sets the archetype resulting from adding a component
-func (a *archetype) SetTransitionAdd(id ID, to *archetype) {
-	a.toAdd[id] = to
-}
-
-// SetTransitionRemove sets the archetype resulting from removing a component
-func (a *archetype) SetTransitionRemove(id ID, to *archetype) {
-	a.toRemove[id] = to
 }
 
 // Stats generates statistics for an archetype

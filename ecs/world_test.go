@@ -142,21 +142,21 @@ func TestWorldComponents(t *testing.T) {
 	archPosRot, ok := w.findArchetype(maskPosRot)
 	assert.True(t, ok)
 
-	assert.Equal(t, 0, int(archNone.Len()))
-	assert.Equal(t, 1, int(archPos.Len()))
-	assert.Equal(t, 1, int(archRot.Len()))
-	assert.Equal(t, 1, int(archPosRot.Len()))
+	assert.Equal(t, 0, int(archNone.archetype.Len()))
+	assert.Equal(t, 1, int(archPos.archetype.Len()))
+	assert.Equal(t, 1, int(archRot.archetype.Len()))
+	assert.Equal(t, 1, int(archPosRot.archetype.Len()))
 
 	w.Remove(e1, posID)
 
-	assert.Equal(t, 0, int(archNone.Len()))
-	assert.Equal(t, 1, int(archPos.Len()))
-	assert.Equal(t, 2, int(archRot.Len()))
-	assert.Equal(t, 0, int(archPosRot.Len()))
+	assert.Equal(t, 0, int(archNone.archetype.Len()))
+	assert.Equal(t, 1, int(archPos.archetype.Len()))
+	assert.Equal(t, 2, int(archRot.archetype.Len()))
+	assert.Equal(t, 0, int(archPosRot.archetype.Len()))
 
 	w.Add(e0, rotID)
-	assert.Equal(t, 0, int(archPos.Len()))
-	assert.Equal(t, 1, int(archPosRot.Len()))
+	assert.Equal(t, 0, int(archPos.archetype.Len()))
+	assert.Equal(t, 1, int(archPosRot.archetype.Len()))
 
 	w.Remove(e2, rotID)
 	// No-op add/remove
