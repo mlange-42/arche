@@ -160,7 +160,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 func (w *World) RemoveEntity(entity Entity) {
 	w.checkLocked()
 
-	index := w.entities[entity.id]
+	index := &w.entities[entity.id]
 	oldArch := index.arch
 
 	if w.listener != nil {
@@ -317,7 +317,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	if len(add) == 0 && len(rem) == 0 {
 		return
 	}
-	index := w.entities[entity.id]
+	index := &w.entities[entity.id]
 	oldArch := index.arch
 	mask := oldArch.Mask
 	oldMask := mask
@@ -413,7 +413,7 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	if !w.Has(entity, id) {
 		panic("can't copy component into entity that has no such component type")
 	}
-	index := w.entities[entity.id]
+	index := &w.entities[entity.id]
 	arch := index.arch
 
 	return arch.Set(index.index, id, comp)
