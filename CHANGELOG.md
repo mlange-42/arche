@@ -1,8 +1,15 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.1...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.2...main)
 
 Nothing
+
+## [[v0.4.2]](https://github.com/mlange-42/arche/compare/v0.4.1...v0.4.2)
+
+## Other
+
+* Avoid creation of unused archetypes by splitting the archetype graph out of the actual archetypes (#113)
+* Use slice instead of fixed-size array for type lookup in component registry (#113)
 
 ## [[v0.4.1]](https://github.com/mlange-42/arche/compare/v0.4.0...v0.4.1)
 

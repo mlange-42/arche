@@ -12,12 +12,13 @@ import (
 )
 
 type position struct {
-	X int
-	Y int
+	X float64
+	Y float64
 }
 
-type rotation struct {
-	Angle int
+type velocity struct {
+	X float64
+	Y float64
 }
 
 func main() {
@@ -42,17 +43,21 @@ func run(rounds, iters, entities int) {
 		)
 
 		posID := ecs.ComponentID[position](&world)
-		rotID := ecs.ComponentID[rotation](&world)
+		velID := ecs.ComponentID[velocity](&world)
 
 		for j := 0; j < entities; j++ {
-			_ = world.NewEntity(posID, rotID)
+			_ = world.NewEntity(posID, velID)
 		}
 
+		filter := ecs.All(posID, velID)
+
 		for j := 0; j < iters; j++ {
-			query := world.Query(ecs.All(posID, rotID))
+			query := world.Query(filter)
 			for query.Next() {
 				pos := (*position)(query.Get(posID))
-				pos.X = 1
+				vel := (*velocity)(query.Get(velID))
+				pos.X += vel.X
+				pos.Y += vel.Y
 			}
 		}
 	}

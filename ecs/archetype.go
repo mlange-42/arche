@@ -7,6 +7,45 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
+// archetypeNode is a node in the archetype graph
+type archetypeNode struct {
+	mask      Mask
+	archetype *archetype
+	toAdd     []*archetypeNode
+	toRemove  []*archetypeNode
+}
+
+// Creates a new archetypeNode
+func newArchetypeNode(mask Mask) archetypeNode {
+	return archetypeNode{
+		mask:     mask,
+		toAdd:    make([]*archetypeNode, MaskTotalBits),
+		toRemove: make([]*archetypeNode, MaskTotalBits),
+	}
+}
+
+// GetTransitionAdd returns the archetypeNode resulting from adding a component
+func (a *archetypeNode) GetTransitionAdd(id ID) (*archetypeNode, bool) {
+	p := a.toAdd[id]
+	return p, p != nil
+}
+
+// GetTransitionRemove returns the archetypeNode resulting from removing a component
+func (a *archetypeNode) GetTransitionRemove(id ID) (*archetypeNode, bool) {
+	p := a.toRemove[id]
+	return p, p != nil
+}
+
+// SetTransitionAdd sets the archetypeNode resulting from adding a component
+func (a *archetypeNode) SetTransitionAdd(id ID, to *archetypeNode) {
+	a.toAdd[id] = to
+}
+
+// SetTransitionRemove sets the archetypeNode resulting from removing a component
+func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
+	a.toRemove[id] = to
+}
+
 // archetype represents an ECS archetype
 type archetype struct {
 	Mask Mask
@@ -16,12 +55,11 @@ type archetype struct {
 	references []*storage
 	entities   genericStorage[Entity]
 	components []storage
-	toAdd      []*archetype
-	toRemove   []*archetype
+	graphNode  *archetypeNode
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...componentType) {
+func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage bool, components ...componentType) {
 	var mask Mask
 	if len(components) > 0 {
 		a.Ids = make([]ID, len(components))
@@ -43,10 +81,9 @@ func (a *archetype) Init(capacityIncrement int, forStorage bool, components ...c
 		a.references[c.ID] = &a.components[i]
 	}
 
+	a.graphNode = node
 	a.Mask = mask
 	a.entities = genericStorage[Entity]{}
-	a.toAdd = make([]*archetype, MaskTotalBits)
-	a.toRemove = make([]*archetype, MaskTotalBits)
 	a.entities.Init(capacityIncrement, forStorage)
 }
 
@@ -134,28 +171,6 @@ func (a *archetype) SetPointer(index uint32, id ID, comp unsafe.Pointer) unsafe.
 // Zero resets th memory at the given position
 func (a *archetype) Zero(index uint32, id ID) {
 	a.references[id].Zero(index)
-}
-
-// GetTransitionAdd returns the archetype resulting from adding a component
-func (a *archetype) GetTransitionAdd(id ID) (*archetype, bool) {
-	p := a.toAdd[id]
-	return p, p != nil
-}
-
-// GetTransitionRemove returns the archetype resulting from removing a component
-func (a *archetype) GetTransitionRemove(id ID) (*archetype, bool) {
-	p := a.toRemove[id]
-	return p, p != nil
-}
-
-// SetTransitionAdd sets the archetype resulting from adding a component
-func (a *archetype) SetTransitionAdd(id ID, to *archetype) {
-	a.toAdd[id] = to
-}
-
-// SetTransitionRemove sets the archetype resulting from removing a component
-func (a *archetype) SetTransitionRemove(id ID, to *archetype) {
-	a.toRemove[id] = to
 }
 
 // Stats generates statistics for an archetype

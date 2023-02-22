@@ -23,6 +23,7 @@ type World struct {
 	config     Config
 	entities   []entityIndex
 	archetypes pagedArr32[archetype]
+	graph      pagedArr32[archetypeNode]
 	entityPool entityPool
 	bitPool    bitPool
 	registry   componentRegistry
@@ -58,10 +59,12 @@ func fromConfig(conf Config) World {
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
 		archetypes: pagedArr32[archetype]{},
+		graph:      pagedArr32[archetypeNode]{},
 		locks:      Mask{},
 		listener:   nil,
 	}
-	w.createArchetype(Mask{}, false)
+	node := w.createArchetypeNode(Mask{})
+	w.createArchetype(node, false)
 	return w
 }
 
@@ -405,6 +408,7 @@ func (w *World) Stats() *stats.WorldStats {
 	}
 }
 
+// Copies a component to an entity
 func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	if !w.Has(entity, id) {
 		panic("can't copy component into entity that has no such component type")
@@ -415,55 +419,73 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	return arch.Set(index.index, id, comp)
 }
 
+// Tries to find an archetype by traversing the archetype graph,
+// searching by mask and extending the graph if necessary.
+// A new archetype is created for the final graph node if not already present.
 func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *archetype {
-	curr := start
+	curr := start.graphNode
 	mask := start.Mask
-	maxRem := len(rem) - 1
-	maxAdd := len(add) - 1
-	for i, id := range rem {
+	for _, id := range rem {
 		mask.Set(id, false)
 		if next, ok := curr.GetTransitionRemove(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask, i == maxRem && maxAdd == 0)
+			next, _ := w.findOrCreateArchetypeSlow(mask)
 			next.SetTransitionAdd(id, curr)
 			curr.SetTransitionRemove(id, next)
 			curr = next
 		}
 	}
-	for i, id := range add {
+	for _, id := range add {
 		mask.Set(id, true)
 		if next, ok := curr.GetTransitionAdd(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask, i == maxAdd)
+			next, _ := w.findOrCreateArchetypeSlow(mask)
 			next.SetTransitionRemove(id, curr)
 			curr.SetTransitionAdd(id, next)
 			curr = next
 		}
 	}
-	return curr
+	if curr.archetype == nil {
+		w.createArchetype(curr, true)
+	}
+	return curr.archetype
 }
 
-func (w *World) findOrCreateArchetypeSlow(mask Mask, forStorage bool) (*archetype, bool) {
-	if arch, ok := w.findArchetype(mask); ok {
+// Tries to find an archetype for a mask, when it can't be reached through the archetype graph.
+// Creates an archetype graph node.
+func (w *World) findOrCreateArchetypeSlow(mask Mask) (*archetypeNode, bool) {
+	if arch, ok := w.findArchetypeSlow(mask); ok {
 		return arch, false
 	}
-	return w.createArchetype(mask, forStorage), true
+	return w.createArchetypeNode(mask), true
 }
 
-func (w *World) findArchetype(mask Mask) (*archetype, bool) {
-	length := w.archetypes.Len()
+// Searches for an archetype by a mask.
+func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
+	length := w.graph.Len()
 	for i := 0; i < length; i++ {
-		arch := w.archetypes.Get(i)
-		if arch.Mask == mask {
+		arch := w.graph.Get(i)
+		if arch.mask == mask {
 			return arch, true
 		}
 	}
 	return nil, false
 }
 
-func (w *World) createArchetype(mask Mask, forStorage bool) *archetype {
+// Creates a node in the archetype graph.
+func (w *World) createArchetypeNode(mask Mask) *archetypeNode {
+	w.graph.Add(newArchetypeNode(mask))
+	node := w.graph.Get(w.graph.Len() - 1)
+	return node
+}
+
+// Creates an archetype for the given archetype graph node.
+// Initializes the archetype with a capacity according to CapacityIncrement if forStorage is true,
+// and with a capacity of 1 otherwise.
+func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype {
+	mask := node.mask
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 
@@ -475,9 +497,11 @@ func (w *World) createArchetype(mask Mask, forStorage bool) *archetype {
 			idx++
 		}
 	}
+
 	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
-	arch.Init(w.config.CapacityIncrement, forStorage, types...)
+	arch.Init(node, w.config.CapacityIncrement, forStorage, types...)
+	node.archetype = arch
 	return arch
 }
 

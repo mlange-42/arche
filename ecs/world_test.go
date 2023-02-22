@@ -133,30 +133,30 @@ func TestWorldComponents(t *testing.T) {
 	maskRot := All(rotID)
 	maskPosRot := All(posID, rotID)
 
-	archNone, ok := w.findArchetype(maskNone)
+	archNone, ok := w.findArchetypeSlow(maskNone)
 	assert.True(t, ok)
-	archPos, ok := w.findArchetype(maskPos)
+	archPos, ok := w.findArchetypeSlow(maskPos)
 	assert.True(t, ok)
-	archRot, ok := w.findArchetype(maskRot)
+	archRot, ok := w.findArchetypeSlow(maskRot)
 	assert.True(t, ok)
-	archPosRot, ok := w.findArchetype(maskPosRot)
+	archPosRot, ok := w.findArchetypeSlow(maskPosRot)
 	assert.True(t, ok)
 
-	assert.Equal(t, 0, int(archNone.Len()))
-	assert.Equal(t, 1, int(archPos.Len()))
-	assert.Equal(t, 1, int(archRot.Len()))
-	assert.Equal(t, 1, int(archPosRot.Len()))
+	assert.Equal(t, 0, int(archNone.archetype.Len()))
+	assert.Equal(t, 1, int(archPos.archetype.Len()))
+	assert.Equal(t, 1, int(archRot.archetype.Len()))
+	assert.Equal(t, 1, int(archPosRot.archetype.Len()))
 
 	w.Remove(e1, posID)
 
-	assert.Equal(t, 0, int(archNone.Len()))
-	assert.Equal(t, 1, int(archPos.Len()))
-	assert.Equal(t, 2, int(archRot.Len()))
-	assert.Equal(t, 0, int(archPosRot.Len()))
+	assert.Equal(t, 0, int(archNone.archetype.Len()))
+	assert.Equal(t, 1, int(archPos.archetype.Len()))
+	assert.Equal(t, 2, int(archRot.archetype.Len()))
+	assert.Equal(t, 0, int(archPosRot.archetype.Len()))
 
 	w.Add(e0, rotID)
-	assert.Equal(t, 0, int(archPos.Len()))
-	assert.Equal(t, 1, int(archPosRot.Len()))
+	assert.Equal(t, 0, int(archPos.archetype.Len()))
+	assert.Equal(t, 1, int(archPosRot.archetype.Len()))
 
 	w.Remove(e2, rotID)
 	// No-op add/remove
@@ -420,18 +420,24 @@ func TestArchetypeGraph(t *testing.T) {
 	rotID := ComponentID[rotation](&world)
 
 	archEmpty := world.archetypes.Get(0)
-	arch0 := world.findOrCreateArchetype(archEmpty, []ID{posID}, []ID{})
-	archEmpty2 := world.findOrCreateArchetype(arch0, []ID{}, []ID{posID})
-
+	arch0 := world.findOrCreateArchetype(archEmpty, []ID{posID, velID}, []ID{})
+	archEmpty2 := world.findOrCreateArchetype(arch0, []ID{}, []ID{velID, posID})
 	assert.Equal(t, archEmpty, archEmpty2)
+	assert.Equal(t, 2, world.archetypes.Len())
+	assert.Equal(t, 3, world.graph.Len())
+
+	archEmpty3 := world.findOrCreateArchetype(arch0, []ID{}, []ID{posID, velID})
+	assert.Equal(t, archEmpty, archEmpty3)
+	assert.Equal(t, 2, world.archetypes.Len())
+	assert.Equal(t, 4, world.graph.Len())
 
 	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{})
 	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{})
 
 	assert.Equal(t, []ID{0, 1, 2}, arch012.Ids)
 
-	archEmpty3 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID})
-	assert.Equal(t, archEmpty, archEmpty3)
+	archEmpty4 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID})
+	assert.Equal(t, archEmpty, archEmpty4)
 }
 
 func TestWorldListener(t *testing.T) {
@@ -565,21 +571,26 @@ func Test1000Archetypes(t *testing.T) {
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[Entity]()
+	printTypeSize[entityIndex]()
 	printTypeSize[Mask]()
 	printTypeSize[World]()
 	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
 	printTypeSize[archetype]()
+	printTypeSize[archetypeNode]()
 	printTypeSize[storage]()
+	printTypeSize[entityPool]()
+	printTypeSize[componentRegistry]()
+	printTypeSize[bitPool]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
 }
 
 func printTypeSize[T any]() {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
-	fmt.Printf("%16s: %5d B\n", tp.Name(), tp.Size())
+	fmt.Printf("%18s: %5d B\n", tp.Name(), tp.Size())
 }
 
 func printTypeSizeName[T any](name string) {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
-	fmt.Printf("%16s: %5d B\n", name, tp.Size())
+	fmt.Printf("%18s: %5d B\n", name, tp.Size())
 }
