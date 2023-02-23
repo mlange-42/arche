@@ -7,25 +7,38 @@ import (
 	c "github.com/mlange-42/arche/benchmark/arche/common"
 )
 
+const (
+	TestStruct0ID ecs.ComponentID = iota
+	TestStruct1ID
+	TestStruct2ID
+	TestStruct3ID
+	TestStruct4ID
+	TestStruct5ID
+	TestStruct6ID
+	TestStruct7ID
+	TestStruct8ID
+	TestStruct9ID
+	PositionComponentID
+	RotationComponentID
+)
+
 func runGameEngineEcs(b *testing.B, count int) {
 	b.StopTimer()
-	comps := []ecs.ComponentConfig{
-		{ID: 0, Component: c.Position{}},
-		{ID: 1, Component: c.Rotation{}},
-	}
-	world := ecs.NewWorld(comps...)
+	world := ecs.NewWorld(1024)
+	world.Register(ecs.NewComponentRegistry[c.Position](PositionComponentID))
+	world.Register(ecs.NewComponentRegistry[c.Rotation](RotationComponentID))
 
 	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Assign(entity, 0, 1)
+		world.NewEntity(PositionComponentID, RotationComponentID)
 	}
-	filter := world.NewFilter(0, 1)
 
+	mask := ecs.MakeComponentMask(PositionComponentID, RotationComponentID)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		for _, e := range filter.Entities() {
-			pos := (*c.Position)(world.Component(e, 0))
+		query := world.Query(mask)
+		for query.Next() {
+			pos := (*c.Position)(query.Component(PositionComponentID))
 			pos.X = 1.0
 		}
 	}
@@ -33,30 +46,27 @@ func runGameEngineEcs(b *testing.B, count int) {
 
 func runGameEngineEcs5C(b *testing.B, count int) {
 	b.StopTimer()
-	comps := []ecs.ComponentConfig{
-		{ID: 0, Component: c.TestStruct0{}},
-		{ID: 1, Component: c.TestStruct1{}},
-		{ID: 2, Component: c.TestStruct2{}},
-		{ID: 3, Component: c.TestStruct3{}},
-		{ID: 4, Component: c.TestStruct4{}},
-	}
-	world := ecs.NewWorld(comps...)
+	world := ecs.NewWorld(1024)
+	world.Register(ecs.NewComponentRegistry[c.TestStruct0](TestStruct0ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct1](TestStruct1ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct2](TestStruct2ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct3](TestStruct3ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct4](TestStruct4ID))
 
 	for i := 0; i < count; i++ {
-		entity := world.NewEntity()
-		world.Assign(entity, 0, 1, 2, 3, 4)
+		_ = world.NewEntity(TestStruct0ID, TestStruct1ID, TestStruct2ID, TestStruct3ID, TestStruct4ID)
 	}
-	filter := world.NewFilter(0, 1, 2, 3, 4)
-
+	mask := ecs.MakeComponentMask(TestStruct0ID, TestStruct1ID, TestStruct2ID, TestStruct3ID, TestStruct4ID)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		for _, e := range filter.Entities() {
-			t1 := (*c.TestStruct0)(world.Component(e, 0))
-			t2 := (*c.TestStruct1)(world.Component(e, 1))
-			t3 := (*c.TestStruct2)(world.Component(e, 2))
-			t4 := (*c.TestStruct3)(world.Component(e, 3))
-			t5 := (*c.TestStruct4)(world.Component(e, 4))
+		query := world.Query(mask)
+		for query.Next() {
+			t1 := (*c.TestStruct0)(query.Component(TestStruct0ID))
+			t2 := (*c.TestStruct1)(query.Component(TestStruct1ID))
+			t3 := (*c.TestStruct2)(query.Component(TestStruct2ID))
+			t4 := (*c.TestStruct3)(query.Component(TestStruct3ID))
+			t5 := (*c.TestStruct4)(query.Component(TestStruct4ID))
 			t1.Val, t2.Val, t3.Val, t4.Val, t5.Val = 1, 1, 1, 1, 1
 		}
 	}
@@ -64,46 +74,43 @@ func runGameEngineEcs5C(b *testing.B, count int) {
 
 func runGameEngineEcs1kArch(b *testing.B, count int) {
 	b.StopTimer()
-	comps := []ecs.ComponentConfig{
-		{ID: 0, Component: c.TestStruct0{}},
-		{ID: 1, Component: c.TestStruct1{}},
-		{ID: 2, Component: c.TestStruct2{}},
-		{ID: 3, Component: c.TestStruct3{}},
-		{ID: 4, Component: c.TestStruct4{}},
-		{ID: 5, Component: c.TestStruct5{}},
-		{ID: 6, Component: c.TestStruct6{}},
-		{ID: 7, Component: c.TestStruct7{}},
-		{ID: 8, Component: c.TestStruct8{}},
-		{ID: 9, Component: c.TestStruct9{}},
-	}
-	world := ecs.NewWorld(comps...)
+	world := ecs.NewWorld(1024)
+	world.Register(ecs.NewComponentRegistry[c.TestStruct0](TestStruct0ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct1](TestStruct1ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct2](TestStruct2ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct3](TestStruct3ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct4](TestStruct4ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct5](TestStruct5ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct6](TestStruct6ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct7](TestStruct7ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct8](TestStruct8ID))
+	world.Register(ecs.NewComponentRegistry[c.TestStruct9](TestStruct9ID))
 
 	perArch := 2 * count / 1000
 
 	for i := 0; i < 1024; i++ {
 		mask := i
-		add := make([]ecs.ID, 0, 10)
+		add := make([]uint, 0, 10)
 		for j := 0; j < 10; j++ {
-			id := ecs.ID(j)
+			id := uint(j)
 			m := 1 << j
 			if mask&m == m {
 				add = append(add, id)
 			}
 		}
 		for j := 0; j < perArch; j++ {
-			entity := world.NewEntity()
-			world.Assign(entity, add...)
+			_ = world.NewEntity(add...)
 		}
 	}
 
-	filter := world.NewFilter(6)
-
+	mask := ecs.MakeComponentMask(TestStruct6ID)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		for _, e := range filter.Entities() {
-			pos := (*c.TestStruct6)(world.Component(e, 6))
-			pos.Val = 1
+		query := world.Query(mask)
+		for query.Next() {
+			t1 := (*c.TestStruct6)(query.Component(TestStruct6ID))
+			t1.Val = 1
 		}
 	}
 }
