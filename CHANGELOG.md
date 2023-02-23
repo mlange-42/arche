@@ -1,8 +1,17 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.2...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.3...main)
 
 Nothing
+
+## [[v0.4.3]](https://github.com/mlange-42/arche/compare/v0.4.2...v0.4.3)
+
+## Bugfixes
+
+* `EntityEvent` has more consistent values when an entity is removed (#115)
+  * `EntityEvent.NewMask` is zero
+  * `EntityEvent.Removed` is contains all former components
+  * `EntityEvent.Current` is `nil`
 
 ## [[v0.4.2]](https://github.com/mlange-42/arche/compare/v0.4.1...v0.4.2)
 
