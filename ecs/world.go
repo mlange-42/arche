@@ -164,7 +164,7 @@ func (w *World) RemoveEntity(entity Entity) {
 	oldArch := index.arch
 
 	if w.listener != nil {
-		w.listener(EntityEvent{entity, oldArch.Mask, oldArch.Mask, nil, nil, oldArch.Ids, -1})
+		w.listener(EntityEvent{entity, oldArch.Mask, Mask{}, nil, oldArch.Ids, nil, -1})
 	}
 
 	swapped := oldArch.Remove(index.index)

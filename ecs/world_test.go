@@ -481,8 +481,9 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
 		OldMask:      All(posID, velID),
-		NewMask:      All(posID, velID),
-		Current:      []ID{posID, velID},
+		NewMask:      Mask{},
+		Removed:      []ID{posID, velID},
+		Current:      nil,
 		AddedRemoved: -1,
 	}, events[len(events)-1])
 
