@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -131,4 +132,99 @@ func TestQueryClosed(t *testing.T) {
 	q.Close()
 	assert.Panics(t, func() { q.Next() })
 	assert.Panics(t, func() { q.Get(posID) })
+}
+
+func TestQueryJump(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	velID := ComponentID[velocity](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	e4 := w.NewEntity()
+	e5 := w.NewEntity()
+
+	w.Add(e0, posID)
+	w.Add(e1, posID, velID, rotID)
+	w.Add(e2, posID)
+	w.Add(e3, posID, velID)
+	w.Add(e4, posID, velID)
+	w.Add(e5, posID, rotID)
+
+	q := w.Query(All(posID))
+
+	q.JumpTo(5)
+	assert.Equal(t, e5, q.Entity())
+	q.JumpTo(0)
+	assert.Equal(t, e0, q.Entity())
+	q.JumpTo(3)
+	assert.Equal(t, e3, q.Entity())
+
+	assert.Panics(t, func() { q.JumpTo(-1) })
+	assert.Panics(t, func() { q.JumpTo(6) })
+}
+
+func BenchmarkQueryJumpTo_1Arch_1000(b *testing.B) {
+	b.StopTimer()
+	count := 1000
+
+	w := NewWorld()
+	posID := ComponentID[position](&w)
+
+	positions := make([]int, count)
+	for i := 0; i < count; i++ {
+		_ = w.NewEntity(posID)
+		positions[i] = rand.Intn(count)
+	}
+
+	query := w.Query(All(posID))
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		cnt := 0
+		for _, p := range positions {
+			query.JumpTo(p)
+			cnt++
+		}
+	}
+}
+
+func BenchmarkQueryJumpTo_4Arch_1000(b *testing.B) {
+	b.StopTimer()
+	count := 1000
+
+	w := NewWorld()
+	posID := ComponentID[position](&w)
+	velID := ComponentID[velocity](&w)
+	rotID := ComponentID[rotation](&w)
+
+	ids := [][]ID{
+		{posID},
+		{posID, velID},
+		{posID, rotID},
+		{posID, velID, rotID},
+	}
+
+	positions := make([]int, count)
+	for i := 0; i < count; i++ {
+		_ = w.NewEntity(ids[i%len(ids)]...)
+		positions[i] = rand.Intn(count)
+	}
+
+	query := w.Query(All(posID))
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		cnt := 0
+		for _, p := range positions {
+			query.JumpTo(p)
+			cnt++
+		}
+	}
 }

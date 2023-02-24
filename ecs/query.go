@@ -130,3 +130,18 @@ func (q *queryIter) Mask() Mask {
 func (q *queryIter) Close() {
 	q.world.closeQuery(q)
 }
+
+// JumpTo jumps to the given index of the query.
+func (q *queryIter) JumpTo(index int) {
+	q.archIndex = 0
+	q.archetype = q.archetypes[q.archIndex]
+	q.index = 0
+
+	idx := uint32(index)
+	for idx >= q.archetype.Len() {
+		idx -= q.archetype.Len()
+		q.archIndex++
+		q.archetype = q.archetypes[q.archIndex]
+	}
+	q.index = int(idx)
+}
