@@ -2,7 +2,7 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.3...main)
 
-## Bugfixes
+### Bugfixes
 
 * `Query.Next`, `Query.Get`, etc. now always panic when called on a closed query (#117)
 
@@ -13,7 +13,7 @@
 
 ## [[v0.4.3]](https://github.com/mlange-42/arche/compare/v0.4.2...v0.4.3)
 
-## Bugfixes
+### Bugfixes
 
 * `EntityEvent` has more consistent values when an entity is removed (#115)
   * `EntityEvent.NewMask` is zero
@@ -22,7 +22,7 @@
 
 ## [[v0.4.2]](https://github.com/mlange-42/arche/compare/v0.4.1...v0.4.2)
 
-## Other
+### Other
 
 * Avoid creation of unused archetypes by splitting the archetype graph out of the actual archetypes (#113)
 * Use slice instead of fixed-size array for type lookup in component registry (#113)
@@ -30,11 +30,11 @@
 
 ## [[v0.4.1]](https://github.com/mlange-42/arche/compare/v0.4.0...v0.4.1)
 
-## Bugfixes
+### Bugfixes
 
 * Fix units symbol for bytes from `b` to `B` in string formatting of world statistics (#111)
 
-## Other
+### Other
 
 * Adds [github.com/wfranczyk/ento](https://github.com/wfranczyk/ento) to benchmarks (#110)
 
@@ -111,7 +111,7 @@ API revision, split out generics and filters into separate packages.
 
 ## [[v0.1.3]](https://github.com/mlange-42/arche/compare/v0.1.2...v0.1.3)
 
-## Features
+### Features
 
 * Add `Config` to allow for configuration of the world (currently only storage capacity increment) (#28)
 * `Query` has a method `Count()`, reporting the total number of matching entities (#30)
