@@ -7,30 +7,41 @@ import (
 	c "github.com/mlange-42/arche/benchmark/arche/common"
 )
 
-func runGameEngineEcsMove(b *testing.B, count int, add, rem []ecs.ID) {
+const (
+	TestStruct0ID ecs.ComponentID = iota
+	TestStruct1ID
+	TestStruct2ID
+	TestStruct3ID
+	TestStruct4ID
+	TestStruct5ID
+	TestStruct6ID
+	TestStruct7ID
+	TestStruct8ID
+	TestStruct9ID
+)
+
+func runGameEngineEcsMove(b *testing.B, count int, add, rem []uint) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		comps := []ecs.ComponentConfig{
-			{ID: 0, Component: c.TestStruct0{}},
-			{ID: 1, Component: c.TestStruct1{}},
-			{ID: 2, Component: c.TestStruct2{}},
-			{ID: 3, Component: c.TestStruct3{}},
-			{ID: 4, Component: c.TestStruct4{}},
-			{ID: 5, Component: c.TestStruct5{}},
-			{ID: 6, Component: c.TestStruct6{}},
-		}
-		world := ecs.NewWorld(comps...)
+		world := ecs.NewWorld(1024)
+		world.Register(ecs.NewComponentRegistry[c.TestStruct0](TestStruct0ID))
+		world.Register(ecs.NewComponentRegistry[c.TestStruct1](TestStruct1ID))
+		world.Register(ecs.NewComponentRegistry[c.TestStruct2](TestStruct2ID))
+		world.Register(ecs.NewComponentRegistry[c.TestStruct3](TestStruct3ID))
+		world.Register(ecs.NewComponentRegistry[c.TestStruct4](TestStruct4ID))
+		world.Register(ecs.NewComponentRegistry[c.TestStruct5](TestStruct5ID))
+		world.Register(ecs.NewComponentRegistry[c.TestStruct6](TestStruct6ID))
 
+		entities := []ecs.EntityID{}
 		for i := 0; i < count; i++ {
-			entity := world.NewEntity()
-			world.Assign(entity, add...)
+			entities = append(entities, world.NewEntity(add...))
 		}
-		filter := world.NewFilter(add...)
-
 		b.StartTimer()
 
-		for _, e := range filter.Entities() {
-			world.Remove(e, rem...)
+		for _, e := range entities {
+			for _, comp := range rem {
+				world.RemComponent(e, comp)
+			}
 		}
 
 	}
@@ -38,14 +49,14 @@ func runGameEngineEcsMove(b *testing.B, count int, add, rem []ecs.ID) {
 
 func BenchmarkGGECSMove_1C_1_000(b *testing.B) {
 	runGameEngineEcsMove(b, 1000,
-		[]ecs.ID{0},
-		[]ecs.ID{0},
+		[]uint{0},
+		[]uint{0},
 	)
 }
 
 func BenchmarkGGECSMove_5C_1_000(b *testing.B) {
 	runGameEngineEcsMove(b, 1000,
-		[]ecs.ID{0, 1, 2, 3, 4},
-		[]ecs.ID{0},
+		[]uint{0, 1, 2, 3, 4},
+		[]uint{0},
 	)
 }

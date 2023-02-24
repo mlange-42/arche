@@ -3,8 +3,8 @@ module github.com/mlange-42/arche/benchmark
 go 1.20
 
 require (
-	github.com/marioolofo/go-gameengine-ecs v0.0.0-20230205000850-cead1cc4bf6a
-	github.com/mlange-42/arche v0.0.0
+	github.com/marioolofo/go-gameengine-ecs v0.9.0
+	github.com/mlange-42/arche v0.4.1
 	github.com/pkg/profile v1.7.0
 	github.com/wfranczyk/ento v0.1.0
 	github.com/yohamta/donburi v1.3.4
