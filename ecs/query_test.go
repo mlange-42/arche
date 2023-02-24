@@ -37,6 +37,7 @@ func TestQuery(t *testing.T) {
 	w.Add(e4, rotID)
 
 	q := w.Query(All(posID, rotID))
+	assert.Equal(t, 2, q.Count())
 	cnt := 0
 	for q.Next() {
 		ent := q.Entity()
@@ -51,6 +52,7 @@ func TestQuery(t *testing.T) {
 	assert.Equal(t, 2, cnt)
 
 	q = w.Query(All(posID))
+	assert.Equal(t, 3, q.Count())
 	cnt = 0
 	for q.Next() {
 		ent := q.Entity()
@@ -105,6 +107,10 @@ func TestQuery(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 0, cnt)
+
+	q = w.Query(All(posID, rotID))
+	q.Close()
+	assert.Panics(t, func() { q.Next() })
 }
 
 func TestQueryClosed(t *testing.T) {

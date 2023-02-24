@@ -38,23 +38,41 @@ func (f *MaskFilter) Matches(bits Mask) bool {
 type Query struct {
 	queryIter
 	filter Filter
+	count  int
 }
 
 // newQuery creates a new Filter
-func newQuery(world *World, filter Filter, lockBit uint8) Query {
+func newQuery(world *World, filter Filter, arches []*archetype, count int, lockBit uint8) Query {
+	var arch *archetype
+	len := len(arches)
+	archLen := 0
+	if len > 0 {
+		arch = arches[0]
+		archLen = int(arch.Len())
+	}
 	return Query{
 		queryIter: queryIter{
-			world:   world,
-			index:   -1,
-			lockBit: lockBit,
+			world:      world,
+			archetypes: arches,
+			archetype:  arch,
+			index:      -1,
+			length:     archLen,
+			lockBit:    lockBit,
 		},
+		count:  count,
 		filter: filter,
 	}
 }
 
+// Count returns the number of entities in this query.
+func (q *Query) Count() int {
+	return q.count
+}
+
 // Next proceeds to the next [Entity] in the Query.
 func (q *Query) Next() bool {
-	if q.archetype.Next() {
+	q.index++
+	if q.index < q.length {
 		return true
 	}
 	// outline to allow inlining of the fast path
@@ -62,10 +80,11 @@ func (q *Query) Next() bool {
 }
 
 func (q *Query) nextArchetype() bool {
-	index, archetype, ok := q.world.nextArchetype(q.filter, q.index)
-	q.index = index
-	if ok {
-		q.archetype = archetype
+	q.archIndex++
+	if q.archIndex < len(q.archetypes) {
+		q.archetype = q.archetypes[q.archIndex]
+		q.index = 0
+		q.length = int(q.archetype.Len())
 		return true
 	}
 	q.world.closeQuery(&q.queryIter)
@@ -73,32 +92,35 @@ func (q *Query) nextArchetype() bool {
 }
 
 type queryIter struct {
-	world     *World
-	archetype archetypeIter
-	index     int
-	lockBit   uint8
+	world      *World
+	archetypes []*archetype
+	archetype  *archetype
+	archIndex  int
+	length     int
+	index      int
+	lockBit    uint8
 }
 
 // Has returns whether the current [Entity] has the given component.
 func (q *queryIter) Has(comp ID) bool {
-	return q.archetype.Has(comp)
+	return q.archetype.HasComponent(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's current [Entity].
 func (q *queryIter) Get(comp ID) unsafe.Pointer {
-	return q.archetype.Get(comp)
+	return q.archetype.Get(uint32(q.index), comp)
 }
 
 // Entity returns the [Entity] at the iterator's position
 func (q *queryIter) Entity() Entity {
-	return q.archetype.Entity()
+	return q.archetype.GetEntity(uint32(q.index))
 }
 
 // Mask returns the archetype [BitMask] for the [Entity] at the iterator's current position.
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (q *queryIter) Mask() Mask {
-	return q.archetype.Archetype.Mask
+	return q.archetype.Mask
 }
 
 // Close closes the Query and unlocks the world.
@@ -107,37 +129,4 @@ func (q *queryIter) Mask() Mask {
 // Needs to be called only if breaking out of the query iteration.
 func (q *queryIter) Close() {
 	q.world.closeQuery(q)
-}
-
-type archetypeIter struct {
-	Archetype *archetype
-	Length    uint32
-	Index     uint32
-}
-
-func newArchetypeIter(arch *archetype) archetypeIter {
-	return archetypeIter{
-		Archetype: arch,
-		Length:    arch.Len(),
-	}
-}
-
-func (it *archetypeIter) Next() bool {
-	it.Index++
-	return it.Index < it.Length
-}
-
-// Has returns whether the current entity has the given component
-func (it *archetypeIter) Has(comp ID) bool {
-	return it.Archetype.HasComponent(comp)
-}
-
-// Get returns the pointer to the given component at the iterator's position
-func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
-	return it.Archetype.Get(it.Index, comp)
-}
-
-// Entity returns the entity at the iterator's position
-func (it *archetypeIter) Entity() Entity {
-	return it.Archetype.GetEntity(it.Index)
 }

@@ -199,7 +199,20 @@ func (w *World) RemoveEntity(entity Entity) {
 func (w *World) Query(filter Filter) Query {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newQuery(w, filter, lock)
+
+	arches := []*archetype{}
+	len := int(w.archetypes.Len())
+	count := 0
+	for i := 0; i < len; i++ {
+		a := w.archetypes.Get(i)
+		l := a.Len()
+		if l > 0 && filter.Matches(a.Mask) {
+			arches = append(arches, a)
+			count += int(l)
+		}
+	}
+
+	return newQuery(w, filter, arches, count, lock)
 }
 
 // Alive reports whether an entity is still alive.
@@ -510,27 +523,15 @@ func (w *World) componentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
 }
 
-func (w *World) nextArchetype(filter Filter, index int) (int, archetypeIter, bool) {
-	len := int(w.archetypes.Len())
-	if index >= len {
-		panic("exceeded end of query")
-	}
-	for i := index + 1; i < len; i++ {
-		a := w.archetypes.Get(i)
-		if a.Len() > 0 && filter.Matches(a.Mask) {
-			return i, newArchetypeIter(a), true
-		}
-	}
-	return len, archetypeIter{}, false
-}
-
 // closeQuery closes a query and unlocks the world
 func (w *World) closeQuery(query *queryIter) {
 	l := query.lockBit
 	if !w.locks.Get(ID(l)) {
 		panic("unbalanced query unlock")
 	}
-	query.index = -2
+	query.archetypes = nil
+	query.archetype = nil
+	query.index = query.length
 	w.locks.Set(ID(l), false)
 	w.bitPool.Recycle(l)
 }
