@@ -190,6 +190,10 @@ func TestQueryStep(t *testing.T) {
 	assert.Equal(t, Entity{2, 0}, q.Entity())
 
 	q = w.Query(All(posID))
+	q.Step(10)
+	assert.Equal(t, Entity{10, 0}, q.Entity())
+
+	q = w.Query(All(posID))
 	assert.Panics(t, func() { q.Step(0) })
 	q.Step(2)
 	assert.Panics(t, func() { q.Step(0) })
