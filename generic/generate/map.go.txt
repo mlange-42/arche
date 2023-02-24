@@ -2,14 +2,17 @@
 //////////////////////////////////////////////////////////////////////////
 
 // Map{{ .Index }} is a helper for mapping {{ .NumberStr }} components.
-type Map{{ .Index }}{{ .TypesFull }} mapper
+type Map{{ .Index }}{{ .TypesFull }} struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
 
 // NewMap{{ .Index }} creates a new Map{{ .Index }} object.
 func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }} {
-	return Map{{ .Index }}{{ .Types }}(mapper{
+	return Map{{ .Index }}{{ .Types }}{
 		ids:   {{ .Include }},
 		world: w,
-	})
+	}
 }
 
 // Get all the Map{{ .Index }}'s components for the given entity.

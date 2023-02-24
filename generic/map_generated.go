@@ -9,14 +9,17 @@ import (
 //////////////////////////////////////////////////////////////////////////
 
 // Map1 is a helper for mapping one components.
-type Map1[A any] mapper
+type Map1[A any] struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
 
 // NewMap1 creates a new Map1 object.
 func NewMap1[A any](w *ecs.World) Map1[A] {
-	return Map1[A](mapper{
+	return Map1[A]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w)},
 		world: w,
-	})
+	}
 }
 
 // Get all the Map1's components for the given entity.
@@ -72,14 +75,17 @@ func (m *Map1[A]) Remove(entity ecs.Entity) {
 //////////////////////////////////////////////////////////////////////////
 
 // Map2 is a helper for mapping two components.
-type Map2[A any, B any] mapper
+type Map2[A any, B any] struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
 
 // NewMap2 creates a new Map2 object.
 func NewMap2[A any, B any](w *ecs.World) Map2[A, B] {
-	return Map2[A, B](mapper{
+	return Map2[A, B]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w)},
 		world: w,
-	})
+	}
 }
 
 // Get all the Map2's components for the given entity.
@@ -137,14 +143,17 @@ func (m *Map2[A, B]) Remove(entity ecs.Entity) {
 //////////////////////////////////////////////////////////////////////////
 
 // Map3 is a helper for mapping three components.
-type Map3[A any, B any, C any] mapper
+type Map3[A any, B any, C any] struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
 
 // NewMap3 creates a new Map3 object.
 func NewMap3[A any, B any, C any](w *ecs.World) Map3[A, B, C] {
-	return Map3[A, B, C](mapper{
+	return Map3[A, B, C]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w)},
 		world: w,
-	})
+	}
 }
 
 // Get all the Map3's components for the given entity.
@@ -204,14 +213,17 @@ func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
 //////////////////////////////////////////////////////////////////////////
 
 // Map4 is a helper for mapping four components.
-type Map4[A any, B any, C any, D any] mapper
+type Map4[A any, B any, C any, D any] struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
 
 // NewMap4 creates a new Map4 object.
 func NewMap4[A any, B any, C any, D any](w *ecs.World) Map4[A, B, C, D] {
-	return Map4[A, B, C, D](mapper{
+	return Map4[A, B, C, D]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w)},
 		world: w,
-	})
+	}
 }
 
 // Get all the Map4's components for the given entity.
@@ -273,14 +285,17 @@ func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
 //////////////////////////////////////////////////////////////////////////
 
 // Map5 is a helper for mapping five components.
-type Map5[A any, B any, C any, D any, E any] mapper
+type Map5[A any, B any, C any, D any, E any] struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
 
 // NewMap5 creates a new Map5 object.
 func NewMap5[A any, B any, C any, D any, E any](w *ecs.World) Map5[A, B, C, D, E] {
-	return Map5[A, B, C, D, E](mapper{
+	return Map5[A, B, C, D, E]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w)},
 		world: w,
-	})
+	}
 }
 
 // Get all the Map5's components for the given entity.
@@ -344,14 +359,17 @@ func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
 //////////////////////////////////////////////////////////////////////////
 
 // Map6 is a helper for mapping six components.
-type Map6[A any, B any, C any, D any, E any, F any] mapper
+type Map6[A any, B any, C any, D any, E any, F any] struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
 
 // NewMap6 creates a new Map6 object.
 func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World) Map6[A, B, C, D, E, F] {
-	return Map6[A, B, C, D, E, F](mapper{
+	return Map6[A, B, C, D, E, F]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w)},
 		world: w,
-	})
+	}
 }
 
 // Get all the Map6's components for the given entity.
@@ -417,14 +435,17 @@ func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
 //////////////////////////////////////////////////////////////////////////
 
 // Map7 is a helper for mapping seven components.
-type Map7[A any, B any, C any, D any, E any, F any, G any] mapper
+type Map7[A any, B any, C any, D any, E any, F any, G any] struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
 
 // NewMap7 creates a new Map7 object.
 func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Map7[A, B, C, D, E, F, G] {
-	return Map7[A, B, C, D, E, F, G](mapper{
+	return Map7[A, B, C, D, E, F, G]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w), ecs.ComponentID[G](w)},
 		world: w,
-	})
+	}
 }
 
 // Get all the Map7's components for the given entity.
@@ -492,14 +513,17 @@ func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
 //////////////////////////////////////////////////////////////////////////
 
 // Map8 is a helper for mapping eight components.
-type Map8[A any, B any, C any, D any, E any, F any, G any, H any] mapper
+type Map8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
+	ids   []ecs.ID
+	world *ecs.World
+}
 
 // NewMap8 creates a new Map8 object.
 func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World) Map8[A, B, C, D, E, F, G, H] {
-	return Map8[A, B, C, D, E, F, G, H](mapper{
+	return Map8[A, B, C, D, E, F, G, H]{
 		ids:   []ecs.ID{ecs.ComponentID[A](w), ecs.ComponentID[B](w), ecs.ComponentID[C](w), ecs.ComponentID[D](w), ecs.ComponentID[E](w), ecs.ComponentID[F](w), ecs.ComponentID[G](w), ecs.ComponentID[H](w)},
 		world: w,
-	})
+	}
 }
 
 // Get all the Map8's components for the given entity.
