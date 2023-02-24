@@ -107,6 +107,29 @@ func TestQuery(t *testing.T) {
 	assert.Equal(t, 0, cnt)
 }
 
+func TestQueryCount(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	e4 := w.NewEntity()
+
+	w.Add(e0, posID)
+	w.Add(e1, posID, rotID)
+	w.Add(e2, posID, rotID)
+	w.Add(e3, posID, rotID)
+	w.Add(e4, rotID)
+
+	q := w.Query(All(posID))
+	assert.Equal(t, 4, q.Count())
+	assert.Equal(t, 4, q.Count())
+}
+
 func TestQueryClosed(t *testing.T) {
 	w := NewWorld()
 

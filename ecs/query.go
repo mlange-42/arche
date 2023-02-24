@@ -47,6 +47,7 @@ func newQuery(world *World, filter Filter, lockBit uint8) Query {
 			world:   world,
 			index:   -1,
 			lockBit: lockBit,
+			count:   -1,
 		},
 		filter: filter,
 	}
@@ -59,6 +60,18 @@ func (q *Query) Next() bool {
 	}
 	// outline to allow inlining of the fast path
 	return q.nextArchetype()
+}
+
+// Count counts the entities matching this query.
+//
+// Involves a small overhead of iterating through archetypes when called the first time.
+// However, it is considerable faster then manual counting via iteration.
+func (q *Query) Count() int {
+	if q.count >= 0 {
+		return q.count
+	}
+	q.count = q.world.count(q.filter)
+	return q.count
 }
 
 func (q *Query) nextArchetype() bool {
@@ -77,6 +90,7 @@ type queryIter struct {
 	archetype archetypeIter
 	index     int
 	lockBit   uint8
+	count     int
 }
 
 // Has returns whether the current [Entity] has the given component.
