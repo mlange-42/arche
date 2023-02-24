@@ -165,13 +165,6 @@ func TestQueryStep(t *testing.T) {
 	assert.Equal(t, 10, cnt)
 
 	q = w.Query(All(posID))
-	cnt = 0
-	for q.Step(2) {
-		cnt++
-	}
-	assert.Equal(t, 5, cnt)
-
-	q = w.Query(All(posID))
 	q.Next()
 	assert.Equal(t, Entity{1, 0}, q.Entity())
 	q.Step(1)
@@ -187,6 +180,27 @@ func TestQueryStep(t *testing.T) {
 
 	assert.False(t, q.Step(3))
 	assert.False(t, w.IsLocked())
+
+	q = w.Query(All(posID))
+	q.Step(1)
+	assert.Equal(t, Entity{1, 0}, q.Entity())
+
+	q = w.Query(All(posID))
+	q.Step(2)
+	assert.Equal(t, Entity{2, 0}, q.Entity())
+
+	q = w.Query(All(posID))
+	assert.Panics(t, func() { q.Step(0) })
+	q.Step(2)
+	assert.Panics(t, func() { q.Step(0) })
+
+	q = w.Query(All(posID))
+	cnt = 0
+	for q.Step(2) {
+		cnt++
+	}
+	assert.Equal(t, 5, cnt)
+
 }
 
 func TestQueryClosed(t *testing.T) {

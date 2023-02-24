@@ -65,10 +65,12 @@ func (q *Query) Next() bool {
 // Step advances the query iterator by the given number of entities.
 //
 // Query.Step(1) is equivalent to [Query.Next]().
-// Query.Step(0) does nothing.
 //
 // This method, used together with [Query.Count], can be useful for the selection of random entities.
 func (q *Query) Step(step int) bool {
+	if step <= 0 {
+		panic("step size must be positive")
+	}
 	var ok bool
 	for {
 		step, ok = q.archetype.Step(uint32(step))
@@ -165,7 +167,7 @@ func (it *archetypeIter) Next() bool {
 
 func (it *archetypeIter) Step(count uint32) (int, bool) {
 	if it.Length == 0 {
-		return int(count) - 1, false
+		return int(count - 1), false
 	}
 	it.Index += count
 	if it.Index < it.Length {
