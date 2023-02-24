@@ -48,10 +48,10 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 // Query builds a [Query{{ .Index }}] query for iteration.
 func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{ .Types }} {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return Query{{ .Index }}{{ .Types }}(query{
+	return Query{{ .Index }}{{ .Types }}{
 		w.Query(&q.compiled.filter),
 		q.compiled.Ids,
-	})
+	}
 }
 
 // Filter generates and return the [ecs.Filter] used after [Filter{{ .Index }}.Query].
@@ -65,13 +65,18 @@ func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskFilter {
 
 // Query{{ .Index }} is a generic query iterator for {{ .NumberStr }} components.
 //
-// Create it with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query]
-type Query{{ .Index }}{{ .TypesFull }} query
+// Create it with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query].
+//
+// Also has all methods of [ecs.Query].
+type Query{{ .Index }}{{ .TypesFull }} struct {
+	ecs.Query
+	ids []ecs.ID
+}
 
 {{if .ReturnAll}}
 // Get returns all queried components for the current query iterator position.
 //
-// Use [Query{{ .Index }}.Entity] to get the current Entity.
+// Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query{{ .Index }}{{ .Types }}) Get() ({{ .TypesReturn }}) {
 	return {{ .ReturnAll }}
 }
