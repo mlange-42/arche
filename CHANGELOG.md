@@ -2,6 +2,10 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.3...main)
 
+### Features
+
+* `Query` has methods `Count()` and `Step(int)`, primarily for effective random sampling (#119)
+
 ### Bugfixes
 
 * `Query.Next`, `Query.Get`, etc. now always panic when called on a closed query (#117)
