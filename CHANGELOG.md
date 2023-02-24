@@ -2,6 +2,10 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.3...main)
 
+## Bugfixes
+
+* `Query.Next`, `Query.Get`, etc. now always panic when called on a closed query (#117)
+
 ### Other
 
 * Update to [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs) v0.9.0 in benchmarks (#116)

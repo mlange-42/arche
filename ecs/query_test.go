@@ -106,3 +106,23 @@ func TestQuery(t *testing.T) {
 	}
 	assert.Equal(t, 0, cnt)
 }
+
+func TestQueryClosed(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Add(e0, posID)
+	w.Add(e1, posID, rotID)
+	w.Add(e2, posID, rotID)
+
+	q := w.Query(All(posID, rotID))
+	q.Close()
+	assert.Panics(t, func() { q.Next() })
+	assert.Panics(t, func() { q.Get(posID) })
+}
