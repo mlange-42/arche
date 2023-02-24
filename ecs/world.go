@@ -530,6 +530,7 @@ func (w *World) closeQuery(query *queryIter) {
 	if !w.locks.Get(ID(l)) {
 		panic("unbalanced query unlock")
 	}
+	query.index = -2
 	w.locks.Set(ID(l), false)
 	w.bitPool.Recycle(l)
 }
