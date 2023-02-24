@@ -1,4 +1,4 @@
-// Demonstrates random sampling of a fixed number of entities from a query.
+// Demonstrates random sampling of a fixed number of entities from a query using Query.Step().
 package main
 
 import (

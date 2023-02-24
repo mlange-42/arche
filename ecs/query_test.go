@@ -222,7 +222,11 @@ func TestQueryClosed(t *testing.T) {
 	w.Add(e2, posID, rotID)
 
 	q := w.Query(All(posID, rotID))
-	q.Close()
-	assert.Panics(t, func() { q.Next() })
+	assert.Panics(t, func() { q.Entity() })
 	assert.Panics(t, func() { q.Get(posID) })
+
+	q.Close()
+	assert.Panics(t, func() { q.Entity() })
+	assert.Panics(t, func() { q.Get(posID) })
+	assert.Panics(t, func() { q.Next() })
 }
