@@ -80,5 +80,6 @@ jobs:
           go run ./examples/generic
           go run ./examples/locked_world
           go run ./examples/random_access
+          go run ./examples/random_sampling
           go run ./examples/readme
           go run ./examples/world_stats

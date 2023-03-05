@@ -47,6 +47,7 @@ func newQuery(world *World, filter Filter, lockBit uint8) Query {
 			world:   world,
 			index:   -1,
 			lockBit: lockBit,
+			count:   -1,
 		},
 		filter: filter,
 	}
@@ -59,6 +60,42 @@ func (q *Query) Next() bool {
 	}
 	// outline to allow inlining of the fast path
 	return q.nextArchetype()
+}
+
+// Step advances the query iterator by the given number of entities.
+//
+// Query.Step(1) is equivalent to [Query.Next]().
+//
+// This method, used together with [Query.Count], can be useful for the selection of random entities.
+func (q *Query) Step(step int) bool {
+	if step <= 0 {
+		panic("step size must be positive")
+	}
+	var ok bool
+	for {
+		step, ok = q.archetype.Step(uint32(step))
+		if ok {
+			return true
+		}
+		if !q.nextArchetype() {
+			return false
+		}
+		if step == 0 {
+			return true
+		}
+	}
+}
+
+// Count counts the entities matching this query.
+//
+// Involves a small overhead of iterating through archetypes when called the first time.
+// However, it is considerable faster than manual counting via iteration.
+func (q *Query) Count() int {
+	if q.count >= 0 {
+		return q.count
+	}
+	q.count = q.world.count(q.filter)
+	return q.count
 }
 
 func (q *Query) nextArchetype() bool {
@@ -77,6 +114,7 @@ type queryIter struct {
 	archetype archetypeIter
 	index     int
 	lockBit   uint8
+	count     int
 }
 
 // Has returns whether the current [Entity] has the given component.
@@ -125,6 +163,17 @@ func newArchetypeIter(arch *archetype) archetypeIter {
 func (it *archetypeIter) Next() bool {
 	it.Index++
 	return it.Index < it.Length
+}
+
+func (it *archetypeIter) Step(count uint32) (int, bool) {
+	if it.Length == 0 {
+		return int(count - 1), false
+	}
+	it.Index += count
+	if it.Index < it.Length {
+		return 0, true
+	}
+	return int(it.Index) - int(it.Length), false
 }
 
 // Has returns whether the current entity has the given component

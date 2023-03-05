@@ -1,6 +1,14 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.3...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.4...main)
+
+Nothing
+
+## [[v0.4.4]](https://github.com/mlange-42/arche/compare/v0.4.3...v0.4.4)
+
+### Features
+
+* `Query` has methods `Count()` and `Step(int)`, primarily for effective random sampling (#119)
 
 ### Bugfixes
 
@@ -9,6 +17,7 @@
 ### Other
 
 * Update to [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs) v0.9.0 in benchmarks (#116)
+* Adds example `random_sampling` to demonstrate usage of `Query.Count()` and `Query.Step(int)` (#119)
 * Remove internal wrapper structs in generic queries and maps (#120)
 
 ## [[v0.4.3]](https://github.com/mlange-42/arche/compare/v0.4.2...v0.4.3)

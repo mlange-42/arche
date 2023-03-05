@@ -524,6 +524,19 @@ func (w *World) nextArchetype(filter Filter, index int) (int, archetypeIter, boo
 	return len, archetypeIter{}, false
 }
 
+// Counts the entities matching the filter
+func (w *World) count(filter Filter) int {
+	len := int(w.archetypes.Len())
+	count := uint32(0)
+	for i := 0; i < len; i++ {
+		a := w.archetypes.Get(i)
+		if filter.Matches(a.Mask) {
+			count += a.Len()
+		}
+	}
+	return int(count)
+}
+
 // closeQuery closes a query and unlocks the world
 func (w *World) closeQuery(query *queryIter) {
 	l := query.lockBit
