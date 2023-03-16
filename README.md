@@ -145,7 +145,7 @@ In the illustration, the first archetype holds all components for all entities w
  Entities   Archetypes   Bitmasks   Queries
 
    E         E Comps
-  |0|       |2|A|B|C|    111...<-.<--------.
+  |0|       |2|A|B|C|    111...<-.<--match-.
   |1|---.   |8|A|B|C|            |         |
   |2|   '-->|1|A|B|C|            |         |
   |3|       |3|A|B|C|            |--(A, C) |
@@ -154,7 +154,7 @@ In the illustration, the first archetype holds all components for all entities w
   |7|---'   |6|A|C|                        |  010...
   |8|       |4|A|C|                        |
   |9|---.                                  |
-  |.|   |   |5|B|C|      010...   <--------'
+  |.|   |   |5|B|C|      011...   <--------'
   |.|   '-->|9|B|C|
   |.|
   |.| <===> [Entity pool]
