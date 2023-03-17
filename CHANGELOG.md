@@ -6,6 +6,10 @@ Nothing
 
 ## [[v0.4.5]](https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5)
 
+### Features
+
+* Adds memory per entity to archetype stats (!124)
+
 ### Other
 
 * Adds benchmarks of Arche vs. Array of Structs (AoS) and Array of Pointers (AoP), for different memory per entity and number of entities (!123)
