@@ -2,7 +2,9 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.4...main)
 
-Nothing
+### Other
+
+* Adds benchmarks of Arche vs. Array of Structs (AoS), for different "entity sizes" (!123)
 
 ## [[v0.4.4]](https://github.com/mlange-42/arche/compare/v0.4.3...v0.4.4)
 
