@@ -183,18 +183,20 @@ func (a *archetype) Stats(reg *componentRegistry) stats.ArchetypeStats {
 	}
 
 	cap := int(a.Cap())
-	memory := cap * int(entitySize)
+	memPerEntity := 0
 	for i := 0; i < len(a.components); i++ {
 		comp := &a.components[i]
-		memory += int(comp.itemSize) * cap
+		memPerEntity += int(comp.itemSize)
 	}
+	memory := cap * (int(entitySize) + memPerEntity)
 
 	return stats.ArchetypeStats{
-		Size:           int(a.Len()),
-		Capacity:       cap,
-		Components:     aCompCount,
-		ComponentIDs:   ids,
-		ComponentTypes: aTypes,
-		Memory:         memory,
+		Size:            int(a.Len()),
+		Capacity:        cap,
+		Components:      aCompCount,
+		ComponentIDs:    ids,
+		ComponentTypes:  aTypes,
+		Memory:          memory,
+		MemoryPerEntity: memPerEntity,
 	}
 }

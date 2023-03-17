@@ -49,6 +49,8 @@ type ArchetypeStats struct {
 	ComponentTypes []reflect.Type
 	// Total reserved memory for entities and components, in bytes
 	Memory int
+	// Memory for components per entity
+	MemoryPerEntity int
 }
 
 func (s *WorldStats) String() string {
@@ -83,7 +85,7 @@ func (s *ArchetypeStats) String() string {
 		typeNames[i] = tp.Name()
 	}
 	return fmt.Sprintf(
-		"Archetype -- Components: %2d, Entities: %6d, Capacity: %6d, Memory: %7.1f kB\n  Components: %s\n",
-		s.Components, s.Size, s.Capacity, float64(s.Memory)/1024.0, strings.Join(typeNames, ", "),
+		"Archetype -- Components: %2d, Entities: %6d, Capacity: %6d, Memory: %7.1f kB, Per entity: %4d B\n  Components: %s\n",
+		s.Components, s.Size, s.Capacity, float64(s.Memory)/1024.0, s.MemoryPerEntity, strings.Join(typeNames, ", "),
 	)
 }
