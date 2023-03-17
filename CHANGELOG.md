@@ -2,7 +2,9 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.5...main)
 
-Nothing
+### Other
+
+* Archetype access speedup of 10%, by using a fixed-size array of storage column references (!125)
 
 ## [[v0.4.5]](https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5)
 
