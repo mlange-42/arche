@@ -52,7 +52,7 @@ type archetype struct {
 	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
-	references []*storage
+	references [MaskTotalBits]*storage
 	entities   genericStorage[Entity]
 	components []storage
 	graphNode  *archetypeNode
@@ -65,7 +65,6 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 		a.Ids = make([]ID, len(components))
 	}
 	a.components = make([]storage, len(components))
-	a.references = make([]*storage, MaskTotalBits)
 
 	prev := -1
 	for i, c := range components {
