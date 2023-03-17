@@ -1,8 +1,14 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.4...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.5...main)
 
 Nothing
+
+## [[v0.4.5]](https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5)
+
+### Other
+
+* Adds benchmarks of Arche vs. Array of Structs (AoS) and Array of Pointers (AoP), for different memory per entity and number of entities (!123)
 
 ## [[v0.4.4]](https://github.com/mlange-42/arche/compare/v0.4.3...v0.4.4)
 
