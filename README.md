@@ -186,19 +186,18 @@ For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arc
 
 ### Versus Array of Structs
 
-The plot below shows CPU time benchmarks of Arche vs. Array of Structs and Array of Pointers (with structs escaped to the heap).
+The plot below shows CPU time benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue) (with structs escaped to the heap).
 
-Arche (black) requires a constant time of 2.5ns per access, independent of the memory per entity (x axis) and number of entities (line styles).
+Arche requires a constant time of 2.5ns per access, independent of the memory per entity (x axis) and number of entities (line styles).
 For AoS and AoP, time per access increases with memory per entity as well as number of entities, due to cache misses.
 
 In the given example with components of 16 bytes each, from 64 bytes per entity onwards (i.e. 4 components / 8 `float64` values),
-Arche outperforms AoS and AoP, particularly for large numbers of entities.
-
+Arche outperforms AoS and AoP, particularly with a large number of entities.
 
 <div align="center" width="100%">
 
 ![Benchmark vs. AoS and AoP](./benchmark/arche/aos/results.svg)  
-*CPU benchmarks of Arche (black) vs. AoS (red) and AoP (blue.)*
+*CPU benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue).*
 </div>
 
 ### Versus other Go ECS implementations

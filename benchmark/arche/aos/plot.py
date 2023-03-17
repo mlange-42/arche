@@ -25,12 +25,12 @@ if __name__ == "__main__":
     plt.rcParams["font.family"] = "Arial"
 
     fig, ax = plt.subplots(figsize=(6, 4))
-    ax.set_title("Iter & get 16B")
+    ax.set_title("Iter & get 16 byte")
     ax.set_xscale("log")
     ax.set_xticks([16, 32, 64, 128, 256])
     ax.set_xticklabels([16, 32, 64, 128, 256])
-    ax.set_xlabel("Components [Bytes]")
-    ax.set_ylabel("Time/op [ns]")
+    ax.set_xlabel("Memory per Entity [byte]", fontsize=11)
+    ax.set_ylabel("Time per Entity [ns]", fontsize=11)
 
     ax.set_ylim(0, np.max(data["Time"]) * 1.05)
 
