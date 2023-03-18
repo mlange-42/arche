@@ -52,10 +52,12 @@ type archetype struct {
 	Ids  []ID
 	// Indirection to avoid a fixed-size array of storages
 	// Increases access time by 50-100%
-	references []*storage
-	entities   genericStorage[Entity]
-	components []storage
-	graphNode  *archetypeNode
+	references  []*storage
+	entities    genericStorage[Entity]
+	components  []storage
+	graphNode   *archetypeNode
+	basePointer unsafe.Pointer
+	storageSize uintptr
 }
 
 // Init initializes an archetype
@@ -80,6 +82,8 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 		a.components[i].Init(c.Type, capacityIncrement, forStorage)
 		a.references[c.ID] = &a.components[i]
 	}
+	a.basePointer = unsafe.Pointer(&a.references[0])
+	a.storageSize = unsafe.Sizeof(a.references[0])
 
 	a.graphNode = node
 	a.Mask = mask
@@ -94,11 +98,15 @@ func (a *archetype) GetEntity(index uint32) Entity {
 
 // Get returns the component with the given ID at the given index
 func (a *archetype) Get(index uint32, id ID) unsafe.Pointer {
-	ref := a.references[id]
+	ref := a.getStorage(id)
 	if ref != nil {
 		return ref.Get(index)
 	}
 	return nil
+}
+
+func (a *archetype) getStorage(id ID) *storage {
+	return *(**storage)(unsafe.Add(a.basePointer, a.storageSize*uintptr(id)))
 }
 
 // Add adds an entity with zeroed components to the archetype
@@ -123,7 +131,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	}
 	idx := a.entities.Add(entity)
 	for _, c := range components {
-		a.references[c.ID].Add(c.Comp)
+		a.getStorage(c.ID).Add(c.Comp)
 	}
 	return idx
 }
@@ -145,7 +153,7 @@ func (a *archetype) Components() []ID {
 
 // HasComponent returns whether the archetype contains the given component ID
 func (a *archetype) HasComponent(id ID) bool {
-	return a.references[id] != nil
+	return a.getStorage(id) != nil
 }
 
 // Len reports the number of entities in the archetype
@@ -160,17 +168,17 @@ func (a *archetype) Cap() uint32 {
 
 // Set overwrites a component with the data behind the given pointer
 func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
-	return a.references[id].Set(index, comp)
+	return a.getStorage(id).Set(index, comp)
 }
 
 // SetPointer overwrites a component with the data behind the given pointer
 func (a *archetype) SetPointer(index uint32, id ID, comp unsafe.Pointer) unsafe.Pointer {
-	return a.references[id].SetPointer(index, comp)
+	return a.getStorage(id).SetPointer(index, comp)
 }
 
 // Zero resets th memory at the given position
 func (a *archetype) Zero(index uint32, id ID) {
-	a.references[id].Zero(index)
+	a.getStorage(id).Zero(index)
 }
 
 // Stats generates statistics for an archetype

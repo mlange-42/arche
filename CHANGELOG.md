@@ -2,7 +2,9 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.5...main)
 
-Nothing
+### Other
+
+* Speedup archetype access by 10%, by elimination of bounds checks (!125)
 
 ## [[v0.4.5]](https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5)
 
