@@ -10,7 +10,6 @@ import (
 type storage struct {
 	buffer            reflect.Value
 	bufferAddress     unsafe.Pointer
-	typeOf            reflect.Type
 	itemSize          uintptr
 	len               uint32
 	cap               uint32
@@ -29,7 +28,6 @@ func (s *storage) Init(tp reflect.Type, increment int, forStorage bool) {
 	}
 	s.buffer = reflect.New(reflect.ArrayOf(cap, tp)).Elem()
 	s.bufferAddress = s.buffer.Addr().UnsafePointer()
-	s.typeOf = tp
 	s.itemSize = size
 	s.len = 0
 	s.cap = uint32(cap)
@@ -37,15 +35,18 @@ func (s *storage) Init(tp reflect.Type, increment int, forStorage bool) {
 }
 
 // Get retrieves an unsafe pointer to an element
-func (s *storage) Get(index uint32) unsafe.Pointer {
-	return unsafe.Add(s.bufferAddress, uintptr(index)*s.itemSize)
+func (s *storage) Get(index uintptr) unsafe.Pointer {
+	if s == nil {
+		return nil
+	}
+	return unsafe.Add(s.bufferAddress, index*s.itemSize)
 }
 
 // Add adds an element to the end of the storage
 func (s *storage) Add(value interface{}) (index uint32) {
 	s.extend()
 	s.len++
-	s.Set(s.len-1, value)
+	s.Set(uintptr(s.len-1), value)
 	return s.len - 1
 }
 
@@ -53,17 +54,17 @@ func (s *storage) Add(value interface{}) (index uint32) {
 func (s *storage) AddPointer(value unsafe.Pointer) (index uint32) {
 	s.extend()
 	s.len++
-	s.SetPointer(s.len-1, value)
+	s.SetPointer(uintptr(s.len-1), value)
 	return s.len - 1
 }
 
 // Alloc adds an empty element to the end of the storage.
 // It does not zero the storage!
-func (s *storage) Alloc() (index uint32) {
+func (s *storage) Alloc() (index uintptr) {
 	s.extend()
 	s.len++
 	//s.Zero(s.len - 1)
-	return s.len - 1
+	return uintptr(s.len - 1)
 }
 
 func (s *storage) extend() {
@@ -73,15 +74,15 @@ func (s *storage) extend() {
 
 	old := s.buffer
 	s.cap = s.capacityIncrement * ((s.cap + s.capacityIncrement) / s.capacityIncrement)
-	s.buffer = reflect.New(reflect.ArrayOf(int(s.cap), s.typeOf)).Elem()
+	s.buffer = reflect.New(reflect.ArrayOf(int(s.cap), s.buffer.Type().Elem())).Elem()
 	s.bufferAddress = s.buffer.Addr().UnsafePointer()
 	reflect.Copy(s.buffer, old)
 }
 
 // Remove swap-removes an element
-func (s *storage) Remove(index uint32) bool {
-	o := s.len - 1
-	n := index
+func (s *storage) Remove(index uintptr) bool {
+	o := uintptr(s.len - 1)
+	n := uintptr(index)
 
 	if n == o || s.itemSize == 0 {
 		s.len--
@@ -91,8 +92,8 @@ func (s *storage) Remove(index uint32) bool {
 	// TODO shrink the underlying data arrays?
 	size := s.itemSize
 
-	src := unsafe.Add(s.bufferAddress, uintptr(o)*s.itemSize)
-	dst := unsafe.Add(s.bufferAddress, uintptr(n)*s.itemSize)
+	src := unsafe.Add(s.bufferAddress, o*s.itemSize)
+	dst := unsafe.Add(s.bufferAddress, n*s.itemSize)
 
 	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
 	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
@@ -104,7 +105,7 @@ func (s *storage) Remove(index uint32) bool {
 }
 
 // Set sets the storage at the given index
-func (s *storage) Set(index uint32, value interface{}) unsafe.Pointer {
+func (s *storage) Set(index uintptr, value interface{}) unsafe.Pointer {
 	dst := s.Get(index)
 
 	if s.itemSize == 0 {
@@ -124,7 +125,7 @@ func (s *storage) Set(index uint32, value interface{}) unsafe.Pointer {
 	return dst
 }
 
-func (s *storage) SetPointer(index uint32, value unsafe.Pointer) unsafe.Pointer {
+func (s *storage) SetPointer(index uintptr, value unsafe.Pointer) unsafe.Pointer {
 	dst := s.Get(index)
 	if s.itemSize == 0 {
 		return dst
@@ -141,7 +142,7 @@ func (s *storage) SetPointer(index uint32, value unsafe.Pointer) unsafe.Pointer 
 }
 
 // Zero resets a block of storage
-func (s *storage) Zero(index uint32) {
+func (s *storage) Zero(index uintptr) {
 	if s.itemSize == 0 {
 		return
 	}
@@ -167,8 +168,9 @@ func (s *storage) Cap() uint32 {
 // toSlice converts the content of a storage to a slice of structs
 func toSlice[T any](s storage) []T {
 	res := make([]T, s.Len())
-	var i uint32
-	for i = 0; i < s.Len(); i++ {
+	var i uintptr
+	len := uintptr(s.Len())
+	for i = 0; i < len; i++ {
 		ptr := (*T)(s.Get(i))
 		res[i] = *ptr
 	}

@@ -186,9 +186,10 @@ func BenchmarkIterStorage_1000(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		len := int(s.Len())
-		for j := 0; j < len; j++ {
-			a := (*testStruct0)(s.Get(uint32(j)))
+		len := uintptr(s.Len())
+		var j uintptr
+		for j = 0; j < len; j++ {
+			a := (*testStruct0)(s.Get(j))
 			a.Val = 1
 		}
 	}

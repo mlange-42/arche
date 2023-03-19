@@ -48,10 +48,8 @@ func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
 
 // archetype represents an ECS archetype
 type archetype struct {
-	Mask Mask
-	Ids  []ID
-	// Indirection to avoid a fixed-size array of storages
-	// Increases access time by 50-100%
+	Mask        Mask
+	Ids         []ID
 	references  []*storage
 	entities    genericStorage[Entity]
 	components  []storage
@@ -97,12 +95,8 @@ func (a *archetype) GetEntity(index uint32) Entity {
 }
 
 // Get returns the component with the given ID at the given index
-func (a *archetype) Get(index uint32, id ID) unsafe.Pointer {
-	ref := a.getStorage(id)
-	if ref != nil {
-		return ref.Get(index)
-	}
-	return nil
+func (a *archetype) Get(index uintptr, id ID) unsafe.Pointer {
+	return a.getStorage(id).Get(index)
 }
 
 func (a *archetype) getStorage(id ID) *storage {
@@ -110,11 +104,12 @@ func (a *archetype) getStorage(id ID) *storage {
 }
 
 // Add adds an entity with zeroed components to the archetype
-func (a *archetype) Alloc(entity Entity, zero bool) uint32 {
-	idx := a.entities.Add(entity)
-	len := len(a.components)
+func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
+	idx := uintptr(a.entities.Add(entity))
+	len := uintptr(len(a.components))
 
-	for i := 0; i < len; i++ {
+	var i uintptr
+	for i = 0; i < len; i++ {
 		comp := &a.components[i]
 		idx := comp.Alloc()
 		if zero {
@@ -137,8 +132,8 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 }
 
 // Remove removes an entity from the archetype
-func (a *archetype) Remove(index uint32) bool {
-	swapped := a.entities.Remove(index)
+func (a *archetype) Remove(index uintptr) bool {
+	swapped := a.entities.Remove(uint32(index))
 	len := len(a.components)
 	for i := 0; i < len; i++ {
 		a.components[i].Remove(index)
@@ -167,17 +162,17 @@ func (a *archetype) Cap() uint32 {
 }
 
 // Set overwrites a component with the data behind the given pointer
-func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
+func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
 	return a.getStorage(id).Set(index, comp)
 }
 
 // SetPointer overwrites a component with the data behind the given pointer
-func (a *archetype) SetPointer(index uint32, id ID, comp unsafe.Pointer) unsafe.Pointer {
+func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe.Pointer {
 	return a.getStorage(id).SetPointer(index, comp)
 }
 
 // Zero resets th memory at the given position
-func (a *archetype) Zero(index uint32, id ID) {
+func (a *archetype) Zero(index uintptr, id ID) {
 	a.getStorage(id).Zero(index)
 }
 
