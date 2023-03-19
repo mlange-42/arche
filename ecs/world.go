@@ -172,7 +172,7 @@ func (w *World) RemoveEntity(entity Entity) {
 	w.entityPool.Recycle(entity)
 
 	if swapped {
-		swapEntity := oldArch.GetEntity(uint32(index.index))
+		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
 
@@ -352,7 +352,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	swapped := oldArch.Remove(index.index)
 
 	if swapped {
-		swapEntity := oldArch.GetEntity(uint32(index.index))
+		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}

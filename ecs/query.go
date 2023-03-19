@@ -188,5 +188,5 @@ func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
 
 // Entity returns the entity at the iterator's position
 func (it *archetypeIter) Entity() Entity {
-	return it.Archetype.GetEntity(uint32(it.Index))
+	return it.Archetype.GetEntity(it.Index)
 }

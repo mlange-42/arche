@@ -51,7 +51,7 @@ type archetype struct {
 	Mask        Mask
 	Ids         []ID
 	references  []*storage
-	entities    genericStorage[Entity]
+	entities    storage
 	components  []storage
 	graphNode   *archetypeNode
 	basePointer unsafe.Pointer
@@ -85,13 +85,13 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 
 	a.graphNode = node
 	a.Mask = mask
-	a.entities = genericStorage[Entity]{}
-	a.entities.Init(capacityIncrement, forStorage)
+	a.entities = storage{}
+	a.entities.Init(reflect.TypeOf((*Entity)(nil)), capacityIncrement, forStorage)
 }
 
 // GetEntity returns the entity at the given index
-func (a *archetype) GetEntity(index uint32) Entity {
-	return a.entities.Get(index)
+func (a *archetype) GetEntity(index uintptr) Entity {
+	return *(*Entity)(a.entities.Get(index))
 }
 
 // Get returns the component with the given ID at the given index
@@ -105,7 +105,7 @@ func (a *archetype) getStorage(id ID) *storage {
 
 // Add adds an entity with zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
-	idx := uintptr(a.entities.Add(entity))
+	idx := uintptr(a.entities.Add(&entity))
 	len := uintptr(len(a.components))
 
 	var i uintptr
@@ -124,7 +124,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	if len(components) != len(a.Ids) {
 		panic("Invalid number of components")
 	}
-	idx := a.entities.Add(entity)
+	idx := a.entities.Add(&entity)
 	for _, c := range components {
 		a.getStorage(c.ID).Add(c.Comp)
 	}
@@ -133,7 +133,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 
 // Remove removes an entity from the archetype
 func (a *archetype) Remove(index uintptr) bool {
-	swapped := a.entities.Remove(uint32(index))
+	swapped := a.entities.Remove(index)
 	len := len(a.components)
 	for i := 0; i < len; i++ {
 		a.components[i].Remove(index)
