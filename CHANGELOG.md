@@ -5,7 +5,8 @@
 ### Other
 
 * Speedup archetype access by 10%, by elimination of bounds checks (!126)
-* Minor optimizations of component storage (!127)
+* Minor optimizations of component storage (!128)
+* Adds an example to demonstrate how to implement classical ECS systems (!129)
 
 ## [[v0.4.5]](https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5)
 
