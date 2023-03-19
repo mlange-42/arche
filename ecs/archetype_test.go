@@ -104,7 +104,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 		len := int(arch.Len())
 		id := ID(0)
 		for j := 0; j < len; j++ {
-			pos := (*testStruct0)(arch.Get(uint32(j), id))
+			pos := (*testStruct0)(arch.Get(uintptr(j), id))
 			pos.Val = 1
 		}
 	}
