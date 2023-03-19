@@ -149,14 +149,14 @@ func (q *queryIter) Close() {
 
 type archetypeIter struct {
 	Archetype *archetype
-	Length    uint32
-	Index     uint32
+	Length    uintptr
+	Index     uintptr
 }
 
 func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
-		Length:    arch.Len(),
+		Length:    uintptr(arch.Len()),
 	}
 }
 
@@ -169,7 +169,7 @@ func (it *archetypeIter) Step(count uint32) (int, bool) {
 	if it.Length == 0 {
 		return int(count - 1), false
 	}
-	it.Index += count
+	it.Index += uintptr(count)
 	if it.Index < it.Length {
 		return 0, true
 	}
@@ -183,10 +183,10 @@ func (it *archetypeIter) Has(comp ID) bool {
 
 // Get returns the pointer to the given component at the iterator's position
 func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
-	return it.Archetype.Get(uintptr(it.Index), comp)
+	return it.Archetype.Get(it.Index, comp)
 }
 
 // Entity returns the entity at the iterator's position
 func (it *archetypeIter) Entity() Entity {
-	return it.Archetype.GetEntity(it.Index)
+	return it.Archetype.GetEntity(uint32(it.Index))
 }
