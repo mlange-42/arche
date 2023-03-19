@@ -10,7 +10,6 @@ import (
 type storage struct {
 	buffer            reflect.Value
 	bufferAddress     unsafe.Pointer
-	typeOf            reflect.Type
 	itemSize          uintptr
 	len               uint32
 	cap               uint32
@@ -29,7 +28,6 @@ func (s *storage) Init(tp reflect.Type, increment int, forStorage bool) {
 	}
 	s.buffer = reflect.New(reflect.ArrayOf(cap, tp)).Elem()
 	s.bufferAddress = s.buffer.Addr().UnsafePointer()
-	s.typeOf = tp
 	s.itemSize = size
 	s.len = 0
 	s.cap = uint32(cap)
@@ -73,7 +71,7 @@ func (s *storage) extend() {
 
 	old := s.buffer
 	s.cap = s.capacityIncrement * ((s.cap + s.capacityIncrement) / s.capacityIncrement)
-	s.buffer = reflect.New(reflect.ArrayOf(int(s.cap), s.typeOf)).Elem()
+	s.buffer = reflect.New(reflect.ArrayOf(int(s.cap), s.buffer.Type().Elem())).Elem()
 	s.bufferAddress = s.buffer.Addr().UnsafePointer()
 	reflect.Copy(s.buffer, old)
 }
