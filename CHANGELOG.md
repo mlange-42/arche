@@ -1,12 +1,17 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.5...main)
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.6...main)
+
+Nothing
+
+## [[v0.4.6]](https://github.com/mlange-42/arche/compare/v0.4.5...v0.4.6)
 
 ### Other
 
 * Speedup archetype access by 10%, by elimination of bounds checks (!126)
 * Minor optimizations of component storage (!128)
 * Adds an example to demonstrate how to implement classical ECS systems (!129)
+* Speedup entity access from queries by 50% by using a component storage for them (!131)
 
 ## [[v0.4.5]](https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5)
 
