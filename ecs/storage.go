@@ -36,6 +36,9 @@ func (s *storage) Init(tp reflect.Type, increment int, forStorage bool) {
 
 // Get retrieves an unsafe pointer to an element
 func (s *storage) Get(index uintptr) unsafe.Pointer {
+	if s == nil {
+		return nil
+	}
 	return unsafe.Add(s.bufferAddress, index*s.itemSize)
 }
 
@@ -89,8 +92,8 @@ func (s *storage) Remove(index uintptr) bool {
 	// TODO shrink the underlying data arrays?
 	size := s.itemSize
 
-	src := unsafe.Add(s.bufferAddress, uintptr(o)*s.itemSize)
-	dst := unsafe.Add(s.bufferAddress, uintptr(n)*s.itemSize)
+	src := unsafe.Add(s.bufferAddress, o*s.itemSize)
+	dst := unsafe.Add(s.bufferAddress, n*s.itemSize)
 
 	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
 	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]

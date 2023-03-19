@@ -48,10 +48,8 @@ func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
 
 // archetype represents an ECS archetype
 type archetype struct {
-	Mask Mask
-	Ids  []ID
-	// Indirection to avoid a fixed-size array of storages
-	// Increases access time by 50-100%
+	Mask        Mask
+	Ids         []ID
 	references  []*storage
 	entities    genericStorage[Entity]
 	components  []storage
@@ -98,11 +96,7 @@ func (a *archetype) GetEntity(index uint32) Entity {
 
 // Get returns the component with the given ID at the given index
 func (a *archetype) Get(index uintptr, id ID) unsafe.Pointer {
-	ref := a.getStorage(id)
-	if ref != nil {
-		return ref.Get(index)
-	}
-	return nil
+	return a.getStorage(id).Get(index)
 }
 
 func (a *archetype) getStorage(id ID) *storage {
