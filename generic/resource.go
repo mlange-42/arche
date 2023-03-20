@@ -7,7 +7,7 @@ import "github.com/mlange-42/arche/ecs"
 // Create one with [NewResource].
 type Resource[T any] struct {
 	id    ecs.ResID
-	world *ecs.World
+	world ecs.WorldResources
 }
 
 // NewResource creates a new [Resource] mapper for a resource type.
@@ -16,10 +16,10 @@ type Resource[T any] struct {
 // [Resource] provides a type-safe way to access a world resources.
 //
 // See also [ecs.World.GetResource], [ecs.World.HasResource] and [ecs.World.AddResource].
-func NewResource[T any](w *ecs.World) Resource[T] {
+func NewResource[T any](world ecs.WorldResources) Resource[T] {
 	return Resource[T]{
-		id:    ecs.ResourceID[T](w),
-		world: w,
+		id:    ecs.ResourceID[T](world),
+		world: world,
 	}
 }
 

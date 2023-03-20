@@ -62,7 +62,7 @@ func generateMaps() {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-			include = "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](w), ecs.ComponentID[") + "](w)}"
+			include = "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](world), ecs.ComponentID[") + "](world)}"
 		} else {
 			include = "[]ecs.ID{}"
 		}

@@ -46,10 +46,10 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 }
 
 // Query builds a [Query{{ .Index }}] query for iteration.
-func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{ .Types }} {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+func (q *Filter{{ .Index }}{{ .Types }}) Query(world ecs.Components) Query{{ .Index }}{{ .Types }} {
+	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query{{ .Index }}{{ .Types }}{
-		w.Query(&q.compiled.filter),
+		world.Query(&q.compiled.filter),
 		q.compiled.Ids,
 	}
 }
@@ -58,8 +58,8 @@ func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter{{ .Index }}.Query].
-func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+func (q *Filter{{ .Index }}{{ .Types }}) Filter(world ecs.Components) ecs.MaskFilter {
+	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }
 

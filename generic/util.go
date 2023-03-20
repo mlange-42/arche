@@ -17,7 +17,7 @@ func typeOf[T any]() Comp {
 	return reflect.TypeOf((*T)(nil)).Elem()
 }
 
-func toIds(w *ecs.World, types []Comp) []ecs.ID {
+func toIds(w ecs.WorldComponents, types []Comp) []ecs.ID {
 	ids := make([]ecs.ID, len(types))
 	for i, t := range types {
 		ids[i] = ecs.TypeID(w, t)
@@ -25,7 +25,7 @@ func toIds(w *ecs.World, types []Comp) []ecs.ID {
 	return ids
 }
 
-func toMask(w *ecs.World, types []Comp) ecs.Mask {
+func toMask(w ecs.WorldComponents, types []Comp) ecs.Mask {
 	mask := ecs.Mask{}
 	for _, t := range types {
 		mask.Set(ecs.TypeID(w, t), true)
@@ -33,7 +33,7 @@ func toMask(w *ecs.World, types []Comp) ecs.Mask {
 	return mask
 }
 
-func toMaskOptional(w *ecs.World, include []ecs.ID, optional []Comp) ecs.Mask {
+func toMaskOptional(w ecs.WorldComponents, include []ecs.ID, optional []Comp) ecs.Mask {
 	mask := ecs.All(include...)
 	for _, t := range optional {
 		mask.Set(ecs.TypeID(w, t), false)

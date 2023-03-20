@@ -4,14 +4,14 @@
 // Map{{ .Index }} is a helper for mapping {{ .NumberStr }} components.
 type Map{{ .Index }}{{ .TypesFull }} struct {
 	ids   []ecs.ID
-	world *ecs.World
+	world ecs.Components
 }
 
 // NewMap{{ .Index }} creates a new Map{{ .Index }} object.
-func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }} {
+func NewMap{{ .Index }}{{ .TypesFull }}(world ecs.Components) Map{{ .Index }}{{ .Types }} {
 	return Map{{ .Index }}{{ .Types }}{
 		ids:   {{ .Include }},
-		world: w,
+		world: world,
 	}
 }
 

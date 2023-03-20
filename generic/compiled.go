@@ -10,14 +10,14 @@ type compiledQuery struct {
 	compiled bool
 }
 
-func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp) {
+func (q *compiledQuery) Compile(world ecs.WorldComponents, include, optional, exclude []Comp) {
 	if q.compiled {
 		return
 	}
-	q.Ids = toIds(w, include)
+	q.Ids = toIds(world, include)
 	q.filter = ecs.MaskFilter{
-		Include: toMaskOptional(w, q.Ids, optional),
-		Exclude: toMask(w, exclude),
+		Include: toMaskOptional(world, q.Ids, optional),
+		Exclude: toMask(world, exclude),
 	}
 	q.compiled = true
 }

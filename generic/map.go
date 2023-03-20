@@ -7,7 +7,7 @@ import "github.com/mlange-42/arche/ecs"
 // Create one with [NewMap].
 type Map[T any] struct {
 	id    ecs.ID
-	world *ecs.World
+	world ecs.WorldComponents
 }
 
 // NewMap creates a new [Map] for a component type.
@@ -15,10 +15,10 @@ type Map[T any] struct {
 // Map provides a type-safe way to access a component type by entity ID.
 //
 // See also [ecs.World.Get], [ecs.World.Has] and [ecs.World.Set].
-func NewMap[T any](w *ecs.World) Map[T] {
+func NewMap[T any](world ecs.WorldComponents) Map[T] {
 	return Map[T]{
-		id:    ecs.ComponentID[T](w),
-		world: w,
+		id:    ecs.ComponentID[T](world),
+		world: world,
 	}
 }
 

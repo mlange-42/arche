@@ -7,19 +7,41 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
+// WorldComponents is an interface for accessing components. It is implemented by the [World].
+type WorldComponents interface {
+	NewEntity(comps ...ID) Entity
+	NewEntityWith(comps ...Component) Entity
+	Add(entity Entity, comps ...ID)
+	Assign(entity Entity, comps ...Component)
+	Remove(entity Entity, comps ...ID)
+	Exchange(entity Entity, add []ID, rem []ID)
+	Get(entity Entity, comp ID) unsafe.Pointer
+	Has(entity Entity, comp ID) bool
+	Set(entity Entity, id ID, comp interface{}) unsafe.Pointer
+	Query(filter Filter) Query
+	componentID(tp reflect.Type) ID
+}
+
+// WorldResources is an interface for accessing resources. It is implemented by the [World].
+type WorldResources interface {
+	GetResource(id ResID) interface{}
+	HasResource(id ResID) bool
+	resourceID(tp reflect.Type) ResID
+}
+
 // ComponentID returns the [ID] for a component type via generics. Registers the type if it is not already registered.
-func ComponentID[T any](w *World) ID {
+func ComponentID[T any](w WorldComponents) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.componentID(tp)
 }
 
 // TypeID returns the [ID] for a component type. Registers the type if it is not already registered.
-func TypeID(w *World, tp reflect.Type) ID {
+func TypeID(w WorldComponents, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
 // ResourceID returns the [ResID] for a resource type via generics. Registers the type if it is not already registered.
-func ResourceID[T any](w *World) ResID {
+func ResourceID[T any](w WorldResources) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.resourceID(tp)
 }
@@ -31,7 +53,7 @@ func ResourceID[T any](w *World) ResID {
 // Uses reflection. For more efficient access, see [World.GetResource],
 // and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 // These methods are more than 20 times faster than the GetResource function.
-func GetResource[T any](w *World) *T {
+func GetResource[T any](w WorldResources) *T {
 	return w.GetResource(ResourceID[T](w)).(*T)
 }
 
