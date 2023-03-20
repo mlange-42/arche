@@ -86,7 +86,7 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 	a.graphNode = node
 	a.Mask = mask
 	a.entities = storage{}
-	a.entities.Init(reflect.TypeOf((*Entity)(nil)), capacityIncrement, forStorage)
+	a.entities.Init(reflect.TypeOf(Entity{}), capacityIncrement, forStorage)
 }
 
 // GetEntity returns the entity at the given index
