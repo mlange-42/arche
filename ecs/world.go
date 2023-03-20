@@ -12,6 +12,8 @@ import (
 type IWorld interface {
 	NewEntity(comps ...ID) Entity
 	NewEntityWith(comps ...Component) Entity
+	RemoveEntity(entity Entity)
+	Alive(entity Entity) bool
 
 	Add(entity Entity, comps ...ID)
 	Assign(entity Entity, comps ...Component)
@@ -24,8 +26,14 @@ type IWorld interface {
 
 	Query(filter Filter) Query
 
+	AddResource(res any) ResID
 	GetResource(id ResID) interface{}
 	HasResource(id ResID) bool
+
+	Mask(entity Entity) Mask
+	IsLocked() bool
+	Stats() *stats.WorldStats
+	SetListener(listener func(e EntityEvent))
 
 	componentID(tp reflect.Type) ID
 	resourceID(tp reflect.Type) ResID
