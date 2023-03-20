@@ -14,10 +14,13 @@ func TestGenericResource(t *testing.T) {
 	assert.Equal(t, ecs.ResourceID[testStruct0](&w), get.ID())
 
 	assert.False(t, get.Has())
-	w.AddResource(&testStruct0{100})
+	get.Add(&testStruct0{100})
 
 	assert.True(t, get.Has())
 	res := get.Get()
 
 	assert.Equal(t, testStruct0{100}, *res)
+
+	get.Remove()
+	assert.False(t, get.Has())
 }

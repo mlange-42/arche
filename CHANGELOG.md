@@ -1,9 +1,5 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.5.0...main)
-
-Nothing
-
 ## [[v0.5.0]](https://github.com/mlange-42/arche/compare/v0.4.6...v0.5.0)
 
 Feature release. Does not break v0.4.x projects.

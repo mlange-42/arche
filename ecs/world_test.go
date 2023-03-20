@@ -422,11 +422,12 @@ func TestWorldResources(t *testing.T) {
 	w := NewWorld()
 
 	posID := ResourceID[position](&w)
+	rotID := ResourceID[rotation](&w)
 
 	assert.False(t, w.HasResource(posID))
 	assert.Nil(t, w.GetResource(posID))
 
-	w.AddResource(&position{1, 2})
+	AddResource(&w, &position{1, 2})
 
 	fmt.Println(w.resources.registry.Components)
 
@@ -436,10 +437,16 @@ func TestWorldResources(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, position{1, 2}, *pos)
 
-	assert.Panics(t, func() { w.AddResource(&position{1, 2}) })
+	assert.Panics(t, func() { w.AddResource(posID, &position{1, 2}) })
 
 	pos = GetResource[position](&w)
 	assert.Equal(t, position{1, 2}, *pos)
+
+	w.AddResource(rotID, &rotation{5})
+	assert.True(t, w.HasResource(rotID))
+	w.RemoveResource(rotID)
+	assert.False(t, w.HasResource(rotID))
+	assert.Panics(t, func() { w.RemoveResource(rotID) })
 }
 
 func TestRegisterComponents(t *testing.T) {
@@ -640,7 +647,7 @@ func BenchmarkGetResource(b *testing.B) {
 	b.StopTimer()
 
 	w := NewWorld()
-	w.AddResource(&position{1, 2})
+	AddResource(&w, &position{1, 2})
 	posID := ResourceID[position](&w)
 
 	b.StartTimer()
@@ -657,7 +664,7 @@ func BenchmarkGetResourceShortcut(b *testing.B) {
 	b.StopTimer()
 
 	w := NewWorld()
-	w.AddResource(&position{1, 2})
+	AddResource(&w, &position{1, 2})
 
 	b.StartTimer()
 

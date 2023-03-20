@@ -21,7 +21,7 @@ func main() {
 	world := ecs.NewWorld()
 
 	// Add a resource to the world
-	world.AddResource(&TimeStep{0})
+	ecs.AddResource(&world, &TimeStep{0})
 
 	// Run the simulation
 	run(&world)

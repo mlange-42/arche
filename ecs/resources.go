@@ -21,14 +21,21 @@ func newResources() resources {
 // The resource should always be a pointer.
 //
 // Panics if there is already a resource of the given type.
-func (r *resources) Add(res any) ResID {
-	tp := reflect.TypeOf(res).Elem()
-	id := r.registry.ComponentID(tp)
+func (r *resources) Add(id ResID, res any) {
 	if r.resources[id] != nil {
-		panic(fmt.Sprintf("Resource of type %v was already added", tp))
+		panic(fmt.Sprintf("Resource of ID %d was already added (type %v)", id, reflect.TypeOf(res)))
 	}
 	r.resources[id] = res
-	return id
+}
+
+// Remove removes a resource from the world.
+//
+// Panics if there is no resource of the given type.
+func (r *resources) Remove(id ResID) {
+	if r.resources[id] == nil {
+		panic(fmt.Sprintf("Resource of ID %d is not present", id))
+	}
+	r.resources[id] = nil
 }
 
 // Get returns a pointer to the resource of the given type.

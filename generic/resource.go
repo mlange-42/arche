@@ -28,6 +28,24 @@ func (g *Resource[T]) ID() ecs.ResID {
 	return g.id
 }
 
+// Add adds a resource to the world.
+//
+// Panics if there is already a resource of the given type.
+//
+// See also [ecs.World.AddResource].
+func (g *Resource[T]) Add(res *T) {
+	g.world.AddResource(g.id, res)
+}
+
+// Remove removes a resource from the world.
+//
+// Panics if there is no resource of the given type.
+//
+// See also [ecs.World.RemoveResource].
+func (g *Resource[T]) Remove() {
+	g.world.RemoveResource(g.id)
+}
+
 // Get gets the resource of the given type.
 //
 // Returns nil if there is no such resource.
