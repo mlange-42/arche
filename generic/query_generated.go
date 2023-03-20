@@ -40,7 +40,7 @@ func (q *Filter0) Without(mask ...Comp) *Filter0 {
 }
 
 // Query builds a [Query0] query for iteration.
-func (q *Filter0) Query(world ecs.WorldComponents) Query0 {
+func (q *Filter0) Query(world ecs.IWorld) Query0 {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query0{
 		world.Query(&q.compiled.filter),
@@ -52,7 +52,7 @@ func (q *Filter0) Query(world ecs.WorldComponents) Query0 {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter0.Query].
-func (q *Filter0) Filter(world ecs.WorldComponents) ecs.MaskFilter {
+func (q *Filter0) Filter(world ecs.IWorld) ecs.MaskFilter {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }
@@ -112,7 +112,7 @@ func (q *Filter1[A]) Without(mask ...Comp) *Filter1[A] {
 }
 
 // Query builds a [Query1] query for iteration.
-func (q *Filter1[A]) Query(world ecs.WorldComponents) Query1[A] {
+func (q *Filter1[A]) Query(world ecs.IWorld) Query1[A] {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query1[A]{
 		world.Query(&q.compiled.filter),
@@ -124,7 +124,7 @@ func (q *Filter1[A]) Query(world ecs.WorldComponents) Query1[A] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter1.Query].
-func (q *Filter1[A]) Filter(world ecs.WorldComponents) ecs.MaskFilter {
+func (q *Filter1[A]) Filter(world ecs.IWorld) ecs.MaskFilter {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }
@@ -191,7 +191,7 @@ func (q *Filter2[A, B]) Without(mask ...Comp) *Filter2[A, B] {
 }
 
 // Query builds a [Query2] query for iteration.
-func (q *Filter2[A, B]) Query(world ecs.WorldComponents) Query2[A, B] {
+func (q *Filter2[A, B]) Query(world ecs.IWorld) Query2[A, B] {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query2[A, B]{
 		world.Query(&q.compiled.filter),
@@ -203,7 +203,7 @@ func (q *Filter2[A, B]) Query(world ecs.WorldComponents) Query2[A, B] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter2.Query].
-func (q *Filter2[A, B]) Filter(world ecs.WorldComponents) ecs.MaskFilter {
+func (q *Filter2[A, B]) Filter(world ecs.IWorld) ecs.MaskFilter {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }
@@ -270,7 +270,7 @@ func (q *Filter3[A, B, C]) Without(mask ...Comp) *Filter3[A, B, C] {
 }
 
 // Query builds a [Query3] query for iteration.
-func (q *Filter3[A, B, C]) Query(world ecs.WorldComponents) Query3[A, B, C] {
+func (q *Filter3[A, B, C]) Query(world ecs.IWorld) Query3[A, B, C] {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query3[A, B, C]{
 		world.Query(&q.compiled.filter),
@@ -282,7 +282,7 @@ func (q *Filter3[A, B, C]) Query(world ecs.WorldComponents) Query3[A, B, C] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter3.Query].
-func (q *Filter3[A, B, C]) Filter(world ecs.WorldComponents) ecs.MaskFilter {
+func (q *Filter3[A, B, C]) Filter(world ecs.IWorld) ecs.MaskFilter {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }
@@ -349,7 +349,7 @@ func (q *Filter4[A, B, C, D]) Without(mask ...Comp) *Filter4[A, B, C, D] {
 }
 
 // Query builds a [Query4] query for iteration.
-func (q *Filter4[A, B, C, D]) Query(world ecs.WorldComponents) Query4[A, B, C, D] {
+func (q *Filter4[A, B, C, D]) Query(world ecs.IWorld) Query4[A, B, C, D] {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query4[A, B, C, D]{
 		world.Query(&q.compiled.filter),
@@ -361,7 +361,7 @@ func (q *Filter4[A, B, C, D]) Query(world ecs.WorldComponents) Query4[A, B, C, D
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter4.Query].
-func (q *Filter4[A, B, C, D]) Filter(world ecs.WorldComponents) ecs.MaskFilter {
+func (q *Filter4[A, B, C, D]) Filter(world ecs.IWorld) ecs.MaskFilter {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }
@@ -428,7 +428,7 @@ func (q *Filter5[A, B, C, D, E]) Without(mask ...Comp) *Filter5[A, B, C, D, E] {
 }
 
 // Query builds a [Query5] query for iteration.
-func (q *Filter5[A, B, C, D, E]) Query(world ecs.WorldComponents) Query5[A, B, C, D, E] {
+func (q *Filter5[A, B, C, D, E]) Query(world ecs.IWorld) Query5[A, B, C, D, E] {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query5[A, B, C, D, E]{
 		world.Query(&q.compiled.filter),
@@ -440,7 +440,7 @@ func (q *Filter5[A, B, C, D, E]) Query(world ecs.WorldComponents) Query5[A, B, C
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter5.Query].
-func (q *Filter5[A, B, C, D, E]) Filter(world ecs.WorldComponents) ecs.MaskFilter {
+func (q *Filter5[A, B, C, D, E]) Filter(world ecs.IWorld) ecs.MaskFilter {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }
@@ -507,7 +507,7 @@ func (q *Filter6[A, B, C, D, E, F]) Without(mask ...Comp) *Filter6[A, B, C, D, E
 }
 
 // Query builds a [Query6] query for iteration.
-func (q *Filter6[A, B, C, D, E, F]) Query(world ecs.WorldComponents) Query6[A, B, C, D, E, F] {
+func (q *Filter6[A, B, C, D, E, F]) Query(world ecs.IWorld) Query6[A, B, C, D, E, F] {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query6[A, B, C, D, E, F]{
 		world.Query(&q.compiled.filter),
@@ -519,7 +519,7 @@ func (q *Filter6[A, B, C, D, E, F]) Query(world ecs.WorldComponents) Query6[A, B
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter6.Query].
-func (q *Filter6[A, B, C, D, E, F]) Filter(world ecs.WorldComponents) ecs.MaskFilter {
+func (q *Filter6[A, B, C, D, E, F]) Filter(world ecs.IWorld) ecs.MaskFilter {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }
@@ -586,7 +586,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Without(mask ...Comp) *Filter7[A, B, C, D
 }
 
 // Query builds a [Query7] query for iteration.
-func (q *Filter7[A, B, C, D, E, F, G]) Query(world ecs.WorldComponents) Query7[A, B, C, D, E, F, G] {
+func (q *Filter7[A, B, C, D, E, F, G]) Query(world ecs.IWorld) Query7[A, B, C, D, E, F, G] {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query7[A, B, C, D, E, F, G]{
 		world.Query(&q.compiled.filter),
@@ -598,7 +598,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Query(world ecs.WorldComponents) Query7[A
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter7.Query].
-func (q *Filter7[A, B, C, D, E, F, G]) Filter(world ecs.WorldComponents) ecs.MaskFilter {
+func (q *Filter7[A, B, C, D, E, F, G]) Filter(world ecs.IWorld) ecs.MaskFilter {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }
@@ -665,7 +665,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask ...Comp) *Filter8[A, B, C
 }
 
 // Query builds a [Query8] query for iteration.
-func (q *Filter8[A, B, C, D, E, F, G, H]) Query(world ecs.WorldComponents) Query8[A, B, C, D, E, F, G, H] {
+func (q *Filter8[A, B, C, D, E, F, G, H]) Query(world ecs.IWorld) Query8[A, B, C, D, E, F, G, H] {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return Query8[A, B, C, D, E, F, G, H]{
 		world.Query(&q.compiled.filter),
@@ -677,7 +677,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Query(world ecs.WorldComponents) Query
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter8.Query].
-func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(world ecs.WorldComponents) ecs.MaskFilter {
+func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(world ecs.IWorld) ecs.MaskFilter {
 	q.compiled.Compile(world, q.include, q.optional, q.exclude)
 	return q.compiled.filter
 }

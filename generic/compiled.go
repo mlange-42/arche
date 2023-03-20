@@ -10,7 +10,7 @@ type compiledQuery struct {
 	compiled bool
 }
 
-func (q *compiledQuery) Compile(world ecs.WorldComponents, include, optional, exclude []Comp) {
+func (q *compiledQuery) Compile(world ecs.IWorld, include, optional, exclude []Comp) {
 	if q.compiled {
 		return
 	}

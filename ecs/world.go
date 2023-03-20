@@ -7,41 +7,43 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
-// WorldComponents is an interface for accessing components. It is implemented by the [World].
-type WorldComponents interface {
+// IWorld is an interface for accessing components and resources.
+// It is implemented by the [World] type.
+type IWorld interface {
 	NewEntity(comps ...ID) Entity
 	NewEntityWith(comps ...Component) Entity
+
 	Add(entity Entity, comps ...ID)
 	Assign(entity Entity, comps ...Component)
 	Remove(entity Entity, comps ...ID)
 	Exchange(entity Entity, add []ID, rem []ID)
+
 	Get(entity Entity, comp ID) unsafe.Pointer
 	Has(entity Entity, comp ID) bool
 	Set(entity Entity, id ID, comp interface{}) unsafe.Pointer
-	Query(filter Filter) Query
-	componentID(tp reflect.Type) ID
-}
 
-// WorldResources is an interface for accessing resources. It is implemented by the [World].
-type WorldResources interface {
+	Query(filter Filter) Query
+
 	GetResource(id ResID) interface{}
 	HasResource(id ResID) bool
+
+	componentID(tp reflect.Type) ID
 	resourceID(tp reflect.Type) ResID
 }
 
 // ComponentID returns the [ID] for a component type via generics. Registers the type if it is not already registered.
-func ComponentID[T any](w WorldComponents) ID {
+func ComponentID[T any](w IWorld) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.componentID(tp)
 }
 
 // TypeID returns the [ID] for a component type. Registers the type if it is not already registered.
-func TypeID(w WorldComponents, tp reflect.Type) ID {
+func TypeID(w IWorld, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
 // ResourceID returns the [ResID] for a resource type via generics. Registers the type if it is not already registered.
-func ResourceID[T any](w WorldResources) ResID {
+func ResourceID[T any](w IWorld) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.resourceID(tp)
 }
@@ -53,7 +55,7 @@ func ResourceID[T any](w WorldResources) ResID {
 // Uses reflection. For more efficient access, see [World.GetResource],
 // and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 // These methods are more than 20 times faster than the GetResource function.
-func GetResource[T any](w WorldResources) *T {
+func GetResource[T any](w IWorld) *T {
 	return w.GetResource(ResourceID[T](w)).(*T)
 }
 

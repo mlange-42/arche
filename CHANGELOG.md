@@ -6,6 +6,7 @@
 
 * The World handles ECS resources, i.e. component-like global data (!132)
 * Adds generic access to world resources (!132)
+* Adds interface `IWorld` to allow for using types that embed a World as arguments in many places (!134)
 
 ### Other
 

@@ -14,11 +14,11 @@ import "github.com/mlange-42/arche/ecs"
 type Exchange struct {
 	add    []ecs.ID
 	remove []ecs.ID
-	world  ecs.WorldComponents
+	world  ecs.IWorld
 }
 
 // NewExchange creates a new Exchange object.
-func NewExchange(world ecs.WorldComponents) *Exchange {
+func NewExchange(world ecs.IWorld) *Exchange {
 	return &Exchange{
 		world: world,
 	}
