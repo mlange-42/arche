@@ -35,7 +35,17 @@ func GetResource[T any](w *World) *T {
 	return w.GetResource(ResourceID[T](w)).(*T)
 }
 
-// World is the central type holding [Entity] and component data.
+// AddResource adds a resource to the world.
+//
+// Panics if there is already such a resource.
+//
+// Uses reflection. For more efficient access, see [World.AddResource],
+// and [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
+func AddResource[T any](w *World, res *T) {
+	w.AddResource(ResourceID[T](w), res)
+}
+
+// World is the central type holding [Entity] and component data, as well as resources.
 type World struct {
 	config     Config
 	entities   []entityIndex
@@ -401,12 +411,21 @@ func (w *World) SetListener(listener func(e EntityEvent)) {
 // AddResource adds a resource to the world.
 // The resource should always be a pointer.
 //
-// Returns the [ID] assigned to the resource type.
-// See also [ResourceID].
-//
 // Panics if there is already a resource of the given type.
-func (w *World) AddResource(res any) ResID {
-	return w.resources.Add(res)
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
+func (w *World) AddResource(id ResID, res any) {
+	w.resources.Add(id, res)
+}
+
+// RemoveResource removes a resource from the world.
+// The resource should always be a pointer.
+//
+// Panics if there is no resource of the given type.
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Remove] for a generic variant.
+func (w *World) RemoveResource(id ResID) {
+	w.resources.Remove(id)
 }
 
 // GetResource returns a pointer to the given resource type.

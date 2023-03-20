@@ -1,11 +1,13 @@
 # Changelog
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.6...main)
+## [[v0.5.0]](https://github.com/mlange-42/arche/compare/v0.4.6...v0.5.0)
+
+Feature release. Does not break v0.4.x projects.
 
 ### Features
 
 * The World handles ECS resources, i.e. component-like global data (!132)
-* Adds generic access to world resources (!132)
+* Generic access to world resources (!132)
 
 ### Other
 
