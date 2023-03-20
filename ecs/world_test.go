@@ -620,6 +620,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[bitPool]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
+	printTypeSize[resources]()
 }
 
 func printTypeSize[T any]() {

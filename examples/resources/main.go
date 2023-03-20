@@ -48,7 +48,7 @@ func run(w *ecs.World) {
 
 // Makes use of the resource by generic access.
 func runGeneric(w *ecs.World) {
-	mapper := generic.NewResMap[TimeStep](w)
+	mapper := generic.NewResource[TimeStep](w)
 	for {
 		// Get the the TimeStep resource from the world
 		time := mapper.Get()

@@ -30,7 +30,7 @@ func BenchmarkArcheGetResourceGeneric(b *testing.B) {
 
 	w := ecs.NewWorld()
 	w.AddResource(&c.Position{X: 1, Y: 2})
-	mapper := generic.NewResMap[c.Position](&w)
+	mapper := generic.NewResource[c.Position](&w)
 
 	b.StartTimer()
 
@@ -64,7 +64,7 @@ func BenchmarkArcheHasResourceGeneric(b *testing.B) {
 
 	w := ecs.NewWorld()
 	w.AddResource(&c.Position{X: 1, Y: 2})
-	mapper := generic.NewResMap[c.Position](&w)
+	mapper := generic.NewResource[c.Position](&w)
 
 	b.StartTimer()
 

@@ -394,11 +394,17 @@ func (w *World) AddResource(res any) {
 }
 
 // GetResource returns a pointer to the given resource type.
+//
+// Returns nil if there is no such resource.
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 func (w *World) GetResource(id ID) interface{} {
 	return w.resources.Get(id)
 }
 
 // HasResource returns whether the world has the given resource type.
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Has] for a generic variant.
 func (w *World) HasResource(id ID) bool {
 	return w.resources.Has(id)
 }

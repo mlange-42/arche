@@ -7,9 +7,9 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestGenericResourceMap(t *testing.T) {
+func TestGenericResource(t *testing.T) {
 	w := ecs.NewWorld()
-	get := NewResMap[testStruct0](&w)
+	get := NewResource[testStruct0](&w)
 
 	assert.Equal(t, ecs.ResourceID[testStruct0](&w), get.ID())
 
