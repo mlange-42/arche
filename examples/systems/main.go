@@ -26,13 +26,13 @@ func main() {
 
 // System interface
 type System interface {
-	Initialize(w *ecs.World)
-	Update(w *ecs.World)
+	Initialize(w *Scheduler)
+	Update(w *Scheduler)
 }
 
 // Scheduler for updating systems
 type Scheduler struct {
-	world   ecs.World
+	ecs.World
 	systems []System
 }
 
@@ -48,16 +48,16 @@ func (s *Scheduler) Run(steps int) {
 }
 
 func (s *Scheduler) initialize() {
-	s.world = ecs.NewWorld()
+	s.World = ecs.NewWorld()
 
 	for _, sys := range s.systems {
-		sys.Initialize(&s.world)
+		sys.Initialize(s)
 	}
 }
 
 func (s *Scheduler) update() {
 	for _, sys := range s.systems {
-		sys.Update(&s.world)
+		sys.Update(s)
 	}
 }
 
@@ -79,7 +79,7 @@ type InitializerSystem struct {
 }
 
 // Initialize the system
-func (s *InitializerSystem) Initialize(w *ecs.World) {
+func (s *InitializerSystem) Initialize(w *Scheduler) {
 	mapper := generic.NewMap2[Position, Velocity](w)
 	for i := 0; i < s.Count; i++ {
 		_, pos, vel := mapper.NewEntity()
@@ -92,7 +92,7 @@ func (s *InitializerSystem) Initialize(w *ecs.World) {
 }
 
 // Update the system
-func (s *InitializerSystem) Update(w *ecs.World) {}
+func (s *InitializerSystem) Update(w *Scheduler) {}
 
 // PosUpdaterSystem updates entity positions
 type PosUpdaterSystem struct {
@@ -100,12 +100,12 @@ type PosUpdaterSystem struct {
 }
 
 // Initialize the system
-func (s *PosUpdaterSystem) Initialize(w *ecs.World) {
+func (s *PosUpdaterSystem) Initialize(w *Scheduler) {
 	s.filter = *generic.NewFilter2[Position, Velocity]()
 }
 
 // Update the system
-func (s *PosUpdaterSystem) Update(w *ecs.World) {
+func (s *PosUpdaterSystem) Update(w *Scheduler) {
 	query := s.filter.Query(w)
 	for query.Next() {
 		pos, vel := query.Get()
