@@ -23,8 +23,8 @@ func NewResource[T any](w *ecs.World) Resource[T] {
 	}
 }
 
-// ID returns the resource ID for this Map.
-func (g *Resource[T]) ID() ecs.ID {
+// ID returns the resource [ecs.ResID] for this Resource mapper.
+func (g *Resource[T]) ID() ecs.ResID {
 	return g.id
 }
 
@@ -37,7 +37,7 @@ func (g *Resource[T]) Get() *T {
 	return g.world.GetResource(g.id).(*T)
 }
 
-// Has returns whether the world has the resource.
+// Has returns whether the world has the resource type.
 //
 // See also [ecs.World.HasResource].
 func (g *Resource[T]) Has() bool {
