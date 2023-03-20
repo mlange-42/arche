@@ -4,7 +4,11 @@
 // Rather, there can only be one resource object per type in the World.
 package main
 
-import "github.com/mlange-42/arche/ecs"
+import (
+	"fmt"
+
+	"github.com/mlange-42/arche/ecs"
+)
 
 // TimeStep is a resource holding the model step
 type TimeStep struct {
@@ -23,13 +27,16 @@ func main() {
 }
 
 func run(w *ecs.World) {
+	timeStepID := ecs.ResourceID[TimeStep](w)
+
 	for {
 		// Get the the TimeStep resource from the world
-		time := ecs.GetResource[TimeStep](w)
+		time := w.GetResource(timeStepID).(*TimeStep)
 
 		// Use the resource
 		time.Step++
-		if time.Step >= 1000 {
+		fmt.Println(time.Step)
+		if time.Step >= 100 {
 			break
 		}
 	}

@@ -1,7 +1,6 @@
 package ecs
 
 import (
-	"fmt"
 	"reflect"
 	"unsafe"
 
@@ -19,29 +18,10 @@ func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
-// GetResource returns the resource of the given type from a [World].
-//
-// Uses reflection and a `map[reflect.Type]interface{}`. Should not be used inside [Query] iterations!
-func GetResource[T any](w *World) *T {
-	tp := reflect.TypeOf((*T)(nil))
-	res, ok := w.resources[tp]
-	if !ok {
-		panic(fmt.Sprintf("No resource of type %v", tp))
-	}
-	t, ok := res.(*T)
-	if !ok {
-		panic(fmt.Sprintf("Can't convert %T to %v", res, tp))
-	}
-	return t
-}
-
-// HasResource returns whether the [World] has a resource of the given type.
-//
-// Uses reflection and a `map[reflect.Type]interface{}`. Should not be used inside [Query] iterations!
-func HasResource[T any](w *World) bool {
-	tp := reflect.TypeOf((*T)(nil))
-	_, ok := w.resources[tp]
-	return ok
+// ResourceID returns the [ID] for a resource type via generics. Registers the type if it is not already registered.
+func ResourceID[T any](w *World) ID {
+	tp := reflect.TypeOf((*T)(nil)).Elem()
+	return w.resourceID(tp)
 }
 
 // World is the central type holding [Entity] and component data.
@@ -55,7 +35,7 @@ type World struct {
 	registry   componentRegistry
 	locks      Mask
 	listener   func(e EntityEvent)
-	resources  map[reflect.Type]any
+	resources  resources
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -89,7 +69,7 @@ func fromConfig(conf Config) World {
 		graph:      pagedArr32[archetypeNode]{},
 		locks:      Mask{},
 		listener:   nil,
-		resources:  map[reflect.Type]any{},
+		resources:  newResources(),
 	}
 	node := w.createArchetypeNode(Mask{})
 	w.createArchetype(node, false)
@@ -410,11 +390,17 @@ func (w *World) SetListener(listener func(e EntityEvent)) {
 // AddResource adds a resource to the world.
 // The resource should always be a pointer.
 func (w *World) AddResource(res any) {
-	tp := reflect.TypeOf(res)
-	if _, ok := w.resources[tp]; ok {
-		panic(fmt.Sprintf("Resource of type %v was already added", tp))
-	}
-	w.resources[tp] = res
+	w.resources.Add(res)
+}
+
+// GetResource returns a pointer to the given resource type.
+func (w *World) GetResource(id ID) interface{} {
+	return w.resources.Get(id)
+}
+
+// HasResource returns whether the world has the given resource type.
+func (w *World) HasResource(id ID) bool {
+	return w.resources.Has(id)
 }
 
 // Stats reports statistics for inspecting the World.
@@ -546,6 +532,11 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 // componentID returns the ID for a component type, and registers it if not already registered.
 func (w *World) componentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
+}
+
+// resourceID returns the ID for a resource type, and registers it if not already registered.
+func (w *World) resourceID(tp reflect.Type) ID {
+	return w.resources.registry.ComponentID(tp)
 }
 
 func (w *World) nextArchetype(filter Filter, index int) (int, archetypeIter, bool) {
