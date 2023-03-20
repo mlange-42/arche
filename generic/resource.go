@@ -2,7 +2,7 @@ package generic
 
 import "github.com/mlange-42/arche/ecs"
 
-// Resource provides a type-safe way to access a world resources.
+// Resource provides a type-safe way to access world resources.
 //
 // Create one with [NewResource].
 type Resource[T any] struct {
@@ -10,7 +10,8 @@ type Resource[T any] struct {
 	world *ecs.World
 }
 
-// NewResource creates a new [Resource] for a resource type.
+// NewResource creates a new [Resource] mapper for a resource type.
+// This does not add a resource to the world, but only creates a mapper for resource access!
 //
 // [Resource] provides a type-safe way to access a world resources.
 //

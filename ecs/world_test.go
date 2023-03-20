@@ -437,6 +437,9 @@ func TestWorldResources(t *testing.T) {
 	assert.Equal(t, position{1, 2}, *pos)
 
 	assert.Panics(t, func() { w.AddResource(&position{1, 2}) })
+
+	pos = GetResource[position](&w)
+	assert.Equal(t, position{1, 2}, *pos)
 }
 
 func TestRegisterComponents(t *testing.T) {
@@ -645,6 +648,22 @@ func BenchmarkGetResource(b *testing.B) {
 	var res *position
 	for i := 0; i < b.N; i++ {
 		res = w.GetResource(posID).(*position)
+	}
+
+	_ = res
+}
+
+func BenchmarkGetResourceShortcut(b *testing.B) {
+	b.StopTimer()
+
+	w := NewWorld()
+	w.AddResource(&position{1, 2})
+
+	b.StartTimer()
+
+	var res *position
+	for i := 0; i < b.N; i++ {
+		res = GetResource[position](&w)
 	}
 
 	_ = res

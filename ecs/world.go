@@ -24,6 +24,17 @@ func ResourceID[T any](w *World) ID {
 	return w.resourceID(tp)
 }
 
+// GetResource returns a pointer to the given resource type.
+//
+// Returns nil if there is no such resource.
+//
+// Uses reflection. For more efficient access, see [World.GetResource],
+// and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
+// These methods are more than 20 times faster than the GetResource function.
+func GetResource[T any](w *World) *T {
+	return w.GetResource(ResourceID[T](w)).(*T)
+}
+
 // World is the central type holding [Entity] and component data.
 type World struct {
 	config     Config
@@ -389,8 +400,13 @@ func (w *World) SetListener(listener func(e EntityEvent)) {
 
 // AddResource adds a resource to the world.
 // The resource should always be a pointer.
-func (w *World) AddResource(res any) {
-	w.resources.Add(res)
+//
+// Returns the [ID] assigned to the resource type.
+// See also [ResourceID].
+//
+// Panics if there is already a resource of the given type.
+func (w *World) AddResource(res any) ID {
+	return w.resources.Add(res)
 }
 
 // GetResource returns a pointer to the given resource type.
