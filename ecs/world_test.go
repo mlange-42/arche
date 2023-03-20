@@ -418,6 +418,20 @@ func TestWorldStats(t *testing.T) {
 	fmt.Println(stats.String())
 }
 
+func TestWorldResources(t *testing.T) {
+	w := NewWorld()
+
+	assert.False(t, HasResource[position](&w))
+	assert.Panics(t, func() { _ = GetResource[position](&w) })
+
+	w.AddResource(&position{1, 2})
+
+	assert.True(t, HasResource[position](&w))
+	pos := GetResource[position](&w)
+
+	assert.Equal(t, position{1, 2}, *pos)
+}
+
 func TestRegisterComponents(t *testing.T) {
 	world := NewWorld()
 
