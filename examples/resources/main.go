@@ -8,6 +8,7 @@ import (
 	"fmt"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/generic"
 )
 
 // TimeStep is a resource holding the model step
@@ -24,14 +25,33 @@ func main() {
 
 	// Run the simulation
 	run(&world)
+	// Run the simulation using generic access
+	runGeneric(&world)
 }
 
+// Makes use of the resource by ID access.
 func run(w *ecs.World) {
 	timeStepID := ecs.ResourceID[TimeStep](w)
 
 	for {
 		// Get the the TimeStep resource from the world
 		time := w.GetResource(timeStepID).(*TimeStep)
+
+		// Use the resource
+		time.Step++
+		fmt.Println(time.Step)
+		if time.Step >= 50 {
+			break
+		}
+	}
+}
+
+// Makes use of the resource by generic access.
+func runGeneric(w *ecs.World) {
+	mapper := generic.NewResMap[TimeStep](w)
+	for {
+		// Get the the TimeStep resource from the world
+		time := mapper.Get()
 
 		// Use the resource
 		time.Step++

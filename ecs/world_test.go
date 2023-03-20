@@ -424,7 +424,7 @@ func TestWorldResources(t *testing.T) {
 	posID := ResourceID[position](&w)
 
 	assert.False(t, w.HasResource(posID))
-	assert.Panics(t, func() { _ = w.GetResource(posID) })
+	assert.Nil(t, w.GetResource(posID))
 
 	w.AddResource(&position{1, 2})
 

@@ -29,12 +29,10 @@ func (r *resources) Add(res any) {
 }
 
 // Get returns a pointer to the resource of the given type.
+//
+// Returns nil if there is no such resource.
 func (r *resources) Get(id ID) interface{} {
-	res := r.resources[id]
-	if res != nil {
-		return res
-	}
-	panic(fmt.Sprintf("No resource for id %d", id))
+	return r.resources[id]
 }
 
 // Has returns whether the world has the given resource.
