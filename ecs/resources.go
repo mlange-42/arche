@@ -6,7 +6,7 @@ import (
 )
 
 type resources struct {
-	registry  componentRegistry
+	registry  componentRegistry[ResID]
 	resources []any
 }
 
@@ -21,7 +21,7 @@ func newResources() resources {
 // The resource should always be a pointer.
 //
 // Panics if there is already a resource of the given type.
-func (r *resources) Add(res any) ID {
+func (r *resources) Add(res any) ResID {
 	tp := reflect.TypeOf(res).Elem()
 	id := r.registry.ComponentID(tp)
 	if r.resources[id] != nil {
@@ -34,11 +34,11 @@ func (r *resources) Add(res any) ID {
 // Get returns a pointer to the resource of the given type.
 //
 // Returns nil if there is no such resource.
-func (r *resources) Get(id ID) interface{} {
+func (r *resources) Get(id ResID) interface{} {
 	return r.resources[id]
 }
 
 // Has returns whether the world has the given resource.
-func (r *resources) Has(id ID) bool {
+func (r *resources) Has(id ResID) bool {
 	return r.resources[id] != nil
 }

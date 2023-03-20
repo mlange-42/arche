@@ -6,7 +6,7 @@ import "github.com/mlange-42/arche/ecs"
 //
 // Create one with [NewResource].
 type Resource[T any] struct {
-	id    ecs.ID
+	id    ecs.ResID
 	world *ecs.World
 }
 

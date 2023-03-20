@@ -18,8 +18,8 @@ func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
-// ResourceID returns the [ID] for a resource type via generics. Registers the type if it is not already registered.
-func ResourceID[T any](w *World) ID {
+// ResourceID returns the [ResID] for a resource type via generics. Registers the type if it is not already registered.
+func ResourceID[T any](w *World) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.resourceID(tp)
 }
@@ -43,7 +43,7 @@ type World struct {
 	graph      pagedArr32[archetypeNode]
 	entityPool entityPool
 	bitPool    bitPool
-	registry   componentRegistry
+	registry   componentRegistry[ID]
 	locks      Mask
 	listener   func(e EntityEvent)
 	resources  resources
@@ -405,7 +405,7 @@ func (w *World) SetListener(listener func(e EntityEvent)) {
 // See also [ResourceID].
 //
 // Panics if there is already a resource of the given type.
-func (w *World) AddResource(res any) ID {
+func (w *World) AddResource(res any) ResID {
 	return w.resources.Add(res)
 }
 
@@ -414,14 +414,14 @@ func (w *World) AddResource(res any) ID {
 // Returns nil if there is no such resource.
 //
 // See also [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
-func (w *World) GetResource(id ID) interface{} {
+func (w *World) GetResource(id ResID) interface{} {
 	return w.resources.Get(id)
 }
 
 // HasResource returns whether the world has the given resource type.
 //
 // See also [github.com/mlange-42/arche/generic.Resource.Has] for a generic variant.
-func (w *World) HasResource(id ID) bool {
+func (w *World) HasResource(id ResID) bool {
 	return w.resources.Has(id)
 }
 
@@ -557,7 +557,7 @@ func (w *World) componentID(tp reflect.Type) ID {
 }
 
 // resourceID returns the ID for a resource type, and registers it if not already registered.
-func (w *World) resourceID(tp reflect.Type) ID {
+func (w *World) resourceID(tp reflect.Type) ResID {
 	return w.resources.registry.ComponentID(tp)
 }
 

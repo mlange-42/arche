@@ -177,7 +177,7 @@ func (a *archetype) Zero(index uintptr, id ID) {
 }
 
 // Stats generates statistics for an archetype
-func (a *archetype) Stats(reg *componentRegistry) stats.ArchetypeStats {
+func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 	ids := a.Components()
 	aCompCount := len(ids)
 	aTypes := make([]reflect.Type, aCompCount)
