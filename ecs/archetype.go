@@ -86,7 +86,7 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 	a.graphNode = node
 	a.Mask = mask
 	a.entities = storage{}
-	a.entities.Init(reflect.TypeOf((*Entity)(nil)), capacityIncrement, forStorage)
+	a.entities.Init(reflect.TypeOf(Entity{}), capacityIncrement, forStorage)
 }
 
 // GetEntity returns the entity at the given index
@@ -177,7 +177,7 @@ func (a *archetype) Zero(index uintptr, id ID) {
 }
 
 // Stats generates statistics for an archetype
-func (a *archetype) Stats(reg *componentRegistry) stats.ArchetypeStats {
+func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 	ids := a.Components()
 	aCompCount := len(ids)
 	aTypes := make([]reflect.Type, aCompCount)

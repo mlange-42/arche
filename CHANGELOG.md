@@ -2,7 +2,14 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.4.6...main)
 
-Nothing
+### Features
+
+* The World handles ECS resources, i.e. component-like global data (!132)
+* Adds generic access to world resources (!132)
+
+### Other
+
+* Adds an example for the use of resources (!132)
 
 ## [[v0.4.6]](https://github.com/mlange-42/arche/compare/v0.4.5...v0.4.6)
 

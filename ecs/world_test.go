@@ -418,6 +418,30 @@ func TestWorldStats(t *testing.T) {
 	fmt.Println(stats.String())
 }
 
+func TestWorldResources(t *testing.T) {
+	w := NewWorld()
+
+	posID := ResourceID[position](&w)
+
+	assert.False(t, w.HasResource(posID))
+	assert.Nil(t, w.GetResource(posID))
+
+	w.AddResource(&position{1, 2})
+
+	fmt.Println(w.resources.registry.Components)
+
+	assert.True(t, w.HasResource(posID))
+	pos, ok := w.GetResource(posID).(*position)
+
+	assert.True(t, ok)
+	assert.Equal(t, position{1, 2}, *pos)
+
+	assert.Panics(t, func() { w.AddResource(&position{1, 2}) })
+
+	pos = GetResource[position](&w)
+	assert.Equal(t, position{1, 2}, *pos)
+}
+
 func TestRegisterComponents(t *testing.T) {
 	world := NewWorld()
 
@@ -590,15 +614,16 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[entityIndex]()
 	printTypeSize[Mask]()
 	printTypeSize[World]()
-	printTypeSizeName[pagedArr32[archetype]]("PagedArr32")
+	printTypeSizeName[pagedArr32[archetype]]("pagedArr32")
 	printTypeSize[archetype]()
 	printTypeSize[archetypeNode]()
 	printTypeSize[storage]()
 	printTypeSize[entityPool]()
-	printTypeSize[componentRegistry]()
+	printTypeSizeName[componentRegistry[ID]]("componentRegistry")
 	printTypeSize[bitPool]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
+	printTypeSize[resources]()
 }
 
 func printTypeSize[T any]() {
@@ -609,4 +634,37 @@ func printTypeSize[T any]() {
 func printTypeSizeName[T any](name string) {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	fmt.Printf("%18s: %5d B\n", name, tp.Size())
+}
+
+func BenchmarkGetResource(b *testing.B) {
+	b.StopTimer()
+
+	w := NewWorld()
+	w.AddResource(&position{1, 2})
+	posID := ResourceID[position](&w)
+
+	b.StartTimer()
+
+	var res *position
+	for i := 0; i < b.N; i++ {
+		res = w.GetResource(posID).(*position)
+	}
+
+	_ = res
+}
+
+func BenchmarkGetResourceShortcut(b *testing.B) {
+	b.StopTimer()
+
+	w := NewWorld()
+	w.AddResource(&position{1, 2})
+
+	b.StartTimer()
+
+	var res *position
+	for i := 0; i < b.N; i++ {
+		res = GetResource[position](&w)
+	}
+
+	_ = res
 }

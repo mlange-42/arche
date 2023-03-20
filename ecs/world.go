@@ -18,6 +18,23 @@ func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
+// ResourceID returns the [ResID] for a resource type via generics. Registers the type if it is not already registered.
+func ResourceID[T any](w *World) ResID {
+	tp := reflect.TypeOf((*T)(nil)).Elem()
+	return w.resourceID(tp)
+}
+
+// GetResource returns a pointer to the given resource type.
+//
+// Returns nil if there is no such resource.
+//
+// Uses reflection. For more efficient access, see [World.GetResource],
+// and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
+// These methods are more than 20 times faster than the GetResource function.
+func GetResource[T any](w *World) *T {
+	return w.GetResource(ResourceID[T](w)).(*T)
+}
+
 // World is the central type holding [Entity] and component data.
 type World struct {
 	config     Config
@@ -26,9 +43,10 @@ type World struct {
 	graph      pagedArr32[archetypeNode]
 	entityPool entityPool
 	bitPool    bitPool
-	registry   componentRegistry
+	registry   componentRegistry[ID]
 	locks      Mask
 	listener   func(e EntityEvent)
+	resources  resources
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -62,6 +80,7 @@ func fromConfig(conf Config) World {
 		graph:      pagedArr32[archetypeNode]{},
 		locks:      Mask{},
 		listener:   nil,
+		resources:  newResources(),
 	}
 	node := w.createArchetypeNode(Mask{})
 	w.createArchetype(node, false)
@@ -379,6 +398,33 @@ func (w *World) SetListener(listener func(e EntityEvent)) {
 	w.listener = listener
 }
 
+// AddResource adds a resource to the world.
+// The resource should always be a pointer.
+//
+// Returns the [ID] assigned to the resource type.
+// See also [ResourceID].
+//
+// Panics if there is already a resource of the given type.
+func (w *World) AddResource(res any) ResID {
+	return w.resources.Add(res)
+}
+
+// GetResource returns a pointer to the given resource type.
+//
+// Returns nil if there is no such resource.
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
+func (w *World) GetResource(id ResID) interface{} {
+	return w.resources.Get(id)
+}
+
+// HasResource returns whether the world has the given resource type.
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Has] for a generic variant.
+func (w *World) HasResource(id ResID) bool {
+	return w.resources.Has(id)
+}
+
 // Stats reports statistics for inspecting the World.
 func (w *World) Stats() *stats.WorldStats {
 	entities := stats.EntityStats{
@@ -508,6 +554,11 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 // componentID returns the ID for a component type, and registers it if not already registered.
 func (w *World) componentID(tp reflect.Type) ID {
 	return w.registry.ComponentID(tp)
+}
+
+// resourceID returns the ID for a resource type, and registers it if not already registered.
+func (w *World) resourceID(tp reflect.Type) ResID {
+	return w.resources.registry.ComponentID(tp)
 }
 
 func (w *World) nextArchetype(filter Filter, index int) (int, archetypeIter, bool) {

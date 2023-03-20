@@ -8,6 +8,9 @@ type eid uint32
 // ID is the component identifier type.
 type ID = uint8
 
+// ResID is the resource identifier type.
+type ResID = uint8
+
 // Component is a component ID/pointer pair.
 //
 // It is a helper for [World.Assign] and [World.NewEntityWith].
