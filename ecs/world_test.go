@@ -624,3 +624,19 @@ func printTypeSizeName[T any](name string) {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	fmt.Printf("%18s: %5d B\n", name, tp.Size())
 }
+
+func BenchmarkGetResource(b *testing.B) {
+	b.StopTimer()
+
+	w := NewWorld()
+	w.AddResource(&position{1, 2})
+
+	b.StartTimer()
+
+	var res *position
+	for i := 0; i < b.N; i++ {
+		res = GetResource[position](&w)
+	}
+
+	_ = res
+}

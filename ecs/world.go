@@ -19,7 +19,9 @@ func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
-// GetResource returns the resource of the given type.
+// GetResource returns the resource of the given type from a [World].
+//
+// Uses reflection and a `map[reflect.Type]interface{}`. Should not be used inside [Query] iterations!
 func GetResource[T any](w *World) *T {
 	tp := reflect.TypeOf((*T)(nil))
 	res, ok := w.resources[tp]
@@ -33,7 +35,9 @@ func GetResource[T any](w *World) *T {
 	return t
 }
 
-// HasResource returns whether the model has a resource of the given type.
+// HasResource returns whether the [World] has a resource of the given type.
+//
+// Uses reflection and a `map[reflect.Type]interface{}`. Should not be used inside [Query] iterations!
 func HasResource[T any](w *World) bool {
 	tp := reflect.TypeOf((*T)(nil))
 	_, ok := w.resources[tp]
