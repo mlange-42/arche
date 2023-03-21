@@ -187,6 +187,27 @@ For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arc
 
 ## Benchmarks
 
+See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
+
+### Versus other Go ECS implementations
+
+The only serious Go ENS implementations I found are [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs),
+[Donburi](https://github.com/yohamta/donburi), [Ento](https://github.com/wwfranczyk/ento)
+and [Entitas-Go](https://github.com/Falldot/Entitas-Go).
+
+#### Position/Velocity
+
+1000 entities with `Pos{float64, float64}` and `Vel{float64, float64}`.
+9000 entities with only `Pos{float64, float64}`.
+Iterate all entities with `Pos` and `Vel`, and add `Vel` to `Pos`.
+
+<div align="center" width="100%">
+
+![Benchmark vs. Go ECSs](./benchmark/competition/pos_vel/results.svg)  
+*CPU benchmarks of Arche (left-most) vs. other Go ECS implementations.
+Left panel: query iteration (log scale), right panel: world setup and entity creation.*
+</div>
+
 ### Versus Array of Structs
 
 The plot below shows CPU time benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue) (with structs escaped to the heap).
@@ -202,10 +223,6 @@ Arche outperforms AoS and AoP, particularly with a large number of entities.
 ![Benchmark vs. AoS and AoP](./benchmark/arche/aos/results.svg)  
 *CPU benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue).*
 </div>
-
-### Versus other Go ECS implementations
-
-See the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
 
 ## Cite as
 
