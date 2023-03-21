@@ -202,8 +202,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 		if lay.itemSize == 0 {
 			continue
 		}
-		rValue := reflect.ValueOf(c.Comp)
-		src := rValue.UnsafePointer()
+		src := reflect.ValueOf(c.Comp).UnsafePointer()
 		a.copy(src, dst, lay.itemSize)
 	}
 	a.len++
@@ -213,8 +212,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 // Adds an entity at the given index. Does not extend the entity buffer.
 func (a *archetype) addEntity(entity *Entity, index uintptr) {
 	dst := unsafe.Add(a.entityPointer, entitySize*index)
-	rValue := reflect.ValueOf(entity)
-	src := rValue.UnsafePointer()
+	src := reflect.ValueOf(entity).UnsafePointer()
 	a.copy(src, dst, entitySize)
 }
 
@@ -243,21 +241,21 @@ func (a *archetype) Zero(index uintptr, id ID) {
 func (a *archetype) Remove(index uintptr) bool {
 	swapped := a.removeEntity(index)
 
-	oldIndex := a.len - 1
-	for _, id := range a.Ids {
-		lay := a.access.getStorage(id)
-		o := uintptr(oldIndex)
-		n := uintptr(index)
+	old := uintptr(a.len - 1)
 
-		if n == o || lay.itemSize == 0 {
-			continue
+	if index != old {
+		for _, id := range a.Ids {
+			lay := a.access.getStorage(id)
+
+			if lay.itemSize == 0 {
+				continue
+			}
+
+			src := unsafe.Add(lay.pointer, old*lay.itemSize)
+			dst := unsafe.Add(lay.pointer, index*lay.itemSize)
+			a.copy(src, dst, lay.itemSize)
 		}
-
-		src := unsafe.Add(lay.pointer, o*lay.itemSize)
-		dst := unsafe.Add(lay.pointer, n*lay.itemSize)
-		a.copy(src, dst, lay.itemSize)
 	}
-
 	a.len--
 
 	return swapped
@@ -266,15 +264,14 @@ func (a *archetype) Remove(index uintptr) bool {
 // removeEntity removes an entity from tne archetype.
 // Components need to be removed separately.
 func (a *archetype) removeEntity(index uintptr) bool {
-	o := uintptr(a.len - 1)
-	n := uintptr(index)
+	old := uintptr(a.len - 1)
 
-	if n == o {
+	if index == old {
 		return false
 	}
 
-	src := unsafe.Add(a.entityPointer, o*entitySize)
-	dst := unsafe.Add(a.entityPointer, n*entitySize)
+	src := unsafe.Add(a.entityPointer, old*entitySize)
+	dst := unsafe.Add(a.entityPointer, index*entitySize)
 	a.copy(src, dst, entitySize)
 
 	return true
