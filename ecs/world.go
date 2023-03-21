@@ -107,25 +107,12 @@ func fromConfig(conf Config) World {
 func (w *World) NewEntity(comps ...ID) Entity {
 	w.checkLocked()
 
-	entity := w.entityPool.Get()
-
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
 		arch = w.findOrCreateArchetype(arch, comps, nil)
 	}
 
-	idx := arch.Alloc(entity, true)
-	len := len(w.entities)
-	if int(entity.id) == len {
-		if len == cap(w.entities) {
-			old := w.entities
-			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
-			copy(w.entities, old)
-		}
-		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
-	} else {
-		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
-	}
+	entity := w.createEntity(arch, true)
 
 	if w.listener != nil {
 		w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
@@ -155,11 +142,25 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 		ids[i] = c.ID
 	}
 
-	entity := w.entityPool.Get()
 	arch := w.archetypes.Get(0)
 	arch = w.findOrCreateArchetype(arch, ids, nil)
 
-	idx := arch.Alloc(entity, false)
+	entity := w.createEntity(arch, false)
+
+	for _, c := range comps {
+		w.copyTo(entity, c.ID, c.Comp)
+	}
+
+	if w.listener != nil {
+		w.listener(EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
+	}
+	return entity
+}
+
+// createEntity creates an Entity and adds to the given archetype.
+func (w *World) createEntity(arch *archetype, zero bool) Entity {
+	entity := w.entityPool.Get()
+	idx := arch.Alloc(entity, zero)
 	len := len(w.entities)
 	if int(entity.id) == len {
 		if len == cap(w.entities) {
@@ -170,14 +171,6 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
 	} else {
 		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
-	}
-
-	for _, c := range comps {
-		w.copyTo(entity, c.ID, c.Comp)
-	}
-
-	if w.listener != nil {
-		w.listener(EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
 	}
 	return entity
 }
