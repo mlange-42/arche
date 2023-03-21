@@ -29,8 +29,7 @@ func TestArchetype(t *testing.T) {
 	)
 
 	assert.Equal(t, 2, int(arch.entities.Len()))
-	assert.Equal(t, 2, int(arch.components[0].Len()))
-	assert.Equal(t, 2, int(arch.components[1].Len()))
+	assert.Equal(t, 2, int(arch.Len()))
 
 	e0 := arch.GetEntity(0)
 	e1 := arch.GetEntity(1)
@@ -51,8 +50,7 @@ func TestArchetype(t *testing.T) {
 
 	arch.Remove(0)
 	assert.Equal(t, 1, int(arch.entities.Len()))
-	assert.Equal(t, 1, int(arch.components[0].Len()))
-	assert.Equal(t, 1, int(arch.components[1].Len()))
+	assert.Equal(t, 1, int(arch.Len()))
 
 	pos0 = (*position)(arch.Get(0, ID(0)))
 	rot0 = (*rotation)(arch.Get(0, ID(1)))

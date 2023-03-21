@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"math"
 	"reflect"
 	"unsafe"
 
@@ -50,14 +51,23 @@ type archetypes = pagedArr32[archetype]
 
 // archetype represents an ECS archetype
 type archetype struct {
-	Mask        Mask
-	Ids         []ID
-	references  []*storage
-	entities    storage
-	components  []storage
-	graphNode   *archetypeNode
-	basePointer unsafe.Pointer
-	storageSize uintptr
+	Mask              Mask
+	Ids               []ID
+	buffers           []reflect.Value
+	layouts           []layout
+	entities          storage
+	graphNode         *archetypeNode
+	basePointer       unsafe.Pointer
+	layoutSize        uintptr
+	len               uint32
+	cap               uint32
+	capacityIncrement uint32
+}
+
+type layout struct {
+	pointer  unsafe.Pointer
+	itemSize uintptr
+	index    uint32
 }
 
 // Init initializes an archetype
@@ -66,8 +76,14 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 	if len(components) > 0 {
 		a.Ids = make([]ID, len(components))
 	}
-	a.components = make([]storage, len(components))
-	a.references = make([]*storage, MaskTotalBits)
+
+	a.buffers = make([]reflect.Value, len(components))
+	a.layouts = make([]layout, MaskTotalBits)
+
+	cap := 1
+	if forStorage {
+		cap = capacityIncrement
+	}
 
 	prev := -1
 	for i, c := range components {
@@ -75,20 +91,30 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 			panic("component arguments must be sorted by ID")
 		}
 		prev = int(c.ID)
-
 		mask.Set(c.ID, true)
+
+		size, align := c.Type.Size(), uintptr(c.Type.Align())
+		size = (size + (align - 1)) / align * align
+
 		a.Ids[i] = c.ID
-		a.components[i] = storage{}
-		a.components[i].Init(c.Type, capacityIncrement, forStorage)
-		a.references[c.ID] = &a.components[i]
+		a.buffers[i] = reflect.New(reflect.ArrayOf(cap, c.Type)).Elem()
+		a.layouts[c.ID] = layout{
+			a.buffers[i].Addr().UnsafePointer(),
+			size,
+			uint32(i),
+		}
 	}
-	a.basePointer = unsafe.Pointer(&a.references[0])
-	a.storageSize = unsafe.Sizeof(a.references[0])
+	a.basePointer = unsafe.Pointer(&a.layouts[0])
+	a.layoutSize = unsafe.Sizeof(a.layouts[0])
 
 	a.graphNode = node
 	a.Mask = mask
 	a.entities = storage{}
 	a.entities.Init(reflect.TypeOf(Entity{}), capacityIncrement, forStorage)
+
+	a.capacityIncrement = uint32(capacityIncrement)
+	a.len = 0
+	a.cap = uint32(cap)
 }
 
 // GetEntity returns the entity at the given index
@@ -98,27 +124,44 @@ func (a *archetype) GetEntity(index uintptr) Entity {
 
 // Get returns the component with the given ID at the given index
 func (a *archetype) Get(index uintptr, id ID) unsafe.Pointer {
-	return a.getStorage(id).Get(index)
+	lay := a.getStorage(id)
+	if lay.pointer == nil {
+		return nil
+	}
+	return unsafe.Add(lay.pointer, lay.itemSize*index)
 }
 
-func (a *archetype) getStorage(id ID) *storage {
-	return *(**storage)(unsafe.Add(a.basePointer, a.storageSize*uintptr(id)))
+func (a *archetype) getStorage(id ID) *layout {
+	return (*layout)(unsafe.Add(a.basePointer, a.layoutSize*uintptr(id)))
 }
 
 // Add adds an entity with zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
 	idx := uintptr(a.entities.Add(&entity))
-	len := uintptr(len(a.components))
-
-	var i uintptr
-	for i = 0; i < len; i++ {
-		comp := &a.components[i]
-		idx := comp.Alloc()
-		if zero {
-			comp.Zero(idx)
-		}
+	a.extend()
+	if zero {
+		a.ZeroAll(idx)
 	}
+	a.len++
 	return idx
+}
+
+func (a *archetype) extend() {
+	if a.cap > a.len {
+		return
+	}
+	a.cap = a.capacityIncrement * ((a.cap + a.capacityIncrement) / a.capacityIncrement)
+
+	for _, id := range a.Ids {
+		lay := a.getStorage(id)
+		if lay.itemSize == 0 {
+			continue
+		}
+		old := a.buffers[lay.index]
+		a.buffers[lay.index] = reflect.New(reflect.ArrayOf(int(a.cap), old.Type().Elem())).Elem()
+		lay.pointer = a.buffers[lay.index].Addr().UnsafePointer()
+		reflect.Copy(a.buffers[lay.index], old)
+	}
 }
 
 // Add adds an entity with components to the archetype
@@ -127,19 +170,64 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 		panic("Invalid number of components")
 	}
 	idx := a.entities.Add(&entity)
+
+	a.extend()
+	a.len++
 	for _, c := range components {
-		a.getStorage(c.ID).Add(c.Comp)
+		lay := a.getStorage(c.ID)
+		dst := a.Get(uintptr(idx), c.ID)
+		if lay.itemSize == 0 {
+			continue
+		}
+		rValue := reflect.ValueOf(c.Comp)
+		src := rValue.UnsafePointer()
+		a.copy(src, dst, lay.itemSize)
 	}
 	return idx
+}
+
+// ZeroAll resets a block of storage in all buffers.
+func (a *archetype) ZeroAll(index uintptr) {
+	for _, id := range a.Ids {
+		a.Zero(index, id)
+	}
+}
+
+// ZeroAll resets a block of storage in one buffer.
+func (a *archetype) Zero(index uintptr, id ID) {
+	lay := a.getStorage(id)
+	if lay.itemSize == 0 {
+		return
+	}
+	dst := unsafe.Add(lay.pointer, index*lay.itemSize)
+
+	for i := uintptr(0); i < lay.itemSize; i++ {
+		*(*byte)(dst) = 0
+		dst = unsafe.Add(dst, 1)
+	}
 }
 
 // Remove removes an entity from the archetype
 func (a *archetype) Remove(index uintptr) bool {
 	swapped := a.entities.Remove(index)
-	len := len(a.components)
-	for i := 0; i < len; i++ {
-		a.components[i].Remove(index)
+
+	oldIndex := a.len - 1
+	for _, id := range a.Ids {
+		lay := a.getStorage(id)
+		o := uintptr(oldIndex)
+		n := uintptr(index)
+
+		if n == o || lay.itemSize == 0 {
+			continue
+		}
+
+		src := unsafe.Add(lay.pointer, o*lay.itemSize)
+		dst := unsafe.Add(lay.pointer, n*lay.itemSize)
+		a.copy(src, dst, lay.itemSize)
 	}
+
+	a.len--
+
 	return swapped
 }
 
@@ -150,7 +238,7 @@ func (a *archetype) Components() []ID {
 
 // HasComponent returns whether the archetype contains the given component ID
 func (a *archetype) HasComponent(id ID) bool {
-	return a.getStorage(id) != nil
+	return a.getStorage(id).pointer != nil
 }
 
 // Len reports the number of entities in the archetype
@@ -165,17 +253,28 @@ func (a *archetype) Cap() uint32 {
 
 // Set overwrites a component with the data behind the given pointer
 func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
-	return a.getStorage(id).Set(index, comp)
+	lay := a.getStorage(id)
+	dst := a.Get(index, id)
+	if lay.itemSize == 0 {
+		return dst
+	}
+	rValue := reflect.ValueOf(comp)
+
+	src := rValue.UnsafePointer()
+	a.copy(src, dst, lay.itemSize)
+	return dst
 }
 
 // SetPointer overwrites a component with the data behind the given pointer
 func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe.Pointer {
-	return a.getStorage(id).SetPointer(index, comp)
-}
+	lay := a.getStorage(id)
+	dst := a.Get(index, id)
+	if lay.itemSize == 0 {
+		return dst
+	}
 
-// Zero resets th memory at the given position
-func (a *archetype) Zero(index uintptr, id ID) {
-	a.getStorage(id).Zero(index)
+	a.copy(comp, dst, lay.itemSize)
+	return dst
 }
 
 // Stats generates statistics for an archetype
@@ -189,9 +288,9 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 
 	cap := int(a.Cap())
 	memPerEntity := 0
-	for i := 0; i < len(a.components); i++ {
-		comp := &a.components[i]
-		memPerEntity += int(comp.itemSize)
+	for _, id := range a.Ids {
+		lay := a.getStorage(id)
+		memPerEntity += int(lay.itemSize)
 	}
 	memory := cap * (int(entitySize) + memPerEntity)
 
@@ -204,4 +303,11 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 		Memory:          memory,
 		MemoryPerEntity: memPerEntity,
 	}
+}
+
+// copy from one pointer to another.
+func (a *archetype) copy(src, dst unsafe.Pointer, itemSize uintptr) {
+	dstSlice := (*[math.MaxInt32]byte)(dst)[:itemSize:itemSize]
+	srcSlice := (*[math.MaxInt32]byte)(src)[:itemSize:itemSize]
+	copy(dstSlice, srcSlice)
 }
