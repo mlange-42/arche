@@ -154,6 +154,28 @@ func TestStorageZeroSize(t *testing.T) {
 	assert.NotNil(t, s)
 }
 
+func TestNilStorage(t *testing.T) {
+	s := (*storage)(nil)
+	assert.True(t, s.Get(0) == nil)
+}
+
+func TestZeroStorage(t *testing.T) {
+	s := storage{}
+	s.Init(reflect.TypeOf(testStruct0{}), 32, true)
+
+	s.Alloc()
+	s.Zero(0)
+
+	st := (*testStruct0)(s.Get(0))
+	assert.Equal(t, 0, int(st.Val))
+
+	s = storage{}
+	s.Init(reflect.TypeOf(label{}), 32, true)
+
+	s.Alloc()
+	s.Zero(0)
+}
+
 func BenchmarkIterStorage_1000(b *testing.B) {
 	b.StopTimer()
 	ref := testStruct0{}

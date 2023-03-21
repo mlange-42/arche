@@ -73,6 +73,11 @@ func TestNewArchetype(t *testing.T) {
 	}
 	arch := archetype{}
 	arch.Init(nil, 32, true, comps...)
+	assert.Equal(t, 32, int(arch.Cap()))
+
+	arch = archetype{}
+	arch.Init(nil, 32, false, comps...)
+	assert.Equal(t, 1, int(arch.Cap()))
 
 	comps = []componentType{
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
@@ -82,6 +87,47 @@ func TestNewArchetype(t *testing.T) {
 		arch := archetype{}
 		arch.Init(nil, 32, true, comps...)
 	})
+}
+
+func TestArchetypeAddGetSet(t *testing.T) {
+	a := archetype{}
+
+	comps := []componentType{
+		{ID: 0, Type: reflect.TypeOf(testStruct0{})},
+		{ID: 1, Type: reflect.TypeOf(label{})},
+	}
+	a.Init(nil, 1, true, comps...)
+
+	assert.Equal(t, 1, int(a.Cap()))
+	assert.Equal(t, 0, int(a.Len()))
+
+	a.Add(Entity{1, 0}, Component{ID: 0, Comp: &testStruct0{100}}, Component{ID: 1, Comp: &label{}})
+	a.Add(Entity{2, 0}, Component{ID: 0, Comp: &testStruct0{200}}, Component{ID: 1, Comp: &label{}})
+
+	ts := (*testStruct0)(a.Get(0, 0))
+	assert.Equal(t, 100, int(ts.Val))
+
+	a.Set(1, 0, &testStruct0{200})
+	a.Set(1, 1, &label{})
+
+	_ = (*testStruct0)(a.Get(1, 0))
+	_ = (*label)(a.Get(1, 1))
+}
+
+func BenchmarkArchetypeAccess1_1000(b *testing.B) {
+	BenchmarkArchetypeAccess_1000(b)
+}
+
+func BenchmarkArchetypeAccess2_1000(b *testing.B) {
+	BenchmarkArchetypeAccess_1000(b)
+}
+
+func BenchmarkArchetypeAccess3_1000(b *testing.B) {
+	BenchmarkArchetypeAccess_1000(b)
+}
+
+func BenchmarkArchetypeAccess4_1000(b *testing.B) {
+	BenchmarkArchetypeAccess_1000(b)
 }
 
 func BenchmarkArchetypeAccess_1000(b *testing.B) {
@@ -99,10 +145,11 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		len := int(arch.Len())
+		len := uintptr(arch.Len())
 		id := ID(0)
-		for j := 0; j < len; j++ {
-			pos := (*testStruct0)(arch.Get(uintptr(j), id))
+		var j uintptr
+		for j = 0; j < len; j++ {
+			pos := (*testStruct0)(arch.Get(j, id))
 			pos.Val = 1
 		}
 	}

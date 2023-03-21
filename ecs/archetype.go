@@ -55,6 +55,7 @@ type archetype struct {
 	Ids               []ID
 	buffers           []reflect.Value
 	layouts           []layout
+	indices           []uint32
 	entities          storage
 	graphNode         *archetypeNode
 	basePointer       unsafe.Pointer
@@ -64,10 +65,18 @@ type archetype struct {
 	capacityIncrement uint32
 }
 
+// layout specification of a component column.
 type layout struct {
 	pointer  unsafe.Pointer
 	itemSize uintptr
-	index    uint32
+}
+
+// Get returns a pointer to the item at the given index.
+func (l *layout) Get(index uintptr) unsafe.Pointer {
+	if l.pointer == nil {
+		return nil
+	}
+	return unsafe.Add(l.pointer, l.itemSize*index)
 }
 
 // Init initializes an archetype
@@ -79,6 +88,7 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 
 	a.buffers = make([]reflect.Value, len(components))
 	a.layouts = make([]layout, MaskTotalBits)
+	a.indices = make([]uint32, MaskTotalBits)
 
 	cap := 1
 	if forStorage {
@@ -101,8 +111,8 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 		a.layouts[c.ID] = layout{
 			a.buffers[i].Addr().UnsafePointer(),
 			size,
-			uint32(i),
 		}
+		a.indices[c.ID] = uint32(i)
 	}
 	a.basePointer = unsafe.Pointer(&a.layouts[0])
 	a.layoutSize = unsafe.Sizeof(a.layouts[0])
@@ -124,11 +134,7 @@ func (a *archetype) GetEntity(index uintptr) Entity {
 
 // Get returns the component with the given ID at the given index
 func (a *archetype) Get(index uintptr, id ID) unsafe.Pointer {
-	lay := a.getStorage(id)
-	if lay.pointer == nil {
-		return nil
-	}
-	return unsafe.Add(lay.pointer, lay.itemSize*index)
+	return a.getStorage(id).Get(index)
 }
 
 func (a *archetype) getStorage(id ID) *layout {
@@ -157,10 +163,11 @@ func (a *archetype) extend() {
 		if lay.itemSize == 0 {
 			continue
 		}
-		old := a.buffers[lay.index]
-		a.buffers[lay.index] = reflect.New(reflect.ArrayOf(int(a.cap), old.Type().Elem())).Elem()
-		lay.pointer = a.buffers[lay.index].Addr().UnsafePointer()
-		reflect.Copy(a.buffers[lay.index], old)
+		index := a.indices[id]
+		old := a.buffers[index]
+		a.buffers[index] = reflect.New(reflect.ArrayOf(int(a.cap), old.Type().Elem())).Elem()
+		lay.pointer = a.buffers[index].Addr().UnsafePointer()
+		reflect.Copy(a.buffers[index], old)
 	}
 }
 
