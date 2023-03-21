@@ -8,6 +8,8 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
+var layoutSize = unsafe.Sizeof(layout{})
+
 // archetypeNode is a node in the archetype graph
 type archetypeNode struct {
 	mask      Mask
@@ -56,7 +58,8 @@ type archetype struct {
 	buffers           []reflect.Value
 	layouts           []layout
 	indices           []uint32
-	entities          storage
+	entityBuffer      reflect.Value
+	entityPointer     unsafe.Pointer
 	graphNode         *archetypeNode
 	len               uint32
 	cap               uint32
@@ -66,7 +69,6 @@ type archetype struct {
 
 type archetypeAccess struct {
 	basePointer unsafe.Pointer
-	layoutSize  uintptr
 }
 
 // layout specification of a component column.
@@ -118,12 +120,11 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 		}
 		a.indices[c.ID] = uint32(i)
 	}
-	a.entities = storage{}
-	a.entities.Init(reflect.TypeOf(Entity{}), capacityIncrement, forStorage)
+	a.entityBuffer = reflect.New(reflect.ArrayOf(cap, entityType)).Elem()
+	a.entityPointer = a.entityBuffer.Addr().UnsafePointer()
 
 	a.access = archetypeAccess{
 		basePointer: unsafe.Pointer(&a.layouts[0]),
-		layoutSize:  unsafe.Sizeof(a.layouts[0]),
 	}
 
 	a.graphNode = node
@@ -136,7 +137,7 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 
 // GetEntity returns the entity at the given index
 func (a *archetype) GetEntity(index uintptr) Entity {
-	return *(*Entity)(a.entities.Get(index))
+	return *(*Entity)(unsafe.Add(a.entityPointer, entitySize*index))
 }
 
 // Get returns the component with the given ID at the given index
@@ -145,13 +146,14 @@ func (a *archetypeAccess) Get(index uintptr, id ID) unsafe.Pointer {
 }
 
 func (a *archetypeAccess) getStorage(id ID) *layout {
-	return (*layout)(unsafe.Add(a.basePointer, a.layoutSize*uintptr(id)))
+	return (*layout)(unsafe.Add(a.basePointer, layoutSize*uintptr(id)))
 }
 
 // Add adds an entity with zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
-	idx := uintptr(a.entities.Add(&entity))
+	idx := uintptr(a.len)
 	a.extend()
+	a.addEntity(&entity, idx)
 	if zero {
 		a.ZeroAll(idx)
 	}
@@ -164,6 +166,11 @@ func (a *archetype) extend() {
 		return
 	}
 	a.cap = a.capacityIncrement * ((a.cap + a.capacityIncrement) / a.capacityIncrement)
+
+	old := a.entityBuffer
+	a.entityBuffer = reflect.New(reflect.ArrayOf(int(a.cap), entityType)).Elem()
+	a.entityPointer = a.entityBuffer.Addr().UnsafePointer()
+	reflect.Copy(a.entityBuffer, old)
 
 	for _, id := range a.Ids {
 		lay := a.access.getStorage(id)
@@ -179,14 +186,14 @@ func (a *archetype) extend() {
 }
 
 // Add adds an entity with components to the archetype
-func (a *archetype) Add(entity Entity, components ...Component) uint32 {
+func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 	if len(components) != len(a.Ids) {
 		panic("Invalid number of components")
 	}
-	idx := a.entities.Add(&entity)
+	idx := uintptr(a.len)
 
 	a.extend()
-	a.len++
+	a.addEntity(&entity, idx)
 	for _, c := range components {
 		lay := a.access.getStorage(c.ID)
 		dst := a.access.Get(uintptr(idx), c.ID)
@@ -197,7 +204,15 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 		src := rValue.UnsafePointer()
 		a.copy(src, dst, lay.itemSize)
 	}
+	a.len++
 	return idx
+}
+
+func (a *archetype) addEntity(entity *Entity, index uintptr) {
+	dst := unsafe.Add(a.entityPointer, entitySize*index)
+	rValue := reflect.ValueOf(entity)
+	src := rValue.UnsafePointer()
+	a.copy(src, dst, entitySize)
 }
 
 // ZeroAll resets a block of storage in all buffers.
@@ -223,7 +238,7 @@ func (a *archetype) Zero(index uintptr, id ID) {
 
 // Remove removes an entity from the archetype
 func (a *archetype) Remove(index uintptr) bool {
-	swapped := a.entities.Remove(index)
+	swapped := a.removeEntity(index)
 
 	oldIndex := a.len - 1
 	for _, id := range a.Ids {
@@ -243,6 +258,21 @@ func (a *archetype) Remove(index uintptr) bool {
 	a.len--
 
 	return swapped
+}
+
+func (a *archetype) removeEntity(index uintptr) bool {
+	o := uintptr(a.len - 1)
+	n := uintptr(index)
+
+	if n == o {
+		return false
+	}
+
+	src := unsafe.Add(a.entityPointer, o*entitySize)
+	dst := unsafe.Add(a.entityPointer, n*entitySize)
+	a.copy(src, dst, entitySize)
+
+	return true
 }
 
 // Components returns the component IDs for this archetype

@@ -2,8 +2,12 @@ package ecs
 
 import "reflect"
 
+// Reflection type of an entity
+
+var entityType = reflect.TypeOf(Entity{})
+
 // Size of an Entity in memory.
-var entitySize = reflect.TypeOf(Entity{}).Size()
+var entitySize = entityType.Size()
 
 // Size of an entitySize in memory.
 var entityIndexSize = reflect.TypeOf(entityIndex{}).Size()

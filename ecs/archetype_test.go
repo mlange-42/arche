@@ -28,7 +28,6 @@ func TestArchetype(t *testing.T) {
 		Component{ID: 1, Comp: &rotation{6}},
 	)
 
-	assert.Equal(t, 2, int(arch.entities.Len()))
 	assert.Equal(t, 2, int(arch.Len()))
 
 	e0 := arch.GetEntity(0)
@@ -49,7 +48,6 @@ func TestArchetype(t *testing.T) {
 	assert.Equal(t, 6, rot1.Angle)
 
 	arch.Remove(0)
-	assert.Equal(t, 1, int(arch.entities.Len()))
 	assert.Equal(t, 1, int(arch.Len()))
 
 	pos0 = (*position)(arch.access.Get(0, ID(0)))
@@ -114,23 +112,7 @@ func TestArchetypeAddGetSet(t *testing.T) {
 	_ = (*label)(a.access.Get(1, 1))
 }
 
-func BenchmarkArchetypeAccess1_1000(b *testing.B) {
-	BenchmarkArchetypeAccess_1000(b)
-}
-
-func BenchmarkArchetypeAccess2_1000(b *testing.B) {
-	BenchmarkArchetypeAccess_1000(b)
-}
-
-func BenchmarkArchetypeAccess3_1000(b *testing.B) {
-	BenchmarkArchetypeAccess_1000(b)
-}
-
-func BenchmarkArchetypeAccess4_1000(b *testing.B) {
-	BenchmarkArchetypeAccess_1000(b)
-}
-
-func BenchmarkArchetypeAccess_1000(b *testing.B) {
+func BenchmarkIterArchetype_1000(b *testing.B) {
 	b.StopTimer()
 	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(testStruct0{})},
@@ -150,7 +132,41 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 		var j uintptr
 		for j = 0; j < len; j++ {
 			pos := (*testStruct0)(arch.access.Get(j, id))
-			pos.Val = 1
+			pos.Val++
+		}
+	}
+}
+
+func BenchmarkIterSlice_1000(b *testing.B) {
+	b.StopTimer()
+	s := []testStruct0{}
+	for i := 0; i < 1000; i++ {
+		s = append(s, testStruct0{})
+	}
+	assert.Equal(b, 1000, len(s))
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < len(s); j++ {
+			a := s[j]
+			a.Val++
+		}
+	}
+}
+
+func BenchmarkIterSliceInterface_1000(b *testing.B) {
+	b.StopTimer()
+	s := []interface{}{}
+	for i := 0; i < 1000; i++ {
+		s = append(s, testStruct0{})
+	}
+	assert.Equal(b, 1000, len(s))
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		for j := 0; j < len(s); j++ {
+			a := s[j].(testStruct0)
+			a.Val++
 		}
 	}
 }

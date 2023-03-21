@@ -610,13 +610,13 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[archetype]()
 	printTypeSize[archetypeAccess]()
 	printTypeSize[archetypeNode]()
-	printTypeSize[storage]()
 	printTypeSize[entityPool]()
 	printTypeSizeName[componentRegistry[ID]]("componentRegistry")
 	printTypeSize[bitPool]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
 	printTypeSize[resources]()
+	printTypeSizeName[reflect.Value]("reflect.Value")
 }
 
 func printTypeSize[T any]() {
