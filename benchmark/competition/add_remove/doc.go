@@ -10,6 +10,8 @@ package addremove
 
 const nEntities = 1000
 
+//go:generate go run github.com/Falldot/Entitas-Go
+
 // Position component
 type Position struct {
 	X float64

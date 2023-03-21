@@ -12,6 +12,8 @@ package posvel
 const nPos = 9000
 const nPosVel = 1000
 
+//go:generate go run github.com/Falldot/Entitas-Go
+
 // Position component
 type Position struct {
 	X float64
