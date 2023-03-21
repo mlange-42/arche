@@ -385,21 +385,6 @@ func TestWorldLock(t *testing.T) {
 	assert.Panics(t, func() { world.Remove(entity, posID) })
 }
 
-func TestWorldNextArchetype(t *testing.T) {
-	world := NewWorld()
-
-	posID := ComponentID[position](&world)
-
-	var entity Entity
-	for i := 0; i < 10; i++ {
-		entity = world.NewEntity()
-		world.Add(entity, posID)
-	}
-
-	world.nextArchetype(All(posID), 0)
-	assert.Panics(t, func() { world.nextArchetype(All(posID), 2) })
-}
-
 func TestWorldStats(t *testing.T) {
 	w := NewWorld()
 

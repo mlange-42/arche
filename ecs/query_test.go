@@ -230,3 +230,21 @@ func TestQueryClosed(t *testing.T) {
 	assert.Panics(t, func() { q.Get(posID) })
 	assert.Panics(t, func() { q.Next() })
 }
+
+func TestQueryNextArchetype(t *testing.T) {
+	world := NewWorld()
+
+	posID := ComponentID[position](&world)
+
+	var entity Entity
+	for i := 0; i < 10; i++ {
+		entity = world.NewEntity()
+		world.Add(entity, posID)
+	}
+
+	query := world.Query(All(posID))
+
+	assert.True(t, query.nextArchetype())
+	assert.False(t, query.nextArchetype())
+	assert.Panics(t, func() { query.nextArchetype() })
+}

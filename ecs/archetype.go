@@ -46,6 +46,8 @@ func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
 	a.toRemove[id] = to
 }
 
+type archetypes = pagedArr32[archetype]
+
 // archetype represents an ECS archetype
 type archetype struct {
 	Mask        Mask

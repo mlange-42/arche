@@ -49,7 +49,7 @@ func AddResource[T any](w *World, res *T) {
 type World struct {
 	config     Config
 	entities   []entityIndex
-	archetypes pagedArr32[archetype]
+	archetypes archetypes
 	graph      pagedArr32[archetypeNode]
 	entityPool entityPool
 	bitPool    bitPool
@@ -86,7 +86,7 @@ func fromConfig(conf Config) World {
 		entityPool: newEntityPool(conf.CapacityIncrement),
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
-		archetypes: pagedArr32[archetype]{},
+		archetypes: archetypes{},
 		graph:      pagedArr32[archetypeNode]{},
 		locks:      Mask{},
 		listener:   nil,
@@ -228,7 +228,7 @@ func (w *World) RemoveEntity(entity Entity) {
 func (w *World) Query(filter Filter) Query {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newQuery(w, filter, lock)
+	return newQuery(w, filter, lock, &w.archetypes)
 }
 
 // Alive reports whether an entity is still alive.
@@ -580,20 +580,6 @@ func (w *World) resourceID(tp reflect.Type) ResID {
 	return w.resources.registry.ComponentID(tp)
 }
 
-func (w *World) nextArchetype(filter Filter, index int) (int, archetypeIter, bool) {
-	len := int(w.archetypes.Len())
-	if index >= len {
-		panic("exceeded end of query")
-	}
-	for i := index + 1; i < len; i++ {
-		a := w.archetypes.Get(i)
-		if a.Len() > 0 && filter.Matches(a.Mask) {
-			return i, newArchetypeIter(a), true
-		}
-	}
-	return len, archetypeIter{}, false
-}
-
 // Counts the entities matching the filter
 func (w *World) count(filter Filter) int {
 	len := int(w.archetypes.Len())
@@ -608,7 +594,7 @@ func (w *World) count(filter Filter) int {
 }
 
 // closeQuery closes a query and unlocks the world
-func (w *World) closeQuery(query *queryIter) {
+func (w *World) closeQuery(query *Query) {
 	l := query.lockBit
 	if !w.locks.Get(ID(l)) {
 		panic("unbalanced query unlock")
