@@ -9,6 +9,7 @@ type pagedArr32[T any] struct {
 	lenLast int
 }
 
+// Add adds a value to the paged array.
 func (p *pagedArr32[T]) Add(value T) {
 	if p.len == 0 || p.lenLast == fixedPageSize {
 		p.pages = append(p.pages, [fixedPageSize]T{})
@@ -19,10 +20,12 @@ func (p *pagedArr32[T]) Add(value T) {
 	p.lenLast++
 }
 
+// Get returns the value at the given index.
 func (p *pagedArr32[T]) Get(index int) *T {
 	return &p.pages[index/fixedPageSize][index%fixedPageSize]
 }
 
+// Len returns the current number of items in the paged array.
 func (p *pagedArr32[T]) Len() int {
 	return p.len
 }

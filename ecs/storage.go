@@ -18,8 +18,7 @@ type storage struct {
 
 // Init initializes a storage
 func (s *storage) Init(tp reflect.Type, increment int, forStorage bool) {
-	size := tp.Size()
-	align := uintptr(tp.Align())
+	size, align := tp.Size(), uintptr(tp.Align())
 	size = (size + (align - 1)) / align * align
 
 	cap := 1
@@ -63,10 +62,12 @@ func (s *storage) AddPointer(value unsafe.Pointer) (index uint32) {
 func (s *storage) Alloc() (index uintptr) {
 	s.extend()
 	s.len++
-	//s.Zero(s.len - 1)
 	return uintptr(s.len - 1)
 }
 
+// extend the storage's capacity by capacityIncrement.
+//
+// Extends to a multiple of capacityIncrement.
 func (s *storage) extend() {
 	if s.cap > s.len || s.itemSize == 0 {
 		return
@@ -89,22 +90,15 @@ func (s *storage) Remove(index uintptr) bool {
 		return false
 	}
 
-	// TODO shrink the underlying data arrays?
-	size := s.itemSize
-
 	src := unsafe.Add(s.bufferAddress, o*s.itemSize)
 	dst := unsafe.Add(s.bufferAddress, n*s.itemSize)
-
-	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
-	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
-
-	copy(dstSlice, srcSlice)
+	s.copy(src, dst, s.itemSize)
 
 	s.len--
 	return true
 }
 
-// Set sets the storage at the given index
+// Set sets the storage at the given index.
 func (s *storage) Set(index uintptr, value interface{}) unsafe.Pointer {
 	dst := s.Get(index)
 
@@ -113,30 +107,20 @@ func (s *storage) Set(index uintptr, value interface{}) unsafe.Pointer {
 	}
 	rValue := reflect.ValueOf(value)
 
-	var src unsafe.Pointer
-	size := s.itemSize
+	src := rValue.UnsafePointer()
+	s.copy(src, dst, s.itemSize)
 
-	src = rValue.UnsafePointer()
-
-	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
-	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
-
-	copy(dstSlice, srcSlice)
 	return dst
 }
 
+// SetPointer sets the storage at the given index from the data behind an unsafe pointer.
 func (s *storage) SetPointer(index uintptr, value unsafe.Pointer) unsafe.Pointer {
 	dst := s.Get(index)
 	if s.itemSize == 0 {
 		return dst
 	}
 
-	size := s.itemSize
-
-	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
-	srcSlice := (*[math.MaxInt32]byte)(value)[:size:size]
-
-	copy(dstSlice, srcSlice)
+	s.copy(value, dst, s.itemSize)
 
 	return dst
 }
@@ -163,6 +147,13 @@ func (s *storage) Len() uint32 {
 // Cap returns the capacity of the storage
 func (s *storage) Cap() uint32 {
 	return s.cap
+}
+
+// copy from one pointer to another.
+func (s *storage) copy(src, dst unsafe.Pointer, itemSize uintptr) {
+	dstSlice := (*[math.MaxInt32]byte)(dst)[:itemSize:itemSize]
+	srcSlice := (*[math.MaxInt32]byte)(src)[:itemSize:itemSize]
+	copy(dstSlice, srcSlice)
 }
 
 // toSlice converts the content of a storage to a slice of structs

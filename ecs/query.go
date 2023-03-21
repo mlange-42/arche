@@ -24,8 +24,7 @@ type MaskFilter struct {
 
 // Matches matches a filter against a mask.
 func (f *MaskFilter) Matches(bits Mask) bool {
-	return bits.Contains(f.Include) &&
-		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
+	return bits.Contains(f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
 // Query is an iterator to iterate entities, filtered by a [Filter].
@@ -36,20 +35,24 @@ func (f *MaskFilter) Matches(bits Mask) bool {
 // [github.com/mlange-42/arche/generic.Query2], etc.
 // For advanced filtering, see package [github.com/mlange-42/arche/filter]
 type Query struct {
-	queryIter
-	filter Filter
+	filter     Filter
+	world      *World
+	archetypes *archetypes
+	archetype  archetypeIter
+	index      int
+	lockBit    uint8
+	count      int
 }
 
 // newQuery creates a new Filter
-func newQuery(world *World, filter Filter, lockBit uint8) Query {
+func newQuery(world *World, filter Filter, lockBit uint8, archetypes *archetypes) Query {
 	return Query{
-		queryIter: queryIter{
-			world:   world,
-			index:   -1,
-			lockBit: lockBit,
-			count:   -1,
-		},
-		filter: filter,
+		filter:     filter,
+		world:      world,
+		archetypes: archetypes,
+		index:      -1,
+		lockBit:    lockBit,
+		count:      -1,
 	}
 }
 
@@ -98,44 +101,25 @@ func (q *Query) Count() int {
 	return q.count
 }
 
-func (q *Query) nextArchetype() bool {
-	index, archetype, ok := q.world.nextArchetype(q.filter, q.index)
-	q.index = index
-	if ok {
-		q.archetype = archetype
-		return true
-	}
-	q.world.closeQuery(&q.queryIter)
-	return false
-}
-
-type queryIter struct {
-	world     *World
-	archetype archetypeIter
-	index     int
-	lockBit   uint8
-	count     int
-}
-
 // Has returns whether the current [Entity] has the given component.
-func (q *queryIter) Has(comp ID) bool {
+func (q *Query) Has(comp ID) bool {
 	return q.archetype.Has(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's current [Entity].
-func (q *queryIter) Get(comp ID) unsafe.Pointer {
+func (q *Query) Get(comp ID) unsafe.Pointer {
 	return q.archetype.Get(comp)
 }
 
 // Entity returns the [Entity] at the iterator's position
-func (q *queryIter) Entity() Entity {
+func (q *Query) Entity() Entity {
 	return q.archetype.Entity()
 }
 
 // Mask returns the archetype [BitMask] for the [Entity] at the iterator's current position.
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
-func (q *queryIter) Mask() Mask {
+func (q *Query) Mask() Mask {
 	return q.archetype.Archetype.Mask
 }
 
@@ -143,16 +127,34 @@ func (q *queryIter) Mask() Mask {
 //
 // Automatically called when iteration finishes.
 // Needs to be called only if breaking out of the query iteration.
-func (q *queryIter) Close() {
+func (q *Query) Close() {
 	q.world.closeQuery(q)
 }
 
+// nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
+func (q *Query) nextArchetype() bool {
+	len := int(q.archetypes.Len())
+	for i := q.index + 1; i < len; i++ {
+		a := q.archetypes.Get(i)
+		if a.Len() > 0 && q.filter.Matches(a.Mask) {
+			q.index = i
+			q.archetype = newArchetypeIter(a)
+			return true
+		}
+	}
+	q.index = len
+	q.world.closeQuery(q)
+	return false
+}
+
+// archetypeIter is an iterator ovr a single archetype.
 type archetypeIter struct {
 	Archetype *archetype
 	Length    uintptr
 	Index     uintptr
 }
 
+// newArchetypeIter creates a new archetypeIter.
 func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
@@ -160,11 +162,13 @@ func newArchetypeIter(arch *archetype) archetypeIter {
 	}
 }
 
+// Next proceeds to the next entity in the archetype, and returns whether this was successful/possible.
 func (it *archetypeIter) Next() bool {
 	it.Index++
 	return it.Index < it.Length
 }
 
+// Step proceeds/steps by the given number of entities.
 func (it *archetypeIter) Step(count uint32) (int, bool) {
 	if it.Length == 0 {
 		return int(count - 1), false

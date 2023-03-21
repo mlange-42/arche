@@ -22,7 +22,7 @@ go get github.com/mlange-42/arche
 
 * Simple core API. See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 * Optional rich filtering and generic query API.
-* Fast iteration and component access via queries (≈2.5ns iterate + get).
+* Fast iteration and component access via queries (≈2.5ns iterate + get, see [Benchmarks](#benchmarks)).
 * Fast random access for components of arbitrary entities. Useful for hierarchies.
 * No systems. Just queries. Use your own structure!
 * Not thread-safe. On purpose.
@@ -108,10 +108,13 @@ This motivates some design decisions, with a focus on simplicity, safety and per
 
 The `ecs.World` object is a pure and minimal ECS implementation in the sense of a data store
 for entities and components, with query and iteration capabilities.
+The core package `ecs` consists of only 1200 lines of easy-to-read, clean and well-documented Go code.
+
 There is neither an update loop nor systems.
 These should be implemented by the user.
 
 The packages `filter` and `generic` provide a layer around the core for richer and/or safer queries and operations. They are built on top of the `ecs` package, so they could also be implemented by users.
+See also [Generic vs. ID access](#generic-vs-id-access).
 
 ### Determinism
 
