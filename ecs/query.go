@@ -120,7 +120,7 @@ func (q *Query) Entity() Entity {
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (q *Query) Mask() Mask {
-	return q.archetype.Archetype.Mask
+	return q.archetype.Access.Mask
 }
 
 // Close closes the Query and unlocks the world.
@@ -149,18 +149,16 @@ func (q *Query) nextArchetype() bool {
 
 // archetypeIter is an iterator ovr a single archetype.
 type archetypeIter struct {
-	Archetype *archetype
-	Access    *archetypeAccess
-	Length    uintptr
-	Index     uintptr
+	Access *archetypeAccess
+	Length uintptr
+	Index  uintptr
 }
 
 // newArchetypeIter creates a new archetypeIter.
 func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
-		Archetype: arch,
-		Access:    &arch.access,
-		Length:    uintptr(arch.Len()),
+		Access: &arch.archetypeAccess,
+		Length: uintptr(arch.Len()),
 	}
 }
 
@@ -184,7 +182,7 @@ func (it *archetypeIter) Step(count uint32) (int, bool) {
 
 // Has returns whether the current entity has the given component
 func (it *archetypeIter) Has(comp ID) bool {
-	return it.Archetype.HasComponent(comp)
+	return it.Access.HasComponent(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's position
@@ -194,5 +192,5 @@ func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
 
 // Entity returns the entity at the iterator's position
 func (it *archetypeIter) Entity() Entity {
-	return it.Archetype.GetEntity(it.Index)
+	return it.Access.GetEntity(it.Index)
 }
