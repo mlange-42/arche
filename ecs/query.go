@@ -150,6 +150,7 @@ func (q *Query) nextArchetype() bool {
 // archetypeIter is an iterator ovr a single archetype.
 type archetypeIter struct {
 	Archetype *archetype
+	Access    *archetypeAccess
 	Length    uintptr
 	Index     uintptr
 }
@@ -158,6 +159,7 @@ type archetypeIter struct {
 func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
+		Access:    &arch.access,
 		Length:    uintptr(arch.Len()),
 	}
 }
@@ -187,7 +189,7 @@ func (it *archetypeIter) Has(comp ID) bool {
 
 // Get returns the pointer to the given component at the iterator's position
 func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
-	return it.Archetype.Get(it.Index, comp)
+	return it.Access.Get(it.Index, comp)
 }
 
 // Entity returns the entity at the iterator's position

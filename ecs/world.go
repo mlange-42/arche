@@ -196,7 +196,7 @@ func (w *World) Alive(entity Entity) bool {
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := &w.entities[entity.id]
-	return index.arch.Get(index.index, comp)
+	return index.arch.access.Get(index.index, comp)
 }
 
 // Has returns whether an [Entity] has a given component.
@@ -315,7 +315,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 
 	for _, id := range oldIDs {
 		if mask.Get(id) {
-			comp := oldArch.Get(index.index, id)
+			comp := oldArch.access.Get(index.index, id)
 			arch.SetPointer(newIndex, id, comp)
 		}
 	}

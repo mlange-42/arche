@@ -36,10 +36,10 @@ func TestArchetype(t *testing.T) {
 	assert.Equal(t, Entity{0, 0}, e0)
 	assert.Equal(t, Entity{1, 0}, e1)
 
-	pos0 := (*position)(arch.Get(0, ID(0)))
-	rot0 := (*rotation)(arch.Get(0, ID(1)))
-	pos1 := (*position)(arch.Get(1, ID(0)))
-	rot1 := (*rotation)(arch.Get(1, ID(1)))
+	pos0 := (*position)(arch.access.Get(0, ID(0)))
+	rot0 := (*rotation)(arch.access.Get(0, ID(1)))
+	pos1 := (*position)(arch.access.Get(1, ID(0)))
+	rot1 := (*rotation)(arch.access.Get(1, ID(1)))
 
 	assert.Equal(t, 1, pos0.X)
 	assert.Equal(t, 2, pos0.Y)
@@ -52,8 +52,8 @@ func TestArchetype(t *testing.T) {
 	assert.Equal(t, 1, int(arch.entities.Len()))
 	assert.Equal(t, 1, int(arch.Len()))
 
-	pos0 = (*position)(arch.Get(0, ID(0)))
-	rot0 = (*rotation)(arch.Get(0, ID(1)))
+	pos0 = (*position)(arch.access.Get(0, ID(0)))
+	rot0 = (*rotation)(arch.access.Get(0, ID(1)))
 	assert.Equal(t, 4, pos0.X)
 	assert.Equal(t, 5, pos0.Y)
 	assert.Equal(t, 6, rot0.Angle)
@@ -104,14 +104,14 @@ func TestArchetypeAddGetSet(t *testing.T) {
 	a.Add(Entity{1, 0}, Component{ID: 0, Comp: &testStruct0{100}}, Component{ID: 1, Comp: &label{}})
 	a.Add(Entity{2, 0}, Component{ID: 0, Comp: &testStruct0{200}}, Component{ID: 1, Comp: &label{}})
 
-	ts := (*testStruct0)(a.Get(0, 0))
+	ts := (*testStruct0)(a.access.Get(0, 0))
 	assert.Equal(t, 100, int(ts.Val))
 
 	a.Set(1, 0, &testStruct0{200})
 	a.Set(1, 1, &label{})
 
-	_ = (*testStruct0)(a.Get(1, 0))
-	_ = (*label)(a.Get(1, 1))
+	_ = (*testStruct0)(a.access.Get(1, 0))
+	_ = (*label)(a.access.Get(1, 1))
 }
 
 func BenchmarkArchetypeAccess1_1000(b *testing.B) {
@@ -149,7 +149,7 @@ func BenchmarkArchetypeAccess_1000(b *testing.B) {
 		id := ID(0)
 		var j uintptr
 		for j = 0; j < len; j++ {
-			pos := (*testStruct0)(arch.Get(j, id))
+			pos := (*testStruct0)(arch.access.Get(j, id))
 			pos.Val = 1
 		}
 	}

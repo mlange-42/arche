@@ -58,11 +58,15 @@ type archetype struct {
 	indices           []uint32
 	entities          storage
 	graphNode         *archetypeNode
-	basePointer       unsafe.Pointer
-	layoutSize        uintptr
 	len               uint32
 	cap               uint32
 	capacityIncrement uint32
+	access            archetypeAccess
+}
+
+type archetypeAccess struct {
+	basePointer unsafe.Pointer
+	layoutSize  uintptr
 }
 
 // layout specification of a component column.
@@ -114,13 +118,16 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 		}
 		a.indices[c.ID] = uint32(i)
 	}
-	a.basePointer = unsafe.Pointer(&a.layouts[0])
-	a.layoutSize = unsafe.Sizeof(a.layouts[0])
+	a.entities = storage{}
+	a.entities.Init(reflect.TypeOf(Entity{}), capacityIncrement, forStorage)
+
+	a.access = archetypeAccess{
+		basePointer: unsafe.Pointer(&a.layouts[0]),
+		layoutSize:  unsafe.Sizeof(a.layouts[0]),
+	}
 
 	a.graphNode = node
 	a.Mask = mask
-	a.entities = storage{}
-	a.entities.Init(reflect.TypeOf(Entity{}), capacityIncrement, forStorage)
 
 	a.capacityIncrement = uint32(capacityIncrement)
 	a.len = 0
@@ -133,11 +140,11 @@ func (a *archetype) GetEntity(index uintptr) Entity {
 }
 
 // Get returns the component with the given ID at the given index
-func (a *archetype) Get(index uintptr, id ID) unsafe.Pointer {
+func (a *archetypeAccess) Get(index uintptr, id ID) unsafe.Pointer {
 	return a.getStorage(id).Get(index)
 }
 
-func (a *archetype) getStorage(id ID) *layout {
+func (a *archetypeAccess) getStorage(id ID) *layout {
 	return (*layout)(unsafe.Add(a.basePointer, a.layoutSize*uintptr(id)))
 }
 
@@ -159,7 +166,7 @@ func (a *archetype) extend() {
 	a.cap = a.capacityIncrement * ((a.cap + a.capacityIncrement) / a.capacityIncrement)
 
 	for _, id := range a.Ids {
-		lay := a.getStorage(id)
+		lay := a.access.getStorage(id)
 		if lay.itemSize == 0 {
 			continue
 		}
@@ -181,8 +188,8 @@ func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	a.extend()
 	a.len++
 	for _, c := range components {
-		lay := a.getStorage(c.ID)
-		dst := a.Get(uintptr(idx), c.ID)
+		lay := a.access.getStorage(c.ID)
+		dst := a.access.Get(uintptr(idx), c.ID)
 		if lay.itemSize == 0 {
 			continue
 		}
@@ -202,7 +209,7 @@ func (a *archetype) ZeroAll(index uintptr) {
 
 // ZeroAll resets a block of storage in one buffer.
 func (a *archetype) Zero(index uintptr, id ID) {
-	lay := a.getStorage(id)
+	lay := a.access.getStorage(id)
 	if lay.itemSize == 0 {
 		return
 	}
@@ -220,7 +227,7 @@ func (a *archetype) Remove(index uintptr) bool {
 
 	oldIndex := a.len - 1
 	for _, id := range a.Ids {
-		lay := a.getStorage(id)
+		lay := a.access.getStorage(id)
 		o := uintptr(oldIndex)
 		n := uintptr(index)
 
@@ -245,23 +252,23 @@ func (a *archetype) Components() []ID {
 
 // HasComponent returns whether the archetype contains the given component ID
 func (a *archetype) HasComponent(id ID) bool {
-	return a.getStorage(id).pointer != nil
+	return a.access.getStorage(id).pointer != nil
 }
 
 // Len reports the number of entities in the archetype
 func (a *archetype) Len() uint32 {
-	return a.entities.Len()
+	return a.len
 }
 
 // Cap reports the current capacity of the archetype
 func (a *archetype) Cap() uint32 {
-	return a.entities.Cap()
+	return a.cap
 }
 
 // Set overwrites a component with the data behind the given pointer
 func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
-	lay := a.getStorage(id)
-	dst := a.Get(index, id)
+	lay := a.access.getStorage(id)
+	dst := a.access.Get(index, id)
 	if lay.itemSize == 0 {
 		return dst
 	}
@@ -274,8 +281,8 @@ func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
 
 // SetPointer overwrites a component with the data behind the given pointer
 func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe.Pointer {
-	lay := a.getStorage(id)
-	dst := a.Get(index, id)
+	lay := a.access.getStorage(id)
+	dst := a.access.Get(index, id)
 	if lay.itemSize == 0 {
 		return dst
 	}
@@ -296,7 +303,7 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 	cap := int(a.Cap())
 	memPerEntity := 0
 	for _, id := range a.Ids {
-		lay := a.getStorage(id)
+		lay := a.access.getStorage(id)
 		memPerEntity += int(lay.itemSize)
 	}
 	memory := cap * (int(entitySize) + memPerEntity)

@@ -608,6 +608,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
 	printTypeSizeName[pagedArr32[archetype]]("pagedArr32")
 	printTypeSize[archetype]()
+	printTypeSize[archetypeAccess]()
 	printTypeSize[archetypeNode]()
 	printTypeSize[storage]()
 	printTypeSize[entityPool]()
