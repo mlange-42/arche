@@ -77,8 +77,7 @@ func (b *Mask) IsZero() bool {
 
 // Reset changes the state of all bits to false.
 func (b *Mask) Reset() {
-	b.Lo = 0
-	b.Hi = 0
+	b.Lo, b.Lo = 0, 0
 }
 
 // Contains reports if other mask is a subset of this mask.

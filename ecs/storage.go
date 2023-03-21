@@ -18,8 +18,7 @@ type storage struct {
 
 // Init initializes a storage
 func (s *storage) Init(tp reflect.Type, increment int, forStorage bool) {
-	size := tp.Size()
-	align := uintptr(tp.Align())
+	size, align := tp.Size(), uintptr(tp.Align())
 	size = (size + (align - 1)) / align * align
 
 	cap := 1

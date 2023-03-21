@@ -1,5 +1,15 @@
 # Changelog
 
+## [[v0.5.1]](https://github.com/mlange-42/arche/compare/v0.5.0...v0.5.1)
+
+### Other
+
+* Internal code refactoring (!136)
+  * Move method `nextArchetype` from `World` to `Query`.
+  * Remove internal type `queryIter`.
+  * Move repetitive pointer copying code in `storage` into a private method.
+  * Move repetitive entity creation code in  `World` into a private method.
+
 ## [[v0.5.0]](https://github.com/mlange-42/arche/compare/v0.4.6...v0.5.0)
 
 Feature release. Does not break v0.4.x projects.

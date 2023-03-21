@@ -24,8 +24,7 @@ type MaskFilter struct {
 
 // Matches matches a filter against a mask.
 func (f *MaskFilter) Matches(bits Mask) bool {
-	return bits.Contains(f.Include) &&
-		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
+	return bits.Contains(f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
 // Query is an iterator to iterate entities, filtered by a [Filter].
