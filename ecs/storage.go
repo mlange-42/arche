@@ -63,7 +63,6 @@ func (s *storage) AddPointer(value unsafe.Pointer) (index uint32) {
 func (s *storage) Alloc() (index uintptr) {
 	s.extend()
 	s.len++
-	//s.Zero(s.len - 1)
 	return uintptr(s.len - 1)
 }
 
@@ -89,16 +88,9 @@ func (s *storage) Remove(index uintptr) bool {
 		return false
 	}
 
-	// TODO shrink the underlying data arrays?
-	size := s.itemSize
-
 	src := unsafe.Add(s.bufferAddress, o*s.itemSize)
 	dst := unsafe.Add(s.bufferAddress, n*s.itemSize)
-
-	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
-	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
-
-	copy(dstSlice, srcSlice)
+	s.copy(src, dst, s.itemSize)
 
 	s.len--
 	return true
@@ -113,15 +105,9 @@ func (s *storage) Set(index uintptr, value interface{}) unsafe.Pointer {
 	}
 	rValue := reflect.ValueOf(value)
 
-	var src unsafe.Pointer
-	size := s.itemSize
+	src := rValue.UnsafePointer()
+	s.copy(src, dst, s.itemSize)
 
-	src = rValue.UnsafePointer()
-
-	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
-	srcSlice := (*[math.MaxInt32]byte)(src)[:size:size]
-
-	copy(dstSlice, srcSlice)
 	return dst
 }
 
@@ -131,12 +117,7 @@ func (s *storage) SetPointer(index uintptr, value unsafe.Pointer) unsafe.Pointer
 		return dst
 	}
 
-	size := s.itemSize
-
-	dstSlice := (*[math.MaxInt32]byte)(dst)[:size:size]
-	srcSlice := (*[math.MaxInt32]byte)(value)[:size:size]
-
-	copy(dstSlice, srcSlice)
+	s.copy(value, dst, s.itemSize)
 
 	return dst
 }
@@ -163,6 +144,12 @@ func (s *storage) Len() uint32 {
 // Cap returns the capacity of the storage
 func (s *storage) Cap() uint32 {
 	return s.cap
+}
+
+func (s *storage) copy(src, dst unsafe.Pointer, itemSize uintptr) {
+	dstSlice := (*[math.MaxInt32]byte)(dst)[:itemSize:itemSize]
+	srcSlice := (*[math.MaxInt32]byte)(src)[:itemSize:itemSize]
+	copy(dstSlice, srcSlice)
 }
 
 // toSlice converts the content of a storage to a slice of structs
