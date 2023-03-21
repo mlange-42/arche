@@ -22,12 +22,11 @@ if __name__ == "__main__":
 
     fig, axes = plt.subplots(ncols=2, figsize=(10, 4))
 
-    iter = (axes[0], iter_prefix, [2, 5, 10, 20, 50, 100, 200], 1000, "log", "Time per iteration [us]")
+    iter = (axes[0], iter_prefix, [1, 2, 5, 10, 20, 50, 100, 200], 1000, "log", "Time per iteration [us]")
     build = (axes[1], build_prefix, None, 1000000, "linear", "Time per run [ms]")
 
     for ax, prefix, yticks, factor, scale, title in [iter, build]:
         ax.set_title("Position/Velocity -- "+prefix.replace("Benchmark", ""))
-        ax.set_xlabel("Engine", fontsize=11)
         ax.set_ylabel(title, fontsize=11)
 
         bench_data = data[data["Model"].str.startswith(prefix)]

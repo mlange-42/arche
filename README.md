@@ -189,17 +189,23 @@ For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arc
 
 See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
 
-### Versus other Go ECS implementations
+### Arche vs. other Go ECS implementations
 
-The only serious Go ENS implementations I found are [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs),
-[Donburi](https://github.com/yohamta/donburi), [Ento](https://github.com/wwfranczyk/ento)
-and [Entitas-Go](https://github.com/Falldot/Entitas-Go).
+To the best of the author's knowledge, there is only a handful of ECS implementations in Go that are serious and somewhat maintained:
+
+* [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs)
+* [Donburi](https://github.com/yohamta/donburi)
+* [Ento](https://github.com/wwfranczyk/ento)
+* [Entitas-Go](https://github.com/Falldot/Entitas-Go) (archived repository)
+
+Here, *Arche* is benchmarked against these implementations.
+Feel free to open an issue if you have suggestions for improvements on the benchmarking code or other engines to include.
 
 #### Position/Velocity
 
-1000 entities with `Pos{float64, float64}` and `Vel{float64, float64}`.
-9000 entities with only `Pos{float64, float64}`.
-Iterate all entities with `Pos` and `Vel`, and add `Vel` to `Pos`.
+* 1000 entities with `Pos{float64, float64}` and `Vel{float64, float64}`.
+* 9000 entities with only `Pos{float64, float64}`.
+* Iterate all entities with `Pos` and `Vel`, and add `Vel` to `Pos`.
 
 <div align="center" width="100%">
 
@@ -208,7 +214,7 @@ Iterate all entities with `Pos` and `Vel`, and add `Vel` to `Pos`.
 Left panel: query iteration (log scale), right panel: world setup and entity creation.*
 </div>
 
-### Versus Array of Structs
+### Arche vs. Array of Structs
 
 The plot below shows CPU time benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue) (with structs escaped to the heap).
 

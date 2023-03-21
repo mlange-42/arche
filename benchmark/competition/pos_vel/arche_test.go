@@ -4,30 +4,30 @@ import (
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
-	"github.com/mlange-42/arche/generic"
 )
 
 func BenchmarkIterArche(b *testing.B) {
 	b.StopTimer()
 	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
 
-	posMap := generic.NewMap1[Position](&world)
-	posVelMap := generic.NewMap2[Position, Velocity](&world)
+	posID := ecs.ComponentID[Position](&world)
+	velID := ecs.ComponentID[Velocity](&world)
 
 	for i := 0; i < nPos; i++ {
-		posMap.NewEntity()
+		world.NewEntity(posID)
 	}
 	for i := 0; i < nPosVel; i++ {
-		posVelMap.NewEntity()
+		world.NewEntity(posID, velID)
 	}
 
-	filter := generic.NewFilter2[Position, Velocity]()
+	filter := ecs.All(posID, velID)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := filter.Query(&world)
+		query := world.Query(filter)
 		for query.Next() {
-			pos, vel := query.Get()
+			pos := (*Position)(query.Get(posID))
+			vel := (*Velocity)(query.Get(velID))
 			pos.X += vel.X
 			pos.Y += vel.Y
 		}
@@ -38,14 +38,14 @@ func BenchmarkBuildArche(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
 
-		posMap := generic.NewMap1[Position](&world)
-		posVelMap := generic.NewMap2[Position, Velocity](&world)
+		posID := ecs.ComponentID[Position](&world)
+		velID := ecs.ComponentID[Velocity](&world)
 
 		for i := 0; i < nPos; i++ {
-			posMap.NewEntity()
+			world.NewEntity(posID)
 		}
 		for i := 0; i < nPosVel; i++ {
-			posVelMap.NewEntity()
+			world.NewEntity(posID, velID)
 		}
 	}
 }
