@@ -35,10 +35,10 @@ func (f *MaskFilter) Matches(bits Mask) bool {
 // [github.com/mlange-42/arche/generic.Query2], etc.
 // For advanced filtering, see package [github.com/mlange-42/arche/filter]
 type Query struct {
+	archetypeIter
 	filter     Filter
 	world      *World
 	archetypes *archetypes
-	archetype  archetypeIter
 	index      int
 	lockBit    uint8
 	count      int
@@ -58,7 +58,7 @@ func newQuery(world *World, filter Filter, lockBit uint8, archetypes *archetypes
 
 // Next proceeds to the next [Entity] in the Query.
 func (q *Query) Next() bool {
-	if q.archetype.Next() {
+	if q.archetypeIter.Next() {
 		return true
 	}
 	// outline to allow inlining of the fast path
@@ -76,7 +76,7 @@ func (q *Query) Step(step int) bool {
 	}
 	var ok bool
 	for {
-		step, ok = q.archetype.Step(uint32(step))
+		step, ok = q.archetypeIter.Step(uint32(step))
 		if ok {
 			return true
 		}
@@ -101,26 +101,11 @@ func (q *Query) Count() int {
 	return q.count
 }
 
-// Has returns whether the current [Entity] has the given component.
-func (q *Query) Has(comp ID) bool {
-	return q.archetype.Has(comp)
-}
-
-// Get returns the pointer to the given component at the iterator's current [Entity].
-func (q *Query) Get(comp ID) unsafe.Pointer {
-	return q.archetype.Get(comp)
-}
-
-// Entity returns the [Entity] at the iterator's position
-func (q *Query) Entity() Entity {
-	return q.archetype.Entity()
-}
-
 // Mask returns the archetype [BitMask] for the [Entity] at the iterator's current position.
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (q *Query) Mask() Mask {
-	return q.archetype.Archetype.Mask
+	return q.Access.Mask
 }
 
 // Close closes the Query and unlocks the world.
@@ -138,7 +123,7 @@ func (q *Query) nextArchetype() bool {
 		a := q.archetypes.Get(i)
 		if a.Len() > 0 && q.filter.Matches(a.Mask) {
 			q.index = i
-			q.archetype = newArchetypeIter(a)
+			q.archetypeIter = newArchetypeIter(a)
 			return true
 		}
 	}
@@ -149,16 +134,16 @@ func (q *Query) nextArchetype() bool {
 
 // archetypeIter is an iterator ovr a single archetype.
 type archetypeIter struct {
-	Archetype *archetype
-	Length    uintptr
-	Index     uintptr
+	Access *archetypeAccess
+	Length uintptr
+	Index  uintptr
 }
 
 // newArchetypeIter creates a new archetypeIter.
 func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
-		Archetype: arch,
-		Length:    uintptr(arch.Len()),
+		Access: &arch.archetypeAccess,
+		Length: uintptr(arch.Len()),
 	}
 }
 
@@ -180,17 +165,17 @@ func (it *archetypeIter) Step(count uint32) (int, bool) {
 	return int(it.Index) - int(it.Length), false
 }
 
-// Has returns whether the current entity has the given component
+// Has returns whether the current entity has the given component.
 func (it *archetypeIter) Has(comp ID) bool {
-	return it.Archetype.HasComponent(comp)
+	return it.Access.HasComponent(comp)
 }
 
-// Get returns the pointer to the given component at the iterator's position
+// Get returns the pointer to the given component at the iterator's position.
 func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
-	return it.Archetype.Get(it.Index, comp)
+	return it.Access.Get(it.Index, comp)
 }
 
-// Entity returns the entity at the iterator's position
+// Entity returns the entity at the iterator's position.
 func (it *archetypeIter) Entity() Entity {
-	return it.Archetype.GetEntity(it.Index)
+	return it.Access.GetEntity(it.Index)
 }

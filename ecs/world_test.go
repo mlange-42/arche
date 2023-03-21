@@ -414,8 +414,6 @@ func TestWorldResources(t *testing.T) {
 
 	AddResource(&w, &position{1, 2})
 
-	fmt.Println(w.resources.registry.Components)
-
 	assert.True(t, w.HasResource(posID))
 	pos, ok := w.GetResource(posID).(*position)
 
@@ -608,14 +606,15 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[World]()
 	printTypeSizeName[pagedArr32[archetype]]("pagedArr32")
 	printTypeSize[archetype]()
+	printTypeSize[archetypeAccess]()
 	printTypeSize[archetypeNode]()
-	printTypeSize[storage]()
 	printTypeSize[entityPool]()
 	printTypeSizeName[componentRegistry[ID]]("componentRegistry")
 	printTypeSize[bitPool]()
 	printTypeSize[Query]()
 	printTypeSize[archetypeIter]()
 	printTypeSize[resources]()
+	printTypeSizeName[reflect.Value]("reflect.Value")
 }
 
 func printTypeSize[T any]() {

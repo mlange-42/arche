@@ -1,11 +1,14 @@
 package ecs
 
 import (
+	"math"
 	"reflect"
 	"unsafe"
 
 	"github.com/mlange-42/arche/ecs/stats"
 )
+
+var layoutSize = unsafe.Sizeof(layout{})
 
 // archetypeNode is a node in the archetype graph
 type archetypeNode struct {
@@ -48,16 +51,59 @@ func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
 
 type archetypes = pagedArr32[archetype]
 
+// Helper for accessing data from an archetype
+type archetypeAccess struct {
+	basePointer   unsafe.Pointer
+	entityPointer unsafe.Pointer
+	Mask          Mask
+}
+
+// GetEntity returns the entity at the given index
+func (a *archetypeAccess) GetEntity(index uintptr) Entity {
+	return *(*Entity)(unsafe.Add(a.entityPointer, entitySize*index))
+}
+
+// Get returns the component with the given ID at the given index
+func (a *archetypeAccess) Get(index uintptr, id ID) unsafe.Pointer {
+	return a.getLayout(id).Get(index)
+}
+
+// HasComponent returns whether the archetype contains the given component ID
+func (a *archetypeAccess) HasComponent(id ID) bool {
+	return a.getLayout(id).pointer != nil
+}
+
+// GetLayout returns the column layout for a component.
+func (a *archetypeAccess) getLayout(id ID) *layout {
+	return (*layout)(unsafe.Add(a.basePointer, layoutSize*uintptr(id)))
+}
+
+// layout specification of a component column.
+type layout struct {
+	pointer  unsafe.Pointer
+	itemSize uintptr
+}
+
+// Get returns a pointer to the item at the given index.
+func (l *layout) Get(index uintptr) unsafe.Pointer {
+	if l.pointer == nil {
+		return nil
+	}
+	return unsafe.Add(l.pointer, l.itemSize*index)
+}
+
 // archetype represents an ECS archetype
 type archetype struct {
-	Mask        Mask
-	Ids         []ID
-	references  []*storage
-	entities    storage
-	components  []storage
-	graphNode   *archetypeNode
-	basePointer unsafe.Pointer
-	storageSize uintptr
+	archetypeAccess
+	Ids               []ID
+	layouts           []layout
+	indices           []uint32
+	buffers           []reflect.Value
+	entityBuffer      reflect.Value
+	len               uint32
+	cap               uint32
+	capacityIncrement uint32
+	graphNode         *archetypeNode
 }
 
 // Init initializes an archetype
@@ -66,8 +112,15 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 	if len(components) > 0 {
 		a.Ids = make([]ID, len(components))
 	}
-	a.components = make([]storage, len(components))
-	a.references = make([]*storage, MaskTotalBits)
+
+	a.buffers = make([]reflect.Value, len(components))
+	a.layouts = make([]layout, MaskTotalBits)
+	a.indices = make([]uint32, MaskTotalBits)
+
+	cap := 1
+	if forStorage {
+		cap = capacityIncrement
+	}
 
 	prev := -1
 	for i, c := range components {
@@ -75,72 +128,135 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 			panic("component arguments must be sorted by ID")
 		}
 		prev = int(c.ID)
-
 		mask.Set(c.ID, true)
+
+		size, align := c.Type.Size(), uintptr(c.Type.Align())
+		size = (size + (align - 1)) / align * align
+
 		a.Ids[i] = c.ID
-		a.components[i] = storage{}
-		a.components[i].Init(c.Type, capacityIncrement, forStorage)
-		a.references[c.ID] = &a.components[i]
+		a.buffers[i] = reflect.New(reflect.ArrayOf(cap, c.Type)).Elem()
+		a.layouts[c.ID] = layout{
+			a.buffers[i].Addr().UnsafePointer(),
+			size,
+		}
+		a.indices[c.ID] = uint32(i)
 	}
-	a.basePointer = unsafe.Pointer(&a.references[0])
-	a.storageSize = unsafe.Sizeof(a.references[0])
+	a.entityBuffer = reflect.New(reflect.ArrayOf(cap, entityType)).Elem()
+
+	a.archetypeAccess = archetypeAccess{
+		basePointer:   unsafe.Pointer(&a.layouts[0]),
+		entityPointer: a.entityBuffer.Addr().UnsafePointer(),
+		Mask:          mask,
+	}
 
 	a.graphNode = node
-	a.Mask = mask
-	a.entities = storage{}
-	a.entities.Init(reflect.TypeOf(Entity{}), capacityIncrement, forStorage)
-}
 
-// GetEntity returns the entity at the given index
-func (a *archetype) GetEntity(index uintptr) Entity {
-	return *(*Entity)(a.entities.Get(index))
-}
-
-// Get returns the component with the given ID at the given index
-func (a *archetype) Get(index uintptr, id ID) unsafe.Pointer {
-	return a.getStorage(id).Get(index)
-}
-
-func (a *archetype) getStorage(id ID) *storage {
-	return *(**storage)(unsafe.Add(a.basePointer, a.storageSize*uintptr(id)))
+	a.capacityIncrement = uint32(capacityIncrement)
+	a.len = 0
+	a.cap = uint32(cap)
 }
 
 // Add adds an entity with zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
-	idx := uintptr(a.entities.Add(&entity))
-	len := uintptr(len(a.components))
-
-	var i uintptr
-	for i = 0; i < len; i++ {
-		comp := &a.components[i]
-		idx := comp.Alloc()
-		if zero {
-			comp.Zero(idx)
-		}
+	idx := uintptr(a.len)
+	a.extend()
+	a.addEntity(&entity, idx)
+	if zero {
+		a.ZeroAll(idx)
 	}
+	a.len++
 	return idx
 }
 
 // Add adds an entity with components to the archetype
-func (a *archetype) Add(entity Entity, components ...Component) uint32 {
+func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 	if len(components) != len(a.Ids) {
 		panic("Invalid number of components")
 	}
-	idx := a.entities.Add(&entity)
+	idx := uintptr(a.len)
+
+	a.extend()
+	a.addEntity(&entity, idx)
 	for _, c := range components {
-		a.getStorage(c.ID).Add(c.Comp)
+		lay := a.getLayout(c.ID)
+		dst := a.Get(uintptr(idx), c.ID)
+		if lay.itemSize == 0 {
+			continue
+		}
+		src := reflect.ValueOf(c.Comp).UnsafePointer()
+		a.copy(src, dst, lay.itemSize)
 	}
+	a.len++
 	return idx
 }
 
-// Remove removes an entity from the archetype
+// Remove removes an entity and its components from the archetype.
 func (a *archetype) Remove(index uintptr) bool {
-	swapped := a.entities.Remove(index)
-	len := len(a.components)
-	for i := 0; i < len; i++ {
-		a.components[i].Remove(index)
+	swapped := a.removeEntity(index)
+
+	old := uintptr(a.len - 1)
+
+	if index != old {
+		for _, id := range a.Ids {
+			lay := a.getLayout(id)
+			if lay.itemSize == 0 {
+				continue
+			}
+			src := unsafe.Add(lay.pointer, old*lay.itemSize)
+			dst := unsafe.Add(lay.pointer, index*lay.itemSize)
+			a.copy(src, dst, lay.itemSize)
+		}
 	}
+	a.len--
+
 	return swapped
+}
+
+// ZeroAll resets a block of storage in all buffers.
+func (a *archetype) ZeroAll(index uintptr) {
+	for _, id := range a.Ids {
+		a.Zero(index, id)
+	}
+}
+
+// ZeroAll resets a block of storage in one buffer.
+func (a *archetype) Zero(index uintptr, id ID) {
+	lay := a.getLayout(id)
+	if lay.itemSize == 0 {
+		return
+	}
+	dst := unsafe.Add(lay.pointer, index*lay.itemSize)
+
+	for i := uintptr(0); i < lay.itemSize; i++ {
+		*(*byte)(dst) = 0
+		dst = unsafe.Add(dst, 1)
+	}
+}
+
+// Set overwrites a component with the data behind the given pointer
+func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
+	lay := a.getLayout(id)
+	dst := a.Get(index, id)
+	if lay.itemSize == 0 {
+		return dst
+	}
+	rValue := reflect.ValueOf(comp)
+
+	src := rValue.UnsafePointer()
+	a.copy(src, dst, lay.itemSize)
+	return dst
+}
+
+// SetPointer overwrites a component with the data behind the given pointer
+func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe.Pointer {
+	lay := a.getLayout(id)
+	dst := a.Get(index, id)
+	if lay.itemSize == 0 {
+		return dst
+	}
+
+	a.copy(comp, dst, lay.itemSize)
+	return dst
 }
 
 // Components returns the component IDs for this archetype
@@ -148,34 +264,14 @@ func (a *archetype) Components() []ID {
 	return a.Ids
 }
 
-// HasComponent returns whether the archetype contains the given component ID
-func (a *archetype) HasComponent(id ID) bool {
-	return a.getStorage(id) != nil
-}
-
 // Len reports the number of entities in the archetype
 func (a *archetype) Len() uint32 {
-	return a.entities.Len()
+	return a.len
 }
 
 // Cap reports the current capacity of the archetype
 func (a *archetype) Cap() uint32 {
-	return a.entities.Cap()
-}
-
-// Set overwrites a component with the data behind the given pointer
-func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
-	return a.getStorage(id).Set(index, comp)
-}
-
-// SetPointer overwrites a component with the data behind the given pointer
-func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe.Pointer {
-	return a.getStorage(id).SetPointer(index, comp)
-}
-
-// Zero resets th memory at the given position
-func (a *archetype) Zero(index uintptr, id ID) {
-	a.getStorage(id).Zero(index)
+	return a.cap
 }
 
 // Stats generates statistics for an archetype
@@ -189,9 +285,9 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 
 	cap := int(a.Cap())
 	memPerEntity := 0
-	for i := 0; i < len(a.components); i++ {
-		comp := &a.components[i]
-		memPerEntity += int(comp.itemSize)
+	for _, id := range a.Ids {
+		lay := a.getLayout(id)
+		memPerEntity += int(lay.itemSize)
 	}
 	memory := cap * (int(entitySize) + memPerEntity)
 
@@ -204,4 +300,59 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 		Memory:          memory,
 		MemoryPerEntity: memPerEntity,
 	}
+}
+
+// copy from one pointer to another.
+func (a *archetype) copy(src, dst unsafe.Pointer, itemSize uintptr) {
+	dstSlice := (*[math.MaxInt32]byte)(dst)[:itemSize:itemSize]
+	srcSlice := (*[math.MaxInt32]byte)(src)[:itemSize:itemSize]
+	copy(dstSlice, srcSlice)
+}
+
+// extend the memory buffers if necessary for adding an entity.
+func (a *archetype) extend() {
+	if a.cap > a.len {
+		return
+	}
+	a.cap = a.capacityIncrement * ((a.cap + a.capacityIncrement) / a.capacityIncrement)
+
+	old := a.entityBuffer
+	a.entityBuffer = reflect.New(reflect.ArrayOf(int(a.cap), entityType)).Elem()
+	a.entityPointer = a.entityBuffer.Addr().UnsafePointer()
+	reflect.Copy(a.entityBuffer, old)
+
+	for _, id := range a.Ids {
+		lay := a.getLayout(id)
+		if lay.itemSize == 0 {
+			continue
+		}
+		index := a.indices[id]
+		old := a.buffers[index]
+		a.buffers[index] = reflect.New(reflect.ArrayOf(int(a.cap), old.Type().Elem())).Elem()
+		lay.pointer = a.buffers[index].Addr().UnsafePointer()
+		reflect.Copy(a.buffers[index], old)
+	}
+}
+
+// Adds an entity at the given index. Does not extend the entity buffer.
+func (a *archetype) addEntity(entity *Entity, index uintptr) {
+	dst := unsafe.Add(a.entityPointer, entitySize*index)
+	src := reflect.ValueOf(entity).UnsafePointer()
+	a.copy(src, dst, entitySize)
+}
+
+// removeEntity removes an entity from tne archetype.
+// Components need to be removed separately.
+func (a *archetype) removeEntity(index uintptr) bool {
+	old := uintptr(a.len - 1)
+
+	if index == old {
+		return false
+	}
+
+	src := unsafe.Add(a.entityPointer, old*entitySize)
+	dst := unsafe.Add(a.entityPointer, index*entitySize)
+	a.copy(src, dst, entitySize)
+
+	return true
 }

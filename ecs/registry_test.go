@@ -13,7 +13,7 @@ func TestComponentRegistry(t *testing.T) {
 	posType := reflect.TypeOf((*position)(nil)).Elem()
 	rotType := reflect.TypeOf((*rotation)(nil)).Elem()
 
-	reg.RegisterComponent(posType, MaskTotalBits)
+	reg.registerComponent(posType, MaskTotalBits)
 
 	assert.Equal(t, ID(0), reg.ComponentID(posType))
 	assert.Equal(t, ID(1), reg.ComponentID(rotType))
@@ -25,9 +25,9 @@ func TestComponentRegistry(t *testing.T) {
 func TestComponentRegistryOverflow(t *testing.T) {
 	reg := newComponentRegistry()
 
-	reg.RegisterComponent(reflect.TypeOf((*position)(nil)).Elem(), 1)
+	reg.registerComponent(reflect.TypeOf((*position)(nil)).Elem(), 1)
 
 	assert.Panics(t, func() {
-		reg.RegisterComponent(reflect.TypeOf((*rotation)(nil)).Elem(), 1)
+		reg.registerComponent(reflect.TypeOf((*rotation)(nil)).Elem(), 1)
 	})
 }
