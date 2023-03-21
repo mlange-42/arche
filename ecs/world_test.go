@@ -414,8 +414,6 @@ func TestWorldResources(t *testing.T) {
 
 	AddResource(&w, &position{1, 2})
 
-	fmt.Println(w.resources.registry.Components)
-
 	assert.True(t, w.HasResource(posID))
 	pos, ok := w.GetResource(posID).(*position)
 
