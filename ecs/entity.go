@@ -32,7 +32,7 @@ func (e Entity) IsZero() bool {
 	return e.id == 0
 }
 
-// entityIndex indicates where an entity is currently stored
+// entityIndex indicates where an entity is currently stored.
 type entityIndex struct {
 	arch  *archetype
 	index uintptr

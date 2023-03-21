@@ -4,12 +4,14 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
+// compiledQuery is a helper for compiling a generic filter into a [ecs.Filter].
 type compiledQuery struct {
 	filter   ecs.MaskFilter
 	Ids      []ecs.ID
 	compiled bool
 }
 
+// Compile compiles a generic filter.
 func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp) {
 	if q.compiled {
 		return
@@ -22,6 +24,7 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp)
 	q.compiled = true
 }
 
+// Reset sets the compiledQuery to not compiled.
 func (q *compiledQuery) Reset() {
 	q.compiled = false
 }

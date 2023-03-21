@@ -131,6 +131,7 @@ func (q *Query) Close() {
 	q.world.closeQuery(q)
 }
 
+// nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
 	len := int(q.archetypes.Len())
 	for i := q.index + 1; i < len; i++ {
@@ -146,12 +147,14 @@ func (q *Query) nextArchetype() bool {
 	return false
 }
 
+// archetypeIter is an iterator ovr a single archetype.
 type archetypeIter struct {
 	Archetype *archetype
 	Length    uintptr
 	Index     uintptr
 }
 
+// newArchetypeIter creates a new archetypeIter.
 func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
 		Archetype: arch,
@@ -159,11 +162,13 @@ func newArchetypeIter(arch *archetype) archetypeIter {
 	}
 }
 
+// Next proceeds to the next entity in the archetype, and returns whether this was successful/possible.
 func (it *archetypeIter) Next() bool {
 	it.Index++
 	return it.Index < it.Length
 }
 
+// Step proceeds/steps by the given number of entities.
 func (it *archetypeIter) Step(count uint32) (int, bool) {
 	if it.Length == 0 {
 		return int(count - 1), false

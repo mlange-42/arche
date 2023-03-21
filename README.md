@@ -108,7 +108,7 @@ This motivates some design decisions, with a focus on simplicity, safety and per
 
 The `ecs.World` object is a pure and minimal ECS implementation in the sense of a data store
 for entities and components, with query and iteration capabilities.
-The core package `ecs` consists of only 1200 lines of easy-to-read Go code.
+The core package `ecs` consists of only 1200 lines of easy-to-read, clean and well-documented Go code.
 
 There is neither an update loop nor systems.
 These should be implemented by the user.

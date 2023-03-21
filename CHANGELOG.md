@@ -9,6 +9,7 @@
   * Remove internal type `queryIter`.
   * Move repetitive pointer copying code in `storage` into a private method.
   * Move repetitive entity creation code in  `World` into a private method.
+* Document all private functions, types and methods  (!136)
 
 ## [[v0.5.0]](https://github.com/mlange-42/arche/compare/v0.4.6...v0.5.0)
 

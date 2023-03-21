@@ -157,24 +157,6 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	return entity
 }
 
-// createEntity creates an Entity and adds to the given archetype.
-func (w *World) createEntity(arch *archetype, zero bool) Entity {
-	entity := w.entityPool.Get()
-	idx := arch.Alloc(entity, zero)
-	len := len(w.entities)
-	if int(entity.id) == len {
-		if len == cap(w.entities) {
-			old := w.entities
-			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
-			copy(w.entities, old)
-		}
-		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
-	} else {
-		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
-	}
-	return entity
-}
-
 // RemoveEntity removes and recycles an [Entity].
 //
 // Panics when called on a locked world or for an already removed entity.
@@ -201,29 +183,6 @@ func (w *World) RemoveEntity(entity Entity) {
 	w.entities[entity.id].arch = nil
 }
 
-// Query creates a [Query] iterator.
-//
-// The [ecs] core package provides only the filter [All] for querying the given components.
-// Further, it can be chained with [Mask.Without] (see the examples) to exclude components.
-//
-// Example:
-//
-//	query := world.Query(All(idA, idB).Without(idC))
-//	for query.Next() {
-//	    pos := (*position)(query.Get(posID))
-//	    pos.X += 1.0
-//	}
-//
-// For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
-// For advanced filtering, see package [github.com/mlange-42/arche/filter].
-//
-// Locks the world to prevent changes to component compositions.
-func (w *World) Query(filter Filter) Query {
-	lock := w.bitPool.Get()
-	w.locks.Set(ID(lock), true)
-	return newQuery(w, filter, lock, &w.archetypes)
-}
-
 // Alive reports whether an entity is still alive.
 func (w *World) Alive(entity Entity) bool {
 	return w.entityPool.Alive(entity)
@@ -247,13 +206,6 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 // See also [github.com/mlange-42/arche/generic.Map.Has] for a generic variant.
 func (w *World) Has(entity Entity, comp ID) bool {
 	return w.entities[entity.id].arch.HasComponent(comp)
-}
-
-// Mask returns the archetype [BitMask] for the given [Entity].
-//
-// Can be used for fast checks of the entity composition, e.g. using a [Filter].
-func (w *World) Mask(entity Entity) Mask {
-	return w.entities[entity.id].arch.Mask
 }
 
 // Add adds components to an [Entity].
@@ -384,23 +336,6 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 }
 
-// IsLocked returns whether the world is locked by any queries.
-func (w *World) IsLocked() bool {
-	return !w.locks.IsZero()
-}
-
-// SetListener sets a listener callback func(e EntityEvent) for the world.
-// The listener is immediately called on every [ecs.Entity] change.
-// Replaces the current listener. Call with `nil` to remove a listener.
-//
-// Events notified are entity creation, removal and changes to the component composition.
-// Events are emitted immediately after the change is applied.
-// Except for removal of an entity, where the event is emitted before removal.
-// This allows for inspection of the to-be-removed Entity.
-func (w *World) SetListener(listener func(e EntityEvent)) {
-	w.listener = listener
-}
-
 // AddResource adds a resource to the world.
 // The resource should always be a pointer.
 //
@@ -437,6 +372,53 @@ func (w *World) HasResource(id ResID) bool {
 	return w.resources.Has(id)
 }
 
+// Query creates a [Query] iterator.
+//
+// The [ecs] core package provides only the filter [All] for querying the given components.
+// Further, it can be chained with [Mask.Without] (see the examples) to exclude components.
+//
+// Example:
+//
+//	query := world.Query(All(idA, idB).Without(idC))
+//	for query.Next() {
+//	    pos := (*position)(query.Get(posID))
+//	    pos.X += 1.0
+//	}
+//
+// For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
+// For advanced filtering, see package [github.com/mlange-42/arche/filter].
+//
+// Locks the world to prevent changes to component compositions.
+func (w *World) Query(filter Filter) Query {
+	lock := w.bitPool.Get()
+	w.locks.Set(ID(lock), true)
+	return newQuery(w, filter, lock, &w.archetypes)
+}
+
+// IsLocked returns whether the world is locked by any queries.
+func (w *World) IsLocked() bool {
+	return !w.locks.IsZero()
+}
+
+// Mask returns the archetype [BitMask] for the given [Entity].
+//
+// Can be used for fast checks of the entity composition, e.g. using a [Filter].
+func (w *World) Mask(entity Entity) Mask {
+	return w.entities[entity.id].arch.Mask
+}
+
+// SetListener sets a listener callback func(e EntityEvent) for the world.
+// The listener is immediately called on every [ecs.Entity] change.
+// Replaces the current listener. Call with `nil` to remove a listener.
+//
+// Events notified are entity creation, removal and changes to the component composition.
+// Events are emitted immediately after the change is applied.
+// Except for removal of an entity, where the event is emitted before removal.
+// This allows for inspection of the to-be-removed Entity.
+func (w *World) SetListener(listener func(e EntityEvent)) {
+	w.listener = listener
+}
+
 // Stats reports statistics for inspecting the World.
 func (w *World) Stats() *stats.WorldStats {
 	entities := stats.EntityStats{
@@ -464,6 +446,24 @@ func (w *World) Stats() *stats.WorldStats {
 		Archetypes:     archetypes,
 		Memory:         memory,
 	}
+}
+
+// createEntity creates an Entity and adds it to the given archetype.
+func (w *World) createEntity(arch *archetype, zero bool) Entity {
+	entity := w.entityPool.Get()
+	idx := arch.Alloc(entity, zero)
+	len := len(w.entities)
+	if int(entity.id) == len {
+		if len == cap(w.entities) {
+			old := w.entities
+			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
+			copy(w.entities, old)
+		}
+		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
+	} else {
+		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
+	}
+	return entity
 }
 
 // Copies a component to an entity
@@ -597,6 +597,7 @@ func (w *World) closeQuery(query *Query) {
 	w.bitPool.Recycle(l)
 }
 
+// checkLocked checks if the world is locked, and panics if so.
 func (w *World) checkLocked() {
 	if !w.locks.IsZero() {
 		panic("attempt to modify a locked world")

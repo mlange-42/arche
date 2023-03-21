@@ -65,6 +65,9 @@ func (s *storage) Alloc() (index uintptr) {
 	return uintptr(s.len - 1)
 }
 
+// extend the storage's capacity by capacityIncrement.
+//
+// Extends to a multiple of capacityIncrement.
 func (s *storage) extend() {
 	if s.cap > s.len || s.itemSize == 0 {
 		return
@@ -95,7 +98,7 @@ func (s *storage) Remove(index uintptr) bool {
 	return true
 }
 
-// Set sets the storage at the given index
+// Set sets the storage at the given index.
 func (s *storage) Set(index uintptr, value interface{}) unsafe.Pointer {
 	dst := s.Get(index)
 
@@ -110,6 +113,7 @@ func (s *storage) Set(index uintptr, value interface{}) unsafe.Pointer {
 	return dst
 }
 
+// SetPointer sets the storage at the given index from the data behind an unsafe pointer.
 func (s *storage) SetPointer(index uintptr, value unsafe.Pointer) unsafe.Pointer {
 	dst := s.Get(index)
 	if s.itemSize == 0 {
@@ -145,6 +149,7 @@ func (s *storage) Cap() uint32 {
 	return s.cap
 }
 
+// copy from one pointer to another.
 func (s *storage) copy(src, dst unsafe.Pointer, itemSize uintptr) {
 	dstSlice := (*[math.MaxInt32]byte)(dst)[:itemSize:itemSize]
 	srcSlice := (*[math.MaxInt32]byte)(src)[:itemSize:itemSize]

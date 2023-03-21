@@ -58,15 +58,22 @@ func (p *entityPool) Alive(e Entity) bool {
 	return e.id != 0 && e.gen == p.entities[e.id].gen
 }
 
+// Len returns the current number of used entities.
 func (p *entityPool) Len() int {
 	return len(p.entities) - 1 - int(p.available)
 }
+
+// Cap returns the current capacity (used and recycled entities).
 func (p *entityPool) Cap() int {
 	return len(p.entities) - 1
 }
+
+// TotalCap returns the current capacity in terms of reserved memory.
 func (p *entityPool) TotalCap() int {
 	return cap(p.entities)
 }
+
+// Available returns the current number of available/recycled entities.
 func (p *entityPool) Available() int {
 	return int(p.available)
 }
