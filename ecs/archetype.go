@@ -51,24 +51,18 @@ func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
 
 type archetypes = pagedArr32[archetype]
 
-// archetype represents an ECS archetype
-type archetype struct {
-	Mask              Mask
-	Ids               []ID
-	buffers           []reflect.Value
-	layouts           []layout
-	indices           []uint32
-	entityBuffer      reflect.Value
-	entityPointer     unsafe.Pointer
-	graphNode         *archetypeNode
-	len               uint32
-	cap               uint32
-	capacityIncrement uint32
-	access            archetypeAccess
-}
-
+// Helper for accessing data from an archetype
 type archetypeAccess struct {
 	basePointer unsafe.Pointer
+}
+
+// Get returns the component with the given ID at the given index
+func (a *archetypeAccess) Get(index uintptr, id ID) unsafe.Pointer {
+	return a.getStorage(id).Get(index)
+}
+
+func (a *archetypeAccess) getStorage(id ID) *layout {
+	return (*layout)(unsafe.Add(a.basePointer, layoutSize*uintptr(id)))
 }
 
 // layout specification of a component column.
@@ -83,6 +77,22 @@ func (l *layout) Get(index uintptr) unsafe.Pointer {
 		return nil
 	}
 	return unsafe.Add(l.pointer, l.itemSize*index)
+}
+
+// archetype represents an ECS archetype
+type archetype struct {
+	Mask              Mask
+	Ids               []ID
+	buffers           []reflect.Value
+	layouts           []layout
+	indices           []uint32
+	entityBuffer      reflect.Value
+	entityPointer     unsafe.Pointer
+	graphNode         *archetypeNode
+	len               uint32
+	cap               uint32
+	capacityIncrement uint32
+	access            archetypeAccess
 }
 
 // Init initializes an archetype
@@ -140,15 +150,6 @@ func (a *archetype) GetEntity(index uintptr) Entity {
 	return *(*Entity)(unsafe.Add(a.entityPointer, entitySize*index))
 }
 
-// Get returns the component with the given ID at the given index
-func (a *archetypeAccess) Get(index uintptr, id ID) unsafe.Pointer {
-	return a.getStorage(id).Get(index)
-}
-
-func (a *archetypeAccess) getStorage(id ID) *layout {
-	return (*layout)(unsafe.Add(a.basePointer, layoutSize*uintptr(id)))
-}
-
 // Add adds an entity with zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
 	idx := uintptr(a.len)
@@ -161,6 +162,7 @@ func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
 	return idx
 }
 
+// extend the memory buffers if necessary for adding an entity.
 func (a *archetype) extend() {
 	if a.cap > a.len {
 		return
@@ -208,6 +210,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 	return idx
 }
 
+// Adds an entity at the given index. Does not extend the entity buffer.
 func (a *archetype) addEntity(entity *Entity, index uintptr) {
 	dst := unsafe.Add(a.entityPointer, entitySize*index)
 	rValue := reflect.ValueOf(entity)
@@ -236,7 +239,7 @@ func (a *archetype) Zero(index uintptr, id ID) {
 	}
 }
 
-// Remove removes an entity from the archetype
+// Remove removes an entity and its components from the archetype.
 func (a *archetype) Remove(index uintptr) bool {
 	swapped := a.removeEntity(index)
 
@@ -260,6 +263,8 @@ func (a *archetype) Remove(index uintptr) bool {
 	return swapped
 }
 
+// removeEntity removes an entity from tne archetype.
+// Components need to be removed separately.
 func (a *archetype) removeEntity(index uintptr) bool {
 	o := uintptr(a.len - 1)
 	n := uintptr(index)

@@ -10,7 +10,7 @@
   * Move repetitive pointer copying code in `storage` into a private method.
   * Move repetitive entity creation code in  `World` into a private method.
 * Document all private functions, types and methods  (!136)
-* Speedup of archetype access by 5% by merging storages into archetypes (!137)
+* Speedup of archetype access by 5-10% by merging storages into archetypes (!137)
 
 ## [[v0.5.0]](https://github.com/mlange-42/arche/compare/v0.4.6...v0.5.0)
 
