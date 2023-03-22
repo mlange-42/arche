@@ -3,10 +3,9 @@ name: Benchmarks
 on: [push]
 
 jobs:
-  build:
+  benchmarks:
     name: Run benchmarks
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
       - name: Setup Go
@@ -22,7 +21,19 @@ jobs:
         run: |
           cd benchmark
           go test -benchmem -run=^$ -bench ^.*$ ./arche/...
+          
+  competition:
+    name: Run competition
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.20.x'
+      - name: Install dependencies
+        run: go get .
       - name: Run competition benchmarks
         run: |
           cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/...
+          go test -benchmem -run=^$ -bench ^.*$ ./competition/... --count 5
