@@ -379,7 +379,8 @@ func (w *World) HasResource(id ResID) bool {
 //
 // Example:
 //
-//	query := world.Query(All(idA, idB).Without(idC))
+//	filter := All(idA, idB).Without(idC)
+//	query := world.Query(filter)
 //	for query.Next() {
 //	    pos := (*position)(query.Get(posID))
 //	    pos.X += 1.0

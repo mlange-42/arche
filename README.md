@@ -20,15 +20,14 @@ go get github.com/mlange-42/arche
 
 ## Features
 
-* Simple core API. See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
-* Optional rich filtering and generic query API.
-* Fast iteration and component access via queries (≈2.5ns iterate + get, see [Benchmarks](#benchmarks)).
-* Fast random access for components of arbitrary entities. Useful for hierarchies.
-* No systems. Just queries. Use your own structure!
+* Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
+* Optional rich [filtering](https://pkg.go.dev/github.com/mlange-42/arche/filter) and [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) query API.
+* No systems. Just queries. Use your own structure.
 * Not thread-safe. On purpose.
 * No dependencies. Except for unit tests ([100% coverage](https://github.com/mlange-42/arche/actions/workflows/coverage.yml)).
+* Probably the fastest Go ECS out there. See the [Benchmarks](#benchmarks).
 
-For details on Arche's architecture, see section [Architecture](#architecture).
+For details, see sections [Architecture](#architecture) and [Design decisions](#design-decisions).
 
 ## Usage example
 
@@ -102,7 +101,8 @@ func main() {
 
 Unlike most other ECS implementations, *Arche* is designed for the development of scientific,
 individual-based models rather than for game development.
-This motivates some design decisions, with a focus on simplicity, safety and performance.
+This motivates some design decisions, with an emphasis on simplicity, safety and performance.
+Nevertheless, *Arche* can also be used for game development.
 
 ### Minimal core API
 
@@ -113,7 +113,7 @@ The core package `ecs` consists of only 1200 lines of easy-to-read, clean and we
 There is neither an update loop nor systems.
 These should be implemented by the user.
 
-The packages `filter` and `generic` provide a layer around the core for richer and/or safer queries and operations. They are built on top of the `ecs` package, so they could also be implemented by users.
+The packages `filter` and `generic` provide a layer around the core for richer and/or safer queries and manipulation. They are built on top of the `ecs` package, so they could also be implemented by a user.
 See also [Generic vs. ID access](#generic-vs-id-access).
 
 ### Determinism
@@ -164,9 +164,9 @@ In the illustration, the first archetype holds all components for all entities w
 ```
 
 The exact composition of each archetype is encoded in a bitmask for fast comparison.
-Thus, queries can easily identify their relevant archetypes (i.e. query bitmask contained in archetype bitmask), and then iterate entities linearly, and very fast. Components can be accessed through the query in a very efficient way.
+Thus, queries can easily identify their relevant archetypes, and then simply iterate entities linearly, which is very fast. Components can be accessed through the query in a very efficient way (&approx;1ns).
 
-For getting components by entity ID, e.g. for hierarchies, the world contains a list that is indexed by the entity ID, and references the entity's archetype and index in the archetype. This way, getting components for entity IDs (i.e. random access) is fast, although not as fast as in queries (≈2ns vs. 1ns).
+For getting components by entity ID, e.g. for hierarchies, the world contains a list that is indexed by the entity ID. For each entity, it references it's current archetype and the index in the archetype. This way, getting components for entity IDs (i.e. random access) is fast, although not as fast as in queries (≈2ns vs. 1ns).
 
 Obviously, archetypes are an optimization for iteration speed.
 But they also come with a downside. Adding or removing components to/from an entity requires moving all the components of the entity to another archetype.
@@ -177,7 +177,7 @@ It is therefore recommended to add/remove/exchange multiple components at the sa
 
 *Arche* provides generic functions and types for accessing and modifying components etc., as shown in the [Usage example](#usage-example).
 
-Generic access is built on top of ID-based access used by the `ecs.World`.
+Generic access is built on top of the ID-based access that is used by the `ecs.World`.
 Generic functions and types provide type-safety and are more user-friendly than ID-based access.
 However, when querying many components, generic queries have a runtime overhead of around 10-20%.
 For performance-critical code, the use of the ID-based methods of `ecs.World` may be worth testing.
@@ -187,25 +187,48 @@ For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arc
 
 ## Benchmarks
 
-### Versus Array of Structs
+See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
+
+### Arche vs. other Go ECS implementations
+
+To the best of the author's knowledge, there are only a handful of ECS implementations in Go that are serious and somewhat maintained:
+
+* [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs)
+* [Donburi](https://github.com/yohamta/donburi)
+* [Ento](https://github.com/wwfranczyk/ento)
+* [Entitas-Go](https://github.com/Falldot/Entitas-Go) (archived repository)
+
+Here, *Arche* is benchmarked against these implementations.
+Feel free to open an issue if you have suggestions for improvements on the benchmarking code or other engines to include.
+
+#### Position/Velocity
+
+* 1000 entities with `Pos{float64, float64}` and `Vel{float64, float64}`.
+* 9000 entities with only `Pos{float64, float64}`.
+* Iterate all entities with `Pos` and `Vel`, and add `Vel` to `Pos`.
+
+<div align="center" width="100%">
+
+![Benchmark vs. Go ECSs](https://github.com/mlange-42/arche/blob/main/benchmark/competition/pos_vel/results.svg)  
+*CPU benchmarks of Arche (left-most) vs. other Go ECS implementations.
+Left panel: query iteration (log scale), right panel: world setup and entity creation.*
+</div>
+
+### Arche vs. Array of Structs
 
 The plot below shows CPU time benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue) (with structs escaped to the heap).
 
-Arche requires a constant time of 2.5ns per access, independent of the memory per entity (x axis) and number of entities (line styles).
+Arche takes a constant time of just over 2ns per entity, regardless of the memory per entity (x-axis) and the number of entities (line styles).
 For AoS and AoP, time per access increases with memory per entity as well as number of entities, due to cache misses.
 
-In the given example with components of 16 bytes each, from 64 bytes per entity onwards (i.e. 4 components / 8 `float64` values),
+In the given example with components of 16 bytes each, from 64 bytes per entity onwards (i.e. 4 components or 8 `float64` values),
 Arche outperforms AoS and AoP, particularly with a large number of entities.
 
 <div align="center" width="100%">
 
-![Benchmark vs. AoS and AoP](./benchmark/arche/aos/results.svg)  
+![Benchmark vs. AoS and AoP](https://github.com/mlange-42/arche/blob/main/benchmark/arche/aos/results.svg)  
 *CPU benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue).*
 </div>
-
-### Versus other Go ECS implementations
-
-See the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
 
 ## Cite as
 
