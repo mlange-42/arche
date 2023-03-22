@@ -209,7 +209,7 @@ Feel free to open an issue if you have suggestions for improvements on the bench
 
 <div align="center" width="100%">
 
-![Benchmark vs. Go ECSs](./benchmark/competition/pos_vel/results.svg)  
+![Benchmark vs. Go ECSs](https://github.com/mlange-42/arche/blob/main/benchmark/competition/pos_vel/results.svg)  
 *CPU benchmarks of Arche (left-most) vs. other Go ECS implementations.
 Left panel: query iteration (log scale), right panel: world setup and entity creation.*
 </div>
@@ -226,7 +226,7 @@ Arche outperforms AoS and AoP, particularly with a large number of entities.
 
 <div align="center" width="100%">
 
-![Benchmark vs. AoS and AoP](./benchmark/arche/aos/results.svg)  
+![Benchmark vs. AoS and AoP](https://github.com/mlange-42/arche/blob/main/benchmark/arche/aos/results.svg)  
 *CPU benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue).*
 </div>
 
