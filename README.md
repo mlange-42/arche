@@ -179,7 +179,7 @@ It is therefore recommended to add/remove/exchange multiple components at the sa
 
 Generic access is built on top of the ID-based access that is used by the `ecs.World`.
 Generic functions and types provide type-safety and are more user-friendly than ID-based access.
-However, when querying many components, generic queries have a runtime overhead of around 10-20%.
+However, when querying many components, generic queries have a runtime overhead of around 20-30%.
 For performance-critical code, the use of the ID-based methods of `ecs.World` may be worth testing.
 
 For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
@@ -209,7 +209,7 @@ Feel free to open an issue if you have suggestions for improvements on the bench
 
 <div align="center" width="100%">
 
-![Benchmark vs. Go ECSs](https://github.com/mlange-42/arche/blob/main/benchmark/competition/pos_vel/results.svg)  
+![Benchmark vs. Go ECSs](https://user-images.githubusercontent.com/44003176/227034251-456fa2e4-8eb9-461b-b312-8bfee37cf9c2.svg)  
 *CPU benchmarks of Arche (left-most) vs. other Go ECS implementations.
 Left panel: query iteration (log scale), right panel: world setup and entity creation.*
 </div>
@@ -226,7 +226,7 @@ Arche outperforms AoS and AoP, particularly with a large number of entities.
 
 <div align="center" width="100%">
 
-![Benchmark vs. AoS and AoP](https://github.com/mlange-42/arche/blob/main/benchmark/arche/aos/results.svg)  
+![Benchmark vs. AoS and AoP](https://user-images.githubusercontent.com/44003176/227033985-587b5d02-c159-4e00-b2a5-dc8b2f65b124.svg)  
 *CPU benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue).*
 </div>
 

@@ -46,10 +46,10 @@ if __name__ == "__main__":
             ]
             series.append(extr["Time"] / factor)
 
-        ax.violinplot(series, showmeans=True, showextrema=False, bw_method=0.5)
+        ax.violinplot(series, vert=True, showmeans=True, showextrema=False, bw_method=0.5)
 
         ax.set_xticks(range(1, len(models) + 1))
-        ax.set_xticklabels([n for _, n in models], fontsize=11)
+        ax.set_xticklabels([n for _, n in models])
 
         ax.set_ylim((yticks or [0])[0], np.max(bench_data["Time"]) * 1.1 / factor)
         ax.set_yscale(scale)
