@@ -25,6 +25,7 @@ type query struct {
 	Arguments   string
 	IDTypes     string
 	IDAssign    string
+	IDList      string
 }
 
 func main() {
@@ -57,26 +58,24 @@ func generateMaps() {
 		returnTypes := ""
 		fullTypes := ""
 		returnAll := ""
-		include := ""
 		components := ""
 		arguments := ""
 		idTypes := ""
 		idAssign := ""
+		idList := ""
 
 		if i > 0 {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-			include = "[]ecs.ID{\necs.ComponentID[" + strings.Join(typeLetters[:i], "](w),\necs.ComponentID[") + "](w),\n}"
 			idTypes = "id" + strings.Join(numbers[:i], " ecs.ID\n\tid") + " ecs.ID"
-		} else {
-			include = "[]ecs.ID{}"
+			idList = "m.id" + strings.Join(numbers[:i], ", m.id")
 		}
 
 		for j := 0; j < i; j++ {
 			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.id%d))", typeLetters[j], j)
 			arguments += fmt.Sprintf("%s *%s", strings.ToLower(typeLetters[j]), typeLetters[j])
-			idAssign += fmt.Sprintf("	id%d: ids[%d],\n", j, j)
+			idAssign += fmt.Sprintf("	id%d: ecs.ComponentID[%s](w),\n", j, typeLetters[j])
 			if j < i-1 {
 				returnAll += ",\n"
 				arguments += ", "
@@ -91,11 +90,11 @@ func generateMaps() {
 			TypesReturn: returnTypes,
 			TypesFull:   fullTypes,
 			ReturnAll:   returnAll,
-			Include:     include,
 			Components:  components,
 			Arguments:   arguments,
 			IDTypes:     idTypes,
 			IDAssign:    idAssign,
+			IDList:      idList,
 		}
 		err = maps.Execute(&text, data)
 		if err != nil {

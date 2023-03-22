@@ -11,19 +11,14 @@ import (
 // Map1 is a helper for mapping one components.
 type Map1[A any] struct {
 	world *ecs.World
-	ids   []ecs.ID
 	id0   ecs.ID
 }
 
 // NewMap1 creates a new Map1 object.
 func NewMap1[A any](w *ecs.World) Map1[A] {
-	ids := []ecs.ID{
-		ecs.ComponentID[A](w),
-	}
 	return Map1[A]{
 		world: w,
-		ids:   ids,
-		id0:   ids[0],
+		id0:   ecs.ComponentID[A](w),
 	}
 }
 
@@ -38,7 +33,7 @@ func (m *Map1[A]) Get(entity ecs.Entity) *A {
 //
 // See also [ecs.World.NewEntity].
 func (m *Map1[A]) NewEntity() (ecs.Entity, *A) {
-	entity := m.world.NewEntity(m.ids...)
+	entity := m.world.NewEntity(m.id0)
 	return entity, (*A)(m.world.Get(entity, m.id0))
 }
 
@@ -56,7 +51,7 @@ func (m *Map1[A]) NewEntityWith(a *A) (ecs.Entity, *A) {
 //
 // See also [ecs.World.Add].
 func (m *Map1[A]) Add(entity ecs.Entity) *A {
-	m.world.Add(entity, m.ids...)
+	m.world.Add(entity, m.id0)
 	return (*A)(m.world.Get(entity, m.id0))
 }
 
@@ -74,7 +69,7 @@ func (m *Map1[A]) Assign(entity ecs.Entity, a *A) *A {
 //
 // See also [ecs.World.Remove].
 func (m *Map1[A]) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+	m.world.Remove(entity, m.id0)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -82,22 +77,16 @@ func (m *Map1[A]) Remove(entity ecs.Entity) {
 // Map2 is a helper for mapping two components.
 type Map2[A any, B any] struct {
 	world *ecs.World
-	ids   []ecs.ID
 	id0   ecs.ID
 	id1   ecs.ID
 }
 
 // NewMap2 creates a new Map2 object.
 func NewMap2[A any, B any](w *ecs.World) Map2[A, B] {
-	ids := []ecs.ID{
-		ecs.ComponentID[A](w),
-		ecs.ComponentID[B](w),
-	}
 	return Map2[A, B]{
 		world: w,
-		ids:   ids,
-		id0:   ids[0],
-		id1:   ids[1],
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
 	}
 }
 
@@ -113,7 +102,7 @@ func (m *Map2[A, B]) Get(entity ecs.Entity) (*A, *B) {
 //
 // See also [ecs.World.NewEntity].
 func (m *Map2[A, B]) NewEntity() (ecs.Entity, *A, *B) {
-	entity := m.world.NewEntity(m.ids...)
+	entity := m.world.NewEntity(m.id0, m.id1)
 	return entity, (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1))
 }
@@ -134,7 +123,7 @@ func (m *Map2[A, B]) NewEntityWith(a *A, b *B) (ecs.Entity, *A, *B) {
 //
 // See also [ecs.World.Add].
 func (m *Map2[A, B]) Add(entity ecs.Entity) (*A, *B) {
-	m.world.Add(entity, m.ids...)
+	m.world.Add(entity, m.id0, m.id1)
 	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1))
 }
@@ -155,7 +144,7 @@ func (m *Map2[A, B]) Assign(entity ecs.Entity, a *A, b *B) (*A, *B) {
 //
 // See also [ecs.World.Remove].
 func (m *Map2[A, B]) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+	m.world.Remove(entity, m.id0, m.id1)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -163,7 +152,6 @@ func (m *Map2[A, B]) Remove(entity ecs.Entity) {
 // Map3 is a helper for mapping three components.
 type Map3[A any, B any, C any] struct {
 	world *ecs.World
-	ids   []ecs.ID
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -171,17 +159,11 @@ type Map3[A any, B any, C any] struct {
 
 // NewMap3 creates a new Map3 object.
 func NewMap3[A any, B any, C any](w *ecs.World) Map3[A, B, C] {
-	ids := []ecs.ID{
-		ecs.ComponentID[A](w),
-		ecs.ComponentID[B](w),
-		ecs.ComponentID[C](w),
-	}
 	return Map3[A, B, C]{
 		world: w,
-		ids:   ids,
-		id0:   ids[0],
-		id1:   ids[1],
-		id2:   ids[2],
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
 	}
 }
 
@@ -198,7 +180,7 @@ func (m *Map3[A, B, C]) Get(entity ecs.Entity) (*A, *B, *C) {
 //
 // See also [ecs.World.NewEntity].
 func (m *Map3[A, B, C]) NewEntity() (ecs.Entity, *A, *B, *C) {
-	entity := m.world.NewEntity(m.ids...)
+	entity := m.world.NewEntity(m.id0, m.id1, m.id2)
 	return entity, (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2))
@@ -222,7 +204,7 @@ func (m *Map3[A, B, C]) NewEntityWith(a *A, b *B, c *C) (ecs.Entity, *A, *B, *C)
 //
 // See also [ecs.World.Add].
 func (m *Map3[A, B, C]) Add(entity ecs.Entity) (*A, *B, *C) {
-	m.world.Add(entity, m.ids...)
+	m.world.Add(entity, m.id0, m.id1, m.id2)
 	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2))
@@ -246,7 +228,7 @@ func (m *Map3[A, B, C]) Assign(entity ecs.Entity, a *A, b *B, c *C) (*A, *B, *C)
 //
 // See also [ecs.World.Remove].
 func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+	m.world.Remove(entity, m.id0, m.id1, m.id2)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -254,7 +236,6 @@ func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
 // Map4 is a helper for mapping four components.
 type Map4[A any, B any, C any, D any] struct {
 	world *ecs.World
-	ids   []ecs.ID
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -263,19 +244,12 @@ type Map4[A any, B any, C any, D any] struct {
 
 // NewMap4 creates a new Map4 object.
 func NewMap4[A any, B any, C any, D any](w *ecs.World) Map4[A, B, C, D] {
-	ids := []ecs.ID{
-		ecs.ComponentID[A](w),
-		ecs.ComponentID[B](w),
-		ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w),
-	}
 	return Map4[A, B, C, D]{
 		world: w,
-		ids:   ids,
-		id0:   ids[0],
-		id1:   ids[1],
-		id2:   ids[2],
-		id3:   ids[3],
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
+		id3:   ecs.ComponentID[D](w),
 	}
 }
 
@@ -293,7 +267,7 @@ func (m *Map4[A, B, C, D]) Get(entity ecs.Entity) (*A, *B, *C, *D) {
 //
 // See also [ecs.World.NewEntity].
 func (m *Map4[A, B, C, D]) NewEntity() (ecs.Entity, *A, *B, *C, *D) {
-	entity := m.world.NewEntity(m.ids...)
+	entity := m.world.NewEntity(m.id0, m.id1, m.id2, m.id3)
 	return entity, (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -320,7 +294,7 @@ func (m *Map4[A, B, C, D]) NewEntityWith(a *A, b *B, c *C, d *D) (ecs.Entity, *A
 //
 // See also [ecs.World.Add].
 func (m *Map4[A, B, C, D]) Add(entity ecs.Entity) (*A, *B, *C, *D) {
-	m.world.Add(entity, m.ids...)
+	m.world.Add(entity, m.id0, m.id1, m.id2, m.id3)
 	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -347,7 +321,7 @@ func (m *Map4[A, B, C, D]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D) (*A
 //
 // See also [ecs.World.Remove].
 func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -355,7 +329,6 @@ func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
 // Map5 is a helper for mapping five components.
 type Map5[A any, B any, C any, D any, E any] struct {
 	world *ecs.World
-	ids   []ecs.ID
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -365,21 +338,13 @@ type Map5[A any, B any, C any, D any, E any] struct {
 
 // NewMap5 creates a new Map5 object.
 func NewMap5[A any, B any, C any, D any, E any](w *ecs.World) Map5[A, B, C, D, E] {
-	ids := []ecs.ID{
-		ecs.ComponentID[A](w),
-		ecs.ComponentID[B](w),
-		ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w),
-		ecs.ComponentID[E](w),
-	}
 	return Map5[A, B, C, D, E]{
 		world: w,
-		ids:   ids,
-		id0:   ids[0],
-		id1:   ids[1],
-		id2:   ids[2],
-		id3:   ids[3],
-		id4:   ids[4],
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
+		id3:   ecs.ComponentID[D](w),
+		id4:   ecs.ComponentID[E](w),
 	}
 }
 
@@ -398,7 +363,7 @@ func (m *Map5[A, B, C, D, E]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E) {
 //
 // See also [ecs.World.NewEntity].
 func (m *Map5[A, B, C, D, E]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E) {
-	entity := m.world.NewEntity(m.ids...)
+	entity := m.world.NewEntity(m.id0, m.id1, m.id2, m.id3, m.id4)
 	return entity, (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -428,7 +393,7 @@ func (m *Map5[A, B, C, D, E]) NewEntityWith(a *A, b *B, c *C, d *D, e *E) (ecs.E
 //
 // See also [ecs.World.Add].
 func (m *Map5[A, B, C, D, E]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E) {
-	m.world.Add(entity, m.ids...)
+	m.world.Add(entity, m.id0, m.id1, m.id2, m.id3, m.id4)
 	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -458,7 +423,7 @@ func (m *Map5[A, B, C, D, E]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, 
 //
 // See also [ecs.World.Remove].
 func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3, m.id4)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -466,7 +431,6 @@ func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
 // Map6 is a helper for mapping six components.
 type Map6[A any, B any, C any, D any, E any, F any] struct {
 	world *ecs.World
-	ids   []ecs.ID
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -477,23 +441,14 @@ type Map6[A any, B any, C any, D any, E any, F any] struct {
 
 // NewMap6 creates a new Map6 object.
 func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World) Map6[A, B, C, D, E, F] {
-	ids := []ecs.ID{
-		ecs.ComponentID[A](w),
-		ecs.ComponentID[B](w),
-		ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w),
-		ecs.ComponentID[E](w),
-		ecs.ComponentID[F](w),
-	}
 	return Map6[A, B, C, D, E, F]{
 		world: w,
-		ids:   ids,
-		id0:   ids[0],
-		id1:   ids[1],
-		id2:   ids[2],
-		id3:   ids[3],
-		id4:   ids[4],
-		id5:   ids[5],
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
+		id3:   ecs.ComponentID[D](w),
+		id4:   ecs.ComponentID[E](w),
+		id5:   ecs.ComponentID[F](w),
 	}
 }
 
@@ -513,7 +468,7 @@ func (m *Map6[A, B, C, D, E, F]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F)
 //
 // See also [ecs.World.NewEntity].
 func (m *Map6[A, B, C, D, E, F]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F) {
-	entity := m.world.NewEntity(m.ids...)
+	entity := m.world.NewEntity(m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
 	return entity, (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -546,7 +501,7 @@ func (m *Map6[A, B, C, D, E, F]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *
 //
 // See also [ecs.World.Add].
 func (m *Map6[A, B, C, D, E, F]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E, *F) {
-	m.world.Add(entity, m.ids...)
+	m.world.Add(entity, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
 	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -579,7 +534,7 @@ func (m *Map6[A, B, C, D, E, F]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *
 //
 // See also [ecs.World.Remove].
 func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -587,7 +542,6 @@ func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
 // Map7 is a helper for mapping seven components.
 type Map7[A any, B any, C any, D any, E any, F any, G any] struct {
 	world *ecs.World
-	ids   []ecs.ID
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -599,25 +553,15 @@ type Map7[A any, B any, C any, D any, E any, F any, G any] struct {
 
 // NewMap7 creates a new Map7 object.
 func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Map7[A, B, C, D, E, F, G] {
-	ids := []ecs.ID{
-		ecs.ComponentID[A](w),
-		ecs.ComponentID[B](w),
-		ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w),
-		ecs.ComponentID[E](w),
-		ecs.ComponentID[F](w),
-		ecs.ComponentID[G](w),
-	}
 	return Map7[A, B, C, D, E, F, G]{
 		world: w,
-		ids:   ids,
-		id0:   ids[0],
-		id1:   ids[1],
-		id2:   ids[2],
-		id3:   ids[3],
-		id4:   ids[4],
-		id5:   ids[5],
-		id6:   ids[6],
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
+		id3:   ecs.ComponentID[D](w),
+		id4:   ecs.ComponentID[E](w),
+		id5:   ecs.ComponentID[F](w),
+		id6:   ecs.ComponentID[G](w),
 	}
 }
 
@@ -638,7 +582,7 @@ func (m *Map7[A, B, C, D, E, F, G]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, 
 //
 // See also [ecs.World.NewEntity].
 func (m *Map7[A, B, C, D, E, F, G]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G) {
-	entity := m.world.NewEntity(m.ids...)
+	entity := m.world.NewEntity(m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
 	return entity, (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -674,7 +618,7 @@ func (m *Map7[A, B, C, D, E, F, G]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, 
 //
 // See also [ecs.World.Add].
 func (m *Map7[A, B, C, D, E, F, G]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G) {
-	m.world.Add(entity, m.ids...)
+	m.world.Add(entity, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
 	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -710,7 +654,7 @@ func (m *Map7[A, B, C, D, E, F, G]) Assign(entity ecs.Entity, a *A, b *B, c *C, 
 //
 // See also [ecs.World.Remove].
 func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -718,7 +662,6 @@ func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
 // Map8 is a helper for mapping eight components.
 type Map8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	world *ecs.World
-	ids   []ecs.ID
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -731,27 +674,16 @@ type Map8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 
 // NewMap8 creates a new Map8 object.
 func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World) Map8[A, B, C, D, E, F, G, H] {
-	ids := []ecs.ID{
-		ecs.ComponentID[A](w),
-		ecs.ComponentID[B](w),
-		ecs.ComponentID[C](w),
-		ecs.ComponentID[D](w),
-		ecs.ComponentID[E](w),
-		ecs.ComponentID[F](w),
-		ecs.ComponentID[G](w),
-		ecs.ComponentID[H](w),
-	}
 	return Map8[A, B, C, D, E, F, G, H]{
 		world: w,
-		ids:   ids,
-		id0:   ids[0],
-		id1:   ids[1],
-		id2:   ids[2],
-		id3:   ids[3],
-		id4:   ids[4],
-		id5:   ids[5],
-		id6:   ids[6],
-		id7:   ids[7],
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
+		id3:   ecs.ComponentID[D](w),
+		id4:   ecs.ComponentID[E](w),
+		id5:   ecs.ComponentID[F](w),
+		id6:   ecs.ComponentID[G](w),
+		id7:   ecs.ComponentID[H](w),
 	}
 }
 
@@ -773,7 +705,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Get(entity ecs.Entity) (*A, *B, *C, *D, *
 //
 // See also [ecs.World.NewEntity].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewEntity() (ecs.Entity, *A, *B, *C, *D, *E, *F, *G, *H) {
-	entity := m.world.NewEntity(m.ids...)
+	entity := m.world.NewEntity(m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
 	return entity, (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -812,7 +744,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewEntityWith(a *A, b *B, c *C, d *D, e *
 //
 // See also [ecs.World.Add].
 func (m *Map8[A, B, C, D, E, F, G, H]) Add(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H) {
-	m.world.Add(entity, m.ids...)
+	m.world.Add(entity, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
 	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.Get(entity, m.id1)),
 		(*C)(m.world.Get(entity, m.id2)),
@@ -851,5 +783,5 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Assign(entity ecs.Entity, a *A, b *B, c *
 //
 // See also [ecs.World.Remove].
 func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
 }

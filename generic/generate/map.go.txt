@@ -4,16 +4,13 @@
 // Map{{ .Index }} is a helper for mapping {{ .NumberStr }} components.
 type Map{{ .Index }}{{ .TypesFull }} struct {
 	world *ecs.World
-	ids   []ecs.ID
 	{{ .IDTypes }}
 }
 
 // NewMap{{ .Index }} creates a new Map{{ .Index }} object.
 func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }} {
-	ids := {{ .Include }}
 	return Map{{ .Index }}{{ .Types }}{
 		world: w,
-		ids:   ids,
 		{{ .IDAssign }}
 	}
 }
@@ -29,7 +26,7 @@ func (m *Map{{ .Index }}{{ .Types }}) Get(entity ecs.Entity) ({{ .TypesReturn }}
 //
 // See also [ecs.World.NewEntity].
 func (m *Map{{ .Index }}{{ .Types }}) NewEntity() (ecs.Entity, {{ .TypesReturn }}) {
-	entity := m.world.NewEntity(m.ids...)
+	entity := m.world.NewEntity({{ .IDList }})
 	return entity{{if .ReturnAll}}, {{ .ReturnAll }}{{ end }}
 }
 
@@ -48,7 +45,7 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) (ecs.Entit
 //
 // See also [ecs.World.Add].
 func (m *Map{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) ({{ .TypesReturn }}) {
-	m.world.Add(entity, m.ids...)
+	m.world.Add(entity, {{ .IDList }})
 	return {{ .ReturnAll }}
 }
 
@@ -67,5 +64,5 @@ func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}
 //
 // See also [ecs.World.Remove].
 func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+	m.world.Remove(entity, {{ .IDList }})
 }
