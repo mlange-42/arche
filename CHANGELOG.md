@@ -2,6 +2,15 @@
 
 ## [[v0.5.1]](https://github.com/mlange-42/arche/compare/v0.5.0...v0.5.1)
 
+### Performance
+
+* Speedup of archetype access by 5-10% by merging storages into archetypes (!137)
+
+### Documentation
+
+* Document all private functions, types and methods  (!136)
+* Adds a section  and plot on benchmarks against other Go ECS implementations to the README (!138)
+
 ### Other
 
 * Internal code refactoring (!136)
@@ -9,8 +18,6 @@
   * Remove internal type `queryIter`.
   * Move repetitive pointer copying code in `storage` into a private method.
   * Move repetitive entity creation code in  `World` into a private method.
-* Document all private functions, types and methods  (!136)
-* Speedup of archetype access by 5-10% by merging storages into archetypes (!137)
 
 ## [[v0.5.0]](https://github.com/mlange-42/arche/compare/v0.4.6...v0.5.0)
 
@@ -21,18 +28,21 @@ Feature release. Does not break v0.4.x projects.
 * The World handles ECS resources, i.e. component-like global data (!132)
 * Generic access to world resources (!132)
 
-### Other
+### Documentation
 
 * Adds an example for the use of resources (!132)
 
 ## [[v0.4.6]](https://github.com/mlange-42/arche/compare/v0.4.5...v0.4.6)
 
-### Other
+### Performance
 
 * Speedup archetype access by 10%, by elimination of bounds checks (!126)
-* Minor optimizations of component storage (!128)
-* Adds an example to demonstrate how to implement classical ECS systems (!129)
 * Speedup entity access from queries by 50% by using a component storage for them (!131)
+* Minor optimizations of component storage (!128)
+
+### Documentation
+
+* Adds an example to demonstrate how to implement classical ECS systems (!129)
 
 ## [[v0.4.5]](https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5)
 
@@ -50,6 +60,10 @@ Feature release. Does not break v0.4.x projects.
 
 * `Query` has methods `Count()` and `Step(int)`, primarily for effective random sampling (#119)
 
+### Documentation
+
+* Adds example `random_sampling` to demonstrate usage of `Query.Count()` and `Query.Step(int)` (#119)
+
 ### Bugfixes
 
 * `Query.Next`, `Query.Get`, etc. now always panic when called on a closed query (#117)
@@ -57,7 +71,6 @@ Feature release. Does not break v0.4.x projects.
 ### Other
 
 * Update to [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs) v0.9.0 in benchmarks (#116)
-* Adds example `random_sampling` to demonstrate usage of `Query.Count()` and `Query.Step(int)` (#119)
 * Remove internal wrapper structs in generic queries and maps (#120)
 
 ## [[v0.4.3]](https://github.com/mlange-42/arche/compare/v0.4.2...v0.4.3)
@@ -71,7 +84,7 @@ Feature release. Does not break v0.4.x projects.
 
 ## [[v0.4.2]](https://github.com/mlange-42/arche/compare/v0.4.1...v0.4.2)
 
-### Other
+### Performance
 
 * Avoid creation of unused archetypes by splitting the archetype graph out of the actual archetypes (#113)
 * Use slice instead of fixed-size array for type lookup in component registry (#113)
@@ -103,16 +116,19 @@ API revision, split out generics and filters into separate packages.
 * Support for up to 128 distinct component types per world (was limited to 64 before) (#78)
 * Generic entity manipulation through types `Map1`, `Map2`, ... and `Exchange` (#79, #84, #87)
 
+### Performance
+
+* Generic queries are compiled to masks and cached on first build (#62)
+* Optimization of adding/removing components, with 2-3x speedup and vast reduction of (number of) allocations (#93)
+* Speed up component world access by use of nil pointer check instead of bitmask (#96)
+
 ### Other
 
 * Overhaul of the module structure, with generics and filters in separate packages (#55, #57, #61, #64)
-* Generic queries are compiled to masks and cached on first build (#62)
 * Boilerplate code for generic filters and queries is auto-generated with `go generate` (#64)
 * Ensure 100% test coverage by adding a CI check for it (#68)
 * `World.RemEntity(Entity)` is now `World.RemoveEntity(Entity)` (#87)
-* Optimization of adding/removing components, with 2-3x speedup and vast reduction of (number of) allocations (#93)
 * More examples as user documentation (#83, #95)
-* Speed up component world access by use of nil pointer check instead of bitmask (#96)
 * General API cleanup with renaming of several types and methods (#100)
 
 ## [[v0.3.1]](https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1)
@@ -130,12 +146,15 @@ API revision, split out generics and filters into separate packages.
   * Generic add, assign and remove (`Add[T]()`, `Add2[T, U](), ...`) (#47)
   * Generic get, has, and set through component mapper `Map[T]` (#47)
 
-### Other
+### Performance
 
 * Use of an archetype graph to speed up finding the target archetype for component addition/removal (#42)
+* Minor optimization of component access by queries (#50)
+
+### Other
+
 * Reduced dependencies by moving profiling and benchmarking to sub-modules (#46)
 * Smaller integer type for component identifiers (#47)
-* Minor optimization of component access by queries (#50)
 
 ## [[v0.2.0]](https://github.com/mlange-42/arche/compare/v0.1.4...v0.2.0)
 
@@ -145,16 +164,19 @@ API revision, split out generics and filters into separate packages.
 * `World` has method `Assign` add and assign components in one go (#38)
 * `World` has method `AssignN` add and assign multiple components in one go (#38)
 
-### Other
+### Performance
 
 * Optimization of `Query` iteration, avoids allocations and makes it approx. 30% faster (#35)
+* Much smaller archetype data structure at the cost of one more index lookup (#37)
+
+### Other
+
 * Removed method `Query.Count()`, as it was a by-product of the allocations in the above point (#35)
 * Archetypes are stored in a paged collection to use more efficient access by pointers (#36)
-* Much smaller archetype data structure at the cost of one more index lookup (#37)
 
 ## [[v0.1.4]](https://github.com/mlange-42/arche/compare/v0.1.3...v0.1.4)
 
-### Other
+### Documentation
 
 * Extended and improved documentation (#34)
 

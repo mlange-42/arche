@@ -191,7 +191,7 @@ See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actio
 
 ### Arche vs. other Go ECS implementations
 
-To the best of the author's knowledge, there is only a handful of ECS implementations in Go that are serious and somewhat maintained:
+To the best of the author's knowledge, there are only a handful of ECS implementations in Go that are serious and somewhat maintained:
 
 * [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs)
 * [Donburi](https://github.com/yohamta/donburi)
