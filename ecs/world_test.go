@@ -441,6 +441,41 @@ func TestRegisterComponents(t *testing.T) {
 	assert.Equal(t, ID(1), ComponentID[rotation](&world))
 }
 
+func TestWorldReset(t *testing.T) {
+	world := NewWorld()
+
+	world.SetListener(func(e EntityEvent) {})
+
+	posID := ComponentID[position](&world)
+	velID := ComponentID[velocity](&world)
+
+	world.NewEntity(posID)
+	world.NewEntity(velID)
+	world.NewEntity(posID, velID)
+	world.NewEntity(posID, velID)
+
+	AddResource(&world, &rotation{100})
+
+	world.Reset()
+
+	assert.Equal(t, 0, int(world.archetypes.Get(0).Len()))
+	assert.Equal(t, 0, world.entityPool.Len())
+	assert.Equal(t, 1, len(world.entities))
+	assert.Nil(t, world.listener)
+
+	query := world.Query(All())
+	assert.Equal(t, 0, query.Count())
+	query.Close()
+
+	e1 := world.NewEntity(posID)
+	e2 := world.NewEntity(velID)
+	world.NewEntity(posID, velID)
+	world.NewEntity(posID, velID)
+
+	assert.Equal(t, Entity{1, 0}, e1)
+	assert.Equal(t, Entity{2, 0}, e2)
+}
+
 func TestArchetypeGraph(t *testing.T) {
 	world := NewWorld()
 
@@ -658,4 +693,37 @@ func BenchmarkGetResourceShortcut(b *testing.B) {
 	}
 
 	_ = res
+}
+
+func BenchmarkAdd_10_000_New(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+
+		posID := ComponentID[position](&world)
+		velID := ComponentID[velocity](&world)
+
+		for i := 0; i < 10000; i++ {
+			_ = world.NewEntity(posID, velID)
+		}
+	}
+}
+
+func BenchmarkAdd_10_000_Reset(b *testing.B) {
+	b.StopTimer()
+	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+
+	posID := ComponentID[position](&world)
+	velID := ComponentID[velocity](&world)
+
+	for i := 0; i < 10000; i++ {
+		_ = world.NewEntity(posID, velID)
+	}
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		world.Reset()
+		for i := 0; i < 10000; i++ {
+			_ = world.NewEntity(posID, velID)
+		}
+	}
 }

@@ -117,6 +117,51 @@ func TestArchetypeAddGetSet(t *testing.T) {
 	assert.Equal(t, 0, int(a.Len()))
 }
 
+func TestArchetypeReset(t *testing.T) {
+	comps := []componentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
+	}
+
+	arch := archetype{}
+	arch.Init(nil, 32, false, comps...)
+
+	arch.Add(
+		newEntity(0),
+		Component{ID: 0, Comp: &position{1, 2}},
+		Component{ID: 1, Comp: &rotation{3}},
+	)
+
+	arch.Add(
+		newEntity(1),
+		Component{ID: 0, Comp: &position{4, 5}},
+		Component{ID: 1, Comp: &rotation{6}},
+	)
+
+	assert.Equal(t, position{1, 2}, *(*position)(arch.Get(0, 0)))
+	assert.Equal(t, position{4, 5}, *(*position)(arch.Get(1, 0)))
+	assert.Equal(t, 2, int(arch.Len()))
+
+	arch.Reset()
+	assert.Equal(t, 0, int(arch.Len()))
+
+	arch.Add(
+		newEntity(0),
+		Component{ID: 0, Comp: &position{10, 20}},
+		Component{ID: 1, Comp: &rotation{3}},
+	)
+
+	arch.Add(
+		newEntity(1),
+		Component{ID: 0, Comp: &position{40, 50}},
+		Component{ID: 1, Comp: &rotation{6}},
+	)
+
+	assert.Equal(t, position{10, 20}, *(*position)(arch.Get(0, 0)))
+	assert.Equal(t, position{40, 50}, *(*position)(arch.Get(1, 0)))
+	assert.Equal(t, 2, int(arch.Len()))
+}
+
 func BenchmarkIterArchetype_1000(b *testing.B) {
 	b.StopTimer()
 	comps := []componentType{

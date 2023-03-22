@@ -35,3 +35,37 @@ func TestResources(t *testing.T) {
 	assert.False(t, res.Has(rotID))
 	assert.Panics(t, func() { res.Remove(rotID) })
 }
+
+func TestResourcesReset(t *testing.T) {
+	res := newResources()
+
+	posID := res.registry.ComponentID(reflect.TypeOf(position{}))
+	rotID := res.registry.ComponentID(reflect.TypeOf(rotation{}))
+
+	res.Add(posID, &position{1, 2})
+	res.Add(rotID, &rotation{5})
+
+	pos, ok := res.Get(posID).(*position)
+	assert.True(t, ok)
+	assert.Equal(t, position{1, 2}, *pos)
+
+	rot, ok := res.Get(rotID).(*rotation)
+	assert.True(t, ok)
+	assert.Equal(t, rotation{5}, *rot)
+
+	res.Reset()
+
+	assert.False(t, res.Has(posID))
+	assert.False(t, res.Has(rotID))
+
+	res.Add(posID, &position{10, 20})
+	res.Add(rotID, &rotation{50})
+
+	pos, ok = res.Get(posID).(*position)
+	assert.True(t, ok)
+	assert.Equal(t, position{10, 20}, *pos)
+
+	rot, ok = res.Get(rotID).(*rotation)
+	assert.True(t, ok)
+	assert.Equal(t, rotation{50}, *rot)
+}
