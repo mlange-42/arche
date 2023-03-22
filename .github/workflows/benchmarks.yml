@@ -25,4 +25,4 @@ jobs:
       - name: Run competition benchmarks
         run: |
           cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/...
+          go test -benchmem -run=^$ -bench ^.*$ ./competition/... --count 5
