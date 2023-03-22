@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/generic"
 )
 
 func BenchmarkIterArche(b *testing.B) {
@@ -46,6 +47,49 @@ func BenchmarkBuildArche(b *testing.B) {
 		}
 		for i := 0; i < nPosVel; i++ {
 			world.NewEntity(posID, velID)
+		}
+	}
+}
+
+func BenchmarkIterArcheGeneric(b *testing.B) {
+	b.StopTimer()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+
+	posMapper := generic.NewMap1[Position](&world)
+	posVelMapper := generic.NewMap2[Position, Velocity](&world)
+
+	for i := 0; i < nPos; i++ {
+		posMapper.NewEntity()
+	}
+	for i := 0; i < nPosVel; i++ {
+		posVelMapper.NewEntity()
+	}
+
+	filter := generic.NewFilter2[Position, Velocity]()
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		query := filter.Query(&world)
+		for query.Next() {
+			pos, vel := query.Get()
+			pos.X += vel.X
+			pos.Y += vel.Y
+		}
+	}
+}
+
+func BenchmarkBuildArcheGeneric(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+
+		posMapper := generic.NewMap1[Position](&world)
+		posVelMapper := generic.NewMap2[Position, Velocity](&world)
+
+		for i := 0; i < nPos; i++ {
+			posMapper.NewEntity()
+		}
+		for i := 0; i < nPosVel; i++ {
+			posVelMapper.NewEntity()
 		}
 	}
 }
