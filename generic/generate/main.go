@@ -60,24 +60,28 @@ func generateMaps() {
 		include := ""
 		components := ""
 		arguments := ""
+		idTypes := ""
+		idAssign := ""
 
 		if i > 0 {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-			include = "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](w), ecs.ComponentID[") + "](w)}"
+			include = "[]ecs.ID{\necs.ComponentID[" + strings.Join(typeLetters[:i], "](w),\necs.ComponentID[") + "](w),\n}"
+			idTypes = "id" + strings.Join(numbers[:i], " ecs.ID\n\tid") + " ecs.ID"
 		} else {
 			include = "[]ecs.ID{}"
 		}
 
 		for j := 0; j < i; j++ {
-			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.ids[%d]))", typeLetters[j], j)
+			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.id%d))", typeLetters[j], j)
 			arguments += fmt.Sprintf("%s *%s", strings.ToLower(typeLetters[j]), typeLetters[j])
+			idAssign += fmt.Sprintf("	id%d: ids[%d],\n", j, j)
 			if j < i-1 {
-				returnAll += ", "
+				returnAll += ",\n"
 				arguments += ", "
 			}
-			components += fmt.Sprintf("ecs.Component{ID: m.ids[%d], Comp: %s},\n", j, strings.ToLower(typeLetters[j]))
+			components += fmt.Sprintf("ecs.Component{ID: m.id%d, Comp: %s},\n", j, strings.ToLower(typeLetters[j]))
 		}
 
 		data := query{
@@ -90,6 +94,8 @@ func generateMaps() {
 			Include:     include,
 			Components:  components,
 			Arguments:   arguments,
+			IDTypes:     idTypes,
+			IDAssign:    idAssign,
 		}
 		err = maps.Execute(&text, data)
 		if err != nil {

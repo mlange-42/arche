@@ -3,15 +3,18 @@
 
 // Map{{ .Index }} is a helper for mapping {{ .NumberStr }} components.
 type Map{{ .Index }}{{ .TypesFull }} struct {
-	ids   []ecs.ID
 	world *ecs.World
+	ids   []ecs.ID
+	{{ .IDTypes }}
 }
 
 // NewMap{{ .Index }} creates a new Map{{ .Index }} object.
 func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }} {
+	ids := {{ .Include }}
 	return Map{{ .Index }}{{ .Types }}{
-		ids:   {{ .Include }},
 		world: w,
+		ids:   ids,
+		{{ .IDAssign }}
 	}
 }
 
