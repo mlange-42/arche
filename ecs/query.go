@@ -121,7 +121,7 @@ func (q *Query) nextArchetype() bool {
 	len := int(q.archetypes.Len())
 	for i := q.index + 1; i < len; i++ {
 		a := q.archetypes.Get(i)
-		if a.Len() > 0 && q.filter.Matches(a.Mask) {
+		if q.filter.Matches(a.Mask) && a.Len() > 0 {
 			q.index = i
 			q.archetypeIter = newArchetypeIter(a)
 			return true
