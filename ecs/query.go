@@ -92,7 +92,7 @@ func (q *Query) Step(step int) bool {
 // Count counts the entities matching this query.
 //
 // Involves a small overhead of iterating through archetypes when called the first time.
-// However, it is considerable faster than manual counting via iteration.
+// However, this is still much faster than manual counting via iteration.
 func (q *Query) Count() int {
 	if q.count >= 0 {
 		return q.count
