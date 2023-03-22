@@ -372,6 +372,28 @@ func (w *World) HasResource(id ResID) bool {
 	return w.resources.Has(id)
 }
 
+// Reset removes all entities and resources as well as the listener from the world.
+//
+// Does NOT free reserved memory, remove archetypes, clear the registry etc.
+//
+// Can be used to run systematic simulations without the need to re-allocate memory for each run.
+// Accelerates re-populating the world by a factor of 2-3.
+func (w *World) Reset() {
+	w.checkLocked()
+
+	w.entities = w.entities[:1]
+	w.entityPool.Reset()
+	w.bitPool.Reset()
+	w.resources.Reset()
+
+	w.listener = nil
+
+	len := w.archetypes.Len()
+	for i := 0; i < len; i++ {
+		w.archetypes.Get(i).Reset()
+	}
+}
+
 // Query creates a [Query] iterator.
 //
 // The [ecs] core package provides only the filter [All] for querying the given components.

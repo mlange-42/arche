@@ -49,3 +49,10 @@ func (r *resources) Get(id ResID) interface{} {
 func (r *resources) Has(id ResID) bool {
 	return r.resources[id] != nil
 }
+
+// Reset removes all resources.
+func (r *resources) Reset() {
+	for i := 0; i < len(r.resources); i++ {
+		r.resources[i] = nil
+	}
+}

@@ -259,6 +259,13 @@ func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe
 	return dst
 }
 
+// Reset removes all entities and components.
+//
+// Does NOT free the reserved memory.
+func (a *archetype) Reset() {
+	a.len = 0
+}
+
 // Components returns the component IDs for this archetype
 func (a *archetype) Components() []ID {
 	return a.Ids

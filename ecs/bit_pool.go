@@ -1,7 +1,6 @@
 package ecs
 
 // bitPool is an entityPool implementation using implicit linked lists.
-// Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
 type bitPool struct {
 	bits      [MaskTotalBits]uint8
 	next      uint8
@@ -9,7 +8,7 @@ type bitPool struct {
 	available uint8
 }
 
-// newBitPool creates a new, initialized bit pool
+// newBitPool creates a new, initialized bit pool.
 func newBitPool() bitPool {
 	return bitPool{
 		bits:      [MaskTotalBits]uint8{},
@@ -19,7 +18,7 @@ func newBitPool() bitPool {
 	}
 }
 
-// Get returns a fresh or recycled bit
+// Get returns a fresh or recycled bit.
 func (p *bitPool) Get() uint8 {
 	if p.available == 0 {
 		if p.length >= MaskTotalBits {
@@ -36,8 +35,15 @@ func (p *bitPool) Get() uint8 {
 	return p.bits[curr]
 }
 
-// Recycle hands a bit back for recycling
+// Recycle hands a bit back for recycling.
 func (p *bitPool) Recycle(b uint8) {
 	p.next, p.bits[b] = b, p.next
 	p.available++
+}
+
+// Reset recycles all bits.
+func (p *bitPool) Reset() {
+	p.next = 0
+	p.length = 0
+	p.available = 0
 }

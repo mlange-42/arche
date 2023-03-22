@@ -4,7 +4,16 @@ import (
 	"math"
 )
 
-// newEntityPool creates a new, initialized Entity pool
+// entityPool is an implementation using implicit linked lists.
+// Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
+type entityPool struct {
+	entities          []Entity
+	next              eid
+	available         uint32
+	capacityIncrement int
+}
+
+// newEntityPool creates a new, initialized Entity pool.
 func newEntityPool(capacityIncrement int) entityPool {
 	entities := make([]Entity, 1, capacityIncrement)
 	entities[0] = Entity{0, math.MaxUint16}
@@ -16,16 +25,7 @@ func newEntityPool(capacityIncrement int) entityPool {
 	}
 }
 
-// entityPool is an implementation using implicit linked lists.
-// Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
-type entityPool struct {
-	entities          []Entity
-	next              eid
-	available         uint32
-	capacityIncrement int
-}
-
-// Get returns a fresh or recycled entity
+// Get returns a fresh or recycled entity.
 func (p *entityPool) Get() Entity {
 	if p.available == 0 {
 		e := newEntity(eid(len(p.entities)))
@@ -43,7 +43,7 @@ func (p *entityPool) Get() Entity {
 	return p.entities[curr]
 }
 
-// Recycle hands an entity back for recycling
+// Recycle hands an entity back for recycling.
 func (p *entityPool) Recycle(e Entity) {
 	if e.id == 0 {
 		panic("can't recycle reserved zero entity")
@@ -53,7 +53,14 @@ func (p *entityPool) Recycle(e Entity) {
 	p.available++
 }
 
-// Alive return whether an entity is still alive, based on the entity's generations
+// Reset recycles all entities. Does NOT free the reserved memory.
+func (p *entityPool) Reset() {
+	p.entities = p.entities[:1]
+	p.next = 0
+	p.available = 0
+}
+
+// Alive return whether an entity is still alive, based on the entity's generations.
 func (p *entityPool) Alive(e Entity) bool {
 	return e.id != 0 && e.gen == p.entities[e.id].gen
 }

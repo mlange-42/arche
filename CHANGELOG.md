@@ -1,5 +1,15 @@
 # Changelog
 
+## [[v0.5.2]](https://github.com/mlange-42/arche/compare/v0.5.1...v0.5.2)
+
+### Features
+
+* Adds method `World.Reset()`, to allow for more efficient systematic simulations (!138)
+
+### Performance
+
+* Speedup of archetype mask checks by 10% by checking mask before empty archetype (!139)
+
 ## [[v0.5.1]](https://github.com/mlange-42/arche/compare/v0.5.0...v0.5.1)
 
 ### Performance
