@@ -10,7 +10,8 @@ import (
 )
 
 var typeLetters = []string{"A", "B", "C", "D", "E", "F", "G", "H"}
-var numbers = []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight"}
+var numbers = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8"}
+var numberStr = []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight"}
 
 type query struct {
 	Index       int
@@ -22,6 +23,9 @@ type query struct {
 	Include     string
 	Components  string
 	Arguments   string
+	IDTypes     string
+	IDAssign    string
+	IDList      string
 }
 
 func main() {
@@ -54,39 +58,43 @@ func generateMaps() {
 		returnTypes := ""
 		fullTypes := ""
 		returnAll := ""
-		include := ""
 		components := ""
 		arguments := ""
+		idTypes := ""
+		idAssign := ""
+		idList := ""
 
 		if i > 0 {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-			include = "[]ecs.ID{ecs.ComponentID[" + strings.Join(typeLetters[:i], "](w), ecs.ComponentID[") + "](w)}"
-		} else {
-			include = "[]ecs.ID{}"
+			idTypes = "id" + strings.Join(numbers[:i], " ecs.ID\n\tid") + " ecs.ID"
+			idList = "m.id" + strings.Join(numbers[:i], ", m.id")
 		}
 
 		for j := 0; j < i; j++ {
-			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.ids[%d]))", typeLetters[j], j)
+			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.id%d))", typeLetters[j], j)
 			arguments += fmt.Sprintf("%s *%s", strings.ToLower(typeLetters[j]), typeLetters[j])
+			idAssign += fmt.Sprintf("	id%d: ecs.ComponentID[%s](w),\n", j, typeLetters[j])
 			if j < i-1 {
-				returnAll += ", "
+				returnAll += ",\n"
 				arguments += ", "
 			}
-			components += fmt.Sprintf("ecs.Component{ID: m.ids[%d], Comp: %s},\n", j, strings.ToLower(typeLetters[j]))
+			components += fmt.Sprintf("ecs.Component{ID: m.id%d, Comp: %s},\n", j, strings.ToLower(typeLetters[j]))
 		}
 
 		data := query{
 			Index:       i,
-			NumberStr:   numbers[i],
+			NumberStr:   numberStr[i],
 			Types:       types,
 			TypesReturn: returnTypes,
 			TypesFull:   fullTypes,
 			ReturnAll:   returnAll,
-			Include:     include,
 			Components:  components,
 			Arguments:   arguments,
+			IDTypes:     idTypes,
+			IDAssign:    idAssign,
+			IDList:      idList,
 		}
 		err = maps.Execute(&text, data)
 		if err != nil {
@@ -126,15 +134,19 @@ func generateQueries() {
 		fullTypes := ""
 		include := ""
 		returnAll := ""
+		idTypes := ""
+		idAssign := ""
 		if i > 0 {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-			include = "[]Comp{typeOf[" + strings.Join(typeLetters[:i], "](), typeOf[") + "]()}"
+			include = "[]Comp{\ntypeOf[" + strings.Join(typeLetters[:i], "](),\ntypeOf[") + "](),\n}"
+			idTypes = "id" + strings.Join(numbers[:i], " ecs.ID\n\tid") + " ecs.ID"
 			for j := 0; j < i; j++ {
-				returnAll += fmt.Sprintf("(*%s)(q.Query.Get(q.ids[%d]))", typeLetters[j], j)
+				returnAll += fmt.Sprintf("(*%s)(q.Query.Get(q.id%d))", typeLetters[j], j)
+				idAssign += fmt.Sprintf("	id%d: q.compiled.Ids[%d],\n", j, j)
 				if j < i-1 {
-					returnAll += ", "
+					returnAll += ",\n"
 				}
 			}
 		} else {
@@ -142,12 +154,14 @@ func generateQueries() {
 		}
 		data := query{
 			Index:       i,
-			NumberStr:   numbers[i],
+			NumberStr:   numberStr[i],
 			Types:       types,
 			TypesReturn: returnTypes,
 			TypesFull:   fullTypes,
 			ReturnAll:   returnAll,
 			Include:     include,
+			IDTypes:     idTypes,
+			IDAssign:    idAssign,
 		}
 		err = filters.Execute(&text, data)
 		if err != nil {
