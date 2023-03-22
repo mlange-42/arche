@@ -39,7 +39,8 @@ func main() {
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity with components.
-		_, pos, en := mapper.NewEntity()
+		e := mapper.NewEntity()
+		pos, en := mapper.Get(e)
 
 		pos.X = rand.Float64() * 100
 		pos.Y = rand.Float64() * 100
@@ -102,7 +103,8 @@ func main() {
 			// Create offspring entities.
 			for i := 0; i < repro.Offspring; i++ {
 				// Create a new Entity and initialize it.
-				_, pos, en := mapper.NewEntity()
+				e := mapper.NewEntity()
+				pos, en := mapper.Get(e)
 
 				pos.X = repro.X + rand.NormFloat64()
 				pos.Y = repro.Y + rand.NormFloat64()

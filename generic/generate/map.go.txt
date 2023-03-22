@@ -25,38 +25,36 @@ func (m *Map{{ .Index }}{{ .Types }}) Get(entity ecs.Entity) ({{ .TypesReturn }}
 // NewEntity creates a new [ecs.Entity] with the Map{{ .Index }}'s components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntity() (ecs.Entity, {{ .TypesReturn }}) {
+func (m *Map{{ .Index }}{{ .Types }}) NewEntity() ecs.Entity {
 	entity := m.world.NewEntity({{ .IDList }})
-	return entity{{if .ReturnAll}}, {{ .ReturnAll }}{{ end }}
+	return entity
 }
 
 {{if .ReturnAll}}
 // NewEntityWith creates a new [ecs.Entity] with the Map{{ .Index }}'s components, using the supplied values.
 //
 // See also [ecs.World.NewEntityWith].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) (ecs.Entity, {{ .TypesReturn }}) {
+func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) ecs.Entity {
 	entity := m.world.NewEntityWith(
 		{{ .Components }}
 	)
-	return entity{{if .ReturnAll}}, {{ .ReturnAll }}{{ end }}
+	return entity
 }
 
 // Add the Map{{ .Index }}'s components to the given entity.
 //
 // See also [ecs.World.Add].
-func (m *Map{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) ({{ .TypesReturn }}) {
+func (m *Map{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) {
 	m.world.Add(entity, {{ .IDList }})
-	return {{ .ReturnAll }}
 }
 
 // Assign the Map{{ .Index }}'s components to the given entity, using the supplied values.
 //
 // See also [ecs.World.Assign].
-func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) ({{ .TypesReturn }}) {
+func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) {
 	m.world.Assign(entity,
 		{{ .Components }}
 	)
-	return {{ .ReturnAll }}
 }
 {{ end }}
 

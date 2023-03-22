@@ -1,6 +1,10 @@
 # Changelog
 
-## [[v0.5.2]](https://github.com/mlange-42/arche/compare/v0.5.1...v0.5.2)
+## [[v0.6.0]](https://github.com/mlange-42/arche/compare/v0.5.1...v0.6.0)
+
+### Breaking changes
+
+* Generic mappers do no longer return all components when creating entities or components (!145)
 
 ### Features
 

@@ -32,8 +32,9 @@ func main() {
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity with components.
-		_, pos, vel := mapper.NewEntity()
-
+		entity := mapper.NewEntity()
+		// Get the components
+		pos, vel := mapper.Get(entity)
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
 		pos.Y = rand.Float64() * 100

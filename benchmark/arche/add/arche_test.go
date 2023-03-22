@@ -35,7 +35,7 @@ func addArcheGeneric(b *testing.B, count int) {
 
 		var e ecs.Entity
 		for i := 0; i < count; i++ {
-			e, _, _ = mut.NewEntity()
+			e = mut.NewEntity()
 		}
 		_ = e
 	}
