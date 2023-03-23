@@ -9,6 +9,8 @@
 ### Features
 
 * Adds method `World.Reset()`, to allow for more efficient systematic simulations (!138)
+* Adds `World.Batch()` helper for performing optimized batch-creation and batch-removal of entities (!149)
+* Adds method `Mask.Exact()` to create a filter matching an exact component composition (!149)
 
 ### Performance
 

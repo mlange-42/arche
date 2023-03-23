@@ -43,6 +43,28 @@ func TestBitMask(t *testing.T) {
 	assert.False(t, mask.ContainsAny(other2))
 }
 
+func TestBitMaskWithoutExact(t *testing.T) {
+	mask := All(ID(1), ID(2), ID(13))
+	assert.True(t, mask.Matches(All(ID(1), ID(2), ID(13))))
+	assert.True(t, mask.Matches(All(ID(1), ID(2), ID(13), ID(27))))
+
+	assert.False(t, mask.Matches(All(ID(1), ID(2))))
+
+	without := mask.Without(ID(3))
+
+	assert.True(t, without.Matches(All(ID(1), ID(2), ID(13))))
+	assert.True(t, without.Matches(All(ID(1), ID(2), ID(13), ID(27))))
+
+	assert.False(t, without.Matches(All(ID(1), ID(2), ID(3), ID(13))))
+	assert.False(t, without.Matches(All(ID(1), ID(2))))
+
+	exact := mask.Exact()
+
+	assert.True(t, exact.Matches(All(ID(1), ID(2), ID(13))))
+	assert.False(t, exact.Matches(All(ID(1), ID(2), ID(13), ID(27))))
+	assert.False(t, exact.Matches(All(ID(1), ID(2), ID(3), ID(13))))
+}
+
 func TestBitMask128(t *testing.T) {
 	for i := 0; i < MaskTotalBits; i++ {
 		mask := All(ID(i))

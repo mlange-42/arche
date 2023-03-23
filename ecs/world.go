@@ -49,7 +49,7 @@ func AddResource[T any](w *World, res *T) {
 type World struct {
 	config     Config
 	entities   []entityIndex
-	archetypes archetypes
+	archetypes archetypeArr
 	graph      pagedArr32[archetypeNode]
 	entityPool entityPool
 	bitPool    bitPool
@@ -86,7 +86,7 @@ func fromConfig(conf Config) World {
 		entityPool: newEntityPool(conf.CapacityIncrement),
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
-		archetypes: archetypes{},
+		archetypes: archetypeArr{},
 		graph:      pagedArr32[archetypeNode]{},
 		locks:      Mask{},
 		listener:   nil,
@@ -118,6 +118,36 @@ func (w *World) NewEntity(comps ...ID) Entity {
 		w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
 	}
 	return entity
+}
+
+func (w *World) newEntities(count int, comps ...ID) Query {
+	w.checkLocked()
+
+	if count < 1 {
+		panic("can only create a positive number of entities")
+	}
+	cnt := uint32(count)
+
+	arch := w.archetypes.Get(0)
+	if len(comps) > 0 {
+		arch = w.findOrCreateArchetype(arch, comps, nil)
+	}
+	startIdx := arch.Len()
+	w.createEntities(arch, uint32(count), true)
+
+	if w.listener != nil {
+		lock := w.lock()
+		var i uint32
+		for i = 0; i < cnt; i++ {
+			idx := startIdx + i
+			entity := arch.GetEntity(uintptr(idx))
+			w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
+		}
+		w.unlock(lock)
+	}
+
+	lock := w.lock()
+	return newArchQuery(w, lock, arch, startIdx)
 }
 
 // NewEntityWith returns a new or recycled [Entity].
@@ -157,6 +187,54 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	return entity
 }
 
+func (w *World) newEntitiesWith(count int, comps ...Component) Query {
+	w.checkLocked()
+
+	if count < 1 {
+		panic("can only create a positive number of entities")
+	}
+	if len(comps) == 0 {
+		return w.newEntities(count)
+	}
+
+	ids := make([]ID, len(comps))
+	for i, c := range comps {
+		ids[i] = c.ID
+	}
+
+	cnt := uint32(count)
+
+	arch := w.archetypes.Get(0)
+	if len(comps) > 0 {
+		arch = w.findOrCreateArchetype(arch, ids, nil)
+	}
+	startIdx := arch.Len()
+	w.createEntities(arch, uint32(count), true)
+
+	var i uint32
+	for i = 0; i < cnt; i++ {
+		idx := startIdx + i
+		entity := arch.GetEntity(uintptr(idx))
+		for _, c := range comps {
+			w.copyTo(entity, c.ID, c.Comp)
+		}
+	}
+
+	if w.listener != nil {
+		lock := w.lock()
+		var i uint32
+		for i = 0; i < cnt; i++ {
+			idx := startIdx + i
+			entity := arch.GetEntity(uintptr(idx))
+			w.listener(EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
+		}
+		w.unlock(lock)
+	}
+
+	lock := w.lock()
+	return newArchQuery(w, lock, arch, startIdx)
+}
+
 // RemoveEntity removes and recycles an [Entity].
 //
 // Panics when called on a locked world or for an already removed entity.
@@ -168,7 +246,9 @@ func (w *World) RemoveEntity(entity Entity) {
 	oldArch := index.arch
 
 	if w.listener != nil {
+		lock := w.lock()
 		w.listener(EntityEvent{entity, oldArch.Mask, Mask{}, nil, oldArch.Ids, nil, -1})
+		w.unlock(lock)
 	}
 
 	swapped := oldArch.Remove(index.index)
@@ -180,7 +260,38 @@ func (w *World) RemoveEntity(entity Entity) {
 		w.entities[swapEntity.id].index = index.index
 	}
 
-	w.entities[entity.id].arch = nil
+	index.arch = nil
+}
+
+// removeEntities removes and recycles all entities matching a filter.
+//
+// Panics when called on a locked world.
+// Do not use during [Query] iteration!
+func (w *World) removeEntities(filter Filter) {
+	w.checkLocked()
+
+	lock := w.lock()
+	for i := 0; i < w.archetypes.Len(); i++ {
+		arch := w.archetypes.Get(i)
+
+		if !filter.Matches(arch.Mask) {
+			continue
+		}
+
+		len := uintptr(arch.Len())
+		var j uintptr
+		for j = 0; j < len; j++ {
+			entity := arch.GetEntity(j)
+			if w.listener != nil {
+				w.listener(EntityEvent{entity, arch.Mask, Mask{}, nil, arch.Ids, nil, -1})
+			}
+			w.entities[entity.id].arch = nil
+			w.entityPool.Recycle(entity)
+		}
+
+		arch.Reset()
+	}
+	w.unlock(lock)
 }
 
 // Alive reports whether an entity is still alive.
@@ -413,9 +524,32 @@ func (w *World) Reset() {
 //
 // Locks the world to prevent changes to component compositions.
 func (w *World) Query(filter Filter) Query {
+	l := w.lock()
+	return newQuery(w, filter, l, &w.archetypes)
+}
+
+// Batch creates a [Batch] processing helper.
+//
+// It provides the functionality to create and remove large numbers of entities in batches,
+// in a more efficient way.
+func (w *World) Batch() Batch {
+	return Batch{w}
+}
+
+// lock the world and get the lock bit for later unlocking.
+func (w *World) lock() uint8 {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newQuery(w, filter, lock, &w.archetypes)
+	return lock
+}
+
+// unlock unlocks the given lock bit.
+func (w *World) unlock(l uint8) {
+	if !w.locks.Get(ID(l)) {
+		panic("unbalanced query unlock")
+	}
+	w.locks.Set(ID(l), false)
+	w.bitPool.Recycle(l)
 }
 
 // IsLocked returns whether the world is locked by any queries.
@@ -487,6 +621,29 @@ func (w *World) createEntity(arch *archetype, zero bool) Entity {
 		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
 	}
 	return entity
+}
+
+func (w *World) createEntities(arch *archetype, count uint32, zero bool) {
+	startIdx := arch.Len()
+	arch.AllocN(uint32(count), zero)
+
+	var i uint32
+	for i = 0; i < count; i++ {
+		idx := startIdx + i
+		entity := w.entityPool.Get()
+		arch.SetEntity(uintptr(idx), entity)
+		len := len(w.entities)
+		if int(entity.id) == len {
+			if len == cap(w.entities) {
+				old := w.entities
+				w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
+				copy(w.entities, old)
+			}
+			w.entities = append(w.entities, entityIndex{arch: arch, index: uintptr(idx)})
+		} else {
+			w.entities[entity.id] = entityIndex{arch: arch, index: uintptr(idx)}
+		}
+	}
 }
 
 // Copies a component to an entity
@@ -596,28 +753,10 @@ func (w *World) resourceID(tp reflect.Type) ResID {
 	return w.resources.registry.ComponentID(tp)
 }
 
-// Counts the entities matching the filter
-func (w *World) count(filter Filter) int {
-	len := int(w.archetypes.Len())
-	count := uint32(0)
-	for i := 0; i < len; i++ {
-		a := w.archetypes.Get(i)
-		if filter.Matches(a.Mask) {
-			count += a.Len()
-		}
-	}
-	return int(count)
-}
-
 // closeQuery closes a query and unlocks the world
 func (w *World) closeQuery(query *Query) {
-	l := query.lockBit
-	if !w.locks.Get(ID(l)) {
-		panic("unbalanced query unlock")
-	}
 	query.index = -2
-	w.locks.Set(ID(l), false)
-	w.bitPool.Recycle(l)
+	w.unlock(query.lockBit)
 }
 
 // checkLocked checks if the world is locked, and panics if so.

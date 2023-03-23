@@ -16,6 +16,9 @@ type Mask struct {
 }
 
 // All creates a new Mask from a list of IDs.
+// Matches al entities that have the respective components, and potentially further components.
+//
+// See also [Mask.Without] and [Mask.Exact]
 //
 // If any [ID] is bigger or equal [MaskTotalBits], it'll not be added to the mask.
 func All(ids ...ID) Mask {
@@ -37,6 +40,15 @@ func (b Mask) Without(comps ...ID) MaskFilter {
 	return MaskFilter{
 		Include: b,
 		Exclude: All(comps...),
+	}
+}
+
+// Exact creates a [MaskFilter] which filters for exactly the mask's components.
+// Matches only entities that have exactly the given components, and no other.
+func (b Mask) Exact() MaskFilter {
+	return MaskFilter{
+		Include: b,
+		Exclude: b.Not(),
 	}
 }
 
@@ -67,6 +79,14 @@ func (b *Mask) Set(bit ID, value bool) {
 		b.Hi |= uint64(1 << (bit - wordSize))
 	} else {
 		b.Hi &= uint64(^(1 << (bit - wordSize)))
+	}
+}
+
+// Not returns the inversion of this mask.
+func (b *Mask) Not() Mask {
+	return Mask{
+		Lo: ^b.Lo,
+		Hi: ^b.Hi,
 	}
 }
 

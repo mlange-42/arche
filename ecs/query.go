@@ -27,6 +27,13 @@ func (f *MaskFilter) Matches(bits Mask) bool {
 	return bits.Contains(f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
+type dummyFilter struct{ Value bool }
+
+// Matches matches a filter against a mask.
+func (f dummyFilter) Matches(bits Mask) bool {
+	return f.Value
+}
+
 // Query is an iterator to iterate entities, filtered by a [Filter].
 //
 // Create queries through the [World] using [World.Query].
@@ -38,14 +45,14 @@ type Query struct {
 	archetypeIter
 	filter     Filter
 	world      *World
-	archetypes *archetypes
+	archetypes archetypes
 	index      int
 	lockBit    uint8
 	count      int
 }
 
 // newQuery creates a new Filter
-func newQuery(world *World, filter Filter, lockBit uint8, archetypes *archetypes) Query {
+func newQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes) Query {
 	return Query{
 		filter:     filter,
 		world:      world,
@@ -53,6 +60,31 @@ func newQuery(world *World, filter Filter, lockBit uint8, archetypes *archetypes
 		index:      -1,
 		lockBit:    lockBit,
 		count:      -1,
+	}
+}
+
+// newQuery creates a query on a single archetype
+func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint32) Query {
+	if start > 0 {
+		iter := newArchetypeIter(archetype)
+		iter.Index = uintptr(start - 1)
+		return Query{
+			filter:        dummyFilter{true},
+			world:         world,
+			archetypes:    singleArchetype{archetype},
+			index:         0,
+			lockBit:       lockBit,
+			count:         int(archetype.Len() - start),
+			archetypeIter: iter,
+		}
+	}
+	return Query{
+		filter:     dummyFilter{true},
+		world:      world,
+		archetypes: singleArchetype{archetype},
+		index:      -1,
+		lockBit:    lockBit,
+		count:      int(archetype.Len()),
 	}
 }
 
@@ -97,8 +129,20 @@ func (q *Query) Count() int {
 	if q.count >= 0 {
 		return q.count
 	}
-	q.count = q.world.count(q.filter)
+	q.count = q.countEntities()
 	return q.count
+}
+
+func (q *Query) countEntities() int {
+	len := int(q.archetypes.Len())
+	count := uint32(0)
+	for i := 0; i < len; i++ {
+		a := q.archetypes.Get(i)
+		if q.filter.Matches(a.Mask) {
+			count += a.Len()
+		}
+	}
+	return int(count)
 }
 
 // Mask returns the archetype [BitMask] for the [Entity] at the iterator's current position.
