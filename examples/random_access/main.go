@@ -23,7 +23,8 @@ func main() {
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity with components.
-		_, link := mapper.NewEntity()
+		e := mapper.NewEntity()
+		link := mapper.Get(e)
 		// Make it an implicit linked list
 		link.Prev = prev
 	}

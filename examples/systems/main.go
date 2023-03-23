@@ -82,7 +82,8 @@ type InitializerSystem struct {
 func (s *InitializerSystem) Initialize(w *ecs.World) {
 	mapper := generic.NewMap2[Position, Velocity](w)
 	for i := 0; i < s.Count; i++ {
-		_, pos, vel := mapper.NewEntity()
+		e := mapper.NewEntity()
+		pos, vel := mapper.Get(e)
 
 		pos.X = rand.Float64() * 100
 		pos.Y = rand.Float64() * 100
