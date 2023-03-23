@@ -207,6 +207,7 @@ func (a *archetype) Remove(index uintptr) bool {
 			a.copy(src, dst, lay.itemSize)
 		}
 	}
+	a.ZeroAll(old)
 	a.len--
 
 	return swapped
@@ -264,6 +265,9 @@ func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe
 // Does NOT free the reserved memory.
 func (a *archetype) Reset() {
 	a.len = 0
+	for _, buf := range a.buffers {
+		buf.SetZero()
+	}
 }
 
 // Components returns the component IDs for this archetype

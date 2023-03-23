@@ -15,6 +15,10 @@
 * Speedup of archetype mask checks by 10% by checking mask before empty archetype (!139)
 * Speedup of generic queries and mappers to come closer to ID-based access (!144)
 
+### Bugfixes
+
+* Archetype storage buffers are "zeroed" when removing entities, to allow GC on pointers and slices in components (!147)
+
 ## [[v0.5.1]](https://github.com/mlange-42/arche/compare/v0.5.0...v0.5.1)
 
 ### Performance
