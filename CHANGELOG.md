@@ -14,6 +14,7 @@
 
 * Speedup of archetype mask checks by 10% by checking mask before empty archetype (!139)
 * Speedup of generic queries and mappers to come closer to ID-based access (!144)
+* Speedup of archetype mask checks by casting filter interface to concrete type when possible (!148)
 
 ### Bugfixes
 
