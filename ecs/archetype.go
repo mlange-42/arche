@@ -159,8 +159,8 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 // Add adds an entity with zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
 	idx := uintptr(a.len)
-	a.extend()
-	a.addEntity(&entity, idx)
+	a.extend(1)
+	a.addEntity(idx, &entity)
 	if zero {
 		a.ZeroAll(idx)
 	}
@@ -175,8 +175,8 @@ func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 	}
 	idx := uintptr(a.len)
 
-	a.extend()
-	a.addEntity(&entity, idx)
+	a.extend(1)
+	a.addEntity(idx, &entity)
 	for _, c := range components {
 		lay := a.getLayout(c.ID)
 		dst := a.Get(uintptr(idx), c.ID)
@@ -232,6 +232,11 @@ func (a *archetype) Zero(index uintptr, id ID) {
 		*(*byte)(dst) = 0
 		dst = unsafe.Add(dst, 1)
 	}
+}
+
+// SetEntity overwrites an entity
+func (a *archetype) SetEntity(index uintptr, entity Entity) {
+	a.addEntity(index, &entity)
 }
 
 // Set overwrites a component with the data behind the given pointer
@@ -321,11 +326,15 @@ func (a *archetype) copy(src, dst unsafe.Pointer, itemSize uintptr) {
 }
 
 // extend the memory buffers if necessary for adding an entity.
-func (a *archetype) extend() {
-	if a.cap > a.len {
+func (a *archetype) extend(by uint32) {
+	required := a.len + by
+	if a.cap >= required {
 		return
 	}
-	a.cap = a.capacityIncrement * ((a.cap + a.capacityIncrement) / a.capacityIncrement)
+	a.cap = a.capacityIncrement * (required / a.capacityIncrement)
+	if required%a.capacityIncrement != 0 {
+		a.cap += a.capacityIncrement
+	}
 
 	old := a.entityBuffer
 	a.entityBuffer = reflect.New(reflect.ArrayOf(int(a.cap), entityType)).Elem()
@@ -346,7 +355,7 @@ func (a *archetype) extend() {
 }
 
 // Adds an entity at the given index. Does not extend the entity buffer.
-func (a *archetype) addEntity(entity *Entity, index uintptr) {
+func (a *archetype) addEntity(index uintptr, entity *Entity) {
 	dst := unsafe.Add(a.entityPointer, entitySize*index)
 	src := reflect.ValueOf(entity).UnsafePointer()
 	a.copy(src, dst, entitySize)

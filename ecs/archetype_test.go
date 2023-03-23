@@ -87,6 +87,26 @@ func TestNewArchetype(t *testing.T) {
 	})
 }
 
+func TestArchetypeExtend(t *testing.T) {
+	comps := []componentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
+	}
+	arch := archetype{}
+	arch.Init(nil, 8, true, comps...)
+	assert.Equal(t, 8, int(arch.Cap()))
+	assert.Equal(t, 0, int(arch.Len()))
+
+	arch.extend(5)
+	assert.Equal(t, 8, int(arch.Cap()))
+
+	arch.extend(8)
+	assert.Equal(t, 8, int(arch.Cap()))
+
+	arch.extend(17)
+	assert.Equal(t, 24, int(arch.Cap()))
+}
+
 func TestArchetypeAddGetSet(t *testing.T) {
 	a := archetype{}
 
@@ -110,6 +130,10 @@ func TestArchetypeAddGetSet(t *testing.T) {
 
 	_ = (*testStruct0)(a.Get(1, 0))
 	_ = (*label)(a.Get(1, 1))
+
+	a.SetEntity(1, Entity{100, 200})
+	e := a.GetEntity(1)
+	assert.Equal(t, Entity{100, 200}, e)
 
 	a.Remove(0)
 	assert.Equal(t, 1, int(a.Len()))
