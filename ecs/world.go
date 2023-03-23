@@ -442,9 +442,24 @@ func (w *World) Reset() {
 //
 // Locks the world to prevent changes to component compositions.
 func (w *World) Query(filter Filter) Query {
+	l := w.lock()
+	return newQuery(w, filter, l, &w.archetypes)
+}
+
+// lock the world and get the lock bit for later unlocking.
+func (w *World) lock() uint8 {
 	lock := w.bitPool.Get()
 	w.locks.Set(ID(lock), true)
-	return newQuery(w, filter, lock, &w.archetypes)
+	return lock
+}
+
+// unlock unlocks the given lock bit.
+func (w *World) unlock(l uint8) {
+	if !w.locks.Get(ID(l)) {
+		panic("unbalanced query unlock")
+	}
+	w.locks.Set(ID(l), false)
+	w.bitPool.Recycle(l)
 }
 
 // IsLocked returns whether the world is locked by any queries.
@@ -663,13 +678,8 @@ func (w *World) count(filter Filter) int {
 
 // closeQuery closes a query and unlocks the world
 func (w *World) closeQuery(query *Query) {
-	l := query.lockBit
-	if !w.locks.Get(ID(l)) {
-		panic("unbalanced query unlock")
-	}
 	query.index = -2
-	w.locks.Set(ID(l), false)
-	w.bitPool.Recycle(l)
+	w.unlock(query.lockBit)
 }
 
 // checkLocked checks if the world is locked, and panics if so.
