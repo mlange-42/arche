@@ -361,11 +361,14 @@ func TestWorldIter(t *testing.T) {
 
 func TestWorldNewEntities(t *testing.T) {
 	world := NewWorld()
+	world.SetListener(func(e EntityEvent) {})
 
 	posID := ComponentID[position](&world)
 	rotID := ComponentID[rotation](&world)
 
 	world.NewEntity(posID, rotID)
+
+	assert.Panics(t, func() { world.newEntities(0, posID, rotID) })
 
 	query := world.newEntities(100, posID, rotID)
 	assert.Equal(t, 100, query.Count())
@@ -392,6 +395,62 @@ func TestWorldNewEntities(t *testing.T) {
 	world.Reset()
 
 	query = world.newEntities(100, posID, rotID)
+	assert.Equal(t, 100, query.Count())
+
+	cnt = 0
+	for query.Next() {
+		cnt++
+	}
+	assert.Equal(t, 100, cnt)
+}
+
+func TestWorldNewEntitiesWith(t *testing.T) {
+	world := NewWorld()
+	world.SetListener(func(e EntityEvent) {})
+
+	posID := ComponentID[position](&world)
+	rotID := ComponentID[rotation](&world)
+
+	comps := []Component{
+		{ID: posID, Comp: &position{100, 200}},
+		{ID: rotID, Comp: &rotation{300}},
+	}
+
+	world.NewEntity(posID, rotID)
+
+	assert.Panics(t, func() { world.newEntitiesWith(0, comps...) })
+	world.newEntitiesWith(1)
+
+	query := world.newEntitiesWith(100, comps...)
+	assert.Equal(t, 100, query.Count())
+
+	cnt := 0
+	for query.Next() {
+		pos := (*position)(query.Get(posID))
+		assert.Equal(t, 100, pos.X)
+		assert.Equal(t, 200, pos.Y)
+		pos.X = cnt + 1
+		pos.Y = cnt + 1
+		cnt++
+	}
+	assert.Equal(t, 100, cnt)
+
+	query = world.Query(All(posID, rotID))
+	assert.Equal(t, 101, query.Count())
+
+	cnt = 0
+	for query.Next() {
+		pos := (*position)(query.Get(posID))
+		assert.Equal(t, cnt, pos.X)
+		cnt++
+	}
+
+	world.Reset()
+
+	query = world.newEntitiesWith(100,
+		Component{ID: posID, Comp: &position{100, 200}},
+		Component{ID: rotID, Comp: &rotation{300}},
+	)
 	assert.Equal(t, 100, query.Count())
 
 	cnt = 0
@@ -818,7 +877,7 @@ func BenchmarkGetResourceShortcut(b *testing.B) {
 	_ = res
 }
 
-func BenchmarkAdd_10_000_New(b *testing.B) {
+func BenchmarkNewEntities_10_000_New(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
 
@@ -831,7 +890,7 @@ func BenchmarkAdd_10_000_New(b *testing.B) {
 	}
 }
 
-func BenchmarkAddBatch_10_000_New(b *testing.B) {
+func BenchmarkNewEntitiesBatch_10_000_New(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
 
@@ -843,7 +902,7 @@ func BenchmarkAddBatch_10_000_New(b *testing.B) {
 	}
 }
 
-func BenchmarkAdd_10_000_Reset(b *testing.B) {
+func BenchmarkNewEntities_10_000_Reset(b *testing.B) {
 	b.StopTimer()
 	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
 
@@ -863,7 +922,7 @@ func BenchmarkAdd_10_000_Reset(b *testing.B) {
 	}
 }
 
-func BenchmarkAddBatch_10_000_Reset(b *testing.B) {
+func BenchmarkNewEntitiesBatch_10_000_Reset(b *testing.B) {
 	b.StopTimer()
 	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
 
