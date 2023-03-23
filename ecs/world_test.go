@@ -2,7 +2,9 @@ package ecs
 
 import (
 	"fmt"
+	"math/rand"
 	"reflect"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -583,6 +585,85 @@ func TestWorldListener(t *testing.T) {
 		AddedRemoved: 0,
 	}, events[len(events)-1])
 
+}
+
+type withSlice struct {
+	Slice []int
+}
+
+func TestWorldRemoveGC(t *testing.T) {
+	w := NewWorld()
+	compID := ComponentID[withSlice](&w)
+
+	runtime.GC()
+	mem1 := runtime.MemStats{}
+	mem2 := runtime.MemStats{}
+	runtime.ReadMemStats(&mem1)
+
+	entities := []Entity{}
+	for i := 0; i < 100; i++ {
+		e := w.NewEntity(compID)
+		ws := (*withSlice)(w.Get(e, compID))
+		ws.Slice = make([]int, 10000)
+		entities = append(entities, e)
+	}
+
+	runtime.GC()
+	runtime.ReadMemStats(&mem2)
+	heap := int(mem2.HeapInuse - mem1.HeapInuse)
+	assert.Greater(t, heap, 8000000)
+	assert.Less(t, heap, 10000000)
+
+	rand.Shuffle(len(entities), func(i, j int) {
+		entities[i], entities[j] = entities[j], entities[i]
+	})
+
+	for _, e := range entities {
+		w.RemoveEntity(e)
+	}
+
+	runtime.GC()
+	runtime.ReadMemStats(&mem2)
+	heap = int(mem2.HeapInuse - mem1.HeapInuse)
+	assert.Less(t, heap, 800000)
+
+	w.NewEntity(compID)
+}
+
+func TestWorldResetGC(t *testing.T) {
+	w := NewWorld()
+	compID := ComponentID[withSlice](&w)
+
+	runtime.GC()
+	mem1 := runtime.MemStats{}
+	mem2 := runtime.MemStats{}
+	runtime.ReadMemStats(&mem1)
+
+	for i := 0; i < 100; i++ {
+		e := w.NewEntity(compID)
+		ws := (*withSlice)(w.Get(e, compID))
+		ws.Slice = make([]int, 10000)
+	}
+
+	runtime.ReadMemStats(&mem2)
+	heap := int(mem2.HeapInuse - mem1.HeapInuse)
+	assert.Greater(t, heap, 8000000)
+	assert.Less(t, heap, 10000000)
+
+	runtime.GC()
+	runtime.ReadMemStats(&mem2)
+	heap = int(mem2.HeapInuse - mem1.HeapInuse)
+	assert.Greater(t, heap, 8000000)
+	assert.Less(t, heap, 10000000)
+
+	w.Reset()
+
+	runtime.GC()
+	runtime.ReadMemStats(&mem2)
+	heap = int(mem2.HeapInuse - mem1.HeapInuse)
+	assert.Less(t, heap, 800000)
+
+	w.NewEntity(compID)
 }
 
 func Test1000Archetypes(t *testing.T) {
