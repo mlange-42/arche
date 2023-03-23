@@ -360,7 +360,7 @@ func TestWorldIter(t *testing.T) {
 }
 
 func TestWorldNewEntities(t *testing.T) {
-	world := NewWorld()
+	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 	world.SetListener(func(e EntityEvent) {})
 
 	posID := ComponentID[position](&world)
@@ -397,15 +397,23 @@ func TestWorldNewEntities(t *testing.T) {
 	query = world.newEntities(100, posID, rotID)
 	assert.Equal(t, 100, query.Count())
 
+	entities := make([]Entity, query.Count())
 	cnt = 0
 	for query.Next() {
+		entities[cnt] = query.Entity()
 		cnt++
 	}
 	assert.Equal(t, 100, cnt)
+
+	for _, e := range entities {
+		world.RemoveEntity(e)
+	}
+	query = world.newEntities(100, posID, rotID)
+	query.Close()
 }
 
 func TestWorldNewEntitiesWith(t *testing.T) {
-	world := NewWorld()
+	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 	world.SetListener(func(e EntityEvent) {})
 
 	posID := ComponentID[position](&world)
@@ -419,9 +427,10 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world.NewEntity(posID, rotID)
 
 	assert.Panics(t, func() { world.newEntitiesWith(0, comps...) })
-	world.newEntitiesWith(1)
+	query := world.newEntitiesWith(1)
+	query.Close()
 
-	query := world.newEntitiesWith(100, comps...)
+	query = world.newEntitiesWith(100, comps...)
 	assert.Equal(t, 100, query.Count())
 
 	cnt := 0
