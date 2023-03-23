@@ -15,7 +15,7 @@ type Resource[T any] struct {
 //
 // [Resource] provides a type-safe way to access a world resources.
 //
-// See also [ecs.World.GetResource], [ecs.World.HasResource] and [ecs.World.AddResource].
+// See also [ecs.World.Resources].
 func NewResource[T any](w *ecs.World) Resource[T] {
 	return Resource[T]{
 		id:    ecs.ResourceID[T](w),
@@ -32,32 +32,32 @@ func (g *Resource[T]) ID() ecs.ResID {
 //
 // Panics if there is already a resource of the given type.
 //
-// See also [ecs.World.AddResource].
+// See also [ecs.Resources.Add].
 func (g *Resource[T]) Add(res *T) {
-	g.world.AddResource(g.id, res)
+	g.world.Resources().Add(g.id, res)
 }
 
 // Remove removes a resource from the world.
 //
 // Panics if there is no resource of the given type.
 //
-// See also [ecs.World.RemoveResource].
+// See also [ecs.Resources.Remove].
 func (g *Resource[T]) Remove() {
-	g.world.RemoveResource(g.id)
+	g.world.Resources().Remove(g.id)
 }
 
 // Get gets the resource of the given type.
 //
 // Returns nil if there is no such resource.
 //
-// See also [ecs.World.GetResource].
+// See also [ecs.Resources.Get].
 func (g *Resource[T]) Get() *T {
-	return g.world.GetResource(g.id).(*T)
+	return g.world.Resources().Get(g.id).(*T)
 }
 
 // Has returns whether the world has the resource type.
 //
-// See also [ecs.World.HasResource].
+// See also [ecs.Resources.Has].
 func (g *Resource[T]) Has() bool {
-	return g.world.HasResource(g.id)
+	return g.world.Resources().Has(g.id)
 }

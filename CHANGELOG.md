@@ -5,6 +5,7 @@
 ### Breaking changes
 
 * Generic mappers do no longer return all components when creating entities or components (!145)
+* Resources API moved out of the world, to a helper to get by `World.Resources()` (!150)
 
 ### Features
 

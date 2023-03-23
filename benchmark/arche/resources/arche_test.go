@@ -12,14 +12,16 @@ func BenchmarkArcheGetResource(b *testing.B) {
 	b.StopTimer()
 
 	w := ecs.NewWorld()
+	resources := w.Resources()
+
 	posID := ecs.ResourceID[c.Position](&w)
-	w.AddResource(posID, &c.Position{X: 1, Y: 2})
+	resources.Add(posID, &c.Position{X: 1, Y: 2})
 
 	b.StartTimer()
 
 	var res *c.Position
 	for i := 0; i < b.N; i++ {
-		res = w.GetResource(posID).(*c.Position)
+		res = resources.Get(posID).(*c.Position)
 	}
 
 	_ = res
@@ -46,14 +48,16 @@ func BenchmarkArcheHasResource(b *testing.B) {
 	b.StopTimer()
 
 	w := ecs.NewWorld()
+	resources := w.Resources()
+
 	posID := ecs.ResourceID[c.Position](&w)
-	w.AddResource(posID, &c.Position{X: 1, Y: 2})
+	resources.Add(posID, &c.Position{X: 1, Y: 2})
 
 	b.StartTimer()
 
 	var res bool
 	for i := 0; i < b.N; i++ {
-		res = w.HasResource(posID)
+		res = resources.Has(posID)
 	}
 
 	_ = res
