@@ -130,6 +130,42 @@ func TestQueryCount(t *testing.T) {
 	assert.Equal(t, 4, q.Count())
 }
 
+type testFilter struct{}
+
+func (f testFilter) Matches(bits Mask) bool {
+	return true
+}
+
+func TestQueryInterface(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	rotID := ComponentID[rotation](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	e4 := w.NewEntity()
+
+	w.Add(e0, posID)
+	w.Add(e1, posID, rotID)
+	w.Add(e2, posID, rotID)
+	w.Add(e3, posID, rotID)
+	w.Add(e4, rotID)
+
+	q := w.Query(testFilter{})
+
+	cnt := 0
+	for q.Next() {
+		_ = q.Entity()
+		cnt++
+	}
+
+	assert.Equal(t, 5, cnt)
+	assert.Equal(t, 5, q.Count())
+}
+
 func TestQueryStep(t *testing.T) {
 	w := NewWorld()
 
