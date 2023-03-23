@@ -49,7 +49,7 @@ func AddResource[T any](w *World, res *T) {
 type World struct {
 	config     Config
 	entities   []entityIndex
-	archetypes archetypes
+	archetypes archetypeArr
 	graph      pagedArr32[archetypeNode]
 	entityPool entityPool
 	bitPool    bitPool
@@ -86,7 +86,7 @@ func fromConfig(conf Config) World {
 		entityPool: newEntityPool(conf.CapacityIncrement),
 		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
-		archetypes: archetypes{},
+		archetypes: archetypeArr{},
 		graph:      pagedArr32[archetypeNode]{},
 		locks:      Mask{},
 		listener:   nil,
@@ -118,6 +118,35 @@ func (w *World) NewEntity(comps ...ID) Entity {
 		w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
 	}
 	return entity
+}
+
+func (w *World) newEntities(count int, comps ...ID) Query {
+	w.checkLocked()
+
+	if count < 1 {
+		panic("can only create a positive number of entities")
+	}
+	cnt := uint32(count)
+
+	arch := w.archetypes.Get(0)
+	if len(comps) > 0 {
+		arch = w.findOrCreateArchetype(arch, comps, nil)
+	}
+	startIdx := arch.Len()
+	w.createEntities(arch, uint32(count), true)
+
+	if w.listener != nil {
+		var i uint32
+		for i = 0; i < cnt; i++ {
+			idx := startIdx + i
+			entity := arch.GetEntity(uintptr(idx))
+			w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
+		}
+	}
+
+	lock := w.bitPool.Get()
+	w.locks.Set(ID(lock), true)
+	return newArchQuery(w, lock, arch, startIdx)
 }
 
 // NewEntityWith returns a new or recycled [Entity].
@@ -487,6 +516,29 @@ func (w *World) createEntity(arch *archetype, zero bool) Entity {
 		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
 	}
 	return entity
+}
+
+func (w *World) createEntities(arch *archetype, count uint32, zero bool) {
+	startIdx := arch.Len()
+	arch.AllocN(uint32(count), zero)
+
+	var i uint32
+	for i = 0; i < count; i++ {
+		idx := startIdx + i
+		entity := w.entityPool.Get()
+		arch.SetEntity(uintptr(idx), entity)
+		len := len(w.entities)
+		if int(entity.id) == len {
+			if len == cap(w.entities) {
+				old := w.entities
+				w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
+				copy(w.entities, old)
+			}
+			w.entities = append(w.entities, entityIndex{arch: arch, index: uintptr(idx)})
+		} else {
+			w.entities[entity.id] = entityIndex{arch: arch, index: uintptr(idx)}
+		}
+	}
 }
 
 // Copies a component to an entity

@@ -49,7 +49,26 @@ func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
 	a.toRemove[id] = to
 }
 
-type archetypes = pagedArr32[archetype]
+type archetypeArr = pagedArr32[archetype]
+
+type archetypes interface {
+	Get(index int) *archetype
+	Len() int
+}
+
+type singleArchetype struct {
+	archetype *archetype
+}
+
+// Get returns the value at the given index.
+func (s singleArchetype) Get(index int) *archetype {
+	return s.archetype
+}
+
+// Len returns the current number of items in the paged array.
+func (s singleArchetype) Len() int {
+	return 1
+}
 
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
@@ -166,6 +185,19 @@ func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
 	}
 	a.len++
 	return idx
+}
+
+// Add adds storage to the archetype
+func (a *archetype) AllocN(count uint32, zero bool) {
+	idx := uintptr(a.len)
+	a.extend(count)
+	if zero {
+		var i uint32
+		for i = 0; i < count; i++ {
+			a.ZeroAll(idx + uintptr(i))
+		}
+	}
+	a.len += count
 }
 
 // Add adds an entity with components to the archetype
