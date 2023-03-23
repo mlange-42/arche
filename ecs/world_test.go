@@ -469,6 +469,37 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	assert.Equal(t, 100, cnt)
 }
 
+func TestWorldRemoveEntities(t *testing.T) {
+	world := NewWorld(NewConfig().WithCapacityIncrement(16))
+	world.SetListener(func(e EntityEvent) {})
+
+	posID := ComponentID[position](&world)
+	rotID := ComponentID[rotation](&world)
+
+	query := world.newEntities(100, posID)
+	assert.Equal(t, 100, query.Count())
+	query.Close()
+
+	query = world.newEntities(100, posID, rotID)
+	assert.Equal(t, 100, query.Count())
+	query.Close()
+
+	query = world.Query(All())
+	assert.Equal(t, 200, query.Count())
+	query.Close()
+
+	filter := All(posID).Exact()
+	world.removeEntities(&filter)
+
+	query = world.Query(All())
+	assert.Equal(t, 100, query.Count())
+	query.Close()
+
+	query = world.Query(All(posID, rotID))
+	assert.Equal(t, 100, query.Count())
+	query.Close()
+}
+
 func TestWorldLock(t *testing.T) {
 	world := NewWorld()
 
@@ -947,5 +978,45 @@ func BenchmarkNewEntitiesBatch_10_000_Reset(b *testing.B) {
 		world.Reset()
 		q := world.newEntities(10000, posID, velID)
 		q.Close()
+	}
+}
+
+func BenchmarkRemoveEntities_10_000(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+
+		posID := ComponentID[position](&world)
+		velID := ComponentID[velocity](&world)
+
+		entities := make([]Entity, 10000)
+		q := world.newEntities(10000, posID, velID)
+
+		cnt := 0
+		for q.Next() {
+			entities[cnt] = q.Entity()
+			cnt++
+		}
+
+		b.StartTimer()
+
+		for _, e := range entities {
+			world.RemoveEntity(e)
+		}
+	}
+}
+
+func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+
+		posID := ComponentID[position](&world)
+		velID := ComponentID[velocity](&world)
+
+		q := world.newEntities(10000, posID, velID)
+		q.Close()
+		b.StartTimer()
+		world.removeEntities(All(posID, velID))
 	}
 }

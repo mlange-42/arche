@@ -260,7 +260,38 @@ func (w *World) RemoveEntity(entity Entity) {
 		w.entities[swapEntity.id].index = index.index
 	}
 
-	w.entities[entity.id].arch = nil
+	index.arch = nil
+}
+
+// removeEntities removes and recycles all entities matching a filter.
+//
+// Panics when called on a locked world.
+// Do not use during [Query] iteration!
+func (w *World) removeEntities(filter Filter) {
+	w.checkLocked()
+
+	lock := w.lock()
+	for i := 0; i < w.archetypes.Len(); i++ {
+		arch := w.archetypes.Get(i)
+
+		if !filter.Matches(arch.Mask) {
+			continue
+		}
+
+		len := uintptr(arch.Len())
+		var j uintptr
+		for j = 0; j < len; j++ {
+			entity := arch.GetEntity(j)
+			if w.listener != nil {
+				w.listener(EntityEvent{entity, arch.Mask, Mask{}, nil, arch.Ids, nil, -1})
+			}
+			w.entities[entity.id].arch = nil
+			w.entityPool.Recycle(entity)
+		}
+
+		arch.Reset()
+	}
+	w.unlock(lock)
 }
 
 // Alive reports whether an entity is still alive.
