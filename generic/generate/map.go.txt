@@ -58,7 +58,7 @@ func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}
 }
 {{ end }}
 
-// Remove the components set via [Map{{ .Index }}.WithRemove] from the given entity.
+// Remove the Map{{ .Index }}'s components from the given entity.
 //
 // See also [ecs.World.Remove].
 func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {

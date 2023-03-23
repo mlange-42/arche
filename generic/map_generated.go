@@ -63,7 +63,7 @@ func (m *Map1[A]) Assign(entity ecs.Entity, a *A) {
 	)
 }
 
-// Remove the components set via [Map1.WithRemove] from the given entity.
+// Remove the Map1's components from the given entity.
 //
 // See also [ecs.World.Remove].
 func (m *Map1[A]) Remove(entity ecs.Entity) {
@@ -132,7 +132,7 @@ func (m *Map2[A, B]) Assign(entity ecs.Entity, a *A, b *B) {
 	)
 }
 
-// Remove the components set via [Map2.WithRemove] from the given entity.
+// Remove the Map2's components from the given entity.
 //
 // See also [ecs.World.Remove].
 func (m *Map2[A, B]) Remove(entity ecs.Entity) {
@@ -206,7 +206,7 @@ func (m *Map3[A, B, C]) Assign(entity ecs.Entity, a *A, b *B, c *C) {
 	)
 }
 
-// Remove the components set via [Map3.WithRemove] from the given entity.
+// Remove the Map3's components from the given entity.
 //
 // See also [ecs.World.Remove].
 func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
@@ -285,7 +285,7 @@ func (m *Map4[A, B, C, D]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D) {
 	)
 }
 
-// Remove the components set via [Map4.WithRemove] from the given entity.
+// Remove the Map4's components from the given entity.
 //
 // See also [ecs.World.Remove].
 func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
@@ -369,7 +369,7 @@ func (m *Map5[A, B, C, D, E]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, 
 	)
 }
 
-// Remove the components set via [Map5.WithRemove] from the given entity.
+// Remove the Map5's components from the given entity.
 //
 // See also [ecs.World.Remove].
 func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
@@ -458,7 +458,7 @@ func (m *Map6[A, B, C, D, E, F]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *
 	)
 }
 
-// Remove the components set via [Map6.WithRemove] from the given entity.
+// Remove the Map6's components from the given entity.
 //
 // See also [ecs.World.Remove].
 func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
@@ -552,7 +552,7 @@ func (m *Map7[A, B, C, D, E, F, G]) Assign(entity ecs.Entity, a *A, b *B, c *C, 
 	)
 }
 
-// Remove the components set via [Map7.WithRemove] from the given entity.
+// Remove the Map7's components from the given entity.
 //
 // See also [ecs.World.Remove].
 func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
@@ -651,7 +651,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Assign(entity ecs.Entity, a *A, b *B, c *
 	)
 }
 
-// Remove the components set via [Map8.WithRemove] from the given entity.
+// Remove the Map8's components from the given entity.
 //
 // See also [ecs.World.Remove].
 func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity) {
