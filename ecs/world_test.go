@@ -363,7 +363,10 @@ func TestWorldNewEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) { events = append(events, e) })
+	world.SetListener(func(e EntityEvent) {
+		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
+		events = append(events, e)
+	})
 
 	posID := ComponentID[position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -429,7 +432,10 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) { events = append(events, e) })
+	world.SetListener(func(e EntityEvent) {
+		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
+		events = append(events, e)
+	})
 
 	posID := ComponentID[position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -500,7 +506,10 @@ func TestWorldRemoveEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) { events = append(events, e) })
+	world.SetListener(func(e EntityEvent) {
+		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
+		events = append(events, e)
+	})
 
 	posID := ComponentID[position](&world)
 	rotID := ComponentID[rotation](&world)
