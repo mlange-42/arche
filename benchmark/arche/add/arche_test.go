@@ -8,7 +8,7 @@ import (
 	"github.com/mlange-42/arche/generic"
 )
 
-func addArcheWorld(b *testing.B, count int) {
+func addArche(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
@@ -26,7 +26,7 @@ func addArcheWorld(b *testing.B, count int) {
 	}
 }
 
-func addArcheWorldBatch(b *testing.B, count int) {
+func addArcheBatch(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
@@ -37,6 +37,48 @@ func addArcheWorldBatch(b *testing.B, count int) {
 		b.StartTimer()
 
 		world.Batch().NewEntities(count, comps...)
+	}
+}
+
+func addSetArche(b *testing.B, count int) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+
+		posID := ecs.ComponentID[c.Position](&world)
+		rotID := ecs.ComponentID[c.Rotation](&world)
+		comps := []ecs.ID{posID, rotID}
+		b.StartTimer()
+
+		var e ecs.Entity
+		for i := 0; i < count; i++ {
+			e = world.NewEntity(comps...)
+			pos := (*c.Position)(world.Get(e, posID))
+			rot := (*c.Rotation)(world.Get(e, rotID))
+			pos.X = 1
+			rot.Angle = 1
+		}
+		_ = e
+	}
+}
+
+func addSetArcheBatch(b *testing.B, count int) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+
+		posID := ecs.ComponentID[c.Position](&world)
+		rotID := ecs.ComponentID[c.Rotation](&world)
+		comps := []ecs.ID{posID, rotID}
+		b.StartTimer()
+
+		query := world.Batch().NewEntitiesQuery(count, comps...)
+		for query.Next() {
+			pos := (*c.Position)(query.Get(posID))
+			rot := (*c.Rotation)(query.Get(rotID))
+			pos.X = 1
+			rot.Angle = 1
+		}
 	}
 }
 
@@ -66,28 +108,87 @@ func addArcheGenericBatch(b *testing.B, count int) {
 	}
 }
 
+func addSetArcheGeneric(b *testing.B, count int) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		mut := generic.NewMap2[c.Position, c.Rotation](&world)
+		b.StartTimer()
+
+		var e ecs.Entity
+		for i := 0; i < count; i++ {
+			e = mut.NewEntity()
+			pos, rot := mut.Get(e)
+			pos.X = 1
+			rot.Angle = 1
+		}
+		_ = e
+	}
+}
+
+func addSetArcheGenericBatch(b *testing.B, count int) {
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		mut := generic.NewMap2[c.Position, c.Rotation](&world)
+		b.StartTimer()
+
+		query := mut.NewEntitiesQuery(count)
+
+		for query.Next() {
+			pos, rot := query.Get()
+			pos.X = 1
+			rot.Angle = 1
+		}
+	}
+}
+
 func BenchmarkArcheAdd_100(b *testing.B) {
-	addArcheWorld(b, 100)
+	addArche(b, 100)
 }
 
 func BenchmarkArcheAdd_1000(b *testing.B) {
-	addArcheWorld(b, 1000)
+	addArche(b, 1000)
 }
 
 func BenchmarkArcheAdd_10000(b *testing.B) {
-	addArcheWorld(b, 10000)
+	addArche(b, 10000)
 }
 
-func BenchmarkArcheAddBatch_100(b *testing.B) {
-	addArcheWorldBatch(b, 100)
+func BenchmarkArcheAdd_Batch_100(b *testing.B) {
+	addArcheBatch(b, 100)
 }
 
-func BenchmarkArcheAddBatch_1000(b *testing.B) {
-	addArcheWorldBatch(b, 1000)
+func BenchmarkArcheAdd_Batch_1000(b *testing.B) {
+	addArcheBatch(b, 1000)
 }
 
-func BenchmarkArcheAddBatch_10000(b *testing.B) {
-	addArcheWorldBatch(b, 10000)
+func BenchmarkArcheAdd_Batch_10000(b *testing.B) {
+	addArcheBatch(b, 10000)
+}
+
+func BenchmarkArcheAddSet_100(b *testing.B) {
+	addSetArche(b, 100)
+}
+
+func BenchmarkArcheAddSet_1000(b *testing.B) {
+	addSetArche(b, 1000)
+}
+
+func BenchmarkArcheAddSet_10000(b *testing.B) {
+	addSetArche(b, 10000)
+}
+
+func BenchmarkArcheAddSet_Batch_100(b *testing.B) {
+	addSetArcheBatch(b, 100)
+}
+
+func BenchmarkArcheAddSet_Batch_1000(b *testing.B) {
+	addSetArcheBatch(b, 1000)
+}
+
+func BenchmarkArcheAddSet_Batch_10000(b *testing.B) {
+	addSetArcheBatch(b, 10000)
 }
 
 func BenchmarkArcheAddGeneric_100(b *testing.B) {
@@ -102,14 +203,38 @@ func BenchmarkArcheAddGeneric_10000(b *testing.B) {
 	addArcheGeneric(b, 10000)
 }
 
-func BenchmarkArcheAddGenericBatch_100(b *testing.B) {
+func BenchmarkArcheAddGeneric_Batch_100(b *testing.B) {
 	addArcheGenericBatch(b, 100)
 }
 
-func BenchmarkArcheAddGenericBatch_1000(b *testing.B) {
+func BenchmarkArcheAddGeneric_Batch_1000(b *testing.B) {
 	addArcheGenericBatch(b, 1000)
 }
 
-func BenchmarkArcheAddGenericBatch_10000(b *testing.B) {
+func BenchmarkArcheAddGeneric_Batch_10000(b *testing.B) {
 	addArcheGenericBatch(b, 10000)
+}
+
+func BenchmarkArcheAddSetGeneric_100(b *testing.B) {
+	addSetArcheGeneric(b, 100)
+}
+
+func BenchmarkArcheAddSetGeneric_1000(b *testing.B) {
+	addSetArcheGeneric(b, 1000)
+}
+
+func BenchmarkArcheAddSetGeneric_10000(b *testing.B) {
+	addSetArcheGeneric(b, 10000)
+}
+
+func BenchmarkArcheAddSetGeneric_Batch_100(b *testing.B) {
+	addSetArcheGenericBatch(b, 100)
+}
+
+func BenchmarkArcheAddSetGeneric_Batch_1000(b *testing.B) {
+	addSetArcheGenericBatch(b, 1000)
+}
+
+func BenchmarkArcheAddSetGeneric_Batch_10000(b *testing.B) {
+	addSetArcheGenericBatch(b, 10000)
 }
