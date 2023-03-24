@@ -42,8 +42,16 @@ func (m *Map1[A]) NewEntity() ecs.Entity {
 
 // NewEntities creates entities with the Map1's components.
 //
-// See also [ecs.Batch.NewEntities].
-func (m *Map1[A]) NewEntities(count int) Query1[A] {
+// See also [Map1.NewEntitiesQuery] and [ecs.Batch.NewEntities].
+func (m *Map1[A]) NewEntities(count int) {
+	m.world.Batch().NewEntities(count, m.id0)
+}
+
+// NewEntities creates entities with the Map1's components.
+// It returns a [Query1] over the new entities.
+//
+// See also [Map1.NewEntities] and [ecs.Batch.NewEntitiesQuery].
+func (m *Map1[A]) NewEntitiesQuery(count int) Query1[A] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0)
 	return Query1[A]{
 		Query: query,
@@ -63,8 +71,16 @@ func (m *Map1[A]) NewEntityWith(a *A) ecs.Entity {
 
 // NewEntitiesWith creates entities with the Map1's components, using the supplied values.
 //
-// See also [ecs.Batch.NewEntitiesWith].
-func (m *Map1[A]) NewEntitiesWith(count int, a *A) Query1[A] {
+// See also [Map1.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
+func (m *Map1[A]) NewEntitiesWith(count int, a *A) {
+	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a})
+}
+
+// NewEntitiesWithQuery creates entities with the Map1's components, using the supplied values.
+// It returns a [Query1] over the new entities.
+//
+// See also [Map1.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
+func (m *Map1[A]) NewEntitiesWithQuery(count int, a *A) Query1[A] {
 	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a})
 	return Query1[A]{
 		Query: query,
@@ -96,8 +112,6 @@ func (m *Map1[A]) Remove(entity ecs.Entity) {
 }
 
 // RemoveEntities removes all components from the world that match the Map1's components.
-//
-// The argument determines whether entities are matched exactly, or if they may contain further components.
 //
 // See also [ecs.World.NewEntityWith].
 func (m *Map1[A]) RemoveEntities(exact bool) {
@@ -148,8 +162,16 @@ func (m *Map2[A, B]) NewEntity() ecs.Entity {
 
 // NewEntities creates entities with the Map2's components.
 //
-// See also [ecs.Batch.NewEntities].
-func (m *Map2[A, B]) NewEntities(count int) Query2[A, B] {
+// See also [Map2.NewEntitiesQuery] and [ecs.Batch.NewEntities].
+func (m *Map2[A, B]) NewEntities(count int) {
+	m.world.Batch().NewEntities(count, m.id0, m.id1)
+}
+
+// NewEntities creates entities with the Map2's components.
+// It returns a [Query2] over the new entities.
+//
+// See also [Map2.NewEntities] and [ecs.Batch.NewEntitiesQuery].
+func (m *Map2[A, B]) NewEntitiesQuery(count int) Query2[A, B] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1)
 	return Query2[A, B]{
 		Query: query,
@@ -171,8 +193,18 @@ func (m *Map2[A, B]) NewEntityWith(a *A, b *B) ecs.Entity {
 
 // NewEntitiesWith creates entities with the Map2's components, using the supplied values.
 //
-// See also [ecs.Batch.NewEntitiesWith].
-func (m *Map2[A, B]) NewEntitiesWith(count int, a *A, b *B) Query2[A, B] {
+// See also [Map2.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
+func (m *Map2[A, B]) NewEntitiesWith(count int, a *A, b *B) {
+	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+	)
+}
+
+// NewEntitiesWithQuery creates entities with the Map2's components, using the supplied values.
+// It returns a [Query2] over the new entities.
+//
+// See also [Map2.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
+func (m *Map2[A, B]) NewEntitiesWithQuery(count int, a *A, b *B) Query2[A, B] {
 	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 	)
@@ -261,8 +293,16 @@ func (m *Map3[A, B, C]) NewEntity() ecs.Entity {
 
 // NewEntities creates entities with the Map3's components.
 //
-// See also [ecs.Batch.NewEntities].
-func (m *Map3[A, B, C]) NewEntities(count int) Query3[A, B, C] {
+// See also [Map3.NewEntitiesQuery] and [ecs.Batch.NewEntities].
+func (m *Map3[A, B, C]) NewEntities(count int) {
+	m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2)
+}
+
+// NewEntities creates entities with the Map3's components.
+// It returns a [Query3] over the new entities.
+//
+// See also [Map3.NewEntities] and [ecs.Batch.NewEntitiesQuery].
+func (m *Map3[A, B, C]) NewEntitiesQuery(count int) Query3[A, B, C] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2)
 	return Query3[A, B, C]{
 		Query: query,
@@ -286,8 +326,19 @@ func (m *Map3[A, B, C]) NewEntityWith(a *A, b *B, c *C) ecs.Entity {
 
 // NewEntitiesWith creates entities with the Map3's components, using the supplied values.
 //
-// See also [ecs.Batch.NewEntitiesWith].
-func (m *Map3[A, B, C]) NewEntitiesWith(count int, a *A, b *B, c *C) Query3[A, B, C] {
+// See also [Map3.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
+func (m *Map3[A, B, C]) NewEntitiesWith(count int, a *A, b *B, c *C) {
+	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+	)
+}
+
+// NewEntitiesWithQuery creates entities with the Map3's components, using the supplied values.
+// It returns a [Query3] over the new entities.
+//
+// See also [Map3.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
+func (m *Map3[A, B, C]) NewEntitiesWithQuery(count int, a *A, b *B, c *C) Query3[A, B, C] {
 	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
@@ -382,8 +433,16 @@ func (m *Map4[A, B, C, D]) NewEntity() ecs.Entity {
 
 // NewEntities creates entities with the Map4's components.
 //
-// See also [ecs.Batch.NewEntities].
-func (m *Map4[A, B, C, D]) NewEntities(count int) Query4[A, B, C, D] {
+// See also [Map4.NewEntitiesQuery] and [ecs.Batch.NewEntities].
+func (m *Map4[A, B, C, D]) NewEntities(count int) {
+	m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3)
+}
+
+// NewEntities creates entities with the Map4's components.
+// It returns a [Query4] over the new entities.
+//
+// See also [Map4.NewEntities] and [ecs.Batch.NewEntitiesQuery].
+func (m *Map4[A, B, C, D]) NewEntitiesQuery(count int) Query4[A, B, C, D] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3)
 	return Query4[A, B, C, D]{
 		Query: query,
@@ -409,8 +468,20 @@ func (m *Map4[A, B, C, D]) NewEntityWith(a *A, b *B, c *C, d *D) ecs.Entity {
 
 // NewEntitiesWith creates entities with the Map4's components, using the supplied values.
 //
-// See also [ecs.Batch.NewEntitiesWith].
-func (m *Map4[A, B, C, D]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D) Query4[A, B, C, D] {
+// See also [Map4.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
+func (m *Map4[A, B, C, D]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D) {
+	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+	)
+}
+
+// NewEntitiesWithQuery creates entities with the Map4's components, using the supplied values.
+// It returns a [Query4] over the new entities.
+//
+// See also [Map4.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
+func (m *Map4[A, B, C, D]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D) Query4[A, B, C, D] {
 	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
@@ -511,8 +582,16 @@ func (m *Map5[A, B, C, D, E]) NewEntity() ecs.Entity {
 
 // NewEntities creates entities with the Map5's components.
 //
-// See also [ecs.Batch.NewEntities].
-func (m *Map5[A, B, C, D, E]) NewEntities(count int) Query5[A, B, C, D, E] {
+// See also [Map5.NewEntitiesQuery] and [ecs.Batch.NewEntities].
+func (m *Map5[A, B, C, D, E]) NewEntities(count int) {
+	m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3, m.id4)
+}
+
+// NewEntities creates entities with the Map5's components.
+// It returns a [Query5] over the new entities.
+//
+// See also [Map5.NewEntities] and [ecs.Batch.NewEntitiesQuery].
+func (m *Map5[A, B, C, D, E]) NewEntitiesQuery(count int) Query5[A, B, C, D, E] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4)
 	return Query5[A, B, C, D, E]{
 		Query: query,
@@ -540,8 +619,21 @@ func (m *Map5[A, B, C, D, E]) NewEntityWith(a *A, b *B, c *C, d *D, e *E) ecs.En
 
 // NewEntitiesWith creates entities with the Map5's components, using the supplied values.
 //
-// See also [ecs.Batch.NewEntitiesWith].
-func (m *Map5[A, B, C, D, E]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E) Query5[A, B, C, D, E] {
+// See also [Map5.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
+func (m *Map5[A, B, C, D, E]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E) {
+	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+	)
+}
+
+// NewEntitiesWithQuery creates entities with the Map5's components, using the supplied values.
+// It returns a [Query5] over the new entities.
+//
+// See also [Map5.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
+func (m *Map5[A, B, C, D, E]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E) Query5[A, B, C, D, E] {
 	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
@@ -648,8 +740,16 @@ func (m *Map6[A, B, C, D, E, F]) NewEntity() ecs.Entity {
 
 // NewEntities creates entities with the Map6's components.
 //
-// See also [ecs.Batch.NewEntities].
-func (m *Map6[A, B, C, D, E, F]) NewEntities(count int) Query6[A, B, C, D, E, F] {
+// See also [Map6.NewEntitiesQuery] and [ecs.Batch.NewEntities].
+func (m *Map6[A, B, C, D, E, F]) NewEntities(count int) {
+	m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
+}
+
+// NewEntities creates entities with the Map6's components.
+// It returns a [Query6] over the new entities.
+//
+// See also [Map6.NewEntities] and [ecs.Batch.NewEntitiesQuery].
+func (m *Map6[A, B, C, D, E, F]) NewEntitiesQuery(count int) Query6[A, B, C, D, E, F] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
 	return Query6[A, B, C, D, E, F]{
 		Query: query,
@@ -679,8 +779,22 @@ func (m *Map6[A, B, C, D, E, F]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *
 
 // NewEntitiesWith creates entities with the Map6's components, using the supplied values.
 //
-// See also [ecs.Batch.NewEntitiesWith].
-func (m *Map6[A, B, C, D, E, F]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F) Query6[A, B, C, D, E, F] {
+// See also [Map6.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
+func (m *Map6[A, B, C, D, E, F]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F) {
+	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+	)
+}
+
+// NewEntitiesWithQuery creates entities with the Map6's components, using the supplied values.
+// It returns a [Query6] over the new entities.
+//
+// See also [Map6.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
+func (m *Map6[A, B, C, D, E, F]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F) Query6[A, B, C, D, E, F] {
 	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
@@ -793,8 +907,16 @@ func (m *Map7[A, B, C, D, E, F, G]) NewEntity() ecs.Entity {
 
 // NewEntities creates entities with the Map7's components.
 //
-// See also [ecs.Batch.NewEntities].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntities(count int) Query7[A, B, C, D, E, F, G] {
+// See also [Map7.NewEntitiesQuery] and [ecs.Batch.NewEntities].
+func (m *Map7[A, B, C, D, E, F, G]) NewEntities(count int) {
+	m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
+}
+
+// NewEntities creates entities with the Map7's components.
+// It returns a [Query7] over the new entities.
+//
+// See also [Map7.NewEntities] and [ecs.Batch.NewEntitiesQuery].
+func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesQuery(count int) Query7[A, B, C, D, E, F, G] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
 	return Query7[A, B, C, D, E, F, G]{
 		Query: query,
@@ -826,8 +948,23 @@ func (m *Map7[A, B, C, D, E, F, G]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, 
 
 // NewEntitiesWith creates entities with the Map7's components, using the supplied values.
 //
-// See also [ecs.Batch.NewEntitiesWith].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) Query7[A, B, C, D, E, F, G] {
+// See also [Map7.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
+func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) {
+	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+	)
+}
+
+// NewEntitiesWithQuery creates entities with the Map7's components, using the supplied values.
+// It returns a [Query7] over the new entities.
+//
+// See also [Map7.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
+func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) Query7[A, B, C, D, E, F, G] {
 	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
@@ -946,8 +1083,16 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewEntity() ecs.Entity {
 
 // NewEntities creates entities with the Map8's components.
 //
-// See also [ecs.Batch.NewEntities].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntities(count int) Query8[A, B, C, D, E, F, G, H] {
+// See also [Map8.NewEntitiesQuery] and [ecs.Batch.NewEntities].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewEntities(count int) {
+	m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
+}
+
+// NewEntities creates entities with the Map8's components.
+// It returns a [Query8] over the new entities.
+//
+// See also [Map8.NewEntities] and [ecs.Batch.NewEntitiesQuery].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesQuery(count int) Query8[A, B, C, D, E, F, G, H] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
 	return Query8[A, B, C, D, E, F, G, H]{
 		Query: query,
@@ -981,8 +1126,24 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewEntityWith(a *A, b *B, c *C, d *D, e *
 
 // NewEntitiesWith creates entities with the Map8's components, using the supplied values.
 //
-// See also [ecs.Batch.NewEntitiesWith].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) Query8[A, B, C, D, E, F, G, H] {
+// See also [Map8.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) {
+	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+	)
+}
+
+// NewEntitiesWithQuery creates entities with the Map8's components, using the supplied values.
+// It returns a [Query8] over the new entities.
+//
+// See also [Map8.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) Query8[A, B, C, D, E, F, G, H] {
 	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
