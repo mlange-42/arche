@@ -25,6 +25,7 @@ type query struct {
 	Arguments   string
 	IDTypes     string
 	IDAssign    string
+	IDAssign2   string
 	IDList      string
 }
 
@@ -62,6 +63,7 @@ func generateMaps() {
 		arguments := ""
 		idTypes := ""
 		idAssign := ""
+		idAssign2 := ""
 		idList := ""
 
 		if i > 0 {
@@ -76,6 +78,7 @@ func generateMaps() {
 			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.id%d))", typeLetters[j], j)
 			arguments += fmt.Sprintf("%s *%s", strings.ToLower(typeLetters[j]), typeLetters[j])
 			idAssign += fmt.Sprintf("	id%d: ecs.ComponentID[%s](w),\n", j, typeLetters[j])
+			idAssign2 += fmt.Sprintf("	id%d: m.id%d,\n", j, j)
 			if j < i-1 {
 				returnAll += ",\n"
 				arguments += ", "
@@ -94,6 +97,7 @@ func generateMaps() {
 			Arguments:   arguments,
 			IDTypes:     idTypes,
 			IDAssign:    idAssign,
+			IDAssign2:   idAssign2,
 			IDList:      idList,
 		}
 		err = maps.Execute(&text, data)

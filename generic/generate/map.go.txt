@@ -30,6 +30,17 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntity() ecs.Entity {
 	return entity
 }
 
+// NewEntities creates entities with the Map{{ .Index }}'s components.
+//
+// See also [ecs.Batch.NewEntities].
+func (m *Map{{ .Index }}{{ .Types }}) NewEntities(count int) Query{{ .Index }}{{ .Types }} {
+	query := m.world.Batch().NewEntities(count, {{ .IDList }})
+	return Query{{ .Index }}{{ .Types }}{
+		Query: query,
+		{{ .IDAssign2 }}
+	}
+}
+
 {{if .ReturnAll}}
 // NewEntityWith creates a new [ecs.Entity] with the Map{{ .Index }}'s components, using the supplied values.
 //
