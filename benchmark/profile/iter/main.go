@@ -49,7 +49,7 @@ func run(rounds, iters, entities int) {
 			_ = world.NewEntity(posID, velID)
 		}
 
-		filter := ecs.All(posID, velID)
+		var filter ecs.Filter = ecs.All(posID, velID)
 
 		for j := 0; j < iters; j++ {
 			query := world.Query(filter)

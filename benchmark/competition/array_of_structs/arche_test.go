@@ -30,10 +30,11 @@ func runArche16B(b *testing.B, count int) {
 	id0 := ecs.ComponentID[Struct16B0](&world)
 
 	world.Batch().NewEntities(count, id0)
+	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(ecs.All(id0))
+		query := world.Query(filter)
 		for query.Next() {
 			s0 := (*Struct16B0)(query.Get(id0))
 			s0.Hi++
@@ -50,10 +51,11 @@ func runArche32B(b *testing.B, count int) {
 	id1 := ecs.ComponentID[Struct16B1](&world)
 
 	world.Batch().NewEntities(count, id0, id1)
+	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(ecs.All(id0))
+		query := world.Query(filter)
 		for query.Next() {
 			s0 := (*Struct16B0)(query.Get(id0))
 			s0.Hi++
@@ -72,10 +74,11 @@ func runArche64B(b *testing.B, count int) {
 	id3 := ecs.ComponentID[Struct16B3](&world)
 
 	world.Batch().NewEntities(count, id0, id1, id2, id3)
+	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(ecs.All(id0))
+		query := world.Query(filter)
 		for query.Next() {
 			s0 := (*Struct16B0)(query.Get(id0))
 			s0.Hi++
@@ -98,10 +101,11 @@ func runArche128B(b *testing.B, count int) {
 	id7 := ecs.ComponentID[Struct16B7](&world)
 
 	world.Batch().NewEntities(count, id0, id1, id2, id3, id4, id5, id6, id7)
+	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(ecs.All(id0))
+		query := world.Query(filter)
 		for query.Next() {
 			s0 := (*Struct16B0)(query.Get(id0))
 			s0.Hi++
@@ -135,10 +139,11 @@ func runArche256B(b *testing.B, count int) {
 		id0, id1, id2, id3, id4, id5, id6, id7,
 		id8, id9, id10, id11, id12, id13, id14, id15,
 	)
+	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(ecs.All(id0))
+		query := world.Query(filter)
 		for query.Next() {
 			s0 := (*Struct16B0)(query.Get(id0))
 			s0.Hi++
