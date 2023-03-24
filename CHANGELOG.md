@@ -4,40 +4,41 @@
 
 ### Breaking changes
 
-* Generic mappers do no longer return all components when creating entities or components (!145)
-* Resources API moved out of the world, to a helper to get by `World.Resources()` (!150)
+* Generic mappers do no longer return all components when creating entities or components (#145)
+* Resources API moved out of the world, to a helper to get by `World.Resources()` (#150)
 
 ### Features
 
-* Adds method `World.Reset()`, to allow for more efficient systematic simulations (!138)
-* Adds `World.Batch()` helper for performing optimized batch-creation and batch-removal of entities (!149)
-* Adds method `Mask.Exact()` to create a filter matching an exact component composition (!149)
-* Generic mappers (`Map1`, ...) have methods `NewEntities`, `NewEntitiesWith` and `RemoveEntities` for batch operations (!151)
+* Adds method `World.Reset()`, to allow for more efficient systematic simulations (#138)
+* Adds `World.Batch()` helper for performing optimized batch-creation and batch-removal of entities (#149)
+* Adds method `Mask.Exact()` to create a filter matching an exact component composition (#149)
+* Generic mappers (`Map1`, ...) have methods `NewEntities`, `NewEntitiesWith` and `RemoveEntities` for batch operations (#151)
+* Batch-creation methods (ID-based and generic) have variants like `NewEntitiesQuery` that return a query over the created entities (#152)
 
 ### Performance
 
-* Speedup of archetype mask checks by 10% by checking mask before empty archetype (!139)
-* Speedup of generic queries and mappers to come closer to ID-based access (!144)
-* Speedup of archetype mask checks by casting filter interface to concrete type when possible (!148)
+* Speedup of archetype mask checks by 10% by checking mask before empty archetype (#139)
+* Speedup of generic queries and mappers to come closer to ID-based access (#144)
+* Speedup of archetype mask checks by casting filter interface to concrete type when possible (#148)
 
 ### Bugfixes
 
-* Archetype storage buffers are "zeroed" when removing entities, to allow GC on pointers and slices in components (!147)
+* Archetype storage buffers are "zeroed" when removing entities, to allow GC on pointers and slices in components (#147)
 
 ## [[v0.5.1]](https://github.com/mlange-42/arche/compare/v0.5.0...v0.5.1)
 
 ### Performance
 
-* Speedup of archetype access by 5-10% by merging storages into archetypes (!137)
+* Speedup of archetype access by 5-10% by merging storages into archetypes (#137)
 
 ### Documentation
 
-* Document all private functions, types and methods  (!136)
-* Adds a section  and plot on benchmarks against other Go ECS implementations to the README (!138)
+* Document all private functions, types and methods  (#136)
+* Adds a section  and plot on benchmarks against other Go ECS implementations to the README (#138)
 
 ### Other
 
-* Internal code refactoring (!136)
+* Internal code refactoring (#136)
   * Move method `nextArchetype` from `World` to `Query`.
   * Remove internal type `queryIter`.
   * Move repetitive pointer copying code in `storage` into a private method.
@@ -49,34 +50,34 @@ Feature release. Does not break v0.4.x projects.
 
 ### Features
 
-* The World handles ECS resources, i.e. component-like global data (!132)
-* Generic access to world resources (!132)
+* The World handles ECS resources, i.e. component-like global data (#132)
+* Generic access to world resources (#132)
 
 ### Documentation
 
-* Adds an example for the use of resources (!132)
+* Adds an example for the use of resources (#132)
 
 ## [[v0.4.6]](https://github.com/mlange-42/arche/compare/v0.4.5...v0.4.6)
 
 ### Performance
 
-* Speedup archetype access by 10%, by elimination of bounds checks (!126)
-* Speedup entity access from queries by 50% by using a component storage for them (!131)
-* Minor optimizations of component storage (!128)
+* Speedup archetype access by 10%, by elimination of bounds checks (#126)
+* Speedup entity access from queries by 50% by using a component storage for them (#131)
+* Minor optimizations of component storage (#128)
 
 ### Documentation
 
-* Adds an example to demonstrate how to implement classical ECS systems (!129)
+* Adds an example to demonstrate how to implement classical ECS systems (#129)
 
 ## [[v0.4.5]](https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5)
 
 ### Features
 
-* Adds memory per entity to archetype stats (!124)
+* Adds memory per entity to archetype stats (#124)
 
 ### Other
 
-* Adds benchmarks of Arche vs. Array of Structs (AoS) and Array of Pointers (AoP), for different memory per entity and number of entities (!123)
+* Adds benchmarks of Arche vs. Array of Structs (AoS) and Array of Pointers (AoP), for different memory per entity and number of entities (#123)
 
 ## [[v0.4.4]](https://github.com/mlange-42/arche/compare/v0.4.3...v0.4.4)
 
