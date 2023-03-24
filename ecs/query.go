@@ -27,6 +27,9 @@ func (f *MaskFilter) Matches(bits Mask) bool {
 	return bits.Contains(f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
+// dummyFilter is a filter that returns either true or false, irrespective of the matched mask.
+//
+// Used for the [Query] returned by entity batch creation methods.
 type dummyFilter struct{ Value bool }
 
 // Matches matches a filter against a mask.
