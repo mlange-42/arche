@@ -167,7 +167,7 @@ In the illustration, the first archetype holds all components for all entities w
 The exact composition of each archetype is encoded in a bitmask for fast comparison.
 Thus, queries can easily identify their relevant archetypes, and then simply iterate entities linearly, which is very fast. Components can be accessed through the query in a very efficient way (&approx;1ns).
 
-For getting components by entity ID, e.g. for hierarchies, the world contains a list that is indexed by the entity ID. For each entity, it references it's current archetype and the index in the archetype. This way, getting components for entity IDs (i.e. random access) is fast, although not as fast as in queries (≈2ns vs. 1ns).
+For getting components by entity ID, e.g. for hierarchies, the world contains a list that is indexed by the entity ID. For each entity, it references it's current archetype and the index in the archetype. This way, getting components for entity IDs (i.e. random access) is fast, although not as fast as in queries (≈1.5ns vs. 1ns).
 
 Obviously, archetypes are an optimization for iteration speed.
 But they also come with a downside. Adding or removing components to/from an entity requires moving all the components of the entity to another archetype.
