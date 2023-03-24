@@ -44,7 +44,7 @@ func (m *Map1[A]) NewEntity() ecs.Entity {
 //
 // See also [ecs.Batch.NewEntities].
 func (m *Map1[A]) NewEntities(count int) Query1[A] {
-	query := m.world.Batch().NewEntities(count, m.id0)
+	query := m.world.Batch().NewEntitiesQuery(count, m.id0)
 	return Query1[A]{
 		Query: query,
 		id0:   m.id0,
@@ -65,7 +65,7 @@ func (m *Map1[A]) NewEntityWith(a *A) ecs.Entity {
 //
 // See also [ecs.Batch.NewEntitiesWith].
 func (m *Map1[A]) NewEntitiesWith(count int, a *A) Query1[A] {
-	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a})
+	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a})
 	return Query1[A]{
 		Query: query,
 		id0:   m.id0,
@@ -150,7 +150,7 @@ func (m *Map2[A, B]) NewEntity() ecs.Entity {
 //
 // See also [ecs.Batch.NewEntities].
 func (m *Map2[A, B]) NewEntities(count int) Query2[A, B] {
-	query := m.world.Batch().NewEntities(count, m.id0, m.id1)
+	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1)
 	return Query2[A, B]{
 		Query: query,
 		id0:   m.id0,
@@ -173,7 +173,7 @@ func (m *Map2[A, B]) NewEntityWith(a *A, b *B) ecs.Entity {
 //
 // See also [ecs.Batch.NewEntitiesWith].
 func (m *Map2[A, B]) NewEntitiesWith(count int, a *A, b *B) Query2[A, B] {
-	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 	)
 	return Query2[A, B]{
@@ -263,7 +263,7 @@ func (m *Map3[A, B, C]) NewEntity() ecs.Entity {
 //
 // See also [ecs.Batch.NewEntities].
 func (m *Map3[A, B, C]) NewEntities(count int) Query3[A, B, C] {
-	query := m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2)
+	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2)
 	return Query3[A, B, C]{
 		Query: query,
 		id0:   m.id0,
@@ -288,7 +288,7 @@ func (m *Map3[A, B, C]) NewEntityWith(a *A, b *B, c *C) ecs.Entity {
 //
 // See also [ecs.Batch.NewEntitiesWith].
 func (m *Map3[A, B, C]) NewEntitiesWith(count int, a *A, b *B, c *C) Query3[A, B, C] {
-	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
 	)
@@ -384,7 +384,7 @@ func (m *Map4[A, B, C, D]) NewEntity() ecs.Entity {
 //
 // See also [ecs.Batch.NewEntities].
 func (m *Map4[A, B, C, D]) NewEntities(count int) Query4[A, B, C, D] {
-	query := m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3)
+	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3)
 	return Query4[A, B, C, D]{
 		Query: query,
 		id0:   m.id0,
@@ -411,7 +411,7 @@ func (m *Map4[A, B, C, D]) NewEntityWith(a *A, b *B, c *C, d *D) ecs.Entity {
 //
 // See also [ecs.Batch.NewEntitiesWith].
 func (m *Map4[A, B, C, D]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D) Query4[A, B, C, D] {
-	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
 		ecs.Component{ID: m.id3, Comp: d},
@@ -513,7 +513,7 @@ func (m *Map5[A, B, C, D, E]) NewEntity() ecs.Entity {
 //
 // See also [ecs.Batch.NewEntities].
 func (m *Map5[A, B, C, D, E]) NewEntities(count int) Query5[A, B, C, D, E] {
-	query := m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3, m.id4)
+	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4)
 	return Query5[A, B, C, D, E]{
 		Query: query,
 		id0:   m.id0,
@@ -542,7 +542,7 @@ func (m *Map5[A, B, C, D, E]) NewEntityWith(a *A, b *B, c *C, d *D, e *E) ecs.En
 //
 // See also [ecs.Batch.NewEntitiesWith].
 func (m *Map5[A, B, C, D, E]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E) Query5[A, B, C, D, E] {
-	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
 		ecs.Component{ID: m.id3, Comp: d},
@@ -650,7 +650,7 @@ func (m *Map6[A, B, C, D, E, F]) NewEntity() ecs.Entity {
 //
 // See also [ecs.Batch.NewEntities].
 func (m *Map6[A, B, C, D, E, F]) NewEntities(count int) Query6[A, B, C, D, E, F] {
-	query := m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
+	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
 	return Query6[A, B, C, D, E, F]{
 		Query: query,
 		id0:   m.id0,
@@ -681,7 +681,7 @@ func (m *Map6[A, B, C, D, E, F]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *
 //
 // See also [ecs.Batch.NewEntitiesWith].
 func (m *Map6[A, B, C, D, E, F]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F) Query6[A, B, C, D, E, F] {
-	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
 		ecs.Component{ID: m.id3, Comp: d},
@@ -795,7 +795,7 @@ func (m *Map7[A, B, C, D, E, F, G]) NewEntity() ecs.Entity {
 //
 // See also [ecs.Batch.NewEntities].
 func (m *Map7[A, B, C, D, E, F, G]) NewEntities(count int) Query7[A, B, C, D, E, F, G] {
-	query := m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
+	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
 	return Query7[A, B, C, D, E, F, G]{
 		Query: query,
 		id0:   m.id0,
@@ -828,7 +828,7 @@ func (m *Map7[A, B, C, D, E, F, G]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, 
 //
 // See also [ecs.Batch.NewEntitiesWith].
 func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) Query7[A, B, C, D, E, F, G] {
-	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
 		ecs.Component{ID: m.id3, Comp: d},
@@ -948,7 +948,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewEntity() ecs.Entity {
 //
 // See also [ecs.Batch.NewEntities].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewEntities(count int) Query8[A, B, C, D, E, F, G, H] {
-	query := m.world.Batch().NewEntities(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
+	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
 	return Query8[A, B, C, D, E, F, G, H]{
 		Query: query,
 		id0:   m.id0,
@@ -983,7 +983,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewEntityWith(a *A, b *B, c *C, d *D, e *
 //
 // See also [ecs.Batch.NewEntitiesWith].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) Query8[A, B, C, D, E, F, G, H] {
-	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
 		ecs.Component{ID: m.id3, Comp: d},
