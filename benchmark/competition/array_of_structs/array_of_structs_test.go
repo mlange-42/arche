@@ -1,4 +1,4 @@
-package aos
+package arrayofstructs
 
 import (
 	"testing"

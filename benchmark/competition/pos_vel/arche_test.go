@@ -14,12 +14,8 @@ func BenchmarkIterArche(b *testing.B) {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	for i := 0; i < nPos; i++ {
-		world.NewEntity(posID)
-	}
-	for i := 0; i < nPosVel; i++ {
-		world.NewEntity(posID, velID)
-	}
+	world.Batch().NewEntities(nPos, posID)
+	world.Batch().NewEntities(nPosVel, posID, velID)
 
 	filter := ecs.All(posID, velID)
 	b.StartTimer()
