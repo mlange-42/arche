@@ -120,7 +120,13 @@ func (w *World) NewEntity(comps ...ID) Entity {
 	return entity
 }
 
-func (w *World) newEntities(count int, comps ...ID) Query {
+func (w *World) newEntitiesQuery(count int, comps ...ID) Query {
+	arch, startIdx := w.newEntities(count, comps...)
+	lock := w.lock()
+	return newArchQuery(w, lock, arch, startIdx)
+}
+
+func (w *World) newEntities(count int, comps ...ID) (*archetype, uint32) {
 	w.checkLocked()
 
 	if count < 1 {
@@ -146,8 +152,7 @@ func (w *World) newEntities(count int, comps ...ID) Query {
 		w.unlock(lock)
 	}
 
-	lock := w.lock()
-	return newArchQuery(w, lock, arch, startIdx)
+	return arch, startIdx
 }
 
 // NewEntityWith returns a new or recycled [Entity].
@@ -187,7 +192,13 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	return entity
 }
 
-func (w *World) newEntitiesWith(count int, comps ...Component) Query {
+func (w *World) newEntitiesWithQuery(count int, comps ...Component) Query {
+	arch, startIdx := w.newEntitiesWith(count, comps...)
+	lock := w.lock()
+	return newArchQuery(w, lock, arch, startIdx)
+}
+
+func (w *World) newEntitiesWith(count int, comps ...Component) (*archetype, uint32) {
 	w.checkLocked()
 
 	if count < 1 {
@@ -231,8 +242,7 @@ func (w *World) newEntitiesWith(count int, comps ...Component) Query {
 		w.unlock(lock)
 	}
 
-	lock := w.lock()
-	return newArchQuery(w, lock, arch, startIdx)
+	return arch, startIdx
 }
 
 // RemoveEntity removes and recycles an [Entity].

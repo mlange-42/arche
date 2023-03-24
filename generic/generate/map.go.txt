@@ -35,9 +35,17 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntity() ecs.Entity {
 
 // NewEntities creates entities with the Map{{ .Index }}'s components.
 //
-// See also [ecs.Batch.NewEntities].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntities(count int) Query{{ .Index }}{{ .Types }} {
-	query := m.world.Batch().NewEntities(count, {{ .IDList }})
+// See also [Map{{ .Index }}.NewEntitiesQuery] and [ecs.Batch.NewEntities].
+func (m *Map{{ .Index }}{{ .Types }}) NewEntities(count int) {
+	m.world.Batch().NewEntities(count, {{ .IDList }})
+}
+
+// NewEntities creates entities with the Map{{ .Index }}'s components.
+// It returns a [Query{{ .Index }}] over the new entities.
+//
+// See also [Map{{ .Index }}.NewEntities] and [ecs.Batch.NewEntitiesQuery].
+func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesQuery(count int) Query{{ .Index }}{{ .Types }} {
+	query := m.world.Batch().NewEntitiesQuery(count, {{ .IDList }})
 	return Query{{ .Index }}{{ .Types }}{
 		Query: query,
 		{{ .IDAssign2 }}
@@ -57,9 +65,17 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) ecs.Entity
 
 // NewEntitiesWith creates entities with the Map{{ .Index }}'s components, using the supplied values.
 //
-// See also [ecs.Batch.NewEntitiesWith].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWith(count int, {{ .Arguments }}) Query{{ .Index }}{{ .Types }} {
-	query := m.world.Batch().NewEntitiesWith(count, {{ .Components }})
+// See also [Map{{ .Index }}.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
+func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWith(count int, {{ .Arguments }}) {
+	m.world.Batch().NewEntitiesWith(count, {{ .Components }})
+}
+
+// NewEntitiesWithQuery creates entities with the Map{{ .Index }}'s components, using the supplied values.
+// It returns a [Query{{ .Index }}] over the new entities.
+//
+// See also [Map{{ .Index }}.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
+func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWithQuery(count int, {{ .Arguments }}) Query{{ .Index }}{{ .Types }} {
+	query := m.world.Batch().NewEntitiesWithQuery(count, {{ .Components }})
 	return Query{{ .Index }}{{ .Types }}{
 		Query: query,
 		{{ .IDAssign2 }}
