@@ -372,10 +372,7 @@ func (a *archetype) extend(by uint32) {
 	if a.cap >= required {
 		return
 	}
-	a.cap = a.capacityIncrement * (required / a.capacityIncrement)
-	if required%a.capacityIncrement != 0 {
-		a.cap += a.capacityIncrement
-	}
+	a.cap = capacityU32(required, a.capacityIncrement)
 
 	old := a.entityBuffer
 	a.entityBuffer = reflect.New(reflect.ArrayOf(int(a.cap), entityType)).Elem()
