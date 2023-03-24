@@ -12,6 +12,7 @@ type Resources struct {
 	resources []any
 }
 
+// newResources creates a new Resources manager.
 func newResources() Resources {
 	return Resources{
 		registry:  newComponentRegistry(),

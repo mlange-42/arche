@@ -2,7 +2,9 @@ package ecs
 
 const fixedPageSize = 32
 
-// pagedArr32 is a paged collection working with pages of length 32 arrays
+// pagedArr32 is a paged collection working with pages of length 32 arrays.
+//
+// Implements [archetypes].
 type pagedArr32[T any] struct {
 	pages   [][fixedPageSize]T
 	len     int

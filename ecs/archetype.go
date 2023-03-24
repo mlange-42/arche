@@ -8,9 +8,10 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
+// layoutSize is the size of an archetype column layout in bytes.
 var layoutSize = unsafe.Sizeof(layout{})
 
-// archetypeNode is a node in the archetype graph
+// archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
 	mask      Mask
 	archetype *archetype
@@ -49,13 +50,20 @@ func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
 	a.toRemove[id] = to
 }
 
+// Synonym for pagedArr32[archetype].
+// Implements [archetypes].
 type archetypeArr = pagedArr32[archetype]
 
+// Interface for an iterator over archetypes
 type archetypes interface {
 	Get(index int) *archetype
 	Len() int
 }
 
+// Implementation of an archetype iterator for a single archetype.
+// Implements [archetypes].
+//
+// Used for the [Query] returned by entity batch creation methods.
 type singleArchetype struct {
 	archetype *archetype
 }
