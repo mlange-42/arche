@@ -4,15 +4,18 @@
 // Map{{ .Index }} is a helper for mapping {{ .NumberStr }} components.
 type Map{{ .Index }}{{ .TypesFull }} struct {
 	world *ecs.World
+	mask ecs.Mask
 	{{ .IDTypes }}
 }
 
 // NewMap{{ .Index }} creates a new Map{{ .Index }} object.
 func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }} {
-	return Map{{ .Index }}{{ .Types }}{
+	m := Map{{ .Index }}{{ .Types }}{
 		world: w,
 		{{ .IDAssign }}
 	}
+	m.mask = ecs.All({{ .IDList }})
+	return m
 }
 
 // Get all the Map{{ .Index }}'s components for the given entity.
@@ -52,6 +55,17 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) ecs.Entity
 	return entity
 }
 
+// NewEntitiesWith creates entities with the Map{{ .Index }}'s components, using the supplied values.
+//
+// See also [ecs.Batch.NewEntitiesWith].
+func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWith(count int, {{ .Arguments }}) Query{{ .Index }}{{ .Types }} {
+	query := m.world.Batch().NewEntitiesWith(count, {{ .Components }})
+	return Query{{ .Index }}{{ .Types }}{
+		Query: query,
+		{{ .IDAssign2 }}
+	}
+}
+
 // Add the Map{{ .Index }}'s components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -74,4 +88,17 @@ func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}
 // See also [ecs.World.Remove].
 func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, {{ .IDList }})
+}
+
+
+// RemoveEntities removes all components from the world that match the Map{{ .Index }}'s components.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map{{ .Index }}{{ .Types }}) RemoveEntities(exact bool) {
+	if exact {
+		filter := m.mask.Exact()
+		m.world.Batch().RemoveEntities(&filter)
+	} else {
+		m.world.Batch().RemoveEntities(m.mask)
+	}
 }

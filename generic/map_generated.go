@@ -11,15 +11,18 @@ import (
 // Map1 is a helper for mapping one components.
 type Map1[A any] struct {
 	world *ecs.World
+	mask  ecs.Mask
 	id0   ecs.ID
 }
 
 // NewMap1 creates a new Map1 object.
 func NewMap1[A any](w *ecs.World) Map1[A] {
-	return Map1[A]{
+	m := Map1[A]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
 	}
+	m.mask = ecs.All(m.id0)
+	return m
 }
 
 // Get all the Map1's components for the given entity.
@@ -58,6 +61,17 @@ func (m *Map1[A]) NewEntityWith(a *A) ecs.Entity {
 	return entity
 }
 
+// NewEntitiesWith creates entities with the Map1's components, using the supplied values.
+//
+// See also [ecs.Batch.NewEntitiesWith].
+func (m *Map1[A]) NewEntitiesWith(count int, a *A) Query1[A] {
+	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a})
+	return Query1[A]{
+		Query: query,
+		id0:   m.id0,
+	}
+}
+
 // Add the Map1's components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -81,22 +95,39 @@ func (m *Map1[A]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.id0)
 }
 
+// RemoveEntities removes all components from the world that match the Map1's components.
+//
+// The argument determines whether entities are matched exactly, or if they may contain further components.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map1[A]) RemoveEntities(exact bool) {
+	if exact {
+		filter := m.mask.Exact()
+		m.world.Batch().RemoveEntities(&filter)
+	} else {
+		m.world.Batch().RemoveEntities(m.mask)
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // Map2 is a helper for mapping two components.
 type Map2[A any, B any] struct {
 	world *ecs.World
+	mask  ecs.Mask
 	id0   ecs.ID
 	id1   ecs.ID
 }
 
 // NewMap2 creates a new Map2 object.
 func NewMap2[A any, B any](w *ecs.World) Map2[A, B] {
-	return Map2[A, B]{
+	m := Map2[A, B]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
 		id1:   ecs.ComponentID[B](w),
 	}
+	m.mask = ecs.All(m.id0, m.id1)
+	return m
 }
 
 // Get all the Map2's components for the given entity.
@@ -138,6 +169,20 @@ func (m *Map2[A, B]) NewEntityWith(a *A, b *B) ecs.Entity {
 	return entity
 }
 
+// NewEntitiesWith creates entities with the Map2's components, using the supplied values.
+//
+// See also [ecs.Batch.NewEntitiesWith].
+func (m *Map2[A, B]) NewEntitiesWith(count int, a *A, b *B) Query2[A, B] {
+	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+	)
+	return Query2[A, B]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+	}
+}
+
 // Add the Map2's components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -162,11 +207,24 @@ func (m *Map2[A, B]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.id0, m.id1)
 }
 
+// RemoveEntities removes all components from the world that match the Map2's components.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map2[A, B]) RemoveEntities(exact bool) {
+	if exact {
+		filter := m.mask.Exact()
+		m.world.Batch().RemoveEntities(&filter)
+	} else {
+		m.world.Batch().RemoveEntities(m.mask)
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // Map3 is a helper for mapping three components.
 type Map3[A any, B any, C any] struct {
 	world *ecs.World
+	mask  ecs.Mask
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -174,12 +232,14 @@ type Map3[A any, B any, C any] struct {
 
 // NewMap3 creates a new Map3 object.
 func NewMap3[A any, B any, C any](w *ecs.World) Map3[A, B, C] {
-	return Map3[A, B, C]{
+	m := Map3[A, B, C]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
 		id1:   ecs.ComponentID[B](w),
 		id2:   ecs.ComponentID[C](w),
 	}
+	m.mask = ecs.All(m.id0, m.id1, m.id2)
+	return m
 }
 
 // Get all the Map3's components for the given entity.
@@ -224,6 +284,22 @@ func (m *Map3[A, B, C]) NewEntityWith(a *A, b *B, c *C) ecs.Entity {
 	return entity
 }
 
+// NewEntitiesWith creates entities with the Map3's components, using the supplied values.
+//
+// See also [ecs.Batch.NewEntitiesWith].
+func (m *Map3[A, B, C]) NewEntitiesWith(count int, a *A, b *B, c *C) Query3[A, B, C] {
+	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+	)
+	return Query3[A, B, C]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+	}
+}
+
 // Add the Map3's components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -249,11 +325,24 @@ func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.id0, m.id1, m.id2)
 }
 
+// RemoveEntities removes all components from the world that match the Map3's components.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map3[A, B, C]) RemoveEntities(exact bool) {
+	if exact {
+		filter := m.mask.Exact()
+		m.world.Batch().RemoveEntities(&filter)
+	} else {
+		m.world.Batch().RemoveEntities(m.mask)
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // Map4 is a helper for mapping four components.
 type Map4[A any, B any, C any, D any] struct {
 	world *ecs.World
+	mask  ecs.Mask
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -262,13 +351,15 @@ type Map4[A any, B any, C any, D any] struct {
 
 // NewMap4 creates a new Map4 object.
 func NewMap4[A any, B any, C any, D any](w *ecs.World) Map4[A, B, C, D] {
-	return Map4[A, B, C, D]{
+	m := Map4[A, B, C, D]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
 		id1:   ecs.ComponentID[B](w),
 		id2:   ecs.ComponentID[C](w),
 		id3:   ecs.ComponentID[D](w),
 	}
+	m.mask = ecs.All(m.id0, m.id1, m.id2, m.id3)
+	return m
 }
 
 // Get all the Map4's components for the given entity.
@@ -316,6 +407,24 @@ func (m *Map4[A, B, C, D]) NewEntityWith(a *A, b *B, c *C, d *D) ecs.Entity {
 	return entity
 }
 
+// NewEntitiesWith creates entities with the Map4's components, using the supplied values.
+//
+// See also [ecs.Batch.NewEntitiesWith].
+func (m *Map4[A, B, C, D]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D) Query4[A, B, C, D] {
+	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+	)
+	return Query4[A, B, C, D]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+		id3:   m.id3,
+	}
+}
+
 // Add the Map4's components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -342,11 +451,24 @@ func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3)
 }
 
+// RemoveEntities removes all components from the world that match the Map4's components.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map4[A, B, C, D]) RemoveEntities(exact bool) {
+	if exact {
+		filter := m.mask.Exact()
+		m.world.Batch().RemoveEntities(&filter)
+	} else {
+		m.world.Batch().RemoveEntities(m.mask)
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // Map5 is a helper for mapping five components.
 type Map5[A any, B any, C any, D any, E any] struct {
 	world *ecs.World
+	mask  ecs.Mask
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -356,7 +478,7 @@ type Map5[A any, B any, C any, D any, E any] struct {
 
 // NewMap5 creates a new Map5 object.
 func NewMap5[A any, B any, C any, D any, E any](w *ecs.World) Map5[A, B, C, D, E] {
-	return Map5[A, B, C, D, E]{
+	m := Map5[A, B, C, D, E]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
 		id1:   ecs.ComponentID[B](w),
@@ -364,6 +486,8 @@ func NewMap5[A any, B any, C any, D any, E any](w *ecs.World) Map5[A, B, C, D, E
 		id3:   ecs.ComponentID[D](w),
 		id4:   ecs.ComponentID[E](w),
 	}
+	m.mask = ecs.All(m.id0, m.id1, m.id2, m.id3, m.id4)
+	return m
 }
 
 // Get all the Map5's components for the given entity.
@@ -414,6 +538,26 @@ func (m *Map5[A, B, C, D, E]) NewEntityWith(a *A, b *B, c *C, d *D, e *E) ecs.En
 	return entity
 }
 
+// NewEntitiesWith creates entities with the Map5's components, using the supplied values.
+//
+// See also [ecs.Batch.NewEntitiesWith].
+func (m *Map5[A, B, C, D, E]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E) Query5[A, B, C, D, E] {
+	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+	)
+	return Query5[A, B, C, D, E]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+		id3:   m.id3,
+		id4:   m.id4,
+	}
+}
+
 // Add the Map5's components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -441,11 +585,24 @@ func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3, m.id4)
 }
 
+// RemoveEntities removes all components from the world that match the Map5's components.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map5[A, B, C, D, E]) RemoveEntities(exact bool) {
+	if exact {
+		filter := m.mask.Exact()
+		m.world.Batch().RemoveEntities(&filter)
+	} else {
+		m.world.Batch().RemoveEntities(m.mask)
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // Map6 is a helper for mapping six components.
 type Map6[A any, B any, C any, D any, E any, F any] struct {
 	world *ecs.World
+	mask  ecs.Mask
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -456,7 +613,7 @@ type Map6[A any, B any, C any, D any, E any, F any] struct {
 
 // NewMap6 creates a new Map6 object.
 func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World) Map6[A, B, C, D, E, F] {
-	return Map6[A, B, C, D, E, F]{
+	m := Map6[A, B, C, D, E, F]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
 		id1:   ecs.ComponentID[B](w),
@@ -465,6 +622,8 @@ func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World) Map6[A, B, 
 		id4:   ecs.ComponentID[E](w),
 		id5:   ecs.ComponentID[F](w),
 	}
+	m.mask = ecs.All(m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
+	return m
 }
 
 // Get all the Map6's components for the given entity.
@@ -518,6 +677,28 @@ func (m *Map6[A, B, C, D, E, F]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *
 	return entity
 }
 
+// NewEntitiesWith creates entities with the Map6's components, using the supplied values.
+//
+// See also [ecs.Batch.NewEntitiesWith].
+func (m *Map6[A, B, C, D, E, F]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F) Query6[A, B, C, D, E, F] {
+	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+	)
+	return Query6[A, B, C, D, E, F]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+		id3:   m.id3,
+		id4:   m.id4,
+		id5:   m.id5,
+	}
+}
+
 // Add the Map6's components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -546,11 +727,24 @@ func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
 }
 
+// RemoveEntities removes all components from the world that match the Map6's components.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map6[A, B, C, D, E, F]) RemoveEntities(exact bool) {
+	if exact {
+		filter := m.mask.Exact()
+		m.world.Batch().RemoveEntities(&filter)
+	} else {
+		m.world.Batch().RemoveEntities(m.mask)
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // Map7 is a helper for mapping seven components.
 type Map7[A any, B any, C any, D any, E any, F any, G any] struct {
 	world *ecs.World
+	mask  ecs.Mask
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -562,7 +756,7 @@ type Map7[A any, B any, C any, D any, E any, F any, G any] struct {
 
 // NewMap7 creates a new Map7 object.
 func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Map7[A, B, C, D, E, F, G] {
-	return Map7[A, B, C, D, E, F, G]{
+	m := Map7[A, B, C, D, E, F, G]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
 		id1:   ecs.ComponentID[B](w),
@@ -572,6 +766,8 @@ func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Map7
 		id5:   ecs.ComponentID[F](w),
 		id6:   ecs.ComponentID[G](w),
 	}
+	m.mask = ecs.All(m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
+	return m
 }
 
 // Get all the Map7's components for the given entity.
@@ -628,6 +824,30 @@ func (m *Map7[A, B, C, D, E, F, G]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, 
 	return entity
 }
 
+// NewEntitiesWith creates entities with the Map7's components, using the supplied values.
+//
+// See also [ecs.Batch.NewEntitiesWith].
+func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) Query7[A, B, C, D, E, F, G] {
+	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+	)
+	return Query7[A, B, C, D, E, F, G]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+		id3:   m.id3,
+		id4:   m.id4,
+		id5:   m.id5,
+		id6:   m.id6,
+	}
+}
+
 // Add the Map7's components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -657,11 +877,24 @@ func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
 }
 
+// RemoveEntities removes all components from the world that match the Map7's components.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map7[A, B, C, D, E, F, G]) RemoveEntities(exact bool) {
+	if exact {
+		filter := m.mask.Exact()
+		m.world.Batch().RemoveEntities(&filter)
+	} else {
+		m.world.Batch().RemoveEntities(m.mask)
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////
 
 // Map8 is a helper for mapping eight components.
 type Map8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	world *ecs.World
+	mask  ecs.Mask
 	id0   ecs.ID
 	id1   ecs.ID
 	id2   ecs.ID
@@ -674,7 +907,7 @@ type Map8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 
 // NewMap8 creates a new Map8 object.
 func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World) Map8[A, B, C, D, E, F, G, H] {
-	return Map8[A, B, C, D, E, F, G, H]{
+	m := Map8[A, B, C, D, E, F, G, H]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
 		id1:   ecs.ComponentID[B](w),
@@ -685,6 +918,8 @@ func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.Worl
 		id6:   ecs.ComponentID[G](w),
 		id7:   ecs.ComponentID[H](w),
 	}
+	m.mask = ecs.All(m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
+	return m
 }
 
 // Get all the Map8's components for the given entity.
@@ -744,6 +979,32 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewEntityWith(a *A, b *B, c *C, d *D, e *
 	return entity
 }
 
+// NewEntitiesWith creates entities with the Map8's components, using the supplied values.
+//
+// See also [ecs.Batch.NewEntitiesWith].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) Query8[A, B, C, D, E, F, G, H] {
+	query := m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+	)
+	return Query8[A, B, C, D, E, F, G, H]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+		id3:   m.id3,
+		id4:   m.id4,
+		id5:   m.id5,
+		id6:   m.id6,
+		id7:   m.id7,
+	}
+}
+
 // Add the Map8's components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -772,4 +1033,16 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Assign(entity ecs.Entity, a *A, b *B, c *
 // See also [ecs.World.Remove].
 func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
+}
+
+// RemoveEntities removes all components from the world that match the Map8's components.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map8[A, B, C, D, E, F, G, H]) RemoveEntities(exact bool) {
+	if exact {
+		filter := m.mask.Exact()
+		m.world.Batch().RemoveEntities(&filter)
+	} else {
+		m.world.Batch().RemoveEntities(m.mask)
+	}
 }
