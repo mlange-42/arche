@@ -17,7 +17,7 @@ func BenchmarkIterArche(b *testing.B) {
 	world.Batch().NewEntities(nPos, posID)
 	world.Batch().NewEntities(nPosVel, posID, velID)
 
-	filter := ecs.All(posID, velID)
+	var filter ecs.Filter = ecs.All(posID, velID)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {

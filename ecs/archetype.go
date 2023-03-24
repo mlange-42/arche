@@ -183,7 +183,7 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 	a.cap = uint32(cap)
 }
 
-// Add adds an entity with zeroed components to the archetype
+// Add adds an entity with optionally zeroed components to the archetype
 func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
 	idx := uintptr(a.len)
 	a.extend(1)
