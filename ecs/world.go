@@ -561,10 +561,7 @@ func (w *World) Mask(entity Entity) Mask {
 // The listener is immediately called on every [ecs.Entity] change.
 // Replaces the current listener. Call with `nil` to remove a listener.
 //
-// Events notified are entity creation, removal and changes to the component composition.
-// Events are emitted immediately after the change is applied.
-// Except for removal of an entity, where the event is emitted before removal.
-// This allows for inspection of the to-be-removed Entity.
+// For details, see [EntityEvent].
 func (w *World) SetListener(listener func(e EntityEvent)) {
 	w.listener = listener
 }
