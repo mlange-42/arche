@@ -34,6 +34,13 @@ func TestMap1Generated(t *testing.T) {
 
 	s0 = mut.Get(e)
 	assert.NotNil(t, s0)
+
+	q := mut.NewEntities(2)
+	q.Close()
+	q = mut.NewEntitiesWith(2, &testStruct0{})
+	q.Close()
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
 }
 
 func TestMap2Generated(t *testing.T) {
@@ -70,6 +77,15 @@ func TestMap2Generated(t *testing.T) {
 	s0, s1 = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
+
+	q := mut.NewEntities(2)
+	q.Close()
+	q = mut.NewEntitiesWith(2,
+		&testStruct0{}, &testStruct1{},
+	)
+	q.Close()
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
 }
 
 func TestMap3Generated(t *testing.T) {
@@ -112,6 +128,15 @@ func TestMap3Generated(t *testing.T) {
 	s0, s1, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
+
+	q := mut.NewEntities(2)
+	q.Close()
+	q = mut.NewEntitiesWith(2,
+		&testStruct0{}, &testStruct1{}, &testStruct2{},
+	)
+	q.Close()
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
 }
 
 func TestMap4Generated(t *testing.T) {
@@ -154,6 +179,15 @@ func TestMap4Generated(t *testing.T) {
 	s0, s1, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
+
+	q := mut.NewEntities(2)
+	q.Close()
+	q = mut.NewEntitiesWith(2,
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+	)
+	q.Close()
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
 }
 
 func TestMap5Generated(t *testing.T) {
@@ -199,6 +233,16 @@ func TestMap5Generated(t *testing.T) {
 	s0, s1, _, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
+
+	q := mut.NewEntities(2)
+	q.Close()
+	q = mut.NewEntitiesWith(2,
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{},
+	)
+	q.Close()
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
 }
 
 func TestMap6Generated(t *testing.T) {
@@ -244,6 +288,16 @@ func TestMap6Generated(t *testing.T) {
 	s0, s1, _, _, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
+
+	q := mut.NewEntities(2)
+	q.Close()
+	q = mut.NewEntitiesWith(2,
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{},
+	)
+	q.Close()
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
 }
 
 func TestMap7Generated(t *testing.T) {
@@ -289,6 +343,16 @@ func TestMap7Generated(t *testing.T) {
 	s0, s1, _, _, _, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
+
+	q := mut.NewEntities(2)
+	q.Close()
+	q = mut.NewEntitiesWith(2,
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{},
+	)
+	q.Close()
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
 }
 
 func TestMap8Generated(t *testing.T) {
@@ -334,4 +398,14 @@ func TestMap8Generated(t *testing.T) {
 	s0, s1, _, _, _, _, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
+
+	q := mut.NewEntities(2)
+	q.Close()
+	q = mut.NewEntitiesWith(2,
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+	)
+	q.Close()
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
 }

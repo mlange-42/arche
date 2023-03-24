@@ -503,8 +503,8 @@ func (w *World) Query(filter Filter) Query {
 //
 // It provides the functionality to create and remove large numbers of entities in batches,
 // in a more efficient way.
-func (w *World) Batch() Batch {
-	return Batch{w}
+func (w *World) Batch() *Batch {
+	return &Batch{w}
 }
 
 // lock the world and get the lock bit for later unlocking.
