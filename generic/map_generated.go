@@ -50,6 +50,8 @@ func (m *Map1[A]) NewEntities(count int) {
 // NewEntities creates entities with the Map1's components.
 // It returns a [Query1] over the new entities.
 //
+// Listener notification is delayed until the query is closed of fully iterated.
+//
 // See also [Map1.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map1[A]) NewEntitiesQuery(count int) Query1[A] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0)
@@ -78,6 +80,8 @@ func (m *Map1[A]) NewEntitiesWith(count int, a *A) {
 
 // NewEntitiesWithQuery creates entities with the Map1's components, using the supplied values.
 // It returns a [Query1] over the new entities.
+//
+// Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map1.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map1[A]) NewEntitiesWithQuery(count int, a *A) Query1[A] {
@@ -170,6 +174,8 @@ func (m *Map2[A, B]) NewEntities(count int) {
 // NewEntities creates entities with the Map2's components.
 // It returns a [Query2] over the new entities.
 //
+// Listener notification is delayed until the query is closed of fully iterated.
+//
 // See also [Map2.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map2[A, B]) NewEntitiesQuery(count int) Query2[A, B] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1)
@@ -202,6 +208,8 @@ func (m *Map2[A, B]) NewEntitiesWith(count int, a *A, b *B) {
 
 // NewEntitiesWithQuery creates entities with the Map2's components, using the supplied values.
 // It returns a [Query2] over the new entities.
+//
+// Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map2.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map2[A, B]) NewEntitiesWithQuery(count int, a *A, b *B) Query2[A, B] {
@@ -301,6 +309,8 @@ func (m *Map3[A, B, C]) NewEntities(count int) {
 // NewEntities creates entities with the Map3's components.
 // It returns a [Query3] over the new entities.
 //
+// Listener notification is delayed until the query is closed of fully iterated.
+//
 // See also [Map3.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map3[A, B, C]) NewEntitiesQuery(count int) Query3[A, B, C] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2)
@@ -336,6 +346,8 @@ func (m *Map3[A, B, C]) NewEntitiesWith(count int, a *A, b *B, c *C) {
 
 // NewEntitiesWithQuery creates entities with the Map3's components, using the supplied values.
 // It returns a [Query3] over the new entities.
+//
+// Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map3.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map3[A, B, C]) NewEntitiesWithQuery(count int, a *A, b *B, c *C) Query3[A, B, C] {
@@ -441,6 +453,8 @@ func (m *Map4[A, B, C, D]) NewEntities(count int) {
 // NewEntities creates entities with the Map4's components.
 // It returns a [Query4] over the new entities.
 //
+// Listener notification is delayed until the query is closed of fully iterated.
+//
 // See also [Map4.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map4[A, B, C, D]) NewEntitiesQuery(count int) Query4[A, B, C, D] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3)
@@ -479,6 +493,8 @@ func (m *Map4[A, B, C, D]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D) {
 
 // NewEntitiesWithQuery creates entities with the Map4's components, using the supplied values.
 // It returns a [Query4] over the new entities.
+//
+// Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map4.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map4[A, B, C, D]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D) Query4[A, B, C, D] {
@@ -590,6 +606,8 @@ func (m *Map5[A, B, C, D, E]) NewEntities(count int) {
 // NewEntities creates entities with the Map5's components.
 // It returns a [Query5] over the new entities.
 //
+// Listener notification is delayed until the query is closed of fully iterated.
+//
 // See also [Map5.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map5[A, B, C, D, E]) NewEntitiesQuery(count int) Query5[A, B, C, D, E] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4)
@@ -631,6 +649,8 @@ func (m *Map5[A, B, C, D, E]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D,
 
 // NewEntitiesWithQuery creates entities with the Map5's components, using the supplied values.
 // It returns a [Query5] over the new entities.
+//
+// Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map5.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map5[A, B, C, D, E]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E) Query5[A, B, C, D, E] {
@@ -748,6 +768,8 @@ func (m *Map6[A, B, C, D, E, F]) NewEntities(count int) {
 // NewEntities creates entities with the Map6's components.
 // It returns a [Query6] over the new entities.
 //
+// Listener notification is delayed until the query is closed of fully iterated.
+//
 // See also [Map6.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map6[A, B, C, D, E, F]) NewEntitiesQuery(count int) Query6[A, B, C, D, E, F] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5)
@@ -792,6 +814,8 @@ func (m *Map6[A, B, C, D, E, F]) NewEntitiesWith(count int, a *A, b *B, c *C, d 
 
 // NewEntitiesWithQuery creates entities with the Map6's components, using the supplied values.
 // It returns a [Query6] over the new entities.
+//
+// Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map6.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map6[A, B, C, D, E, F]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F) Query6[A, B, C, D, E, F] {
@@ -915,6 +939,8 @@ func (m *Map7[A, B, C, D, E, F, G]) NewEntities(count int) {
 // NewEntities creates entities with the Map7's components.
 // It returns a [Query7] over the new entities.
 //
+// Listener notification is delayed until the query is closed of fully iterated.
+//
 // See also [Map7.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesQuery(count int) Query7[A, B, C, D, E, F, G] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6)
@@ -962,6 +988,8 @@ func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWith(count int, a *A, b *B, c *C,
 
 // NewEntitiesWithQuery creates entities with the Map7's components, using the supplied values.
 // It returns a [Query7] over the new entities.
+//
+// Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map7.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) Query7[A, B, C, D, E, F, G] {
@@ -1091,6 +1119,8 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewEntities(count int) {
 // NewEntities creates entities with the Map8's components.
 // It returns a [Query8] over the new entities.
 //
+// Listener notification is delayed until the query is closed of fully iterated.
+//
 // See also [Map8.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesQuery(count int) Query8[A, B, C, D, E, F, G, H] {
 	query := m.world.Batch().NewEntitiesQuery(count, m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7)
@@ -1141,6 +1171,8 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWith(count int, a *A, b *B, c 
 
 // NewEntitiesWithQuery creates entities with the Map8's components, using the supplied values.
 // It returns a [Query8] over the new entities.
+//
+// Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map8.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) Query8[A, B, C, D, E, F, G, H] {

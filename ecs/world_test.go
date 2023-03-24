@@ -361,7 +361,12 @@ func TestWorldIter(t *testing.T) {
 
 func TestWorldNewEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
-	world.SetListener(func(e EntityEvent) {})
+
+	events := []EntityEvent{}
+	world.SetListener(func(e EntityEvent) {
+		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
+		events = append(events, e)
+	})
 
 	posID := ComponentID[position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -372,6 +377,7 @@ func TestWorldNewEntities(t *testing.T) {
 
 	query := world.newEntitiesQuery(100, posID, rotID)
 	assert.Equal(t, 100, query.Count())
+	assert.Equal(t, 1, len(events))
 
 	cnt := 0
 	for query.Next() {
@@ -381,6 +387,7 @@ func TestWorldNewEntities(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 100, cnt)
+	assert.Equal(t, 101, len(events))
 
 	query = world.Query(All(posID, rotID))
 	assert.Equal(t, 101, query.Count())
@@ -396,6 +403,7 @@ func TestWorldNewEntities(t *testing.T) {
 
 	query = world.newEntitiesQuery(100, posID, rotID)
 	assert.Equal(t, 100, query.Count())
+	assert.Equal(t, 101, len(events))
 
 	entities := make([]Entity, query.Count())
 	cnt = 0
@@ -404,17 +412,30 @@ func TestWorldNewEntities(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 100, cnt)
+	assert.Equal(t, 201, len(events))
 
 	for _, e := range entities {
 		world.RemoveEntity(e)
 	}
+	assert.Equal(t, 301, len(events))
+
 	query = world.newEntitiesQuery(100, posID, rotID)
+	assert.Equal(t, 301, len(events))
 	query.Close()
+	assert.Equal(t, 401, len(events))
+
+	world.newEntities(100, posID, rotID)
+	assert.Equal(t, 501, len(events))
 }
 
 func TestWorldNewEntitiesWith(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
-	world.SetListener(func(e EntityEvent) {})
+
+	events := []EntityEvent{}
+	world.SetListener(func(e EntityEvent) {
+		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
+		events = append(events, e)
+	})
 
 	posID := ComponentID[position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -425,13 +446,19 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	}
 
 	world.NewEntity(posID, rotID)
+	assert.Equal(t, 1, len(events))
 
 	assert.Panics(t, func() { world.newEntitiesWithQuery(0, comps...) })
+	assert.Equal(t, 1, len(events))
+
 	query := world.newEntitiesWithQuery(1)
+	assert.Equal(t, 1, len(events))
 	query.Close()
+	assert.Equal(t, 2, len(events))
 
 	query = world.newEntitiesWithQuery(100, comps...)
 	assert.Equal(t, 100, query.Count())
+	assert.Equal(t, 2, len(events))
 
 	cnt := 0
 	for query.Next() {
@@ -443,6 +470,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 100, cnt)
+	assert.Equal(t, 102, len(events))
 
 	query = world.Query(All(posID, rotID))
 	assert.Equal(t, 101, query.Count())
@@ -461,17 +489,27 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 		Component{ID: rotID, Comp: &rotation{300}},
 	)
 	assert.Equal(t, 100, query.Count())
+	assert.Equal(t, 102, len(events))
 
 	cnt = 0
 	for query.Next() {
 		cnt++
 	}
 	assert.Equal(t, 100, cnt)
+	assert.Equal(t, 202, len(events))
+
+	world.newEntitiesWith(100, comps...)
+	assert.Equal(t, 302, len(events))
 }
 
 func TestWorldRemoveEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
-	world.SetListener(func(e EntityEvent) {})
+
+	events := []EntityEvent{}
+	world.SetListener(func(e EntityEvent) {
+		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
+		events = append(events, e)
+	})
 
 	posID := ComponentID[position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -479,10 +517,12 @@ func TestWorldRemoveEntities(t *testing.T) {
 	query := world.newEntitiesQuery(100, posID)
 	assert.Equal(t, 100, query.Count())
 	query.Close()
+	assert.Equal(t, 100, len(events))
 
 	query = world.newEntitiesQuery(100, posID, rotID)
 	assert.Equal(t, 100, query.Count())
 	query.Close()
+	assert.Equal(t, 200, len(events))
 
 	query = world.Query(All())
 	assert.Equal(t, 200, query.Count())
@@ -490,6 +530,7 @@ func TestWorldRemoveEntities(t *testing.T) {
 
 	filter := All(posID).Exact()
 	world.removeEntities(&filter)
+	assert.Equal(t, 300, len(events))
 
 	query = world.Query(All())
 	assert.Equal(t, 100, query.Count())
@@ -604,7 +645,6 @@ func TestWorldReset(t *testing.T) {
 	assert.Equal(t, 0, int(world.archetypes.Get(0).Len()))
 	assert.Equal(t, 0, world.entityPool.Len())
 	assert.Equal(t, 1, len(world.entities))
-	assert.Nil(t, world.listener)
 
 	query := world.Query(All())
 	assert.Equal(t, 0, query.Count())

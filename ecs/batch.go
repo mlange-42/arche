@@ -25,6 +25,7 @@ func (b *Batch) NewEntities(count int, comps ...ID) {
 //
 // Returns a [Query] for iterating the created entities.
 // The [Query] must be closed if it is not used!
+// Listener notification is delayed until the query is closed of fully iterated.
 // See also [Batch.NewEntities].
 //
 // Panics when called on a locked world.
@@ -53,6 +54,7 @@ func (b *Batch) NewEntitiesWith(count int, comps ...Component) {
 //
 // Returns a [Query] for iterating the created entities.
 // The [Query] must be closed if it is not used!
+// Listener notification is delayed until the query is closed of fully iterated.
 // See also [Batch.NewEntitiesWith].
 //
 // Panics when called on a locked world.

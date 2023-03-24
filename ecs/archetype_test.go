@@ -94,6 +94,7 @@ func TestArchetypeExtend(t *testing.T) {
 	}
 	arch := archetype{}
 	arch.Init(nil, 8, true, comps...)
+
 	assert.Equal(t, 8, int(arch.Cap()))
 	assert.Equal(t, 0, int(arch.Len()))
 
@@ -105,6 +106,29 @@ func TestArchetypeExtend(t *testing.T) {
 
 	arch.extend(17)
 	assert.Equal(t, 24, int(arch.Cap()))
+}
+
+func TestArchetypeAlloc(t *testing.T) {
+	comps := []componentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
+	}
+	arch := archetype{}
+	arch.Init(nil, 8, true, comps...)
+
+	assert.Equal(t, 8, int(arch.Cap()))
+	assert.Equal(t, 0, int(arch.Len()))
+
+	arch.AllocN(1, true)
+	assert.Equal(t, 1, int(arch.Len()))
+
+	arch.AllocN(7, true)
+	assert.Equal(t, 8, int(arch.Len()))
+	assert.Equal(t, 8, int(arch.Cap()))
+
+	arch.AllocN(1, true)
+	assert.Equal(t, 9, int(arch.Len()))
+	assert.Equal(t, 16, int(arch.Cap()))
 }
 
 func TestArchetypeAddGetSet(t *testing.T) {

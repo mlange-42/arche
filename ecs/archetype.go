@@ -64,17 +64,18 @@ type archetypes interface {
 // Implements [archetypes].
 //
 // Used for the [Query] returned by entity batch creation methods.
-type singleArchetype struct {
-	archetype *archetype
+type batchArchetype struct {
+	Archetype  *archetype
+	StartIndex uint32
 }
 
 // Get returns the value at the given index.
-func (s singleArchetype) Get(index int) *archetype {
-	return s.archetype
+func (s batchArchetype) Get(index int) *archetype {
+	return s.Archetype
 }
 
 // Len returns the current number of items in the paged array.
-func (s singleArchetype) Len() int {
+func (s batchArchetype) Len() int {
 	return 1
 }
 

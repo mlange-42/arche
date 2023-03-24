@@ -74,7 +74,7 @@ func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint3
 		return Query{
 			filter:        dummyFilter{true},
 			world:         world,
-			archetypes:    singleArchetype{archetype},
+			archetypes:    batchArchetype{archetype, start},
 			index:         0,
 			lockBit:       lockBit,
 			count:         int(archetype.Len() - start),
@@ -84,7 +84,7 @@ func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint3
 	return Query{
 		filter:     dummyFilter{true},
 		world:      world,
-		archetypes: singleArchetype{archetype},
+		archetypes: batchArchetype{archetype, start},
 		index:      -1,
 		lockBit:    lockBit,
 		count:      int(archetype.Len()),
