@@ -5,13 +5,15 @@ import (
 	"reflect"
 )
 
-type resources struct {
+// Resources manage a world's resources.
+// Access is using [World.Resources].
+type Resources struct {
 	registry  componentRegistry[ResID]
 	resources []any
 }
 
-func newResources() resources {
-	return resources{
+func newResources() Resources {
+	return Resources{
 		registry:  newComponentRegistry(),
 		resources: make([]any, MaskTotalBits),
 	}
@@ -21,7 +23,9 @@ func newResources() resources {
 // The resource should always be a pointer.
 //
 // Panics if there is already a resource of the given type.
-func (r *resources) Add(id ResID, res any) {
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
+func (r *Resources) Add(id ResID, res any) {
 	if r.resources[id] != nil {
 		panic(fmt.Sprintf("Resource of ID %d was already added (type %v)", id, reflect.TypeOf(res)))
 	}
@@ -31,7 +35,9 @@ func (r *resources) Add(id ResID, res any) {
 // Remove removes a resource from the world.
 //
 // Panics if there is no resource of the given type.
-func (r *resources) Remove(id ResID) {
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Remove] for a generic variant.
+func (r *Resources) Remove(id ResID) {
 	if r.resources[id] == nil {
 		panic(fmt.Sprintf("Resource of ID %d is not present", id))
 	}
@@ -41,17 +47,21 @@ func (r *resources) Remove(id ResID) {
 // Get returns a pointer to the resource of the given type.
 //
 // Returns nil if there is no such resource.
-func (r *resources) Get(id ResID) interface{} {
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
+func (r *Resources) Get(id ResID) interface{} {
 	return r.resources[id]
 }
 
 // Has returns whether the world has the given resource.
-func (r *resources) Has(id ResID) bool {
+//
+// See also [github.com/mlange-42/arche/generic.Resource.Has] for a generic variant.
+func (r *Resources) Has(id ResID) bool {
 	return r.resources[id] != nil
 }
 
-// Reset removes all resources.
-func (r *resources) Reset() {
+// reset removes all resources.
+func (r *Resources) reset() {
 	for i := 0; i < len(r.resources); i++ {
 		r.resources[i] = nil
 	}

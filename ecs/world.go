@@ -32,7 +32,7 @@ func ResourceID[T any](w *World) ResID {
 // and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 // These methods are more than 20 times faster than the GetResource function.
 func GetResource[T any](w *World) *T {
-	return w.GetResource(ResourceID[T](w)).(*T)
+	return w.resources.Get(ResourceID[T](w)).(*T)
 }
 
 // AddResource adds a resource to the world.
@@ -42,7 +42,7 @@ func GetResource[T any](w *World) *T {
 // Uses reflection. For more efficient access, see [World.AddResource],
 // and [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
 func AddResource[T any](w *World, res *T) {
-	w.AddResource(ResourceID[T](w), res)
+	w.resources.Add(ResourceID[T](w), res)
 }
 
 // World is the central type holding [Entity] and component data, as well as resources.
@@ -56,7 +56,7 @@ type World struct {
 	registry   componentRegistry[ID]
 	locks      Mask
 	listener   func(e EntityEvent)
-	resources  resources
+	resources  Resources
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -447,40 +447,11 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 }
 
-// AddResource adds a resource to the world.
-// The resource should always be a pointer.
+// Resources of the world.
 //
-// Panics if there is already a resource of the given type.
-//
-// See also [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
-func (w *World) AddResource(id ResID, res any) {
-	w.resources.Add(id, res)
-}
-
-// RemoveResource removes a resource from the world.
-// The resource should always be a pointer.
-//
-// Panics if there is no resource of the given type.
-//
-// See also [github.com/mlange-42/arche/generic.Resource.Remove] for a generic variant.
-func (w *World) RemoveResource(id ResID) {
-	w.resources.Remove(id)
-}
-
-// GetResource returns a pointer to the given resource type.
-//
-// Returns nil if there is no such resource.
-//
-// See also [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
-func (w *World) GetResource(id ResID) interface{} {
-	return w.resources.Get(id)
-}
-
-// HasResource returns whether the world has the given resource type.
-//
-// See also [github.com/mlange-42/arche/generic.Resource.Has] for a generic variant.
-func (w *World) HasResource(id ResID) bool {
-	return w.resources.Has(id)
+// Resources are component-like data that is not associated to an entity, but unique to the world.
+func (w *World) Resources() *Resources {
+	return &w.resources
 }
 
 // Reset removes all entities and resources as well as the listener from the world.
@@ -495,7 +466,7 @@ func (w *World) Reset() {
 	w.entities = w.entities[:1]
 	w.entityPool.Reset()
 	w.bitPool.Reset()
-	w.resources.Reset()
+	w.resources.reset()
 
 	w.listener = nil
 

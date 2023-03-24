@@ -35,7 +35,7 @@ func run(w *ecs.World) {
 
 	for {
 		// Get the the TimeStep resource from the world
-		time := w.GetResource(timeStepID).(*TimeStep)
+		time := w.Resources().Get(timeStepID).(*TimeStep)
 
 		// Use the resource
 		time.Step++

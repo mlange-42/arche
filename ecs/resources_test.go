@@ -53,7 +53,7 @@ func TestResourcesReset(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, rotation{5}, *rot)
 
-	res.Reset()
+	res.reset()
 
 	assert.False(t, res.Has(posID))
 	assert.False(t, res.Has(rotID))
