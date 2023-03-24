@@ -121,18 +121,33 @@ func (w *World) NewEntity(comps ...ID) Entity {
 }
 
 func (w *World) newEntitiesQuery(count int, comps ...ID) Query {
-	arch, startIdx := w.newEntities(count, comps...)
+	arch, startIdx := w.newEntitiesNoNotify(count, comps...)
 	lock := w.lock()
 	return newArchQuery(w, lock, arch, startIdx)
 }
 
 func (w *World) newEntities(count int, comps ...ID) (*archetype, uint32) {
+	arch, startIdx := w.newEntitiesNoNotify(count, comps...)
+
+	if w.listener != nil {
+		cnt := uint32(count)
+		var i uint32
+		for i = 0; i < cnt; i++ {
+			idx := startIdx + i
+			entity := arch.GetEntity(uintptr(idx))
+			w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
+		}
+	}
+
+	return arch, startIdx
+}
+
+func (w *World) newEntitiesNoNotify(count int, comps ...ID) (*archetype, uint32) {
 	w.checkLocked()
 
 	if count < 1 {
 		panic("can only create a positive number of entities")
 	}
-	cnt := uint32(count)
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
@@ -140,17 +155,6 @@ func (w *World) newEntities(count int, comps ...ID) (*archetype, uint32) {
 	}
 	startIdx := arch.Len()
 	w.createEntities(arch, uint32(count), true)
-
-	if w.listener != nil {
-		lock := w.lock()
-		var i uint32
-		for i = 0; i < cnt; i++ {
-			idx := startIdx + i
-			entity := arch.GetEntity(uintptr(idx))
-			w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
-		}
-		w.unlock(lock)
-	}
 
 	return arch, startIdx
 }
@@ -193,24 +197,45 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 }
 
 func (w *World) newEntitiesWithQuery(count int, comps ...Component) Query {
-	arch, startIdx := w.newEntitiesWith(count, comps...)
+	ids := make([]ID, len(comps))
+	for i, c := range comps {
+		ids[i] = c.ID
+	}
+
+	arch, startIdx := w.newEntitiesWithNoNotify(count, ids, comps...)
 	lock := w.lock()
 	return newArchQuery(w, lock, arch, startIdx)
 }
 
 func (w *World) newEntitiesWith(count int, comps ...Component) (*archetype, uint32) {
+	ids := make([]ID, len(comps))
+	for i, c := range comps {
+		ids[i] = c.ID
+	}
+
+	arch, startIdx := w.newEntitiesWithNoNotify(count, ids, comps...)
+
+	if w.listener != nil {
+		var i uint32
+		cnt := uint32(count)
+		for i = 0; i < cnt; i++ {
+			idx := startIdx + i
+			entity := arch.GetEntity(uintptr(idx))
+			w.listener(EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
+		}
+	}
+
+	return arch, startIdx
+}
+
+func (w *World) newEntitiesWithNoNotify(count int, ids []ID, comps ...Component) (*archetype, uint32) {
 	w.checkLocked()
 
 	if count < 1 {
 		panic("can only create a positive number of entities")
 	}
 	if len(comps) == 0 {
-		return w.newEntities(count)
-	}
-
-	ids := make([]ID, len(comps))
-	for i, c := range comps {
-		ids[i] = c.ID
+		return w.newEntitiesNoNotify(count)
 	}
 
 	cnt := uint32(count)
@@ -229,17 +254,6 @@ func (w *World) newEntitiesWith(count int, comps ...Component) (*archetype, uint
 		for _, c := range comps {
 			w.copyTo(entity, c.ID, c.Comp)
 		}
-	}
-
-	if w.listener != nil {
-		lock := w.lock()
-		var i uint32
-		for i = 0; i < cnt; i++ {
-			idx := startIdx + i
-			entity := arch.GetEntity(uintptr(idx))
-			w.listener(EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
-		}
-		w.unlock(lock)
 	}
 
 	return arch, startIdx
@@ -464,7 +478,7 @@ func (w *World) Resources() *Resources {
 	return &w.resources
 }
 
-// Reset removes all entities and resources as well as the listener from the world.
+// Reset removes all entities and resources from the world.
 //
 // Does NOT free reserved memory, remove archetypes, clear the registry etc.
 //
@@ -477,8 +491,6 @@ func (w *World) Reset() {
 	w.entityPool.Reset()
 	w.bitPool.Reset()
 	w.resources.reset()
-
-	w.listener = nil
 
 	len := w.archetypes.Len()
 	for i := 0; i < len; i++ {
@@ -738,11 +750,27 @@ func (w *World) resourceID(tp reflect.Type) ResID {
 func (w *World) closeQuery(query *Query) {
 	query.index = -2
 	w.unlock(query.lockBit)
+
+	if w.listener != nil {
+		if arch, ok := query.archetypes.(batchArchetype); ok {
+			w.notifyQuery(&arch)
+		}
+	}
 }
 
 // checkLocked checks if the world is locked, and panics if so.
 func (w *World) checkLocked() {
 	if !w.locks.IsZero() {
 		panic("attempt to modify a locked world")
+	}
+}
+
+func (w *World) notifyQuery(batchArch *batchArchetype) {
+	arch := batchArch.Archetype
+	var i uintptr
+	len := uintptr(arch.Len())
+	for i = uintptr(batchArch.StartIndex); i < len; i++ {
+		entity := arch.GetEntity(i)
+		w.listener(EntityEvent{entity, Mask{}, arch.Mask, arch.Ids, nil, arch.Ids, 1})
 	}
 }

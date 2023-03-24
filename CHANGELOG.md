@@ -6,6 +6,7 @@
 
 * Generic mappers do no longer return all components when creating entities or components (#145)
 * Resources API moved out of the world, to a helper to get by `World.Resources()` (#150)
+* `World.Reset()` does no longer remove the component change listener (#157)
 
 ### Features
 
@@ -14,6 +15,7 @@
 * Adds method `Mask.Exact()` to create a filter matching an exact component composition (#149)
 * Generic mappers (`Map1`, ...) have methods `NewEntities`, `NewEntitiesWith` and `RemoveEntities` for batch operations (#151)
 * Batch-creation methods (ID-based and generic) have variants like `NewEntitiesQuery` that return a query over the created entities (#152)
+* Notification during batch-creation is delayed until the resp. query is closed (#157)
 
 ### Performance
 
