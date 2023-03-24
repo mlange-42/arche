@@ -43,6 +43,8 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntities(count int) {
 // NewEntities creates entities with the Map{{ .Index }}'s components.
 // It returns a [Query{{ .Index }}] over the new entities.
 //
+// Listener notification is delayed until the query is closed of fully iterated.
+//
 // See also [Map{{ .Index }}.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesQuery(count int) Query{{ .Index }}{{ .Types }} {
 	query := m.world.Batch().NewEntitiesQuery(count, {{ .IDList }})
@@ -72,6 +74,8 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWith(count int, {{ .Arguments }
 
 // NewEntitiesWithQuery creates entities with the Map{{ .Index }}'s components, using the supplied values.
 // It returns a [Query{{ .Index }}] over the new entities.
+//
+// Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map{{ .Index }}.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWithQuery(count int, {{ .Arguments }}) Query{{ .Index }}{{ .Types }} {

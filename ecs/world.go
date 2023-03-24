@@ -769,8 +769,11 @@ func (w *World) notifyQuery(batchArch *batchArchetype) {
 	arch := batchArch.Archetype
 	var i uintptr
 	len := uintptr(arch.Len())
+	event := EntityEvent{Entity{}, Mask{}, arch.Mask, arch.Ids, nil, arch.Ids, 1}
+
 	for i = uintptr(batchArch.StartIndex); i < len; i++ {
 		entity := arch.GetEntity(i)
-		w.listener(EntityEvent{entity, Mask{}, arch.Mask, arch.Ids, nil, arch.Ids, 1})
+		event.Entity = entity
+		w.listener(event)
 	}
 }
