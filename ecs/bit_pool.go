@@ -8,16 +8,6 @@ type bitPool struct {
 	available uint8
 }
 
-// newBitPool creates a new, initialized bit pool.
-func newBitPool() bitPool {
-	return bitPool{
-		bits:      [MaskTotalBits]uint8{},
-		next:      0,
-		length:    0,
-		available: 0,
-	}
-}
-
 // Get returns a fresh or recycled bit.
 func (p *bitPool) Get() uint8 {
 	if p.available == 0 {

@@ -24,11 +24,11 @@ func ResourceID[T any](w *World) ResID {
 	return w.resourceID(tp)
 }
 
-// GetResource returns a pointer to the given resource type.
+// GetResource returns a pointer to the given resource type in world.
 //
 // Returns nil if there is no such resource.
 //
-// Uses reflection. For more efficient access, see [World.GetResource],
+// Uses reflection. For more efficient access, see [World.Resources],
 // and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 // These methods are more than 20 times faster than the GetResource function.
 func GetResource[T any](w *World) *T {
@@ -47,16 +47,15 @@ func AddResource[T any](w *World, res *T) {
 
 // World is the central type holding [Entity] and component data, as well as resources.
 type World struct {
-	config     Config
-	entities   []entityIndex
-	archetypes archetypeArr
-	graph      pagedArr32[archetypeNode]
-	entityPool entityPool
-	bitPool    bitPool
-	registry   componentRegistry[ID]
-	locks      Mask
-	listener   func(e EntityEvent)
-	resources  Resources
+	config     Config                    // World configuration.
+	listener   func(e EntityEvent)       // Component change listener.
+	resources  Resources                 // World resources.
+	entities   []entityIndex             // Mapping from entities to archetype and index.
+	entityPool entityPool                // Pool for entities.
+	archetypes pagedArr32[archetype]     // The archetypes.
+	graph      pagedArr32[archetypeNode] // The archetype graph.
+	locks      lockMask                  // World locks.
+	registry   componentRegistry[ID]     // Component registry.
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -84,11 +83,10 @@ func fromConfig(conf Config) World {
 		config:     conf,
 		entities:   entities,
 		entityPool: newEntityPool(conf.CapacityIncrement),
-		bitPool:    newBitPool(),
 		registry:   newComponentRegistry(),
-		archetypes: archetypeArr{},
+		archetypes: pagedArr32[archetype]{},
 		graph:      pagedArr32[archetypeNode]{},
-		locks:      Mask{},
+		locks:      lockMask{},
 		listener:   nil,
 		resources:  newResources(),
 	}
@@ -489,7 +487,7 @@ func (w *World) Reset() {
 
 	w.entities = w.entities[:1]
 	w.entityPool.Reset()
-	w.bitPool.Reset()
+	w.locks.Reset()
 	w.resources.reset()
 
 	len := w.archetypes.Len()
@@ -531,23 +529,17 @@ func (w *World) Batch() *Batch {
 
 // lock the world and get the lock bit for later unlocking.
 func (w *World) lock() uint8 {
-	lock := w.bitPool.Get()
-	w.locks.Set(ID(lock), true)
-	return lock
+	return w.locks.Lock()
 }
 
 // unlock unlocks the given lock bit.
 func (w *World) unlock(l uint8) {
-	if !w.locks.Get(ID(l)) {
-		panic("unbalanced query unlock")
-	}
-	w.locks.Set(ID(l), false)
-	w.bitPool.Recycle(l)
+	w.locks.Unlock(l)
 }
 
 // IsLocked returns whether the world is locked by any queries.
 func (w *World) IsLocked() bool {
-	return !w.locks.IsZero()
+	return w.locks.IsLocked()
 }
 
 // Mask returns the archetype [BitMask] for the given [Entity].
@@ -758,7 +750,7 @@ func (w *World) closeQuery(query *Query) {
 
 // checkLocked checks if the world is locked, and panics if so.
 func (w *World) checkLocked() {
-	if !w.locks.IsZero() {
+	if w.IsLocked() {
 		panic("attempt to modify a locked world")
 	}
 }
