@@ -16,14 +16,10 @@ package ecs
 // For batch methods that return a [Query], events are fired after the [Query] is closed (or fully iterated).
 // This allows the [World] to be in an unlocked state, and notifies after potential entity initialization.
 type EntityEvent struct {
-	// The entity that was changed.
-	Entity Entity
-	// The old and new component masks.
-	OldMask, NewMask Mask
-	// Components added, removed, and after the change.
-	Added, Removed, Current []ID
-	// Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
-	AddedRemoved int
+	Entity                  Entity // The entity that was changed.
+	OldMask, NewMask        Mask   // The old and new component masks.
+	Added, Removed, Current []ID   // Components added, removed, and after the change.
+	AddedRemoved            int    // Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
 }
 
 // EntityAdded reports whether the entity was newly added.

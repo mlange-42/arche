@@ -16,8 +16,8 @@ type ResID = uint8
 // It is a helper for [World.Assign] and [World.NewEntityWith].
 // It is not related to how components are implemented in Arche.
 type Component struct {
-	ID   ID
-	Comp interface{}
+	ID   ID          // Component ID.
+	Comp interface{} // The component, as a pointer to a struct.
 }
 
 // componentType is a component ID with a data type

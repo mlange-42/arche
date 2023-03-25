@@ -2,6 +2,8 @@ package ecs
 
 // Config provides configuration for an ECS [World].
 type Config struct {
+	// Capacity increment for archetypes and the entity index.
+	// The default value is 128.
 	CapacityIncrement int
 }
 

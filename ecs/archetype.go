@@ -50,10 +50,6 @@ func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
 	a.toRemove[id] = to
 }
 
-// Synonym for pagedArr32[archetype].
-// Implements [archetypes].
-type archetypeArr = pagedArr32[archetype]
-
 // Interface for an iterator over archetypes
 type archetypes interface {
 	Get(index int) *archetype
@@ -122,16 +118,16 @@ func (l *layout) Get(index uintptr) unsafe.Pointer {
 
 // archetype represents an ECS archetype
 type archetype struct {
-	archetypeAccess
-	Ids               []ID
-	layouts           []layout
-	indices           []uint32
-	buffers           []reflect.Value
-	entityBuffer      reflect.Value
-	len               uint32
-	cap               uint32
-	capacityIncrement uint32
-	graphNode         *archetypeNode
+	archetypeAccess                   // Access helper, passed to queries.
+	graphNode         *archetypeNode  // Node in the archetype graph.
+	Ids               []ID            // List of component IDs.
+	layouts           []layout        // Column layouts by ID.
+	indices           []uint32        // Mapping from IDs to buffer indices.
+	buffers           []reflect.Value // Reflection arrays containing component data.
+	entityBuffer      reflect.Value   // Reflection array containing entity data.
+	len               uint32          // Current number of entities
+	cap               uint32          // Current capacity
+	capacityIncrement uint32          // Capacity increment
 }
 
 // Init initializes an archetype
