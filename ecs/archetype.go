@@ -391,7 +391,7 @@ func (a *archetype) extend(by uint32) {
 // Adds an entity at the given index. Does not extend the entity buffer.
 func (a *archetype) addEntity(index uintptr, entity *Entity) {
 	dst := unsafe.Add(a.entityPointer, entitySize*index)
-	src := reflect.ValueOf(entity).UnsafePointer()
+	src := unsafe.Pointer(entity)
 	a.copy(src, dst, entitySize)
 }
 
