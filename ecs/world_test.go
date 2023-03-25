@@ -372,11 +372,13 @@ func TestWorldNewEntities(t *testing.T) {
 	rotID := ComponentID[rotation](&world)
 
 	world.NewEntity(posID, rotID)
+	assert.Equal(t, 2, len(world.entities))
 
 	assert.Panics(t, func() { world.newEntitiesQuery(0, posID, rotID) })
 
 	query := world.newEntitiesQuery(100, posID, rotID)
 	assert.Equal(t, 100, query.Count())
+	assert.Equal(t, 102, len(world.entities))
 	assert.Equal(t, 1, len(events))
 
 	cnt := 0
@@ -400,6 +402,7 @@ func TestWorldNewEntities(t *testing.T) {
 	}
 
 	world.Reset()
+	assert.Equal(t, 1, len(world.entities))
 
 	query = world.newEntitiesQuery(100, posID, rotID)
 	assert.Equal(t, 100, query.Count())
@@ -418,14 +421,17 @@ func TestWorldNewEntities(t *testing.T) {
 		world.RemoveEntity(e)
 	}
 	assert.Equal(t, 301, len(events))
+	assert.Equal(t, 101, len(world.entities))
 
 	query = world.newEntitiesQuery(100, posID, rotID)
 	assert.Equal(t, 301, len(events))
 	query.Close()
 	assert.Equal(t, 401, len(events))
+	assert.Equal(t, 101, len(world.entities))
 
 	world.newEntities(100, posID, rotID)
 	assert.Equal(t, 501, len(events))
+	assert.Equal(t, 201, len(world.entities))
 }
 
 func TestWorldNewEntitiesWith(t *testing.T) {

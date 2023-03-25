@@ -617,22 +617,23 @@ func (w *World) createEntities(arch *archetype, count uint32, zero bool) {
 	startIdx := arch.Len()
 	arch.AllocN(uint32(count), zero)
 
+	len := len(w.entities)
+	required := len + int(count) - w.entityPool.Available()
+	if required > cap(w.entities) {
+		cap := capacity(required, w.config.CapacityIncrement)
+		old := w.entities
+		w.entities = make([]entityIndex, required, cap)
+		copy(w.entities, old)
+	} else if required > len {
+		w.entities = w.entities[:required]
+	}
+
 	var i uint32
 	for i = 0; i < count; i++ {
 		idx := startIdx + i
 		entity := w.entityPool.Get()
 		arch.SetEntity(uintptr(idx), entity)
-		len := len(w.entities)
-		if int(entity.id) == len {
-			if len == cap(w.entities) {
-				old := w.entities
-				w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
-				copy(w.entities, old)
-			}
-			w.entities = append(w.entities, entityIndex{arch: arch, index: uintptr(idx)})
-		} else {
-			w.entities[entity.id] = entityIndex{arch: arch, index: uintptr(idx)}
-		}
+		w.entities[entity.id] = entityIndex{arch: arch, index: uintptr(idx)}
 	}
 }
 
