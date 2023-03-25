@@ -70,7 +70,7 @@ func newQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes)
 func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint32) Query {
 	if start > 0 {
 		iter := newArchetypeIter(archetype)
-		iter.Index = uintptr(start - 1)
+		iter.index = uintptr(start - 1)
 		return Query{
 			filter:        dummyFilter{true},
 			world:         world,
@@ -152,7 +152,7 @@ func (q *Query) countEntities() int {
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (q *Query) Mask() Mask {
-	return q.Access.Mask
+	return q.access.Mask
 }
 
 // Close closes the Query and unlocks the world.
@@ -221,48 +221,48 @@ func (q *Query) nextArchetypeFilter() bool {
 
 // archetypeIter is an iterator ovr a single archetype.
 type archetypeIter struct {
-	Access *archetypeAccess
-	Length uintptr
-	Index  uintptr
+	access *archetypeAccess
+	length uintptr
+	index  uintptr
 }
 
 // newArchetypeIter creates a new archetypeIter.
 func newArchetypeIter(arch *archetype) archetypeIter {
 	return archetypeIter{
-		Access: &arch.archetypeAccess,
-		Length: uintptr(arch.Len()),
+		access: &arch.archetypeAccess,
+		length: uintptr(arch.Len()),
 	}
 }
 
 // Next proceeds to the next entity in the archetype, and returns whether this was successful/possible.
 func (it *archetypeIter) Next() bool {
-	it.Index++
-	return it.Index < it.Length
+	it.index++
+	return it.index < it.length
 }
 
 // Step proceeds/steps by the given number of entities.
 func (it *archetypeIter) Step(count uint32) (int, bool) {
-	if it.Length == 0 {
+	if it.length == 0 {
 		return int(count - 1), false
 	}
-	it.Index += uintptr(count)
-	if it.Index < it.Length {
+	it.index += uintptr(count)
+	if it.index < it.length {
 		return 0, true
 	}
-	return int(it.Index) - int(it.Length), false
+	return int(it.index) - int(it.length), false
 }
 
 // Has returns whether the current entity has the given component.
 func (it *archetypeIter) Has(comp ID) bool {
-	return it.Access.HasComponent(comp)
+	return it.access.HasComponent(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's position.
 func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
-	return it.Access.Get(it.Index, comp)
+	return it.access.Get(it.index, comp)
 }
 
 // Entity returns the entity at the iterator's position.
 func (it *archetypeIter) Entity() Entity {
-	return it.Access.GetEntity(it.Index)
+	return it.access.GetEntity(it.index)
 }
