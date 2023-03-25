@@ -119,14 +119,14 @@ func TestArchetypeAlloc(t *testing.T) {
 	assert.Equal(t, 8, int(arch.Cap()))
 	assert.Equal(t, 0, int(arch.Len()))
 
-	arch.AllocN(1, true)
+	arch.AllocN(1)
 	assert.Equal(t, 1, int(arch.Len()))
 
-	arch.AllocN(7, true)
+	arch.AllocN(7)
 	assert.Equal(t, 8, int(arch.Len()))
 	assert.Equal(t, 8, int(arch.Cap()))
 
-	arch.AllocN(1, true)
+	arch.AllocN(1)
 	assert.Equal(t, 9, int(arch.Len()))
 	assert.Equal(t, 16, int(arch.Cap()))
 }
@@ -210,6 +210,37 @@ func TestArchetypeReset(t *testing.T) {
 	assert.Equal(t, 2, int(arch.Len()))
 }
 
+func TestArchetypeZero(t *testing.T) {
+	comps := []componentType{
+		{ID: 0, Type: reflect.TypeOf(position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
+	}
+
+	arch := archetype{}
+	arch.Init(nil, 32, false, comps...)
+
+	arch.Alloc(newEntity(0))
+	arch.Alloc(newEntity(1))
+
+	assert.Equal(t, position{0, 0}, *(*position)(arch.Get(0, 0)))
+	assert.Equal(t, position{0, 0}, *(*position)(arch.Get(1, 0)))
+
+	pos := (*position)(arch.Get(0, 0))
+	pos.X = 100
+	pos = (*position)(arch.Get(1, 0))
+	pos.X = 100
+
+	assert.Equal(t, position{100, 0}, *(*position)(arch.Get(0, 0)))
+	assert.Equal(t, position{100, 0}, *(*position)(arch.Get(1, 0)))
+
+	arch.Remove(0)
+	arch.Remove(0)
+	arch.Alloc(newEntity(0))
+	arch.Alloc(newEntity(1))
+	assert.Equal(t, position{0, 0}, *(*position)(arch.Get(0, 0)))
+	assert.Equal(t, position{0, 0}, *(*position)(arch.Get(1, 0)))
+}
+
 func BenchmarkIterArchetype_1000(b *testing.B) {
 	b.StopTimer()
 	comps := []componentType{
@@ -220,7 +251,7 @@ func BenchmarkIterArchetype_1000(b *testing.B) {
 	arch.Init(nil, 32, true, comps...)
 
 	for i := 0; i < 1000; i++ {
-		arch.Alloc(newEntity(eid(i)), true)
+		arch.Alloc(newEntity(eid(i)))
 	}
 	b.StartTimer()
 

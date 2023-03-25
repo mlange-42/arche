@@ -110,7 +110,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 		arch = w.findOrCreateArchetype(arch, comps, nil)
 	}
 
-	entity := w.createEntity(arch, true)
+	entity := w.createEntity(arch)
 
 	if w.listener != nil {
 		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
@@ -143,7 +143,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	arch := w.archetypes.Get(0)
 	arch = w.findOrCreateArchetype(arch, ids, nil)
 
-	entity := w.createEntity(arch, false)
+	entity := w.createEntity(arch)
 
 	for _, c := range comps {
 		w.copyTo(entity, c.ID, c.Comp)
@@ -405,16 +405,13 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	oldIDs := oldArch.Components()
 
 	arch := w.findOrCreateArchetype(oldArch, add, rem)
-	newIndex := arch.Alloc(entity, false)
+	newIndex := arch.Alloc(entity)
 
 	for _, id := range oldIDs {
 		if mask.Get(id) {
 			comp := oldArch.Get(index.index, id)
 			arch.SetPointer(newIndex, id, comp)
 		}
-	}
-	for _, id := range add {
-		arch.Zero(newIndex, id)
 	}
 
 	swapped := oldArch.Remove(index.index)
@@ -568,7 +565,7 @@ func (w *World) newEntitiesNoNotify(count int, comps ...ID) (*archetype, uint32)
 		arch = w.findOrCreateArchetype(arch, comps, nil)
 	}
 	startIdx := arch.Len()
-	w.createEntities(arch, uint32(count), true)
+	w.createEntities(arch, uint32(count))
 
 	return arch, startIdx
 }
@@ -591,7 +588,7 @@ func (w *World) newEntitiesWithNoNotify(count int, ids []ID, comps ...Component)
 		arch = w.findOrCreateArchetype(arch, ids, nil)
 	}
 	startIdx := arch.Len()
-	w.createEntities(arch, uint32(count), true)
+	w.createEntities(arch, uint32(count))
 
 	var i uint32
 	for i = 0; i < cnt; i++ {
@@ -606,9 +603,9 @@ func (w *World) newEntitiesWithNoNotify(count int, ids []ID, comps ...Component)
 }
 
 // createEntity creates an Entity and adds it to the given archetype.
-func (w *World) createEntity(arch *archetype, zero bool) Entity {
+func (w *World) createEntity(arch *archetype) Entity {
 	entity := w.entityPool.Get()
-	idx := arch.Alloc(entity, zero)
+	idx := arch.Alloc(entity)
 	len := len(w.entities)
 	if int(entity.id) == len {
 		if len == cap(w.entities) {
@@ -624,9 +621,9 @@ func (w *World) createEntity(arch *archetype, zero bool) Entity {
 }
 
 // createEntity creates multiple Entities and adds them to the given archetype.
-func (w *World) createEntities(arch *archetype, count uint32, zero bool) {
+func (w *World) createEntities(arch *archetype, count uint32) {
 	startIdx := arch.Len()
-	arch.AllocN(uint32(count), zero)
+	arch.AllocN(uint32(count))
 
 	len := len(w.entities)
 	required := len + int(count) - w.entityPool.Available()

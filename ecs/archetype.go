@@ -192,27 +192,17 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 }
 
 // Add adds an entity with optionally zeroed components to the archetype
-func (a *archetype) Alloc(entity Entity, zero bool) uintptr {
+func (a *archetype) Alloc(entity Entity) uintptr {
 	idx := uintptr(a.len)
 	a.extend(1)
 	a.addEntity(idx, &entity)
-	if zero {
-		a.ZeroAll(idx)
-	}
 	a.len++
 	return idx
 }
 
 // Add adds storage to the archetype
-func (a *archetype) AllocN(count uint32, zero bool) {
-	idx := uintptr(a.len)
+func (a *archetype) AllocN(count uint32) {
 	a.extend(count)
-	if zero {
-		var i uint32
-		for i = 0; i < count; i++ {
-			a.ZeroAll(idx + uintptr(i))
-		}
-	}
 	a.len += count
 }
 
@@ -239,6 +229,9 @@ func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 }
 
 // Remove removes an entity and its components from the archetype.
+//
+// Performs a swap-remove and reports whether a swap was necessary
+// (i.e. not the last entity that was removed).
 func (a *archetype) Remove(index uintptr) bool {
 	swapped := a.removeEntity(index)
 
