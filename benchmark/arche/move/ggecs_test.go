@@ -49,14 +49,14 @@ func runGameEngineEcsMove(b *testing.B, count int, add, rem []uint) {
 
 func BenchmarkGGECSMove_1C_1_000(b *testing.B) {
 	runGameEngineEcsMove(b, 1000,
-		[]uint{0},
+		[]uint{0, 1},
 		[]uint{0},
 	)
 }
 
 func BenchmarkGGECSMove_5C_1_000(b *testing.B) {
 	runGameEngineEcsMove(b, 1000,
-		[]uint{0, 1, 2, 3, 4},
+		[]uint{0, 1, 2, 3, 4, 5},
 		[]uint{0},
 	)
 }

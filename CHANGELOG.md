@@ -25,6 +25,8 @@
 * Speedup of generic queries and mappers to come closer to ID-based access (#144)
 * Speedup of archetype mask checks by casting filter interface to concrete type when possible (#148)
 * Optimized batch creation of entities (#159)
+* More efficiently clear the memory of removed components, with 2-3x speedup (#165)
+* Do not clear memory when adding entities to archetypes, not required anymore as of #147 (#165)
 
 ### Bugfixes
 
