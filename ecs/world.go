@@ -253,7 +253,8 @@ func (w *World) removeEntities(filter Filter) {
 	w.checkLocked()
 
 	lock := w.lock()
-	for i := 0; i < w.archetypes.Len(); i++ {
+	numArches := w.archetypes.Len()
+	for i := 0; i < numArches; i++ {
 		arch := w.archetypes.Get(i)
 
 		if !filter.Matches(arch.Mask) {
