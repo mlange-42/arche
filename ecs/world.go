@@ -48,7 +48,7 @@ func AddResource[T any](w *World, res *T) {
 // World is the central type holding [Entity] and component data, as well as resources.
 type World struct {
 	config     Config                    // World configuration.
-	listener   func(e EntityEvent)       // Component change listener.
+	listener   func(e *EntityEvent)      // Component change listener.
 	resources  Resources                 // World resources.
 	entities   []entityIndex             // Mapping from entities to archetype and index.
 	entityPool entityPool                // Pool for entities.
@@ -113,7 +113,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 	entity := w.createEntity(arch, true)
 
 	if w.listener != nil {
-		w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
+		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
 	}
 	return entity
 }
@@ -150,7 +150,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	if w.listener != nil {
-		w.listener(EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
+		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
 	}
 	return entity
 }
@@ -166,7 +166,7 @@ func (w *World) newEntities(count int, comps ...ID) (*archetype, uint32) {
 		for i = 0; i < cnt; i++ {
 			idx := startIdx + i
 			entity := arch.GetEntity(uintptr(idx))
-			w.listener(EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
+			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.Ids, 1})
 		}
 	}
 
@@ -197,7 +197,7 @@ func (w *World) newEntitiesWith(count int, comps ...Component) (*archetype, uint
 		for i = 0; i < cnt; i++ {
 			idx := startIdx + i
 			entity := arch.GetEntity(uintptr(idx))
-			w.listener(EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
+			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.Ids, 1})
 		}
 	}
 
@@ -229,7 +229,7 @@ func (w *World) RemoveEntity(entity Entity) {
 
 	if w.listener != nil {
 		lock := w.lock()
-		w.listener(EntityEvent{entity, oldArch.Mask, Mask{}, nil, oldArch.Ids, nil, -1})
+		w.listener(&EntityEvent{entity, oldArch.Mask, Mask{}, nil, oldArch.Ids, nil, -1})
 		w.unlock(lock)
 	}
 
@@ -265,7 +265,7 @@ func (w *World) removeEntities(filter Filter) {
 		for j = 0; j < len; j++ {
 			entity := arch.GetEntity(j)
 			if w.listener != nil {
-				w.listener(EntityEvent{entity, arch.Mask, Mask{}, nil, arch.Ids, nil, -1})
+				w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, arch.Ids, nil, -1})
 			}
 			w.entities[entity.id].arch = nil
 			w.entityPool.Recycle(entity)
@@ -425,7 +425,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
 
 	if w.listener != nil {
-		w.listener(EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.Ids, 0})
+		w.listener(&EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.Ids, 0})
 	}
 }
 
@@ -504,7 +504,7 @@ func (w *World) Mask(entity Entity) Mask {
 // Replaces the current listener. Call with `nil` to remove a listener.
 //
 // For details, see [EntityEvent].
-func (w *World) SetListener(listener func(e EntityEvent)) {
+func (w *World) SetListener(listener func(e *EntityEvent)) {
 	w.listener = listener
 }
 
@@ -776,6 +776,6 @@ func (w *World) notifyQuery(batchArch *batchArchetype) {
 	for i = uintptr(batchArch.StartIndex); i < len; i++ {
 		entity := arch.GetEntity(i)
 		event.Entity = entity
-		w.listener(event)
+		w.listener(&event)
 	}
 }

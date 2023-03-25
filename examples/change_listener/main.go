@@ -26,7 +26,7 @@ type Rotation struct {
 }
 
 // Listen is called on entity changes.
-func Listen(evt ecs.EntityEvent) {
+func Listen(evt *ecs.EntityEvent) {
 	// Just prints out what the event is about.
 	// This could also be a method of a type that manages events.
 	// Could use e.g. filters to distribute events to interested/registered systems.
