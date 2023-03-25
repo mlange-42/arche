@@ -363,9 +363,9 @@ func TestWorldNewEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) {
+	world.SetListener(func(e *EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
-		events = append(events, e)
+		events = append(events, *e)
 	})
 
 	posID := ComponentID[position](&world)
@@ -438,9 +438,9 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) {
+	world.SetListener(func(e *EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
-		events = append(events, e)
+		events = append(events, *e)
 	})
 
 	posID := ComponentID[position](&world)
@@ -512,9 +512,9 @@ func TestWorldRemoveEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) {
+	world.SetListener(func(e *EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
-		events = append(events, e)
+		events = append(events, *e)
 	})
 
 	posID := ComponentID[position](&world)
@@ -634,7 +634,7 @@ func TestRegisterComponents(t *testing.T) {
 func TestWorldReset(t *testing.T) {
 	world := NewWorld()
 
-	world.SetListener(func(e EntityEvent) {})
+	world.SetListener(func(e *EntityEvent) {})
 
 	posID := ComponentID[position](&world)
 	velID := ComponentID[velocity](&world)
@@ -695,8 +695,8 @@ func TestArchetypeGraph(t *testing.T) {
 
 func TestWorldListener(t *testing.T) {
 	events := []EntityEvent{}
-	listen := func(e EntityEvent) {
-		events = append(events, e)
+	listen := func(e *EntityEvent) {
+		events = append(events, *e)
 	}
 
 	w := NewWorld()

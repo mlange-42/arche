@@ -8,6 +8,7 @@
 * Resources API moved out of the world, to a helper to get by `World.Resources()` (#150)
 * `World.Reset()` does no longer remove the component change listener (#157)
 * Removes methods `filter.ALL.Not()` and `filter.ANY.Not()`, use `NoneOf()` and `AnyNot()` instead (#160)
+* World listener function takes a pointer to the `EntityEvent` instead of a copy as argument (#162)
 
 ### Features
 

@@ -18,7 +18,7 @@ package ecs
 type EntityEvent struct {
 	Entity                  Entity // The entity that was changed.
 	OldMask, NewMask        Mask   // The old and new component masks.
-	Added, Removed, Current []ID   // Components added, removed, and after the change.
+	Added, Removed, Current []ID   // Components added, removed, and after the change. DO NOT MODIFY!
 	AddedRemoved            int    // Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
 }
 
