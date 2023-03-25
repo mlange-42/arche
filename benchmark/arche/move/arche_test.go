@@ -26,10 +26,13 @@ func runArcheMove(b *testing.B, count int, add, rem []g.Comp) {
 		}
 
 		entities := make([]ecs.Entity, count)
-		for i := 0; i < count; i++ {
-			e := world.NewEntity(addIDs...)
-			entities[i] = e
+		query := world.Batch().NewEntitiesQuery(count, addIDs...)
+		cnt := 0
+		for query.Next() {
+			entities[cnt] = query.Entity()
+			cnt++
 		}
+
 		b.StartTimer()
 
 		for _, e := range entities {
@@ -40,14 +43,14 @@ func runArcheMove(b *testing.B, count int, add, rem []g.Comp) {
 
 func BenchmarkArcheMove_1C_1_000(b *testing.B) {
 	runArcheMove(b, 1000,
-		g.T1[c.TestStruct0](),
+		g.T2[c.TestStruct0, c.TestStruct1](),
 		g.T1[c.TestStruct0](),
 	)
 }
 
 func BenchmarkArcheMove_5C_1_000(b *testing.B) {
 	runArcheMove(b, 1000,
-		g.T5[c.TestStruct0, c.TestStruct1, c.TestStruct2, c.TestStruct3, c.TestStruct4](),
+		g.T6[c.TestStruct0, c.TestStruct1, c.TestStruct2, c.TestStruct3, c.TestStruct4, c.TestStruct5](),
 		g.T1[c.TestStruct0](),
 	)
 }
