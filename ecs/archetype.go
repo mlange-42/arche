@@ -128,6 +128,8 @@ type archetype struct {
 	len               uint32          // Current number of entities
 	cap               uint32          // Current capacity
 	capacityIncrement uint32          // Capacity increment
+	zeroValue         []byte
+	zeroPointer       unsafe.Pointer
 }
 
 // Init initializes an archetype
@@ -147,6 +149,7 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 	}
 
 	prev := -1
+	var maxSize uintptr = 0
 	for i, c := range components {
 		if int(c.ID) <= prev {
 			panic("component arguments must be sorted by ID")
@@ -156,6 +159,9 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 
 		size, align := c.Type.Size(), uintptr(c.Type.Align())
 		size = (size + (align - 1)) / align * align
+		if size > maxSize {
+			maxSize = size
+		}
 
 		a.Ids[i] = c.ID
 		a.buffers[i] = reflect.New(reflect.ArrayOf(cap, c.Type)).Elem()
@@ -178,6 +184,11 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 	a.capacityIncrement = uint32(capacityIncrement)
 	a.len = 0
 	a.cap = uint32(cap)
+
+	if maxSize > 0 {
+		a.zeroValue = make([]byte, maxSize)
+		a.zeroPointer = unsafe.Pointer(&a.zeroValue[0])
+	}
 }
 
 // Add adds an entity with optionally zeroed components to the archetype
@@ -264,11 +275,7 @@ func (a *archetype) Zero(index uintptr, id ID) {
 		return
 	}
 	dst := unsafe.Add(lay.pointer, index*lay.itemSize)
-
-	for i := uintptr(0); i < lay.itemSize; i++ {
-		*(*byte)(dst) = 0
-		dst = unsafe.Add(dst, 1)
-	}
+	a.copy(a.zeroPointer, dst, lay.itemSize)
 }
 
 // SetEntity overwrites an entity
