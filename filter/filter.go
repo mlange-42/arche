@@ -4,24 +4,11 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-// ALL matches entities that have all the given components.
-type ALL ecs.Mask
-
 // All matches entities that have all the given components.
 //
 // Like [And] for combining individual components.
-func All(comps ...ecs.ID) ALL {
-	return ALL(ecs.All(comps...))
-}
-
-// Not inverts this filter to exclude entities with all the given components
-func (f ALL) Not() NoneOF {
-	return NoneOF(f)
-}
-
-// Matches matches a filter against a bitmask
-func (f ALL) Matches(bits ecs.Mask) bool {
-	return bits.Contains(ecs.Mask(f))
+func All(comps ...ecs.ID) ecs.Mask {
+	return ecs.All(comps...)
 }
 
 // ANY matches entities that have any of the given components.
@@ -30,11 +17,6 @@ type ANY ecs.Mask
 // Any matches entities that have any of the given components.
 func Any(comps ...ecs.ID) ANY {
 	return ANY(ecs.All(comps...))
-}
-
-// Not inverts this filter to exclude entities with any of the given components
-func (f ANY) Not() AnyNOT {
-	return AnyNOT(f)
 }
 
 // Matches matches a filter against a bitmask

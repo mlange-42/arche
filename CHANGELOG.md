@@ -7,6 +7,7 @@
 * Generic mappers do no longer return all components when creating entities or components (#145)
 * Resources API moved out of the world, to a helper to get by `World.Resources()` (#150)
 * `World.Reset()` does no longer remove the component change listener (#157)
+* Removes methods `filter.ALL.Not()` and `filter.ANY.Not()`, use `NoneOf()` and `AnyNot()` instead (#160)
 
 ### Features
 

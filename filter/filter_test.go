@@ -113,9 +113,6 @@ func TestLogicFilters(t *testing.T) {
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
-
-	assert.Equal(t, AnyNot(0, 1), Any(0, 1).Not())
-	assert.Equal(t, NoneOf(0, 1), All(0, 1).Not())
 }
 
 func TestFilter(t *testing.T) {
