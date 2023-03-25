@@ -918,6 +918,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[archetypeIter]()
 	printTypeSize[Resources]()
 	printTypeSizeName[reflect.Value]("reflect.Value")
+	printTypeSize[EntityEvent]()
 }
 
 func printTypeSize[T any]() {

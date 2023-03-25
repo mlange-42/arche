@@ -18,8 +18,8 @@ type Filter interface {
 // MaskFilter is a [Filter] for including and excluding certain components.
 // See [All] and [Mask.Without].
 type MaskFilter struct {
-	Include Mask
-	Exclude Mask
+	Include Mask // Components to include.
+	Exclude Mask // Components to exclude.
 }
 
 // Matches matches a filter against a mask.
