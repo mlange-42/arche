@@ -1,2 +1,4 @@
-/*.out
-/*.pprof
+*.out
+*.pprof
+*.csv
+*.svg
