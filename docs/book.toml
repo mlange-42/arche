@@ -1,0 +1,26 @@
+[book]
+authors = ["Martin Lange"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Arche Documentation"
+
+[build]
+build-dir = "public"
+
+[output.html]
+default-theme = "Rust"
+additional-css = ["src/css/custom.css"]
+git-repository-url = "https://github.com/mlange-42/arche"
+git-repository-icon = "fa-github"
+
+[output.html.search]
+limit-results = 15
+teaser-word-count = 50
+use-boolean-and = true
+
+[preprocessor.toc]
+command = "mdbook-toc"
+marker = "[[_TOC_]]"
+max-level = 2
+renderer = ["html"]

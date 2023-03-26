@@ -1,0 +1,40 @@
+name: Docs
+
+on:
+  push:
+    branches: ["**"]
+  release:
+    types: [ created ]
+
+jobs:
+  publish:
+    name: Publish docs
+    env:
+      MDBOOK_VERSION: 0.4.25
+      MDBOOK_TOC_VERSION: 0.11.0
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install mdbook
+        run: |
+          curl -LsSf https://github.com/rust-lang/mdBook/releases/download/v${MDBOOK_VERSION}/mdbook-v${MDBOOK_VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar xzf -
+          curl -LsSf https://github.com/badboy/mdbook-toc/releases/download/${MDBOOK_TOC_VERSION}/mdbook-toc-${MDBOOK_TOC_VERSION}-x86_64-unknown-linux-gnu.tar.gz | tar xzf -
+          echo $(pwd) >> $GITHUB_PATH
+      - name: Run mdbook
+        run: |
+          mdbook build docs
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: docs
+          path: |
+            docs/public
+      - name: Deploy to GitHub Pages
+        if: success() && github.event_name == 'release' && github.event.action == 'created'
+        uses: crazy-max/ghaction-github-pages@v2
+        with:
+          target_branch: gh-pages
+          build_dir: docs/public
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

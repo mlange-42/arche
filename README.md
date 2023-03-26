@@ -3,6 +3,7 @@
 [![Coverage Status](https://badge.coveralls.io/repos/github/mlange-42/arche/badge.svg?branch=main)](https://badge.coveralls.io/github/mlange-42/arche?branch=main)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mlange-42/arche)](https://goreportcard.com/report/github.com/mlange-42/arche)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche.svg)](https://pkg.go.dev/github.com/mlange-42/arche)
+[![Manual](https://img.shields.io/static/v1?label=manual&message=mdBook&color=blue&logo=mdBook)](https://mlange-42.github.io/arche/)
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
 [![DOI:10.5281/zenodo.7656484](https://zenodo.org/badge/DOI/10.5281/zenodo.7656484.svg)](https://doi.org/10.5281/zenodo.7656484)
 [![MIT license](https://img.shields.io/github/license/mlange-42/arche)](https://github.com/mlange-42/arche/blob/main/LICENSE)

@@ -4,3 +4,4 @@
 *.svg
 *.png
 go.work.sum
+/docs/public/
