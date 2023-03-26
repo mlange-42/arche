@@ -255,13 +255,16 @@ func (w *World) RemoveEntity(entity Entity) {
 
 // removeEntities removes and recycles all entities matching a filter.
 //
+// Returns the number of removed entities.
+//
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
-func (w *World) removeEntities(filter Filter) {
+func (w *World) removeEntities(filter Filter) int {
 	w.checkLocked()
 
 	lock := w.lock()
 	numArches := w.archetypes.Len()
+	var count uintptr
 	for i := 0; i < numArches; i++ {
 		arch := w.archetypes.Get(i)
 
@@ -270,6 +273,8 @@ func (w *World) removeEntities(filter Filter) {
 		}
 
 		len := uintptr(arch.Len())
+		count += len
+
 		var j uintptr
 		for j = 0; j < len; j++ {
 			entity := arch.GetEntity(j)
@@ -283,6 +288,8 @@ func (w *World) removeEntities(filter Filter) {
 		arch.Reset()
 	}
 	w.unlock(lock)
+
+	return int(count)
 }
 
 // Alive reports whether an entity is still alive.

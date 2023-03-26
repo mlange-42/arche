@@ -67,8 +67,10 @@ func (b *Batch) NewEntitiesWithQuery(count int, comps ...Component) Query {
 
 // RemoveEntities removes and recycles all entities matching a filter.
 //
+// Returns the number of removed entities.
+//
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
-func (b *Batch) RemoveEntities(filter Filter) {
-	b.world.removeEntities(filter)
+func (b *Batch) RemoveEntities(filter Filter) int {
+	return b.world.removeEntities(filter)
 }

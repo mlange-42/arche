@@ -119,14 +119,15 @@ func (m *Map1[A]) Remove(entity ecs.Entity) {
 
 // RemoveEntities removes all components from the world that match the Map1's components.
 //
+// Returns the number of removed entities.
+//
 // See also [ecs.World.NewEntityWith].
-func (m *Map1[A]) RemoveEntities(exact bool) {
+func (m *Map1[A]) RemoveEntities(exact bool) int {
 	if exact {
 		filter := m.mask.Exact()
-		m.world.Batch().RemoveEntities(&filter)
-	} else {
-		m.world.Batch().RemoveEntities(m.mask)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -253,14 +254,15 @@ func (m *Map2[A, B]) Remove(entity ecs.Entity) {
 
 // RemoveEntities removes all components from the world that match the Map2's components.
 //
+// Returns the number of removed entities.
+//
 // See also [ecs.World.NewEntityWith].
-func (m *Map2[A, B]) RemoveEntities(exact bool) {
+func (m *Map2[A, B]) RemoveEntities(exact bool) int {
 	if exact {
 		filter := m.mask.Exact()
-		m.world.Batch().RemoveEntities(&filter)
-	} else {
-		m.world.Batch().RemoveEntities(m.mask)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -396,14 +398,15 @@ func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
 
 // RemoveEntities removes all components from the world that match the Map3's components.
 //
+// Returns the number of removed entities.
+//
 // See also [ecs.World.NewEntityWith].
-func (m *Map3[A, B, C]) RemoveEntities(exact bool) {
+func (m *Map3[A, B, C]) RemoveEntities(exact bool) int {
 	if exact {
 		filter := m.mask.Exact()
-		m.world.Batch().RemoveEntities(&filter)
-	} else {
-		m.world.Batch().RemoveEntities(m.mask)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -548,14 +551,15 @@ func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
 
 // RemoveEntities removes all components from the world that match the Map4's components.
 //
+// Returns the number of removed entities.
+//
 // See also [ecs.World.NewEntityWith].
-func (m *Map4[A, B, C, D]) RemoveEntities(exact bool) {
+func (m *Map4[A, B, C, D]) RemoveEntities(exact bool) int {
 	if exact {
 		filter := m.mask.Exact()
-		m.world.Batch().RemoveEntities(&filter)
-	} else {
-		m.world.Batch().RemoveEntities(m.mask)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -709,14 +713,15 @@ func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
 
 // RemoveEntities removes all components from the world that match the Map5's components.
 //
+// Returns the number of removed entities.
+//
 // See also [ecs.World.NewEntityWith].
-func (m *Map5[A, B, C, D, E]) RemoveEntities(exact bool) {
+func (m *Map5[A, B, C, D, E]) RemoveEntities(exact bool) int {
 	if exact {
 		filter := m.mask.Exact()
-		m.world.Batch().RemoveEntities(&filter)
-	} else {
-		m.world.Batch().RemoveEntities(m.mask)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -879,14 +884,15 @@ func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
 
 // RemoveEntities removes all components from the world that match the Map6's components.
 //
+// Returns the number of removed entities.
+//
 // See also [ecs.World.NewEntityWith].
-func (m *Map6[A, B, C, D, E, F]) RemoveEntities(exact bool) {
+func (m *Map6[A, B, C, D, E, F]) RemoveEntities(exact bool) int {
 	if exact {
 		filter := m.mask.Exact()
-		m.world.Batch().RemoveEntities(&filter)
-	} else {
-		m.world.Batch().RemoveEntities(m.mask)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1058,14 +1064,15 @@ func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
 
 // RemoveEntities removes all components from the world that match the Map7's components.
 //
+// Returns the number of removed entities.
+//
 // See also [ecs.World.NewEntityWith].
-func (m *Map7[A, B, C, D, E, F, G]) RemoveEntities(exact bool) {
+func (m *Map7[A, B, C, D, E, F, G]) RemoveEntities(exact bool) int {
 	if exact {
 		filter := m.mask.Exact()
-		m.world.Batch().RemoveEntities(&filter)
-	} else {
-		m.world.Batch().RemoveEntities(m.mask)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1246,12 +1253,13 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity) {
 
 // RemoveEntities removes all components from the world that match the Map8's components.
 //
+// Returns the number of removed entities.
+//
 // See also [ecs.World.NewEntityWith].
-func (m *Map8[A, B, C, D, E, F, G, H]) RemoveEntities(exact bool) {
+func (m *Map8[A, B, C, D, E, F, G, H]) RemoveEntities(exact bool) int {
 	if exact {
 		filter := m.mask.Exact()
-		m.world.Batch().RemoveEntities(&filter)
-	} else {
-		m.world.Batch().RemoveEntities(m.mask)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
+	return m.world.Batch().RemoveEntities(m.mask)
 }

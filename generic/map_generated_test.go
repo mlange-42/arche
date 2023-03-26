@@ -42,8 +42,10 @@ func TestMap1Generated(t *testing.T) {
 	q.Close()
 	q = mut.NewEntitiesWithQuery(2, &testStruct0{})
 	q.Close()
-	mut.RemoveEntities(true)
-	mut.RemoveEntities(false)
+	cnt := mut.RemoveEntities(true)
+	assert.Equal(t, 11, cnt)
+	cnt = mut.RemoveEntities(false)
+	assert.Equal(t, 0, cnt)
 }
 
 func TestMap2Generated(t *testing.T) {

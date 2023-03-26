@@ -535,7 +535,8 @@ func TestWorldRemoveEntities(t *testing.T) {
 	query.Close()
 
 	filter := All(posID).Exact()
-	world.removeEntities(&filter)
+	cnt := world.removeEntities(&filter)
+	assert.Equal(t, 100, cnt)
 	assert.Equal(t, 300, len(events))
 
 	query = world.Query(All())
