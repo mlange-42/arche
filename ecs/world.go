@@ -102,6 +102,14 @@ func fromConfig(conf Config) World {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+//
+// Note that calling a method with varargs in Go causes a slice allocation.
+// For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
+//
+//	// fast
+//	world.NewEntity(idA, idB, idC)
+//	// even faster
+//	world.NewEntity(ids...)
 func (w *World) NewEntity(comps ...ID) Entity {
 	w.checkLocked()
 
@@ -309,6 +317,14 @@ func (w *World) Has(entity Entity, comp ID) bool {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+//
+// Note that calling a method with varargs in Go causes a slice allocation.
+// For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
+//
+//	// fast
+//	world.Add(entity, idA, idB, idC)
+//	// even faster
+//	world.Add(entity, ids...)
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
 }
