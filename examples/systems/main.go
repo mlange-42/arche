@@ -44,7 +44,9 @@ func (s *Scheduler) AddSystem(sys System) {
 // Run initializes and updates all Systems
 func (s *Scheduler) Run(steps int) {
 	s.initialize()
-	s.update()
+	for i := 0; i < steps; i++ {
+		s.update()
+	}
 }
 
 func (s *Scheduler) initialize() {
