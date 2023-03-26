@@ -37,6 +37,7 @@
 ### Other
 
 * Restructure and extend benchmarks (#146, #153, #155, #156)
+* Add an ECS competition benchmark for adding and removing components (#170)
 
 ## [[v0.5.1]](https://github.com/mlange-42/arche/compare/v0.5.0...v0.5.1)
 
