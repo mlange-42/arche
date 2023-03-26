@@ -28,6 +28,7 @@
 * More efficiently clear the memory of removed components, with 2-3x speedup (#165)
 * Do not clear memory when adding entities to archetypes, not required anymore as of #147 (#165)
 * Speed up copying entity to archetype by getting entity pointer without reflection (#166)
+* Avoid slice allocations in generic mapper methods (#170)
 
 ### Bugfixes
 
