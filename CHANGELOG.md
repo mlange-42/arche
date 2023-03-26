@@ -35,6 +35,10 @@
 
 * Archetype storage buffers are "zeroed" when removing entities, to allow GC on pointers and slices in components (#147)
 
+### Documentation
+
+* Adds an example for batch-creation and batch-removal of entities (#173)
+
 ### Other
 
 * Restructure and extend benchmarks (#146, #153, #155, #156)
