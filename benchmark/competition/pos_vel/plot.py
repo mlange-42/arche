@@ -29,7 +29,7 @@ if __name__ == "__main__":
         [1, 2, 5, 10, 20, 50, 100, 200],
         1000,
         "log",
-        "Time per iteration [us]",
+        "Time per iteration [μs]",
     )
     build = (axes[1], build_prefix, None, 1000000, "linear", "Time per run [ms]")
 
@@ -46,7 +46,9 @@ if __name__ == "__main__":
             ]
             series.append(extr["Time"] / factor)
 
-        ax.violinplot(series, vert=True, showmeans=True, showextrema=False, bw_method=0.5)
+        ax.violinplot(
+            series, vert=True, showmeans=True, showextrema=False, bw_method=0.5
+        )
 
         ax.set_xticks(range(1, len(models) + 1))
         ax.set_xticklabels([n[stat] for _, n in models])
