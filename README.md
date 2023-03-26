@@ -215,7 +215,7 @@ Iterate:
 
 <div align="center" width="100%">
 
-![Benchmark vs. Go ECSs - Pos/Vel](https://user-images.githubusercontent.com/44003176/227774391-702d7ada-643e-4543-b50d-e7cb9420e7fd.svg)  
+![Benchmark vs. Go ECSs - Pos/Vel](https://user-images.githubusercontent.com/44003176/227806196-857b9c24-2acd-4803-9993-27d7c0460c79.svg)  
 *Position/Velocity benchmarks of Arche (left-most) vs. other Go ECS implementations.
 Left panel: query iteration (log scale), right panel: world setup and entity creation.*
 </div>
@@ -231,7 +231,7 @@ Iterate:
 
 <div align="center" width="100%">
 
-![Benchmark vs. Go ECSs - Add/remove](https://user-images.githubusercontent.com/44003176/227783106-e0af9bfa-a4ed-4de4-aa17-1b3c7cb1cf70.svg)  
+![Benchmark vs. Go ECSs - Add/remove](https://user-images.githubusercontent.com/44003176/227806187-51a2313a-5cab-4bb1-868f-0dcb7929b9af.svg)  
 *Add/remove component benchmarks of Arche (left-most) vs. other Go ECS implementations.
 Left panel: iteration, right panel: world setup and entity creation.*
 </div>
