@@ -204,15 +204,34 @@ Feel free to open an issue if you have suggestions for improvements on the bench
 
 #### Position/Velocity
 
-* 1000 entities with `Pos{float64, float64}` and `Vel{float64, float64}`.
-* 9000 entities with only `Pos{float64, float64}`.
+Build:
+* Create 1000 entities with `Pos{float64, float64}` and `Vel{float64, float64}`.
+* Create 9000 entities with only `Pos{float64, float64}`.
+
+Iterate:
 * Iterate all entities with `Pos` and `Vel`, and add `Vel` to `Pos`.
 
 <div align="center" width="100%">
 
-![Benchmark vs. Go ECSs](https://user-images.githubusercontent.com/44003176/227750005-22ef44e3-ab83-41f1-9d32-910ff0ca51d5.svg)  
-*CPU benchmarks of Arche (left-most) vs. other Go ECS implementations.
+![Benchmark vs. Go ECSs - Pos/Vel](https://user-images.githubusercontent.com/44003176/227774391-702d7ada-643e-4543-b50d-e7cb9420e7fd.svg)  
+*Position/Velocity benchmarks of Arche (left-most) vs. other Go ECS implementations.
 Left panel: query iteration (log scale), right panel: world setup and entity creation.*
+</div>
+
+#### Add/remove component
+
+Build:
+* Create 1000 entities with `Pos{float64, float64}`.
+
+Iterate:
+* Get all entities with `Pos`, and add `Vel{float64, float64}` component.
+* Get all entities with `Pos` and `Vel`, and remove `Vel` component.
+
+<div align="center" width="100%">
+
+![Benchmark vs. Go ECSs - Add/remove](https://user-images.githubusercontent.com/44003176/227783106-e0af9bfa-a4ed-4de4-aa17-1b3c7cb1cf70.svg)  
+*Add/remove component benchmarks of Arche (left-most) vs. other Go ECS implementations.
+Left panel: iteration, right panel: world setup and entity creation.*
 </div>
 
 ### Arche vs. Array of Structs

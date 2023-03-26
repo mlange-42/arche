@@ -28,6 +28,7 @@
 * More efficiently clear the memory of removed components, with 2-3x speedup (#165)
 * Do not clear memory when adding entities to archetypes, not required anymore as of #147 (#165)
 * Speed up copying entity to archetype by getting entity pointer without reflection (#166)
+* Avoid slice allocations in generic mapper methods (#170)
 
 ### Bugfixes
 
@@ -36,6 +37,7 @@
 ### Other
 
 * Restructure and extend benchmarks (#146, #153, #155, #156)
+* Add an ECS competition benchmark for adding and removing components (#170)
 
 ## [[v0.5.1]](https://github.com/mlange-42/arche/compare/v0.5.0...v0.5.1)
 

@@ -26,15 +26,15 @@ if __name__ == "__main__":
     iter = (
         axes[0],
         iter_prefix,
-        [1, 2, 5, 10, 20, 50, 100, 200],
+        None,
         1000,
-        "log",
+        "linear",
         "Time per iteration [μs]",
     )
-    build = (axes[1], build_prefix, None, 1000000, "linear", "Time per run [ms]")
+    build = (axes[1], build_prefix, None, 1000, "linear", "Time per run [μs]")
 
     for stat, (ax, prefix, yticks, factor, scale, title) in enumerate([iter, build]):
-        ax.set_title("Position/Velocity -- " + prefix.replace("Benchmark", ""))
+        ax.set_title("Add/remove component -- " + prefix.replace("Benchmark", ""))
         ax.set_ylabel(title, fontsize=11)
 
         bench_data = data[data["Model"].str.startswith(prefix)]
