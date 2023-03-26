@@ -12,12 +12,6 @@
 [Department for Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
 [Helmholtz Centre for Environmental Research](https://www.ufz.de).
 
-## Installations
-
-```shell
-go get github.com/mlange-42/arche
-```
-
 ## Features
 
 * Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
@@ -28,6 +22,14 @@ go get github.com/mlange-42/arche
 * Probably the fastest Go ECS out there. See the [Benchmarks](#benchmarks).
 
 For details, see sections [Architecture](#architecture) and [Design decisions](#design-decisions).
+
+## Installation
+
+To use *Arche* in a Go project, run:
+
+```shell
+go get github.com/mlange-42/arche
+```
 
 ## Usage example
 
