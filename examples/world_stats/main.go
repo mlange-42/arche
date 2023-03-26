@@ -40,7 +40,7 @@ func main() {
 
 	currIDs := make([]ecs.ID, 0, len(ids))
 	// Create 1 million entities.
-	for i := 0; i < 1000000; i++ {
+	for i := 0; i < 1_000_000; i++ {
 		// Create a new Entity.
 		entity := world.NewEntity()
 		// Select some random components
@@ -51,8 +51,11 @@ func main() {
 		}
 		// Add the components
 		world.Add(entity, currIDs...)
+		// Clear the slice of IDs
 		currIDs = currIDs[:0]
 	}
 
-	fmt.Println(world.Stats().String())
+	// Get and print world statistics
+	stats := world.Stats()
+	fmt.Println(stats.String())
 }

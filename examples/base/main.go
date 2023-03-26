@@ -55,7 +55,7 @@ func main() {
 	for t := 0; t < 1000; t++ {
 		// Get a fresh query iterator.
 		query := world.Query(&filter)
-		// Iterate it
+		// Iterate it.
 		for query.Next() {
 			// Component access through the Query.
 			pos := (*Position)(query.Get(posID))

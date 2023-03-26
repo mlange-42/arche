@@ -19,14 +19,14 @@ func main() {
 	// Create a component mapper.
 	mapper := generic.NewMap1[Linked](&world)
 
-	var prev ecs.Entity
+	var prevEntity ecs.Entity
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity with components.
 		e := mapper.NewEntity()
 		link := mapper.Get(e)
-		// Make it an implicit linked list
-		link.Prev = prev
+		// Make it an implicit linked list.
+		link.Prev = prevEntity
 	}
 
 	// Create a generic filter.
@@ -35,8 +35,8 @@ func main() {
 	// Get a fresh query iterator.
 	query := filter.Query(&world)
 	for query.Next() {
+		// Get entity and link component.
 		entity := query.Entity()
-
 		link := query.Get()
 		if link.Prev.IsZero() {
 			continue
@@ -44,7 +44,7 @@ func main() {
 
 		// Get a component from another entity than the one of the current iteration.
 		prevLink := mapper.Get(link.Prev)
-		// Make it a double-linked list
+		// Make it a double-linked list.
 		prevLink.Next = entity
 	}
 }

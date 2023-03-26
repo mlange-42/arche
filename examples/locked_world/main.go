@@ -58,7 +58,7 @@ func main() {
 	for t := 0; t < 100; t++ {
 		// Get a fresh query iterator.
 		query := filter.Query(&world)
-		// We want to count our entities
+		// We want to count our entities.
 		alive := 0
 		born := 0
 		died := 0
@@ -72,9 +72,9 @@ func main() {
 			// Do model logic.
 			ene.Value += rand.NormFloat64() * 0.05
 
-			// Entities with zero energy die
+			// Entities with zero energy die.
 			if ene.Value <= 0.0 {
-				// Put the entity into a slice for later processing
+				// Put the entity into a slice for later processing.
 				toDie = append(toDie, entity)
 				died++
 				continue
@@ -82,23 +82,23 @@ func main() {
 
 			alive++
 
-			// Entities with energy > 0 reproduce
+			// Entities with energy > 0 reproduce.
 			if ene.Value >= 1.0 {
 				ene.Value = 0.5
 				offspring := 1 + rand.Intn(3)
 				born += offspring
-				// Put the reproduction information into a slice for later processing
+				// Put the reproduction information into a slice for later processing.
 				toReproduce = append(toReproduce, Reproduction{pos.X, pos.Y, offspring})
 			}
 		}
-		// Here, the world lock is released automatically
+		// Here, the world lock is released automatically.
 
-		// Remove entities that are to die
+		// Remove entities that are to die.
 		for _, entity := range toDie {
 			world.RemoveEntity(entity)
 		}
 
-		// Create entities through reproduction
+		// Create entities through reproduction.
 		for _, repro := range toReproduce {
 			// Create offspring entities.
 			for i := 0; i < repro.Offspring; i++ {
@@ -112,7 +112,7 @@ func main() {
 			}
 		}
 
-		// Clear the slices
+		// Clear the slices.
 		toDie = toDie[:0]
 		toReproduce = toReproduce[:0]
 
