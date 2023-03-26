@@ -115,12 +115,13 @@ func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
 
 // RemoveEntities removes all components from the world that match the Map{{ .Index }}'s components.
 //
+// Returns the number of removed entities.
+//
 // See also [ecs.World.NewEntityWith].
-func (m *Map{{ .Index }}{{ .Types }}) RemoveEntities(exact bool) {
+func (m *Map{{ .Index }}{{ .Types }}) RemoveEntities(exact bool) int {
 	if exact {
 		filter := m.mask.Exact()
-		m.world.Batch().RemoveEntities(&filter)
-	} else {
-		m.world.Batch().RemoveEntities(m.mask)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
+	return m.world.Batch().RemoveEntities(m.mask)
 }
