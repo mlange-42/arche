@@ -54,12 +54,8 @@ func BenchmarkIterArcheGeneric(b *testing.B) {
 	posMapper := generic.NewMap1[Position](&world)
 	posVelMapper := generic.NewMap2[Position, Velocity](&world)
 
-	for i := 0; i < nPos; i++ {
-		posMapper.NewEntity()
-	}
-	for i := 0; i < nPosVel; i++ {
-		posVelMapper.NewEntity()
-	}
+	posMapper.NewEntities(nPos)
+	posVelMapper.NewEntities(nPosVel)
 
 	filter := generic.NewFilter2[Position, Velocity]()
 	b.StartTimer()
@@ -78,14 +74,10 @@ func BenchmarkBuildArcheGeneric(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
 
-		posMapper := generic.NewMap1[Position](&world)
-		posVelMapper := generic.NewMap2[Position, Velocity](&world)
+		posID := ecs.ComponentID[Position](&world)
+		velID := ecs.ComponentID[Velocity](&world)
 
-		for i := 0; i < nPos; i++ {
-			posMapper.NewEntity()
-		}
-		for i := 0; i < nPosVel; i++ {
-			posVelMapper.NewEntity()
-		}
+		world.Batch().NewEntities(nPos, posID)
+		world.Batch().NewEntities(nPosVel, posID, velID)
 	}
 }
