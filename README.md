@@ -210,7 +210,7 @@ Feel free to open an issue if you have suggestions for improvements on the bench
 
 <div align="center" width="100%">
 
-![Benchmark vs. Go ECSs](https://user-images.githubusercontent.com/44003176/227034251-456fa2e4-8eb9-461b-b312-8bfee37cf9c2.svg)  
+![Benchmark vs. Go ECSs](https://user-images.githubusercontent.com/44003176/227750005-22ef44e3-ab83-41f1-9d32-910ff0ca51d5.svg)  
 *CPU benchmarks of Arche (left-most) vs. other Go ECS implementations.
 Left panel: query iteration (log scale), right panel: world setup and entity creation.*
 </div>

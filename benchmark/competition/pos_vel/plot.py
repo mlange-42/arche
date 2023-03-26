@@ -10,12 +10,12 @@ if __name__ == "__main__":
     data = pd.read_csv("results.csv", sep=";")
 
     models = [
-        ("Arche", "Arche\n(IDs)"),
-        ("ArcheGeneric", "Arche\n(generic)"),
-        ("GGEcs", "go-\ngameengine-\necs"),
-        ("Donburi", "Donburi"),
-        ("Entitas", "Entitas-Go"),
-        ("Ento", "Ento"),
+        ("Arche", ("Arche\n(IDs)", "Arche\n")),
+        ("ArcheGeneric", ("Arche\n(generic)", "Arche\n(batch)")),
+        ("GGEcs", ("go-\ngameengine-\necs", "go-\ngameengine-\necs")),
+        ("Donburi", ("Donburi", "Donburi")),
+        ("Entitas", ("Entitas-Go", "Entitas-Go")),
+        ("Ento", ("Ento", "Ento")),
     ]
 
     plt.rcParams["svg.fonttype"] = "none"
@@ -33,7 +33,7 @@ if __name__ == "__main__":
     )
     build = (axes[1], build_prefix, None, 1000000, "linear", "Time per run [ms]")
 
-    for ax, prefix, yticks, factor, scale, title in [iter, build]:
+    for stat, (ax, prefix, yticks, factor, scale, title) in enumerate([iter, build]):
         ax.set_title("Position/Velocity -- " + prefix.replace("Benchmark", ""))
         ax.set_ylabel(title, fontsize=11)
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
         ax.violinplot(series, vert=True, showmeans=True, showextrema=False, bw_method=0.5)
 
         ax.set_xticks(range(1, len(models) + 1))
-        ax.set_xticklabels([n for _, n in models])
+        ax.set_xticklabels([n[stat] for _, n in models])
 
         ax.set_ylim((yticks or [0])[0], np.max(bench_data["Time"]) * 1.1 / factor)
         ax.set_yscale(scale)
