@@ -21,6 +21,9 @@ func BenchmarkIterEnto(b *testing.B) {
 		world.AddEntity(Position{})
 	}
 
+	// Iterate once for more fairness
+	world.Update()
+
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {

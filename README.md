@@ -229,9 +229,12 @@ Iterate:
 * Get all entities with `Pos`, and add `Vel{float64, float64}` component.
 * Get all entities with `Pos` and `Vel`, and remove `Vel` component.
 
+> Note: The iteration is performed once before benchmarking,
+> to avoid biasing slower implementations through one-time allocations.
+
 <div align="center" width="100%">
 
-![Benchmark vs. Go ECSs - Add/remove](https://user-images.githubusercontent.com/44003176/227806187-51a2313a-5cab-4bb1-868f-0dcb7929b9af.svg)  
+![Benchmark vs. Go ECSs - Add/remove](https://user-images.githubusercontent.com/44003176/227808722-45dd7e09-5a0d-4f66-83de-5b9ce1ffc250.svg)  
 *Add/remove component benchmarks of Arche (left-most) vs. other Go ECS implementations.
 Left panel: iteration, right panel: world setup and entity creation.*
 </div>
