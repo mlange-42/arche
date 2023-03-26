@@ -19,10 +19,34 @@ func BenchmarkIterArche(b *testing.B) {
 
 	var filterPos ecs.Filter = ecs.All(posID)
 	var filterPosVel ecs.Filter = ecs.All(posID, velID)
+
+	entities := make([]ecs.Entity, 0, nEntities)
+
+	// Iterate once for more fairness
+	query := world.Query(filterPos)
+	for query.Next() {
+		entities = append(entities, query.Entity())
+	}
+
+	for _, e := range entities {
+		world.Add(e, ids...)
+	}
+
+	entities = entities[:0]
+	query = world.Query(filterPosVel)
+	for query.Next() {
+		entities = append(entities, query.Entity())
+	}
+
+	for _, e := range entities {
+		world.Remove(e, ids...)
+	}
+
+	entities = entities[:0]
+
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		entities := make([]ecs.Entity, 0, nEntities)
 		query := world.Query(filterPos)
 		for query.Next() {
 			entities = append(entities, query.Entity())
@@ -41,6 +65,8 @@ func BenchmarkIterArche(b *testing.B) {
 		for _, e := range entities {
 			world.Remove(e, ids...)
 		}
+
+		entities = entities[:0]
 	}
 }
 
@@ -75,10 +101,33 @@ func BenchmarkIterArcheGeneric(b *testing.B) {
 
 	filterPos := generic.NewFilter1[Position]()
 	filterPosVel := generic.NewFilter2[Position, Velocity]()
+
+	entities := make([]ecs.Entity, 0, nEntities)
+
+	// Iterate once for more fairness
+	query := filterPos.Query(&world)
+	for query.Next() {
+		entities = append(entities, query.Entity())
+	}
+
+	for _, e := range entities {
+		velMapper.Add(e)
+	}
+
+	entities = entities[:0]
+	query2 := filterPosVel.Query(&world)
+	for query2.Next() {
+		entities = append(entities, query2.Entity())
+	}
+
+	for _, e := range entities {
+		velMapper.Remove(e)
+	}
+	entities = entities[:0]
+
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		entities := make([]ecs.Entity, 0, nEntities)
 		query := filterPos.Query(&world)
 		for query.Next() {
 			entities = append(entities, query.Entity())
@@ -97,6 +146,7 @@ func BenchmarkIterArcheGeneric(b *testing.B) {
 		for _, e := range entities {
 			velMapper.Remove(e)
 		}
+		entities = entities[:0]
 	}
 }
 

@@ -20,6 +20,15 @@ func BenchmarkIterDonburi(b *testing.B) {
 
 	queryPos := donburi.NewQuery(filter.Contains(position))
 	queryPosVel := donburi.NewQuery(filter.Contains(position, velocity))
+
+	// Iterate once for more fairness
+	queryPos.Each(world, func(entry *donburi.Entry) {
+		entry.AddComponent(velocity)
+	})
+	queryPosVel.Each(world, func(entry *donburi.Entry) {
+		entry.RemoveComponent(velocity)
+	})
+
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
