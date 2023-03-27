@@ -58,9 +58,9 @@ func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter{{ .Index }}.Query].
-func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.

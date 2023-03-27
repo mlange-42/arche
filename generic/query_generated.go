@@ -51,9 +51,9 @@ func (q *Filter0) Query(w *ecs.World) Query0 {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter0.Query].
-func (q *Filter0) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter0) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.
@@ -143,9 +143,9 @@ func (q *Filter1[A]) Query(w *ecs.World) Query1[A] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter1.Query].
-func (q *Filter1[A]) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.
@@ -245,9 +245,9 @@ func (q *Filter2[A, B]) Query(w *ecs.World) Query2[A, B] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter2.Query].
-func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.
@@ -351,9 +351,9 @@ func (q *Filter3[A, B, C]) Query(w *ecs.World) Query3[A, B, C] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter3.Query].
-func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.
@@ -461,9 +461,9 @@ func (q *Filter4[A, B, C, D]) Query(w *ecs.World) Query4[A, B, C, D] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter4.Query].
-func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.
@@ -575,9 +575,9 @@ func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World) Query5[A, B, C, D, E] {
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter5.Query].
-func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.
@@ -693,9 +693,9 @@ func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World) Query6[A, B, C, D, E, F]
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter6.Query].
-func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.
@@ -815,9 +815,9 @@ func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World) Query7[A, B, C, D, E,
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter7.Query].
-func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.
@@ -941,9 +941,9 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World) Query8[A, B, C, D,
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter8.Query].
-func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.Filter {
+func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
 }
 
 // Register the filter for caching.
