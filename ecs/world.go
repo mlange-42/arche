@@ -47,15 +47,16 @@ func AddResource[T any](w *World, res *T) {
 
 // World is the central type holding [Entity] and component data, as well as resources.
 type World struct {
-	config     Config                    // World configuration.
-	listener   func(e *EntityEvent)      // Component change listener.
-	resources  Resources                 // World resources.
-	entities   []entityIndex             // Mapping from entities to archetype and index.
-	entityPool entityPool                // Pool for entities.
-	archetypes pagedArr32[archetype]     // The archetypes.
-	graph      pagedArr32[archetypeNode] // The archetype graph.
-	locks      lockMask                  // World locks.
-	registry   componentRegistry[ID]     // Component registry.
+	config      Config                    // World configuration.
+	listener    func(e *EntityEvent)      // Component change listener.
+	resources   Resources                 // World resources.
+	entities    []entityIndex             // Mapping from entities to archetype and index.
+	entityPool  entityPool                // Pool for entities.
+	archetypes  pagedArr32[archetype]     // The archetypes.
+	graph       pagedArr32[archetypeNode] // The archetype graph.
+	locks       lockMask                  // World locks.
+	registry    componentRegistry[ID]     // Component registry.
+	filterCache Cache                     // Cache for registered filters.
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -80,15 +81,16 @@ func fromConfig(conf Config) World {
 	entities := make([]entityIndex, 1, conf.CapacityIncrement)
 	entities[0] = entityIndex{arch: nil, index: 0}
 	w := World{
-		config:     conf,
-		entities:   entities,
-		entityPool: newEntityPool(conf.CapacityIncrement),
-		registry:   newComponentRegistry(),
-		archetypes: pagedArr32[archetype]{},
-		graph:      pagedArr32[archetypeNode]{},
-		locks:      lockMask{},
-		listener:   nil,
-		resources:  newResources(),
+		config:      conf,
+		entities:    entities,
+		entityPool:  newEntityPool(conf.CapacityIncrement),
+		registry:    newComponentRegistry(),
+		archetypes:  pagedArr32[archetype]{},
+		graph:       pagedArr32[archetypeNode]{},
+		locks:       lockMask{},
+		listener:    nil,
+		resources:   newResources(),
+		filterCache: newCache(),
 	}
 	node := w.createArchetypeNode(Mask{})
 	w.createArchetype(node, false)
@@ -450,13 +452,6 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 }
 
-// Resources of the world.
-//
-// Resources are component-like data that is not associated to an entity, but unique to the world.
-func (w *World) Resources() *Resources {
-	return &w.resources
-}
-
 // Reset removes all entities and resources from the world.
 //
 // Does NOT free reserved memory, remove archetypes, clear the registry etc.
@@ -497,7 +492,31 @@ func (w *World) Reset() {
 // Locks the world to prevent changes to component compositions.
 func (w *World) Query(filter Filter) Query {
 	l := w.lock()
+	if cached, ok := filter.(CachedFilter); ok {
+		archetypes := w.filterCache.get(&cached).Archetypes
+		return newQuery(w, filter, l, archetypeSlice(archetypes))
+	}
+
 	return newQuery(w, filter, l, &w.archetypes)
+}
+
+func (w *World) getArchetypes(filter Filter) []*archetype {
+	arches := []*archetype{}
+	len := int(w.archetypes.Len())
+	for i := 0; i < len; i++ {
+		a := w.archetypes.Get(i)
+		if filter.Matches(a.Mask) {
+			arches = append(arches, a)
+		}
+	}
+	return arches
+}
+
+// Resources of the world.
+//
+// Resources are component-like data that is not associated to an entity, but unique to the world.
+func (w *World) Resources() *Resources {
+	return &w.resources
 }
 
 // Batch creates a [Batch] processing helper.
@@ -506,6 +525,14 @@ func (w *World) Query(filter Filter) Query {
 // in a more efficient way.
 func (w *World) Batch() *Batch {
 	return &Batch{w}
+}
+
+// Cache returns the [Cache] of the world, for registering filters.
+func (w *World) Cache() *Cache {
+	if w.filterCache.getArchetypes == nil {
+		w.filterCache.getArchetypes = w.getArchetypes
+	}
+	return &w.filterCache
 }
 
 // IsLocked returns whether the world is locked by any queries.
@@ -762,6 +789,8 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
 	arch.Init(node, w.config.CapacityIncrement, forStorage, types...)
 	node.archetype = arch
+
+	w.filterCache.addArchetype(arch)
 	return arch
 }
 

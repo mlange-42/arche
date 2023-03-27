@@ -75,6 +75,18 @@ func (s batchArchetype) Len() int {
 	return 1
 }
 
+type archetypeSlice []*archetype
+
+// Get returns the value at the given index.
+func (s archetypeSlice) Get(index int) *archetype {
+	return s[index]
+}
+
+// Len returns the current number of items in the paged array.
+func (s archetypeSlice) Len() int {
+	return len(s)
+}
+
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
 	basePointer   unsafe.Pointer
