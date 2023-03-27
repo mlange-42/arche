@@ -479,7 +479,7 @@ func (w *World) Reset() {
 //
 // Example:
 //
-//	filter := All(idA, idB).Without(idC)
+//	filter := ecs.All(idA, idB).Without(idC)
 //	query := world.Query(filter)
 //	for query.Next() {
 //	    pos := (*position)(query.Get(posID))
@@ -498,18 +498,6 @@ func (w *World) Query(filter Filter) Query {
 	}
 
 	return newQuery(w, filter, l, &w.archetypes)
-}
-
-func (w *World) getArchetypes(filter Filter) pagedPointerArr32[archetype] {
-	arches := pagedPointerArr32[archetype]{}
-	len := int(w.archetypes.Len())
-	for i := 0; i < len; i++ {
-		a := w.archetypes.Get(i)
-		if filter.Matches(a.Mask) {
-			arches.Add(a)
-		}
-	}
-	return arches
 }
 
 // Resources of the world.
@@ -792,6 +780,18 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 
 	w.filterCache.addArchetype(arch)
 	return arch
+}
+
+func (w *World) getArchetypes(filter Filter) pagedPointerArr32[archetype] {
+	arches := pagedPointerArr32[archetype]{}
+	len := int(w.archetypes.Len())
+	for i := 0; i < len; i++ {
+		a := w.archetypes.Get(i)
+		if filter.Matches(a.Mask) {
+			arches.Add(a)
+		}
+	}
+	return arches
 }
 
 // componentID returns the ID for a component type, and registers it if not already registered.

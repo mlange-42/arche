@@ -6,6 +6,7 @@ import (
 )
 
 // Resources manage a world's resources.
+//
 // Access it using [World.Resources].
 type Resources struct {
 	registry  componentRegistry[ResID]

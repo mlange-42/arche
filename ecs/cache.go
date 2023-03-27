@@ -7,6 +7,8 @@ type cacheEntry struct {
 }
 
 // Cache provides filter caching to speed up queries.
+//
+// Access it using [World.Cache].
 type Cache struct {
 	bitPool       bitPool
 	indices       []int
@@ -27,6 +29,11 @@ func newCache() Cache {
 }
 
 // Register registers a new filter.
+//
+// Use the returned [CachedFilter] to construct queries:
+//
+//	filter := world.Cache().Register(ecs.All(10))
+//	query := world.Query(filter)
 func (c *Cache) Register(f Filter) CachedFilter {
 	id := c.bitPool.Get()
 	c.filters = append(c.filters,
