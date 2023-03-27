@@ -516,6 +516,8 @@ func (w *World) Batch() *Batch {
 }
 
 // Cache returns the [Cache] of the world, for registering filters.
+//
+// See [Cache] for details.
 func (w *World) Cache() *Cache {
 	if w.filterCache.getArchetypes == nil {
 		w.filterCache.getArchetypes = w.getArchetypes

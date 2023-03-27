@@ -6,9 +6,18 @@ type cacheEntry struct {
 	Archetypes pagedPointerArr32[archetype]
 }
 
-// Cache provides filter caching to speed up queries.
+// Cache provides [Filter] caching to speed up queries.
 //
 // Access it using [World.Cache].
+//
+// For registered filters, the relevant archetypes are tracked internally,
+// so that there are no mask checks required during iteration.
+// This is particularly helpful to avoid query iteration slowdown by a very high number of archetypes.
+// If the number of archetypes exceeds approx. 50-100, uncached filters experience a slowdown.
+// The relative slowdown increases with lower numbers of entities queried (below 10.000).
+// Cached filters avoid this slowdown.
+//
+// The overhead of tracking cached filters is very low, as updates are required only when new archetypes are created.
 type Cache struct {
 	bitPool       bitPool
 	indices       []int
@@ -32,7 +41,7 @@ func newCache() Cache {
 //
 // Use the returned [CachedFilter] to construct queries:
 //
-//	filter := world.Cache().Register(ecs.All(10))
+//	filter := world.Cache().Register(ecs.All(posID, velID))
 //	query := world.Query(filter)
 func (c *Cache) Register(f Filter) CachedFilter {
 	id := c.bitPool.Get()
