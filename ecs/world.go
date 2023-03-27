@@ -494,7 +494,7 @@ func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(CachedFilter); ok {
 		archetypes := w.filterCache.get(&cached).Archetypes
-		return newQuery(w, filter, l, archetypeSlice(archetypes))
+		return newQuery(w, cached, l, archetypeSlice(archetypes))
 	}
 
 	return newQuery(w, filter, l, &w.archetypes)
