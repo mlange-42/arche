@@ -492,8 +492,8 @@ func (w *World) Reset() {
 // Locks the world to prevent changes to component compositions.
 func (w *World) Query(filter Filter) Query {
 	l := w.lock()
-	if cached, ok := filter.(CachedFilter); ok {
-		archetypes := &w.filterCache.get(&cached).Archetypes
+	if cached, ok := filter.(*CachedFilter); ok {
+		archetypes := &w.filterCache.get(cached).Archetypes
 		return newQuery(w, cached, l, archetypes)
 	}
 

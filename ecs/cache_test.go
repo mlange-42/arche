@@ -21,8 +21,8 @@ func TestFilterCache(t *testing.T) {
 	e1 := cache.get(&f1)
 	e2 := cache.get(&f2)
 
-	assert.Equal(t, f1.Filter, e1.Filter)
-	assert.Equal(t, f2.Filter, e2.Filter)
+	assert.Equal(t, f1.filter, e1.Filter)
+	assert.Equal(t, f2.filter, e2.Filter)
 
 	ff1 := cache.Unregister(&f1)
 	ff2 := cache.Unregister(&f2)
@@ -78,7 +78,8 @@ func benchmarkCachedFilters(b *testing.B, arches int, count int, cached bool) {
 
 	var filter Filter = All(id)
 	if cached {
-		filter = world.Cache().Register(filter)
+		f := world.Cache().Register(filter)
+		filter = &f
 	}
 
 	b.StartTimer()

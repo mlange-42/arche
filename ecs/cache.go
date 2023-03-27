@@ -37,12 +37,12 @@ func newCache() Cache {
 	}
 }
 
-// Register registers a new filter.
+// Register a [Filter].
 //
 // Use the returned [CachedFilter] to construct queries:
 //
 //	filter := world.Cache().Register(ecs.All(posID, velID))
-//	query := world.Query(filter)
+//	query := world.Query(&filter)
 func (c *Cache) Register(f Filter) CachedFilter {
 	id := c.bitPool.Get()
 	c.filters = append(c.filters,
@@ -55,7 +55,7 @@ func (c *Cache) Register(f Filter) CachedFilter {
 	return CachedFilter{f, id}
 }
 
-// Unregister un-registers a filter.
+// Unregister a filter.
 //
 // Returns the original filter.
 func (c *Cache) Unregister(f *CachedFilter) Filter {

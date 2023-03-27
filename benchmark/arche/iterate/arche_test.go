@@ -112,7 +112,8 @@ func runArcheQueryCached(b *testing.B, count int) {
 
 	world.Batch().NewEntities(count, posID, rotID)
 
-	var filter ecs.Filter = world.Cache().Register(ecs.All(posID, rotID))
+	cf := world.Cache().Register(ecs.All(posID, rotID))
+	var filter ecs.Filter = &cf
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -276,7 +277,8 @@ func runArcheQuery1kArchCached(b *testing.B, count int) {
 		}
 	}
 
-	var filter ecs.Filter = world.Cache().Register(ecs.All(6))
+	cf := world.Cache().Register(ecs.All(6))
+	var filter ecs.Filter = &cf
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -381,7 +383,9 @@ func runArcheQuery1Of1kArchCached(b *testing.B, count int) {
 		}
 	}
 	world.Batch().NewEntities(count, 10)
-	var filter ecs.Filter = world.Cache().Register(ecs.All(10))
+
+	cf := world.Cache().Register(ecs.All(10))
+	var filter ecs.Filter = &cf
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()

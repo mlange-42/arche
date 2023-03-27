@@ -6,10 +6,11 @@ import (
 
 // compiledQuery is a helper for compiling a generic filter into a [ecs.Filter].
 type compiledQuery struct {
-	maskFilter ecs.MaskFilter
-	filter     ecs.Filter
-	Ids        []ecs.ID
-	compiled   bool
+	maskFilter   ecs.MaskFilter
+	cachedFilter ecs.CachedFilter
+	filter       ecs.Filter
+	Ids          []ecs.ID
+	compiled     bool
 }
 
 // Compile compiles a generic filter.

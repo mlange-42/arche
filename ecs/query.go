@@ -39,8 +39,13 @@ func (f dummyFilter) Matches(bits Mask) bool {
 
 // CachedFilter is a filter that is cached by the world.
 type CachedFilter struct {
-	Filter
-	id ID
+	filter Filter
+	id     ID
+}
+
+// Matches matches a filter against a mask.
+func (f *CachedFilter) Matches(bits Mask) bool {
+	return f.filter.Matches(bits)
 }
 
 // Query is an iterator to iterate entities, filtered by a [Filter].
@@ -172,7 +177,7 @@ func (q *Query) Close() {
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
 	switch t := q.filter.(type) {
-	case CachedFilter:
+	case *CachedFilter:
 		return q.nextArchetypeCached()
 	case Mask:
 		return q.nextArchetypeMask(t)
