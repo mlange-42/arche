@@ -144,6 +144,10 @@ func TestQueryCached(t *testing.T) {
 	for q.Next() {
 	}
 
+	filterVel := w.Cache().Register(All(velID))
+	q = w.Query(filterVel)
+	assert.Equal(t, 20, q.Count())
+	q.Close()
 }
 
 func TestQueryCount(t *testing.T) {

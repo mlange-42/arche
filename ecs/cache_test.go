@@ -12,8 +12,8 @@ func TestFilterCache(t *testing.T) {
 
 	f1 := cache.Register(All(0, 1))
 	f2 := cache.Register(All(0, 1, 2))
-	assert.Equal(t, 0, f1.id)
-	assert.Equal(t, 1, f2.id)
+	assert.Equal(t, 0, int(f1.id))
+	assert.Equal(t, 1, int(f2.id))
 
 	e1 := cache.get(&f1)
 	e2 := cache.get(&f2)

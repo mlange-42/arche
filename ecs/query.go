@@ -40,7 +40,7 @@ func (f dummyFilter) Matches(bits Mask) bool {
 // CachedFilter is a filter that is cached by the world.
 type CachedFilter struct {
 	Filter
-	id int
+	id ID
 }
 
 // Query is an iterator to iterate entities, filtered by a [Filter].
