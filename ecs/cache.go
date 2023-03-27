@@ -2,7 +2,7 @@ package ecs
 
 type cacheEntry struct {
 	Filter     Filter
-	Archetypes []*archetype
+	Archetypes pagedPointerArr32[archetype]
 }
 
 // Cache provides filter caching to speed up queries.
@@ -10,7 +10,7 @@ type Cache struct {
 	// TODO write a better data structure!
 	filters       map[int]*cacheEntry
 	counter       int
-	getArchetypes func(f Filter) []*archetype
+	getArchetypes func(f Filter) pagedPointerArr32[archetype]
 }
 
 func newCache() Cache {
@@ -49,7 +49,7 @@ func (c *Cache) get(f *CachedFilter) *cacheEntry {
 func (c *Cache) addArchetype(arch *archetype) {
 	for _, e := range c.filters {
 		if e.Filter.Matches(arch.Mask) {
-			e.Archetypes = append(e.Archetypes, arch)
+			e.Archetypes.Add(arch)
 		}
 	}
 }

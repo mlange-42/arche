@@ -28,6 +28,6 @@ func TestFilterCache(t *testing.T) {
 	assert.Panics(t, func() { cache.get(&f1) })
 }
 
-func getArchetypes(f Filter) []*archetype {
-	return []*archetype{}
+func getArchetypes(f Filter) pagedPointerArr32[archetype] {
+	return pagedPointerArr32[archetype]{}
 }

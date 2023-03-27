@@ -171,16 +171,16 @@ func (q *Query) Close() {
 
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
-	if _, ok := q.filter.(CachedFilter); ok {
+	switch t := q.filter.(type) {
+	case CachedFilter:
 		return q.nextArchetypeCached()
+	case Mask:
+		return q.nextArchetypeMask(t)
+	case *MaskFilter:
+		return q.nextArchetypeMaskFilter(t)
+	default:
+		return q.nextArchetypeFilter()
 	}
-	if mask, ok := q.filter.(Mask); ok {
-		return q.nextArchetypeMask(mask)
-	}
-	if mask, ok := q.filter.(*MaskFilter); ok {
-		return q.nextArchetypeMaskFilter(mask)
-	}
-	return q.nextArchetypeFilter()
 }
 
 func (q *Query) nextArchetypeCached() bool {

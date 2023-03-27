@@ -493,20 +493,20 @@ func (w *World) Reset() {
 func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(CachedFilter); ok {
-		archetypes := w.filterCache.get(&cached).Archetypes
-		return newQuery(w, cached, l, archetypeSlice(archetypes))
+		archetypes := &w.filterCache.get(&cached).Archetypes
+		return newQuery(w, cached, l, archetypes)
 	}
 
 	return newQuery(w, filter, l, &w.archetypes)
 }
 
-func (w *World) getArchetypes(filter Filter) []*archetype {
-	arches := []*archetype{}
+func (w *World) getArchetypes(filter Filter) pagedPointerArr32[archetype] {
+	arches := pagedPointerArr32[archetype]{}
 	len := int(w.archetypes.Len())
 	for i := 0; i < len; i++ {
 		a := w.archetypes.Get(i)
 		if filter.Matches(a.Mask) {
-			arches = append(arches, a)
+			arches.Add(a)
 		}
 	}
 	return arches
