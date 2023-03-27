@@ -101,7 +101,10 @@ func TestQuery0(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	assert.Equal(t, ecs.All(8).Without(9), filter.Filter(&w))
+	f := ecs.All(8).Without(9)
+	assert.Equal(t, &f, filter.Filter(&w))
+	filter.Register(&w)
+
 	query := filter.Query(&w)
 	for query.Next() {
 		_ = query.Entity()
@@ -109,6 +112,8 @@ func TestQuery0(t *testing.T) {
 	}
 	assert.Equal(t, 1, cnt)
 
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
 }
 
 func TestQuery1(t *testing.T) {
@@ -136,7 +141,10 @@ func TestQuery1(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	assert.Equal(t, ecs.All(0, 8).Without(9), filter.Filter(&w))
+	f := ecs.All(0, 8).Without(9)
+	assert.Equal(t, &f, filter.Filter(&w))
+	filter.Register(&w)
+
 	query := filter.Query(&w)
 	for query.Next() {
 		c0 := query.Get()
@@ -144,6 +152,9 @@ func TestQuery1(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
 }
 
 func TestQuery2(t *testing.T) {
@@ -173,7 +184,9 @@ func TestQuery2(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	assert.Equal(t, ecs.All(0, 8).Without(9), filter.Filter(&w))
+	f := ecs.All(0, 8).Without(9)
+	assert.Equal(t, &f, filter.Filter(&w))
+	filter.Register(&w)
 
 	for i := 0; i < 10; i++ {
 		cnt := 0
@@ -186,6 +199,9 @@ func TestQuery2(t *testing.T) {
 		}
 		assert.Equal(t, 1, cnt)
 	}
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
 }
 
 func TestQuery3(t *testing.T) {
@@ -220,7 +236,10 @@ func TestQuery3(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	assert.Equal(t, ecs.All(0, 2, 8).Without(9), filter.Filter(&w))
+	f := ecs.All(0, 2, 8).Without(9)
+	assert.Equal(t, &f, filter.Filter(&w))
+	filter.Register(&w)
+
 	query := filter.Query(&w)
 	for query.Next() {
 		c1, c2, c3 := query.Get()
@@ -230,6 +249,9 @@ func TestQuery3(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
 }
 
 func TestQuery4(t *testing.T) {
@@ -268,7 +290,10 @@ func TestQuery4(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	assert.Equal(t, ecs.All(0, 2, 3, 8).Without(9), filter.Filter(&w))
+	f := ecs.All(0, 2, 3, 8).Without(9)
+	assert.Equal(t, &f, filter.Filter(&w))
+	filter.Register(&w)
+
 	query := filter.Query(&w)
 	for query.Next() {
 		c1, c2, c3, c4 := query.Get()
@@ -279,6 +304,9 @@ func TestQuery4(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
 }
 
 func TestQuery5(t *testing.T) {
@@ -321,7 +349,10 @@ func TestQuery5(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	assert.Equal(t, ecs.All(0, 2, 3, 4, 8).Without(9), filter.Filter(&w))
+	f := ecs.All(0, 2, 3, 4, 8).Without(9)
+	assert.Equal(t, &f, filter.Filter(&w))
+	filter.Register(&w)
+
 	query := filter.Query(&w)
 	for query.Next() {
 		c1, c2, c3, c4, c5 := query.Get()
@@ -333,6 +364,9 @@ func TestQuery5(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
 }
 
 func TestQuery6(t *testing.T) {
@@ -379,7 +413,10 @@ func TestQuery6(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	assert.Equal(t, ecs.All(0, 2, 3, 4, 5, 8).Without(9), filter.Filter(&w))
+	f := ecs.All(0, 2, 3, 4, 5, 8).Without(9)
+	assert.Equal(t, &f, filter.Filter(&w))
+	filter.Register(&w)
+
 	query := filter.Query(&w)
 	for query.Next() {
 		c1, c2, c3, c4, c5, c6 := query.Get()
@@ -392,6 +429,9 @@ func TestQuery6(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
 }
 
 func TestQuery7(t *testing.T) {
@@ -445,7 +485,10 @@ func TestQuery7(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	assert.Equal(t, ecs.All(0, 2, 3, 4, 5, 6, 8).Without(9), filter.Filter(&w))
+	f := ecs.All(0, 2, 3, 4, 5, 6, 8).Without(9)
+	assert.Equal(t, &f, filter.Filter(&w))
+	filter.Register(&w)
+
 	query := filter.Query(&w)
 	for query.Next() {
 		c1, c2, c3, c4, c5, c6, c7 := query.Get()
@@ -459,6 +502,9 @@ func TestQuery7(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
 }
 
 func TestQuery8(t *testing.T) {
@@ -508,7 +554,10 @@ func TestQuery8(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	assert.Equal(t, ecs.All(0, 2, 3, 4, 5, 6, 7, 8).Without(9), filter.Filter(&w))
+	f := ecs.All(0, 2, 3, 4, 5, 6, 7, 8).Without(9)
+	assert.Equal(t, &f, filter.Filter(&w))
+	filter.Register(&w)
+
 	query := filter.Query(&w)
 	for query.Next() {
 		c1, c2, c3, c4, c5, c6, c7, c8 := query.Get()
@@ -523,6 +572,9 @@ func TestQuery8(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
 }
 
 func TestQueryGeneric(t *testing.T) {

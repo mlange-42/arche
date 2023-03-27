@@ -6,9 +6,10 @@ import (
 
 // compiledQuery is a helper for compiling a generic filter into a [ecs.Filter].
 type compiledQuery struct {
-	filter   ecs.MaskFilter
-	Ids      []ecs.ID
-	compiled bool
+	maskFilter ecs.MaskFilter
+	filter     ecs.Filter
+	Ids        []ecs.ID
+	compiled   bool
 }
 
 // Compile compiles a generic filter.
@@ -17,10 +18,11 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp)
 		return
 	}
 	q.Ids = toIds(w, include)
-	q.filter = ecs.MaskFilter{
+	q.maskFilter = ecs.MaskFilter{
 		Include: toMaskOptional(w, q.Ids, optional),
 		Exclude: toMask(w, exclude),
 	}
+	q.filter = &q.maskFilter
 	q.compiled = true
 }
 

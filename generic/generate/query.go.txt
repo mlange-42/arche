@@ -49,7 +49,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{ .Types }} {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query{{ .Index }}{{ .Types }}{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 		{{ .IDAssign }}
 	}
 }
@@ -58,9 +58,26 @@ func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{
 //
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter{{ .Index }}.Query].
-func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskFilter {
+func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return q.compiled.filter
+}
+
+// Register registers the filter for caching.
+//
+// See also [ecs.World.Cache].
+func (q *Filter{{ .Index }}{{ .Types }}) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.filter = w.Cache().Register(q.compiled.filter)
+}
+
+// Unregister un-registers the filter from caching.
+func (q *Filter{{ .Index }}{{ .Types }}) Unregister(w *ecs.World) {
+	if cached, ok := q.compiled.filter.(ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(&cached)
+		return
+	}
+	panic("can't unregister a filter that is not cached")
 }
 
 // Query{{ .Index }} is a generic query iterator for {{ .NumberStr }} components.
