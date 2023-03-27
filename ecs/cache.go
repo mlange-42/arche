@@ -47,11 +47,14 @@ func (c *Cache) Register(f Filter) CachedFilter {
 }
 
 // Unregister un-registers a filter.
-func (c *Cache) Unregister(f *CachedFilter) {
+//
+// Returns the original filter.
+func (c *Cache) Unregister(f *CachedFilter) Filter {
 	idx := c.indices[f.id]
 	if idx >= MaskTotalBits {
 		panic("no filter for id found to unregister")
 	}
+	filter := c.filters[idx].Filter
 	c.indices[f.id] = MaskTotalBits
 
 	last := len(c.filters) - 1
@@ -61,6 +64,8 @@ func (c *Cache) Unregister(f *CachedFilter) {
 	}
 	c.filters[last] = cacheEntry{}
 	c.filters = c.filters[:last]
+
+	return filter
 }
 
 func (c *Cache) get(f *CachedFilter) *cacheEntry {
