@@ -21,6 +21,7 @@ type TestStruct6 struct{ Val int32 }
 type TestStruct7 struct{ Val int32 }
 type TestStruct8 struct{ Val int32 }
 type TestStruct9 struct{ Val int32 }
+type TestStruct10 struct{ Val int32 }
 
 func RegisterAll(w *ecs.World) []ecs.ID {
 	_ = TestStruct0{1}
@@ -33,8 +34,9 @@ func RegisterAll(w *ecs.World) []ecs.ID {
 	_ = TestStruct7{1}
 	_ = TestStruct8{1}
 	_ = TestStruct9{1}
+	_ = TestStruct10{1}
 
-	ids := make([]ecs.ID, 10)
+	ids := make([]ecs.ID, 11)
 	ids[0] = ecs.ComponentID[TestStruct0](w)
 	ids[1] = ecs.ComponentID[TestStruct1](w)
 	ids[2] = ecs.ComponentID[TestStruct2](w)
@@ -45,6 +47,7 @@ func RegisterAll(w *ecs.World) []ecs.ID {
 	ids[7] = ecs.ComponentID[TestStruct7](w)
 	ids[8] = ecs.ComponentID[TestStruct8](w)
 	ids[9] = ecs.ComponentID[TestStruct9](w)
+	ids[10] = ecs.ComponentID[TestStruct10](w)
 
 	return ids
 }
