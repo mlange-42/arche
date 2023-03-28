@@ -60,22 +60,24 @@ type Query struct {
 	world          *World
 	archetypes     archetypes
 	access         *archetypeAccess
-	index          int
 	lockBit        uint8
-	count          int
+	isFiltered     bool
+	archIndex      int
 	entityIndex    uintptr
 	entityIndexMax uintptr
+	count          int
 }
 
 // newQuery creates a new Filter
-func newQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes) Query {
+func newQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes, isFiltered bool) Query {
 	return Query{
 		filter:     filter,
 		world:      world,
 		archetypes: archetypes,
-		index:      -1,
+		archIndex:  -1,
 		lockBit:    lockBit,
 		count:      -1,
+		isFiltered: isFiltered,
 	}
 }
 
@@ -84,10 +86,11 @@ func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint3
 	if start > 0 {
 		return Query{
 			filter:         dummyFilter{true},
+			isFiltered:     true,
 			world:          world,
 			archetypes:     batchArchetype{archetype, start},
 			access:         &archetype.archetypeAccess,
-			index:          0,
+			archIndex:      0,
 			lockBit:        lockBit,
 			count:          int(archetype.Len() - start),
 			entityIndex:    uintptr(start - 1),
@@ -96,9 +99,10 @@ func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint3
 	}
 	return Query{
 		filter:     dummyFilter{true},
+		isFiltered: true,
 		world:      world,
 		archetypes: batchArchetype{archetype, start},
-		index:      -1,
+		archIndex:  -1,
 		lockBit:    lockBit,
 		count:      int(archetype.Len()),
 	}
@@ -180,6 +184,25 @@ func (q *Query) Close() {
 	q.world.closeQuery(q)
 }
 
+// nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
+func (q *Query) nextArchetype() bool {
+	len := int(q.archetypes.Len()) - 1
+	f := q.isFiltered
+	for q.archIndex < len {
+		q.archIndex++
+		a := q.archetypes.Get(q.archIndex)
+		aLen := a.Len()
+		if (f || q.filter.Matches(a.Mask)) && aLen > 0 {
+			q.access = &a.archetypeAccess
+			q.entityIndex = 0
+			q.entityIndexMax = uintptr(aLen) - 1
+			return true
+		}
+	}
+	q.world.closeQuery(q)
+	return false
+}
+
 func (q *Query) stepArchetype(step uint32) (int, bool) {
 	q.entityIndex += uintptr(step)
 	if q.entityIndex <= q.entityIndexMax {
@@ -198,50 +221,4 @@ func (q *Query) countEntities() int {
 		}
 	}
 	return int(count)
-}
-
-// nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
-func (q *Query) nextArchetype() bool {
-	switch q.filter.(type) {
-	case *CachedFilter:
-		return q.nextArchetypeCached()
-	default:
-		return q.nextArchetypeFilter()
-	}
-}
-
-// nextArchetypeCached is called if the query is cached.
-func (q *Query) nextArchetypeCached() bool {
-	len := int(q.archetypes.Len()) - 1
-	for q.index < len {
-		q.index++
-		a := q.archetypes.Get(q.index)
-		aLen := a.Len()
-		if aLen > 0 {
-			q.access = &a.archetypeAccess
-			q.entityIndex = 0
-			q.entityIndexMax = uintptr(aLen) - 1
-			return true
-		}
-	}
-	q.world.closeQuery(q)
-	return false
-}
-
-// nextArchetypeFilter is called if the query is not cached.
-func (q *Query) nextArchetypeFilter() bool {
-	len := int(q.archetypes.Len()) - 1
-	for q.index < len {
-		q.index++
-		a := q.archetypes.Get(q.index)
-		aLen := a.Len()
-		if q.filter.Matches(a.Mask) && aLen > 0 {
-			q.access = &a.archetypeAccess
-			q.entityIndex = 0
-			q.entityIndexMax = uintptr(aLen) - 1
-			return true
-		}
-	}
-	q.world.closeQuery(q)
-	return false
 }
