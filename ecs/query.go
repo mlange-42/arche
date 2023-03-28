@@ -56,16 +56,16 @@ func (f *CachedFilter) Matches(bits Mask) bool {
 // [github.com/mlange-42/arche/generic.Query2], etc.
 // For advanced filtering, see package [github.com/mlange-42/arche/filter]
 type Query struct {
-	filter         Filter
-	world          *World
-	archetypes     archetypes
-	access         *archetypeAccess
-	lockBit        uint8
-	isFiltered     bool
-	archIndex      int
-	entityIndex    uintptr
-	entityIndexMax uintptr
-	count          int
+	world          *World           // The [World].
+	filter         Filter           // The filter used by the query.
+	archetypes     archetypes       // The query's archetypes (can be all, unfiltered archetypes).
+	access         *archetypeAccess // Access helper for the archetype currently being iterated.
+	lockBit        uint8            // The bit that was used to lock the [World] when the query was created.
+	isFiltered     bool             // Whether the list of archetypes is already filtered.
+	archIndex      int              // Iteration index of the current archetype.
+	entityIndex    uintptr          // Iteration index of the current [Entity] current archetype.
+	entityIndexMax uintptr          // Maximum entity index in the current archetype.
+	count          int              // Cached entity count.
 }
 
 // newQuery creates a new Filter
