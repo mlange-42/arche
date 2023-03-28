@@ -176,13 +176,9 @@ func (q *Query) Close() {
 
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
-	switch t := q.filter.(type) {
+	switch q.filter.(type) {
 	case *CachedFilter:
 		return q.nextArchetypeCached()
-	case Mask:
-		return q.nextArchetypeMask(t)
-	case *MaskFilter:
-		return q.nextArchetypeMaskFilter(t)
 	default:
 		return q.nextArchetypeFilter()
 	}
@@ -193,36 +189,6 @@ func (q *Query) nextArchetypeCached() bool {
 	for i := q.index + 1; i < len; i++ {
 		a := q.archetypes.Get(i)
 		if a.Len() > 0 {
-			q.index = i
-			q.archetypeIter = newArchetypeIter(a)
-			return true
-		}
-	}
-	q.index = len
-	q.world.closeQuery(q)
-	return false
-}
-
-func (q *Query) nextArchetypeMask(f Mask) bool {
-	len := int(q.archetypes.Len())
-	for i := q.index + 1; i < len; i++ {
-		a := q.archetypes.Get(i)
-		if f.Matches(a.Mask) && a.Len() > 0 {
-			q.index = i
-			q.archetypeIter = newArchetypeIter(a)
-			return true
-		}
-	}
-	q.index = len
-	q.world.closeQuery(q)
-	return false
-}
-
-func (q *Query) nextArchetypeMaskFilter(f *MaskFilter) bool {
-	len := int(q.archetypes.Len())
-	for i := q.index + 1; i < len; i++ {
-		a := q.archetypes.Get(i)
-		if f.Matches(a.Mask) && a.Len() > 0 {
 			q.index = i
 			q.archetypeIter = newArchetypeIter(a)
 			return true
