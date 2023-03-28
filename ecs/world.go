@@ -494,10 +494,10 @@ func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(*CachedFilter); ok {
 		archetypes := &w.filterCache.get(cached).Archetypes
-		return newQuery(w, cached, l, archetypes)
+		return newQuery(w, cached, l, archetypes, true)
 	}
 
-	return newQuery(w, filter, l, &w.archetypes)
+	return newQuery(w, filter, l, &w.archetypes, false)
 }
 
 // Resources of the world.
@@ -809,7 +809,7 @@ func (w *World) resourceID(tp reflect.Type) ResID {
 
 // closeQuery closes a query and unlocks the world.
 func (w *World) closeQuery(query *Query) {
-	query.index = -2
+	query.archIndex = -2
 	w.unlock(query.lockBit)
 
 	if w.listener != nil {

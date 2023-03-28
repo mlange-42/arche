@@ -56,47 +56,53 @@ func (f *CachedFilter) Matches(bits Mask) bool {
 // [github.com/mlange-42/arche/generic.Query2], etc.
 // For advanced filtering, see package [github.com/mlange-42/arche/filter]
 type Query struct {
-	archetypeIter
-	filter     Filter
-	world      *World
-	archetypes archetypes
-	index      int
-	lockBit    uint8
-	count      int
+	filter         Filter
+	world          *World
+	archetypes     archetypes
+	access         *archetypeAccess
+	lockBit        uint8
+	isFiltered     bool
+	archIndex      int
+	entityIndex    uintptr
+	entityIndexMax uintptr
+	count          int
 }
 
 // newQuery creates a new Filter
-func newQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes) Query {
+func newQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes, isFiltered bool) Query {
 	return Query{
 		filter:     filter,
 		world:      world,
 		archetypes: archetypes,
-		index:      -1,
+		archIndex:  -1,
 		lockBit:    lockBit,
 		count:      -1,
+		isFiltered: isFiltered,
 	}
 }
 
 // newQuery creates a query on a single archetype
 func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint32) Query {
 	if start > 0 {
-		iter := newArchetypeIter(archetype)
-		iter.index = uintptr(start - 1)
 		return Query{
-			filter:        dummyFilter{true},
-			world:         world,
-			archetypes:    batchArchetype{archetype, start},
-			index:         0,
-			lockBit:       lockBit,
-			count:         int(archetype.Len() - start),
-			archetypeIter: iter,
+			filter:         dummyFilter{true},
+			isFiltered:     true,
+			world:          world,
+			archetypes:     batchArchetype{archetype, start},
+			access:         &archetype.archetypeAccess,
+			archIndex:      0,
+			lockBit:        lockBit,
+			count:          int(archetype.Len() - start),
+			entityIndex:    uintptr(start - 1),
+			entityIndexMax: uintptr(archetype.Len()) - 1,
 		}
 	}
 	return Query{
 		filter:     dummyFilter{true},
+		isFiltered: true,
 		world:      world,
 		archetypes: batchArchetype{archetype, start},
-		index:      -1,
+		archIndex:  -1,
 		lockBit:    lockBit,
 		count:      int(archetype.Len()),
 	}
@@ -104,11 +110,27 @@ func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint3
 
 // Next proceeds to the next [Entity] in the Query.
 func (q *Query) Next() bool {
-	if q.archetypeIter.Next() {
+	if q.entityIndex < q.entityIndexMax {
+		q.entityIndex++
 		return true
 	}
 	// outline to allow inlining of the fast path
 	return q.nextArchetype()
+}
+
+// Has returns whether the current entity has the given component.
+func (q *Query) Has(comp ID) bool {
+	return q.access.HasComponent(comp)
+}
+
+// Get returns the pointer to the given component at the iterator's position.
+func (q *Query) Get(comp ID) unsafe.Pointer {
+	return q.access.Get(q.entityIndex, comp)
+}
+
+// Entity returns the entity at the iterator's position.
+func (q *Query) Entity() Entity {
+	return q.access.GetEntity(q.entityIndex)
 }
 
 // Step advances the query iterator by the given number of entities.
@@ -122,7 +144,7 @@ func (q *Query) Step(step int) bool {
 	}
 	var ok bool
 	for {
-		step, ok = q.archetypeIter.Step(uint32(step))
+		step, ok = q.stepArchetype(uint32(step))
 		if ok {
 			return true
 		}
@@ -147,18 +169,6 @@ func (q *Query) Count() int {
 	return q.count
 }
 
-func (q *Query) countEntities() int {
-	len := int(q.archetypes.Len())
-	count := uint32(0)
-	for i := 0; i < len; i++ {
-		a := q.archetypes.Get(i)
-		if q.filter.Matches(a.Mask) {
-			count += a.Len()
-		}
-	}
-	return int(count)
-}
-
 // Mask returns the archetype [BitMask] for the [Entity] at the iterator's current position.
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
@@ -176,90 +186,39 @@ func (q *Query) Close() {
 
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
-	switch q.filter.(type) {
-	case *CachedFilter:
-		return q.nextArchetypeCached()
-	default:
-		return q.nextArchetypeFilter()
-	}
-}
-
-// nextArchetypeCached is called if the query is cached.
-func (q *Query) nextArchetypeCached() bool {
-	len := int(q.archetypes.Len())
-	for i := q.index + 1; i < len; i++ {
-		a := q.archetypes.Get(i)
-		if a.Len() > 0 {
-			q.index = i
-			q.archetypeIter = newArchetypeIter(a)
+	len := int(q.archetypes.Len()) - 1
+	f := q.isFiltered
+	for q.archIndex < len {
+		q.archIndex++
+		a := q.archetypes.Get(q.archIndex)
+		aLen := a.Len()
+		if (f || q.filter.Matches(a.Mask)) && aLen > 0 {
+			q.access = &a.archetypeAccess
+			q.entityIndex = 0
+			q.entityIndexMax = uintptr(aLen) - 1
 			return true
 		}
 	}
-	q.index = len
 	q.world.closeQuery(q)
 	return false
 }
 
-// nextArchetypeFilter is called if the query is not cached.
-func (q *Query) nextArchetypeFilter() bool {
-	len := int(q.archetypes.Len())
-	for i := q.index + 1; i < len; i++ {
-		a := q.archetypes.Get(i)
-		if q.filter.Matches(a.Mask) && a.Len() > 0 {
-			q.index = i
-			q.archetypeIter = newArchetypeIter(a)
-			return true
-		}
-	}
-	q.index = len
-	q.world.closeQuery(q)
-	return false
-}
-
-// archetypeIter is an iterator ovr a single archetype.
-type archetypeIter struct {
-	access *archetypeAccess
-	length uintptr
-	index  uintptr
-}
-
-// newArchetypeIter creates a new archetypeIter.
-func newArchetypeIter(arch *archetype) archetypeIter {
-	return archetypeIter{
-		access: &arch.archetypeAccess,
-		length: uintptr(arch.Len()),
-	}
-}
-
-// Next proceeds to the next entity in the archetype, and returns whether this was successful/possible.
-func (it *archetypeIter) Next() bool {
-	it.index++
-	return it.index < it.length
-}
-
-// Step proceeds/steps by the given number of entities.
-func (it *archetypeIter) Step(count uint32) (int, bool) {
-	if it.length == 0 {
-		return int(count - 1), false
-	}
-	it.index += uintptr(count)
-	if it.index < it.length {
+func (q *Query) stepArchetype(step uint32) (int, bool) {
+	q.entityIndex += uintptr(step)
+	if q.entityIndex <= q.entityIndexMax {
 		return 0, true
 	}
-	return int(it.index) - int(it.length), false
+	return int(q.entityIndex) - int(q.entityIndexMax) - 1, false
 }
 
-// Has returns whether the current entity has the given component.
-func (it *archetypeIter) Has(comp ID) bool {
-	return it.access.HasComponent(comp)
-}
-
-// Get returns the pointer to the given component at the iterator's position.
-func (it *archetypeIter) Get(comp ID) unsafe.Pointer {
-	return it.access.Get(it.index, comp)
-}
-
-// Entity returns the entity at the iterator's position.
-func (it *archetypeIter) Entity() Entity {
-	return it.access.GetEntity(it.index)
+func (q *Query) countEntities() int {
+	len := int(q.archetypes.Len())
+	count := uint32(0)
+	for i := 0; i < len; i++ {
+		a := q.archetypes.Get(i)
+		if q.filter.Matches(a.Mask) {
+			count += a.Len()
+		}
+	}
+	return int(count)
 }
