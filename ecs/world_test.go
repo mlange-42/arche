@@ -917,7 +917,6 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[componentRegistry[ID]]("componentRegistry")
 	printTypeSize[bitPool]()
 	printTypeSize[Query]()
-	printTypeSize[archetypeIter]()
 	printTypeSize[Resources]()
 	printTypeSizeName[reflect.Value]("reflect.Value")
 	printTypeSize[EntityEvent]()
