@@ -32,6 +32,7 @@
 * Speed up copying entity to archetype by getting entity pointer without reflection (#166)
 * Avoid slice allocations in generic mapper methods (#170)
 * Avoid type checks in query when iterating archetypes (#179)
+* Speed up counting entities in queries with a cached filter (#182)
 
 ### Bugfixes
 
