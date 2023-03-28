@@ -16,8 +16,8 @@ var entityIndexSize = reflect.TypeOf(entityIndex{}).Size()
 //
 // Entities should only be created via the [World], using [World.NewEntity] or [World.NewEntityWith].
 type Entity struct {
-	id  eid
-	gen uint16
+	id  eid    // Entity ID
+	gen uint16 // Entity generation
 }
 
 // newEntity creates a new Entity.
@@ -37,6 +37,6 @@ func (e Entity) IsZero() bool {
 
 // entityIndex indicates where an entity is currently stored.
 type entityIndex struct {
-	arch  *archetype
-	index uintptr
+	arch  *archetype // Entity's current archetype
+	index uintptr    // Entity's current index in the archetype
 }

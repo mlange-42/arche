@@ -1,9 +1,10 @@
 package ecs
 
+// Cache entry for a [Filter].
 type cacheEntry struct {
-	ID         ID
-	Filter     Filter
-	Archetypes pagedPointerArr32[archetype]
+	ID         ID                           // Filter ID.
+	Filter     Filter                       // The underlying filter.
+	Archetypes pagedPointerArr32[archetype] // Archetypes matching the filter.
 }
 
 // Cache provides [Filter] caching to speed up queries.
@@ -19,10 +20,10 @@ type cacheEntry struct {
 //
 // The overhead of tracking cached filters is very low, as updates are required only when new archetypes are created.
 type Cache struct {
-	bitPool       bitPool
-	indices       []int
-	filters       []cacheEntry
-	getArchetypes func(f Filter) pagedPointerArr32[archetype]
+	indices       []int                                       // Mapping from filter IDs to indices in filters
+	filters       []cacheEntry                                // The cached filters, indexed by indices
+	getArchetypes func(f Filter) pagedPointerArr32[archetype] // Callback for getting archetypes for a new filter from the world
+	bitPool       bitPool                                     // Pool for filter IDs
 }
 
 // newCache creates a new [Cache].
@@ -78,6 +79,9 @@ func (c *Cache) Unregister(f *CachedFilter) Filter {
 	return filter
 }
 
+// Returns the [cacheEntry] for the given filter.
+//
+// Panics if there is no entry for the filter's ID.
 func (c *Cache) get(f *CachedFilter) *cacheEntry {
 	idx := c.indices[f.id]
 	if idx < MaskTotalBits {
@@ -86,6 +90,9 @@ func (c *Cache) get(f *CachedFilter) *cacheEntry {
 	panic("no filter for id found")
 }
 
+// Adds an archetype.
+//
+// Iterates over all filters and adds the archetype to the resp. entry where the filter matches.
 func (c *Cache) addArchetype(arch *archetype) {
 	ln := len(c.filters)
 	for i := 0; i < ln; i++ {

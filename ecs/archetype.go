@@ -13,10 +13,10 @@ var layoutSize = unsafe.Sizeof(layout{})
 
 // archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
-	mask      Mask
-	archetype *archetype
-	toAdd     []*archetypeNode
-	toRemove  []*archetypeNode
+	mask      Mask             // Mask of the archetype
+	archetype *archetype       // The archetype
+	toAdd     []*archetypeNode // Mapping from component ID to add to the resulting archetype
+	toRemove  []*archetypeNode // Mapping from component ID to remove to the resulting archetype
 }
 
 // Creates a new archetypeNode
@@ -77,9 +77,9 @@ func (s batchArchetype) Len() int {
 
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
-	basePointer   unsafe.Pointer
-	entityPointer unsafe.Pointer
-	Mask          Mask
+	basePointer   unsafe.Pointer // Pointer to the first component column layout.
+	entityPointer unsafe.Pointer // Pointer to the entity storage
+	Mask          Mask           // Archetype's mask
 }
 
 // GetEntity returns the entity at the given index
@@ -104,8 +104,8 @@ func (a *archetypeAccess) getLayout(id ID) *layout {
 
 // layout specification of a component column.
 type layout struct {
-	pointer  unsafe.Pointer
-	itemSize uintptr
+	pointer  unsafe.Pointer // Pointer to the first element in the component column.
+	itemSize uintptr        // Component/step size
 }
 
 // Get returns a pointer to the item at the given index.
@@ -128,8 +128,8 @@ type archetype struct {
 	len               uint32          // Current number of entities
 	cap               uint32          // Current capacity
 	capacityIncrement uint32          // Capacity increment
-	zeroValue         []byte
-	zeroPointer       unsafe.Pointer
+	zeroValue         []byte          // Used as source for setting storage to zero
+	zeroPointer       unsafe.Pointer  // Points to zeroValue for fast access
 }
 
 // Init initializes an archetype
