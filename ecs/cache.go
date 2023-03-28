@@ -25,6 +25,7 @@ type Cache struct {
 	getArchetypes func(f Filter) pagedPointerArr32[archetype]
 }
 
+// newCache creates a new [Cache].
 func newCache() Cache {
 	indices := make([]int, MaskTotalBits)
 	for i := 0; i < MaskTotalBits; i++ {

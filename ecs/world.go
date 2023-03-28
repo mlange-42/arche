@@ -784,6 +784,7 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 	return arch
 }
 
+// Returns all archetypes that match the given filter. Used by [Cache].
 func (w *World) getArchetypes(filter Filter) pagedPointerArr32[archetype] {
 	arches := pagedPointerArr32[archetype]{}
 	len := int(w.archetypes.Len())

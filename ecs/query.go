@@ -184,6 +184,7 @@ func (q *Query) nextArchetype() bool {
 	}
 }
 
+// nextArchetypeCached is called if the query is cached.
 func (q *Query) nextArchetypeCached() bool {
 	len := int(q.archetypes.Len())
 	for i := q.index + 1; i < len; i++ {
@@ -199,6 +200,7 @@ func (q *Query) nextArchetypeCached() bool {
 	return false
 }
 
+// nextArchetypeFilter is called if the query is not cached.
 func (q *Query) nextArchetypeFilter() bool {
 	len := int(q.archetypes.Len())
 	for i := q.index + 1; i < len; i++ {
