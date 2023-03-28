@@ -189,12 +189,11 @@ func (q *Query) Close() {
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
 	len := int(q.archetypes.Len()) - 1
-	f := q.isFiltered
 	for q.archIndex < len {
 		q.archIndex++
 		a := q.archetypes.Get(q.archIndex)
 		aLen := a.Len()
-		if (f || q.filter.Matches(a.Mask)) && aLen > 0 {
+		if (q.isFiltered || q.filter.Matches(a.Mask)) && aLen > 0 {
 			q.access = &a.archetypeAccess
 			q.entityIndex = 0
 			q.entityIndexMax = uintptr(aLen) - 1
@@ -215,10 +214,10 @@ func (q *Query) stepArchetype(step uint32) (int, bool) {
 
 func (q *Query) countEntities() int {
 	len := int(q.archetypes.Len())
-	count := uint32(0)
+	var count uint32 = 0
 	for i := 0; i < len; i++ {
 		a := q.archetypes.Get(i)
-		if q.filter.Matches(a.Mask) {
+		if q.isFiltered || q.filter.Matches(a.Mask) {
 			count += a.Len()
 		}
 	}
