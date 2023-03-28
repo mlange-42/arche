@@ -38,6 +38,8 @@ func (f dummyFilter) Matches(bits Mask) bool {
 }
 
 // CachedFilter is a filter that is cached by the world.
+//
+// See [Cache] for details on filter caching.
 type CachedFilter struct {
 	filter Filter
 	id     ID

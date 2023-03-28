@@ -7,18 +7,25 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
-// ComponentID returns the [ID] for a component type via generics. Registers the type if it is not already registered.
+// ComponentID returns the [ID] for a component type via generics.
+// Registers the type if it is not already registered.
+//
+//	posID := ComponentID[Position](&world)
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.componentID(tp)
 }
 
-// TypeID returns the [ID] for a component type. Registers the type if it is not already registered.
+// TypeID returns the [ID] for a component type.
+// Registers the type if it is not already registered.
 func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
-// ResourceID returns the [ResID] for a resource type via generics. Registers the type if it is not already registered.
+// ResourceID returns the [ResID] for a resource type via generics.
+// Registers the type if it is not already registered.
+//
+//	resID := ResourceID[MyResource](&world)
 func ResourceID[T any](w *World) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.resourceID(tp)
@@ -31,6 +38,8 @@ func ResourceID[T any](w *World) ResID {
 // Uses reflection. For more efficient access, see [World.Resources],
 // and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 // These methods are more than 20 times faster than the GetResource function.
+//
+//	res := GetResource[MyResource](&world)
 func GetResource[T any](w *World) *T {
 	return w.resources.Get(ResourceID[T](w)).(*T)
 }
@@ -517,7 +526,7 @@ func (w *World) Batch() *Batch {
 
 // Cache returns the [Cache] of the world, for registering filters.
 //
-// See [Cache] for details.
+// See [Cache] for details on filter caching.
 func (w *World) Cache() *Cache {
 	if w.filterCache.getArchetypes == nil {
 		w.filterCache.getArchetypes = w.getArchetypes
