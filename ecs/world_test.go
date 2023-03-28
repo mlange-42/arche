@@ -865,6 +865,7 @@ func Test1000Archetypes(t *testing.T) {
 	_ = testStruct7{1}
 	_ = testStruct8{1}
 	_ = testStruct9{1}
+	_ = testStruct10{1}
 
 	w := NewWorld()
 
@@ -920,6 +921,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[Resources]()
 	printTypeSizeName[reflect.Value]("reflect.Value")
 	printTypeSize[EntityEvent]()
+	printTypeSize[Cache]()
 }
 
 func printTypeSize[T any]() {

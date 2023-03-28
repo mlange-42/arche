@@ -107,6 +107,49 @@ func TestQuery(t *testing.T) {
 	assert.Equal(t, 0, cnt)
 }
 
+func TestQueryCached(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[position](&w)
+	velID := ComponentID[velocity](&w)
+
+	filterPos := w.Cache().Register(All(posID))
+	filterPosVel := w.Cache().Register(All(posID, velID))
+
+	q := w.Query(&filterPos)
+	assert.Equal(t, 0, q.Count())
+	q.Close()
+
+	q = w.Query(&filterPosVel)
+	assert.Equal(t, 0, q.Count())
+	q.Close()
+
+	w.Batch().NewEntities(10, posID)
+	w.Batch().NewEntities(10, velID)
+	w.Batch().NewEntities(10, posID, velID)
+
+	q = w.Query(&filterPos)
+	assert.Equal(t, 20, q.Count())
+	q.Close()
+
+	q = w.Query(&filterPosVel)
+	assert.Equal(t, 10, q.Count())
+	q.Close()
+
+	w.Batch().NewEntities(10, posID)
+
+	q = w.Query(&filterPos)
+	assert.Equal(t, 30, q.Count())
+
+	for q.Next() {
+	}
+
+	filterVel := w.Cache().Register(All(velID))
+	q = w.Query(&filterVel)
+	assert.Equal(t, 20, q.Count())
+	q.Close()
+}
+
 func TestQueryCount(t *testing.T) {
 	w := NewWorld()
 

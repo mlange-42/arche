@@ -43,7 +43,7 @@ func (q *Filter0) Without(mask ...Comp) *Filter0 {
 func (q *Filter0) Query(w *ecs.World) Query0 {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query0{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 	}
 }
 
@@ -53,7 +53,27 @@ func (q *Filter0) Query(w *ecs.World) Query0 {
 // For the intended generic use, however, generate a generic query with [Filter0.Query].
 func (q *Filter0) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter0) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
+	q.compiled.filter = &q.compiled.cachedFilter
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter0) Unregister(w *ecs.World) {
+	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
 }
 
 // Query0 is a generic query iterator for zero components.
@@ -115,7 +135,7 @@ func (q *Filter1[A]) Without(mask ...Comp) *Filter1[A] {
 func (q *Filter1[A]) Query(w *ecs.World) Query1[A] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query1[A]{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 		id0:   q.compiled.Ids[0],
 	}
 }
@@ -126,7 +146,27 @@ func (q *Filter1[A]) Query(w *ecs.World) Query1[A] {
 // For the intended generic use, however, generate a generic query with [Filter1.Query].
 func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter1[A]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
+	q.compiled.filter = &q.compiled.cachedFilter
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter1[A]) Unregister(w *ecs.World) {
+	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
 }
 
 // Query1 is a generic query iterator for one components.
@@ -197,7 +237,7 @@ func (q *Filter2[A, B]) Without(mask ...Comp) *Filter2[A, B] {
 func (q *Filter2[A, B]) Query(w *ecs.World) Query2[A, B] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query2[A, B]{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 		id0:   q.compiled.Ids[0],
 		id1:   q.compiled.Ids[1],
 	}
@@ -209,7 +249,27 @@ func (q *Filter2[A, B]) Query(w *ecs.World) Query2[A, B] {
 // For the intended generic use, however, generate a generic query with [Filter2.Query].
 func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter2[A, B]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
+	q.compiled.filter = &q.compiled.cachedFilter
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter2[A, B]) Unregister(w *ecs.World) {
+	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
 }
 
 // Query2 is a generic query iterator for two components.
@@ -283,7 +343,7 @@ func (q *Filter3[A, B, C]) Without(mask ...Comp) *Filter3[A, B, C] {
 func (q *Filter3[A, B, C]) Query(w *ecs.World) Query3[A, B, C] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query3[A, B, C]{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 		id0:   q.compiled.Ids[0],
 		id1:   q.compiled.Ids[1],
 		id2:   q.compiled.Ids[2],
@@ -296,7 +356,27 @@ func (q *Filter3[A, B, C]) Query(w *ecs.World) Query3[A, B, C] {
 // For the intended generic use, however, generate a generic query with [Filter3.Query].
 func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter3[A, B, C]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
+	q.compiled.filter = &q.compiled.cachedFilter
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter3[A, B, C]) Unregister(w *ecs.World) {
+	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
 }
 
 // Query3 is a generic query iterator for three components.
@@ -373,7 +453,7 @@ func (q *Filter4[A, B, C, D]) Without(mask ...Comp) *Filter4[A, B, C, D] {
 func (q *Filter4[A, B, C, D]) Query(w *ecs.World) Query4[A, B, C, D] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query4[A, B, C, D]{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 		id0:   q.compiled.Ids[0],
 		id1:   q.compiled.Ids[1],
 		id2:   q.compiled.Ids[2],
@@ -387,7 +467,27 @@ func (q *Filter4[A, B, C, D]) Query(w *ecs.World) Query4[A, B, C, D] {
 // For the intended generic use, however, generate a generic query with [Filter4.Query].
 func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter4[A, B, C, D]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
+	q.compiled.filter = &q.compiled.cachedFilter
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter4[A, B, C, D]) Unregister(w *ecs.World) {
+	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
 }
 
 // Query4 is a generic query iterator for four components.
@@ -467,7 +567,7 @@ func (q *Filter5[A, B, C, D, E]) Without(mask ...Comp) *Filter5[A, B, C, D, E] {
 func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World) Query5[A, B, C, D, E] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query5[A, B, C, D, E]{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 		id0:   q.compiled.Ids[0],
 		id1:   q.compiled.Ids[1],
 		id2:   q.compiled.Ids[2],
@@ -482,7 +582,27 @@ func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World) Query5[A, B, C, D, E] {
 // For the intended generic use, however, generate a generic query with [Filter5.Query].
 func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter5[A, B, C, D, E]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
+	q.compiled.filter = &q.compiled.cachedFilter
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter5[A, B, C, D, E]) Unregister(w *ecs.World) {
+	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
 }
 
 // Query5 is a generic query iterator for five components.
@@ -565,7 +685,7 @@ func (q *Filter6[A, B, C, D, E, F]) Without(mask ...Comp) *Filter6[A, B, C, D, E
 func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World) Query6[A, B, C, D, E, F] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query6[A, B, C, D, E, F]{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 		id0:   q.compiled.Ids[0],
 		id1:   q.compiled.Ids[1],
 		id2:   q.compiled.Ids[2],
@@ -581,7 +701,27 @@ func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World) Query6[A, B, C, D, E, F]
 // For the intended generic use, however, generate a generic query with [Filter6.Query].
 func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter6[A, B, C, D, E, F]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
+	q.compiled.filter = &q.compiled.cachedFilter
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter6[A, B, C, D, E, F]) Unregister(w *ecs.World) {
+	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
 }
 
 // Query6 is a generic query iterator for six components.
@@ -667,7 +807,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Without(mask ...Comp) *Filter7[A, B, C, D
 func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World) Query7[A, B, C, D, E, F, G] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query7[A, B, C, D, E, F, G]{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 		id0:   q.compiled.Ids[0],
 		id1:   q.compiled.Ids[1],
 		id2:   q.compiled.Ids[2],
@@ -684,7 +824,27 @@ func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World) Query7[A, B, C, D, E,
 // For the intended generic use, however, generate a generic query with [Filter7.Query].
 func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter7[A, B, C, D, E, F, G]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
+	q.compiled.filter = &q.compiled.cachedFilter
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter7[A, B, C, D, E, F, G]) Unregister(w *ecs.World) {
+	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
 }
 
 // Query7 is a generic query iterator for seven components.
@@ -773,7 +933,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask ...Comp) *Filter8[A, B, C
 func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World) Query8[A, B, C, D, E, F, G, H] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
 	return Query8[A, B, C, D, E, F, G, H]{
-		Query: w.Query(&q.compiled.filter),
+		Query: w.Query(q.compiled.filter),
 		id0:   q.compiled.Ids[0],
 		id1:   q.compiled.Ids[1],
 		id2:   q.compiled.Ids[2],
@@ -791,7 +951,27 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World) Query8[A, B, C, D,
 // For the intended generic use, however, generate a generic query with [Filter8.Query].
 func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskFilter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude)
-	return q.compiled.filter
+	return q.compiled.maskFilter
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter8[A, B, C, D, E, F, G, H]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
+	q.compiled.filter = &q.compiled.cachedFilter
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter8[A, B, C, D, E, F, G, H]) Unregister(w *ecs.World) {
+	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
+		q.compiled.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
 }
 
 // Query8 is a generic query iterator for eight components.

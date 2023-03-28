@@ -18,7 +18,8 @@
 * Generic mappers (`Map1`, ...) have methods `NewEntities`, `NewEntitiesWith` and `RemoveEntities` for batch operations (#151)
 * Batch-creation methods (ID-based and generic) have variants like `NewEntitiesQuery` that return a query over the created entities (#152)
 * Notification during batch-creation is delayed until the resp. query is closed (#157)
-* Match-remove methods (`RemoveEntities()`) return the number of removed entities (#173)
+* Batch-remove methods (`RemoveEntities()`) return the number of removed entities (#173)
+* Filters can be cached and tracked by the `World` to speed up queries when there are many archetypes (#178)
 
 ### Performance
 

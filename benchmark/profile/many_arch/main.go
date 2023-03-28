@@ -50,7 +50,7 @@ func run(rounds, iters, entities int) {
 			}
 		}
 
-		filter := ecs.All(6)
+		var filter ecs.Filter = ecs.All(6)
 		for j := 0; j < iters; j++ {
 			query := world.Query(filter)
 			for query.Next() {

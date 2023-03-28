@@ -37,6 +37,17 @@ func (f dummyFilter) Matches(bits Mask) bool {
 	return f.Value
 }
 
+// CachedFilter is a filter that is cached by the world.
+type CachedFilter struct {
+	filter Filter
+	id     ID
+}
+
+// Matches matches a filter against a mask.
+func (f *CachedFilter) Matches(bits Mask) bool {
+	return f.filter.Matches(bits)
+}
+
 // Query is an iterator to iterate entities, filtered by a [Filter].
 //
 // Create queries through the [World] using [World.Query].
@@ -165,20 +176,20 @@ func (q *Query) Close() {
 
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
-	if mask, ok := q.filter.(Mask); ok {
-		return q.nextArchetypeMask(mask)
+	switch q.filter.(type) {
+	case *CachedFilter:
+		return q.nextArchetypeCached()
+	default:
+		return q.nextArchetypeFilter()
 	}
-	if mask, ok := q.filter.(*MaskFilter); ok {
-		return q.nextArchetypeMaskFilter(mask)
-	}
-	return q.nextArchetypeFilter()
 }
 
-func (q *Query) nextArchetypeMask(f Mask) bool {
+// nextArchetypeCached is called if the query is cached.
+func (q *Query) nextArchetypeCached() bool {
 	len := int(q.archetypes.Len())
 	for i := q.index + 1; i < len; i++ {
 		a := q.archetypes.Get(i)
-		if f.Matches(a.Mask) && a.Len() > 0 {
+		if a.Len() > 0 {
 			q.index = i
 			q.archetypeIter = newArchetypeIter(a)
 			return true
@@ -189,21 +200,7 @@ func (q *Query) nextArchetypeMask(f Mask) bool {
 	return false
 }
 
-func (q *Query) nextArchetypeMaskFilter(f *MaskFilter) bool {
-	len := int(q.archetypes.Len())
-	for i := q.index + 1; i < len; i++ {
-		a := q.archetypes.Get(i)
-		if f.Matches(a.Mask) && a.Len() > 0 {
-			q.index = i
-			q.archetypeIter = newArchetypeIter(a)
-			return true
-		}
-	}
-	q.index = len
-	q.world.closeQuery(q)
-	return false
-}
-
+// nextArchetypeFilter is called if the query is not cached.
 func (q *Query) nextArchetypeFilter() bool {
 	len := int(q.archetypes.Len())
 	for i := q.index + 1; i < len; i++ {
