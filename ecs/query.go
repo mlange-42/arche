@@ -4,52 +4,6 @@ import (
 	"unsafe"
 )
 
-// Filter is the interface for logic filters.
-// Filters are required to query entities using [World.Query].
-//
-// See [Mask] and [MaskFilter] for basic filters.
-// For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
-// For advanced filtering, see package [github.com/mlange-42/arche/filter].
-type Filter interface {
-	// Matches the filter against a bitmask, i.e. a component composition.
-	Matches(bits Mask) bool
-}
-
-// MaskFilter is a [Filter] for including and excluding certain components.
-// See [All] and [Mask.Without].
-type MaskFilter struct {
-	Include Mask // Components to include.
-	Exclude Mask // Components to exclude.
-}
-
-// Matches matches a filter against a mask.
-func (f *MaskFilter) Matches(bits Mask) bool {
-	return bits.Contains(f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
-}
-
-// dummyFilter is a filter that returns either true or false, irrespective of the matched mask.
-//
-// Used for the [Query] returned by entity batch creation methods.
-type dummyFilter struct{ Value bool }
-
-// Matches matches a filter against a mask.
-func (f dummyFilter) Matches(bits Mask) bool {
-	return f.Value
-}
-
-// CachedFilter is a filter that is cached by the world.
-//
-// See [Cache] for details on filter caching.
-type CachedFilter struct {
-	filter Filter
-	id     ID
-}
-
-// Matches matches a filter against a mask.
-func (f *CachedFilter) Matches(bits Mask) bool {
-	return f.filter.Matches(bits)
-}
-
 // Query is an iterator to iterate entities, filtered by a [Filter].
 //
 // Create queries through the [World] using [World.Query].
@@ -87,7 +41,7 @@ func newQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes,
 func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint32) Query {
 	if start > 0 {
 		return Query{
-			filter:         dummyFilter{true},
+			filter:         nil,
 			isFiltered:     true,
 			world:          world,
 			archetypes:     batchArchetype{archetype, start},
@@ -100,7 +54,7 @@ func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint3
 		}
 	}
 	return Query{
-		filter:     dummyFilter{true},
+		filter:     nil,
 		isFiltered: true,
 		world:      world,
 		archetypes: batchArchetype{archetype, start},
