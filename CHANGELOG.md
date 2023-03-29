@@ -20,6 +20,7 @@
 * Notification during batch-creation is delayed until the resp. query is closed (#157)
 * Batch-remove methods (`RemoveEntities()`) return the number of removed entities (#173)
 * Filters can be cached and tracked by the `World` to speed up queries when there are many archetypes (#178)
+* Function `AddResource[T](*World)` returns the ID of the resource (#183)
 
 ### Performance
 
@@ -42,6 +43,7 @@
 ### Documentation
 
 * Adds an example for batch-creation and batch-removal of entities (#173)
+* Adds code examples to most public types, methods and functions (#183)
 
 ### Other
 

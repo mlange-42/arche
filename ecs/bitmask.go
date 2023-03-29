@@ -10,6 +10,15 @@ const wordSize = 64
 
 // Mask is a 128 bit bitmask.
 // It is also a [Filter] for including certain components (see [All] and [Mask.Without]).
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	filter := All(posID, velID)
+//	query := world.Query(filter)
 type Mask struct {
 	Lo uint64 // First 64 bits of the mask
 	Hi uint64 // Second 64 bits of the mask
@@ -36,6 +45,15 @@ func (b Mask) Matches(bits Mask) bool {
 
 // Without creates a [MaskFilter] which filters for including the mask's components,
 // and excludes the components given as arguments.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	filter := All(posID).Without(velID)
+//	query := world.Query(filter)
 func (b Mask) Without(comps ...ID) MaskFilter {
 	return MaskFilter{
 		Include: b,
@@ -45,6 +63,15 @@ func (b Mask) Without(comps ...ID) MaskFilter {
 
 // Exact creates a [MaskFilter] which filters for exactly the mask's components.
 // Matches only entities that have exactly the given components, and no other.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	filter := All(posID, velID).Exact()
+//	query := world.Query(filter)
 func (b Mask) Exact() MaskFilter {
 	return MaskFilter{
 		Include: b,

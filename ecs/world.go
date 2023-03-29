@@ -11,6 +11,9 @@ import (
 // ComponentID returns the [ID] for a component type via generics.
 // Registers the type if it is not already registered.
 //
+// # Example
+//
+//	world := NewWorld()
 //	posID := ComponentID[Position](&world)
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
@@ -19,6 +22,11 @@ func ComponentID[T any](w *World) ID {
 
 // TypeID returns the [ID] for a component type.
 // Registers the type if it is not already registered.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := TypeID(&world, reflect.TypeOf(Position{}))
 func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
@@ -26,6 +34,9 @@ func TypeID(w *World, tp reflect.Type) ID {
 // ResourceID returns the [ResID] for a resource type via generics.
 // Registers the type if it is not already registered.
 //
+// # Example
+//
+//	world := NewWorld()
 //	resID := ResourceID[MyResource](&world)
 func ResourceID[T any](w *World) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
@@ -40,19 +51,36 @@ func ResourceID[T any](w *World) ResID {
 // and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 // These methods are more than 20 times faster than the GetResource function.
 //
+// # Example
+//
+//	world := NewWorld()
+//
+//	myRes := MyRes{}
+//	AddResource(&world, &myRes)
 //	res := GetResource[MyResource](&world)
 func GetResource[T any](w *World) *T {
 	return w.resources.Get(ResourceID[T](w)).(*T)
 }
 
 // AddResource adds a resource to the world.
+// Returns the ID for the added resource.
 //
 // Panics if there is already such a resource.
 //
 // Uses reflection. For more efficient access, see [World.AddResource],
 // and [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
-func AddResource[T any](w *World, res *T) {
-	w.resources.Add(ResourceID[T](w), res)
+//
+// # Example
+//
+//	world := NewWorld()
+//
+//	myRes := MyRes{}
+//	AddResource(&world, &myRes)
+//	res := GetResource[MyResource](&world)
+func AddResource[T any](w *World, res *T) ResID {
+	id := ResourceID[T](w)
+	w.resources.Add(id, res)
+	return id
 }
 
 // World is the central type holding [Entity] and component data, as well as resources.
@@ -612,7 +640,7 @@ func (w *World) Reset() {
 //	posID := ComponentID[Position](&world)
 //	velID := ComponentID[Velocity](&world)
 //
-//	filter := ecs.All(posID, velID)
+//	filter := All(posID, velID)
 //	query := world.Query(filter)
 //	for query.Next() {
 //	    pos := (*Position)(query.Get(posID))
