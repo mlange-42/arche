@@ -61,8 +61,8 @@ type World struct {
 	resources   Resources                 // World resources.
 	entities    []entityIndex             // Mapping from entities to archetype and index.
 	entityPool  entityPool                // Pool for entities.
-	archetypes  pagedArr32[archetype]     // The archetypes.
-	graph       pagedArr32[archetypeNode] // The archetype graph.
+	archetypes  pagedSlice[archetype]     // The archetypes.
+	graph       pagedSlice[archetypeNode] // The archetype graph.
 	locks       lockMask                  // World locks.
 	registry    componentRegistry[ID]     // Component registry.
 	filterCache Cache                     // Cache for registered filters.
@@ -94,8 +94,8 @@ func fromConfig(conf Config) World {
 		entities:    entities,
 		entityPool:  newEntityPool(conf.CapacityIncrement),
 		registry:    newComponentRegistry(),
-		archetypes:  pagedArr32[archetype]{},
-		graph:       pagedArr32[archetypeNode]{},
+		archetypes:  newPagedSlice[archetype](32),
+		graph:       newPagedSlice[archetypeNode](32),
 		locks:       lockMask{},
 		listener:    nil,
 		resources:   newResources(),

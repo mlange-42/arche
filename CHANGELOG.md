@@ -37,6 +37,7 @@
 ### Bugfixes
 
 * Archetype storage buffers are "zeroed" when removing entities, to allow GC on pointers and slices in components (#147)
+* Use slices instead of arrays inside paged archetype list to ensure pointer persistence (#184)
 
 ### Documentation
 
