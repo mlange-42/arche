@@ -48,8 +48,8 @@ func run(w *ecs.World) {
 	}
 
 	// Batch-remove all entities with exactly the given components.
-	filterExact := ecs.All(posID, velID).Exact()
-	w.Batch().RemoveEntities(&filterExact)
+	filterExcl := ecs.All(posID, velID).Exclusive()
+	w.Batch().RemoveEntities(&filterExcl)
 
 	// Batch-remove all entities with the given components (and potentially further components).
 	filter := ecs.All(posID, velID)

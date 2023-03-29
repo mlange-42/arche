@@ -138,7 +138,7 @@ func (b *Batch) NewEntitiesWithQuery(count int, comps ...Component) Query {
 //
 //	world.Batch().NewEntities(10_000, posID, velID)
 //
-//	filter := All(posID, velID).Exact()
+//	filter := All(posID, velID).Exclusive()
 //	world.Batch().RemoveEntities(filter)
 func (b *Batch) RemoveEntities(filter Filter) int {
 	return b.world.removeEntities(filter)
