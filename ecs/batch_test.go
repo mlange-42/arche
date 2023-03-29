@@ -10,11 +10,11 @@ func TestBatch(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 	world.SetListener(func(e *EntityEvent) {})
 
-	posID := ComponentID[position](&world)
+	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
 
 	comps := []Component{
-		{ID: posID, Comp: &position{100, 200}},
+		{ID: posID, Comp: &Position{100, 200}},
 		{ID: rotID, Comp: &rotation{300}},
 	}
 
@@ -38,11 +38,11 @@ func TestBatchQuery(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 	world.SetListener(func(e *EntityEvent) {})
 
-	posID := ComponentID[position](&world)
+	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
 
 	comps := []Component{
-		{ID: posID, Comp: &position{100, 200}},
+		{ID: posID, Comp: &Position{100, 200}},
 		{ID: rotID, Comp: &rotation{300}},
 	}
 

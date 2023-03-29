@@ -10,24 +10,24 @@ import (
 func TestResources(t *testing.T) {
 	res := newResources()
 
-	posID := res.registry.ComponentID(reflect.TypeOf(position{}))
+	posID := res.registry.ComponentID(reflect.TypeOf(Position{}))
 	rotID := res.registry.ComponentID(reflect.TypeOf(rotation{}))
 
 	assert.False(t, res.Has(posID))
 	assert.Nil(t, res.Get(posID))
 
-	res.Add(posID, &position{1, 2})
+	res.Add(posID, &Position{1, 2})
 
 	assert.True(t, res.Has(posID))
-	pos, ok := res.Get(posID).(*position)
+	pos, ok := res.Get(posID).(*Position)
 	assert.True(t, ok)
-	assert.Equal(t, position{1, 2}, *pos)
+	assert.Equal(t, Position{1, 2}, *pos)
 
-	assert.Panics(t, func() { res.Add(posID, &position{1, 2}) })
+	assert.Panics(t, func() { res.Add(posID, &Position{1, 2}) })
 
-	pos, ok = res.Get(posID).(*position)
+	pos, ok = res.Get(posID).(*Position)
 	assert.True(t, ok)
-	assert.Equal(t, position{1, 2}, *pos)
+	assert.Equal(t, Position{1, 2}, *pos)
 
 	res.Add(rotID, &rotation{5})
 	assert.True(t, res.Has(rotID))
@@ -39,15 +39,15 @@ func TestResources(t *testing.T) {
 func TestResourcesReset(t *testing.T) {
 	res := newResources()
 
-	posID := res.registry.ComponentID(reflect.TypeOf(position{}))
+	posID := res.registry.ComponentID(reflect.TypeOf(Position{}))
 	rotID := res.registry.ComponentID(reflect.TypeOf(rotation{}))
 
-	res.Add(posID, &position{1, 2})
+	res.Add(posID, &Position{1, 2})
 	res.Add(rotID, &rotation{5})
 
-	pos, ok := res.Get(posID).(*position)
+	pos, ok := res.Get(posID).(*Position)
 	assert.True(t, ok)
-	assert.Equal(t, position{1, 2}, *pos)
+	assert.Equal(t, Position{1, 2}, *pos)
 
 	rot, ok := res.Get(rotID).(*rotation)
 	assert.True(t, ok)
@@ -58,12 +58,12 @@ func TestResourcesReset(t *testing.T) {
 	assert.False(t, res.Has(posID))
 	assert.False(t, res.Has(rotID))
 
-	res.Add(posID, &position{10, 20})
+	res.Add(posID, &Position{10, 20})
 	res.Add(rotID, &rotation{50})
 
-	pos, ok = res.Get(posID).(*position)
+	pos, ok = res.Get(posID).(*Position)
 	assert.True(t, ok)
-	assert.Equal(t, position{10, 20}, *pos)
+	assert.Equal(t, Position{10, 20}, *pos)
 
 	rot, ok = res.Get(rotID).(*rotation)
 	assert.True(t, ok)

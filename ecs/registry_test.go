@@ -10,7 +10,7 @@ import (
 func TestComponentRegistry(t *testing.T) {
 	reg := newComponentRegistry()
 
-	posType := reflect.TypeOf((*position)(nil)).Elem()
+	posType := reflect.TypeOf((*Position)(nil)).Elem()
 	rotType := reflect.TypeOf((*rotation)(nil)).Elem()
 
 	reg.registerComponent(posType, MaskTotalBits)
@@ -25,7 +25,7 @@ func TestComponentRegistry(t *testing.T) {
 func TestComponentRegistryOverflow(t *testing.T) {
 	reg := newComponentRegistry()
 
-	reg.registerComponent(reflect.TypeOf((*position)(nil)).Elem(), 1)
+	reg.registerComponent(reflect.TypeOf((*Position)(nil)).Elem(), 1)
 
 	assert.Panics(t, func() {
 		reg.registerComponent(reflect.TypeOf((*rotation)(nil)).Elem(), 1)
