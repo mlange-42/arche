@@ -8,6 +8,20 @@ import (
 // Resources manage a world's resources.
 //
 // Access it using [World.Resources].
+//
+// # Example
+//
+//	world := NewWorld()
+//
+//	resID := ResourceID[MyRes](&world)
+//
+//	myRes := MyRes{}
+//	world.Resources().Add(resID, &myRes)
+//	res := (*MyRes)(world.Resources().Get(resID))
+//
+//	if world.Resources().Has(resID) {
+//		world.Resources().Remove(resID)
+//	}
 type Resources struct {
 	registry  componentRegistry[ResID]
 	resources []any

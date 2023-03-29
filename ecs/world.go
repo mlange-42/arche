@@ -1,7 +1,6 @@
 package ecs
 
 import (
-	"fmt"
 	"reflect"
 	"unsafe"
 
@@ -11,6 +10,9 @@ import (
 // ComponentID returns the [ID] for a component type via generics.
 // Registers the type if it is not already registered.
 //
+// # Example
+//
+//	world := NewWorld()
 //	posID := ComponentID[Position](&world)
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
@@ -19,6 +21,11 @@ func ComponentID[T any](w *World) ID {
 
 // TypeID returns the [ID] for a component type.
 // Registers the type if it is not already registered.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := TypeID(&world, reflect.TypeOf(Position{}))
 func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
@@ -26,6 +33,9 @@ func TypeID(w *World, tp reflect.Type) ID {
 // ResourceID returns the [ResID] for a resource type via generics.
 // Registers the type if it is not already registered.
 //
+// # Example
+//
+//	world := NewWorld()
 //	resID := ResourceID[MyResource](&world)
 func ResourceID[T any](w *World) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
@@ -40,22 +50,48 @@ func ResourceID[T any](w *World) ResID {
 // and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 // These methods are more than 20 times faster than the GetResource function.
 //
+// # Example
+//
+//	world := NewWorld()
+//
+//	myRes := MyRes{}
+//	AddResource(&world, &myRes)
 //	res := GetResource[MyResource](&world)
 func GetResource[T any](w *World) *T {
 	return w.resources.Get(ResourceID[T](w)).(*T)
 }
 
 // AddResource adds a resource to the world.
+// Returns the ID for the added resource.
 //
 // Panics if there is already such a resource.
 //
 // Uses reflection. For more efficient access, see [World.AddResource],
 // and [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
-func AddResource[T any](w *World, res *T) {
-	w.resources.Add(ResourceID[T](w), res)
+//
+// # Example
+//
+//	world := NewWorld()
+//
+//	myRes := MyRes{}
+//	AddResource(&world, &myRes)
+//	res := GetResource[MyResource](&world)
+func AddResource[T any](w *World, res *T) ResID {
+	id := ResourceID[T](w)
+	w.resources.Add(id, res)
+	return id
 }
 
 // World is the central type holding [Entity] and component data, as well as resources.
+//
+// # Example
+//
+//	world := NewWorld()
+//
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	e := world.NewEntity(posID, velID)
 type World struct {
 	config      Config                    // World configuration.
 	listener    func(e *EntityEvent)      // Component change listener.
@@ -122,6 +158,14 @@ func fromConfig(conf Config) World {
 //	world.NewEntity(idA, idB, idC)
 //	// even faster
 //	world.NewEntity(ids...)
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	e := world.NewEntity(posID, velID)
 func (w *World) NewEntity(comps ...ID) Entity {
 	w.checkLocked()
 
@@ -148,6 +192,17 @@ func (w *World) NewEntity(comps ...ID) Entity {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	e := world.NewEntityWith(
+//		Component{ID: posID, Comp: &Position{X: 0, Y: 0}},
+//		Component{ID: velID, Comp: &Velocity{X: 10, Y: 2}},
+//	)
 func (w *World) NewEntityWith(comps ...Component) Entity {
 	w.checkLocked()
 
@@ -241,6 +296,12 @@ func (w *World) newEntitiesWithQuery(count int, comps ...Component) Query {
 //
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
+//
+// # Example
+//
+//	world := NewWorld()
+//	e := world.NewEntity()
+//	world.RemoveEntity(e)
 func (w *World) RemoveEntity(entity Entity) {
 	w.checkLocked()
 
@@ -315,6 +376,15 @@ func (w *World) Alive(entity Entity) bool {
 // Panics when called for an already removed entity.
 //
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//
+//	e := world.NewEntity(posID)
+//
+//	pos := (*Position)(world.Get(e, posID))
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	index := &w.entities[entity.id]
 	return index.arch.Get(index.index, comp)
@@ -325,6 +395,17 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 // Panics when called for an already removed entity.
 //
 // See also [github.com/mlange-42/arche/generic.Map.Has] for a generic variant.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//
+//	e := world.NewEntity(posID)
+//
+//	if world.Has(e) {
+//		world.RemoveEntity(e)
+//	}
 func (w *World) Has(entity Entity, comp ID) bool {
 	return w.entities[entity.id].arch.HasComponent(comp)
 }
@@ -344,6 +425,16 @@ func (w *World) Has(entity Entity, comp ID) bool {
 //	world.Add(entity, idA, idB, idC)
 //	// even faster
 //	world.Add(entity, ids...)
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	e := world.NewEntity()
+//
+//	world.Add(e, posID, velID)
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
 }
@@ -358,6 +449,19 @@ func (w *World) Add(entity Entity, comps ...ID) {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	e := world.NewEntity()
+//
+//	world.Assign(e,
+//		Component{ID: posID, Comp: &Position{X: 0, Y: 0}},
+//		Component{ID: velID, Comp: &Velocity{X: 10, Y: 2}},
+//	)
 func (w *World) Assign(entity Entity, comps ...Component) {
 	len := len(comps)
 	if len == 0 {
@@ -391,6 +495,15 @@ func (w *World) Assign(entity Entity, comps ...Component) {
 // Panics if the entity does not have a component of that type.
 //
 // See also [github.com/mlange-42/arche/generic.Map.Set] for a generic variant.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//
+//	e := world.NewEntity(posID)
+//
+//	world.Set(e, posID, &Position{X: 0, Y: 0})
 func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	return w.copyTo(entity, id, comp)
 }
@@ -402,6 +515,16 @@ func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	e := world.NewEntity(posID, velID)
+//
+//	world.Remove(e, posID, velID)
 func (w *World) Remove(entity Entity, comps ...ID) {
 	w.Exchange(entity, nil, comps)
 }
@@ -414,6 +537,16 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Exchange].
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	e := world.NewEntity(posID)
+//
+//	world.Remove(e, []ID{velID}, []ID{posID})
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.checkLocked()
 
@@ -468,6 +601,14 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 //
 // Can be used to run systematic simulations without the need to re-allocate memory for each run.
 // Accelerates re-populating the world by a factor of 2-3.
+//
+// # Example
+//
+//	world := NewWorld()
+//
+//	e := world.NewEntity()
+//
+//	world.Reset()
 func (w *World) Reset() {
 	w.checkLocked()
 
@@ -487,19 +628,25 @@ func (w *World) Reset() {
 // The [ecs] core package provides only the filter [All] for querying the given components.
 // Further, it can be chained with [Mask.Without] (see the examples) to exclude components.
 //
-// Example:
-//
-//	filter := ecs.All(idA, idB).Without(idC)
-//	query := world.Query(filter)
-//	for query.Next() {
-//	    pos := (*position)(query.Get(posID))
-//	    pos.X += 1.0
-//	}
-//
 // For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
 //
 // Locks the world to prevent changes to component compositions.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	filter := All(posID, velID)
+//	query := world.Query(filter)
+//	for query.Next() {
+//	    pos := (*Position)(query.Get(posID))
+//	    vel := (*Velocity)(query.Get(velID))
+//	    pos.X += vel.X
+//	    pos.Y += vel.Y
+//	}
 func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(*CachedFilter); ok {
@@ -513,6 +660,17 @@ func (w *World) Query(filter Filter) Query {
 // Resources of the world.
 //
 // Resources are component-like data that is not associated to an entity, but unique to the world.
+//
+// # Example
+//
+//	world := NewWorld()
+//
+//	resID := ResourceID[MyRes](&world)
+//
+//	myRes := MyRes{}
+//	world.Resources().Add(resID, &myRes)
+//
+//	res := (*MyRes)(world.Resources().Get(resID))
 func (w *World) Resources() *Resources {
 	return &w.resources
 }
@@ -521,6 +679,11 @@ func (w *World) Resources() *Resources {
 //
 // It provides the functionality to create and remove large numbers of entities in batches,
 // in a more efficient way.
+//
+// # Example
+//
+//	world := NewWorld()
+//	world.Batch().NewEntities(10_000)
 func (w *World) Batch() *Batch {
 	return &Batch{w}
 }
@@ -528,6 +691,15 @@ func (w *World) Batch() *Batch {
 // Cache returns the [Cache] of the world, for registering filters.
 //
 // See [Cache] for details on filter caching.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//
+//	filter := All(posID)
+//	cached := world.Cache().Register(filter)
+//	query := world.Query(cached)
 func (w *World) Cache() *Cache {
 	if w.filterCache.getArchetypes == nil {
 		w.filterCache.getArchetypes = w.getArchetypes
@@ -552,11 +724,27 @@ func (w *World) Mask(entity Entity) Mask {
 // Replaces the current listener. Call with `nil` to remove a listener.
 //
 // For details, see [EntityEvent].
+//
+// # Example
+//
+//	world := NewWorld()
+//
+//	world.SetListener(
+//		func(evt EntityEvent){
+//			fmt.Println(evt)
+//		}
+//	)
 func (w *World) SetListener(listener func(e *EntityEvent)) {
 	w.listener = listener
 }
 
 // Stats reports statistics for inspecting the World.
+//
+// # Example
+//
+//	world := NewWorld()
+//	stats := world.Stats()
+//	fmt.Println(stats.String())
 func (w *World) Stats() *stats.WorldStats {
 	entities := stats.EntityStats{
 		Used:     w.entityPool.Len(),
@@ -804,7 +992,6 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 			arches = append(arches, a)
 		}
 	}
-	fmt.Println(len(arches))
 	return archetypePointers{arches}
 }
 

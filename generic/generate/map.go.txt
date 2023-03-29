@@ -2,6 +2,15 @@
 //////////////////////////////////////////////////////////////////////////
 
 // Map{{ .Index }} is a helper for mapping {{ .NumberStr }} components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap{{ .Index }}{{ .Types }}(&world)
+//
+//	entity := mapper.NewEntity()
+//	{{ .Variables }} := mapper.Get(entity)
 type Map{{ .Index }}{{ .TypesFull }} struct {
 	world *ecs.World
 	mask ecs.Mask

@@ -2,6 +2,19 @@
 //////////////////////////////////////////////////////////////////////////
 
 // Filter{{ .Index }} is a helper for building [Query{{ .Index }}] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter{{ .Index }}{{ .Types }}()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter{{ .Index }}{{ .Types }}().{{if .Types}}
+//			Optional(T[A]()).{{ end }}
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter{{ .Index }}{{ .TypesFull }} filter
 
 // NewFilter{{ .Index }} creates a generic Filter{{ .Index }} for {{ .NumberStr }} components.
@@ -88,6 +101,17 @@ func (q *Filter{{ .Index }}{{ .Types }}) Unregister(w *ecs.World) {
 // Create it with [NewFilter{{ .Index }}] and [Filter{{ .Index }}.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter{{ .Index }}{{ .Types }}()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity(){{if .Types}}
+//		{{ .Variables }} := query.Get(){{ end }}
+//	}
 type Query{{ .Index }}{{ .TypesFull }} struct {
 	ecs.Query
 	{{ .IDTypes }}

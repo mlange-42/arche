@@ -3,6 +3,14 @@ package ecs
 // Batch is a helper to perform batched operations on the world.
 //
 // Create using [World.Batch].
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	world.Batch().NewEntities(10_000, posID, velID)
 type Batch struct {
 	world *World
 }

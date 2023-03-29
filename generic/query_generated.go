@@ -9,6 +9,18 @@ import (
 //////////////////////////////////////////////////////////////////////////
 
 // Filter0 is a helper for building [Query0] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter0()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter0().
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter0 filter
 
 // NewFilter0 creates a generic Filter0 for zero components.
@@ -81,6 +93,16 @@ func (q *Filter0) Unregister(w *ecs.World) {
 // Create it with [NewFilter0] and [Filter0.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter0()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//	}
 type Query0 struct {
 	ecs.Query
 }
@@ -88,6 +110,19 @@ type Query0 struct {
 //////////////////////////////////////////////////////////////////////////
 
 // Filter1 is a helper for building [Query1] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter1[A]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter1[A]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter1[A any] filter
 
 // NewFilter1 creates a generic Filter1 for one components.
@@ -174,6 +209,17 @@ func (q *Filter1[A]) Unregister(w *ecs.World) {
 // Create it with [NewFilter1] and [Filter1.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter1[A]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a := query.Get()
+//	}
 type Query1[A any] struct {
 	ecs.Query
 	id0 ecs.ID
@@ -189,6 +235,19 @@ func (q *Query1[A]) Get() *A {
 //////////////////////////////////////////////////////////////////////////
 
 // Filter2 is a helper for building [Query2] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter2[A, B]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter2[A, B]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter2[A any, B any] filter
 
 // NewFilter2 creates a generic Filter2 for two components.
@@ -277,6 +336,17 @@ func (q *Filter2[A, B]) Unregister(w *ecs.World) {
 // Create it with [NewFilter2] and [Filter2.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter2[A, B]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b := query.Get()
+//	}
 type Query2[A any, B any] struct {
 	ecs.Query
 	id0 ecs.ID
@@ -294,6 +364,19 @@ func (q *Query2[A, B]) Get() (*A, *B) {
 //////////////////////////////////////////////////////////////////////////
 
 // Filter3 is a helper for building [Query3] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter3[A, B, C]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter3[A, B, C]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter3[A any, B any, C any] filter
 
 // NewFilter3 creates a generic Filter3 for three components.
@@ -384,6 +467,17 @@ func (q *Filter3[A, B, C]) Unregister(w *ecs.World) {
 // Create it with [NewFilter3] and [Filter3.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter3[A, B, C]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c := query.Get()
+//	}
 type Query3[A any, B any, C any] struct {
 	ecs.Query
 	id0 ecs.ID
@@ -403,6 +497,19 @@ func (q *Query3[A, B, C]) Get() (*A, *B, *C) {
 //////////////////////////////////////////////////////////////////////////
 
 // Filter4 is a helper for building [Query4] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter4[A, B, C, D]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter4[A, B, C, D]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter4[A any, B any, C any, D any] filter
 
 // NewFilter4 creates a generic Filter4 for four components.
@@ -495,6 +602,17 @@ func (q *Filter4[A, B, C, D]) Unregister(w *ecs.World) {
 // Create it with [NewFilter4] and [Filter4.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter4[A, B, C, D]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c, d := query.Get()
+//	}
 type Query4[A any, B any, C any, D any] struct {
 	ecs.Query
 	id0 ecs.ID
@@ -516,6 +634,19 @@ func (q *Query4[A, B, C, D]) Get() (*A, *B, *C, *D) {
 //////////////////////////////////////////////////////////////////////////
 
 // Filter5 is a helper for building [Query5] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter5[A, B, C, D, E]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter5[A, B, C, D, E]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter5[A any, B any, C any, D any, E any] filter
 
 // NewFilter5 creates a generic Filter5 for five components.
@@ -610,6 +741,17 @@ func (q *Filter5[A, B, C, D, E]) Unregister(w *ecs.World) {
 // Create it with [NewFilter5] and [Filter5.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter5[A, B, C, D, E]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c, d, e := query.Get()
+//	}
 type Query5[A any, B any, C any, D any, E any] struct {
 	ecs.Query
 	id0 ecs.ID
@@ -633,6 +775,19 @@ func (q *Query5[A, B, C, D, E]) Get() (*A, *B, *C, *D, *E) {
 //////////////////////////////////////////////////////////////////////////
 
 // Filter6 is a helper for building [Query6] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter6[A, B, C, D, E, F]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter6[A, B, C, D, E, F]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter6[A any, B any, C any, D any, E any, F any] filter
 
 // NewFilter6 creates a generic Filter6 for six components.
@@ -729,6 +884,17 @@ func (q *Filter6[A, B, C, D, E, F]) Unregister(w *ecs.World) {
 // Create it with [NewFilter6] and [Filter6.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter6[A, B, C, D, E, F]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c, d, e, f := query.Get()
+//	}
 type Query6[A any, B any, C any, D any, E any, F any] struct {
 	ecs.Query
 	id0 ecs.ID
@@ -754,6 +920,19 @@ func (q *Query6[A, B, C, D, E, F]) Get() (*A, *B, *C, *D, *E, *F) {
 //////////////////////////////////////////////////////////////////////////
 
 // Filter7 is a helper for building [Query7] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter7[A, B, C, D, E, F, G]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter7[A, B, C, D, E, F, G]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter7[A any, B any, C any, D any, E any, F any, G any] filter
 
 // NewFilter7 creates a generic Filter7 for seven components.
@@ -852,6 +1031,17 @@ func (q *Filter7[A, B, C, D, E, F, G]) Unregister(w *ecs.World) {
 // Create it with [NewFilter7] and [Filter7.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter7[A, B, C, D, E, F, G]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c, d, e, f, g := query.Get()
+//	}
 type Query7[A any, B any, C any, D any, E any, F any, G any] struct {
 	ecs.Query
 	id0 ecs.ID
@@ -879,6 +1069,19 @@ func (q *Query7[A, B, C, D, E, F, G]) Get() (*A, *B, *C, *D, *E, *F, *G) {
 //////////////////////////////////////////////////////////////////////////
 
 // Filter8 is a helper for building [Query8] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter8[A, B, C, D, E, F, G, H]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter8[A, B, C, D, E, F, G, H]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
 type Filter8[A any, B any, C any, D any, E any, F any, G any, H any] filter
 
 // NewFilter8 creates a generic Filter8 for eight components.
@@ -979,6 +1182,17 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Unregister(w *ecs.World) {
 // Create it with [NewFilter8] and [Filter8.Query].
 //
 // Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter8[A, B, C, D, E, F, G, H]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c, d, e, f, g, h := query.Get()
+//	}
 type Query8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	ecs.Query
 	id0 ecs.ID

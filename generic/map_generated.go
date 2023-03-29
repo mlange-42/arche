@@ -9,6 +9,15 @@ import (
 //////////////////////////////////////////////////////////////////////////
 
 // Map1 is a helper for mapping one components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap1[A](&world)
+//
+//	entity := mapper.NewEntity()
+//	a := mapper.Get(entity)
 type Map1[A any] struct {
 	world *ecs.World
 	mask  ecs.Mask
@@ -133,6 +142,15 @@ func (m *Map1[A]) RemoveEntities(exact bool) int {
 //////////////////////////////////////////////////////////////////////////
 
 // Map2 is a helper for mapping two components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap2[A, B](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b := mapper.Get(entity)
 type Map2[A any, B any] struct {
 	world *ecs.World
 	mask  ecs.Mask
@@ -268,6 +286,15 @@ func (m *Map2[A, B]) RemoveEntities(exact bool) int {
 //////////////////////////////////////////////////////////////////////////
 
 // Map3 is a helper for mapping three components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap3[A, B, C](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c := mapper.Get(entity)
 type Map3[A any, B any, C any] struct {
 	world *ecs.World
 	mask  ecs.Mask
@@ -412,6 +439,15 @@ func (m *Map3[A, B, C]) RemoveEntities(exact bool) int {
 //////////////////////////////////////////////////////////////////////////
 
 // Map4 is a helper for mapping four components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap4[A, B, C, D](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c, d := mapper.Get(entity)
 type Map4[A any, B any, C any, D any] struct {
 	world *ecs.World
 	mask  ecs.Mask
@@ -565,6 +601,15 @@ func (m *Map4[A, B, C, D]) RemoveEntities(exact bool) int {
 //////////////////////////////////////////////////////////////////////////
 
 // Map5 is a helper for mapping five components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap5[A, B, C, D, E](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c, d, e := mapper.Get(entity)
 type Map5[A any, B any, C any, D any, E any] struct {
 	world *ecs.World
 	mask  ecs.Mask
@@ -727,6 +772,15 @@ func (m *Map5[A, B, C, D, E]) RemoveEntities(exact bool) int {
 //////////////////////////////////////////////////////////////////////////
 
 // Map6 is a helper for mapping six components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap6[A, B, C, D, E, F](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c, d, e, f := mapper.Get(entity)
 type Map6[A any, B any, C any, D any, E any, F any] struct {
 	world *ecs.World
 	mask  ecs.Mask
@@ -898,6 +952,15 @@ func (m *Map6[A, B, C, D, E, F]) RemoveEntities(exact bool) int {
 //////////////////////////////////////////////////////////////////////////
 
 // Map7 is a helper for mapping seven components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap7[A, B, C, D, E, F, G](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c, d, e, f, g := mapper.Get(entity)
 type Map7[A any, B any, C any, D any, E any, F any, G any] struct {
 	world *ecs.World
 	mask  ecs.Mask
@@ -1078,6 +1141,15 @@ func (m *Map7[A, B, C, D, E, F, G]) RemoveEntities(exact bool) int {
 //////////////////////////////////////////////////////////////////////////
 
 // Map8 is a helper for mapping eight components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap8[A, B, C, D, E, F, G, H](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c, d, e, f, g, h := mapper.Get(entity)
 type Map8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	world *ecs.World
 	mask  ecs.Mask
