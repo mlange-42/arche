@@ -24,6 +24,14 @@ type Batch struct {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	world.Batch().NewEntities(10_000, posID, velID)
 func (b *Batch) NewEntities(count int, comps ...ID) {
 	b.world.newEntities(count, comps...)
 }
@@ -40,6 +48,18 @@ func (b *Batch) NewEntities(count int, comps ...ID) {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	query := world.Batch().NewEntitiesQuery(10_000, posID, velID)
+//
+//	for query.Next() {
+//		// initialize components of the newly created entities
+//	}
 func (b *Batch) NewEntitiesQuery(count int, comps ...ID) Query {
 	return b.world.newEntitiesQuery(count, comps...)
 }
@@ -53,6 +73,19 @@ func (b *Batch) NewEntitiesQuery(count int, comps ...ID) Query {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	components := []Component{
+//		{ID: posID, Comp: &Position{X: 0, Y: 0}},
+//		{ID: velID, Comp: &Velocity{X: 10, Y: 2}},
+//	}
+//
+//	world.Batch().NewEntitiesWith(10_000, components...)
 func (b *Batch) NewEntitiesWith(count int, comps ...Component) {
 	b.world.newEntitiesWith(count, comps...)
 }
@@ -69,6 +102,23 @@ func (b *Batch) NewEntitiesWith(count int, comps ...Component) {
 // Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	components := []Component{
+//		{ID: posID, Comp: &Position{X: 0, Y: 0}},
+//		{ID: velID, Comp: &Velocity{X: 10, Y: 2}},
+//	}
+//
+//	query := world.Batch().NewEntitiesWithQuery(10_000, components...)
+//
+//	for query.Next() {
+//		// initialize components of the newly created entities
+//	}
 func (b *Batch) NewEntitiesWithQuery(count int, comps ...Component) Query {
 	return b.world.newEntitiesWithQuery(count, comps...)
 }
@@ -79,6 +129,17 @@ func (b *Batch) NewEntitiesWithQuery(count int, comps ...Component) Query {
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
+//
+// # Example
+//
+//	world := NewWorld()
+//	posID := ComponentID[Position](&world)
+//	velID := ComponentID[Velocity](&world)
+//
+//	world.Batch().NewEntities(10_000, posID, velID)
+//
+//	filter := All(posID, velID).Exact()
+//	world.Batch().RemoveEntities(filter)
 func (b *Batch) RemoveEntities(filter Filter) int {
 	return b.world.removeEntities(filter)
 }
