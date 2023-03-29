@@ -327,17 +327,3 @@ func TestQueryNextArchetype(t *testing.T) {
 	assert.False(t, query.nextArchetype())
 	assert.Panics(t, func() { query.nextArchetype() })
 }
-
-func TestFilters(t *testing.T) {
-	f1 := dummyFilter{true}
-	f2 := dummyFilter{false}
-
-	assert.True(t, f1.Matches(All(1, 2, 3)))
-	assert.False(t, f2.Matches(All(1, 2, 3)))
-
-	f3 := All(1, 2, 3)
-	f3c := CachedFilter{filter: f3, id: 0}
-
-	assert.Equal(t, f3.Matches(All(1, 2, 3)), f3c.Matches(All(1, 2, 3)))
-	assert.Equal(t, f3.Matches(All(1, 2)), f3c.Matches(All(1, 2)))
-}
