@@ -13,15 +13,6 @@ type Filter interface {
 
 // MaskFilter is a [Filter] for including and excluding certain components.
 // See [All] and [Mask.Without].
-//
-// # Example
-//
-//	world := NewWorld()
-//	posID := ComponentID[Position](&world)
-//	velID := ComponentID[Velocity](&world)
-//
-//	filter := All(posID).Without(velID)
-//	query := world.Query(filter)
 type MaskFilter struct {
 	Include Mask // Components to include.
 	Exclude Mask // Components to exclude.
@@ -35,16 +26,6 @@ func (f *MaskFilter) Matches(bits Mask) bool {
 // CachedFilter is a filter that is cached by the world.
 //
 // Create it using [Cache.Register].
-//
-// # Example
-//
-//	world := NewWorld()
-//	posID := ComponentID[Position](&world)
-//
-//	filter := All(posID)
-//	cached := world.Cache().Register(filter)
-//
-//	query := world.Query(cached)
 type CachedFilter struct {
 	filter Filter
 	id     ID

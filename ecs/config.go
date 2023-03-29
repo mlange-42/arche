@@ -1,11 +1,6 @@
 package ecs
 
 // Config provides configuration for an ECS [World].
-//
-// # Example
-//
-//	config := NewConfig().WithCapacityIncrement(1024)
-//	world := NewWorld(config)
 type Config struct {
 	// Capacity increment for archetypes and the entity index.
 	// The default value is 128.

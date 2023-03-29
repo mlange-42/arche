@@ -16,6 +16,7 @@ func TestConfig(t *testing.T) {
 func ExampleConfig() {
 	config := NewConfig().WithCapacityIncrement(1024)
 	world := NewWorld(config)
+
 	world.NewEntity()
 	// Output:
 }

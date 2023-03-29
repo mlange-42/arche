@@ -279,3 +279,45 @@ type maskPointer Mask
 func (f *maskPointer) Matches(bits Mask) bool {
 	return bits.Contains(Mask(*f))
 }
+
+func ExampleMask() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	filter := All(posID, velID)
+	query := world.Query(filter)
+
+	for query.Next() {
+		// ...
+	}
+	// Output:
+}
+
+func ExampleMask_Without() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	filter := All(posID).Without(velID)
+	query := world.Query(&filter)
+
+	for query.Next() {
+		// ...
+	}
+	// Output:
+}
+
+func ExampleMask_Exclusive() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	filter := All(posID, velID).Exclusive()
+	query := world.Query(&filter)
+
+	for query.Next() {
+		// ...
+	}
+	// Output:
+}

@@ -1068,6 +1068,52 @@ func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
 	}
 }
 
+func ExampleComponentID() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+
+	world.NewEntity(posID)
+	// Output:
+}
+
+func ExampleTypeID() {
+	world := NewWorld()
+	posID := TypeID(&world, reflect.TypeOf(Position{}))
+
+	world.NewEntity(posID)
+	// Output:
+}
+
+func ExampleResourceID() {
+	world := NewWorld()
+	resID := ResourceID[Position](&world)
+
+	world.Resources().Add(resID, &Position{100, 100})
+	// Output:
+}
+
+func ExampleGetResource() {
+	world := NewWorld()
+
+	myRes := Position{100, 100}
+
+	AddResource(&world, &myRes)
+	res := GetResource[Position](&world)
+	fmt.Println(res)
+	// Output: &{100 100}
+}
+
+func ExampleAddResource() {
+	world := NewWorld()
+
+	myRes := Position{100, 100}
+	AddResource(&world, &myRes)
+
+	res := GetResource[Position](&world)
+	fmt.Println(res)
+	// Output: &{100 100}
+}
+
 func ExampleWorld() {
 	world := NewWorld()
 

@@ -11,21 +11,6 @@ import (
 // See also the generic alternatives [github.com/mlange-42/arche/generic.Query1],
 // [github.com/mlange-42/arche/generic.Query2], etc.
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
-//
-// # Example
-//
-//	world := NewWorld()
-//	posID := ComponentID[Position](&world)
-//	velID := ComponentID[Velocity](&world)
-//
-//	filter := All(posID, velID)
-//	query := world.Query(filter)
-//	for query.Next() {
-//	    pos := (*Position)(query.Get(posID))
-//	    vel := (*Velocity)(query.Get(velID))
-//	    pos.X += vel.X
-//	    pos.Y += vel.Y
-//	}
 type Query struct {
 	world          *World           // The [World].
 	filter         Filter           // The filter used by the query.
@@ -132,15 +117,6 @@ func (q *Query) Step(step int) bool {
 //
 // Involves a small overhead of iterating through archetypes when called the first time.
 // However, this is still much faster than manual counting via iteration.
-//
-// # Example
-//
-//	world := NewWorld()
-//	posID := ComponentID[Position](&world)
-//
-//	query := world.Query(All(posID))
-//	cnt := query.Count()
-//	query.Close()
 func (q *Query) Count() int {
 	if q.count >= 0 {
 		return q.count
@@ -160,15 +136,6 @@ func (q *Query) Mask() Mask {
 //
 // Automatically called when iteration finishes.
 // Needs to be called only if breaking out of the query iteration.
-//
-// # Example
-//
-//	world := NewWorld()
-//	posID := ComponentID[Position](&world)
-//
-//	query := world.Query(All(posID))
-//	cnt := query.Count()
-//	query.Close()
 func (q *Query) Close() {
 	q.world.closeQuery(q)
 }

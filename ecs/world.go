@@ -9,11 +9,6 @@ import (
 
 // ComponentID returns the [ID] for a component type via generics.
 // Registers the type if it is not already registered.
-//
-// # Example
-//
-//	world := NewWorld()
-//	posID := ComponentID[Position](&world)
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.componentID(tp)
@@ -21,22 +16,12 @@ func ComponentID[T any](w *World) ID {
 
 // TypeID returns the [ID] for a component type.
 // Registers the type if it is not already registered.
-//
-// # Example
-//
-//	world := NewWorld()
-//	posID := TypeID(&world, reflect.TypeOf(Position{}))
 func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
 // ResourceID returns the [ResID] for a resource type via generics.
 // Registers the type if it is not already registered.
-//
-// # Example
-//
-//	world := NewWorld()
-//	resID := ResourceID[MyResource](&world)
 func ResourceID[T any](w *World) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.resourceID(tp)
@@ -49,14 +34,6 @@ func ResourceID[T any](w *World) ResID {
 // Uses reflection. For more efficient access, see [World.Resources],
 // and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 // These methods are more than 20 times faster than the GetResource function.
-//
-// # Example
-//
-//	world := NewWorld()
-//
-//	myRes := MyRes{}
-//	AddResource(&world, &myRes)
-//	res := GetResource[MyResource](&world)
 func GetResource[T any](w *World) *T {
 	return w.resources.Get(ResourceID[T](w)).(*T)
 }
@@ -68,14 +45,6 @@ func GetResource[T any](w *World) *T {
 //
 // Uses reflection. For more efficient access, see [World.AddResource],
 // and [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
-//
-// # Example
-//
-//	world := NewWorld()
-//
-//	myRes := MyRes{}
-//	AddResource(&world, &myRes)
-//	res := GetResource[MyResource](&world)
 func AddResource[T any](w *World, res *T) ResID {
 	id := ResourceID[T](w)
 	w.resources.Add(id, res)
@@ -575,12 +544,6 @@ func (w *World) SetListener(listener func(e *EntityEvent)) {
 }
 
 // Stats reports statistics for inspecting the World.
-//
-// # Example
-//
-//	world := NewWorld()
-//	stats := world.Stats()
-//	fmt.Println(stats.String())
 func (w *World) Stats() *stats.WorldStats {
 	entities := stats.EntityStats{
 		Used:     w.entityPool.Len(),

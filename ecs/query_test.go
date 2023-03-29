@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -326,4 +327,46 @@ func TestQueryNextArchetype(t *testing.T) {
 	assert.True(t, query.nextArchetype())
 	assert.False(t, query.nextArchetype())
 	assert.Panics(t, func() { query.nextArchetype() })
+}
+
+func ExampleQuery() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	filter := All(posID, velID)
+	query := world.Query(filter)
+	for query.Next() {
+		pos := (*Position)(query.Get(posID))
+		vel := (*Velocity)(query.Get(velID))
+		pos.X += vel.X
+		pos.Y += vel.Y
+	}
+	// Output:
+}
+
+func ExampleQuery_Count() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	world.NewEntity(posID)
+
+	query := world.Query(All(posID))
+	cnt := query.Count()
+	fmt.Println(cnt)
+
+	query.Close()
+	// Output: 1
+}
+
+func ExampleQuery_Close() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	world.NewEntity(posID)
+
+	query := world.Query(All(posID))
+	cnt := query.Count()
+	fmt.Println(cnt)
+
+	query.Close()
+	// Output: 1
 }

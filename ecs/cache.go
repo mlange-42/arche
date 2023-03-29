@@ -19,15 +19,6 @@ type cacheEntry struct {
 // Cached filters avoid this slowdown.
 //
 // The overhead of tracking cached filters is very low, as updates are required only when new archetypes are created.
-//
-// # Example
-//
-//	world := NewWorld()
-//	posID := ComponentID[Position](&world)
-//
-//	filter := All(posID)
-//	cached := world.Cache().Register(filter)
-//	query := world.Query(cached)
 type Cache struct {
 	indices       []int                            // Mapping from filter IDs to indices in filters
 	filters       []cacheEntry                     // The cached filters, indexed by indices
@@ -52,8 +43,9 @@ func newCache() Cache {
 //
 // Use the returned [CachedFilter] to construct queries:
 //
-//	filter := world.Cache().Register(All(posID, velID))
-//	query := world.Query(&filter)
+//	filter := All(posID, velID)
+//	cached := world.Cache().Register(&filter)
+//	query := world.Query(&cached)
 func (c *Cache) Register(f Filter) CachedFilter {
 	id := c.bitPool.Get()
 	c.filters = append(c.filters,
