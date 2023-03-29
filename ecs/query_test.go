@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -19,9 +20,9 @@ func TestMask(t *testing.T) {
 func TestQuery(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
+	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
-	velID := ComponentID[velocity](&w)
+	velID := ComponentID[Velocity](&w)
 	s0ID := ComponentID[testStruct0](&w)
 
 	e0 := w.NewEntity()
@@ -40,7 +41,7 @@ func TestQuery(t *testing.T) {
 	cnt := 0
 	for q.Next() {
 		ent := q.Entity()
-		pos := (*position)(q.Get(posID))
+		pos := (*Position)(q.Get(posID))
 		rot := (*rotation)(q.Get(rotID))
 		assert.Equal(t, w.Mask(ent), q.Mask())
 		_ = ent
@@ -54,7 +55,7 @@ func TestQuery(t *testing.T) {
 	cnt = 0
 	for q.Next() {
 		ent := q.Entity()
-		pos := (*position)(q.Get(posID))
+		pos := (*Position)(q.Get(posID))
 		_ = ent
 		_ = pos
 		cnt++
@@ -110,8 +111,8 @@ func TestQuery(t *testing.T) {
 func TestQueryCached(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
-	velID := ComponentID[velocity](&w)
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
 
 	filterPos := w.Cache().Register(All(posID))
 	filterPosVel := w.Cache().Register(All(posID, velID))
@@ -153,7 +154,7 @@ func TestQueryCached(t *testing.T) {
 func TestQueryCount(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
+	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
@@ -182,7 +183,7 @@ func (f testFilter) Matches(bits Mask) bool {
 func TestQueryInterface(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
+	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
@@ -212,8 +213,8 @@ func TestQueryInterface(t *testing.T) {
 func TestQueryStep(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
-	velID := ComponentID[velocity](&w)
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
 	rotID := ComponentID[rotation](&w)
 
 	_ = w.NewEntity(posID)
@@ -289,7 +290,7 @@ func TestQueryStep(t *testing.T) {
 func TestQueryClosed(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
+	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
@@ -313,7 +314,7 @@ func TestQueryClosed(t *testing.T) {
 func TestQueryNextArchetype(t *testing.T) {
 	world := NewWorld()
 
-	posID := ComponentID[position](&world)
+	posID := ComponentID[Position](&world)
 
 	var entity Entity
 	for i := 0; i < 10; i++ {
@@ -326,4 +327,46 @@ func TestQueryNextArchetype(t *testing.T) {
 	assert.True(t, query.nextArchetype())
 	assert.False(t, query.nextArchetype())
 	assert.Panics(t, func() { query.nextArchetype() })
+}
+
+func ExampleQuery() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	filter := All(posID, velID)
+	query := world.Query(filter)
+	for query.Next() {
+		pos := (*Position)(query.Get(posID))
+		vel := (*Velocity)(query.Get(velID))
+		pos.X += vel.X
+		pos.Y += vel.Y
+	}
+	// Output:
+}
+
+func ExampleQuery_Count() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	world.NewEntity(posID)
+
+	query := world.Query(All(posID))
+	cnt := query.Count()
+	fmt.Println(cnt)
+
+	query.Close()
+	// Output: 1
+}
+
+func ExampleQuery_Close() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	world.NewEntity(posID)
+
+	query := world.Query(All(posID))
+	cnt := query.Count()
+	fmt.Println(cnt)
+
+	query.Close()
+	// Output: 1
 }

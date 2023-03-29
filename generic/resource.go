@@ -5,15 +5,6 @@ import "github.com/mlange-42/arche/ecs"
 // Resource provides a type-safe way to access world resources.
 //
 // Create one with [NewResource].
-//
-// # Example
-//
-//	world := ecs.NewWorld()
-//	myRes := MyRes{}
-//
-//	resAccess := NewResource[MyRes](&world)
-//	resAccess.Add(&myRes)
-//	res := resAccess.Get()
 type Resource[T any] struct {
 	id    ecs.ResID
 	world *ecs.World

@@ -52,15 +52,15 @@ func TestWorldEntites(t *testing.T) {
 func TestWorldNewEntites(t *testing.T) {
 	w := NewWorld(NewConfig().WithCapacityIncrement(32))
 
-	posID := ComponentID[position](&w)
-	velID := ComponentID[velocity](&w)
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
 	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity(posID, velID, rotID)
 	e2 := w.NewEntityWith(
-		Component{posID, &position{1, 2}},
-		Component{velID, &velocity{3, 4}},
+		Component{posID, &Position{1, 2}},
+		Component{velID, &Velocity{3, 4}},
 		Component{rotID, &rotation{5}},
 	)
 	e3 := w.NewEntityWith()
@@ -70,12 +70,12 @@ func TestWorldNewEntites(t *testing.T) {
 	assert.Equal(t, All(posID, velID, rotID), w.Mask(e2))
 	assert.Equal(t, All(), w.Mask(e3))
 
-	pos := (*position)(w.Get(e2, posID))
-	vel := (*velocity)(w.Get(e2, velID))
+	pos := (*Position)(w.Get(e2, posID))
+	vel := (*Velocity)(w.Get(e2, velID))
 	rot := (*rotation)(w.Get(e2, rotID))
 
-	assert.Equal(t, &position{1, 2}, pos)
-	assert.Equal(t, &velocity{3, 4}, vel)
+	assert.Equal(t, &Position{1, 2}, pos)
+	assert.Equal(t, &Velocity{3, 4}, vel)
 	assert.Equal(t, &rotation{5}, rot)
 
 	w.RemoveEntity(e0)
@@ -85,17 +85,17 @@ func TestWorldNewEntites(t *testing.T) {
 
 	for i := 0; i < 35; i++ {
 		e := w.NewEntityWith(
-			Component{posID, &position{i + 1, i + 2}},
-			Component{velID, &velocity{i + 3, i + 4}},
+			Component{posID, &Position{i + 1, i + 2}},
+			Component{velID, &Velocity{i + 3, i + 4}},
 			Component{rotID, &rotation{i + 5}},
 		)
 
-		pos := (*position)(w.Get(e, posID))
-		vel := (*velocity)(w.Get(e, velID))
+		pos := (*Position)(w.Get(e, posID))
+		vel := (*Velocity)(w.Get(e, velID))
 		rot := (*rotation)(w.Get(e, rotID))
 
-		assert.Equal(t, &position{i + 1, i + 2}, pos)
-		assert.Equal(t, &velocity{i + 3, i + 4}, vel)
+		assert.Equal(t, &Position{i + 1, i + 2}, pos)
+		assert.Equal(t, &Velocity{i + 3, i + 4}, vel)
 		assert.Equal(t, &rotation{i + 5}, rot)
 	}
 }
@@ -103,10 +103,10 @@ func TestWorldNewEntites(t *testing.T) {
 func TestWorldComponents(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
+	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
 
-	tPosID := TypeID(&w, reflect.TypeOf(position{}))
+	tPosID := TypeID(&w, reflect.TypeOf(Position{}))
 	tRotID := TypeID(&w, reflect.TypeOf(rotation{}))
 
 	assert.Equal(t, posID, tPosID)
@@ -173,7 +173,7 @@ func TestWorldComponents(t *testing.T) {
 func TestWorldLabels(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
+	posID := ComponentID[Position](&w)
 	labID := ComponentID[label](&w)
 
 	e0 := w.NewEntity()
@@ -200,8 +200,8 @@ func TestWorldLabels(t *testing.T) {
 func TestWorldExchange(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
-	velID := ComponentID[velocity](&w)
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
 	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
@@ -241,8 +241,8 @@ func TestWorldExchange(t *testing.T) {
 func TestWorldAssignSet(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
-	velID := ComponentID[velocity](&w)
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
 	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
@@ -250,46 +250,46 @@ func TestWorldAssignSet(t *testing.T) {
 
 	assert.Panics(t, func() { w.Assign(e0) })
 
-	w.Assign(e0, Component{posID, &position{2, 3}})
-	pos := (*position)(w.Get(e0, posID))
+	w.Assign(e0, Component{posID, &Position{2, 3}})
+	pos := (*Position)(w.Get(e0, posID))
 	assert.Equal(t, 2, pos.X)
 	pos.X = 5
 
-	pos = (*position)(w.Get(e0, posID))
+	pos = (*Position)(w.Get(e0, posID))
 	assert.Equal(t, 5, pos.X)
 
-	assert.Panics(t, func() { w.Assign(e0, Component{posID, &position{2, 3}}) })
-	assert.Panics(t, func() { _ = (*position)(w.copyTo(e1, posID, &position{2, 3})) })
+	assert.Panics(t, func() { w.Assign(e0, Component{posID, &Position{2, 3}}) })
+	assert.Panics(t, func() { _ = (*Position)(w.copyTo(e1, posID, &Position{2, 3})) })
 
 	e2 := w.NewEntity()
 	w.Assign(e2,
-		Component{posID, &position{4, 5}},
-		Component{velID, &velocity{1, 2}},
+		Component{posID, &Position{4, 5}},
+		Component{velID, &Velocity{1, 2}},
 		Component{rotID, &rotation{3}},
 	)
 	assert.True(t, w.Has(e2, velID))
 	assert.True(t, w.Has(e2, rotID))
 	assert.True(t, w.Has(e2, posID))
 
-	pos = (*position)(w.Get(e2, posID))
+	pos = (*Position)(w.Get(e2, posID))
 	rot := (*rotation)(w.Get(e2, rotID))
-	vel := (*velocity)(w.Get(e2, velID))
-	assert.Equal(t, &position{4, 5}, pos)
+	vel := (*Velocity)(w.Get(e2, velID))
+	assert.Equal(t, &Position{4, 5}, pos)
 	assert.Equal(t, &rotation{3}, rot)
-	assert.Equal(t, &velocity{1, 2}, vel)
+	assert.Equal(t, &Velocity{1, 2}, vel)
 
-	_ = (*position)(w.Set(e2, posID, &position{7, 8}))
-	pos = (*position)(w.Get(e2, posID))
+	_ = (*Position)(w.Set(e2, posID, &Position{7, 8}))
+	pos = (*Position)(w.Get(e2, posID))
 	assert.Equal(t, 7, pos.X)
 
-	*pos = position{8, 9}
-	pos = (*position)(w.Get(e2, posID))
+	*pos = Position{8, 9}
+	pos = (*Position)(w.Get(e2, posID))
 	assert.Equal(t, 8, pos.X)
 }
 func TestWorldGetComponents(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
+	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
@@ -303,30 +303,30 @@ func TestWorldGetComponents(t *testing.T) {
 	assert.False(t, w.Has(e2, posID))
 	assert.True(t, w.Has(e2, rotID))
 
-	pos1 := (*position)(w.Get(e1, posID))
-	assert.Equal(t, &position{}, pos1)
+	pos1 := (*Position)(w.Get(e1, posID))
+	assert.Equal(t, &Position{}, pos1)
 
 	pos1.X = 100
 	pos1.Y = 101
 
-	pos0 := (*position)(w.Get(e0, posID))
-	pos1 = (*position)(w.Get(e1, posID))
-	assert.Equal(t, &position{}, pos0)
-	assert.Equal(t, &position{100, 101}, pos1)
+	pos0 := (*Position)(w.Get(e0, posID))
+	pos1 = (*Position)(w.Get(e1, posID))
+	assert.Equal(t, &Position{}, pos0)
+	assert.Equal(t, &Position{100, 101}, pos1)
 
 	w.RemoveEntity(e0)
 
-	pos1 = (*position)(w.Get(e1, posID))
-	assert.Equal(t, &position{100, 101}, pos1)
+	pos1 = (*Position)(w.Get(e1, posID))
+	assert.Equal(t, &Position{100, 101}, pos1)
 
-	pos2 := (*position)(w.Get(e2, posID))
+	pos2 := (*Position)(w.Get(e2, posID))
 	assert.True(t, pos2 == nil)
 }
 
 func TestWorldIter(t *testing.T) {
 	world := NewWorld()
 
-	posID := ComponentID[position](&world)
+	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
 
 	for i := 0; i < 1000; i++ {
@@ -337,7 +337,7 @@ func TestWorldIter(t *testing.T) {
 	for i := 0; i < 100; i++ {
 		query := world.Query(All(posID, rotID))
 		for query.Next() {
-			pos := (*position)(query.Get(posID))
+			pos := (*Position)(query.Get(posID))
 			_ = pos
 		}
 		assert.Panics(t, func() { query.Next() })
@@ -346,7 +346,7 @@ func TestWorldIter(t *testing.T) {
 	for i := 0; i < MaskTotalBits-1; i++ {
 		query := world.Query(All(posID, rotID))
 		for query.Next() {
-			pos := (*position)(query.Get(posID))
+			pos := (*Position)(query.Get(posID))
 			_ = pos
 			break
 		}
@@ -368,7 +368,7 @@ func TestWorldNewEntities(t *testing.T) {
 		events = append(events, *e)
 	})
 
-	posID := ComponentID[position](&world)
+	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
 
 	world.NewEntity(posID, rotID)
@@ -383,7 +383,7 @@ func TestWorldNewEntities(t *testing.T) {
 
 	cnt := 0
 	for query.Next() {
-		pos := (*position)(query.Get(posID))
+		pos := (*Position)(query.Get(posID))
 		pos.X = cnt + 1
 		pos.Y = cnt + 1
 		cnt++
@@ -396,7 +396,7 @@ func TestWorldNewEntities(t *testing.T) {
 
 	cnt = 0
 	for query.Next() {
-		pos := (*position)(query.Get(posID))
+		pos := (*Position)(query.Get(posID))
 		assert.Equal(t, cnt, pos.X)
 		cnt++
 	}
@@ -443,11 +443,11 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 		events = append(events, *e)
 	})
 
-	posID := ComponentID[position](&world)
+	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
 
 	comps := []Component{
-		{ID: posID, Comp: &position{100, 200}},
+		{ID: posID, Comp: &Position{100, 200}},
 		{ID: rotID, Comp: &rotation{300}},
 	}
 
@@ -468,7 +468,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 
 	cnt := 0
 	for query.Next() {
-		pos := (*position)(query.Get(posID))
+		pos := (*Position)(query.Get(posID))
 		assert.Equal(t, 100, pos.X)
 		assert.Equal(t, 200, pos.Y)
 		pos.X = cnt + 1
@@ -483,7 +483,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 
 	cnt = 0
 	for query.Next() {
-		pos := (*position)(query.Get(posID))
+		pos := (*Position)(query.Get(posID))
 		assert.Equal(t, cnt, pos.X)
 		cnt++
 	}
@@ -491,7 +491,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world.Reset()
 
 	query = world.newEntitiesWithQuery(100,
-		Component{ID: posID, Comp: &position{100, 200}},
+		Component{ID: posID, Comp: &Position{100, 200}},
 		Component{ID: rotID, Comp: &rotation{300}},
 	)
 	assert.Equal(t, 100, query.Count())
@@ -517,7 +517,7 @@ func TestWorldRemoveEntities(t *testing.T) {
 		events = append(events, *e)
 	})
 
-	posID := ComponentID[position](&world)
+	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
 
 	query := world.newEntitiesQuery(100, posID)
@@ -551,7 +551,7 @@ func TestWorldRemoveEntities(t *testing.T) {
 func TestWorldLock(t *testing.T) {
 	world := NewWorld()
 
-	posID := ComponentID[position](&world)
+	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
 
 	var entity Entity
@@ -579,7 +579,7 @@ func TestWorldLock(t *testing.T) {
 func TestWorldStats(t *testing.T) {
 	w := NewWorld()
 
-	posID := ComponentID[position](&w)
+	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
@@ -597,24 +597,24 @@ func TestWorldStats(t *testing.T) {
 func TestWorldResources(t *testing.T) {
 	w := NewWorld()
 
-	posID := ResourceID[position](&w)
+	posID := ResourceID[Position](&w)
 	rotID := ResourceID[rotation](&w)
 
 	assert.False(t, w.Resources().Has(posID))
 	assert.Nil(t, w.Resources().Get(posID))
 
-	AddResource(&w, &position{1, 2})
+	AddResource(&w, &Position{1, 2})
 
 	assert.True(t, w.Resources().Has(posID))
-	pos, ok := w.Resources().Get(posID).(*position)
+	pos, ok := w.Resources().Get(posID).(*Position)
 
 	assert.True(t, ok)
-	assert.Equal(t, position{1, 2}, *pos)
+	assert.Equal(t, Position{1, 2}, *pos)
 
-	assert.Panics(t, func() { w.Resources().Add(posID, &position{1, 2}) })
+	assert.Panics(t, func() { w.Resources().Add(posID, &Position{1, 2}) })
 
-	pos = GetResource[position](&w)
-	assert.Equal(t, position{1, 2}, *pos)
+	pos = GetResource[Position](&w)
+	assert.Equal(t, Position{1, 2}, *pos)
 
 	w.Resources().Add(rotID, &rotation{5})
 	assert.True(t, w.Resources().Has(rotID))
@@ -626,9 +626,9 @@ func TestWorldResources(t *testing.T) {
 func TestRegisterComponents(t *testing.T) {
 	world := NewWorld()
 
-	ComponentID[position](&world)
+	ComponentID[Position](&world)
 
-	assert.Equal(t, ID(0), ComponentID[position](&world))
+	assert.Equal(t, ID(0), ComponentID[Position](&world))
 	assert.Equal(t, ID(1), ComponentID[rotation](&world))
 }
 
@@ -637,8 +637,8 @@ func TestWorldReset(t *testing.T) {
 
 	world.SetListener(func(e *EntityEvent) {})
 
-	posID := ComponentID[position](&world)
-	velID := ComponentID[velocity](&world)
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
 
 	world.NewEntity(posID)
 	world.NewEntity(velID)
@@ -669,8 +669,8 @@ func TestWorldReset(t *testing.T) {
 func TestArchetypeGraph(t *testing.T) {
 	world := NewWorld()
 
-	posID := ComponentID[position](&world)
-	velID := ComponentID[velocity](&world)
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
 	rotID := ComponentID[rotation](&world)
 
 	archEmpty := world.archetypes.Get(0)
@@ -704,8 +704,8 @@ func TestWorldListener(t *testing.T) {
 
 	w.SetListener(listen)
 
-	posID := ComponentID[position](&w)
-	velID := ComponentID[velocity](&w)
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
 	rotID := ComponentID[rotation](&w)
 
 	e0 := w.NewEntity()
@@ -741,7 +741,7 @@ func TestWorldListener(t *testing.T) {
 		AddedRemoved: -1,
 	}, events[len(events)-1])
 
-	e0 = w.NewEntityWith(Component{posID, &position{}}, Component{velID, &velocity{}})
+	e0 = w.NewEntityWith(Component{posID, &Position{}}, Component{velID, &Velocity{}})
 	assert.Equal(t, 5, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
@@ -937,14 +937,14 @@ func BenchmarkGetResource(b *testing.B) {
 	b.StopTimer()
 
 	w := NewWorld()
-	AddResource(&w, &position{1, 2})
-	posID := ResourceID[position](&w)
+	AddResource(&w, &Position{1, 2})
+	posID := ResourceID[Position](&w)
 
 	b.StartTimer()
 
-	var res *position
+	var res *Position
 	for i := 0; i < b.N; i++ {
-		res = w.Resources().Get(posID).(*position)
+		res = w.Resources().Get(posID).(*Position)
 	}
 
 	_ = res
@@ -954,13 +954,13 @@ func BenchmarkGetResourceShortcut(b *testing.B) {
 	b.StopTimer()
 
 	w := NewWorld()
-	AddResource(&w, &position{1, 2})
+	AddResource(&w, &Position{1, 2})
 
 	b.StartTimer()
 
-	var res *position
+	var res *Position
 	for i := 0; i < b.N; i++ {
-		res = GetResource[position](&w)
+		res = GetResource[Position](&w)
 	}
 
 	_ = res
@@ -970,8 +970,8 @@ func BenchmarkNewEntities_10_000_New(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
 
-		posID := ComponentID[position](&world)
-		velID := ComponentID[velocity](&world)
+		posID := ComponentID[Position](&world)
+		velID := ComponentID[Velocity](&world)
 
 		for i := 0; i < 10000; i++ {
 			_ = world.NewEntity(posID, velID)
@@ -983,8 +983,8 @@ func BenchmarkNewEntitiesBatch_10_000_New(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
 
-		posID := ComponentID[position](&world)
-		velID := ComponentID[velocity](&world)
+		posID := ComponentID[Position](&world)
+		velID := ComponentID[Velocity](&world)
 
 		world.newEntities(10000, posID, velID)
 	}
@@ -994,8 +994,8 @@ func BenchmarkNewEntities_10_000_Reset(b *testing.B) {
 	b.StopTimer()
 	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
 
-	posID := ComponentID[position](&world)
-	velID := ComponentID[velocity](&world)
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
 
 	for i := 0; i < 10000; i++ {
 		_ = world.NewEntity(posID, velID)
@@ -1014,8 +1014,8 @@ func BenchmarkNewEntitiesBatch_10_000_Reset(b *testing.B) {
 	b.StopTimer()
 	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
 
-	posID := ComponentID[position](&world)
-	velID := ComponentID[velocity](&world)
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
 
 	for i := 0; i < 10000; i++ {
 		_ = world.NewEntity(posID, velID)
@@ -1033,8 +1033,8 @@ func BenchmarkRemoveEntities_10_000(b *testing.B) {
 		b.StopTimer()
 		world := NewWorld(NewConfig().WithCapacityIncrement(10000))
 
-		posID := ComponentID[position](&world)
-		velID := ComponentID[velocity](&world)
+		posID := ComponentID[Position](&world)
+		velID := ComponentID[Velocity](&world)
 
 		entities := make([]Entity, 10000)
 		q := world.newEntitiesQuery(10000, posID, velID)
@@ -1058,12 +1058,254 @@ func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
 		b.StopTimer()
 		world := NewWorld(NewConfig().WithCapacityIncrement(10000))
 
-		posID := ComponentID[position](&world)
-		velID := ComponentID[velocity](&world)
+		posID := ComponentID[Position](&world)
+		velID := ComponentID[Velocity](&world)
 
 		q := world.newEntitiesQuery(10000, posID, velID)
 		q.Close()
 		b.StartTimer()
 		world.removeEntities(All(posID, velID))
 	}
+}
+
+func ExampleComponentID() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+
+	world.NewEntity(posID)
+	// Output:
+}
+
+func ExampleTypeID() {
+	world := NewWorld()
+	posID := TypeID(&world, reflect.TypeOf(Position{}))
+
+	world.NewEntity(posID)
+	// Output:
+}
+
+func ExampleResourceID() {
+	world := NewWorld()
+	resID := ResourceID[Position](&world)
+
+	world.Resources().Add(resID, &Position{100, 100})
+	// Output:
+}
+
+func ExampleGetResource() {
+	world := NewWorld()
+
+	myRes := Position{100, 100}
+
+	AddResource(&world, &myRes)
+	res := GetResource[Position](&world)
+	fmt.Println(res)
+	// Output: &{100 100}
+}
+
+func ExampleAddResource() {
+	world := NewWorld()
+
+	myRes := Position{100, 100}
+	AddResource(&world, &myRes)
+
+	res := GetResource[Position](&world)
+	fmt.Println(res)
+	// Output: &{100 100}
+}
+
+func ExampleWorld() {
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	_ = world.NewEntity(posID, velID)
+	// Output:
+}
+
+func ExampleWorld_NewEntity() {
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	_ = world.NewEntity(posID, velID)
+	// Output:
+}
+
+func ExampleWorld_NewEntityWith() {
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	_ = world.NewEntityWith(
+		Component{ID: posID, Comp: &Position{X: 0, Y: 0}},
+		Component{ID: velID, Comp: &Velocity{X: 10, Y: 2}},
+	)
+	// Output:
+}
+
+func ExampleWorld_RemoveEntity() {
+	world := NewWorld()
+	e := world.NewEntity()
+	world.RemoveEntity(e)
+	// Output:
+}
+
+func ExampleWorld_Get() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+
+	e := world.NewEntity(posID)
+
+	pos := (*Position)(world.Get(e, posID))
+	pos.X, pos.Y = 10, 5
+	// Output:
+}
+
+func ExampleWorld_Has() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+
+	e := world.NewEntity(posID)
+
+	if world.Has(e, posID) {
+		world.Remove(e, posID)
+	}
+	// Output:
+}
+
+func ExampleWorld_Add() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	e := world.NewEntity()
+
+	world.Add(e, posID, velID)
+	// Output:
+}
+
+func ExampleWorld_Assign() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	e := world.NewEntity()
+
+	world.Assign(e,
+		Component{ID: posID, Comp: &Position{X: 0, Y: 0}},
+		Component{ID: velID, Comp: &Velocity{X: 10, Y: 2}},
+	)
+	// Output:
+}
+
+func ExampleWorld_Set() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+
+	e := world.NewEntity(posID)
+
+	world.Set(e, posID, &Position{X: 0, Y: 0})
+	// Output:
+}
+
+func ExampleWorld_Remove() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	e := world.NewEntity(posID, velID)
+
+	world.Remove(e, posID, velID)
+	// Output:
+}
+
+func ExampleWorld_Exchange() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	e := world.NewEntity(posID)
+
+	world.Exchange(e, []ID{velID}, []ID{posID})
+	// Output:
+}
+
+func ExampleWorld_Reset() {
+	world := NewWorld()
+	_ = world.NewEntity()
+
+	world.Reset()
+	// Output:
+}
+
+func ExampleWorld_Query() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	filter := All(posID, velID)
+	query := world.Query(filter)
+	for query.Next() {
+		pos := (*Position)(query.Get(posID))
+		vel := (*Velocity)(query.Get(velID))
+		pos.X += vel.X
+		pos.Y += vel.Y
+	}
+	// Output:
+}
+func ExampleWorld_Resources() {
+	world := NewWorld()
+
+	resID := ResourceID[Position](&world)
+
+	myRes := Position{}
+	world.Resources().Add(resID, &myRes)
+
+	res := (world.Resources().Get(resID)).(*Position)
+	res.X, res.Y = 10, 5
+	// Output:
+}
+
+func ExampleWorld_Batch() {
+	world := NewWorld()
+	world.Batch().NewEntities(10_000)
+	// Output:
+}
+
+func ExampleWorld_Cache() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+
+	filter := All(posID)
+	cached := world.Cache().Register(filter)
+	query := world.Query(&cached)
+
+	for query.Next() {
+		// handle entities...
+	}
+	// Output:
+}
+
+func ExampleWorld_SetListener() {
+	world := NewWorld()
+
+	world.SetListener(
+		func(evt *EntityEvent) {
+			fmt.Println(evt)
+		},
+	)
+
+	world.NewEntity()
+	// Output: &{{1 0} {0 0} {0 0} [] [] [] 1}
+}
+
+func ExampleWorld_Stats() {
+	world := NewWorld()
+	stats := world.Stats()
+	fmt.Println(stats.Entities.String())
+	// Output: Entities -- Used: 0, Recycled: 0, Total: 0, Capacity: 128
 }

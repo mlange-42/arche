@@ -2,12 +2,12 @@ package ecs
 
 type label struct{}
 
-type position struct {
+type Position struct {
 	X int
 	Y int
 }
 
-type velocity struct {
+type Velocity struct {
 	X int
 	Y int
 }

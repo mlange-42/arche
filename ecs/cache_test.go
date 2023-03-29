@@ -242,3 +242,17 @@ func BenchmarkFilterCached_1of1024_1_000(b *testing.B) {
 func BenchmarkFilterCached_1of1024_10_000(b *testing.B) {
 	benchmarkCachedFilters(b, 1024, 10000, true)
 }
+
+func ExampleCache() {
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+
+	filter := All(posID)
+	cached := world.Cache().Register(filter)
+	query := world.Query(&cached)
+
+	for query.Next() {
+		// ...
+	}
+	// Output:
+}

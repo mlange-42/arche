@@ -5,16 +5,6 @@ import "github.com/mlange-42/arche/ecs"
 // Map provides a type-safe way to access a component type by entity ID.
 //
 // Create one with [NewMap].
-//
-// # Example
-//
-//	world := ecs.NewWorld()
-//
-//	spawner := NewMap2[Position, Velocity](&world)
-//	entity := spawner.NewEntity()
-//
-//	mapper := NewMap[Position](&world)
-//	pos := mapper.Get(entity)
 type Map[T any] struct {
 	id    ecs.ID
 	world *ecs.World
