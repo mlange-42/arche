@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"fmt"
 	"reflect"
 	"unsafe"
 
@@ -794,16 +795,17 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 }
 
 // Returns all archetypes that match the given filter. Used by [Cache].
-func (w *World) getArchetypes(filter Filter) pagedPointerArr32[archetype] {
-	arches := pagedPointerArr32[archetype]{}
-	len := int(w.archetypes.Len())
-	for i := 0; i < len; i++ {
+func (w *World) getArchetypes(filter Filter) archetypePointers {
+	arches := []*archetype{}
+	ln := int(w.archetypes.Len())
+	for i := 0; i < ln; i++ {
 		a := w.archetypes.Get(i)
 		if filter.Matches(a.Mask) {
-			arches.Add(a)
+			arches = append(arches, a)
 		}
 	}
-	return arches
+	fmt.Println(len(arches))
+	return archetypePointers{arches}
 }
 
 // componentID returns the ID for a component type, and registers it if not already registered.
