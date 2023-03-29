@@ -30,9 +30,7 @@ func TestPagedArrPointerPersistence(t *testing.T) {
 	}
 
 	p2 := a.Get(0)
-
 	assert.Equal(t, unsafe.Pointer(p1), unsafe.Pointer(p2))
-
 	*p1 = 100
 	assert.Equal(t, 100, *p2)
 }
