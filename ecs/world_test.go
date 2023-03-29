@@ -909,7 +909,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[entityIndex]()
 	printTypeSize[Mask]()
 	printTypeSize[World]()
-	printTypeSizeName[pagedArr32[archetype]]("pagedArr32")
+	printTypeSizeName[pagedSlice[archetype]]("pagedArr32")
 	printTypeSize[archetype]()
 	printTypeSize[archetypeAccess]()
 	printTypeSize[archetypeNode]()
