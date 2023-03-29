@@ -30,3 +30,15 @@ func TestGenericMap(t *testing.T) {
 	assert.Equal(t, ecs.ComponentID[testStruct1](&w), get2.ID())
 	assert.Panics(t, func() { get2.Set(e0, &testStruct1{}) })
 }
+
+func ExampleMap() {
+	world := ecs.NewWorld()
+
+	spawner := NewMap2[Position, Velocity](&world)
+	entity := spawner.NewEntity()
+
+	mapper := NewMap[Position](&world)
+	pos := mapper.Get(entity)
+	pos.X, pos.Y = 10, 5
+	// Output:
+}

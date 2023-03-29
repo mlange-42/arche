@@ -43,7 +43,7 @@
 ### Documentation
 
 * Adds an example for batch-creation and batch-removal of entities (#173)
-* Adds code examples to most public types, methods and functions (#183)
+* Adds code examples to most public types, methods and functions (#183, #189)
 
 ### Other
 

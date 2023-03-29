@@ -24,3 +24,14 @@ func TestGenericResource(t *testing.T) {
 	get.Remove()
 	assert.False(t, get.Has())
 }
+
+func ExampleResource() {
+	world := ecs.NewWorld()
+	myRes := Position{}
+
+	resAccess := NewResource[Position](&world)
+	resAccess.Add(&myRes)
+	res := resAccess.Get()
+	res.X, res.Y = 10, 5
+	// Output:
+}
