@@ -122,7 +122,10 @@ func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
 }
 
 
-// RemoveEntities removes all components from the world that match the Map{{ .Index }}'s components.
+// RemoveEntities removes all entities from the world that match the Map{{ .Index }}'s components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
 //
 // Returns the number of removed entities.
 //

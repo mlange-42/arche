@@ -126,7 +126,10 @@ func (m *Map1[A]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
-// RemoveEntities removes all components from the world that match the Map1's components.
+// RemoveEntities removes all entities from the world that match the Map1's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
 //
 // Returns the number of removed entities.
 //
@@ -270,7 +273,10 @@ func (m *Map2[A, B]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
-// RemoveEntities removes all components from the world that match the Map2's components.
+// RemoveEntities removes all entities from the world that match the Map2's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
 //
 // Returns the number of removed entities.
 //
@@ -423,7 +429,10 @@ func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
-// RemoveEntities removes all components from the world that match the Map3's components.
+// RemoveEntities removes all entities from the world that match the Map3's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
 //
 // Returns the number of removed entities.
 //
@@ -585,7 +594,10 @@ func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
-// RemoveEntities removes all components from the world that match the Map4's components.
+// RemoveEntities removes all entities from the world that match the Map4's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
 //
 // Returns the number of removed entities.
 //
@@ -756,7 +768,10 @@ func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
-// RemoveEntities removes all components from the world that match the Map5's components.
+// RemoveEntities removes all entities from the world that match the Map5's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
 //
 // Returns the number of removed entities.
 //
@@ -936,7 +951,10 @@ func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
-// RemoveEntities removes all components from the world that match the Map6's components.
+// RemoveEntities removes all entities from the world that match the Map6's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
 //
 // Returns the number of removed entities.
 //
@@ -1125,7 +1143,10 @@ func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
-// RemoveEntities removes all components from the world that match the Map7's components.
+// RemoveEntities removes all entities from the world that match the Map7's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
 //
 // Returns the number of removed entities.
 //
@@ -1323,7 +1344,10 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity) {
 	m.world.Remove(entity, m.ids...)
 }
 
-// RemoveEntities removes all components from the world that match the Map8's components.
+// RemoveEntities removes all entities from the world that match the Map8's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
 //
 // Returns the number of removed entities.
 //

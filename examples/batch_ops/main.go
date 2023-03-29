@@ -76,5 +76,5 @@ func runGeneric(w *ecs.World) {
 	mapper.RemoveEntities(true)
 
 	// Batch-remove all entities with the given components (and potentially further components).
-	mapper.RemoveEntities(true)
+	mapper.RemoveEntities(false)
 }
