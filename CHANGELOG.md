@@ -14,7 +14,7 @@
 
 * Adds method `World.Reset()`, to allow for more efficient systematic simulations (#138)
 * Adds `World.Batch()` helper for performing optimized batch-creation and batch-removal of entities (#149)
-* Adds method `Mask.Exact()` to create a filter matching an exact component composition (#149)
+* Adds method `Mask.Exclusive()` to create a filter matching an exact component composition (#149, #188)
 * Generic mappers (`Map1`, ...) have methods `NewEntities`, `NewEntitiesWith` and `RemoveEntities` for batch operations (#151)
 * Batch-creation methods (ID-based and generic) have variants like `NewEntitiesQuery` that return a query over the created entities (#152)
 * Notification during batch-creation is delayed until the resp. query is closed (#157)

@@ -23,12 +23,12 @@ func TestBatch(t *testing.T) {
 	b.NewEntities(100, posID)
 	b.NewEntitiesWith(100, comps...)
 
-	filter1 := All(posID).Exact()
+	filter1 := All(posID).Exclusive()
 	q := world.Query(&filter1)
 	assert.Equal(t, 100, q.Count())
 	q.Close()
 
-	filter2 := All(posID, rotID).Exact()
+	filter2 := All(posID, rotID).Exclusive()
 	q = world.Query(&filter2)
 	assert.Equal(t, 100, q.Count())
 	q.Close()
@@ -53,12 +53,12 @@ func TestBatchQuery(t *testing.T) {
 	q = b.NewEntitiesWithQuery(100, comps...)
 	q.Close()
 
-	filter1 := All(posID).Exact()
+	filter1 := All(posID).Exclusive()
 	q = world.Query(&filter1)
 	assert.Equal(t, 100, q.Count())
 	q.Close()
 
-	filter2 := All(posID, rotID).Exact()
+	filter2 := All(posID, rotID).Exclusive()
 	q = world.Query(&filter2)
 	assert.Equal(t, 100, q.Count())
 	q.Close()

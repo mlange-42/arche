@@ -27,7 +27,7 @@ type Mask struct {
 // All creates a new Mask from a list of IDs.
 // Matches al entities that have the respective components, and potentially further components.
 //
-// See also [Mask.Without] and [Mask.Exact]
+// See also [Mask.Without] and [Mask.Exclusive]
 //
 // If any [ID] is bigger or equal [MaskTotalBits], it'll not be added to the mask.
 func All(ids ...ID) Mask {
@@ -61,7 +61,7 @@ func (b Mask) Without(comps ...ID) MaskFilter {
 	}
 }
 
-// Exact creates a [MaskFilter] which filters for exactly the mask's components.
+// Exclusive creates a [MaskFilter] which filters for exactly the mask's components.
 // Matches only entities that have exactly the given components, and no other.
 //
 // # Example
@@ -70,9 +70,9 @@ func (b Mask) Without(comps ...ID) MaskFilter {
 //	posID := ComponentID[Position](&world)
 //	velID := ComponentID[Velocity](&world)
 //
-//	filter := All(posID, velID).Exact()
+//	filter := All(posID, velID).Exclusive()
 //	query := world.Query(filter)
-func (b Mask) Exact() MaskFilter {
+func (b Mask) Exclusive() MaskFilter {
 	return MaskFilter{
 		Include: b,
 		Exclude: b.Not(),
