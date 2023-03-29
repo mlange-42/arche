@@ -1,7 +1,6 @@
 package ecs
 
 import (
-	"fmt"
 	"reflect"
 	"unsafe"
 
@@ -744,7 +743,8 @@ func (w *World) SetListener(listener func(e *EntityEvent)) {
 // # Example
 //
 //	world := NewWorld()
-//	fmt.Println(world.Start().String())
+//	stats := world.Stats()
+//	fmt.Println(stats.String())
 func (w *World) Stats() *stats.WorldStats {
 	entities := stats.EntityStats{
 		Used:     w.entityPool.Len(),
@@ -992,7 +992,6 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 			arches = append(arches, a)
 		}
 	}
-	fmt.Println(len(arches))
 	return archetypePointers{arches}
 }
 

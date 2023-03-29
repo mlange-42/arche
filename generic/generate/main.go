@@ -10,6 +10,7 @@ import (
 )
 
 var typeLetters = []string{"A", "B", "C", "D", "E", "F", "G", "H"}
+var variableLetters = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
 var numbers = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8"}
 var numberStr = []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight"}
 
@@ -19,6 +20,7 @@ type query struct {
 	Types       string
 	TypesFull   string
 	TypesReturn string
+	Variables   string
 	ReturnAll   string
 	Include     string
 	Components  string
@@ -65,9 +67,11 @@ func generateMaps() {
 		idAssign := ""
 		idAssign2 := ""
 		idList := ""
+		variables := ""
 
 		if i > 0 {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
+			variables = strings.Join(variableLetters[:i], ", ")
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
 			idTypes = "id" + strings.Join(numbers[:i], " ecs.ID\n\tid") + " ecs.ID"
@@ -93,6 +97,7 @@ func generateMaps() {
 			TypesReturn: returnTypes,
 			TypesFull:   fullTypes,
 			ReturnAll:   returnAll,
+			Variables:   variables,
 			Components:  components,
 			Arguments:   arguments,
 			IDTypes:     idTypes,
@@ -140,8 +145,10 @@ func generateQueries() {
 		returnAll := ""
 		idTypes := ""
 		idAssign := ""
+		variables := ""
 		if i > 0 {
 			types = "[" + strings.Join(typeLetters[:i], ", ") + "]"
+			variables = strings.Join(variableLetters[:i], ", ")
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
 			include = "[]Comp{\ntypeOf[" + strings.Join(typeLetters[:i], "](),\ntypeOf[") + "](),\n}"
@@ -162,6 +169,7 @@ func generateQueries() {
 			Types:       types,
 			TypesReturn: returnTypes,
 			TypesFull:   fullTypes,
+			Variables:   variables,
 			ReturnAll:   returnAll,
 			Include:     include,
 			IDTypes:     idTypes,
