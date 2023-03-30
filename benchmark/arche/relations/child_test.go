@@ -12,8 +12,8 @@ func benchmarkChild(b *testing.B, numParents int) {
 
 	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
 
-	parentMapper := generic.NewMap1[ParentData](&world)
-	childMapper := generic.NewMap2[ChildData, Child](&world)
+	parentMapper := generic.NewMap1[ParentList](&world)
+	childMapper := generic.NewMap1[Child](&world)
 
 	spawnedPar := parentMapper.NewEntitiesQuery(numParents)
 	parents := make([]ecs.Entity, 0, numParents)
@@ -24,15 +24,15 @@ func benchmarkChild(b *testing.B, numParents int) {
 	spawnedChild := childMapper.NewEntitiesQuery(numParents * numChildren)
 	cnt := 0
 	for spawnedChild.Next() {
-		data, child := spawnedChild.Get()
-		data.Value = 1
+		child := spawnedChild.Get()
+		child.Value = 1
 		child.Parent = parents[cnt/numChildren]
 		cnt++
 	}
 
-	parentFilter := generic.NewFilter1[ParentData]()
+	parentFilter := generic.NewFilter1[ParentList]()
 	parentFilter.Register(&world)
-	childFilter := generic.NewFilter2[ChildData, Child]()
+	childFilter := generic.NewFilter1[Child]()
 	childFilter.Register(&world)
 
 	b.StartTimer()
@@ -40,10 +40,10 @@ func benchmarkChild(b *testing.B, numParents int) {
 	for i := 0; i < b.N; i++ {
 		query := childFilter.Query(&world)
 		for query.Next() {
-			data, child := query.Get()
+			child := query.Get()
 			parData := parentMapper.Get(child.Parent)
 
-			parData.Value += data.Value
+			parData.Value += child.Value
 		}
 	}
 
@@ -70,4 +70,8 @@ func BenchmarkRelationChild_1000_x_10(b *testing.B) {
 
 func BenchmarkRelationChild_10000_x_10(b *testing.B) {
 	benchmarkChild(b, 10000)
+}
+
+func BenchmarkRelationChild_100000_x_10(b *testing.B) {
+	benchmarkChild(b, 100000)
 }

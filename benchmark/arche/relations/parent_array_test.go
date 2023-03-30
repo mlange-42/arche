@@ -13,8 +13,8 @@ func benchmarkParentArray(b *testing.B, numParents int) {
 	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
 
 	parentMapper := generic.NewMap1[ParentArr](&world)
-	parentMapperFull := generic.NewMap2[ParentData, ParentArr](&world)
-	childMapper := generic.NewMap1[ChildData](&world)
+	parentMapperFull := generic.NewMap1[ParentArr](&world)
+	childMapper := generic.NewMap1[Child](&world)
 
 	spawnedPar := parentMapperFull.NewEntitiesQuery(numParents)
 	parents := make([]ecs.Entity, 0, numParents)
@@ -32,7 +32,7 @@ func benchmarkParentArray(b *testing.B, numParents int) {
 		cnt++
 	}
 
-	parentFilter := generic.NewFilter2[ParentData, ParentArr]()
+	parentFilter := generic.NewFilter1[ParentArr]()
 	parentFilter.Register(&world)
 
 	b.StartTimer()
@@ -40,22 +40,20 @@ func benchmarkParentArray(b *testing.B, numParents int) {
 	for i := 0; i < b.N; i++ {
 		query := parentFilter.Query(&world)
 		for query.Next() {
-			data, par := query.Get()
+			par := query.Get()
 			for i := 0; i < len(par.Children); i++ {
 				childData := childMapper.Get(par.Children[i])
-				data.Value += childData.Value
+				par.Value += childData.Value
 			}
 		}
 	}
 
 	b.StopTimer()
-	parentFilterSimple := generic.NewFilter1[ParentData]()
-	parentFilterSimple.Register(&world)
-	querySimple := parentFilterSimple.Query(&world)
+	query := parentFilter.Query(&world)
 
 	expected := numChildren * b.N
-	for querySimple.Next() {
-		par := querySimple.Get()
+	for query.Next() {
+		par := query.Get()
 		if par.Value != expected {
 			panic("wrong number of children")
 		}
@@ -72,4 +70,8 @@ func BenchmarkRelationParentArray_1000_x_10(b *testing.B) {
 
 func BenchmarkRelationParentArray_10000_x_10(b *testing.B) {
 	benchmarkParentArray(b, 10000)
+}
+
+func BenchmarkRelationParentArray_100000_x_10(b *testing.B) {
+	benchmarkParentArray(b, 100000)
 }

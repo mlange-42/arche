@@ -6,45 +6,41 @@
 //
 // The task is to sum up a value over all children of each parent.
 //
-// Each parent has 10 children. Benchmarks are run for 100, 1000 and 10000 parent entities.
+// The benchmarks are implemented in a way that only one components needs to be fetched for each parent and each child.
+//
+// Each parent has 10 children. Benchmarks are run for 100, 1000 and 10k and 100k parent entities.
 package relations
 
 import "github.com/mlange-42/arche/ecs"
 
 const numChildren = 10
 
-// ParentData component
-type ParentData struct {
-	Value int
-}
-
-// ChildData component
-type ChildData struct {
-	Value int
-}
-
 // Child component
 type Child struct {
 	Parent ecs.Entity
+	Value  int
 }
 
 // ChildList component
 type ChildList struct {
-	Next ecs.Entity
+	Next  ecs.Entity
+	Value int
 }
 
 // ParentArr component
 type ParentArr struct {
 	Children [numChildren]ecs.Entity
+	Value    int
 }
 
 // ParentSlice component
 type ParentSlice struct {
 	Children []ecs.Entity
+	Value    int
 }
 
 // ParentList component
 type ParentList struct {
-	FirstChild  ecs.Entity
-	NumChildren int
+	FirstChild ecs.Entity
+	Value      int
 }
