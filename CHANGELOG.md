@@ -2,6 +2,14 @@
 
 ## [[v0.6.0]](https://github.com/mlange-42/arche/compare/v0.5.1...v0.6.0)
 
+Arche v0.6.0 features fast batch entity creation and deletion, cached filters, and many internal optimizations.
+
+### Highlights
+
+* Batch creation and deletion of entities, with up to 4x and 10x speedup, respectively. Even more when combined with `World.Reset()`.
+* Cached filters for handling many archetypes and complex queries without slowdown.
+* A lot of internal performance optimizations.
+
 ### Breaking changes
 
 * Generic mappers do no longer return all components when creating entities or components (#145)
