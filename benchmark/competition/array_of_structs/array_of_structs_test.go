@@ -147,6 +147,10 @@ func BenchmarkArrOfStructs_16B_100_000(b *testing.B) {
 	runAoS16B(b, 100000)
 }
 
+func BenchmarkArrOfStructs_16B_250_000(b *testing.B) {
+	runAoS16B(b, 250000)
+}
+
 func BenchmarkArrOfStructs_32B_1_000(b *testing.B) {
 	runAoS32B(b, 1000)
 }
@@ -157,6 +161,10 @@ func BenchmarkArrOfStructs_32B_10_000(b *testing.B) {
 
 func BenchmarkArrOfStructs_32B_100_000(b *testing.B) {
 	runAoS32B(b, 100000)
+}
+
+func BenchmarkArrOfStructs_32B_250_000(b *testing.B) {
+	runAoS32B(b, 250000)
 }
 
 func BenchmarkArrOfStructs_64B_1_000(b *testing.B) {
@@ -171,6 +179,10 @@ func BenchmarkArrOfStructs_64B_100_000(b *testing.B) {
 	runAoS64B(b, 100000)
 }
 
+func BenchmarkArrOfStructs_64B_250_000(b *testing.B) {
+	runAoS64B(b, 250000)
+}
+
 func BenchmarkArrOfStructs_128B_1_000(b *testing.B) {
 	runAoS128B(b, 1000)
 }
@@ -183,6 +195,10 @@ func BenchmarkArrOfStructs_128B_100_000(b *testing.B) {
 	runAoS128B(b, 100000)
 }
 
+func BenchmarkArrOfStructs_128B_250_000(b *testing.B) {
+	runAoS128B(b, 250000)
+}
+
 func BenchmarkArrOfStructs_256B_1_000(b *testing.B) {
 	runAoS256B(b, 1000)
 }
@@ -193,4 +209,8 @@ func BenchmarkArrOfStructs_256B_10_000(b *testing.B) {
 
 func BenchmarkArrOfStructs_256B_100_000(b *testing.B) {
 	runAoS256B(b, 100000)
+}
+
+func BenchmarkArrOfStructs_256B_250_000(b *testing.B) {
+	runAoS256B(b, 250000)
 }

@@ -101,6 +101,10 @@ func BenchmarkArrOfPointers_16B_100_000(b *testing.B) {
 	runAoP16B(b, 100000)
 }
 
+func BenchmarkArrOfPointers_16B_250_000(b *testing.B) {
+	runAoP16B(b, 250000)
+}
+
 func BenchmarkArrOfPointers_32B_1_000(b *testing.B) {
 	runAoP32B(b, 1000)
 }
@@ -111,6 +115,10 @@ func BenchmarkArrOfPointers_32B_10_000(b *testing.B) {
 
 func BenchmarkArrOfPointers_32B_100_000(b *testing.B) {
 	runAoP32B(b, 100000)
+}
+
+func BenchmarkArrOfPointers_32B_250_000(b *testing.B) {
+	runAoP32B(b, 250000)
 }
 
 func BenchmarkArrOfPointers_64B_1_000(b *testing.B) {
@@ -125,6 +133,10 @@ func BenchmarkArrOfPointers_64B_100_000(b *testing.B) {
 	runAoP64B(b, 100000)
 }
 
+func BenchmarkArrOfPointers_64B_250_000(b *testing.B) {
+	runAoP64B(b, 250000)
+}
+
 func BenchmarkArrOfPointers_128B_1_000(b *testing.B) {
 	runAoP128B(b, 1000)
 }
@@ -137,6 +149,10 @@ func BenchmarkArrOfPointers_128B_100_000(b *testing.B) {
 	runAoP128B(b, 100000)
 }
 
+func BenchmarkArrOfPointers_128B_250_000(b *testing.B) {
+	runAoP128B(b, 250000)
+}
+
 func BenchmarkArrOfPointers_256B_1_000(b *testing.B) {
 	runAoP256B(b, 1000)
 }
@@ -147,4 +163,8 @@ func BenchmarkArrOfPointers_256B_10_000(b *testing.B) {
 
 func BenchmarkArrOfPointers_256B_100_000(b *testing.B) {
 	runAoP256B(b, 100000)
+}
+
+func BenchmarkArrOfPointers_256B_250_000(b *testing.B) {
+	runAoP256B(b, 250000)
 }
