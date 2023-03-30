@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -67,4 +68,16 @@ func BenchmarkEntityEventPointerReuse(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		handler.ListenPointer(&event)
 	}
+}
+
+func ExampleEntityEvent() {
+	world := NewWorld()
+
+	listener := func(evt *EntityEvent) {
+		fmt.Println(evt)
+	}
+	world.SetListener(listener)
+
+	world.NewEntity()
+	// Output: &{{1 0} {0 0} {0 0} [] [] [] 1}
 }
