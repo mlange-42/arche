@@ -492,6 +492,7 @@ func (w *World) Reset() {
 // Further, it can be chained with [Mask.Without] (see the examples) to exclude components.
 //
 // Locks the world to prevent changes to component compositions.
+// The lock is released automatically when the query finishes iteration, or when [Query.Close] is called.
 // The number of simultaneous locks (and thus open queries) at a given time is limited to [MaskTotalBits].
 //
 // For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
