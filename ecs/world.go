@@ -773,8 +773,17 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 
+	start := 0
+	end := MaskTotalBits
+	if mask.Lo == 0 {
+		start = wordSize
+	}
+	if mask.Hi == 0 {
+		end = wordSize
+	}
+
 	idx := 0
-	for i := 0; i < MaskTotalBits; i++ {
+	for i := start; i < end; i++ {
 		id := ID(i)
 		if mask.Get(id) {
 			types[idx] = componentType{ID: id, Type: w.registry.Types[id]}
