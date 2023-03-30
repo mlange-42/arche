@@ -913,6 +913,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[archetype]()
 	printTypeSize[archetypeAccess]()
 	printTypeSize[archetypeNode]()
+	printTypeSize[layout]()
 	printTypeSize[entityPool]()
 	printTypeSizeName[componentRegistry[ID]]("componentRegistry")
 	printTypeSize[bitPool]()

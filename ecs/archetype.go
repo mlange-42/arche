@@ -170,12 +170,13 @@ func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 	a.addEntity(idx, &entity)
 	for _, c := range components {
 		lay := a.getLayout(c.ID)
-		if lay.itemSize == 0 {
+		size := lay.itemSize
+		if size == 0 {
 			continue
 		}
 		src := reflect.ValueOf(c.Comp).UnsafePointer()
 		dst := a.Get(uintptr(idx), c.ID)
-		a.copy(src, dst, lay.itemSize)
+		a.copy(src, dst, size)
 	}
 	a.len++
 	return idx
@@ -193,12 +194,13 @@ func (a *archetype) Remove(index uintptr) bool {
 	if index != old {
 		for _, id := range a.Ids {
 			lay := a.getLayout(id)
-			if lay.itemSize == 0 {
+			size := lay.itemSize
+			if size == 0 {
 				continue
 			}
-			src := unsafe.Add(lay.pointer, old*lay.itemSize)
-			dst := unsafe.Add(lay.pointer, index*lay.itemSize)
-			a.copy(src, dst, lay.itemSize)
+			src := unsafe.Add(lay.pointer, old*size)
+			dst := unsafe.Add(lay.pointer, index*size)
+			a.copy(src, dst, size)
 		}
 	}
 	a.ZeroAll(old)
@@ -217,11 +219,12 @@ func (a *archetype) ZeroAll(index uintptr) {
 // ZeroAll resets a block of storage in one buffer.
 func (a *archetype) Zero(index uintptr, id ID) {
 	lay := a.getLayout(id)
-	if lay.itemSize == 0 {
+	size := lay.itemSize
+	if size == 0 {
 		return
 	}
-	dst := unsafe.Add(lay.pointer, index*lay.itemSize)
-	a.copy(a.zeroPointer, dst, lay.itemSize)
+	dst := unsafe.Add(lay.pointer, index*size)
+	a.copy(a.zeroPointer, dst, size)
 }
 
 // SetEntity overwrites an entity
@@ -233,13 +236,14 @@ func (a *archetype) SetEntity(index uintptr, entity Entity) {
 func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
 	lay := a.getLayout(id)
 	dst := a.Get(index, id)
-	if lay.itemSize == 0 {
+	size := lay.itemSize
+	if size == 0 {
 		return dst
 	}
 	rValue := reflect.ValueOf(comp)
 
 	src := rValue.UnsafePointer()
-	a.copy(src, dst, lay.itemSize)
+	a.copy(src, dst, size)
 	return dst
 }
 
@@ -247,11 +251,12 @@ func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
 func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe.Pointer {
 	lay := a.getLayout(id)
 	dst := a.Get(index, id)
-	if lay.itemSize == 0 {
+	size := lay.itemSize
+	if size == 0 {
 		return dst
 	}
 
-	a.copy(comp, dst, lay.itemSize)
+	a.copy(comp, dst, size)
 	return dst
 }
 
