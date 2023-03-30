@@ -35,6 +35,7 @@
 * Avoid type checks in query when iterating archetypes (#179)
 * Speed up counting entities in queries with a cached filter (#182)
 * Implements a fast and memory-efficient lookup data structure for components ID keys, to reduce the memory footprint of archetypes and the archetype graph (#192)
+* Speedup of archetype creation by 40% by using a `const` for archetype storage page sizes (#197)
 
 ### Bugfixes
 

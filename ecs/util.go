@@ -1,5 +1,8 @@
 package ecs
 
+// Page size of pagedSlice type
+const pageSize = 32
+
 // Calculates the capacity required for size, given an increment.
 func capacity(size, increment int) int {
 	cap := increment * (size / increment)
@@ -58,23 +61,20 @@ func (m *lockMask) Reset() {
 //
 // Implements [archetypes].
 type pagedSlice[T any] struct {
-	pages    [][]T
-	len      int
-	lenLast  int
-	pageSize int
+	pages   [][]T
+	len     int
+	lenLast int
 }
 
 // newPagedSlice creates a new pagedSlice with the given page size/capacity increment.
-func newPagedSlice[T any](pageSize int) pagedSlice[T] {
-	return pagedSlice[T]{
-		pageSize: pageSize,
-	}
+func newPagedSlice[T any]() pagedSlice[T] {
+	return pagedSlice[T]{}
 }
 
 // Add adds a value to the paged slice.
 func (p *pagedSlice[T]) Add(value T) {
-	if p.len == 0 || p.lenLast == p.pageSize {
-		p.pages = append(p.pages, make([]T, p.pageSize))
+	if p.len == 0 || p.lenLast == pageSize {
+		p.pages = append(p.pages, make([]T, pageSize))
 		p.lenLast = 0
 	}
 	p.pages[len(p.pages)-1][p.lenLast] = value
@@ -84,7 +84,7 @@ func (p *pagedSlice[T]) Add(value T) {
 
 // Get returns the value at the given index.
 func (p *pagedSlice[T]) Get(index int) *T {
-	return &p.pages[index/p.pageSize][index%p.pageSize]
+	return &p.pages[index/pageSize][index%pageSize]
 }
 
 // Len returns the current number of items in the paged slice.
