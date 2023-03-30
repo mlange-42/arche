@@ -711,23 +711,23 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *arc
 	mask := start.Mask
 	for _, id := range rem {
 		mask.Set(id, false)
-		if next, ok := curr.GetTransitionRemove(id); ok {
+		if next, ok := curr.TransitionRemove.Get(id); ok {
 			curr = next
 		} else {
 			next, _ := w.findOrCreateArchetypeSlow(mask)
-			next.SetTransitionAdd(id, curr)
-			curr.SetTransitionRemove(id, next)
+			next.TransitionAdd.Set(id, curr)
+			curr.TransitionRemove.Set(id, next)
 			curr = next
 		}
 	}
 	for _, id := range add {
 		mask.Set(id, true)
-		if next, ok := curr.GetTransitionAdd(id); ok {
+		if next, ok := curr.TransitionAdd.Get(id); ok {
 			curr = next
 		} else {
 			next, _ := w.findOrCreateArchetypeSlow(mask)
-			next.SetTransitionRemove(id, curr)
-			curr.SetTransitionAdd(id, next)
+			next.TransitionRemove.Set(id, curr)
+			curr.TransitionAdd.Set(id, next)
 			curr = next
 		}
 	}
