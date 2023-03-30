@@ -7,7 +7,7 @@ import (
 )
 
 func TestIDMap(t *testing.T) {
-	m := newIDMap[Entity]()
+	m := newIDMap[*Entity]()
 
 	e0 := Entity{0, 0}
 	e1 := Entity{1, 0}
@@ -43,11 +43,48 @@ func TestIDMap(t *testing.T) {
 	assert.Nil(t, m.chunks[0])
 }
 
+func TestIDMapPointers(t *testing.T) {
+	m := newIDMap[Entity]()
+
+	e0 := Entity{0, 0}
+	e1 := Entity{1, 0}
+	e121 := Entity{121, 0}
+
+	m.Set(0, e0)
+	m.Set(1, e1)
+	m.Set(121, e121)
+
+	e, ok := m.GetPointer(0)
+	assert.True(t, ok)
+	assert.Equal(t, e0, *e)
+
+	e, ok = m.GetPointer(1)
+	assert.True(t, ok)
+	assert.Equal(t, e1, *e)
+
+	e, ok = m.GetPointer(121)
+	assert.True(t, ok)
+	assert.Equal(t, e121, *e)
+
+	e, ok = m.GetPointer(15)
+	assert.False(t, ok)
+	assert.Nil(t, e)
+
+	m.Remove(0)
+	m.Remove(1)
+
+	e, ok = m.GetPointer(0)
+	assert.False(t, ok)
+	assert.Nil(t, e)
+
+	assert.Nil(t, m.chunks[0])
+}
+
 func BenchmarkIdMapping_IDMap(b *testing.B) {
 	b.StopTimer()
 
 	entities := [MaskTotalBits]Entity{}
-	m := newIDMap[Entity]()
+	m := newIDMap[*Entity]()
 
 	for i := 0; i < MaskTotalBits; i++ {
 		entities[i] = Entity{eid(i), 0}
@@ -98,7 +135,7 @@ func BenchmarkIdMapping_HashMap(b *testing.B) {
 
 	var ptr *Entity = nil
 	for i := 0; i < b.N; i++ {
-		ptr, _ = m[ID(i%MaskTotalBits)]
+		ptr = m[ID(i%MaskTotalBits)]
 	}
 	_ = ptr
 }
