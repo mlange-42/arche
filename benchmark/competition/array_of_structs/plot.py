@@ -5,6 +5,8 @@ from matplotlib import pyplot as plt
 
 if __name__ == "__main__":
     data = pd.read_csv("results.csv", sep=";")
+    data = data[data["Model"] != "LL"]
+    data = data[data["Entities"] <= 100000]
 
     models = np.unique(data["Model"])
     entities = np.unique(data["Entities"])
@@ -14,11 +16,13 @@ if __name__ == "__main__":
         "Arche": "black",
         "AoS": "red",
         "AoP": "blue",
+        "LL": "grey",
     }
     linesEntities = {
         1000: ("dotted", 1.0),
         10000: ("dashed", 1.2),
         100000: ("solid", 1.5),
+        # 250000: ("-.", 1.0),
     }
 
     plt.rcParams["svg.fonttype"] = "none"
