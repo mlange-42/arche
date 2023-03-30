@@ -34,9 +34,7 @@ func (m *idMap[T]) Get(index uint8) (T, bool) {
 	if !m.used.Get(index) {
 		return m.zeroValue, false
 	}
-	chunk := index / chunkSize
-	subIndex := index % chunkSize
-	return m.chunks[chunk][subIndex], true
+	return m.chunks[index/chunkSize][index%chunkSize], true
 }
 
 // Get returns a pointer to the value at the given key and whether the key is present.
@@ -44,19 +42,16 @@ func (m *idMap[T]) GetPointer(index uint8) (*T, bool) {
 	if !m.used.Get(index) {
 		return nil, false
 	}
-	chunk := index / chunkSize
-	subIndex := index % chunkSize
-	return &m.chunks[chunk][subIndex], true
+	return &m.chunks[index/chunkSize][index%chunkSize], true
 }
 
 // Set sets the value at the given key.
 func (m *idMap[T]) Set(index uint8, value T) {
 	chunk := index / chunkSize
-	subIndex := index % chunkSize
 	if m.chunks[chunk] == nil {
 		m.chunks[chunk] = make([]T, chunkSize)
 	}
-	m.chunks[chunk][subIndex] = value
+	m.chunks[chunk][index%chunkSize] = value
 	m.used.Set(index, true)
 	m.chunkUsed[chunk]++
 }

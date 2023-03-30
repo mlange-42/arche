@@ -28,19 +28,24 @@ func newEntityPool(capacityIncrement int) entityPool {
 // Get returns a fresh or recycled entity.
 func (p *entityPool) Get() Entity {
 	if p.available == 0 {
-		e := newEntity(eid(len(p.entities)))
-		if len(p.entities) == cap(p.entities) {
-			old := p.entities
-			p.entities = make([]Entity, len(p.entities), len(p.entities)+p.capacityIncrement)
-			copy(p.entities, old)
-		}
-		p.entities = append(p.entities, e)
-		return e
+		return p.getNew()
 	}
 	curr := p.next
 	p.next, p.entities[p.next].id = p.entities[p.next].id, p.next
 	p.available--
 	return p.entities[curr]
+}
+
+// Allocates and returns a new entity. For internal use.
+func (p *entityPool) getNew() Entity {
+	e := newEntity(eid(len(p.entities)))
+	if len(p.entities) == cap(p.entities) {
+		old := p.entities
+		p.entities = make([]Entity, len(p.entities), len(p.entities)+p.capacityIncrement)
+		copy(p.entities, old)
+	}
+	p.entities = append(p.entities, e)
+	return e
 }
 
 // Recycle hands an entity back for recycling.
@@ -96,18 +101,23 @@ type bitPool struct {
 // Get returns a fresh or recycled bit.
 func (p *bitPool) Get() uint8 {
 	if p.available == 0 {
-		if p.length >= MaskTotalBits {
-			panic("run out of the maximum of 128 bits")
-		}
-		b := p.length
-		p.bits[p.length] = b
-		p.length++
-		return b
+		return p.getNew()
 	}
 	curr := p.next
 	p.next, p.bits[p.next] = p.bits[p.next], p.next
 	p.available--
 	return p.bits[curr]
+}
+
+// Allocates and returns a new bit. For internal use.
+func (p *bitPool) getNew() uint8 {
+	if p.length >= MaskTotalBits {
+		panic("run out of the maximum of 128 bits")
+	}
+	b := p.length
+	p.bits[p.length] = b
+	p.length++
+	return b
 }
 
 // Recycle hands a bit back for recycling.
