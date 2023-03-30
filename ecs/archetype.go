@@ -13,39 +13,19 @@ var layoutSize = unsafe.Sizeof(layout{})
 
 // archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
-	mask      Mask                  // Mask of the archetype
-	archetype *archetype            // The archetype
-	toAdd     idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
-	toRemove  idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
+	mask             Mask                  // Mask of the archetype
+	archetype        *archetype            // The archetype
+	TransitionAdd    idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
+	TransitionRemove idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
 }
 
 // Creates a new archetypeNode
 func newArchetypeNode(mask Mask) archetypeNode {
 	return archetypeNode{
-		mask:     mask,
-		toAdd:    newIDMap[*archetypeNode](),
-		toRemove: newIDMap[*archetypeNode](),
+		mask:             mask,
+		TransitionAdd:    newIDMap[*archetypeNode](),
+		TransitionRemove: newIDMap[*archetypeNode](),
 	}
-}
-
-// GetTransitionAdd returns the archetypeNode resulting from adding a component
-func (a *archetypeNode) GetTransitionAdd(id ID) (*archetypeNode, bool) {
-	return a.toAdd.Get(id)
-}
-
-// GetTransitionRemove returns the archetypeNode resulting from removing a component
-func (a *archetypeNode) GetTransitionRemove(id ID) (*archetypeNode, bool) {
-	return a.toRemove.Get(id)
-}
-
-// SetTransitionAdd sets the archetypeNode resulting from adding a component
-func (a *archetypeNode) SetTransitionAdd(id ID, to *archetypeNode) {
-	a.toAdd.Set(id, to)
-}
-
-// SetTransitionRemove sets the archetypeNode resulting from removing a component
-func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
-	a.toRemove.Set(id, to)
 }
 
 // Helper for accessing data from an archetype
@@ -190,11 +170,11 @@ func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 	a.addEntity(idx, &entity)
 	for _, c := range components {
 		lay := a.getLayout(c.ID)
-		dst := a.Get(uintptr(idx), c.ID)
 		if lay.itemSize == 0 {
 			continue
 		}
 		src := reflect.ValueOf(c.Comp).UnsafePointer()
+		dst := a.Get(uintptr(idx), c.ID)
 		a.copy(src, dst, lay.itemSize)
 	}
 	a.len++

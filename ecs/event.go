@@ -2,7 +2,7 @@ package ecs
 
 // EntityEvent contains information about component changes to an [Entity].
 //
-// To receive change events, register a function func(e EntityEvent) with [World.SetListener].
+// To receive change events, register a function func(e *EntityEvent) with [World.SetListener].
 //
 // Events notified are entity creation, removal and changes to the component composition.
 // Events are emitted immediately after the change is applied.
@@ -15,6 +15,9 @@ package ecs
 // Events for batch-creation of entities using [World.Batch] are fired after all entities are created.
 // For batch methods that return a [Query], events are fired after the [Query] is closed (or fully iterated).
 // This allows the [World] to be in an unlocked state, and notifies after potential entity initialization.
+//
+// Note that the event pointer received by the listener function should not be stored,
+// as the instance behind the pointer might be reused for further notifications.
 type EntityEvent struct {
 	Entity                  Entity // The entity that was changed.
 	OldMask, NewMask        Mask   // The old and new component masks.

@@ -1294,11 +1294,10 @@ func ExampleWorld_Cache() {
 func ExampleWorld_SetListener() {
 	world := NewWorld()
 
-	world.SetListener(
-		func(evt *EntityEvent) {
-			fmt.Println(evt)
-		},
-	)
+	listener := func(evt *EntityEvent) {
+		fmt.Println(evt)
+	}
+	world.SetListener(listener)
 
 	world.NewEntity()
 	// Output: &{{1 0} {0 0} {0 0} [] [] [] 1}

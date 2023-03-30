@@ -18,6 +18,8 @@ func TestFilterCache(t *testing.T) {
 	assert.Equal(t, 0, int(f1.id))
 	assert.Equal(t, 1, int(f2.id))
 
+	assert.Panics(t, func() { cache.Register(&f2) })
+
 	e1 := cache.get(&f1)
 	e2 := cache.get(&f2)
 
