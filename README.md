@@ -15,7 +15,7 @@
 ## Features
 
 * Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
-* Optional rich [filtering](https://pkg.go.dev/github.com/mlange-42/arche/filter) and [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) query API.
+* Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
 * No systems. Just queries. Use your own structure.
 * Not thread-safe. On purpose.
 * No dependencies. Except for unit tests ([100% coverage](https://github.com/mlange-42/arche/actions/workflows/coverage.yml)).
@@ -34,7 +34,8 @@ go get github.com/mlange-42/arche
 ## Usage example
 
 Here is a minimal usage example.
-You will likely create systems with a method that takes a pointer to the `World` as argument.
+It uses the type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
+You will likely create systems with an update method that takes a pointer to the `World` as argument.
 
 See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
 [examples](https://github.com/mlange-42/arche/tree/main/examples) for details.
