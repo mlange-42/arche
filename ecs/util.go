@@ -19,6 +19,8 @@ func capacityU32(size, increment uint32) uint32 {
 }
 
 // Manages locks by mask bits.
+//
+// The number of simultaneous locks at a given time is limited to [MaskTotalBits].
 type lockMask struct {
 	locks   Mask    // The actual locks.
 	bitPool bitPool // The bit pool for getting and recycling bits.

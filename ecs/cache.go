@@ -15,10 +15,13 @@ type cacheEntry struct {
 // so that there are no mask checks required during iteration.
 // This is particularly helpful to avoid query iteration slowdown by a very high number of archetypes.
 // If the number of archetypes exceeds approx. 50-100, uncached filters experience a slowdown.
-// The relative slowdown increases with lower numbers of entities queried (below 10.000).
+// The relative slowdown increases with lower numbers of entities queried (below a few thousand).
 // Cached filters avoid this slowdown.
 //
-// The overhead of tracking cached filters is very low, as updates are required only when new archetypes are created.
+// Further, cached filters should be used for complex queries built with package [github.com/mlange-42/arche/filter].
+//
+// The overhead of tracking cached filters internally is very low, as updates are required only when new archetypes are created.
+// The number of cached filters is limited to [MaskTotalBits].
 type Cache struct {
 	indices       idMap[int]                       // Mapping from filter IDs to indices in filters
 	filters       []cacheEntry                     // The cached filters, indexed by indices

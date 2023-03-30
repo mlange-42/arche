@@ -9,6 +9,8 @@ import (
 
 // ComponentID returns the [ID] for a component type via generics.
 // Registers the type if it is not already registered.
+//
+// The number of unique component types per [World] is limited to [MaskTotalBits].
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.componentID(tp)
@@ -16,12 +18,16 @@ func ComponentID[T any](w *World) ID {
 
 // TypeID returns the [ID] for a component type.
 // Registers the type if it is not already registered.
+//
+// The number of unique component types per [World] is limited to [MaskTotalBits].
 func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
 // ResourceID returns the [ResID] for a resource type via generics.
 // Registers the type if it is not already registered.
+//
+// The number of resources per [World] is limited to [MaskTotalBits].
 func ResourceID[T any](w *World) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.resourceID(tp)
@@ -45,6 +51,8 @@ func GetResource[T any](w *World) *T {
 //
 // Uses reflection. For more efficient access, see [World.AddResource],
 // and [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
+//
+// The number of resources per [World] is limited to [MaskTotalBits].
 func AddResource[T any](w *World, res *T) ResID {
 	id := ResourceID[T](w)
 	w.resources.Add(id, res)
@@ -109,8 +117,6 @@ func fromConfig(conf Config) World {
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
-//
 // Note that calling a method with varargs in Go causes a slice allocation.
 // For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
 //
@@ -118,6 +124,8 @@ func fromConfig(conf Config) World {
 //	world.NewEntity(idA, idB, idC)
 //	// even faster
 //	world.NewEntity(ids...)
+//
+// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) NewEntity(comps ...ID) Entity {
 	w.checkLocked()
 
@@ -331,8 +339,6 @@ func (w *World) Has(entity Entity, comp ID) bool {
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 //
-// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
-//
 // Note that calling a method with varargs in Go causes a slice allocation.
 // For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
 //
@@ -340,6 +346,8 @@ func (w *World) Has(entity Entity, comp ID) bool {
 //	world.Add(entity, idA, idB, idC)
 //	// even faster
 //	world.Add(entity, ids...)
+//
+// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
 }
@@ -483,10 +491,11 @@ func (w *World) Reset() {
 // The [ecs] core package provides only the filter [All] for querying the given components.
 // Further, it can be chained with [Mask.Without] (see the examples) to exclude components.
 //
+// Locks the world to prevent changes to component compositions.
+// The number of simultaneous locks (and thus open queries) at a given time is limited to [MaskTotalBits].
+//
 // For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
-//
-// Locks the world to prevent changes to component compositions.
 func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(*CachedFilter); ok {
