@@ -34,6 +34,7 @@
 * Avoid slice allocations in generic mapper methods (#170)
 * Avoid type checks in query when iterating archetypes (#179)
 * Speed up counting entities in queries with a cached filter (#182)
+* Implements a fast and memory-efficient lookup data structure for components ID keys, to reduce the memory footprint of archetypes and the archetype graph (#192)
 
 ### Bugfixes
 

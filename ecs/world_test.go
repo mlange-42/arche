@@ -921,6 +921,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[reflect.Value]("reflect.Value")
 	printTypeSize[EntityEvent]()
 	printTypeSize[Cache]()
+	printTypeSizeName[idMap[archetype]]("idMap")
 }
 
 func printTypeSize[T any]() {

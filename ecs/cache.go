@@ -20,7 +20,7 @@ type cacheEntry struct {
 //
 // The overhead of tracking cached filters is very low, as updates are required only when new archetypes are created.
 type Cache struct {
-	indices       []int                            // Mapping from filter IDs to indices in filters
+	indices       idMap[int]                       // Mapping from filter IDs to indices in filters
 	filters       []cacheEntry                     // The cached filters, indexed by indices
 	getArchetypes func(f Filter) archetypePointers // Callback for getting archetypes for a new filter from the world
 	bitPool       bitPool                          // Pool for filter IDs
@@ -28,13 +28,9 @@ type Cache struct {
 
 // newCache creates a new [Cache].
 func newCache() Cache {
-	indices := make([]int, MaskTotalBits)
-	for i := 0; i < MaskTotalBits; i++ {
-		indices[i] = MaskTotalBits
-	}
 	return Cache{
 		bitPool: bitPool{},
-		indices: indices,
+		indices: newIDMap[int](),
 		filters: []cacheEntry{},
 	}
 }
@@ -54,7 +50,7 @@ func (c *Cache) Register(f Filter) CachedFilter {
 			Filter:     f,
 			Archetypes: c.getArchetypes(f),
 		})
-	c.indices[id] = len(c.filters) - 1
+	c.indices.Set(id, len(c.filters)-1)
 	return CachedFilter{f, id}
 }
 
@@ -62,17 +58,17 @@ func (c *Cache) Register(f Filter) CachedFilter {
 //
 // Returns the original filter.
 func (c *Cache) Unregister(f *CachedFilter) Filter {
-	idx := c.indices[f.id]
-	if idx >= MaskTotalBits {
+	idx, ok := c.indices.Get(f.id)
+	if !ok {
 		panic("no filter for id found to unregister")
 	}
 	filter := c.filters[idx].Filter
-	c.indices[f.id] = MaskTotalBits
+	c.indices.Remove(f.id)
 
 	last := len(c.filters) - 1
 	if idx != last {
 		c.filters[idx], c.filters[last] = c.filters[last], c.filters[idx]
-		c.indices[c.filters[idx].ID] = idx
+		c.indices.Set(c.filters[idx].ID, idx)
 	}
 	c.filters[last] = cacheEntry{}
 	c.filters = c.filters[:last]
@@ -84,8 +80,7 @@ func (c *Cache) Unregister(f *CachedFilter) Filter {
 //
 // Panics if there is no entry for the filter's ID.
 func (c *Cache) get(f *CachedFilter) *cacheEntry {
-	idx := c.indices[f.id]
-	if idx < MaskTotalBits {
+	if idx, ok := c.indices.Get(f.id); ok {
 		return &c.filters[idx]
 	}
 	panic("no filter for id found")

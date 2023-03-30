@@ -13,41 +13,39 @@ var layoutSize = unsafe.Sizeof(layout{})
 
 // archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
-	mask      Mask             // Mask of the archetype
-	archetype *archetype       // The archetype
-	toAdd     []*archetypeNode // Mapping from component ID to add to the resulting archetype
-	toRemove  []*archetypeNode // Mapping from component ID to remove to the resulting archetype
+	mask      Mask                  // Mask of the archetype
+	archetype *archetype            // The archetype
+	toAdd     idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
+	toRemove  idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
 }
 
 // Creates a new archetypeNode
 func newArchetypeNode(mask Mask) archetypeNode {
 	return archetypeNode{
 		mask:     mask,
-		toAdd:    make([]*archetypeNode, MaskTotalBits),
-		toRemove: make([]*archetypeNode, MaskTotalBits),
+		toAdd:    newIDMap[*archetypeNode](),
+		toRemove: newIDMap[*archetypeNode](),
 	}
 }
 
 // GetTransitionAdd returns the archetypeNode resulting from adding a component
 func (a *archetypeNode) GetTransitionAdd(id ID) (*archetypeNode, bool) {
-	p := a.toAdd[id]
-	return p, p != nil
+	return a.toAdd.Get(id)
 }
 
 // GetTransitionRemove returns the archetypeNode resulting from removing a component
 func (a *archetypeNode) GetTransitionRemove(id ID) (*archetypeNode, bool) {
-	p := a.toRemove[id]
-	return p, p != nil
+	return a.toRemove.Get(id)
 }
 
 // SetTransitionAdd sets the archetypeNode resulting from adding a component
 func (a *archetypeNode) SetTransitionAdd(id ID, to *archetypeNode) {
-	a.toAdd[id] = to
+	a.toAdd.Set(id, to)
 }
 
 // SetTransitionRemove sets the archetypeNode resulting from removing a component
 func (a *archetypeNode) SetTransitionRemove(id ID, to *archetypeNode) {
-	a.toRemove[id] = to
+	a.toRemove.Set(id, to)
 }
 
 // Helper for accessing data from an archetype
@@ -97,7 +95,7 @@ type archetype struct {
 	graphNode         *archetypeNode  // Node in the archetype graph.
 	Ids               []ID            // List of component IDs.
 	layouts           []layout        // Column layouts by ID.
-	indices           []uint32        // Mapping from IDs to buffer indices.
+	indices           idMap[uint32]   // Mapping from IDs to buffer indices.
 	buffers           []reflect.Value // Reflection arrays containing component data.
 	entityBuffer      reflect.Value   // Reflection array containing entity data.
 	len               uint32          // Current number of entities
@@ -116,7 +114,7 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 
 	a.buffers = make([]reflect.Value, len(components))
 	a.layouts = make([]layout, MaskTotalBits)
-	a.indices = make([]uint32, MaskTotalBits)
+	a.indices = newIDMap[uint32]()
 
 	cap := 1
 	if forStorage {
@@ -144,7 +142,7 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 			a.buffers[i].Addr().UnsafePointer(),
 			size,
 		}
-		a.indices[c.ID] = uint32(i)
+		a.indices.Set(c.ID, uint32(i))
 	}
 	a.entityBuffer = reflect.New(reflect.ArrayOf(cap, entityType)).Elem()
 
@@ -355,7 +353,7 @@ func (a *archetype) extend(by uint32) {
 		if lay.itemSize == 0 {
 			continue
 		}
-		index := a.indices[id]
+		index, _ := a.indices.Get(id)
 		old := a.buffers[index]
 		a.buffers[index] = reflect.New(reflect.ArrayOf(int(a.cap), old.Type().Elem())).Elem()
 		lay.pointer = a.buffers[index].Addr().UnsafePointer()
