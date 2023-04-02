@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.6.1] (unpublished)](https://github.com/mlange-42/arche/compare/v0.6.0...main)
+
+### Documentation
+
+* Extend documentation and benchmarks for `Entity` (#201)
+
 ## [[v0.6.0]](https://github.com/mlange-42/arche/compare/v0.5.1...v0.6.0)
 
 Arche v0.6.0 features fast batch entity creation and deletion, cached filters, and many internal optimizations.
