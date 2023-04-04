@@ -5,6 +5,7 @@
 ### Documentation
 
 * Extend documentation and benchmarks for `Entity` (#201)
+* Add a section with links to the Arche tools [arche-model](https://github.com/mlange-42/arche-model) and [arche-pixel](https://github.com/mlange-42/arche-pixel) (#202)
 
 ## [[v0.6.0]](https://github.com/mlange-42/arche/compare/v0.5.1...v0.6.0)
 

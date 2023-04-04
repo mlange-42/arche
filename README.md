@@ -116,6 +116,7 @@ The core package `ecs` consists of only 1500 lines of easy-to-read, clean and we
 
 There is neither an update loop nor systems.
 These should be implemented by the user.
+For an implementation, see module [arche-model](https://github.com/mlange-42/arche-model).
 
 The packages `filter` and `generic` provide a layer around the core for richer and/or safer queries and manipulation. They are built on top of the `ecs` package, so they could also be implemented by a user.
 See also [Generic vs. ID access](#generic-vs-id-access).
@@ -188,6 +189,14 @@ For performance-critical code, the use of the ID-based methods of `ecs.World` ma
 
 For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
 [examples](https://github.com/mlange-42/arche/tree/main/examples).
+
+## Tools
+
+Several tools for *Arche* are provided in separate modules:
+
+* [arche-model](https://github.com/mlange-42/arche-model) provides a wrapper around *Arche*, and some general-purpose systems.
+It's purpose is to get started with prototyping and developing simulation models immediately.
+* [arche-pixel](https://github.com/mlange-42/arche-pixel) provides OpenGL graphics and plots for *Arche* using the [Pixel](https://github.com/faiface/pixel) game engine.
 
 ## Benchmarks
 
