@@ -2,6 +2,7 @@
 
 [![Test status](https://img.shields.io/github/actions/workflow/status/mlange-42/arche/tests.yml?branch=main&label=Tests&logo=github)](https://github.com/mlange-42/arche/actions/workflows/tests.yml)
 [![100% Coverage](https://img.shields.io/github/actions/workflow/status/mlange-42/arche/coverage.yml?branch=main&label=100%25%20Coverage&logo=github)](https://github.com/mlange-42/arche/actions/workflows/coverage.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/mlange-42/arche)](https://goreportcard.com/report/github.com/mlange-42/arche)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche.svg)](https://pkg.go.dev/github.com/mlange-42/arche)
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
 [![MIT license](https://img.shields.io/github/license/mlange-42/arche)](https://github.com/mlange-42/arche/blob/main/LICENSE)
@@ -9,7 +10,7 @@
 *Arche* is an archetype-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
 
 *Arche* is designed for the use in simulation models of the
-[Department for Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
+[Department of Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
 [Helmholtz Centre for Environmental Research](https://www.ufz.de).
 
 ## Features
