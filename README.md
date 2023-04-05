@@ -17,7 +17,7 @@
 
 * Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 * Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
-* No systems. Just queries. Use your own structure.
+* No systems. Just queries. Use your own structure (or the [Tools](#tools)).
 * Not thread-safe. On purpose.
 * No dependencies. Except for unit tests ([100% coverage](https://github.com/mlange-42/arche/actions/workflows/coverage.yml)).
 * Probably the fastest Go ECS out there. See the [Benchmarks](#benchmarks).
@@ -195,8 +195,8 @@ For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arc
 
 Several tools for *Arche* are provided in separate modules:
 
-* [arche-model](https://github.com/mlange-42/arche-model) provides a wrapper around *Arche*, and some general-purpose systems.
-It's purpose is to get started with prototyping and developing simulation models immediately.
+* [arche-model](https://github.com/mlange-42/arche-model) provides a wrapper around *Arche*, and some common systems and resources.
+It's purpose is to get started with prototyping and developing simulation models immediately, focussing on the model logic.
 * [arche-pixel](https://github.com/mlange-42/arche-pixel) provides OpenGL graphics and plots for *Arche* using the [Pixel](https://github.com/faiface/pixel) game engine.
 
 ## Benchmarks
