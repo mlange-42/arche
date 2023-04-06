@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/mlange-42/arche/ecs/stats"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -581,6 +582,7 @@ func TestWorldStats(t *testing.T) {
 
 	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
+	velID := ComponentID[Velocity](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -592,6 +594,15 @@ func TestWorldStats(t *testing.T) {
 
 	stats := w.Stats()
 	fmt.Println(stats.String())
+
+	assert.Equal(t, 3, len(stats.Archetypes))
+	assert.Equal(t, 3, stats.Entities.Used)
+
+	w.NewEntity(velID)
+	stats = w.Stats()
+	assert.Equal(t, 4, len(stats.Archetypes))
+	assert.Equal(t, 4, stats.Entities.Used)
+
 }
 
 func TestWorldResources(t *testing.T) {
@@ -1068,6 +1079,52 @@ func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
 		b.StartTimer()
 		world.removeEntities(All(posID, velID))
 	}
+}
+
+func BenchmarkWorldStats_1Arch(b *testing.B) {
+	b.StopTimer()
+
+	w := NewWorld()
+	w.NewEntity()
+
+	b.StartTimer()
+
+	var st *stats.WorldStats
+	for i := 0; i < b.N; i++ {
+		st = w.Stats()
+	}
+	_ = st
+}
+
+func BenchmarkWorldStats_10Arch(b *testing.B) {
+	b.StopTimer()
+
+	w := NewWorld()
+
+	ids := []ID{
+		ComponentID[testStruct0](&w),
+		ComponentID[testStruct1](&w),
+		ComponentID[testStruct2](&w),
+		ComponentID[testStruct3](&w),
+		ComponentID[testStruct4](&w),
+		ComponentID[testStruct5](&w),
+		ComponentID[testStruct6](&w),
+		ComponentID[testStruct7](&w),
+		ComponentID[testStruct8](&w),
+		ComponentID[testStruct9](&w),
+	}
+
+	for _, id := range ids {
+		w.NewEntity(id)
+	}
+
+	b.StartTimer()
+
+	var st *stats.WorldStats
+	for i := 0; i < b.N; i++ {
+		st = w.Stats()
+	}
+	_ = st
 }
 
 func ExampleComponentID() {

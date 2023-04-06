@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.6.2]](https://github.com/mlange-42/arche/compare/v0.6.1...v0.6.2)
+
+### Performance
+
+* Speed up generating world stats by factor 10 be re-using stats object (#210)
+
 ## [[v0.6.1]](https://github.com/mlange-42/arche/compare/v0.6.0...v0.6.1)
 
 ### Documentation

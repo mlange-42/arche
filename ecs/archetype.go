@@ -313,6 +313,16 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 	}
 }
 
+// UpdateStats updates statistics for an archetype
+func (a *archetype) UpdateStats(stats *stats.ArchetypeStats) {
+	cap := int(a.Cap())
+	memory := cap * (int(entitySize) + stats.MemoryPerEntity)
+
+	stats.Size = int(a.Len())
+	stats.Capacity = cap
+	stats.Memory = memory
+}
+
 // copy from one pointer to another.
 func (a *archetype) copy(src, dst unsafe.Pointer, itemSize uintptr) {
 	dstSlice := (*[math.MaxInt32]byte)(dst)[:itemSize:itemSize]
