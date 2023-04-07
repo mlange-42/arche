@@ -71,6 +71,7 @@ type World struct {
 	locks       lockMask                  // World locks.
 	registry    componentRegistry[ID]     // Component registry.
 	filterCache Cache                     // Cache for registered filters.
+	stats       stats.WorldStats          // Cached world statistics
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -555,7 +556,7 @@ func (w *World) SetListener(listener func(e *EntityEvent)) {
 
 // Stats reports statistics for inspecting the World.
 func (w *World) Stats() *stats.WorldStats {
-	entities := stats.EntityStats{
+	w.stats.Entities = stats.EntityStats{
 		Used:     w.entityPool.Len(),
 		Total:    w.entityPool.Cap(),
 		Recycled: w.entityPool.Available(),
@@ -566,20 +567,25 @@ func (w *World) Stats() *stats.WorldStats {
 	types := append([]reflect.Type{}, w.registry.Types[:compCount]...)
 
 	memory := cap(w.entities)*int(entityIndexSize) + w.entityPool.TotalCap()*int(entitySize)
-	archetypes := make([]stats.ArchetypeStats, w.archetypes.Len())
-	for i := 0; i < w.archetypes.Len(); i++ {
-		archetypes[i] = w.archetypes.Get(i).Stats(&w.registry)
-		memory += archetypes[i].Memory
+
+	cntOld := len(w.stats.Archetypes)
+	cntNew := w.archetypes.Len()
+	for i := 0; i < cntOld; i++ {
+		arch := &w.stats.Archetypes[i]
+		w.archetypes.Get(i).UpdateStats(arch)
+		memory += arch.Memory
+	}
+	for i := cntOld; i < cntNew; i++ {
+		w.stats.Archetypes = append(w.stats.Archetypes, w.archetypes.Get(i).Stats(&w.registry))
+		memory += w.stats.Archetypes[i].Memory
 	}
 
-	return &stats.WorldStats{
-		Entities:       entities,
-		ComponentCount: compCount,
-		ComponentTypes: types,
-		Locked:         w.IsLocked(),
-		Archetypes:     archetypes,
-		Memory:         memory,
-	}
+	w.stats.ComponentCount = compCount
+	w.stats.ComponentTypes = types
+	w.stats.Locked = w.IsLocked()
+	w.stats.Memory = memory
+
+	return &w.stats
 }
 
 // lock the world and get the lock bit for later unlocking.
