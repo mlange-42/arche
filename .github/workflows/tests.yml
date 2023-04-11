@@ -48,8 +48,8 @@ jobs:
       run: go install github.com/mattn/goveralls@latest
     - name: Send coverage
       uses: shogo82148/actions-goveralls@v1
-        with:
-          path-to-profile: covprofile
+      with:
+        path-to-profile: covprofile
 
   lint:
     name: Run linters
