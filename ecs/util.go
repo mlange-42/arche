@@ -3,13 +3,6 @@ package ecs
 // Page size of pagedSlice type
 const pageSize = 32
 
-func testCoverageFail() bool {
-	if true {
-		return false
-	}
-	return true
-}
-
 // Calculates the capacity required for size, given an increment.
 func capacity(size, increment int) int {
 	cap := increment * (size / increment)
