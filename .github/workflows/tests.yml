@@ -32,17 +32,24 @@ jobs:
     name: Run tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v3
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.16'
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        go mod download
+    - name: Run Unit tests
+      run: |
+        go test -v -covermode atomic -coverprofile=covprofile ./...
+    - name: Install goveralls
+      run: go install github.com/mattn/goveralls@latest
+    - name: Send coverage
+      uses: shogo82148/actions-goveralls@v1
         with:
-          go-version: '1.20.x'
-      - name: Install dependencies
-        run: go get .
-      - name: Run tests
-        run: |
-          go test -v ./... -covermode=count -coverprofile="coverage.out"
-          go tool cover -func="coverage.out"
+          path-to-profile: covprofile
 
   lint:
     name: Run linters
