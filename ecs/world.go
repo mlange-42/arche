@@ -146,7 +146,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 // NewEntityWith returns a new or recycled [Entity].
 // The given component values are assigned to the entity.
 //
-// The components in the `Comp` field of [Component] must be pointers.
+// The components in the Comp field of [Component] must be pointers.
 // The passed pointers are no valid references to the assigned memory!
 //
 // Panics when called on a locked world.
@@ -316,7 +316,7 @@ func (w *World) Alive(entity Entity) bool {
 
 // Get returns a pointer th the given component of an [Entity].
 //
-// Returns `nil` if the entity has no such component.
+// Returns nil if the entity has no such component.
 // Panics when called for an already removed entity.
 //
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
@@ -355,7 +355,7 @@ func (w *World) Add(entity Entity, comps ...ID) {
 
 // Assign assigns multiple components to an [Entity], using pointers for the content.
 //
-// The components in the `Comp` field of [Component] must be pointers.
+// The components in the Comp field of [Component] must be pointers.
 // The passed pointers are no valid references to the assigned memory!
 //
 // Panics when called with components that can't be added because they are already present.
@@ -538,7 +538,7 @@ func (w *World) IsLocked() bool {
 	return w.locks.IsLocked()
 }
 
-// Mask returns the archetype [BitMask] for the given [Entity].
+// Mask returns the archetype [Mask] for the given [Entity].
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (w *World) Mask(entity Entity) Mask {
@@ -547,7 +547,7 @@ func (w *World) Mask(entity Entity) Mask {
 
 // SetListener sets a listener callback func(e EntityEvent) for the world.
 // The listener is immediately called on every [ecs.Entity] change.
-// Replaces the current listener. Call with `nil` to remove a listener.
+// Replaces the current listener. Call with nil to remove a listener.
 //
 // For details, see [EntityEvent].
 func (w *World) SetListener(listener func(e *EntityEvent)) {

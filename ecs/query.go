@@ -125,7 +125,7 @@ func (q *Query) Count() int {
 	return q.count
 }
 
-// Mask returns the archetype [BitMask] for the [Entity] at the iterator's current position.
+// Mask returns the archetype [Mask] for the [Entity] at the iterator's current position.
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (q *Query) Mask() Mask {
