@@ -1,7 +1,7 @@
 # Arche
 
 [![Test status](https://img.shields.io/github/actions/workflow/status/mlange-42/arche/tests.yml?branch=main&label=Tests&logo=github)](https://github.com/mlange-42/arche/actions/workflows/tests.yml)
-[![100% Coverage](https://img.shields.io/github/actions/workflow/status/mlange-42/arche/coverage.yml?branch=main&label=100%%20Coverage&logo=github)](https://github.com/mlange-42/arche/actions/workflows/coverage.yml)
+[![Coverage Status](https://badge.coveralls.io/repos/github/mlange-42/arche/badge.svg?branch=main)](https://badge.coveralls.io/github/mlange-42/arche?branch=main)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mlange-42/arche)](https://goreportcard.com/report/github.com/mlange-42/arche)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche.svg)](https://pkg.go.dev/github.com/mlange-42/arche)
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
@@ -19,7 +19,7 @@
 * Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
 * No systems. Just queries. Use your own structure (or the [Tools](#tools)).
 * Not thread-safe. On purpose.
-* No dependencies. Except for unit tests ([100% coverage](https://github.com/mlange-42/arche/actions/workflows/coverage.yml)).
+* No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
 * Probably the fastest Go ECS out there. See the [Benchmarks](#benchmarks).
 
 For details, see sections [Architecture](#architecture) and [Design decisions](#design-decisions).
