@@ -36,7 +36,7 @@ go get github.com/mlange-42/arche
 
 Here is a minimal usage example.
 It uses the type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
-You will likely create systems with an update method that takes a pointer to the `World` as argument.
+For a full-featured wrapper with systems, scheduling and more, see [arche-model](https://github.com/mlange-42/arche-model).
 
 See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
 [examples](https://github.com/mlange-42/arche/tree/main/examples) for details.
@@ -146,7 +146,7 @@ Neither is silent failure, given the scientific background.
 
 *Arche* uses an archetype-based architecture.
 
-The ASCII graph below illustrates the architecture.
+The ASCII graph below illustrates the approach.
 Components for entities are stored in so-called archetypes, which represent unique combinations of components.
 In the illustration, the first archetype holds all components for all entities with (only/exactly) the components A, B and C.
 
@@ -178,18 +178,6 @@ Obviously, archetypes are an optimization for iteration speed.
 But they also come with a downside. Adding or removing components to/from an entity requires moving all the components of the entity to another archetype.
 This takes around 20ns per involved component.
 It is therefore recommended to add/remove/exchange multiple components at the same time rather than one after the other.
-
-## Generic vs. ID access
-
-*Arche* provides generic functions and types for accessing and modifying components etc., as shown in the [Usage example](#usage-example).
-
-Generic access is built on top of the ID-based access that is used by the `ecs.World`.
-Generic functions and types provide type-safety and are more user-friendly than ID-based access.
-However, when querying many components, generic queries have a runtime overhead of around 20-30%.
-For performance-critical code, the use of the ID-based methods of `ecs.World` may be worth testing.
-
-For more details, see the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
-[examples](https://github.com/mlange-42/arche/tree/main/examples).
 
 ## Tools
 
