@@ -1,5 +1,15 @@
 # Changelog
 
+## [[v0.6.3]](https://github.com/mlange-42/arche/compare/v0.6.2...v0.6.3)
+
+### Documentation
+
+* Minor README and docstring tweaks (#211, #213)
+
+### Other
+
+* Use [https://badge.coveralls.io/github/mlange-42/arche?branch=main](coveralls.io) for test coverage, add respective badge (#212)
+
 ## [[v0.6.2]](https://github.com/mlange-42/arche/compare/v0.6.1...v0.6.2)
 
 ### Performance
