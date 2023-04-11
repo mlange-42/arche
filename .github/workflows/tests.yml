@@ -39,16 +39,17 @@ jobs:
     - name: Check out code
       uses: actions/checkout@v2
     - name: Install dependencies
-      run: go get .
+      run: |
+        go get .
+        go install github.com/mattn/goveralls@latest
     - name: Run Unit tests
       run: |
-        go test -v -covermode atomic -coverprofile=covprofile ./...
-    - name: Install goveralls
-      run: go install github.com/mattn/goveralls@latest
+        go test -v -covermode atomic -coverprofile="coverage.out" ./...
+        go tool cover -func="coverage.out"
     - name: Send coverage
       uses: shogo82148/actions-goveralls@v1
       with:
-        path-to-profile: covprofile
+        path-to-profile: coverage.out
 
   lint:
     name: Run linters
