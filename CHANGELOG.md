@@ -8,7 +8,7 @@
 
 ### Other
 
-* Use [https://badge.coveralls.io/github/mlange-42/arche?branch=main](coveralls.io) for test coverage, add respective badge (#212)
+* Use [coveralls.io](https://badge.coveralls.io/github/mlange-42/arche?branch=main) for test coverage, add respective badge (#212)
 
 ## [[v0.6.2]](https://github.com/mlange-42/arche/compare/v0.6.1...v0.6.2)
 
