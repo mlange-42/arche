@@ -967,6 +967,30 @@ func printTypeSizeName[T any](name string) {
 	fmt.Printf("%18s: %5d B\n", name, tp.Size())
 }
 
+func BenchmarkEntityAlive(b *testing.B) {
+	b.StopTimer()
+
+	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+	posID := ComponentID[Position](&world)
+
+	entities := make([]Entity, 0, 1000)
+	q := world.newEntitiesQuery(1000, posID)
+	for q.Next() {
+		entities = append(entities, q.Entity())
+	}
+
+	b.StartTimer()
+
+	var alive bool
+	for i := 0; i < b.N; i++ {
+		for _, e := range entities {
+			alive = world.Alive(e)
+		}
+	}
+
+	_ = alive
+}
+
 func BenchmarkGetResource(b *testing.B) {
 	b.StopTimer()
 
