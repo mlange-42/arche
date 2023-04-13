@@ -287,6 +287,7 @@ func TestWorldAssignSet(t *testing.T) {
 	pos = (*Position)(w.Get(e2, posID))
 	assert.Equal(t, 8, pos.X)
 }
+
 func TestWorldGetComponents(t *testing.T) {
 	w := NewWorld()
 
@@ -316,6 +317,8 @@ func TestWorldGetComponents(t *testing.T) {
 	assert.Equal(t, &Position{100, 101}, pos1)
 
 	w.RemoveEntity(e0)
+
+	assert.Panics(t, func() { w.Get(e0, posID) })
 
 	pos1 = (*Position)(w.Get(e1, posID))
 	assert.Equal(t, &Position{100, 101}, pos1)

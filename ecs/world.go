@@ -314,13 +314,16 @@ func (w *World) Alive(entity Entity) bool {
 	return w.entityPool.Alive(entity)
 }
 
-// Get returns a pointer th the given component of an [Entity].
+// Get returns a pointer to the given component of an [Entity].
 //
 // Returns nil if the entity has no such component.
 // Panics when called for an already removed entity.
 //
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
+	if !w.Alive(entity) {
+		panic("can't get component of a dead entity")
+	}
 	index := &w.entities[entity.id]
 	return index.arch.Get(index.index, comp)
 }
@@ -331,6 +334,9 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 //
 // See also [github.com/mlange-42/arche/generic.Map.Has] for a generic variant.
 func (w *World) Has(entity Entity, comp ID) bool {
+	if !w.Alive(entity) {
+		panic("can't check for component of a dead entity")
+	}
 	return w.entities[entity.id].arch.HasComponent(comp)
 }
 
@@ -364,6 +370,9 @@ func (w *World) Add(entity Entity, comps ...ID) {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Assign(entity Entity, comps ...Component) {
+	if !w.Alive(entity) {
+		panic("can't assign to a dead entity")
+	}
 	len := len(comps)
 	if len == 0 {
 		panic("no components given to assign")
@@ -421,6 +430,10 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 // See also the generic variants under [github.com/mlange-42/arche/generic.Exchange].
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.checkLocked()
+
+	if !w.Alive(entity) {
+		panic("can't exchange components on a dead entity")
+	}
 
 	if len(add) == 0 && len(rem) == 0 {
 		return
