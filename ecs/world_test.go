@@ -237,6 +237,10 @@ func TestWorldExchange(t *testing.T) {
 
 	assert.Panics(t, func() { w.Exchange(e1, []ID{velID}, []ID{}) })
 	assert.Panics(t, func() { w.Exchange(e1, []ID{}, []ID{posID}) })
+
+	w.RemoveEntity(e0)
+	_ = w.NewEntity()
+	assert.Panics(t, func() { w.Exchange(e0, []ID{posID}, []ID{}) })
 }
 
 func TestWorldAssignSet(t *testing.T) {
@@ -286,6 +290,10 @@ func TestWorldAssignSet(t *testing.T) {
 	*pos = Position{8, 9}
 	pos = (*Position)(w.Get(e2, posID))
 	assert.Equal(t, 8, pos.X)
+
+	w.RemoveEntity(e0)
+	_ = w.NewEntity()
+	assert.Panics(t, func() { w.Assign(e0, Component{posID, &Position{2, 3}}) })
 }
 
 func TestWorldGetComponents(t *testing.T) {
@@ -317,7 +325,8 @@ func TestWorldGetComponents(t *testing.T) {
 	assert.Equal(t, &Position{100, 101}, pos1)
 
 	w.RemoveEntity(e0)
-
+	assert.Panics(t, func() { w.Get(e0, posID) })
+	_ = w.NewEntity(posID)
 	assert.Panics(t, func() { w.Get(e0, posID) })
 
 	pos1 = (*Position)(w.Get(e1, posID))
