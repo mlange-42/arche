@@ -398,50 +398,6 @@ func runArcheQuery1Of1kArchCached(b *testing.B, count int) {
 	}
 }
 
-func runArcheWorldGet(b *testing.B, count int) {
-	b.StopTimer()
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[c.Position](&world)
-	rotID := ecs.ComponentID[c.Rotation](&world)
-
-	entities := make([]ecs.Entity, count)
-	for i := 0; i < count; i++ {
-		entities[i] = world.NewEntity(posID, rotID)
-	}
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
-		for _, e := range entities {
-			pos := (*c.Position)(world.Get(e, posID))
-			pos.X = 1
-		}
-	}
-}
-
-func runArcheWorldGetGeneric(b *testing.B, count int) {
-	b.StopTimer()
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[c.Position](&world)
-	rotID := ecs.ComponentID[c.Rotation](&world)
-
-	get := generic.NewMap[c.Position](&world)
-
-	entities := make([]ecs.Entity, count)
-	for i := 0; i < count; i++ {
-		entities[i] = world.NewEntity(posID, rotID)
-	}
-	b.StartTimer()
-
-	for i := 0; i < b.N; i++ {
-		for _, e := range entities {
-			pos := get.Get(e)
-			pos.X = 1
-		}
-	}
-}
-
 func BenchmarkArcheIter_1_000(b *testing.B) {
 	runArcheIter(b, 1000)
 }
@@ -548,30 +504,6 @@ func BenchmarkArcheIterQueryGeneric_5C_10_000(b *testing.B) {
 
 func BenchmarkArcheIterQueryGeneric_5C_100_000(b *testing.B) {
 	runArcheQueryGeneric5C(b, 100000)
-}
-
-func BenchmarkArcheIterWorldID_1_000(b *testing.B) {
-	runArcheWorldGet(b, 1000)
-}
-
-func BenchmarkArcheIterWorldID_10_000(b *testing.B) {
-	runArcheWorldGet(b, 10000)
-}
-
-func BenchmarkArcheIterWorldID_100_000(b *testing.B) {
-	runArcheWorldGet(b, 100000)
-}
-
-func BenchmarkArcheIterWorldGeneric_1_000(b *testing.B) {
-	runArcheWorldGetGeneric(b, 1000)
-}
-
-func BenchmarkArcheIterWorldGeneric_10_000(b *testing.B) {
-	runArcheWorldGetGeneric(b, 10000)
-}
-
-func BenchmarkArcheIterWorldGeneric_100_000(b *testing.B) {
-	runArcheWorldGetGeneric(b, 100000)
 }
 
 func BenchmarkArcheIter1kArchID_1_000(b *testing.B) {

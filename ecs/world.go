@@ -325,6 +325,7 @@ func (w *World) Alive(entity Entity) bool {
 //
 // Panics when called for a removed (and potentially recycled) entity.
 //
+// See [World.GetUnsafe] for an optimized version for static entities.
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	if !w.entityPool.Alive(entity) {
@@ -334,15 +335,43 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 	return index.arch.Get(index.index, comp)
 }
 
+// GetUnsafe returns a pointer to the given component of an [Entity].
+// Returns nil if the entity has no such component.
+//
+// GetUnsafe is an optimized version of [World.Get],
+// for cases where entities are static or checked with [World.Alive] in user code.
+// It can also be used after getting another component of the same entity with [World.Get].
+//
+// Panics when called for a removed entity, but not for a recycled entity.
+//
+// See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
+func (w *World) GetUnsafe(entity Entity, comp ID) unsafe.Pointer {
+	index := &w.entities[entity.id]
+	return index.arch.Get(index.index, comp)
+}
+
 // Has returns whether an [Entity] has a given component.
 //
 // Panics when called for a removed (and potentially recycled) entity.
 //
+// See [World.HasUnsafe] for an optimized version for static entities.
 // See also [github.com/mlange-42/arche/generic.Map.Has] for a generic variant.
 func (w *World) Has(entity Entity, comp ID) bool {
 	if !w.entityPool.Alive(entity) {
 		panic("can't check for component of a dead entity")
 	}
+	return w.entities[entity.id].arch.HasComponent(comp)
+}
+
+// HasUnsafe returns whether an [Entity] has a given component.
+//
+// HasUnsafe is an optimized version of [World.Has],
+// for cases where entities are static or checked with [World.Alive] in user code.
+//
+// Panics when called for a removed entity, but not for a recycled entity.
+//
+// See also [github.com/mlange-42/arche/generic.Map.Has] for a generic variant.
+func (w *World) HasUnsafe(entity Entity, comp ID) bool {
 	return w.entities[entity.id].arch.HasComponent(comp)
 }
 

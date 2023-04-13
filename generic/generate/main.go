@@ -15,20 +15,21 @@ var numbers = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8"}
 var numberStr = []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight"}
 
 type query struct {
-	Index       int
-	NumberStr   string
-	Types       string
-	TypesFull   string
-	TypesReturn string
-	Variables   string
-	ReturnAll   string
-	Include     string
-	Components  string
-	Arguments   string
-	IDTypes     string
-	IDAssign    string
-	IDAssign2   string
-	IDList      string
+	Index         int
+	NumberStr     string
+	Types         string
+	TypesFull     string
+	TypesReturn   string
+	Variables     string
+	ReturnAll     string
+	ReturnAllSafe string
+	Include       string
+	Components    string
+	Arguments     string
+	IDTypes       string
+	IDAssign      string
+	IDAssign2     string
+	IDList        string
 }
 
 func main() {
@@ -61,6 +62,7 @@ func generateMaps() {
 		returnTypes := ""
 		fullTypes := ""
 		returnAll := ""
+		returnAllSafe := ""
 		components := ""
 		arguments := ""
 		idTypes := ""
@@ -79,31 +81,38 @@ func generateMaps() {
 		}
 
 		for j := 0; j < i; j++ {
-			returnAll += fmt.Sprintf("(*%s)(m.world.Get(entity, m.id%d))", typeLetters[j], j)
+			returnAll += fmt.Sprintf("(*%s)(m.world.GetUnsafe(entity, m.id%d))", typeLetters[j], j)
+			if j == 0 {
+				returnAllSafe += fmt.Sprintf("(*%s)(m.world.Get(entity, m.id%d))", typeLetters[j], j)
+			} else {
+				returnAllSafe += fmt.Sprintf("(*%s)(m.world.GetUnsafe(entity, m.id%d))", typeLetters[j], j)
+			}
 			arguments += fmt.Sprintf("%s *%s", strings.ToLower(typeLetters[j]), typeLetters[j])
 			idAssign += fmt.Sprintf("	id%d: ecs.ComponentID[%s](w),\n", j, typeLetters[j])
 			idAssign2 += fmt.Sprintf("	id%d: m.id%d,\n", j, j)
 			if j < i-1 {
 				returnAll += ",\n"
+				returnAllSafe += ",\n"
 				arguments += ", "
 			}
 			components += fmt.Sprintf("ecs.Component{ID: m.id%d, Comp: %s},\n", j, strings.ToLower(typeLetters[j]))
 		}
 
 		data := query{
-			Index:       i,
-			NumberStr:   numberStr[i],
-			Types:       types,
-			TypesReturn: returnTypes,
-			TypesFull:   fullTypes,
-			ReturnAll:   returnAll,
-			Variables:   variables,
-			Components:  components,
-			Arguments:   arguments,
-			IDTypes:     idTypes,
-			IDAssign:    idAssign,
-			IDAssign2:   idAssign2,
-			IDList:      idList,
+			Index:         i,
+			NumberStr:     numberStr[i],
+			Types:         types,
+			TypesReturn:   returnTypes,
+			TypesFull:     fullTypes,
+			ReturnAll:     returnAll,
+			ReturnAllSafe: returnAllSafe,
+			Variables:     variables,
+			Components:    components,
+			Arguments:     arguments,
+			IDTypes:       idTypes,
+			IDAssign:      idAssign,
+			IDAssign2:     idAssign2,
+			IDList:        idList,
 		}
 		err = maps.Execute(&text, data)
 		if err != nil {

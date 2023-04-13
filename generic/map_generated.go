@@ -38,9 +38,20 @@ func NewMap1[A any](w *ecs.World) Map1[A] {
 
 // Get all the Map1's components for the given entity.
 //
+// See [Map1.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map1[A]) Get(entity ecs.Entity) *A {
 	return (*A)(m.world.Get(entity, m.id0))
+}
+
+// GetUnsafe all the Map1's components for the given entity.
+//
+// GetUnsafe is an optimized version of [Map1.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnsafe].
+func (m *Map1[A]) GetUnsafe(entity ecs.Entity) *A {
+	return (*A)(m.world.GetUnsafe(entity, m.id0))
 }
 
 // NewEntity creates a new [ecs.Entity] with the Map1's components.
@@ -176,10 +187,22 @@ func NewMap2[A any, B any](w *ecs.World) Map2[A, B] {
 
 // Get all the Map2's components for the given entity.
 //
+// See [Map2.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map2[A, B]) Get(entity ecs.Entity) (*A, *B) {
 	return (*A)(m.world.Get(entity, m.id0)),
-		(*B)(m.world.Get(entity, m.id1))
+		(*B)(m.world.GetUnsafe(entity, m.id1))
+}
+
+// GetUnsafe all the Map2's components for the given entity.
+//
+// GetUnsafe is an optimized version of [Map2.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnsafe].
+func (m *Map2[A, B]) GetUnsafe(entity ecs.Entity) (*A, *B) {
+	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+		(*B)(m.world.GetUnsafe(entity, m.id1))
 }
 
 // NewEntity creates a new [ecs.Entity] with the Map2's components.
@@ -325,11 +348,24 @@ func NewMap3[A any, B any, C any](w *ecs.World) Map3[A, B, C] {
 
 // Get all the Map3's components for the given entity.
 //
+// See [Map3.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map3[A, B, C]) Get(entity ecs.Entity) (*A, *B, *C) {
 	return (*A)(m.world.Get(entity, m.id0)),
-		(*B)(m.world.Get(entity, m.id1)),
-		(*C)(m.world.Get(entity, m.id2))
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2))
+}
+
+// GetUnsafe all the Map3's components for the given entity.
+//
+// GetUnsafe is an optimized version of [Map3.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnsafe].
+func (m *Map3[A, B, C]) GetUnsafe(entity ecs.Entity) (*A, *B, *C) {
+	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2))
 }
 
 // NewEntity creates a new [ecs.Entity] with the Map3's components.
@@ -483,12 +519,26 @@ func NewMap4[A any, B any, C any, D any](w *ecs.World) Map4[A, B, C, D] {
 
 // Get all the Map4's components for the given entity.
 //
+// See [Map4.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map4[A, B, C, D]) Get(entity ecs.Entity) (*A, *B, *C, *D) {
 	return (*A)(m.world.Get(entity, m.id0)),
-		(*B)(m.world.Get(entity, m.id1)),
-		(*C)(m.world.Get(entity, m.id2)),
-		(*D)(m.world.Get(entity, m.id3))
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3))
+}
+
+// GetUnsafe all the Map4's components for the given entity.
+//
+// GetUnsafe is an optimized version of [Map4.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnsafe].
+func (m *Map4[A, B, C, D]) GetUnsafe(entity ecs.Entity) (*A, *B, *C, *D) {
+	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3))
 }
 
 // NewEntity creates a new [ecs.Entity] with the Map4's components.
@@ -650,13 +700,28 @@ func NewMap5[A any, B any, C any, D any, E any](w *ecs.World) Map5[A, B, C, D, E
 
 // Get all the Map5's components for the given entity.
 //
+// See [Map5.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map5[A, B, C, D, E]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E) {
 	return (*A)(m.world.Get(entity, m.id0)),
-		(*B)(m.world.Get(entity, m.id1)),
-		(*C)(m.world.Get(entity, m.id2)),
-		(*D)(m.world.Get(entity, m.id3)),
-		(*E)(m.world.Get(entity, m.id4))
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3)),
+		(*E)(m.world.GetUnsafe(entity, m.id4))
+}
+
+// GetUnsafe all the Map5's components for the given entity.
+//
+// GetUnsafe is an optimized version of [Map5.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnsafe].
+func (m *Map5[A, B, C, D, E]) GetUnsafe(entity ecs.Entity) (*A, *B, *C, *D, *E) {
+	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3)),
+		(*E)(m.world.GetUnsafe(entity, m.id4))
 }
 
 // NewEntity creates a new [ecs.Entity] with the Map5's components.
@@ -826,14 +891,30 @@ func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World) Map6[A, B, 
 
 // Get all the Map6's components for the given entity.
 //
+// See [Map6.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map6[A, B, C, D, E, F]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F) {
 	return (*A)(m.world.Get(entity, m.id0)),
-		(*B)(m.world.Get(entity, m.id1)),
-		(*C)(m.world.Get(entity, m.id2)),
-		(*D)(m.world.Get(entity, m.id3)),
-		(*E)(m.world.Get(entity, m.id4)),
-		(*F)(m.world.Get(entity, m.id5))
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3)),
+		(*E)(m.world.GetUnsafe(entity, m.id4)),
+		(*F)(m.world.GetUnsafe(entity, m.id5))
+}
+
+// GetUnsafe all the Map6's components for the given entity.
+//
+// GetUnsafe is an optimized version of [Map6.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnsafe].
+func (m *Map6[A, B, C, D, E, F]) GetUnsafe(entity ecs.Entity) (*A, *B, *C, *D, *E, *F) {
+	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3)),
+		(*E)(m.world.GetUnsafe(entity, m.id4)),
+		(*F)(m.world.GetUnsafe(entity, m.id5))
 }
 
 // NewEntity creates a new [ecs.Entity] with the Map6's components.
@@ -1011,15 +1092,32 @@ func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Map7
 
 // Get all the Map7's components for the given entity.
 //
+// See [Map7.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map7[A, B, C, D, E, F, G]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G) {
 	return (*A)(m.world.Get(entity, m.id0)),
-		(*B)(m.world.Get(entity, m.id1)),
-		(*C)(m.world.Get(entity, m.id2)),
-		(*D)(m.world.Get(entity, m.id3)),
-		(*E)(m.world.Get(entity, m.id4)),
-		(*F)(m.world.Get(entity, m.id5)),
-		(*G)(m.world.Get(entity, m.id6))
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3)),
+		(*E)(m.world.GetUnsafe(entity, m.id4)),
+		(*F)(m.world.GetUnsafe(entity, m.id5)),
+		(*G)(m.world.GetUnsafe(entity, m.id6))
+}
+
+// GetUnsafe all the Map7's components for the given entity.
+//
+// GetUnsafe is an optimized version of [Map7.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnsafe].
+func (m *Map7[A, B, C, D, E, F, G]) GetUnsafe(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G) {
+	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3)),
+		(*E)(m.world.GetUnsafe(entity, m.id4)),
+		(*F)(m.world.GetUnsafe(entity, m.id5)),
+		(*G)(m.world.GetUnsafe(entity, m.id6))
 }
 
 // NewEntity creates a new [ecs.Entity] with the Map7's components.
@@ -1205,16 +1303,34 @@ func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.Worl
 
 // Get all the Map8's components for the given entity.
 //
+// See [Map8.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map8[A, B, C, D, E, F, G, H]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H) {
 	return (*A)(m.world.Get(entity, m.id0)),
-		(*B)(m.world.Get(entity, m.id1)),
-		(*C)(m.world.Get(entity, m.id2)),
-		(*D)(m.world.Get(entity, m.id3)),
-		(*E)(m.world.Get(entity, m.id4)),
-		(*F)(m.world.Get(entity, m.id5)),
-		(*G)(m.world.Get(entity, m.id6)),
-		(*H)(m.world.Get(entity, m.id7))
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3)),
+		(*E)(m.world.GetUnsafe(entity, m.id4)),
+		(*F)(m.world.GetUnsafe(entity, m.id5)),
+		(*G)(m.world.GetUnsafe(entity, m.id6)),
+		(*H)(m.world.GetUnsafe(entity, m.id7))
+}
+
+// GetUnsafe all the Map8's components for the given entity.
+//
+// GetUnsafe is an optimized version of [Map8.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnsafe].
+func (m *Map8[A, B, C, D, E, F, G, H]) GetUnsafe(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H) {
+	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+		(*B)(m.world.GetUnsafe(entity, m.id1)),
+		(*C)(m.world.GetUnsafe(entity, m.id2)),
+		(*D)(m.world.GetUnsafe(entity, m.id3)),
+		(*E)(m.world.GetUnsafe(entity, m.id4)),
+		(*F)(m.world.GetUnsafe(entity, m.id5)),
+		(*G)(m.world.GetUnsafe(entity, m.id6)),
+		(*H)(m.world.GetUnsafe(entity, m.id7))
 }
 
 // NewEntity creates a new [ecs.Entity] with the Map8's components.
