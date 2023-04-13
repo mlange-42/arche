@@ -979,7 +979,7 @@ func printTypeSizeName[T any](name string) {
 	fmt.Printf("%18s: %5d B\n", name, tp.Size())
 }
 
-func BenchmarkEntityAlive(b *testing.B) {
+func BenchmarkEntityAlive_1000(b *testing.B) {
 	b.StopTimer()
 
 	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
