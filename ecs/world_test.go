@@ -326,8 +326,11 @@ func TestWorldGetComponents(t *testing.T) {
 
 	w.RemoveEntity(e0)
 	assert.Panics(t, func() { w.Get(e0, posID) })
+	assert.Panics(t, func() { w.Mask(e0) })
+
 	_ = w.NewEntity(posID)
 	assert.Panics(t, func() { w.Get(e0, posID) })
+	assert.Panics(t, func() { w.Mask(e0) })
 
 	pos1 = (*Position)(w.Get(e1, posID))
 	assert.Equal(t, &Position{100, 101}, pos1)

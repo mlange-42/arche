@@ -244,10 +244,16 @@ func (w *World) newEntitiesWithQuery(count int, comps ...Component) Query {
 
 // RemoveEntity removes and recycles an [Entity].
 //
+// Panics when called for a removed (and potentially recycled) entity.
+//
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
 func (w *World) RemoveEntity(entity Entity) {
 	w.checkLocked()
+
+	if !w.entityPool.Alive(entity) {
+		panic("can't remove a dead entity")
+	}
 
 	index := &w.entities[entity.id]
 	oldArch := index.arch
@@ -315,9 +321,9 @@ func (w *World) Alive(entity Entity) bool {
 }
 
 // Get returns a pointer to the given component of an [Entity].
-//
 // Returns nil if the entity has no such component.
-// Panics when called for an already removed entity.
+//
+// Panics when called for a removed (and potentially recycled) entity.
 //
 // See also [github.com/mlange-42/arche/generic.Map.Get] for a generic variant.
 func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
@@ -330,7 +336,7 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 
 // Has returns whether an [Entity] has a given component.
 //
-// Panics when called for an already removed entity.
+// Panics when called for a removed (and potentially recycled) entity.
 //
 // See also [github.com/mlange-42/arche/generic.Map.Has] for a generic variant.
 func (w *World) Has(entity Entity, comp ID) bool {
@@ -342,9 +348,10 @@ func (w *World) Has(entity Entity, comp ID) bool {
 
 // Add adds components to an [Entity].
 //
-// Panics when called with component that can't be added because they are already present.
-// Panics when called on a locked world or for an already removed entity.
-// Do not use during [Query] iteration!
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called with components that can't be added because they are already present.
+//   - when called on a locked world. Do not use during [Query] iteration!
 //
 // Note that calling a method with varargs in Go causes a slice allocation.
 // For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
@@ -364,15 +371,13 @@ func (w *World) Add(entity Entity, comps ...ID) {
 // The components in the Comp field of [Component] must be pointers.
 // The passed pointers are no valid references to the assigned memory!
 //
-// Panics when called with components that can't be added because they are already present.
-// Panics when called on a locked world or for an already removed entity.
-// Do not use during [Query] iteration!
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called with components that can't be added because they are already present.
+//   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Assign(entity Entity, comps ...Component) {
-	if !w.entityPool.Alive(entity) {
-		panic("can't assign to a dead entity")
-	}
 	len := len(comps)
 	if len == 0 {
 		panic("no components given to assign")
@@ -399,10 +404,10 @@ func (w *World) Assign(entity Entity, comps ...Component) {
 // Returns a pointer to the assigned memory.
 // The passed in pointer is not a valid reference to that memory!
 //
-// Panics when called on a locked world or for an already removed entity.
-// Do not use during [Query] iteration!
-//
-// Panics if the entity does not have a component of that type.
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - if the entity does not have a component of that type.
+//   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [github.com/mlange-42/arche/generic.Map.Set] for a generic variant.
 func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
@@ -411,9 +416,10 @@ func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 
 // Remove removes components from an entity.
 //
-// Panics when called with components that can't be removed because they are not present.
-// Panics when called on a locked world or for an already removed entity.
-// Do not use during [Query] iteration!
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called with components that can't be removed because they are not present.
+//   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Remove(entity Entity, comps ...ID) {
@@ -422,10 +428,10 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 
 // Exchange adds and removes components in one pass.
 //
-// Panics when called with components that can't be added or removed because
-// they are already present/not present, respectively.
-// Panics when called on a locked world or for an already removed entity.
-// Do not use during [Query] iteration!
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called with components that can't be added or removed because they are already present/not present, respectively.
+//   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Exchange].
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
@@ -555,6 +561,9 @@ func (w *World) IsLocked() bool {
 //
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (w *World) Mask(entity Entity) Mask {
+	if !w.entityPool.Alive(entity) {
+		panic("can't exchange components on a dead entity")
+	}
 	return w.entities[entity.id].arch.Mask
 }
 
