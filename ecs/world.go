@@ -338,7 +338,7 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 // GetUnsafe returns a pointer to the given component of an [Entity].
 // Returns nil if the entity has no such component.
 //
-// GetAlive is an optimized version of [World.Get],
+// GetUnsafe is an optimized version of [World.Get],
 // for cases where entities are static or checked with [World.Alive] in user code.
 // It can also be used after getting another component of the same entity with [World.Get].
 //

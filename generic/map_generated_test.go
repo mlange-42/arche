@@ -42,10 +42,15 @@ func TestMap1Generated(t *testing.T) {
 	q.Close()
 	q = mut.NewEntitiesWithQuery(2, &testStruct0{})
 	q.Close()
+
+	mut.GetUnsafe(e)
+
 	cnt := mut.RemoveEntities(true)
 	assert.Equal(t, 11, cnt)
 	cnt = mut.RemoveEntities(false)
 	assert.Equal(t, 0, cnt)
+
+	assert.Panics(t, func() { mut.Get(e) })
 }
 
 func TestMap2Generated(t *testing.T) {
@@ -92,8 +97,13 @@ func TestMap2Generated(t *testing.T) {
 		&testStruct0{}, &testStruct1{},
 	)
 	q.Close()
+
+	mut.GetUnsafe(e)
+
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
 }
 
 func TestMap3Generated(t *testing.T) {
@@ -146,8 +156,13 @@ func TestMap3Generated(t *testing.T) {
 		&testStruct0{}, &testStruct1{}, &testStruct2{},
 	)
 	q.Close()
+
+	mut.GetUnsafe(e)
+
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
 }
 
 func TestMap4Generated(t *testing.T) {
@@ -200,8 +215,13 @@ func TestMap4Generated(t *testing.T) {
 		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
 	)
 	q.Close()
+
+	mut.GetUnsafe(e)
+
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
 }
 
 func TestMap5Generated(t *testing.T) {
@@ -261,8 +281,13 @@ func TestMap5Generated(t *testing.T) {
 		&testStruct4{},
 	)
 	q.Close()
+
+	mut.GetUnsafe(e)
+
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
 }
 
 func TestMap6Generated(t *testing.T) {
@@ -322,8 +347,13 @@ func TestMap6Generated(t *testing.T) {
 		&testStruct4{}, &testStruct5{},
 	)
 	q.Close()
+
+	mut.GetUnsafe(e)
+
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
 }
 
 func TestMap7Generated(t *testing.T) {
@@ -383,8 +413,13 @@ func TestMap7Generated(t *testing.T) {
 		&testStruct4{}, &testStruct5{}, &testStruct6{},
 	)
 	q.Close()
+
+	mut.GetUnsafe(e)
+
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
 }
 
 func TestMap8Generated(t *testing.T) {
@@ -444,6 +479,11 @@ func TestMap8Generated(t *testing.T) {
 		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
 	)
 	q.Close()
+
+	mut.GetUnsafe(e)
+
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
 }
