@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.6.4]](https://github.com/mlange-42/arche/compare/v0.6.3...v0.6.4)
+
+### Features
+
+* Adds method `World.ComponentType(ID)` to get the `reflect.Type` for component IDs (#215)
+
 ## [[v0.6.3]](https://github.com/mlange-42/arche/compare/v0.6.2...v0.6.3)
 
 ### Documentation

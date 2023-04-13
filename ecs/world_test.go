@@ -634,6 +634,24 @@ func TestWorldResources(t *testing.T) {
 	assert.Panics(t, func() { w.Resources().Remove(rotID) })
 }
 
+func TestWorldComponentType(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	rotID := ComponentID[rotation](&w)
+
+	tp, ok := w.ComponentType(posID)
+	assert.True(t, ok)
+	assert.Equal(t, reflect.TypeOf(Position{}), tp)
+
+	tp, ok = w.ComponentType(rotID)
+	assert.True(t, ok)
+	assert.Equal(t, reflect.TypeOf(rotation{}), tp)
+
+	_, ok = w.ComponentType(2)
+	assert.False(t, ok)
+}
+
 func TestRegisterComponents(t *testing.T) {
 	world := NewWorld()
 

@@ -291,7 +291,7 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 	aCompCount := len(ids)
 	aTypes := make([]reflect.Type, aCompCount)
 	for j, id := range ids {
-		aTypes[j] = reg.ComponentType(id)
+		aTypes[j], _ = reg.ComponentType(id)
 	}
 
 	cap := int(a.Cap())
