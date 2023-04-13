@@ -312,6 +312,8 @@ func TestWorldGetComponents(t *testing.T) {
 
 	assert.False(t, w.Has(e2, posID))
 	assert.True(t, w.Has(e2, rotID))
+	assert.False(t, w.HasUnsafe(e2, posID))
+	assert.True(t, w.HasUnsafe(e2, rotID))
 
 	pos1 := (*Position)(w.Get(e1, posID))
 	assert.Equal(t, &Position{}, pos1)
@@ -321,6 +323,11 @@ func TestWorldGetComponents(t *testing.T) {
 
 	pos0 := (*Position)(w.Get(e0, posID))
 	pos1 = (*Position)(w.Get(e1, posID))
+	assert.Equal(t, &Position{}, pos0)
+	assert.Equal(t, &Position{100, 101}, pos1)
+
+	pos0 = (*Position)(w.GetUnsafe(e0, posID))
+	pos1 = (*Position)(w.GetUnsafe(e1, posID))
 	assert.Equal(t, &Position{}, pos0)
 	assert.Equal(t, &Position{100, 101}, pos1)
 

@@ -5,6 +5,7 @@
 ### Features
 
 * Adds method `World.ComponentType(ID)` to get the `reflect.Type` for component IDs (#215)
+* Adds methods `World.GetUnsafe` and `World.HasUnsafe` as optimized variants for known static entities (#217)
 
 ### Bugfixes
 
