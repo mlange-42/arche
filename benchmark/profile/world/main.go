@@ -44,9 +44,10 @@ func run(rounds, iters, entityCount int) {
 		posID := ecs.ComponentID[position](&world)
 		rotID := ecs.ComponentID[rotation](&world)
 
-		entities := make([]ecs.Entity, entityCount)
-		for i := 0; i < entityCount; i++ {
-			entities[i] = world.NewEntity(posID, rotID)
+		entities := make([]ecs.Entity, 0, entityCount)
+		query := world.Batch().NewEntitiesQuery(entityCount, posID, rotID)
+		for query.Next() {
+			entities = append(entities, query.Entity())
 		}
 
 		for j := 0; j < iters; j++ {
