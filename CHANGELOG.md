@@ -6,6 +6,10 @@
 
 * Adds method `World.ComponentType(ID)` to get the `reflect.Type` for component IDs (#215)
 
+### Bugfixes
+
+* All world methods with an entity as argument panic on a dead/recycled entity; causes 0.5ns slower `World.Get(Entity)` (#216)
+
 ## [[v0.6.3]](https://github.com/mlange-42/arche/compare/v0.6.2...v0.6.3)
 
 ### Documentation

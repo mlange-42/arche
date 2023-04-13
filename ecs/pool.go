@@ -65,7 +65,7 @@ func (p *entityPool) Reset() {
 	p.available = 0
 }
 
-// Alive return whether an entity is still alive, based on the entity's generations.
+// Alive returns whether an entity is still alive, based on the entity's generations.
 func (p *entityPool) Alive(e Entity) bool {
 	return e.id != 0 && e.gen == p.entities[e.id].gen
 }

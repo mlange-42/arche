@@ -237,6 +237,10 @@ func TestWorldExchange(t *testing.T) {
 
 	assert.Panics(t, func() { w.Exchange(e1, []ID{velID}, []ID{}) })
 	assert.Panics(t, func() { w.Exchange(e1, []ID{}, []ID{posID}) })
+
+	w.RemoveEntity(e0)
+	_ = w.NewEntity()
+	assert.Panics(t, func() { w.Exchange(e0, []ID{posID}, []ID{}) })
 }
 
 func TestWorldAssignSet(t *testing.T) {
@@ -286,7 +290,12 @@ func TestWorldAssignSet(t *testing.T) {
 	*pos = Position{8, 9}
 	pos = (*Position)(w.Get(e2, posID))
 	assert.Equal(t, 8, pos.X)
+
+	w.RemoveEntity(e0)
+	_ = w.NewEntity()
+	assert.Panics(t, func() { w.Assign(e0, Component{posID, &Position{2, 3}}) })
 }
+
 func TestWorldGetComponents(t *testing.T) {
 	w := NewWorld()
 
@@ -316,6 +325,12 @@ func TestWorldGetComponents(t *testing.T) {
 	assert.Equal(t, &Position{100, 101}, pos1)
 
 	w.RemoveEntity(e0)
+	assert.Panics(t, func() { w.Get(e0, posID) })
+	assert.Panics(t, func() { w.Mask(e0) })
+
+	_ = w.NewEntity(posID)
+	assert.Panics(t, func() { w.Get(e0, posID) })
+	assert.Panics(t, func() { w.Mask(e0) })
 
 	pos1 = (*Position)(w.Get(e1, posID))
 	assert.Equal(t, &Position{100, 101}, pos1)
@@ -962,6 +977,30 @@ func printTypeSize[T any]() {
 func printTypeSizeName[T any](name string) {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	fmt.Printf("%18s: %5d B\n", name, tp.Size())
+}
+
+func BenchmarkEntityAlive_1000(b *testing.B) {
+	b.StopTimer()
+
+	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+	posID := ComponentID[Position](&world)
+
+	entities := make([]Entity, 0, 1000)
+	q := world.newEntitiesQuery(1000, posID)
+	for q.Next() {
+		entities = append(entities, q.Entity())
+	}
+
+	b.StartTimer()
+
+	var alive bool
+	for i := 0; i < b.N; i++ {
+		for _, e := range entities {
+			alive = world.Alive(e)
+		}
+	}
+
+	_ = alive
 }
 
 func BenchmarkGetResource(b *testing.B) {
