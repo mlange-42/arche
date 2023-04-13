@@ -34,10 +34,7 @@ func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }
 // See [Map{{ .Index }}.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map{{ .Index }}{{ .Types }}) Get(entity ecs.Entity) ({{ .TypesReturn }}) {
-	if !m.world.Alive(entity) {
-		panic("can't get components of a dead entity")
-	}
-	return {{ .ReturnAll }}
+	return {{ .ReturnAllSafe }}
 }
 
 // GetUnsafe all the Map{{ .Index }}'s components for the given entity.

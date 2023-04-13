@@ -41,10 +41,7 @@ func NewMap1[A any](w *ecs.World) Map1[A] {
 // See [Map1.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map1[A]) Get(entity ecs.Entity) *A {
-	if !m.world.Alive(entity) {
-		panic("can't get components of a dead entity")
-	}
-	return (*A)(m.world.GetUnsafe(entity, m.id0))
+	return (*A)(m.world.Get(entity, m.id0))
 }
 
 // GetUnsafe all the Map1's components for the given entity.
@@ -193,10 +190,7 @@ func NewMap2[A any, B any](w *ecs.World) Map2[A, B] {
 // See [Map2.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map2[A, B]) Get(entity ecs.Entity) (*A, *B) {
-	if !m.world.Alive(entity) {
-		panic("can't get components of a dead entity")
-	}
-	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.GetUnsafe(entity, m.id1))
 }
 
@@ -357,10 +351,7 @@ func NewMap3[A any, B any, C any](w *ecs.World) Map3[A, B, C] {
 // See [Map3.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map3[A, B, C]) Get(entity ecs.Entity) (*A, *B, *C) {
-	if !m.world.Alive(entity) {
-		panic("can't get components of a dead entity")
-	}
-	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.GetUnsafe(entity, m.id1)),
 		(*C)(m.world.GetUnsafe(entity, m.id2))
 }
@@ -531,10 +522,7 @@ func NewMap4[A any, B any, C any, D any](w *ecs.World) Map4[A, B, C, D] {
 // See [Map4.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map4[A, B, C, D]) Get(entity ecs.Entity) (*A, *B, *C, *D) {
-	if !m.world.Alive(entity) {
-		panic("can't get components of a dead entity")
-	}
-	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.GetUnsafe(entity, m.id1)),
 		(*C)(m.world.GetUnsafe(entity, m.id2)),
 		(*D)(m.world.GetUnsafe(entity, m.id3))
@@ -715,10 +703,7 @@ func NewMap5[A any, B any, C any, D any, E any](w *ecs.World) Map5[A, B, C, D, E
 // See [Map5.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map5[A, B, C, D, E]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E) {
-	if !m.world.Alive(entity) {
-		panic("can't get components of a dead entity")
-	}
-	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.GetUnsafe(entity, m.id1)),
 		(*C)(m.world.GetUnsafe(entity, m.id2)),
 		(*D)(m.world.GetUnsafe(entity, m.id3)),
@@ -909,10 +894,7 @@ func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World) Map6[A, B, 
 // See [Map6.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map6[A, B, C, D, E, F]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F) {
-	if !m.world.Alive(entity) {
-		panic("can't get components of a dead entity")
-	}
-	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.GetUnsafe(entity, m.id1)),
 		(*C)(m.world.GetUnsafe(entity, m.id2)),
 		(*D)(m.world.GetUnsafe(entity, m.id3)),
@@ -1113,10 +1095,7 @@ func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Map7
 // See [Map7.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map7[A, B, C, D, E, F, G]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G) {
-	if !m.world.Alive(entity) {
-		panic("can't get components of a dead entity")
-	}
-	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.GetUnsafe(entity, m.id1)),
 		(*C)(m.world.GetUnsafe(entity, m.id2)),
 		(*D)(m.world.GetUnsafe(entity, m.id3)),
@@ -1327,10 +1306,7 @@ func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.Worl
 // See [Map8.GetUnsafe] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map8[A, B, C, D, E, F, G, H]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H) {
-	if !m.world.Alive(entity) {
-		panic("can't get components of a dead entity")
-	}
-	return (*A)(m.world.GetUnsafe(entity, m.id0)),
+	return (*A)(m.world.Get(entity, m.id0)),
 		(*B)(m.world.GetUnsafe(entity, m.id1)),
 		(*C)(m.world.GetUnsafe(entity, m.id2)),
 		(*D)(m.world.GetUnsafe(entity, m.id3)),
