@@ -1,6 +1,6 @@
 # Changelog
 
-## [[v0.6.4]](https://github.com/mlange-42/arche/compare/v0.6.3...v0.6.4)
+## [[v0.7.0]](https://github.com/mlange-42/arche/compare/v0.6.3...v0.7.0)
 
 ### Features
 
