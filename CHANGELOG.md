@@ -1,13 +1,17 @@
 # Changelog
 
-## [[v0.6.4]](https://github.com/mlange-42/arche/compare/v0.6.3...v0.6.4)
+## [[v0.7.0]](https://github.com/mlange-42/arche/compare/v0.6.3...v0.7.0)
 
 ### Features
 
 * Adds method `World.ComponentType(ID)` to get the `reflect.Type` for component IDs (#215)
-* Adds methods `World.GetUnchecked` and `World.HasUnchecked` as optimized variants for known static entities (#217, #218)
-* Adds method `MapX.GetUnchecked` to all generic mappers, as equivalent to previous point (#217, #218)
-* Adds methods `Map.GetUnchecked` and `Map.HasUnchecked` to generic `Map`, as equivalent to previous points (#217, #218)
+* Adds methods `World.GetUnchecked` and `World.HasUnchecked` as optimized variants for known static entities (#217, #219)
+* Adds method `MapX.GetUnchecked` to all generic mappers, as equivalent to previous point (#217, #219)
+* Adds methods `Map.GetUnchecked` and `Map.HasUnchecked` to generic `Map`, as equivalent to previous points (#217, #219)
+
+### Performance
+
+* Optimize `World.Alive(Entity)` by only checking the entity generation, but not `id == 0` (#220)
 
 ### Bugfixes
 
