@@ -5,9 +5,9 @@
 ### Features
 
 * Adds method `World.ComponentType(ID)` to get the `reflect.Type` for component IDs (#215)
-* Adds methods `World.GetUnsafe` and `World.HasUnsafe` as optimized variants for known static entities (#217)
-* Adds method `MapX.GetUnsafe` to all generic mappers, as equivalent to previous point (#217)
-* Adds methods `Map.GetUnsafe` and `Map.HasUnsafe` to generic `Map`, as equivalent to previous points (#217)
+* Adds methods `World.GetUnchecked` and `World.HasUnchecked` as optimized variants for known static entities (#217, #218)
+* Adds method `MapX.GetUnchecked` to all generic mappers, as equivalent to previous point (#217, #218)
+* Adds methods `Map.GetUnchecked` and `Map.HasUnchecked` to generic `Map`, as equivalent to previous points (#217, #218)
 
 ### Bugfixes
 

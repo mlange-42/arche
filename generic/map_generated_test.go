@@ -43,7 +43,7 @@ func TestMap1Generated(t *testing.T) {
 	q = mut.NewEntitiesWithQuery(2, &testStruct0{})
 	q.Close()
 
-	mut.GetUnsafe(e)
+	mut.GetUnchecked(e)
 
 	cnt := mut.RemoveEntities(true)
 	assert.Equal(t, 11, cnt)
@@ -98,7 +98,7 @@ func TestMap2Generated(t *testing.T) {
 	)
 	q.Close()
 
-	mut.GetUnsafe(e)
+	mut.GetUnchecked(e)
 
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
@@ -157,7 +157,7 @@ func TestMap3Generated(t *testing.T) {
 	)
 	q.Close()
 
-	mut.GetUnsafe(e)
+	mut.GetUnchecked(e)
 
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
@@ -216,7 +216,7 @@ func TestMap4Generated(t *testing.T) {
 	)
 	q.Close()
 
-	mut.GetUnsafe(e)
+	mut.GetUnchecked(e)
 
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
@@ -282,7 +282,7 @@ func TestMap5Generated(t *testing.T) {
 	)
 	q.Close()
 
-	mut.GetUnsafe(e)
+	mut.GetUnchecked(e)
 
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
@@ -348,7 +348,7 @@ func TestMap6Generated(t *testing.T) {
 	)
 	q.Close()
 
-	mut.GetUnsafe(e)
+	mut.GetUnchecked(e)
 
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
@@ -414,7 +414,7 @@ func TestMap7Generated(t *testing.T) {
 	)
 	q.Close()
 
-	mut.GetUnsafe(e)
+	mut.GetUnchecked(e)
 
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)
@@ -480,7 +480,7 @@ func TestMap8Generated(t *testing.T) {
 	)
 	q.Close()
 
-	mut.GetUnsafe(e)
+	mut.GetUnchecked(e)
 
 	mut.RemoveEntities(true)
 	mut.RemoveEntities(false)

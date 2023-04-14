@@ -52,7 +52,7 @@ func runArcheWorldGetGeneric(b *testing.B, count int) {
 	}
 }
 
-func runArcheWorldGetUnsafe(b *testing.B, count int) {
+func runArcheWorldGetUnchecked(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -67,13 +67,13 @@ func runArcheWorldGetUnsafe(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		for _, e := range entities {
-			pos := (*c.Position)(world.GetUnsafe(e, posID))
+			pos := (*c.Position)(world.GetUnchecked(e, posID))
 			pos.X = 1
 		}
 	}
 }
 
-func runArcheWorldGetGenericUnsafe(b *testing.B, count int) {
+func runArcheWorldGetGenericUnchecked(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -90,7 +90,7 @@ func runArcheWorldGetGenericUnsafe(b *testing.B, count int) {
 
 	for i := 0; i < b.N; i++ {
 		for _, e := range entities {
-			pos := get.GetUnsafe(e)
+			pos := get.GetUnchecked(e)
 			pos.X = 1
 		}
 	}
@@ -120,26 +120,26 @@ func BenchmarkArcheIterWorldGeneric_100_000(b *testing.B) {
 	runArcheWorldGetGeneric(b, 100000)
 }
 
-func BenchmarkArcheIterWorldIDUnsafe_1_000(b *testing.B) {
-	runArcheWorldGetUnsafe(b, 1000)
+func BenchmarkArcheIterWorldIDUnchecked_1_000(b *testing.B) {
+	runArcheWorldGetUnchecked(b, 1000)
 }
 
-func BenchmarkArcheIterWorldIDUnsafe_10_000(b *testing.B) {
-	runArcheWorldGetUnsafe(b, 10000)
+func BenchmarkArcheIterWorldIDUnchecked_10_000(b *testing.B) {
+	runArcheWorldGetUnchecked(b, 10000)
 }
 
-func BenchmarkArcheIterWorldIDUnsafe_100_000(b *testing.B) {
-	runArcheWorldGetUnsafe(b, 100000)
+func BenchmarkArcheIterWorldIDUnchecked_100_000(b *testing.B) {
+	runArcheWorldGetUnchecked(b, 100000)
 }
 
-func BenchmarkArcheIterWorldGenericUnsafe_1_000(b *testing.B) {
-	runArcheWorldGetGenericUnsafe(b, 1000)
+func BenchmarkArcheIterWorldGenericUnchecked_1_000(b *testing.B) {
+	runArcheWorldGetGenericUnchecked(b, 1000)
 }
 
-func BenchmarkArcheIterWorldGenericUnsafe_10_000(b *testing.B) {
-	runArcheWorldGetGenericUnsafe(b, 10000)
+func BenchmarkArcheIterWorldGenericUnchecked_10_000(b *testing.B) {
+	runArcheWorldGetGenericUnchecked(b, 10000)
 }
 
-func BenchmarkArcheIterWorldGenericUnsafe_100_000(b *testing.B) {
-	runArcheWorldGetGenericUnsafe(b, 100000)
+func BenchmarkArcheIterWorldGenericUnchecked_100_000(b *testing.B) {
+	runArcheWorldGetGenericUnchecked(b, 100000)
 }

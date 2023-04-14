@@ -21,8 +21,8 @@ func TestGenericMap(t *testing.T) {
 	_ = get.Get(e0)
 	assert.True(t, has)
 
-	has = get.HasUnsafe(e0)
-	_ = get.GetUnsafe(e0)
+	has = get.HasUnchecked(e0)
+	_ = get.GetUnchecked(e0)
 	assert.True(t, has)
 
 	_ = get.Set(e0, &testStruct0{100})
@@ -57,7 +57,7 @@ func ExampleMap() {
 	pos.X, pos.Y = 10, 5
 
 	// Get the map's component, optimized for cases when the entity is guaranteed to be still alive.
-	pos = mapper.GetUnsafe(entity)
+	pos = mapper.GetUnchecked(entity)
 	pos.X, pos.Y = 10, 5
 	// Output:
 }
