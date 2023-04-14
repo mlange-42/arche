@@ -81,11 +81,11 @@ func generateMaps() {
 		}
 
 		for j := 0; j < i; j++ {
-			returnAll += fmt.Sprintf("(*%s)(m.world.GetUnsafe(entity, m.id%d))", typeLetters[j], j)
+			returnAll += fmt.Sprintf("(*%s)(m.world.GetUnchecked(entity, m.id%d))", typeLetters[j], j)
 			if j == 0 {
 				returnAllSafe += fmt.Sprintf("(*%s)(m.world.Get(entity, m.id%d))", typeLetters[j], j)
 			} else {
-				returnAllSafe += fmt.Sprintf("(*%s)(m.world.GetUnsafe(entity, m.id%d))", typeLetters[j], j)
+				returnAllSafe += fmt.Sprintf("(*%s)(m.world.GetUnchecked(entity, m.id%d))", typeLetters[j], j)
 			}
 			arguments += fmt.Sprintf("%s *%s", strings.ToLower(typeLetters[j]), typeLetters[j])
 			idAssign += fmt.Sprintf("	id%d: ecs.ComponentID[%s](w),\n", j, typeLetters[j])
