@@ -50,6 +50,7 @@ func TestEntityPool(t *testing.T) {
 	}
 
 	assert.False(t, p.Alive(e0Old), "Recycled entity of old generation should not be alive")
+	assert.False(t, p.Alive(Entity{}), "Zero entity should not be alive")
 }
 
 func TestEntityPoolStochastic(t *testing.T) {

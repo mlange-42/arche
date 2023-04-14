@@ -8,6 +8,7 @@ package main
 
 import (
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/generic"
 	"github.com/pkg/profile"
 )
 
@@ -50,9 +51,11 @@ func run(rounds, iters, entityCount int) {
 			entities = append(entities, query.Entity())
 		}
 
+		mapper := generic.NewMap1[position](&world)
+
 		for j := 0; j < iters; j++ {
 			for _, e := range entities {
-				pos := (*position)(world.Get(e, posID))
+				pos := mapper.Get(e)
 				pos.X = 1
 			}
 		}
