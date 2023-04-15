@@ -7,22 +7,26 @@
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
 [![MIT license](https://img.shields.io/github/license/mlange-42/arche)](https://github.com/mlange-42/arche/blob/main/LICENSE)
 
-*Arche* is an archetype-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
+*Arche* is an [archetype](https://github.com/mlange-42/arche/blob/main/ARCHITECTURE.md)-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
 
 *Arche* is designed for the use in simulation models of the
 [Department of Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
 [Helmholtz Centre for Environmental Research](https://www.ufz.de).
+
+<div align="center" width="100%">
+
+&mdash;&mdash;
+
+[Features](#features) &nbsp; &bull; &nbsp; [Installation](#installation) &nbsp; &bull; &nbsp; [Usage](#usage) &nbsp; &bull; &nbsp; [Tools](#tools) &nbsp; &bull; &nbsp; [Design](#design) &nbsp; &bull; &nbsp; [Benchmarks](#benchmarks)
+</div>
 
 ## Features
 
 * Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 * Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
 * No systems. Just queries. Use your own structure (or the [Tools](#tools)).
-* Not thread-safe. On purpose.
 * No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
 * Probably the fastest Go ECS out there. See the [Benchmarks](#benchmarks).
-
-For details, see sections [Architecture](#architecture) and [Design decisions](#design-decisions).
 
 ## Installation
 
@@ -32,7 +36,7 @@ To use *Arche* in a Go project, run:
 go get github.com/mlange-42/arche
 ```
 
-## Usage example
+## Usage
 
 Here is a minimal usage example.
 It uses the type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
@@ -102,25 +106,32 @@ func main() {
 }
 ```
 
-## Design decisions
+## Tools
+
+Several tools for *Arche* are provided in separate modules:
+
+* [arche-model](https://github.com/mlange-42/arche-model) provides a wrapper around *Arche*, and some common systems and resources.
+It's purpose is to get started with prototyping and developing simulation models immediately, focussing on the model logic.
+* [arche-pixel](https://github.com/mlange-42/arche-pixel) provides OpenGL graphics and live plots for *Arche* using the [Pixel](https://github.com/faiface/pixel) game engine.
+
+## Design
 
 Unlike most other ECS implementations, *Arche* is designed for the development of scientific,
 individual-based models rather than for game development.
 This motivates some design decisions, with an emphasis on simplicity, safety and performance.
 Nevertheless, *Arche* can also be used for game development.
 
-### Minimal core API
+### Simple core API
 
-The `ecs.World` object is a pure and minimal ECS implementation in the sense of a data store
+The `ecs.World` object is a pure and simple ECS implementation in the sense of a data store
 for entities and components, with query and iteration capabilities.
 The core package `ecs` consists of only 1500 lines of easy-to-read, clean and well-documented Go code.
 
 There is neither an update loop nor systems.
 These should be implemented by the user.
-For an implementation, see module [arche-model](https://github.com/mlange-42/arche-model).
+For a batteries-included implementation, see module [arche-model](https://github.com/mlange-42/arche-model).
 
-The packages `filter` and `generic` provide a layer around the core for richer and/or safer queries and manipulation. They are built on top of the `ecs` package, so they could also be implemented by a user.
-See also [Generic vs. ID access](#generic-vs-id-access).
+The packages [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) provide a layer around the core for richer and/or safer queries and manipulation. They are built on top of the `ecs` package, so they could also be implemented by a user.
 
 ### Determinism
 
@@ -141,51 +152,6 @@ Neither is silent failure, given the scientific background.
 
 * The number of component types per `World` is limited to 128. This is mainly a performance decision.
 * The number of entities alive at any one time is limited to just under 5 billion (`uint32` ID).
-
-## Architecture
-
-*Arche* uses an archetype-based architecture.
-
-The ASCII graph below illustrates the approach.
-Components for entities are stored in so-called archetypes, which represent unique combinations of components.
-In the illustration, the first archetype holds all components for all entities with (only/exactly) the components A, B and C.
-
-```text
- Entities   Archetypes   Bitmasks   Queries
-
-   E         E Comps
-  |0|       |2|A|B|C|    111...<-.<--match-.
-  |1|---.   |8|A|B|C|            |         |
-  |2|   '-->|1|A|B|C|            |         |
-  |3|       |3|A|B|C|            |--(A, C) |
-  |4|                            |  101... |
-  |6|   .-->|7|A|C|      101...<-'         |--(B)
-  |7|---'   |6|A|C|                        |  010...
-  |8|       |4|A|C|                        |
-  |9|---.                                  |
-  |.|   |   |5|B|C|      011...   <--------'
-  |.|   '-->|9|B|C|
-  |.|
-  |.| <===> [Entity pool]
-```
-
-The exact composition of each archetype is encoded in a bitmask for fast comparison.
-Thus, queries can easily identify their relevant archetypes, and then simply iterate entities linearly, which is very fast. Components can be accessed through the query in a very efficient way (&approx;1ns).
-
-For getting components by entity ID, e.g. for hierarchies, the world contains a list that is indexed by the entity ID. For each entity, it references it's current archetype and the index in the archetype. This way, getting components for entity IDs (i.e. random access) is fast, although not as fast as in queries (≈1.5ns vs. 1ns).
-
-Obviously, archetypes are an optimization for iteration speed.
-But they also come with a downside. Adding or removing components to/from an entity requires moving all the components of the entity to another archetype.
-This takes around 20ns per involved component.
-It is therefore recommended to add/remove/exchange multiple components at the same time rather than one after the other.
-
-## Tools
-
-Several tools for *Arche* are provided in separate modules:
-
-* [arche-model](https://github.com/mlange-42/arche-model) provides a wrapper around *Arche*, and some common systems and resources.
-It's purpose is to get started with prototyping and developing simulation models immediately, focussing on the model logic.
-* [arche-pixel](https://github.com/mlange-42/arche-pixel) provides OpenGL graphics and live plots for *Arche* using the [Pixel](https://github.com/faiface/pixel) game engine.
 
 ## Benchmarks
 
