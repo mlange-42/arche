@@ -13,6 +13,13 @@
 [Department of Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
 [Helmholtz Centre for Environmental Research](https://www.ufz.de).
 
+<div align="center" width="100%">
+
+&mdash;&mdash;
+
+[Features](#features) &nbsp; &bull; &nbsp; [Installation](#installation) &nbsp; &bull; &nbsp; [Usage](#usage) &nbsp; &bull; &nbsp; [Tools](#tools) &nbsp; &bull; &nbsp; [Design](#design) &nbsp; &bull; &nbsp; [Benchmarks](#benchmarks)
+</div>
+
 ## Features
 
 * Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
@@ -29,7 +36,7 @@ To use *Arche* in a Go project, run:
 go get github.com/mlange-42/arche
 ```
 
-## Usage example
+## Usage
 
 Here is a minimal usage example.
 It uses the type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
@@ -107,7 +114,7 @@ Several tools for *Arche* are provided in separate modules:
 It's purpose is to get started with prototyping and developing simulation models immediately, focussing on the model logic.
 * [arche-pixel](https://github.com/mlange-42/arche-pixel) provides OpenGL graphics and live plots for *Arche* using the [Pixel](https://github.com/faiface/pixel) game engine.
 
-## Design decisions
+## Design
 
 Unlike most other ECS implementations, *Arche* is designed for the development of scientific,
 individual-based models rather than for game development.
