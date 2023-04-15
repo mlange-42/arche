@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.7.1]](https://github.com/mlange-42/arche/compare/v0.7.0...v0.7.1)
+
+### Documentation
+
+* Tweak/improve example `batch_ops` (#222)
+
 ## [[v0.7.0]](https://github.com/mlange-42/arche/compare/v0.6.3...v0.7.0)
 
 ### Features

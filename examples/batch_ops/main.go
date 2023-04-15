@@ -21,26 +21,26 @@ type Velocity struct {
 }
 
 func main() {
+	// Run the simulation.
+	run()
+	// Run the simulation using the generic API.
+	runGeneric()
+}
+
+// Uses the standard API with ID access.
+func run() {
 	// Create a World.
 	world := ecs.NewWorld()
 
-	// Run the simulation.
-	run(&world)
-	// Run the simulation using generic access.
-	runGeneric(&world)
-}
-
-// Makes use of the resource by ID access.
-func run(w *ecs.World) {
 	// Get component IDs.
-	posID := ecs.ComponentID[Position](w)
-	velID := ecs.ComponentID[Velocity](w)
+	posID := ecs.ComponentID[Position](&world)
+	velID := ecs.ComponentID[Velocity](&world)
 
 	// Batch-create entities with components.
-	w.Batch().NewEntities(100, posID, velID)
+	world.Batch().NewEntities(100, posID, velID)
 
 	// Batch-create entities with components, and iterate them.
-	query := w.Batch().NewEntitiesQuery(100, posID, velID)
+	query := world.Batch().NewEntitiesQuery(100, posID, velID)
 	for query.Next() {
 		pos := (*Position)(query.Get(posID))
 		pos.X = 1.0
@@ -49,17 +49,20 @@ func run(w *ecs.World) {
 
 	// Batch-remove all entities with exactly the given components.
 	filterExcl := ecs.All(posID, velID).Exclusive()
-	w.Batch().RemoveEntities(&filterExcl)
+	world.Batch().RemoveEntities(&filterExcl)
 
 	// Batch-remove all entities with the given components (and potentially further components).
 	filter := ecs.All(posID, velID)
-	w.Batch().RemoveEntities(&filter)
+	world.Batch().RemoveEntities(&filter)
 }
 
-// Makes use of the resource by generic access.
-func runGeneric(w *ecs.World) {
+// Uses the type-safe generic API.
+func runGeneric() {
+	// Create a World.
+	world := ecs.NewWorld()
+
 	// Get component mapper.
-	mapper := generic.NewMap2[Position, Velocity](w)
+	mapper := generic.NewMap2[Position, Velocity](&world)
 
 	// Batch-create entities using the mapper.
 	mapper.NewEntities(100)
