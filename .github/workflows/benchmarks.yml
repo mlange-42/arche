@@ -38,13 +38,16 @@ jobs:
         with:
           go-version: '1.20.x'
       - name: Install dependencies
-        run: go get .
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y libgl1-mesa-dev xorg-dev xvfb
+          go get .
       - name: Benchmark vs. Array of Structs
         run: |
           cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/array_of_structs/...
+          xvfb-run -a go test -benchmem -run=^$ -bench ^.*$ ./competition/array_of_structs/...
       - name: Benchmark vs. other ECS impl.
         run: |
           cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/pos_vel/... --count 5
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 5
+          xvfb-run -a go test -benchmem -run=^$ -bench ^.*$ ./competition/pos_vel/... --count 5
+          xvfb-run -a go test -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 5
