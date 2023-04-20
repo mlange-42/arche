@@ -7,6 +7,10 @@
 * Tweak/improve example `batch_ops` (#222)
 * Adds an example for running simulations in parallel (#223)
 
+### Other
+
+* Adds benchmarks for world component access with shuffled entities (#224)
+
 ## [[v0.7.0]](https://github.com/mlange-42/arche/compare/v0.6.3...v0.7.0)
 
 ### Features
