@@ -1,5 +1,9 @@
 # Changelog
 
+## [[v0.7.2]](https://github.com/mlange-42/arche/compare/v0.7.1...v0.7.2)
+
+* Remove go-gameengine-ecs from Arche benchmarks (but not from competition!) (#228)
+
 ## [[v0.7.1]](https://github.com/mlange-42/arche/compare/v0.7.0...v0.7.1)
 
 ### Documentation
