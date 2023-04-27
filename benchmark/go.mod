@@ -4,13 +4,13 @@ go 1.20
 
 require (
 	github.com/marioolofo/go-gameengine-ecs v0.9.0
-	github.com/mlange-42/arche v0.0.0
+	github.com/mlange-42/arche v0.7.0
 	github.com/pkg/profile v1.7.0
 	github.com/wfranczyk/ento v0.1.0
 	github.com/yohamta/donburi v1.3.4
 )
 
-replace github.com/mlange-42/arche v0.0.0 => ../
+replace github.com/mlange-42/arche v0.7.0 => ../
 
 require (
 	github.com/felixge/fgprof v0.9.3 // indirect
