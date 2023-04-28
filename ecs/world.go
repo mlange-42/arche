@@ -292,7 +292,7 @@ func (w *World) removeEntities(filter Filter) int {
 	for i = 0; i < numArches; i++ {
 		arch := w.archetypes.Get(i)
 
-		if !filter.Matches(arch.Mask) {
+		if !arch.Matches(filter) {
 			continue
 		}
 
@@ -870,7 +870,7 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, forStorage b
 
 	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
-	arch.Init(node, w.config.CapacityIncrement, forStorage, types...)
+	arch.Init(node, w.config.CapacityIncrement, forStorage, target.id, types...)
 
 	node.SetArchetype(target.id, arch)
 
@@ -885,7 +885,7 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 	var i int32
 	for i = 0; i < ln; i++ {
 		a := w.archetypes.Get(i)
-		if filter.Matches(a.Mask) {
+		if a.Matches(filter) {
 			arches = append(arches, a)
 		}
 	}
