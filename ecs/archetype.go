@@ -18,13 +18,13 @@ type archetypeNode struct {
 	archetypes       map[eid]*archetype
 	TransitionAdd    idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
 	TransitionRemove idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
-	hasRelation      bool
+	relation         int8
 }
 
 // Creates a new archetypeNode
-func newArchetypeNode(mask Mask, hasRelation bool) archetypeNode {
+func newArchetypeNode(mask Mask, relation int8) archetypeNode {
 	var arch map[eid]*archetype
-	if hasRelation {
+	if relation >= 0 {
 		arch = map[eid]*archetype{}
 	}
 	return archetypeNode{
@@ -32,19 +32,19 @@ func newArchetypeNode(mask Mask, hasRelation bool) archetypeNode {
 		archetypes:       arch,
 		TransitionAdd:    newIDMap[*archetypeNode](),
 		TransitionRemove: newIDMap[*archetypeNode](),
-		hasRelation:      hasRelation,
+		relation:         relation,
 	}
 }
 
 func (a *archetypeNode) GetArchetype(id eid) *archetype {
-	if a.hasRelation {
+	if a.relation >= 0 {
 		return a.archetypes[id]
 	}
 	return a.archetype
 }
 
 func (a *archetypeNode) SetArchetype(id eid, arch *archetype) {
-	if a.hasRelation {
+	if a.relation >= 0 {
 		a.archetypes[id] = arch
 	} else {
 		a.archetype = arch
@@ -53,10 +53,11 @@ func (a *archetypeNode) SetArchetype(id eid, arch *archetype) {
 
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
-	Mask          Mask           // Archetype's mask
-	basePointer   unsafe.Pointer // Pointer to the first component column layout.
-	entityPointer unsafe.Pointer // Pointer to the entity storage
-	Relation      eid
+	Mask              Mask           // Archetype's mask
+	basePointer       unsafe.Pointer // Pointer to the first component column layout.
+	entityPointer     unsafe.Pointer // Pointer to the entity storage
+	Relation          eid
+	RelationComponent int8
 }
 
 // Matches checks if the archetype matches the given mask.
@@ -115,7 +116,7 @@ type archetype struct {
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage bool, relation eid, components ...componentType) {
+func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage bool, relation eid, relationComp int8, components ...componentType) {
 	var mask Mask
 	if len(components) > 0 {
 		a.Ids = make([]ID, len(components))
@@ -156,10 +157,11 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 	a.entityBuffer = reflect.New(reflect.ArrayOf(cap, entityType)).Elem()
 
 	a.archetypeAccess = archetypeAccess{
-		basePointer:   unsafe.Pointer(&a.layouts[0]),
-		entityPointer: a.entityBuffer.Addr().UnsafePointer(),
-		Mask:          mask,
-		Relation:      relation,
+		basePointer:       unsafe.Pointer(&a.layouts[0]),
+		entityPointer:     a.entityBuffer.Addr().UnsafePointer(),
+		Mask:              mask,
+		Relation:          relation,
+		RelationComponent: relationComp,
 	}
 
 	a.graphNode = node

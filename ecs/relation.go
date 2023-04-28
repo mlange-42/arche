@@ -4,6 +4,11 @@ import "reflect"
 
 var relationType = reflect.TypeOf((*Relation)(nil)).Elem()
 
+type relation interface {
+	Target() Entity
+	setTarget(e Entity)
+}
+
 // Relation must be embedded as first field into components that represent an entity relation.
 //
 //	type ChildOf struct {
