@@ -62,8 +62,8 @@ func (m *lockMask) Reset() {
 // Implements [archetypes].
 type pagedSlice[T any] struct {
 	pages   [][]T
-	len     int
-	lenLast int
+	len     int32
+	lenLast int32
 }
 
 // newPagedSlice creates a new pagedSlice with the given page size/capacity increment.
@@ -83,11 +83,11 @@ func (p *pagedSlice[T]) Add(value T) {
 }
 
 // Get returns the value at the given index.
-func (p *pagedSlice[T]) Get(index int) *T {
+func (p *pagedSlice[T]) Get(index int32) *T {
 	return &p.pages[index/pageSize][index%pageSize]
 }
 
 // Len returns the current number of items in the paged slice.
-func (p *pagedSlice[T]) Len() int {
+func (p *pagedSlice[T]) Len() int32 {
 	return p.len
 }

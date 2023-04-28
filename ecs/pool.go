@@ -10,11 +10,11 @@ type entityPool struct {
 	entities          []Entity
 	next              eid
 	available         uint32
-	capacityIncrement int
+	capacityIncrement uint32
 }
 
 // newEntityPool creates a new, initialized Entity pool.
-func newEntityPool(capacityIncrement int) entityPool {
+func newEntityPool(capacityIncrement uint32) entityPool {
 	entities := make([]Entity, 1, capacityIncrement)
 	entities[0] = Entity{0, math.MaxUint16}
 	return entityPool{
@@ -41,7 +41,7 @@ func (p *entityPool) getNew() Entity {
 	e := newEntity(eid(len(p.entities)))
 	if len(p.entities) == cap(p.entities) {
 		old := p.entities
-		p.entities = make([]Entity, len(p.entities), len(p.entities)+p.capacityIncrement)
+		p.entities = make([]Entity, len(p.entities), len(p.entities)+int(p.capacityIncrement))
 		copy(p.entities, old)
 	}
 	p.entities = append(p.entities, e)

@@ -18,7 +18,7 @@ func TestArchetypePointers(t *testing.T) {
 	pt.Add(&a2)
 	pt.Add(&a3)
 
-	assert.Equal(t, 3, pt.Len())
+	assert.Equal(t, int32(3), pt.Len())
 
 	for i := 0; i < 45; i++ {
 		pt.Add(&a3)

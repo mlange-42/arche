@@ -44,9 +44,10 @@ func TestLockMask(t *testing.T) {
 }
 
 func TestPagedSlice(t *testing.T) {
-	a := newPagedSlice[int]()
+	a := newPagedSlice[int32]()
 
-	for i := 0; i < 66; i++ {
+	var i int32
+	for i = 0; i < 66; i++ {
 		a.Add(i)
 		assert.Equal(t, i, *a.Get(i))
 		assert.Equal(t, i+1, a.Len())
@@ -54,12 +55,13 @@ func TestPagedSlice(t *testing.T) {
 }
 
 func TestPagedSlicePointerPersistence(t *testing.T) {
-	a := newPagedSlice[int]()
+	a := newPagedSlice[int32]()
 
 	a.Add(0)
 	p1 := a.Get(0)
 
-	for i := 1; i < 66; i++ {
+	var i int32
+	for i = 1; i < 66; i++ {
 		a.Add(i)
 		assert.Equal(t, i, *a.Get(i))
 		assert.Equal(t, i+1, a.Len())
@@ -68,7 +70,7 @@ func TestPagedSlicePointerPersistence(t *testing.T) {
 	p2 := a.Get(0)
 	assert.Equal(t, unsafe.Pointer(p1), unsafe.Pointer(p2))
 	*p1 = 100
-	assert.Equal(t, 100, *p2)
+	assert.Equal(t, int32(100), *p2)
 }
 
 func BenchmarkPagedSlice_Get(b *testing.B) {
@@ -85,6 +87,6 @@ func BenchmarkPagedSlice_Get(b *testing.B) {
 
 	sum := 0
 	for i := 0; i < b.N; i++ {
-		sum += *s.Get(i % count)
+		sum += *s.Get(int32(i % count))
 	}
 }

@@ -98,7 +98,7 @@ func fromConfig(conf Config) World {
 	w := World{
 		config:      conf,
 		entities:    entities,
-		entityPool:  newEntityPool(conf.CapacityIncrement),
+		entityPool:  newEntityPool(uint32(conf.CapacityIncrement)),
 		registry:    newComponentRegistry(),
 		archetypes:  newPagedSlice[archetype](),
 		graph:       newPagedSlice[archetypeNode](),
@@ -288,7 +288,8 @@ func (w *World) removeEntities(filter Filter) int {
 	lock := w.lock()
 	numArches := w.archetypes.Len()
 	var count uintptr
-	for i := 0; i < numArches; i++ {
+	var i int32
+	for i = 0; i < numArches; i++ {
 		arch := w.archetypes.Get(i)
 
 		if !filter.Matches(arch.Mask) {
@@ -530,7 +531,8 @@ func (w *World) Reset() {
 	w.resources.reset()
 
 	len := w.archetypes.Len()
-	for i := 0; i < len; i++ {
+	var i int32
+	for i = 0; i < len; i++ {
 		w.archetypes.Get(i).Reset()
 	}
 }
@@ -624,14 +626,15 @@ func (w *World) Stats() *stats.WorldStats {
 
 	memory := cap(w.entities)*int(entityIndexSize) + w.entityPool.TotalCap()*int(entitySize)
 
-	cntOld := len(w.stats.Archetypes)
-	cntNew := w.archetypes.Len()
-	for i := 0; i < cntOld; i++ {
+	cntOld := int32(len(w.stats.Archetypes))
+	cntNew := int32(w.archetypes.Len())
+	var i int32
+	for i = 0; i < cntOld; i++ {
 		arch := &w.stats.Archetypes[i]
 		w.archetypes.Get(i).UpdateStats(arch)
 		memory += arch.Memory
 	}
-	for i := cntOld; i < cntNew; i++ {
+	for i = cntOld; i < cntNew; i++ {
 		w.stats.Archetypes = append(w.stats.Archetypes, w.archetypes.Get(i).Stats(&w.registry))
 		memory += w.stats.Archetypes[i].Memory
 	}
@@ -811,7 +814,8 @@ func (w *World) findOrCreateArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 // Searches for an archetype by a mask.
 func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 	length := w.graph.Len()
-	for i := 0; i < length; i++ {
+	var i int32
+	for i = 0; i < length; i++ {
 		arch := w.graph.Get(i)
 		if arch.mask == mask {
 			return arch, true
@@ -865,8 +869,9 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 // Returns all archetypes that match the given filter. Used by [Cache].
 func (w *World) getArchetypes(filter Filter) archetypePointers {
 	arches := []*archetype{}
-	ln := int(w.archetypes.Len())
-	for i := 0; i < ln; i++ {
+	ln := int32(w.archetypes.Len())
+	var i int32
+	for i = 0; i < ln; i++ {
 		a := w.archetypes.Get(i)
 		if filter.Matches(a.Mask) {
 			arches = append(arches, a)

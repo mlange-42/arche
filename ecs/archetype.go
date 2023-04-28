@@ -30,9 +30,9 @@ func newArchetypeNode(mask Mask) archetypeNode {
 
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
+	Mask          Mask           // Archetype's mask
 	basePointer   unsafe.Pointer // Pointer to the first component column layout.
 	entityPointer unsafe.Pointer // Pointer to the entity storage
-	Mask          Mask           // Archetype's mask
 }
 
 // GetEntity returns the entity at the given index
