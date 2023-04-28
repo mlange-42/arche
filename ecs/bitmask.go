@@ -30,7 +30,7 @@ func All(ids ...ID) Mask {
 }
 
 // Matches matches a filter against a bitmask.
-func (b Mask) Matches(bits Mask) bool {
+func (b Mask) Matches(bits Mask, relation *Entity) bool {
 	return bits.Contains(b)
 }
 

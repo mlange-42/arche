@@ -45,24 +45,24 @@ func TestBitMask(t *testing.T) {
 
 func TestBitMaskWithoutExclusive(t *testing.T) {
 	mask := All(ID(1), ID(2), ID(13))
-	assert.True(t, mask.Matches(All(ID(1), ID(2), ID(13))))
-	assert.True(t, mask.Matches(All(ID(1), ID(2), ID(13), ID(27))))
+	assert.True(t, mask.Matches(All(ID(1), ID(2), ID(13)), nil))
+	assert.True(t, mask.Matches(All(ID(1), ID(2), ID(13), ID(27)), nil))
 
-	assert.False(t, mask.Matches(All(ID(1), ID(2))))
+	assert.False(t, mask.Matches(All(ID(1), ID(2)), nil))
 
 	without := mask.Without(ID(3))
 
-	assert.True(t, without.Matches(All(ID(1), ID(2), ID(13))))
-	assert.True(t, without.Matches(All(ID(1), ID(2), ID(13), ID(27))))
+	assert.True(t, without.Matches(All(ID(1), ID(2), ID(13)), nil))
+	assert.True(t, without.Matches(All(ID(1), ID(2), ID(13), ID(27)), nil))
 
-	assert.False(t, without.Matches(All(ID(1), ID(2), ID(3), ID(13))))
-	assert.False(t, without.Matches(All(ID(1), ID(2))))
+	assert.False(t, without.Matches(All(ID(1), ID(2), ID(3), ID(13)), nil))
+	assert.False(t, without.Matches(All(ID(1), ID(2)), nil))
 
 	excl := mask.Exclusive()
 
-	assert.True(t, excl.Matches(All(ID(1), ID(2), ID(13))))
-	assert.False(t, excl.Matches(All(ID(1), ID(2), ID(13), ID(27))))
-	assert.False(t, excl.Matches(All(ID(1), ID(2), ID(3), ID(13))))
+	assert.True(t, excl.Matches(All(ID(1), ID(2), ID(13)), nil))
+	assert.False(t, excl.Matches(All(ID(1), ID(2), ID(13), ID(27)), nil))
+	assert.False(t, excl.Matches(All(ID(1), ID(2), ID(3), ID(13)), nil))
 }
 
 func TestBitMask128(t *testing.T) {
@@ -190,7 +190,7 @@ func BenchmarkMaskFilter(b *testing.B) {
 	b.StartTimer()
 	var v bool
 	for i := 0; i < b.N; i++ {
-		v = mask.Matches(bits)
+		v = mask.Matches(bits, nil)
 	}
 	b.StopTimer()
 	v = !v
@@ -232,7 +232,7 @@ func BenchmarkMask(b *testing.B) {
 	b.StartTimer()
 	var v bool
 	for i := 0; i < b.N; i++ {
-		v = mask.Matches(bits)
+		v = mask.Matches(bits, nil)
 	}
 	b.StopTimer()
 	v = !v

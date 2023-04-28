@@ -527,7 +527,7 @@ func (w *World) SetTarget(entity Entity, compID ID, comp relation, target Entity
 
 	index := &w.entities[entity.id]
 	oldArch := index.arch
-	if index.arch.Relation == target.id {
+	if index.arch.Relation == target {
 		return
 	}
 
@@ -912,7 +912,7 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, targetCompon
 
 	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
-	arch.Init(node, w.config.CapacityIncrement, forStorage, target.id, targetComponent, types...)
+	arch.Init(node, w.config.CapacityIncrement, forStorage, target, targetComponent, types...)
 
 	node.SetArchetype(target.id, arch)
 

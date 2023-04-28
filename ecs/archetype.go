@@ -56,13 +56,13 @@ type archetypeAccess struct {
 	Mask              Mask           // Archetype's mask
 	basePointer       unsafe.Pointer // Pointer to the first component column layout.
 	entityPointer     unsafe.Pointer // Pointer to the entity storage
-	Relation          eid
+	Relation          Entity
 	RelationComponent int8
 }
 
 // Matches checks if the archetype matches the given mask.
 func (a *archetype) Matches(f Filter) bool {
-	return f.Matches(a.Mask)
+	return f.Matches(a.Mask, &a.Relation)
 }
 
 // GetEntity returns the entity at the given index
@@ -116,7 +116,7 @@ type archetype struct {
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage bool, relation eid, relationComp int8, components ...componentType) {
+func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
 	var mask Mask
 	if len(components) > 0 {
 		a.Ids = make([]ID, len(components))
