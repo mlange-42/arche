@@ -12,16 +12,16 @@ import (
 // [github.com/mlange-42/arche/generic.Query2], etc.
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
 type Query struct {
-	world          *World           // The [World].
 	filter         Filter           // The filter used by the query.
 	archetypes     archetypes       // The query's archetypes (can be all, unfiltered archetypes).
+	world          *World           // The [World].
 	access         *archetypeAccess // Access helper for the archetype currently being iterated.
-	lockBit        uint8            // The bit that was used to lock the [World] when the query was created.
-	isFiltered     bool             // Whether the list of archetypes is already filtered.
-	archIndex      int              // Iteration index of the current archetype.
 	entityIndex    uintptr          // Iteration index of the current [Entity] current archetype.
 	entityIndexMax uintptr          // Maximum entity index in the current archetype.
-	count          int              // Cached entity count.
+	archIndex      int32            // Iteration index of the current archetype.
+	count          int32            // Cached entity count.
+	lockBit        uint8            // The bit that was used to lock the [World] when the query was created.
+	isFiltered     bool             // Whether the list of archetypes is already filtered.
 }
 
 // newQuery creates a new Filter
@@ -48,7 +48,7 @@ func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint3
 			access:         &archetype.archetypeAccess,
 			archIndex:      0,
 			lockBit:        lockBit,
-			count:          int(archetype.Len() - start),
+			count:          int32(archetype.Len() - start),
 			entityIndex:    uintptr(start - 1),
 			entityIndexMax: uintptr(archetype.Len()) - 1,
 		}
@@ -60,7 +60,7 @@ func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint3
 		archetypes: batchArchetype{archetype, start},
 		archIndex:  -1,
 		lockBit:    lockBit,
-		count:      int(archetype.Len()),
+		count:      int32(archetype.Len()),
 	}
 }
 
@@ -119,10 +119,10 @@ func (q *Query) Step(step int) bool {
 // However, this is still much faster than manual counting via iteration.
 func (q *Query) Count() int {
 	if q.count >= 0 {
-		return q.count
+		return int(q.count)
 	}
-	q.count = q.countEntities()
-	return q.count
+	q.count = int32(q.countEntities())
+	return int(q.count)
 }
 
 // Mask returns the archetype [Mask] for the [Entity] at the iterator's current position.
@@ -142,7 +142,7 @@ func (q *Query) Close() {
 
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
-	len := int(q.archetypes.Len()) - 1
+	len := int32(q.archetypes.Len()) - 1
 	for q.archIndex < len {
 		q.archIndex++
 		a := q.archetypes.Get(q.archIndex)
@@ -167,9 +167,10 @@ func (q *Query) stepArchetype(step uint32) (int, bool) {
 }
 
 func (q *Query) countEntities() int {
-	len := int(q.archetypes.Len())
+	len := int32(q.archetypes.Len())
 	var count uint32 = 0
-	for i := 0; i < len; i++ {
+	var i int32
+	for i = 0; i < len; i++ {
 		a := q.archetypes.Get(i)
 		if q.isFiltered || q.filter.Matches(a.Mask) {
 			count += a.Len()

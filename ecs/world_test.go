@@ -117,14 +117,14 @@ func TestWorldComponents(t *testing.T) {
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	assert.Equal(t, 1, w.archetypes.Len())
+	assert.Equal(t, int32(1), w.archetypes.Len())
 
 	w.Add(e0, posID)
-	assert.Equal(t, 2, w.archetypes.Len())
+	assert.Equal(t, int32(2), w.archetypes.Len())
 	w.Add(e1, posID, rotID)
-	assert.Equal(t, 3, w.archetypes.Len())
+	assert.Equal(t, int32(3), w.archetypes.Len())
 	w.Add(e2, posID, rotID)
-	assert.Equal(t, 3, w.archetypes.Len())
+	assert.Equal(t, int32(3), w.archetypes.Len())
 
 	assert.Equal(t, All(posID), w.Mask(e0))
 	assert.Equal(t, All(posID, rotID), w.Mask(e1))
@@ -728,13 +728,13 @@ func TestArchetypeGraph(t *testing.T) {
 	arch0 := world.findOrCreateArchetype(archEmpty, []ID{posID, velID}, []ID{})
 	archEmpty2 := world.findOrCreateArchetype(arch0, []ID{}, []ID{velID, posID})
 	assert.Equal(t, archEmpty, archEmpty2)
-	assert.Equal(t, 2, world.archetypes.Len())
-	assert.Equal(t, 3, world.graph.Len())
+	assert.Equal(t, int32(2), world.archetypes.Len())
+	assert.Equal(t, int32(3), world.graph.Len())
 
 	archEmpty3 := world.findOrCreateArchetype(arch0, []ID{}, []ID{posID, velID})
 	assert.Equal(t, archEmpty, archEmpty3)
-	assert.Equal(t, 2, world.archetypes.Len())
-	assert.Equal(t, 4, world.graph.Len())
+	assert.Equal(t, int32(2), world.archetypes.Len())
+	assert.Equal(t, int32(4), world.graph.Len())
 
 	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{})
 	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{})
@@ -944,7 +944,7 @@ func Test1000Archetypes(t *testing.T) {
 		entity := w.NewEntity()
 		w.Add(entity, add...)
 	}
-	assert.Equal(t, 1024, w.archetypes.Len())
+	assert.Equal(t, int32(1024), w.archetypes.Len())
 
 	cnt := 0
 	query := w.Query(All(0, 7))
@@ -973,7 +973,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[reflect.Value]("reflect.Value")
 	printTypeSize[EntityEvent]()
 	printTypeSize[Cache]()
-	printTypeSizeName[idMap[archetype]]("idMap")
+	printTypeSizeName[idMap[uint32]]("idMap")
 }
 
 func printTypeSize[T any]() {

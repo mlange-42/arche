@@ -2,8 +2,8 @@ package ecs
 
 // Interface for an iterator over archetypes.
 type archetypes interface {
-	Get(index int) *archetype
-	Len() int
+	Get(index int32) *archetype
+	Len() int32
 }
 
 // Implementation of an archetype iterator for a single archetype.
@@ -16,12 +16,12 @@ type batchArchetype struct {
 }
 
 // Get returns the value at the given index.
-func (s batchArchetype) Get(index int) *archetype {
+func (s batchArchetype) Get(index int32) *archetype {
 	return s.Archetype
 }
 
 // Len returns the current number of items in the paged array.
-func (s batchArchetype) Len() int {
+func (s batchArchetype) Len() int32 {
 	return 1
 }
 
@@ -34,7 +34,7 @@ type archetypePointers struct {
 }
 
 // Get returns the value at the given index.
-func (a *archetypePointers) Get(index int) *archetype {
+func (a *archetypePointers) Get(index int32) *archetype {
 	return a.pointers[index]
 }
 
@@ -44,6 +44,6 @@ func (a *archetypePointers) Add(arch *archetype) {
 }
 
 // Len returns the current number of items in the paged array.
-func (a *archetypePointers) Len() int {
-	return len(a.pointers)
+func (a *archetypePointers) Len() int32 {
+	return int32(len(a.pointers))
 }
