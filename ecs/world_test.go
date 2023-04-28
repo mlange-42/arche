@@ -571,7 +571,7 @@ func TestWorldRemoveEntities(t *testing.T) {
 	query.Close()
 }
 
-func TestWorldSetRelation(t *testing.T) {
+func TestWorldRelationSet(t *testing.T) {
 	world := NewWorld()
 
 	rotID := ComponentID[rotation](&world)
@@ -615,7 +615,7 @@ func TestWorldSetRelation(t *testing.T) {
 	assert.Panics(t, func() { world.SetTarget(e1, relID, relComp, targ) })
 }
 
-func TestWorldQueryRelation(t *testing.T) {
+func TestWorldRelationQuery(t *testing.T) {
 	world := NewWorld()
 
 	rotID := ComponentID[rotation](&world)
@@ -654,6 +654,44 @@ func TestWorldQueryRelation(t *testing.T) {
 	query = world.Query(&filter2)
 	assert.Equal(t, 0, query.Count())
 	query.Close()
+}
+
+func TestWorldRelation(t *testing.T) {
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	relID := ComponentID[testRelationA](&world)
+
+	parents := make([]Entity, 25)
+	for i := 0; i < 25; i++ {
+		parents[i] = world.NewEntityWith(Component{ID: posID, Comp: &Position{X: i, Y: 0}})
+	}
+
+	for i := 0; i < 2500; i++ {
+		par := parents[i/100]
+		e := world.NewEntity(relID)
+		rel := (*testRelationA)(world.Get(e, relID))
+		world.SetTarget(e, relID, rel, par)
+	}
+
+	parFilter := All(posID)
+	parQuery := world.Query(parFilter)
+	assert.Equal(t, 25, parQuery.Count())
+	for parQuery.Next() {
+		targ := (*Position)(parQuery.Get(posID))
+		filter := RelationFilter{Filter: All(relID), Target: parQuery.Entity()}
+		query := world.Query(&filter)
+		assert.Equal(t, 100, query.Count())
+		for query.Next() {
+			targ.Y++
+		}
+	}
+
+	parQuery = world.Query(parFilter)
+	for parQuery.Next() {
+		targ := (*Position)(parQuery.Get(posID))
+		assert.Equal(t, 100, targ.Y)
+	}
 }
 
 func TestWorldLock(t *testing.T) {

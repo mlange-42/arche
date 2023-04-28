@@ -15,7 +15,7 @@ var layoutSize = unsafe.Sizeof(layout{})
 type archetypeNode struct {
 	mask             Mask       // Mask of the archetype
 	archetype        *archetype // The archetype
-	archetypes       map[eid]*archetype
+	archetypes       map[Entity]*archetype
 	TransitionAdd    idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
 	TransitionRemove idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
 	relation         int8
@@ -23,9 +23,9 @@ type archetypeNode struct {
 
 // Creates a new archetypeNode
 func newArchetypeNode(mask Mask, relation int8) archetypeNode {
-	var arch map[eid]*archetype
+	var arch map[Entity]*archetype
 	if relation >= 0 {
-		arch = map[eid]*archetype{}
+		arch = map[Entity]*archetype{}
 	}
 	return archetypeNode{
 		mask:             mask,
@@ -36,14 +36,14 @@ func newArchetypeNode(mask Mask, relation int8) archetypeNode {
 	}
 }
 
-func (a *archetypeNode) GetArchetype(id eid) *archetype {
+func (a *archetypeNode) GetArchetype(id Entity) *archetype {
 	if a.relation >= 0 {
 		return a.archetypes[id]
 	}
 	return a.archetype
 }
 
-func (a *archetypeNode) SetArchetype(id eid, arch *archetype) {
+func (a *archetypeNode) SetArchetype(id Entity, arch *archetype) {
 	if a.relation >= 0 {
 		a.archetypes[id] = arch
 	} else {

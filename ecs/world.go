@@ -538,7 +538,7 @@ func (w *World) SetTarget(entity Entity, compID ID, comp relation, target Entity
 	}*/
 	comp.setTarget(target)
 
-	arch := oldArch.graphNode.GetArchetype(target.id)
+	arch := oldArch.graphNode.GetArchetype(target)
 	if arch == nil {
 		arch = w.createArchetype(oldArch.graphNode, target, int8(compID), true)
 	}
@@ -848,7 +848,7 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 			curr = next
 		}
 	}
-	arch := curr.GetArchetype(target.id)
+	arch := curr.GetArchetype(target)
 	if arch == nil {
 		arch = w.createArchetype(curr, target, targetComponent, true)
 	}
@@ -914,7 +914,7 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, targetCompon
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
 	arch.Init(node, w.config.CapacityIncrement, forStorage, target, targetComponent, types...)
 
-	node.SetArchetype(target.id, arch)
+	node.SetArchetype(target, arch)
 
 	w.filterCache.addArchetype(arch)
 	return arch
