@@ -16,7 +16,11 @@ type rotation struct {
 	Angle int
 }
 
-type testRelation struct {
+type testRelationA struct {
+	Relation
+}
+
+type testRelationB struct {
 	Relation
 }
 

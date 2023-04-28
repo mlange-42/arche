@@ -40,7 +40,7 @@ type relationComp struct {
 }
 
 type noRelationComp1 struct {
-	rel Relation
+	Rel Relation
 }
 
 type noRelationComp2 struct {

@@ -23,6 +23,18 @@ func (f *MaskFilter) Matches(bits Mask, relation *Entity) bool {
 	return bits.Contains(f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
+// RelationFilter is a [Filter] for a relation target, in addition to components.
+type RelationFilter struct {
+	Filter Filter // Components filter.
+	Target Entity // Relation target entity.
+}
+
+// Matches matches a filter against a mask.
+func (f *RelationFilter) Matches(bits Mask, relation *Entity) bool {
+	// TODO handle dead targets!
+	return f.Filter.Matches(bits, relation) && f.Target.id == relation.id
+}
+
 // CachedFilter is a filter that is cached by the world.
 //
 // Create it using [Cache.Register].
