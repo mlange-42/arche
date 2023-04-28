@@ -98,7 +98,7 @@ func fromConfig(conf Config) World {
 	w := World{
 		config:      conf,
 		entities:    entities,
-		entityPool:  newEntityPool(conf.CapacityIncrement),
+		entityPool:  newEntityPool(uint32(conf.CapacityIncrement)),
 		registry:    newComponentRegistry(),
 		archetypes:  newPagedSlice[archetype](),
 		graph:       newPagedSlice[archetypeNode](),
