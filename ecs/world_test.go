@@ -725,23 +725,23 @@ func TestArchetypeGraph(t *testing.T) {
 	rotID := ComponentID[rotation](&world)
 
 	archEmpty := world.archetypes.Get(0)
-	arch0 := world.findOrCreateArchetype(archEmpty, []ID{posID, velID}, []ID{})
-	archEmpty2 := world.findOrCreateArchetype(arch0, []ID{}, []ID{velID, posID})
+	arch0 := world.findOrCreateArchetype(archEmpty, []ID{posID, velID}, []ID{}, Entity{})
+	archEmpty2 := world.findOrCreateArchetype(arch0, []ID{}, []ID{velID, posID}, Entity{})
 	assert.Equal(t, archEmpty, archEmpty2)
 	assert.Equal(t, int32(2), world.archetypes.Len())
 	assert.Equal(t, int32(3), world.graph.Len())
 
-	archEmpty3 := world.findOrCreateArchetype(arch0, []ID{}, []ID{posID, velID})
+	archEmpty3 := world.findOrCreateArchetype(arch0, []ID{}, []ID{posID, velID}, Entity{})
 	assert.Equal(t, archEmpty, archEmpty3)
 	assert.Equal(t, int32(2), world.archetypes.Len())
 	assert.Equal(t, int32(4), world.graph.Len())
 
-	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{})
-	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{})
+	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{}, Entity{})
+	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{}, Entity{})
 
 	assert.Equal(t, []ID{0, 1, 2}, arch012.Ids)
 
-	archEmpty4 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID})
+	archEmpty4 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID}, Entity{})
 	assert.Equal(t, archEmpty, archEmpty4)
 }
 

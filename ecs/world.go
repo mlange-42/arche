@@ -107,8 +107,8 @@ func fromConfig(conf Config) World {
 		resources:   newResources(),
 		filterCache: newCache(),
 	}
-	node := w.createArchetypeNode(Mask{})
-	w.createArchetype(node, false)
+	node := w.createArchetypeNode(Mask{}, false)
+	w.createArchetype(node, Entity{}, false)
 	return w
 }
 
@@ -132,7 +132,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil)
+		arch = w.findOrCreateArchetype(arch, comps, nil, Entity{})
 	}
 
 	entity := w.createEntity(arch)
@@ -166,7 +166,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	arch := w.archetypes.Get(0)
-	arch = w.findOrCreateArchetype(arch, ids, nil)
+	arch = w.findOrCreateArchetype(arch, ids, nil, Entity{})
 
 	entity := w.createEntity(arch)
 
@@ -493,7 +493,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 
 	oldIDs := oldArch.Components()
 
-	arch := w.findOrCreateArchetype(oldArch, add, rem)
+	arch := w.findOrCreateArchetype(oldArch, add, rem, Entity{})
 	newIndex := arch.Alloc(entity)
 
 	for _, id := range oldIDs {
@@ -674,7 +674,7 @@ func (w *World) newEntitiesNoNotify(count int, comps ...ID) (*archetype, uint32)
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil)
+		arch = w.findOrCreateArchetype(arch, comps, nil, Entity{})
 	}
 	startIdx := arch.Len()
 	w.createEntities(arch, uint32(count))
@@ -697,7 +697,7 @@ func (w *World) newEntitiesWithNoNotify(count int, ids []ID, comps ...Component)
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, ids, nil)
+		arch = w.findOrCreateArchetype(arch, ids, nil, Entity{})
 	}
 	startIdx := arch.Len()
 	w.createEntities(arch, uint32(count))
@@ -771,15 +771,19 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 // Tries to find an archetype by traversing the archetype graph,
 // searching by mask and extending the graph if necessary.
 // A new archetype is created for the final graph node if not already present.
-func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *archetype {
+func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, target Entity) *archetype {
 	curr := start.graphNode
 	mask := start.Mask
+	hasRelation := start.graphNode.hasRelation
 	for _, id := range rem {
 		mask.Set(id, false)
+		if w.registry.IsRelation.Get(id) {
+			hasRelation = false
+		}
 		if next, ok := curr.TransitionRemove.Get(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask)
+			next, _ := w.findOrCreateArchetypeSlow(mask, hasRelation)
 			next.TransitionAdd.Set(id, curr)
 			curr.TransitionRemove.Set(id, next)
 			curr = next
@@ -787,28 +791,35 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *arc
 	}
 	for _, id := range add {
 		mask.Set(id, true)
+		if w.registry.IsRelation.Get(id) {
+			if hasRelation {
+				panic("entity already has a relation component")
+			}
+			hasRelation = true
+		}
 		if next, ok := curr.TransitionAdd.Get(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask)
+			next, _ := w.findOrCreateArchetypeSlow(mask, hasRelation)
 			next.TransitionRemove.Set(id, curr)
 			curr.TransitionAdd.Set(id, next)
 			curr = next
 		}
 	}
-	if curr.archetype == nil {
-		w.createArchetype(curr, true)
+	arch := curr.GetArchetype(target.id)
+	if arch == nil {
+		arch = w.createArchetype(curr, target, true)
 	}
-	return curr.archetype
+	return arch
 }
 
 // Tries to find an archetype for a mask, when it can't be reached through the archetype graph.
 // Creates an archetype graph node.
-func (w *World) findOrCreateArchetypeSlow(mask Mask) (*archetypeNode, bool) {
+func (w *World) findOrCreateArchetypeSlow(mask Mask, hasRelation bool) (*archetypeNode, bool) {
 	if arch, ok := w.findArchetypeSlow(mask); ok {
 		return arch, false
 	}
-	return w.createArchetypeNode(mask), true
+	return w.createArchetypeNode(mask, hasRelation), true
 }
 
 // Searches for an archetype by a mask.
@@ -825,8 +836,8 @@ func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 }
 
 // Creates a node in the archetype graph.
-func (w *World) createArchetypeNode(mask Mask) *archetypeNode {
-	w.graph.Add(newArchetypeNode(mask))
+func (w *World) createArchetypeNode(mask Mask, hasRelation bool) *archetypeNode {
+	w.graph.Add(newArchetypeNode(mask, hasRelation))
 	node := w.graph.Get(w.graph.Len() - 1)
 	return node
 }
@@ -834,7 +845,7 @@ func (w *World) createArchetypeNode(mask Mask) *archetypeNode {
 // Creates an archetype for the given archetype graph node.
 // Initializes the archetype with a capacity according to CapacityIncrement if forStorage is true,
 // and with a capacity of 1 otherwise.
-func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype {
+func (w *World) createArchetype(node *archetypeNode, target Entity, forStorage bool) *archetype {
 	mask := node.mask
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
@@ -860,7 +871,8 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
 	arch.Init(node, w.config.CapacityIncrement, forStorage, types...)
-	node.archetype = arch
+
+	node.SetArchetype(target.id, arch)
 
 	w.filterCache.addArchetype(arch)
 	return arch

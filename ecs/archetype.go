@@ -13,18 +13,41 @@ var layoutSize = unsafe.Sizeof(layout{})
 
 // archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
-	mask             Mask                  // Mask of the archetype
-	archetype        *archetype            // The archetype
+	mask             Mask       // Mask of the archetype
+	archetype        *archetype // The archetype
+	archetypes       map[eid]*archetype
 	TransitionAdd    idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
 	TransitionRemove idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
+	hasRelation      bool
 }
 
 // Creates a new archetypeNode
-func newArchetypeNode(mask Mask) archetypeNode {
+func newArchetypeNode(mask Mask, hasRelation bool) archetypeNode {
+	var arch map[eid]*archetype
+	if hasRelation {
+		arch = map[eid]*archetype{}
+	}
 	return archetypeNode{
 		mask:             mask,
+		archetypes:       arch,
 		TransitionAdd:    newIDMap[*archetypeNode](),
 		TransitionRemove: newIDMap[*archetypeNode](),
+		hasRelation:      hasRelation,
+	}
+}
+
+func (a *archetypeNode) GetArchetype(id eid) *archetype {
+	if a.hasRelation {
+		return a.archetypes[id]
+	}
+	return a.archetype
+}
+
+func (a *archetypeNode) SetArchetype(id eid, arch *archetype) {
+	if a.hasRelation {
+		a.archetypes[id] = arch
+	} else {
+		a.archetype = arch
 	}
 }
 
