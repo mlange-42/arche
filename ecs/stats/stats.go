@@ -37,6 +37,8 @@ type EntityStats struct {
 
 // ArchetypeStats provide statistics for an archetype.
 type ArchetypeStats struct {
+	// Whether the archetype is currently active
+	IsActive bool
 	// Number of entities in the archetype
 	Size int
 	// Capacity of the archetype
@@ -51,6 +53,8 @@ type ArchetypeStats struct {
 	Memory int
 	// Memory for components per entity
 	MemoryPerEntity int
+	// Whether the archetype has changed
+	Dirty bool
 }
 
 func (s *WorldStats) String() string {

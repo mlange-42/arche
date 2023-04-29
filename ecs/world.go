@@ -720,7 +720,7 @@ func (w *World) Stats() *stats.WorldStats {
 	var i int32
 	for i = 0; i < cntOld; i++ {
 		arch := &w.stats.Archetypes[i]
-		w.archetypes.Get(i).UpdateStats(arch)
+		w.archetypes.Get(i).UpdateStats(arch, &w.registry)
 		memory += arch.Memory
 	}
 	for i = cntOld; i < cntNew; i++ {
@@ -965,6 +965,10 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, targetCompon
 		archIndex = w.freeArchetypes[lenFree-1]
 		arch = w.archetypes.Get(archIndex)
 		w.freeArchetypes = w.freeArchetypes[:lenFree-1]
+
+		if int(archIndex) < len(w.stats.Archetypes) {
+			w.stats.Archetypes[archIndex].Dirty = true
+		}
 	} else {
 		w.archetypes.Add(archetype{})
 		archIndex = w.archetypes.Len() - 1
@@ -1002,21 +1006,26 @@ func (w *World) cleanupArchetype(arch *archetype) {
 		return
 	}
 
-	delete(arch.graphNode.archetypes, target)
-	idx := arch.index
-	w.freeArchetypes = append(w.freeArchetypes, idx)
-	w.archetypes.Get(idx).Deactivate()
+	w.deleteArchetype(arch, target)
 }
 
 // Removes empty archetypes that have a target relation to the given entity.
 func (w *World) cleanupArchetypes(target Entity) {
 	for _, node := range w.relationNodes {
 		if arch, ok := node.archetypes[target]; ok && arch.Len() == 0 {
-			delete(node.archetypes, target)
-			idx := arch.index
-			w.freeArchetypes = append(w.freeArchetypes, idx)
-			w.archetypes.Get(idx).Deactivate()
+			w.deleteArchetype(arch, target)
 		}
+	}
+}
+
+func (w *World) deleteArchetype(arch *archetype, target Entity) {
+	delete(arch.graphNode.archetypes, target)
+	idx := arch.index
+	w.freeArchetypes = append(w.freeArchetypes, idx)
+	w.archetypes.Get(idx).Deactivate()
+
+	if int(idx) < len(w.stats.Archetypes) {
+		w.stats.Archetypes[idx].Dirty = true
 	}
 }
 

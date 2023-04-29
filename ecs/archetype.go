@@ -361,6 +361,7 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 	memory := cap * (int(entitySize) + memPerEntity)
 
 	return stats.ArchetypeStats{
+		IsActive:        a.IsActive(),
 		Size:            int(a.Len()),
 		Capacity:        cap,
 		Components:      aCompCount,
@@ -372,13 +373,36 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 }
 
 // UpdateStats updates statistics for an archetype
-func (a *archetype) UpdateStats(stats *stats.ArchetypeStats) {
+func (a *archetype) UpdateStats(stats *stats.ArchetypeStats, reg *componentRegistry[ID]) {
+	if stats.Dirty {
+		ids := a.Components()
+		aCompCount := len(ids)
+		aTypes := make([]reflect.Type, aCompCount)
+		for j, id := range ids {
+			aTypes[j], _ = reg.ComponentType(id)
+		}
+
+		memPerEntity := 0
+		for _, id := range a.graphNode.Ids {
+			lay := a.getLayout(id)
+			memPerEntity += int(lay.itemSize)
+		}
+
+		stats.IsActive = a.IsActive()
+		stats.Components = aCompCount
+		stats.ComponentIDs = ids
+		stats.ComponentTypes = aTypes
+		stats.MemoryPerEntity = memPerEntity
+		stats.Dirty = false
+	}
+
 	cap := int(a.Cap())
 	memory := cap * (int(entitySize) + stats.MemoryPerEntity)
 
 	stats.Size = int(a.Len())
 	stats.Capacity = cap
 	stats.Memory = memory
+
 }
 
 // copy from one pointer to another.

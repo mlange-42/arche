@@ -660,6 +660,8 @@ func TestWorldRelationRemove(t *testing.T) {
 	world.SetRelation(e1, relID, Entity{})
 	world.SetRelation(e2, relID, Entity{})
 
+	_ = world.Stats()
+
 	world.RemoveEntity(targ2)
 	assert.Equal(t, int32(3), world.archetypes.Len())
 
@@ -810,6 +812,9 @@ func TestWorldStats(t *testing.T) {
 	assert.Equal(t, 4, len(stats.Archetypes))
 	assert.Equal(t, 4, stats.Entities.Used)
 
+	w.stats.Archetypes[1].Dirty = true
+	stats = w.Stats()
+	assert.Equal(t, 4, len(stats.Archetypes))
 }
 
 func TestWorldResources(t *testing.T) {
