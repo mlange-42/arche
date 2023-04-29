@@ -38,7 +38,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask ...Comp) *Filter{{ .Index
 		panic("can't modify a registered filter")
 	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 {{ end }}
@@ -51,7 +51,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) With(mask ...Comp) *Filter{{ .Index }}{
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -63,7 +63,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -76,7 +76,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ecs.Enti
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 

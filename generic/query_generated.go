@@ -41,7 +41,7 @@ func (q *Filter0) With(mask ...Comp) *Filter0 {
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -53,7 +53,7 @@ func (q *Filter0) Without(mask ...Comp) *Filter0 {
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -66,7 +66,7 @@ func (q *Filter0) WithRelation(comp Comp, target ecs.Entity) *Filter0 {
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
@@ -179,7 +179,7 @@ func (q *Filter1[A]) Optional(mask ...Comp) *Filter1[A] {
 		panic("can't modify a registered filter")
 	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -191,7 +191,7 @@ func (q *Filter1[A]) With(mask ...Comp) *Filter1[A] {
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -203,7 +203,7 @@ func (q *Filter1[A]) Without(mask ...Comp) *Filter1[A] {
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -216,7 +216,7 @@ func (q *Filter1[A]) WithRelation(comp Comp, target ecs.Entity) *Filter1[A] {
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
@@ -339,7 +339,7 @@ func (q *Filter2[A, B]) Optional(mask ...Comp) *Filter2[A, B] {
 		panic("can't modify a registered filter")
 	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -351,7 +351,7 @@ func (q *Filter2[A, B]) With(mask ...Comp) *Filter2[A, B] {
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -363,7 +363,7 @@ func (q *Filter2[A, B]) Without(mask ...Comp) *Filter2[A, B] {
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -376,7 +376,7 @@ func (q *Filter2[A, B]) WithRelation(comp Comp, target ecs.Entity) *Filter2[A, B
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
@@ -503,7 +503,7 @@ func (q *Filter3[A, B, C]) Optional(mask ...Comp) *Filter3[A, B, C] {
 		panic("can't modify a registered filter")
 	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -515,7 +515,7 @@ func (q *Filter3[A, B, C]) With(mask ...Comp) *Filter3[A, B, C] {
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -527,7 +527,7 @@ func (q *Filter3[A, B, C]) Without(mask ...Comp) *Filter3[A, B, C] {
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -540,7 +540,7 @@ func (q *Filter3[A, B, C]) WithRelation(comp Comp, target ecs.Entity) *Filter3[A
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
@@ -671,7 +671,7 @@ func (q *Filter4[A, B, C, D]) Optional(mask ...Comp) *Filter4[A, B, C, D] {
 		panic("can't modify a registered filter")
 	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -683,7 +683,7 @@ func (q *Filter4[A, B, C, D]) With(mask ...Comp) *Filter4[A, B, C, D] {
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -695,7 +695,7 @@ func (q *Filter4[A, B, C, D]) Without(mask ...Comp) *Filter4[A, B, C, D] {
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -708,7 +708,7 @@ func (q *Filter4[A, B, C, D]) WithRelation(comp Comp, target ecs.Entity) *Filter
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
@@ -843,7 +843,7 @@ func (q *Filter5[A, B, C, D, E]) Optional(mask ...Comp) *Filter5[A, B, C, D, E] 
 		panic("can't modify a registered filter")
 	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -855,7 +855,7 @@ func (q *Filter5[A, B, C, D, E]) With(mask ...Comp) *Filter5[A, B, C, D, E] {
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -867,7 +867,7 @@ func (q *Filter5[A, B, C, D, E]) Without(mask ...Comp) *Filter5[A, B, C, D, E] {
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -880,7 +880,7 @@ func (q *Filter5[A, B, C, D, E]) WithRelation(comp Comp, target ecs.Entity) *Fil
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
@@ -1019,7 +1019,7 @@ func (q *Filter6[A, B, C, D, E, F]) Optional(mask ...Comp) *Filter6[A, B, C, D, 
 		panic("can't modify a registered filter")
 	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -1031,7 +1031,7 @@ func (q *Filter6[A, B, C, D, E, F]) With(mask ...Comp) *Filter6[A, B, C, D, E, F
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -1043,7 +1043,7 @@ func (q *Filter6[A, B, C, D, E, F]) Without(mask ...Comp) *Filter6[A, B, C, D, E
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -1056,7 +1056,7 @@ func (q *Filter6[A, B, C, D, E, F]) WithRelation(comp Comp, target ecs.Entity) *
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
@@ -1199,7 +1199,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Optional(mask ...Comp) *Filter7[A, B, C, 
 		panic("can't modify a registered filter")
 	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -1211,7 +1211,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) With(mask ...Comp) *Filter7[A, B, C, D, E
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -1223,7 +1223,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Without(mask ...Comp) *Filter7[A, B, C, D
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -1236,7 +1236,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) WithRelation(comp Comp, target ecs.Entity
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
@@ -1383,7 +1383,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Optional(mask ...Comp) *Filter8[A, B, 
 		panic("can't modify a registered filter")
 	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -1395,7 +1395,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) With(mask ...Comp) *Filter8[A, B, C, D
 		panic("can't modify a registered filter")
 	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -1407,7 +1407,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask ...Comp) *Filter8[A, B, C
 		panic("can't modify a registered filter")
 	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -1420,7 +1420,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) WithRelation(comp Comp, target ecs.Ent
 	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
