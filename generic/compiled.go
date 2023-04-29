@@ -17,6 +17,7 @@ type compiledQuery struct {
 	Ids          []ecs.ID
 	TargetID     int8
 	compiled     bool
+	locked       bool
 }
 
 // Compile compiles a generic filter.

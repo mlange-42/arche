@@ -37,6 +37,9 @@ func NewFilter0() *Filter0 {
 //
 // Create the required mask items with [T].
 func (q *Filter0) With(mask ...Comp) *Filter0 {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -46,6 +49,9 @@ func (q *Filter0) With(mask ...Comp) *Filter0 {
 //
 // Create the required mask items with [T].
 func (q *Filter0) Without(mask ...Comp) *Filter0 {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -55,6 +61,9 @@ func (q *Filter0) Without(mask ...Comp) *Filter0 {
 //
 // Create the required component ID with [T].
 func (q *Filter0) WithRelation(comp Comp, target ecs.Entity) *Filter0 {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
 	q.compiled.Reset()
@@ -86,6 +95,7 @@ func (q *Filter0) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -97,6 +107,7 @@ func (q *Filter0) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query0 is a generic query iterator for zero components.
@@ -164,6 +175,9 @@ func NewFilter1[A any]() *Filter1[A] {
 //
 // Only affects component types that were specified in the query.
 func (q *Filter1[A]) Optional(mask ...Comp) *Filter1[A] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.optional = append(q.optional, mask...)
 	q.compiled.Reset()
 	return q
@@ -173,6 +187,9 @@ func (q *Filter1[A]) Optional(mask ...Comp) *Filter1[A] {
 //
 // Create the required mask items with [T].
 func (q *Filter1[A]) With(mask ...Comp) *Filter1[A] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -182,6 +199,9 @@ func (q *Filter1[A]) With(mask ...Comp) *Filter1[A] {
 //
 // Create the required mask items with [T].
 func (q *Filter1[A]) Without(mask ...Comp) *Filter1[A] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -191,6 +211,9 @@ func (q *Filter1[A]) Without(mask ...Comp) *Filter1[A] {
 //
 // Create the required component ID with [T].
 func (q *Filter1[A]) WithRelation(comp Comp, target ecs.Entity) *Filter1[A] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
 	q.compiled.Reset()
@@ -223,6 +246,7 @@ func (q *Filter1[A]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -234,6 +258,7 @@ func (q *Filter1[A]) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query1 is a generic query iterator for one components.
@@ -310,6 +335,9 @@ func NewFilter2[A any, B any]() *Filter2[A, B] {
 //
 // Only affects component types that were specified in the query.
 func (q *Filter2[A, B]) Optional(mask ...Comp) *Filter2[A, B] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.optional = append(q.optional, mask...)
 	q.compiled.Reset()
 	return q
@@ -319,6 +347,9 @@ func (q *Filter2[A, B]) Optional(mask ...Comp) *Filter2[A, B] {
 //
 // Create the required mask items with [T].
 func (q *Filter2[A, B]) With(mask ...Comp) *Filter2[A, B] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -328,6 +359,9 @@ func (q *Filter2[A, B]) With(mask ...Comp) *Filter2[A, B] {
 //
 // Create the required mask items with [T].
 func (q *Filter2[A, B]) Without(mask ...Comp) *Filter2[A, B] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -337,6 +371,9 @@ func (q *Filter2[A, B]) Without(mask ...Comp) *Filter2[A, B] {
 //
 // Create the required component ID with [T].
 func (q *Filter2[A, B]) WithRelation(comp Comp, target ecs.Entity) *Filter2[A, B] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
 	q.compiled.Reset()
@@ -370,6 +407,7 @@ func (q *Filter2[A, B]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -381,6 +419,7 @@ func (q *Filter2[A, B]) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query2 is a generic query iterator for two components.
@@ -460,6 +499,9 @@ func NewFilter3[A any, B any, C any]() *Filter3[A, B, C] {
 //
 // Only affects component types that were specified in the query.
 func (q *Filter3[A, B, C]) Optional(mask ...Comp) *Filter3[A, B, C] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.optional = append(q.optional, mask...)
 	q.compiled.Reset()
 	return q
@@ -469,6 +511,9 @@ func (q *Filter3[A, B, C]) Optional(mask ...Comp) *Filter3[A, B, C] {
 //
 // Create the required mask items with [T].
 func (q *Filter3[A, B, C]) With(mask ...Comp) *Filter3[A, B, C] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -478,6 +523,9 @@ func (q *Filter3[A, B, C]) With(mask ...Comp) *Filter3[A, B, C] {
 //
 // Create the required mask items with [T].
 func (q *Filter3[A, B, C]) Without(mask ...Comp) *Filter3[A, B, C] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -487,6 +535,9 @@ func (q *Filter3[A, B, C]) Without(mask ...Comp) *Filter3[A, B, C] {
 //
 // Create the required component ID with [T].
 func (q *Filter3[A, B, C]) WithRelation(comp Comp, target ecs.Entity) *Filter3[A, B, C] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
 	q.compiled.Reset()
@@ -521,6 +572,7 @@ func (q *Filter3[A, B, C]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -532,6 +584,7 @@ func (q *Filter3[A, B, C]) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query3 is a generic query iterator for three components.
@@ -614,6 +667,9 @@ func NewFilter4[A any, B any, C any, D any]() *Filter4[A, B, C, D] {
 //
 // Only affects component types that were specified in the query.
 func (q *Filter4[A, B, C, D]) Optional(mask ...Comp) *Filter4[A, B, C, D] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.optional = append(q.optional, mask...)
 	q.compiled.Reset()
 	return q
@@ -623,6 +679,9 @@ func (q *Filter4[A, B, C, D]) Optional(mask ...Comp) *Filter4[A, B, C, D] {
 //
 // Create the required mask items with [T].
 func (q *Filter4[A, B, C, D]) With(mask ...Comp) *Filter4[A, B, C, D] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -632,6 +691,9 @@ func (q *Filter4[A, B, C, D]) With(mask ...Comp) *Filter4[A, B, C, D] {
 //
 // Create the required mask items with [T].
 func (q *Filter4[A, B, C, D]) Without(mask ...Comp) *Filter4[A, B, C, D] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -641,6 +703,9 @@ func (q *Filter4[A, B, C, D]) Without(mask ...Comp) *Filter4[A, B, C, D] {
 //
 // Create the required component ID with [T].
 func (q *Filter4[A, B, C, D]) WithRelation(comp Comp, target ecs.Entity) *Filter4[A, B, C, D] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
 	q.compiled.Reset()
@@ -676,6 +741,7 @@ func (q *Filter4[A, B, C, D]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -687,6 +753,7 @@ func (q *Filter4[A, B, C, D]) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query4 is a generic query iterator for four components.
@@ -772,6 +839,9 @@ func NewFilter5[A any, B any, C any, D any, E any]() *Filter5[A, B, C, D, E] {
 //
 // Only affects component types that were specified in the query.
 func (q *Filter5[A, B, C, D, E]) Optional(mask ...Comp) *Filter5[A, B, C, D, E] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.optional = append(q.optional, mask...)
 	q.compiled.Reset()
 	return q
@@ -781,6 +851,9 @@ func (q *Filter5[A, B, C, D, E]) Optional(mask ...Comp) *Filter5[A, B, C, D, E] 
 //
 // Create the required mask items with [T].
 func (q *Filter5[A, B, C, D, E]) With(mask ...Comp) *Filter5[A, B, C, D, E] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -790,6 +863,9 @@ func (q *Filter5[A, B, C, D, E]) With(mask ...Comp) *Filter5[A, B, C, D, E] {
 //
 // Create the required mask items with [T].
 func (q *Filter5[A, B, C, D, E]) Without(mask ...Comp) *Filter5[A, B, C, D, E] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -799,6 +875,9 @@ func (q *Filter5[A, B, C, D, E]) Without(mask ...Comp) *Filter5[A, B, C, D, E] {
 //
 // Create the required component ID with [T].
 func (q *Filter5[A, B, C, D, E]) WithRelation(comp Comp, target ecs.Entity) *Filter5[A, B, C, D, E] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
 	q.compiled.Reset()
@@ -835,6 +914,7 @@ func (q *Filter5[A, B, C, D, E]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -846,6 +926,7 @@ func (q *Filter5[A, B, C, D, E]) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query5 is a generic query iterator for five components.
@@ -934,6 +1015,9 @@ func NewFilter6[A any, B any, C any, D any, E any, F any]() *Filter6[A, B, C, D,
 //
 // Only affects component types that were specified in the query.
 func (q *Filter6[A, B, C, D, E, F]) Optional(mask ...Comp) *Filter6[A, B, C, D, E, F] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.optional = append(q.optional, mask...)
 	q.compiled.Reset()
 	return q
@@ -943,6 +1027,9 @@ func (q *Filter6[A, B, C, D, E, F]) Optional(mask ...Comp) *Filter6[A, B, C, D, 
 //
 // Create the required mask items with [T].
 func (q *Filter6[A, B, C, D, E, F]) With(mask ...Comp) *Filter6[A, B, C, D, E, F] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -952,6 +1039,9 @@ func (q *Filter6[A, B, C, D, E, F]) With(mask ...Comp) *Filter6[A, B, C, D, E, F
 //
 // Create the required mask items with [T].
 func (q *Filter6[A, B, C, D, E, F]) Without(mask ...Comp) *Filter6[A, B, C, D, E, F] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -961,6 +1051,9 @@ func (q *Filter6[A, B, C, D, E, F]) Without(mask ...Comp) *Filter6[A, B, C, D, E
 //
 // Create the required component ID with [T].
 func (q *Filter6[A, B, C, D, E, F]) WithRelation(comp Comp, target ecs.Entity) *Filter6[A, B, C, D, E, F] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
 	q.compiled.Reset()
@@ -998,6 +1091,7 @@ func (q *Filter6[A, B, C, D, E, F]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -1009,6 +1103,7 @@ func (q *Filter6[A, B, C, D, E, F]) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query6 is a generic query iterator for six components.
@@ -1100,6 +1195,9 @@ func NewFilter7[A any, B any, C any, D any, E any, F any, G any]() *Filter7[A, B
 //
 // Only affects component types that were specified in the query.
 func (q *Filter7[A, B, C, D, E, F, G]) Optional(mask ...Comp) *Filter7[A, B, C, D, E, F, G] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.optional = append(q.optional, mask...)
 	q.compiled.Reset()
 	return q
@@ -1109,6 +1207,9 @@ func (q *Filter7[A, B, C, D, E, F, G]) Optional(mask ...Comp) *Filter7[A, B, C, 
 //
 // Create the required mask items with [T].
 func (q *Filter7[A, B, C, D, E, F, G]) With(mask ...Comp) *Filter7[A, B, C, D, E, F, G] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -1118,6 +1219,9 @@ func (q *Filter7[A, B, C, D, E, F, G]) With(mask ...Comp) *Filter7[A, B, C, D, E
 //
 // Create the required mask items with [T].
 func (q *Filter7[A, B, C, D, E, F, G]) Without(mask ...Comp) *Filter7[A, B, C, D, E, F, G] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -1127,6 +1231,9 @@ func (q *Filter7[A, B, C, D, E, F, G]) Without(mask ...Comp) *Filter7[A, B, C, D
 //
 // Create the required component ID with [T].
 func (q *Filter7[A, B, C, D, E, F, G]) WithRelation(comp Comp, target ecs.Entity) *Filter7[A, B, C, D, E, F, G] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
 	q.compiled.Reset()
@@ -1165,6 +1272,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -1176,6 +1284,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query7 is a generic query iterator for seven components.
@@ -1270,6 +1379,9 @@ func NewFilter8[A any, B any, C any, D any, E any, F any, G any, H any]() *Filte
 //
 // Only affects component types that were specified in the query.
 func (q *Filter8[A, B, C, D, E, F, G, H]) Optional(mask ...Comp) *Filter8[A, B, C, D, E, F, G, H] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.optional = append(q.optional, mask...)
 	q.compiled.Reset()
 	return q
@@ -1279,6 +1391,9 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Optional(mask ...Comp) *Filter8[A, B, 
 //
 // Create the required mask items with [T].
 func (q *Filter8[A, B, C, D, E, F, G, H]) With(mask ...Comp) *Filter8[A, B, C, D, E, F, G, H] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
 	q.compiled.Reset()
 	return q
@@ -1288,6 +1403,9 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) With(mask ...Comp) *Filter8[A, B, C, D
 //
 // Create the required mask items with [T].
 func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask ...Comp) *Filter8[A, B, C, D, E, F, G, H] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
 	q.compiled.Reset()
 	return q
@@ -1297,6 +1415,9 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask ...Comp) *Filter8[A, B, C
 //
 // Create the required component ID with [T].
 func (q *Filter8[A, B, C, D, E, F, G, H]) WithRelation(comp Comp, target ecs.Entity) *Filter8[A, B, C, D, E, F, G, H] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
 	q.compiled.Reset()
@@ -1336,6 +1457,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -1347,6 +1469,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query8 is a generic query iterator for eight components.
