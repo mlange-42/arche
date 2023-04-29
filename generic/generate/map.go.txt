@@ -20,6 +20,8 @@ type Map{{ .Index }}{{ .TypesFull }} struct {
 }
 
 // NewMap{{ .Index }} creates a new Map{{ .Index }} object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
 func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World, relation ...Comp) Map{{ .Index }}{{ .Types }} {
 	m := Map{{ .Index }}{{ .Types }}{
 		world: w,
@@ -54,6 +56,8 @@ func (m *Map{{ .Index }}{{ .Types }}) GetUnchecked(entity ecs.Entity) ({{ .Types
 
 // New creates a new [ecs.Entity] with the Map{{ .Index }}'s components.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+//
 // See also [ecs.World.NewEntity].
 func (m *Map{{ .Index }}{{ .Types }}) New(target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
@@ -66,6 +70,8 @@ func (m *Map{{ .Index }}{{ .Types }}) New(target ...ecs.Entity) ecs.Entity {
 }
 
 // NewBatch creates entities with the Map{{ .Index }}'s components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
 // See also [Map{{ .Index }}.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int, target ...ecs.Entity) {
@@ -81,6 +87,8 @@ func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int, target ...ecs.Entity) 
 
 // NewQuery creates entities with the Map{{ .Index }}'s components.
 // It returns a [Query{{ .Index }}] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //

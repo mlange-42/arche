@@ -27,6 +27,8 @@ type Map1[A any] struct {
 }
 
 // NewMap1 creates a new Map1 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
 func NewMap1[A any](w *ecs.World, relation ...Comp) Map1[A] {
 	m := Map1[A]{
 		world: w,
@@ -61,6 +63,8 @@ func (m *Map1[A]) GetUnchecked(entity ecs.Entity) *A {
 
 // New creates a new [ecs.Entity] with the Map1's components.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
+//
 // See also [ecs.World.NewEntity].
 func (m *Map1[A]) New(target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
@@ -73,6 +77,8 @@ func (m *Map1[A]) New(target ...ecs.Entity) ecs.Entity {
 }
 
 // NewBatch creates entities with the Map1's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
 // See also [Map1.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map1[A]) NewBatch(count int, target ...ecs.Entity) {
@@ -88,6 +94,8 @@ func (m *Map1[A]) NewBatch(count int, target ...ecs.Entity) {
 
 // NewQuery creates entities with the Map1's components.
 // It returns a [Query1] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
@@ -171,6 +179,8 @@ type Map2[A any, B any] struct {
 }
 
 // NewMap2 creates a new Map2 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
 func NewMap2[A any, B any](w *ecs.World, relation ...Comp) Map2[A, B] {
 	m := Map2[A, B]{
 		world: w,
@@ -208,6 +218,8 @@ func (m *Map2[A, B]) GetUnchecked(entity ecs.Entity) (*A, *B) {
 
 // New creates a new [ecs.Entity] with the Map2's components.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
+//
 // See also [ecs.World.NewEntity].
 func (m *Map2[A, B]) New(target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
@@ -220,6 +232,8 @@ func (m *Map2[A, B]) New(target ...ecs.Entity) ecs.Entity {
 }
 
 // NewBatch creates entities with the Map2's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
 // See also [Map2.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map2[A, B]) NewBatch(count int, target ...ecs.Entity) {
@@ -235,6 +249,8 @@ func (m *Map2[A, B]) NewBatch(count int, target ...ecs.Entity) {
 
 // NewQuery creates entities with the Map2's components.
 // It returns a [Query2] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
@@ -321,6 +337,8 @@ type Map3[A any, B any, C any] struct {
 }
 
 // NewMap3 creates a new Map3 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
 func NewMap3[A any, B any, C any](w *ecs.World, relation ...Comp) Map3[A, B, C] {
 	m := Map3[A, B, C]{
 		world: w,
@@ -361,6 +379,8 @@ func (m *Map3[A, B, C]) GetUnchecked(entity ecs.Entity) (*A, *B, *C) {
 
 // New creates a new [ecs.Entity] with the Map3's components.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
+//
 // See also [ecs.World.NewEntity].
 func (m *Map3[A, B, C]) New(target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
@@ -373,6 +393,8 @@ func (m *Map3[A, B, C]) New(target ...ecs.Entity) ecs.Entity {
 }
 
 // NewBatch creates entities with the Map3's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
 // See also [Map3.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map3[A, B, C]) NewBatch(count int, target ...ecs.Entity) {
@@ -388,6 +410,8 @@ func (m *Map3[A, B, C]) NewBatch(count int, target ...ecs.Entity) {
 
 // NewQuery creates entities with the Map3's components.
 // It returns a [Query3] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
@@ -477,6 +501,8 @@ type Map4[A any, B any, C any, D any] struct {
 }
 
 // NewMap4 creates a new Map4 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
 func NewMap4[A any, B any, C any, D any](w *ecs.World, relation ...Comp) Map4[A, B, C, D] {
 	m := Map4[A, B, C, D]{
 		world: w,
@@ -520,6 +546,8 @@ func (m *Map4[A, B, C, D]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D) {
 
 // New creates a new [ecs.Entity] with the Map4's components.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
+//
 // See also [ecs.World.NewEntity].
 func (m *Map4[A, B, C, D]) New(target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
@@ -532,6 +560,8 @@ func (m *Map4[A, B, C, D]) New(target ...ecs.Entity) ecs.Entity {
 }
 
 // NewBatch creates entities with the Map4's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
 // See also [Map4.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map4[A, B, C, D]) NewBatch(count int, target ...ecs.Entity) {
@@ -547,6 +577,8 @@ func (m *Map4[A, B, C, D]) NewBatch(count int, target ...ecs.Entity) {
 
 // NewQuery creates entities with the Map4's components.
 // It returns a [Query4] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
@@ -639,6 +671,8 @@ type Map5[A any, B any, C any, D any, E any] struct {
 }
 
 // NewMap5 creates a new Map5 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
 func NewMap5[A any, B any, C any, D any, E any](w *ecs.World, relation ...Comp) Map5[A, B, C, D, E] {
 	m := Map5[A, B, C, D, E]{
 		world: w,
@@ -685,6 +719,8 @@ func (m *Map5[A, B, C, D, E]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D, *
 
 // New creates a new [ecs.Entity] with the Map5's components.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
+//
 // See also [ecs.World.NewEntity].
 func (m *Map5[A, B, C, D, E]) New(target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
@@ -697,6 +733,8 @@ func (m *Map5[A, B, C, D, E]) New(target ...ecs.Entity) ecs.Entity {
 }
 
 // NewBatch creates entities with the Map5's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
 // See also [Map5.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map5[A, B, C, D, E]) NewBatch(count int, target ...ecs.Entity) {
@@ -712,6 +750,8 @@ func (m *Map5[A, B, C, D, E]) NewBatch(count int, target ...ecs.Entity) {
 
 // NewQuery creates entities with the Map5's components.
 // It returns a [Query5] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
@@ -807,6 +847,8 @@ type Map6[A any, B any, C any, D any, E any, F any] struct {
 }
 
 // NewMap6 creates a new Map6 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
 func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World, relation ...Comp) Map6[A, B, C, D, E, F] {
 	m := Map6[A, B, C, D, E, F]{
 		world: w,
@@ -856,6 +898,8 @@ func (m *Map6[A, B, C, D, E, F]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D
 
 // New creates a new [ecs.Entity] with the Map6's components.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
+//
 // See also [ecs.World.NewEntity].
 func (m *Map6[A, B, C, D, E, F]) New(target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
@@ -868,6 +912,8 @@ func (m *Map6[A, B, C, D, E, F]) New(target ...ecs.Entity) ecs.Entity {
 }
 
 // NewBatch creates entities with the Map6's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
 // See also [Map6.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map6[A, B, C, D, E, F]) NewBatch(count int, target ...ecs.Entity) {
@@ -883,6 +929,8 @@ func (m *Map6[A, B, C, D, E, F]) NewBatch(count int, target ...ecs.Entity) {
 
 // NewQuery creates entities with the Map6's components.
 // It returns a [Query6] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
@@ -981,6 +1029,8 @@ type Map7[A any, B any, C any, D any, E any, F any, G any] struct {
 }
 
 // NewMap7 creates a new Map7 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
 func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World, relation ...Comp) Map7[A, B, C, D, E, F, G] {
 	m := Map7[A, B, C, D, E, F, G]{
 		world: w,
@@ -1033,6 +1083,8 @@ func (m *Map7[A, B, C, D, E, F, G]) GetUnchecked(entity ecs.Entity) (*A, *B, *C,
 
 // New creates a new [ecs.Entity] with the Map7's components.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
+//
 // See also [ecs.World.NewEntity].
 func (m *Map7[A, B, C, D, E, F, G]) New(target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
@@ -1045,6 +1097,8 @@ func (m *Map7[A, B, C, D, E, F, G]) New(target ...ecs.Entity) ecs.Entity {
 }
 
 // NewBatch creates entities with the Map7's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
 // See also [Map7.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map7[A, B, C, D, E, F, G]) NewBatch(count int, target ...ecs.Entity) {
@@ -1060,6 +1114,8 @@ func (m *Map7[A, B, C, D, E, F, G]) NewBatch(count int, target ...ecs.Entity) {
 
 // NewQuery creates entities with the Map7's components.
 // It returns a [Query7] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
@@ -1161,6 +1217,8 @@ type Map8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 }
 
 // NewMap8 creates a new Map8 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
 func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World, relation ...Comp) Map8[A, B, C, D, E, F, G, H] {
 	m := Map8[A, B, C, D, E, F, G, H]{
 		world: w,
@@ -1216,6 +1274,8 @@ func (m *Map8[A, B, C, D, E, F, G, H]) GetUnchecked(entity ecs.Entity) (*A, *B, 
 
 // New creates a new [ecs.Entity] with the Map8's components.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
+//
 // See also [ecs.World.NewEntity].
 func (m *Map8[A, B, C, D, E, F, G, H]) New(target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
@@ -1228,6 +1288,8 @@ func (m *Map8[A, B, C, D, E, F, G, H]) New(target ...ecs.Entity) ecs.Entity {
 }
 
 // NewBatch creates entities with the Map8's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
 // See also [Map8.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewBatch(count int, target ...ecs.Entity) {
@@ -1243,6 +1305,8 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewBatch(count int, target ...ecs.Entity)
 
 // NewQuery creates entities with the Map8's components.
 // It returns a [Query8] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //

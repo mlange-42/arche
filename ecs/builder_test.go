@@ -46,7 +46,7 @@ func TestBuilder(t *testing.T) {
 
 	b1 = NewBuilder(&w, posID, velID, relID).WithRelation(relID)
 
-	e1 = b1.New()
+	b1.New()
 	e2 := b1.NewRelation(target)
 	assert.Equal(t, target, w.GetRelation(e2, relID))
 
@@ -62,7 +62,7 @@ func TestBuilder(t *testing.T) {
 		Component{ID: relID, Comp: &testRelationA{}},
 	).WithRelation(relID)
 
-	e1 = b1.New()
+	b1.New()
 	e2 = b1.NewRelation(target)
 	assert.Equal(t, target, w.GetRelation(e2, relID))
 
