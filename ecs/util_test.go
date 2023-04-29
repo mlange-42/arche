@@ -52,6 +52,9 @@ func TestPagedSlice(t *testing.T) {
 		assert.Equal(t, i, *a.Get(i))
 		assert.Equal(t, i+1, a.Len())
 	}
+
+	a.Set(3, 100)
+	assert.Equal(t, int32(100), *a.Get(3))
 }
 
 func TestPagedSlicePointerPersistence(t *testing.T) {

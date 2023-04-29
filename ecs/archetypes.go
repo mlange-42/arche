@@ -43,6 +43,17 @@ func (a *archetypePointers) Add(arch *archetype) {
 	a.pointers = append(a.pointers, arch)
 }
 
+// Add adds an element.
+func (a *archetypePointers) Remove(arch *archetype) {
+	for i := 0; i < len(a.pointers); i++ {
+		arch2 := a.pointers[i]
+		if arch == arch2 {
+			a.pointers = append(a.pointers[:i], a.pointers[i+1:]...)
+			return
+		}
+	}
+}
+
 // Len returns the current number of items in the paged array.
 func (a *archetypePointers) Len() int32 {
 	return int32(len(a.pointers))

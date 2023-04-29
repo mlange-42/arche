@@ -5,6 +5,7 @@
 ### Features
 
 * Support for entity relations that can be queries like components (#231)
+* Relation archetypes are removed when they are empty *and* the target entity is dead (#238)
 
 ### Performance
 

@@ -62,17 +62,19 @@ func AddResource[T any](w *World, res *T) ResID {
 
 // World is the central type holding [Entity] and component data, as well as resources.
 type World struct {
-	config      Config                    // World configuration.
-	listener    func(e *EntityEvent)      // Component change listener.
-	resources   Resources                 // World resources.
-	entities    []entityIndex             // Mapping from entities to archetype and index.
-	entityPool  entityPool                // Pool for entities.
-	archetypes  pagedSlice[archetype]     // The archetypes.
-	graph       pagedSlice[archetypeNode] // The archetype graph.
-	locks       lockMask                  // World locks.
-	registry    componentRegistry[ID]     // Component registry.
-	filterCache Cache                     // Cache for registered filters.
-	stats       stats.WorldStats          // Cached world statistics
+	config         Config                    // World configuration.
+	listener       func(e *EntityEvent)      // Component change listener.
+	resources      Resources                 // World resources.
+	entities       []entityIndex             // Mapping from entities to archetype and index.
+	entityPool     entityPool                // Pool for entities.
+	archetypes     pagedSlice[archetype]     // The archetypes.
+	freeArchetypes []int32                   // Indices of free archetypes.
+	graph          pagedSlice[archetypeNode] // The archetype graph.
+	relationNodes  []*archetypeNode          // Archetype nodes that have an entity relation.
+	locks          lockMask                  // World locks.
+	registry       componentRegistry[ID]     // Component registry.
+	filterCache    Cache                     // Cache for registered filters.
+	stats          stats.WorldStats          // Cached world statistics
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -97,16 +99,17 @@ func fromConfig(conf Config) World {
 	entities := make([]entityIndex, 1, conf.CapacityIncrement)
 	entities[0] = entityIndex{arch: nil, index: 0}
 	w := World{
-		config:      conf,
-		entities:    entities,
-		entityPool:  newEntityPool(uint32(conf.CapacityIncrement)),
-		registry:    newComponentRegistry(),
-		archetypes:  newPagedSlice[archetype](),
-		graph:       newPagedSlice[archetypeNode](),
-		locks:       lockMask{},
-		listener:    nil,
-		resources:   newResources(),
-		filterCache: newCache(),
+		config:        conf,
+		entities:      entities,
+		entityPool:    newEntityPool(uint32(conf.CapacityIncrement)),
+		registry:      newComponentRegistry(),
+		archetypes:    newPagedSlice[archetype](),
+		graph:         newPagedSlice[archetypeNode](),
+		relationNodes: []*archetypeNode{},
+		locks:         lockMask{},
+		listener:      nil,
+		resources:     newResources(),
+		filterCache:   newCache(),
 	}
 	node := w.createArchetypeNode(Mask{}, -1)
 	w.createArchetype(node, Entity{}, 0, false)
@@ -273,8 +276,14 @@ func (w *World) RemoveEntity(entity Entity) {
 		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
-
 	index.arch = nil
+
+	if index.isTarget {
+		w.cleanupArchetypes(entity)
+		index.isTarget = false
+	}
+
+	w.cleanupArchetype(oldArch)
 }
 
 // removeEntities removes and recycles all entities matching a filter.
@@ -293,6 +302,10 @@ func (w *World) removeEntities(filter Filter) int {
 	for i = 0; i < numArches; i++ {
 		arch := w.archetypes.Get(i)
 
+		if !arch.IsActive() {
+			continue
+		}
+
 		if !arch.Matches(filter) {
 			continue
 		}
@@ -306,11 +319,19 @@ func (w *World) removeEntities(filter Filter) int {
 			if w.listener != nil {
 				w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, arch.graphNode.Ids, nil, -1})
 			}
-			w.entities[entity.id].arch = nil
+			index := &w.entities[entity.id]
+			index.arch = nil
+
+			if index.isTarget {
+				w.cleanupArchetypes(entity)
+				index.isTarget = false
+			}
+
 			w.entityPool.Recycle(entity)
 		}
 
 		arch.Reset()
+		w.cleanupArchetype(arch)
 	}
 	w.unlock(lock)
 
@@ -510,7 +531,9 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
-	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
+	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex, isTarget: index.isTarget}
+
+	w.cleanupArchetype(oldArch)
 
 	if w.listener != nil {
 		w.listener(&EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.graphNode.Ids, 0})
@@ -539,7 +562,10 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 	w.checkLocked()
 
 	if !w.entityPool.Alive(entity) {
-		panic("can't exchange components on a dead entity")
+		panic("can't set relation for a dead entity")
+	}
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
 	}
 
 	index := &w.entities[entity.id]
@@ -573,7 +599,10 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
-	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
+	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex, isTarget: index.isTarget}
+	w.entities[target.id].isTarget = true
+
+	w.cleanupArchetype(oldArch)
 }
 
 // Reset removes all entities and resources from the world.
@@ -691,7 +720,7 @@ func (w *World) Stats() *stats.WorldStats {
 	var i int32
 	for i = 0; i < cntOld; i++ {
 		arch := &w.stats.Archetypes[i]
-		w.archetypes.Get(i).UpdateStats(arch)
+		w.archetypes.Get(i).UpdateStats(arch, &w.registry)
 		memory += arch.Memory
 	}
 	for i = cntOld; i < cntNew; i++ {
@@ -899,6 +928,7 @@ func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
 	w.graph.Add(newArchetypeNode(mask, relation, w.config.CapacityIncrement))
 	node := w.graph.Get(w.graph.Len() - 1)
+	w.relationNodes = append(w.relationNodes, node)
 	return node
 }
 
@@ -928,9 +958,23 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, targetCompon
 		}
 	}
 
-	w.archetypes.Add(archetype{})
-	arch := w.archetypes.Get(w.archetypes.Len() - 1)
-	arch.Init(node, forStorage, target, targetComponent, types...)
+	var arch *archetype
+	var archIndex int32
+	lenFree := len(w.freeArchetypes)
+	if lenFree > 0 {
+		archIndex = w.freeArchetypes[lenFree-1]
+		arch = w.archetypes.Get(archIndex)
+		w.freeArchetypes = w.freeArchetypes[:lenFree-1]
+
+		if int(archIndex) < len(w.stats.Archetypes) {
+			w.stats.Archetypes[archIndex].Dirty = true
+		}
+	} else {
+		w.archetypes.Add(archetype{})
+		archIndex = w.archetypes.Len() - 1
+		arch = w.archetypes.Get(archIndex)
+	}
+	arch.Init(node, archIndex, forStorage, target, targetComponent, types...)
 
 	node.SetArchetype(target, arch)
 
@@ -945,11 +989,46 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 	var i int32
 	for i = 0; i < ln; i++ {
 		a := w.archetypes.Get(i)
-		if a.Matches(filter) {
+		if a.IsActive() && a.Matches(filter) {
 			arches = append(arches, a)
 		}
 	}
 	return archetypePointers{arches}
+}
+
+// Removes the archetype if it is empty, and has a relation to a dead target.
+func (w *World) cleanupArchetype(arch *archetype) {
+	if arch.Len() > 0 || arch.graphNode.relation < 0 {
+		return
+	}
+	target := arch.Relation
+	if target.IsZero() || w.Alive(target) {
+		return
+	}
+
+	w.deleteArchetype(arch, target)
+}
+
+// Removes empty archetypes that have a target relation to the given entity.
+func (w *World) cleanupArchetypes(target Entity) {
+	for _, node := range w.relationNodes {
+		if arch, ok := node.archetypes[target]; ok && arch.Len() == 0 {
+			w.deleteArchetype(arch, target)
+		}
+	}
+}
+
+func (w *World) deleteArchetype(arch *archetype, target Entity) {
+	delete(arch.graphNode.archetypes, target)
+	idx := arch.index
+	w.freeArchetypes = append(w.freeArchetypes, idx)
+	w.archetypes.Get(idx).Deactivate()
+
+	w.filterCache.removeArchetype(arch)
+
+	if int(idx) < len(w.stats.Archetypes) {
+		w.stats.Archetypes[idx].Dirty = true
+	}
 }
 
 // componentID returns the ID for a component type, and registers it if not already registered.

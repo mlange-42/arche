@@ -27,4 +27,10 @@ func TestArchetypePointers(t *testing.T) {
 	assert.Equal(t, unsafe.Pointer(&a1), unsafe.Pointer(pt.Get(0)))
 	assert.Equal(t, unsafe.Pointer(&a2), unsafe.Pointer(pt.Get(1)))
 	assert.Equal(t, unsafe.Pointer(&a3), unsafe.Pointer(pt.Get(2)))
+
+	assert.Equal(t, int32(48), pt.Len())
+
+	pt.Remove(&a2)
+	assert.Equal(t, int32(47), pt.Len())
+	assert.Equal(t, unsafe.Pointer(&a3), unsafe.Pointer(pt.Get(1)))
 }

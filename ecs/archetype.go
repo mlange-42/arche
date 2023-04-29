@@ -117,12 +117,13 @@ type archetype struct {
 	indices         idMap[uint32]   // Mapping from IDs to buffer indices.
 	buffers         []reflect.Value // Reflection arrays containing component data.
 	entityBuffer    reflect.Value   // Reflection array containing entity data.
+	index           int32           // Index of the archetype in the world.
 	len             uint32          // Current number of entities
 	cap             uint32          // Current capacity
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archetypeNode, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
+func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
 	var mask Mask
 	if len(components) > 0 && len(node.Ids) == 0 {
 		node.Ids = make([]ID, len(components))
@@ -146,6 +147,7 @@ func (a *archetype) Init(node *archetypeNode, forStorage bool, relation Entity, 
 	a.buffers = make([]reflect.Value, len(components))
 	a.layouts = make([]layout, MaskTotalBits)
 	a.indices = newIDMap[uint32]()
+	a.index = index
 
 	cap := 1
 	if forStorage {
@@ -312,6 +314,20 @@ func (a *archetype) Reset() {
 	}
 }
 
+func (a *archetype) Deactivate() {
+	a.Reset()
+	a.index = -1
+	a.graphNode = nil
+	a.layouts = nil
+	a.indices = newIDMap[uint32]()
+	a.buffers = nil
+	a.entityBuffer.SetZero()
+}
+
+func (a *archetype) IsActive() bool {
+	return a.index >= 0
+}
+
 // Components returns the component IDs for this archetype
 func (a *archetype) Components() []ID {
 	return a.graphNode.Ids
@@ -345,6 +361,7 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 	memory := cap * (int(entitySize) + memPerEntity)
 
 	return stats.ArchetypeStats{
+		IsActive:        a.IsActive(),
 		Size:            int(a.Len()),
 		Capacity:        cap,
 		Components:      aCompCount,
@@ -356,13 +373,36 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 }
 
 // UpdateStats updates statistics for an archetype
-func (a *archetype) UpdateStats(stats *stats.ArchetypeStats) {
+func (a *archetype) UpdateStats(stats *stats.ArchetypeStats, reg *componentRegistry[ID]) {
+	if stats.Dirty {
+		ids := a.Components()
+		aCompCount := len(ids)
+		aTypes := make([]reflect.Type, aCompCount)
+		for j, id := range ids {
+			aTypes[j], _ = reg.ComponentType(id)
+		}
+
+		memPerEntity := 0
+		for _, id := range a.graphNode.Ids {
+			lay := a.getLayout(id)
+			memPerEntity += int(lay.itemSize)
+		}
+
+		stats.IsActive = a.IsActive()
+		stats.Components = aCompCount
+		stats.ComponentIDs = ids
+		stats.ComponentTypes = aTypes
+		stats.MemoryPerEntity = memPerEntity
+		stats.Dirty = false
+	}
+
 	cap := int(a.Cap())
 	memory := cap * (int(entitySize) + stats.MemoryPerEntity)
 
 	stats.Size = int(a.Len())
 	stats.Capacity = cap
 	stats.Memory = memory
+
 }
 
 // copy from one pointer to another.

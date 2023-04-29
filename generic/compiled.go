@@ -36,7 +36,6 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 		targetID := ecs.TypeID(w, targetType)
 		q.TargetID = int8(targetID)
 
-		fmt.Println(targetID, targetType)
 		if !q.maskFilter.Include.Get(targetID) {
 			panic(fmt.Sprintf("relation component %v not in filter", targetType))
 		}
