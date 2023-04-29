@@ -40,6 +40,7 @@ func (e Entity) IsZero() bool {
 
 // entityIndex indicates where an entity is currently stored.
 type entityIndex struct {
-	arch  *archetype // Entity's current archetype
-	index uintptr    // Entity's current index in the archetype
+	arch     *archetype // Entity's current archetype
+	index    uintptr    // Entity's current index in the archetype
+	isTarget bool
 }

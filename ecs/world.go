@@ -275,6 +275,11 @@ func (w *World) RemoveEntity(entity Entity) {
 	}
 	index.arch = nil
 
+	if index.isTarget {
+		w.cleanupArchetypes(entity)
+		index.isTarget = false
+	}
+
 	w.cleanupArchetype(oldArch)
 }
 
@@ -307,7 +312,14 @@ func (w *World) removeEntities(filter Filter) int {
 			if w.listener != nil {
 				w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, arch.graphNode.Ids, nil, -1})
 			}
-			w.entities[entity.id].arch = nil
+			index := &w.entities[entity.id]
+			index.arch = nil
+
+			if index.isTarget {
+				w.cleanupArchetypes(entity)
+				index.isTarget = false
+			}
+
 			w.entityPool.Recycle(entity)
 		}
 
@@ -511,7 +523,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
-	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
+	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex, isTarget: index.isTarget}
 
 	w.cleanupArchetype(oldArch)
 
@@ -542,7 +554,10 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 	w.checkLocked()
 
 	if !w.entityPool.Alive(entity) {
-		panic("can't exchange components on a dead entity")
+		panic("can't set relation for a dead entity")
+	}
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
 	}
 
 	index := &w.entities[entity.id]
@@ -576,7 +591,8 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
-	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
+	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex, isTarget: index.isTarget}
+	w.entities[target.id].isTarget = true
 
 	w.cleanupArchetype(oldArch)
 }
@@ -967,6 +983,22 @@ func (w *World) cleanupArchetype(arch *archetype) {
 		return
 	}
 	delete(arch.graphNode.archetypes, target)
+}
+
+// Removes empty archetypes that have a target relation to the given entity.
+func (w *World) cleanupArchetypes(target Entity) {
+	numNodes := w.graph.Len()
+
+	var i int32
+	for i = 0; i < numNodes; i++ {
+		node := w.graph.Get(i)
+		if node.relation < 0 {
+			continue
+		}
+		if arch, ok := node.archetypes[target]; ok && arch.Len() == 0 {
+			delete(node.archetypes, target)
+		}
+	}
 }
 
 // componentID returns the ID for a component type, and registers it if not already registered.
