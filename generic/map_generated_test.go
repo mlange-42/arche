@@ -48,6 +48,21 @@ func TestMap1Generated(t *testing.T) {
 	assert.Equal(t, 0, cnt)
 
 	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap1[testStruct0](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewQuery(5, target) })
+
+	mut2 := NewMap1[testRelationA](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewQuery(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
 }
 
 func TestMap2Generated(t *testing.T) {
@@ -96,6 +111,25 @@ func TestMap2Generated(t *testing.T) {
 	mut.RemoveEntities(false)
 
 	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap2[
+		testStruct0, testStruct1,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewQuery(5, target) })
+
+	mut2 := NewMap2[
+		testRelationA, testStruct1,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewQuery(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
 }
 
 func TestMap3Generated(t *testing.T) {
@@ -148,6 +182,25 @@ func TestMap3Generated(t *testing.T) {
 	mut.RemoveEntities(false)
 
 	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap3[
+		testStruct0, testStruct1, testStruct2,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewQuery(5, target) })
+
+	mut2 := NewMap3[
+		testRelationA, testStruct1, testStruct2,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewQuery(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
 }
 
 func TestMap4Generated(t *testing.T) {
@@ -200,6 +253,25 @@ func TestMap4Generated(t *testing.T) {
 	mut.RemoveEntities(false)
 
 	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap4[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewQuery(5, target) })
+
+	mut2 := NewMap4[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewQuery(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
 }
 
 func TestMap5Generated(t *testing.T) {
@@ -254,6 +326,27 @@ func TestMap5Generated(t *testing.T) {
 	mut.RemoveEntities(false)
 
 	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap5[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewQuery(5, target) })
+
+	mut2 := NewMap5[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewQuery(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
 }
 
 func TestMap6Generated(t *testing.T) {
@@ -308,6 +401,27 @@ func TestMap6Generated(t *testing.T) {
 	mut.RemoveEntities(false)
 
 	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap6[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewQuery(5, target) })
+
+	mut2 := NewMap6[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewQuery(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
 }
 
 func TestMap7Generated(t *testing.T) {
@@ -362,6 +476,27 @@ func TestMap7Generated(t *testing.T) {
 	mut.RemoveEntities(false)
 
 	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap7[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewQuery(5, target) })
+
+	mut2 := NewMap7[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewQuery(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
 }
 
 func TestMap8Generated(t *testing.T) {
@@ -416,4 +551,25 @@ func TestMap8Generated(t *testing.T) {
 	mut.RemoveEntities(false)
 
 	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap8[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewQuery(5, target) })
+
+	mut2 := NewMap8[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewQuery(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
 }

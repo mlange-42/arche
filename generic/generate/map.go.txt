@@ -14,18 +14,23 @@
 type Map{{ .Index }}{{ .TypesFull }} struct {
 	world *ecs.World
 	mask ecs.Mask
+	target int8
 	ids []ecs.ID
 	{{ .IDTypes }}
 }
 
 // NewMap{{ .Index }} creates a new Map{{ .Index }} object.
-func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }} {
+func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World, relation ...Comp) Map{{ .Index }}{{ .Types }} {
 	m := Map{{ .Index }}{{ .Types }}{
 		world: w,
 		{{ .IDAssign }}
 	}
 	m.ids = []ecs.ID{ {{ .IDList }} }
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -50,16 +55,28 @@ func (m *Map{{ .Index }}{{ .Types }}) GetUnchecked(entity ecs.Entity) ({{ .Types
 // New creates a new [ecs.Entity] with the Map{{ .Index }}'s components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map{{ .Index }}{{ .Types }}) New() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
+func (m *Map{{ .Index }}{{ .Types }}) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewRelation(target[0])
 }
 
 // NewBatch creates entities with the Map{{ .Index }}'s components.
 //
 // See also [Map{{ .Index }}.NewQuery] and [ecs.Batch.NewBatch].
-func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int) {
-	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatchRelation(count, target[0])
 }
 
 // NewQuery creates entities with the Map{{ .Index }}'s components.
@@ -68,8 +85,18 @@ func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int) {
 // Listener notification is delayed until the query is closed of fully iterated.
 //
 // See also [Map{{ .Index }}.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map{{ .Index }}{{ .Types }}) NewQuery(count int) Query{{ .Index }}{{ .Types }} {
-	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+func (m *Map{{ .Index }}{{ .Types }}) NewQuery(count int, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
+	var query ecs.Query
+	
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQueryRelation(count, target[0])
+	}
+
 	return Query{{ .Index }}{{ .Types }}{
 		Query: query,
 		{{ .IDAssign2 }}
