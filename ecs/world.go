@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"fmt"
 	"reflect"
 	"unsafe"
 
@@ -516,31 +517,48 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 }
 
-// SetTarget sets the target entity for an entity relation.
-func (w *World) SetTarget(entity Entity, compID ID, comp relation, target Entity) {
+// GetRelation returns the target entity for an entity relation.
+func (w *World) GetRelation(entity Entity, comp ID) Entity {
 	if !w.entityPool.Alive(entity) {
 		panic("can't exchange components on a dead entity")
 	}
-	if !w.registry.IsRelation.Get(compID) {
-		panic("can set target entity only for relation components")
+
+	index := &w.entities[entity.id]
+	if index.arch.graphNode.relation != int8(comp) {
+		if !index.arch.HasComponent(comp) {
+			panic(fmt.Sprintf("entity does not have relation component %T", w.registry.Types[comp]))
+		}
+		panic(fmt.Sprintf("not a relation component: %T", w.registry.Types[comp]))
+	}
+
+	return index.arch.Relation
+}
+
+// SetRelation sets the target entity for an entity relation.
+func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
+	w.checkLocked()
+
+	if !w.entityPool.Alive(entity) {
+		panic("can't exchange components on a dead entity")
 	}
 
 	index := &w.entities[entity.id]
 	oldArch := index.arch
+
+	if oldArch.graphNode.relation != int8(comp) {
+		if !oldArch.HasComponent(comp) {
+			panic(fmt.Sprintf("entity does not have relation component %T", w.registry.Types[comp]))
+		}
+		panic(fmt.Sprintf("not a relation component: %T", w.registry.Types[comp]))
+	}
+
 	if index.arch.Relation == target {
 		return
 	}
 
-	// TODO: check that the component belongs to the entity
-	/*ptr := w.Get(entity, compID)
-	if ptr != unsafe.Pointer(&comp) {
-		panic("relation component for SetTarget does not belong to the given entity")
-	}*/
-	comp.setTarget(target)
-
 	arch := oldArch.graphNode.GetArchetype(target)
 	if arch == nil {
-		arch = w.createArchetype(oldArch.graphNode, target, int8(compID), true)
+		arch = w.createArchetype(oldArch.graphNode, target, int8(oldArch.graphNode.relation), true)
 	}
 
 	newIndex := arch.Alloc(entity)

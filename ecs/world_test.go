@@ -585,34 +585,31 @@ func TestWorldRelationSet(t *testing.T) {
 	assert.Equal(t, int32(3), world.graph.Len())
 	assert.Equal(t, int32(2), world.archetypes.Len())
 
-	relComp := (*testRelationA)(world.Get(e1, relID))
-	assert.Equal(t, Entity{}, relComp.Target())
-	world.SetTarget(e1, relID, relComp, targ)
+	assert.Equal(t, Entity{}, world.GetRelation(e1, relID))
+	world.SetRelation(e1, relID, targ)
 
-	relComp = (*testRelationA)(world.Get(e1, relID))
-	assert.Equal(t, targ, relComp.Target())
+	assert.Equal(t, targ, world.GetRelation(e1, relID))
 	assert.Equal(t, int32(3), world.graph.Len())
 	assert.Equal(t, int32(3), world.archetypes.Len())
 
-	world.SetTarget(e1, relID, relComp, Entity{})
+	world.SetRelation(e1, relID, Entity{})
 
 	// Should do nothing
-	world.SetTarget(e1, relID, relComp, Entity{})
+	world.SetRelation(e1, relID, Entity{})
 
-	relComp = (*testRelationA)(world.Get(e1, relID))
-	assert.Equal(t, Entity{}, relComp.Target())
+	assert.Equal(t, Entity{}, world.GetRelation(e1, relID))
 	assert.Equal(t, int32(3), world.graph.Len())
 	assert.Equal(t, int32(3), world.archetypes.Len())
 
 	world.Remove(e2, relID)
 
-	assert.Panics(t, func() { world.SetTarget(e1, rotID, relComp, Entity{}) })
+	assert.Panics(t, func() { world.SetRelation(e2, relID, Entity{}) })
 
 	assert.Panics(t, func() { world.NewEntity(relID, rel2ID) })
 	assert.Panics(t, func() { world.Add(e1, rel2ID) })
 
 	world.RemoveEntity(e1)
-	assert.Panics(t, func() { world.SetTarget(e1, relID, relComp, targ) })
+	assert.Panics(t, func() { world.SetRelation(e1, relID, targ) })
 }
 
 func TestWorldRelationQuery(t *testing.T) {
@@ -627,12 +624,10 @@ func TestWorldRelationQuery(t *testing.T) {
 
 	for i := 0; i < 4; i++ {
 		e1 := world.NewEntity(relID)
-		rel1 := (*testRelationA)(world.Get(e1, relID))
-		world.SetTarget(e1, relID, rel1, targ1)
+		world.SetRelation(e1, relID, targ1)
 
 		e2 := world.NewEntity(relID)
-		rel2 := (*testRelationA)(world.Get(e2, relID))
-		world.SetTarget(e2, relID, rel2, targ2)
+		world.SetRelation(e2, relID, targ2)
 	}
 
 	filter := All(relID)
@@ -670,8 +665,7 @@ func TestWorldRelation(t *testing.T) {
 	for i := 0; i < 2500; i++ {
 		par := parents[i/100]
 		e := world.NewEntity(relID)
-		rel := (*testRelationA)(world.Get(e, relID))
-		world.SetTarget(e, relID, rel, par)
+		world.SetRelation(e, relID, par)
 	}
 
 	parFilter := All(posID)
