@@ -2,9 +2,17 @@
 
 ## [[v0.8.0]](https://github.com/mlange-42/arche/compare/v0.7.1...v0.8.0)
 
-### Features
+### Highlights
 
 * Support for entity relations that can be queries like components (#231)
+
+### Breaking changes
+
+* Removed `World.Batch` for entity batch creation, use `Builder` instead (#239)
+* Rework of generic entity creation API, use `MapX.New`, `MapX.NewBatch` and `MapX.NewQuery` (#239)
+
+### Features
+
 * Relation archetypes are removed when they are empty *and* the target entity is dead (#238)
 
 ### Performance
