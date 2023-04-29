@@ -59,7 +59,7 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntity() ecs.Entity {
 //
 // See also [Map{{ .Index }}.NewEntitiesQuery] and [ecs.Batch.NewEntities].
 func (m *Map{{ .Index }}{{ .Types }}) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
+	ecs.NewBuilder(m.world, m.ids...).Batch(count)
 }
 
 // NewEntities creates entities with the Map{{ .Index }}'s components.
@@ -69,7 +69,7 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntities(count int) {
 //
 // See also [Map{{ .Index }}.NewEntities] and [ecs.Batch.NewEntitiesQuery].
 func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesQuery(count int) Query{{ .Index }}{{ .Types }} {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
+	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
 	return Query{{ .Index }}{{ .Types }}{
 		Query: query,
 		{{ .IDAssign2 }}
@@ -81,9 +81,9 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesQuery(count int) Query{{ .Index
 //
 // See also [ecs.World.NewEntityWith].
 func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) ecs.Entity {
-	entity := m.world.NewEntityWith(
+	entity := ecs.NewBuilderWith(m.world,
 		{{ .Components }}
-	)
+	).Build()
 	return entity
 }
 
@@ -91,7 +91,9 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) ecs.Entity
 //
 // See also [Map{{ .Index }}.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
 func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWith(count int, {{ .Arguments }}) {
-	m.world.Batch().NewEntitiesWith(count, {{ .Components }})
+	ecs.NewBuilderWith(m.world,
+		{{ .Components }}
+	).Batch(count)
 }
 
 // NewEntitiesWithQuery creates entities with the Map{{ .Index }}'s components, using the supplied values.
@@ -101,7 +103,9 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWith(count int, {{ .Arguments }
 //
 // See also [Map{{ .Index }}.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
 func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWithQuery(count int, {{ .Arguments }}) Query{{ .Index }}{{ .Types }} {
-	query := m.world.Batch().NewEntitiesWithQuery(count, {{ .Components }})
+	query := ecs.NewBuilderWith(m.world,
+		{{ .Components }}
+	).Query(count)
 	return Query{{ .Index }}{{ .Types }}{
 		Query: query,
 		{{ .IDAssign2 }}
@@ -144,7 +148,7 @@ func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
 func (m *Map{{ .Index }}{{ .Types }}) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }

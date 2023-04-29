@@ -187,10 +187,16 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity {
 	w.checkLocked()
 
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
+	}
+
 	arch := w.archetypes.Get(0)
+
 	if len(comps) > 0 {
 		arch = w.findOrCreateArchetype(arch, comps, nil, target, int8(targetID))
 	}
+	w.checkRelation(arch, targetID)
 
 	entity := w.createEntity(arch)
 
@@ -203,8 +209,8 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Component) Entity {
 	w.checkLocked()
 
-	if len(comps) == 0 {
-		return w.NewEntity()
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
 	}
 
 	ids := make([]ID, len(comps))
@@ -214,6 +220,7 @@ func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Compone
 
 	arch := w.archetypes.Get(0)
 	arch = w.findOrCreateArchetype(arch, ids, nil, target, int8(targetID))
+	w.checkRelation(arch, targetID)
 
 	entity := w.createEntity(arch)
 
@@ -329,13 +336,13 @@ func (w *World) RemoveEntity(entity Entity) {
 	w.cleanupArchetype(oldArch)
 }
 
-// removeEntities removes and recycles all entities matching a filter.
+// RemoveEntities removes and recycles all entities matching a filter.
 //
 // Returns the number of removed entities.
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
-func (w *World) removeEntities(filter Filter) int {
+func (w *World) RemoveEntities(filter Filter) int {
 	w.checkLocked()
 
 	lock := w.lock()
@@ -590,12 +597,7 @@ func (w *World) GetRelation(entity Entity, comp ID) Entity {
 	}
 
 	index := &w.entities[entity.id]
-	if index.arch.graphNode.relation != int8(comp) {
-		if !index.arch.HasComponent(comp) {
-			panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
-		}
-		panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
-	}
+	w.checkRelation(index.arch, comp)
 
 	return index.arch.Relation
 }
@@ -612,14 +614,9 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 	}
 
 	index := &w.entities[entity.id]
-	oldArch := index.arch
+	w.checkRelation(index.arch, comp)
 
-	if oldArch.graphNode.relation != int8(comp) {
-		if !oldArch.HasComponent(comp) {
-			panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
-		}
-		panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
-	}
+	oldArch := index.arch
 
 	if index.arch.Relation == target {
 		return
@@ -646,6 +643,15 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 	w.entities[target.id].isTarget = true
 
 	w.cleanupArchetype(oldArch)
+}
+
+func (w *World) checkRelation(arch *archetype, comp ID) {
+	if arch.graphNode.relation != int8(comp) {
+		if !arch.HasComponent(comp) {
+			panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
+		}
+		panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
+	}
 }
 
 // Reset removes all entities and resources from the world.
@@ -695,14 +701,6 @@ func (w *World) Query(filter Filter) Query {
 // Resources are component-like data that is not associated to an entity, but unique to the world.
 func (w *World) Resources() *Resources {
 	return &w.resources
-}
-
-// Batch creates a [Batch] processing helper.
-//
-// It provides the functionality to create and remove large numbers of entities in batches,
-// in a more efficient way.
-func (w *World) Batch() *Batch {
-	return &Batch{w}
 }
 
 // Cache returns the [Cache] of the world, for registering filters.
@@ -804,10 +802,18 @@ func (w *World) newEntitiesNoNotify(count int, targetID int8, target Entity, com
 		panic("can only create a positive number of entities")
 	}
 
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
+	}
+
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
 		arch = w.findOrCreateArchetype(arch, comps, nil, target, targetID)
 	}
+	if targetID >= 0 {
+		w.checkRelation(arch, uint8(targetID))
+	}
+
 	startIdx := arch.Len()
 	w.createEntities(arch, uint32(count))
 
@@ -821,6 +827,11 @@ func (w *World) newEntitiesWithNoNotify(count int, targetID int8, target Entity,
 	if count < 1 {
 		panic("can only create a positive number of entities")
 	}
+
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
+	}
+
 	if len(comps) == 0 {
 		return w.newEntitiesNoNotify(count, targetID, target)
 	}
@@ -831,6 +842,10 @@ func (w *World) newEntitiesWithNoNotify(count int, targetID int8, target Entity,
 	if len(comps) > 0 {
 		arch = w.findOrCreateArchetype(arch, ids, nil, target, targetID)
 	}
+	if targetID >= 0 {
+		w.checkRelation(arch, uint8(targetID))
+	}
+
 	startIdx := arch.Len()
 	w.createEntities(arch, uint32(count))
 

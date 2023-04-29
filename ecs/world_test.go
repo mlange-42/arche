@@ -558,7 +558,7 @@ func TestWorldRemoveEntities(t *testing.T) {
 	query.Close()
 
 	filter := All(posID).Exclusive()
-	cnt := world.removeEntities(&filter)
+	cnt := world.RemoveEntities(&filter)
 	assert.Equal(t, 100, cnt)
 	assert.Equal(t, 300, len(events))
 
@@ -673,8 +673,8 @@ func TestWorldRelationRemove(t *testing.T) {
 
 	assert.Equal(t, int32(3), world.archetypes.Len())
 
-	world.Batch().RemoveEntities(All())
-	world.Batch().RemoveEntities(All())
+	world.RemoveEntities(All())
+	world.RemoveEntities(All())
 }
 
 func TestWorldRelationQuery(t *testing.T) {
@@ -759,6 +759,46 @@ func TestWorldRelation(t *testing.T) {
 		targ := (*Position)(parQuery.Get(posID))
 		assert.Equal(t, 100, targ.Y)
 	}
+}
+
+func TestWorldRelationCreate(t *testing.T) {
+	world := NewWorld()
+	world.SetListener(func(e *EntityEvent) {})
+
+	posID := ComponentID[Position](&world)
+	relID := ComponentID[testRelationA](&world)
+
+	alive := world.NewEntity()
+	dead := world.NewEntity()
+	world.RemoveEntity(dead)
+
+	world.newEntities(5, int8(relID), alive, posID, relID)
+	assert.Panics(t, func() { world.newEntitiesNoNotify(5, int8(relID), dead, posID, relID) })
+
+	world.newEntityTarget(relID, alive, posID, relID)
+	assert.Panics(t, func() { world.newEntityTarget(relID, dead, posID, relID) })
+
+	world.newEntitiesWith(5, int8(relID), alive,
+		Component{ID: posID, Comp: &Position{}},
+		Component{ID: relID, Comp: &testRelationA{}},
+	)
+	assert.Panics(t, func() {
+		world.newEntitiesWith(5, int8(relID), dead,
+			Component{ID: posID, Comp: &Position{}},
+			Component{ID: relID, Comp: &testRelationA{}},
+		)
+	})
+
+	world.newEntityTargetWith(relID, alive,
+		Component{ID: posID, Comp: &Position{}},
+		Component{ID: relID, Comp: &testRelationA{}},
+	)
+	assert.Panics(t, func() {
+		world.newEntityTargetWith(relID, dead,
+			Component{ID: posID, Comp: &Position{}},
+			Component{ID: relID, Comp: &testRelationA{}},
+		)
+	})
 }
 
 func TestWorldLock(t *testing.T) {
@@ -1334,7 +1374,7 @@ func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
 		q := world.newEntitiesQuery(10000, -1, Entity{}, posID, velID)
 		q.Close()
 		b.StartTimer()
-		world.removeEntities(All(posID, velID))
+		world.RemoveEntities(All(posID, velID))
 	}
 }
 
@@ -1583,12 +1623,6 @@ func ExampleWorld_Resources() {
 
 	res := (world.Resources().Get(resID)).(*Position)
 	res.X, res.Y = 10, 5
-	// Output:
-}
-
-func ExampleWorld_Batch() {
-	world := NewWorld()
-	world.Batch().NewEntities(10_000)
 	// Output:
 }
 

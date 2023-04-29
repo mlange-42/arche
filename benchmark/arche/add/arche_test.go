@@ -36,7 +36,7 @@ func addArcheBatch(b *testing.B, count int) {
 		comps := []ecs.ID{posID, rotID}
 		b.StartTimer()
 
-		world.Batch().NewEntities(count, comps...)
+		ecs.NewBuilder(&world, comps...).Batch(count)
 	}
 }
 
@@ -72,7 +72,7 @@ func addSetArcheBatch(b *testing.B, count int) {
 		comps := []ecs.ID{posID, rotID}
 		b.StartTimer()
 
-		query := world.Batch().NewEntitiesQuery(count, comps...)
+		query := ecs.NewBuilder(&world, comps...).Query(count)
 		for query.Next() {
 			pos := (*c.Position)(query.Get(posID))
 			rot := (*c.Rotation)(query.Get(rotID))

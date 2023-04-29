@@ -29,7 +29,8 @@ func runArche16B(b *testing.B, count int) {
 
 	id0 := ecs.ComponentID[Struct16B0](&world)
 
-	world.Batch().NewEntities(count, id0)
+	ecs.NewBuilder(&world, id0).Batch(count)
+
 	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 
@@ -50,7 +51,8 @@ func runArche32B(b *testing.B, count int) {
 	id0 := ecs.ComponentID[Struct16B0](&world)
 	id1 := ecs.ComponentID[Struct16B1](&world)
 
-	world.Batch().NewEntities(count, id0, id1)
+	ecs.NewBuilder(&world, id0, id1).Batch(count)
+
 	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 
@@ -73,7 +75,8 @@ func runArche64B(b *testing.B, count int) {
 	id2 := ecs.ComponentID[Struct16B2](&world)
 	id3 := ecs.ComponentID[Struct16B3](&world)
 
-	world.Batch().NewEntities(count, id0, id1, id2, id3)
+	ecs.NewBuilder(&world, id0, id1, id2, id3).Batch(count)
+
 	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 
@@ -100,7 +103,8 @@ func runArche128B(b *testing.B, count int) {
 	id6 := ecs.ComponentID[Struct16B6](&world)
 	id7 := ecs.ComponentID[Struct16B7](&world)
 
-	world.Batch().NewEntities(count, id0, id1, id2, id3, id4, id5, id6, id7)
+	ecs.NewBuilder(&world, id0, id1, id2, id3, id4, id5, id6, id7).Batch(count)
+
 	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 
@@ -135,10 +139,11 @@ func runArche256B(b *testing.B, count int) {
 	id14 := ecs.ComponentID[Struct16B14](&world)
 	id15 := ecs.ComponentID[Struct16B15](&world)
 
-	world.Batch().NewEntities(count,
+	ecs.NewBuilder(&world,
 		id0, id1, id2, id3, id4, id5, id6, id7,
 		id8, id9, id10, id11, id12, id13, id14, id15,
-	)
+	).Batch(count)
+
 	var filter ecs.Filter = ecs.All(id0)
 	b.StartTimer()
 

@@ -36,11 +36,14 @@ func run() {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	// Batch-create entities with components.
-	world.Batch().NewEntities(100, posID, velID)
+	// Create an entity builder with components.
+	builder := ecs.NewBuilder(&world, posID, velID)
 
-	// Batch-create entities with components, and iterate them.
-	query := world.Batch().NewEntitiesQuery(100, posID, velID)
+	// Batch-create entities.
+	builder.Batch(100)
+
+	// Batch-create entities, and iterate them.
+	query := builder.Query(100)
 	for query.Next() {
 		pos := (*Position)(query.Get(posID))
 		pos.X = 1.0
@@ -49,11 +52,11 @@ func run() {
 
 	// Batch-remove all entities with exactly the given components.
 	filterExcl := ecs.All(posID, velID).Exclusive()
-	world.Batch().RemoveEntities(&filterExcl)
+	world.RemoveEntities(&filterExcl)
 
 	// Batch-remove all entities with the given components (and potentially further components).
 	filter := ecs.All(posID, velID)
-	world.Batch().RemoveEntities(&filter)
+	world.RemoveEntities(&filter)
 }
 
 // Uses the type-safe generic API.

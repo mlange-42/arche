@@ -10,8 +10,8 @@ type Builder struct {
 }
 
 // NewBuilder creates a builder from component IDs.
-func NewBuilder(w *World, comps ...ID) Builder {
-	return Builder{
+func NewBuilder(w *World, comps ...ID) *Builder {
+	return &Builder{
 		world: w,
 		ids:   comps,
 		comps: nil,
@@ -19,8 +19,8 @@ func NewBuilder(w *World, comps ...ID) Builder {
 }
 
 // NewBuilderWith creates a builder from component pointers.
-func NewBuilderWith(w *World, comps ...Component) Builder {
-	return Builder{
+func NewBuilderWith(w *World, comps ...Component) *Builder {
+	return &Builder{
 		world: w,
 		ids:   nil,
 		comps: comps,
@@ -76,9 +76,6 @@ func (b *Builder) BatchRelation(count int, target Entity) {
 
 // Query creates many entities and returns a query over them.
 func (b *Builder) Query(count int) Query {
-	if !b.hasTarget {
-		panic("entity builder has no target")
-	}
 	if b.comps == nil {
 		return b.world.newEntitiesQuery(count, -1, Entity{}, b.ids...)
 	}
