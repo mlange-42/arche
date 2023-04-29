@@ -594,6 +594,11 @@ func TestWorldRelationSet(t *testing.T) {
 
 	world.SetRelation(e1, relID, Entity{})
 
+	assert.Panics(t, func() { world.GetRelation(e1, rotID) })
+	assert.Panics(t, func() { world.GetRelation(e1, rel2ID) })
+	assert.Panics(t, func() { world.SetRelation(e1, rotID, Entity{}) })
+	assert.Panics(t, func() { world.SetRelation(e1, rel2ID, Entity{}) })
+
 	// Should do nothing
 	world.SetRelation(e1, relID, Entity{})
 
@@ -603,12 +608,14 @@ func TestWorldRelationSet(t *testing.T) {
 
 	world.Remove(e2, relID)
 
+	assert.Panics(t, func() { world.GetRelation(e2, relID) })
 	assert.Panics(t, func() { world.SetRelation(e2, relID, Entity{}) })
 
 	assert.Panics(t, func() { world.NewEntity(relID, rel2ID) })
 	assert.Panics(t, func() { world.Add(e1, rel2ID) })
 
 	world.RemoveEntity(e1)
+	assert.Panics(t, func() { world.GetRelation(e1, relID) })
 	assert.Panics(t, func() { world.SetRelation(e1, relID, targ) })
 }
 

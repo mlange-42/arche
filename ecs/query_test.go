@@ -329,6 +329,33 @@ func TestQueryNextArchetype(t *testing.T) {
 	assert.Panics(t, func() { query.nextArchetype() })
 }
 
+func TestQueryRelations(t *testing.T) {
+	world := NewWorld()
+
+	relID := ComponentID[testRelationA](&world)
+	rel2ID := ComponentID[testRelationB](&world)
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	targ := world.NewEntity(posID)
+
+	e1 := world.NewEntity(relID, velID)
+	world.SetRelation(e1, relID, targ)
+
+	filter := All(relID)
+	query := world.Query(filter)
+
+	for query.Next() {
+		targ2 := query.Relation(relID)
+
+		assert.Equal(t, targ, targ2)
+
+		assert.Panics(t, func() { query.Relation(rel2ID) })
+		assert.Panics(t, func() { query.Relation(posID) })
+		assert.Panics(t, func() { query.Relation(velID) })
+	}
+}
+
 func ExampleQuery() {
 	world := NewWorld()
 	posID := ComponentID[Position](&world)

@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"fmt"
 	"unsafe"
 )
 
@@ -87,6 +88,14 @@ func (q *Query) Get(comp ID) unsafe.Pointer {
 // Entity returns the entity at the iterator's position.
 func (q *Query) Entity() Entity {
 	return q.access.GetEntity(q.entityIndex)
+}
+
+// Relation returns the target entity for an entity relation.
+func (q *Query) Relation(comp ID) Entity {
+	if q.access.RelationComponent != int8(comp) {
+		panic(fmt.Sprintf("entity has no component %T, or it is not a relation component", q.world.registry.Types[comp]))
+	}
+	return q.access.GetRelation()
 }
 
 // Step advances the query iterator by the given number of entities.

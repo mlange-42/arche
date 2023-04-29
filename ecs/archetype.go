@@ -75,6 +75,11 @@ func (a *archetypeAccess) Get(index uintptr, id ID) unsafe.Pointer {
 	return a.getLayout(id).Get(index)
 }
 
+// GetEntity returns the entity at the given index
+func (a *archetypeAccess) GetRelation() Entity {
+	return a.Relation
+}
+
 // HasComponent returns whether the archetype contains the given component ID
 func (a *archetypeAccess) HasComponent(id ID) bool {
 	return a.getLayout(id).pointer != nil
