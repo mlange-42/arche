@@ -863,7 +863,7 @@ func TestArchetypeGraph(t *testing.T) {
 	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{}, Entity{}, -1)
 	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{}, Entity{}, -1)
 
-	assert.Equal(t, []ID{0, 1, 2}, arch012.Ids)
+	assert.Equal(t, []ID{0, 1, 2}, arch012.graphNode.Ids)
 
 	archEmpty4 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID}, Entity{}, -1)
 	assert.Equal(t, archEmpty, archEmpty4)

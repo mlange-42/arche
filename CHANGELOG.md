@@ -6,6 +6,10 @@
 
 * Support for entity relations that can be queries like components (#231)
 
+### Performance
+
+* Reduce memory footprint of archetypes by moving properties to nodes (#237)
+
 ### Other
 
 * Remove go-gameengine-ecs from Arche benchmarks (but not from competition!) (#228)
