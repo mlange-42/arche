@@ -1,6 +1,12 @@
 # Changelog
 
-## [[v0.7.2]](https://github.com/mlange-42/arche/compare/v0.7.1...v0.7.2)
+## [[v0.8.0]](https://github.com/mlange-42/arche/compare/v0.7.1...v0.8.0)
+
+### Features
+
+* Support for entity relations that can be queries like components (#231)
+
+### Other
 
 * Remove go-gameengine-ecs from Arche benchmarks (but not from competition!) (#228)
 * Reduce memory size of `Query` and internal archetype list by 8 bytes (#230)
