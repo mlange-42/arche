@@ -51,11 +51,22 @@ func (q *Filter0) Without(mask ...Comp) *Filter0 {
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter0) WithRelation(comp Comp, target ecs.Entity) *Filter0 {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query0] query for iteration.
 func (q *Filter0) Query(w *ecs.World) Query0 {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query0{
-		Query: w.Query(q.compiled.filter),
+		Query:  w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
 	}
 }
 
@@ -64,7 +75,7 @@ func (q *Filter0) Query(w *ecs.World) Query0 {
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter0.Query].
 func (q *Filter0) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -72,7 +83,7 @@ func (q *Filter0) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter0) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -105,6 +116,16 @@ func (q *Filter0) Unregister(w *ecs.World) {
 //	}
 type Query0 struct {
 	ecs.Query
+
+	target int8
+}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query0) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -166,12 +187,23 @@ func (q *Filter1[A]) Without(mask ...Comp) *Filter1[A] {
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter1[A]) WithRelation(comp Comp, target ecs.Entity) *Filter1[A] {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query1] query for iteration.
 func (q *Filter1[A]) Query(w *ecs.World) Query1[A] {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query1[A]{
-		Query: w.Query(q.compiled.filter),
-		id0:   q.compiled.Ids[0],
+		Query:  w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
+		id0:    q.compiled.Ids[0],
 	}
 }
 
@@ -180,7 +212,7 @@ func (q *Filter1[A]) Query(w *ecs.World) Query1[A] {
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter1.Query].
 func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -188,7 +220,7 @@ func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter1[A]) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -222,7 +254,8 @@ func (q *Filter1[A]) Unregister(w *ecs.World) {
 //	}
 type Query1[A any] struct {
 	ecs.Query
-	id0 ecs.ID
+	id0    ecs.ID
+	target int8
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -230,6 +263,14 @@ type Query1[A any] struct {
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query1[A]) Get() *A {
 	return (*A)(q.Query.Get(q.id0))
+}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query1[A]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -292,13 +333,24 @@ func (q *Filter2[A, B]) Without(mask ...Comp) *Filter2[A, B] {
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter2[A, B]) WithRelation(comp Comp, target ecs.Entity) *Filter2[A, B] {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query2] query for iteration.
 func (q *Filter2[A, B]) Query(w *ecs.World) Query2[A, B] {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query2[A, B]{
-		Query: w.Query(q.compiled.filter),
-		id0:   q.compiled.Ids[0],
-		id1:   q.compiled.Ids[1],
+		Query:  w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
 	}
 }
 
@@ -307,7 +359,7 @@ func (q *Filter2[A, B]) Query(w *ecs.World) Query2[A, B] {
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter2.Query].
 func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -315,7 +367,7 @@ func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter2[A, B]) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -349,8 +401,9 @@ func (q *Filter2[A, B]) Unregister(w *ecs.World) {
 //	}
 type Query2[A any, B any] struct {
 	ecs.Query
-	id0 ecs.ID
-	id1 ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	target int8
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -359,6 +412,14 @@ type Query2[A any, B any] struct {
 func (q *Query2[A, B]) Get() (*A, *B) {
 	return (*A)(q.Query.Get(q.id0)),
 		(*B)(q.Query.Get(q.id1))
+}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query2[A, B]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -422,14 +483,25 @@ func (q *Filter3[A, B, C]) Without(mask ...Comp) *Filter3[A, B, C] {
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter3[A, B, C]) WithRelation(comp Comp, target ecs.Entity) *Filter3[A, B, C] {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query3] query for iteration.
 func (q *Filter3[A, B, C]) Query(w *ecs.World) Query3[A, B, C] {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query3[A, B, C]{
-		Query: w.Query(q.compiled.filter),
-		id0:   q.compiled.Ids[0],
-		id1:   q.compiled.Ids[1],
-		id2:   q.compiled.Ids[2],
+		Query:  w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
 	}
 }
 
@@ -438,7 +510,7 @@ func (q *Filter3[A, B, C]) Query(w *ecs.World) Query3[A, B, C] {
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter3.Query].
 func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -446,7 +518,7 @@ func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter3[A, B, C]) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -480,9 +552,10 @@ func (q *Filter3[A, B, C]) Unregister(w *ecs.World) {
 //	}
 type Query3[A any, B any, C any] struct {
 	ecs.Query
-	id0 ecs.ID
-	id1 ecs.ID
-	id2 ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	target int8
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -492,6 +565,14 @@ func (q *Query3[A, B, C]) Get() (*A, *B, *C) {
 	return (*A)(q.Query.Get(q.id0)),
 		(*B)(q.Query.Get(q.id1)),
 		(*C)(q.Query.Get(q.id2))
+}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query3[A, B, C]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -556,15 +637,26 @@ func (q *Filter4[A, B, C, D]) Without(mask ...Comp) *Filter4[A, B, C, D] {
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter4[A, B, C, D]) WithRelation(comp Comp, target ecs.Entity) *Filter4[A, B, C, D] {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query4] query for iteration.
 func (q *Filter4[A, B, C, D]) Query(w *ecs.World) Query4[A, B, C, D] {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query4[A, B, C, D]{
-		Query: w.Query(q.compiled.filter),
-		id0:   q.compiled.Ids[0],
-		id1:   q.compiled.Ids[1],
-		id2:   q.compiled.Ids[2],
-		id3:   q.compiled.Ids[3],
+		Query:  w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
+		id3:    q.compiled.Ids[3],
 	}
 }
 
@@ -573,7 +665,7 @@ func (q *Filter4[A, B, C, D]) Query(w *ecs.World) Query4[A, B, C, D] {
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter4.Query].
 func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -581,7 +673,7 @@ func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter4[A, B, C, D]) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -615,10 +707,11 @@ func (q *Filter4[A, B, C, D]) Unregister(w *ecs.World) {
 //	}
 type Query4[A any, B any, C any, D any] struct {
 	ecs.Query
-	id0 ecs.ID
-	id1 ecs.ID
-	id2 ecs.ID
-	id3 ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	target int8
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -629,6 +722,14 @@ func (q *Query4[A, B, C, D]) Get() (*A, *B, *C, *D) {
 		(*B)(q.Query.Get(q.id1)),
 		(*C)(q.Query.Get(q.id2)),
 		(*D)(q.Query.Get(q.id3))
+}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query4[A, B, C, D]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -694,16 +795,27 @@ func (q *Filter5[A, B, C, D, E]) Without(mask ...Comp) *Filter5[A, B, C, D, E] {
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter5[A, B, C, D, E]) WithRelation(comp Comp, target ecs.Entity) *Filter5[A, B, C, D, E] {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query5] query for iteration.
 func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World) Query5[A, B, C, D, E] {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query5[A, B, C, D, E]{
-		Query: w.Query(q.compiled.filter),
-		id0:   q.compiled.Ids[0],
-		id1:   q.compiled.Ids[1],
-		id2:   q.compiled.Ids[2],
-		id3:   q.compiled.Ids[3],
-		id4:   q.compiled.Ids[4],
+		Query:  w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
+		id3:    q.compiled.Ids[3],
+		id4:    q.compiled.Ids[4],
 	}
 }
 
@@ -712,7 +824,7 @@ func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World) Query5[A, B, C, D, E] {
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter5.Query].
 func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -720,7 +832,7 @@ func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter5[A, B, C, D, E]) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -754,11 +866,12 @@ func (q *Filter5[A, B, C, D, E]) Unregister(w *ecs.World) {
 //	}
 type Query5[A any, B any, C any, D any, E any] struct {
 	ecs.Query
-	id0 ecs.ID
-	id1 ecs.ID
-	id2 ecs.ID
-	id3 ecs.ID
-	id4 ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	target int8
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -770,6 +883,14 @@ func (q *Query5[A, B, C, D, E]) Get() (*A, *B, *C, *D, *E) {
 		(*C)(q.Query.Get(q.id2)),
 		(*D)(q.Query.Get(q.id3)),
 		(*E)(q.Query.Get(q.id4))
+}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query5[A, B, C, D, E]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -836,17 +957,28 @@ func (q *Filter6[A, B, C, D, E, F]) Without(mask ...Comp) *Filter6[A, B, C, D, E
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter6[A, B, C, D, E, F]) WithRelation(comp Comp, target ecs.Entity) *Filter6[A, B, C, D, E, F] {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query6] query for iteration.
 func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World) Query6[A, B, C, D, E, F] {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query6[A, B, C, D, E, F]{
-		Query: w.Query(q.compiled.filter),
-		id0:   q.compiled.Ids[0],
-		id1:   q.compiled.Ids[1],
-		id2:   q.compiled.Ids[2],
-		id3:   q.compiled.Ids[3],
-		id4:   q.compiled.Ids[4],
-		id5:   q.compiled.Ids[5],
+		Query:  w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
+		id3:    q.compiled.Ids[3],
+		id4:    q.compiled.Ids[4],
+		id5:    q.compiled.Ids[5],
 	}
 }
 
@@ -855,7 +987,7 @@ func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World) Query6[A, B, C, D, E, F]
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter6.Query].
 func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -863,7 +995,7 @@ func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter6[A, B, C, D, E, F]) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -897,12 +1029,13 @@ func (q *Filter6[A, B, C, D, E, F]) Unregister(w *ecs.World) {
 //	}
 type Query6[A any, B any, C any, D any, E any, F any] struct {
 	ecs.Query
-	id0 ecs.ID
-	id1 ecs.ID
-	id2 ecs.ID
-	id3 ecs.ID
-	id4 ecs.ID
-	id5 ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
+	target int8
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -915,6 +1048,14 @@ func (q *Query6[A, B, C, D, E, F]) Get() (*A, *B, *C, *D, *E, *F) {
 		(*D)(q.Query.Get(q.id3)),
 		(*E)(q.Query.Get(q.id4)),
 		(*F)(q.Query.Get(q.id5))
+}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query6[A, B, C, D, E, F]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -982,18 +1123,29 @@ func (q *Filter7[A, B, C, D, E, F, G]) Without(mask ...Comp) *Filter7[A, B, C, D
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter7[A, B, C, D, E, F, G]) WithRelation(comp Comp, target ecs.Entity) *Filter7[A, B, C, D, E, F, G] {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query7] query for iteration.
 func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World) Query7[A, B, C, D, E, F, G] {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query7[A, B, C, D, E, F, G]{
-		Query: w.Query(q.compiled.filter),
-		id0:   q.compiled.Ids[0],
-		id1:   q.compiled.Ids[1],
-		id2:   q.compiled.Ids[2],
-		id3:   q.compiled.Ids[3],
-		id4:   q.compiled.Ids[4],
-		id5:   q.compiled.Ids[5],
-		id6:   q.compiled.Ids[6],
+		Query:  w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
+		id3:    q.compiled.Ids[3],
+		id4:    q.compiled.Ids[4],
+		id5:    q.compiled.Ids[5],
+		id6:    q.compiled.Ids[6],
 	}
 }
 
@@ -1002,7 +1154,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World) Query7[A, B, C, D, E,
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter7.Query].
 func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -1010,7 +1162,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter7[A, B, C, D, E, F, G]) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -1044,13 +1196,14 @@ func (q *Filter7[A, B, C, D, E, F, G]) Unregister(w *ecs.World) {
 //	}
 type Query7[A any, B any, C any, D any, E any, F any, G any] struct {
 	ecs.Query
-	id0 ecs.ID
-	id1 ecs.ID
-	id2 ecs.ID
-	id3 ecs.ID
-	id4 ecs.ID
-	id5 ecs.ID
-	id6 ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
+	id6    ecs.ID
+	target int8
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -1064,6 +1217,14 @@ func (q *Query7[A, B, C, D, E, F, G]) Get() (*A, *B, *C, *D, *E, *F, *G) {
 		(*E)(q.Query.Get(q.id4)),
 		(*F)(q.Query.Get(q.id5)),
 		(*G)(q.Query.Get(q.id6))
+}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query7[A, B, C, D, E, F, G]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1132,19 +1293,30 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask ...Comp) *Filter8[A, B, C
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter8[A, B, C, D, E, F, G, H]) WithRelation(comp Comp, target ecs.Entity) *Filter8[A, B, C, D, E, F, G, H] {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query8] query for iteration.
 func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World) Query8[A, B, C, D, E, F, G, H] {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query8[A, B, C, D, E, F, G, H]{
-		Query: w.Query(q.compiled.filter),
-		id0:   q.compiled.Ids[0],
-		id1:   q.compiled.Ids[1],
-		id2:   q.compiled.Ids[2],
-		id3:   q.compiled.Ids[3],
-		id4:   q.compiled.Ids[4],
-		id5:   q.compiled.Ids[5],
-		id6:   q.compiled.Ids[6],
-		id7:   q.compiled.Ids[7],
+		Query:  w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
+		id3:    q.compiled.Ids[3],
+		id4:    q.compiled.Ids[4],
+		id5:    q.compiled.Ids[5],
+		id6:    q.compiled.Ids[6],
+		id7:    q.compiled.Ids[7],
 	}
 }
 
@@ -1153,7 +1325,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World) Query8[A, B, C, D,
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter8.Query].
 func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -1161,7 +1333,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter8[A, B, C, D, E, F, G, H]) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -1195,14 +1367,15 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Unregister(w *ecs.World) {
 //	}
 type Query8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	ecs.Query
-	id0 ecs.ID
-	id1 ecs.ID
-	id2 ecs.ID
-	id3 ecs.ID
-	id4 ecs.ID
-	id5 ecs.ID
-	id6 ecs.ID
-	id7 ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
+	id6    ecs.ID
+	id7    ecs.ID
+	target int8
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -1217,4 +1390,12 @@ func (q *Query8[A, B, C, D, E, F, G, H]) Get() (*A, *B, *C, *D, *E, *F, *G, *H) 
 		(*F)(q.Query.Get(q.id5)),
 		(*G)(q.Query.Get(q.id6)),
 		(*H)(q.Query.Get(q.id7))
+}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query8[A, B, C, D, E, F, G, H]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
 }

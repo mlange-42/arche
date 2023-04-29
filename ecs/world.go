@@ -526,9 +526,9 @@ func (w *World) GetRelation(entity Entity, comp ID) Entity {
 	index := &w.entities[entity.id]
 	if index.arch.graphNode.relation != int8(comp) {
 		if !index.arch.HasComponent(comp) {
-			panic(fmt.Sprintf("entity does not have relation component %T", w.registry.Types[comp]))
+			panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
 		}
-		panic(fmt.Sprintf("not a relation component: %T", w.registry.Types[comp]))
+		panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
 	}
 
 	return index.arch.Relation
@@ -547,9 +547,9 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 
 	if oldArch.graphNode.relation != int8(comp) {
 		if !oldArch.HasComponent(comp) {
-			panic(fmt.Sprintf("entity does not have relation component %T", w.registry.Types[comp]))
+			panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
 		}
-		panic(fmt.Sprintf("not a relation component: %T", w.registry.Types[comp]))
+		panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
 	}
 
 	if index.arch.Relation == target {

@@ -82,6 +82,7 @@ func TestQuery0(t *testing.T) {
 	w := ecs.NewWorld()
 
 	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -108,18 +109,40 @@ func TestQuery0(t *testing.T) {
 	query := filter.Query(&w)
 	for query.Next() {
 		_ = query.Entity()
+		assert.Panics(t, func() { query.Relation() })
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.SetRelation(e0, relID, targ)
+
+	filter2 :=
+		NewFilter0().
+			With(T[testRelationA]()).
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
 }
 
 func TestQuery1(t *testing.T) {
 	w := ecs.NewWorld()
 
 	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -149,18 +172,39 @@ func TestQuery1(t *testing.T) {
 	for query.Next() {
 		c0 := query.Get()
 		assert.Equal(t, cnt+1, int(c0.val))
+		assert.Panics(t, func() { query.Relation() })
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.SetRelation(e0, relID, targ)
+
+	filter2 :=
+		NewFilter1[testRelationA]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
 }
 
 func TestQuery2(t *testing.T) {
 	w := ecs.NewWorld()
 
 	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -195,6 +239,7 @@ func TestQuery2(t *testing.T) {
 			c1, c2 := q.Get()
 			assert.Equal(t, cnt+1, int(c1.val))
 			assert.Equal(t, cnt+2, int(c2.val))
+			assert.Panics(t, func() { q.Relation() })
 			cnt++
 		}
 		assert.Equal(t, 1, cnt)
@@ -202,12 +247,32 @@ func TestQuery2(t *testing.T) {
 
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.SetRelation(e0, relID, targ)
+
+	filter2 :=
+		NewFilter2[testStruct0, testRelationA]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
 }
 
 func TestQuery3(t *testing.T) {
 	w := ecs.NewWorld()
 
 	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -246,18 +311,39 @@ func TestQuery3(t *testing.T) {
 		assert.Equal(t, cnt+1, int(c1.val))
 		assert.Equal(t, cnt+2, int(c2.val))
 		assert.Equal(t, cnt+3, int(c3.val))
+		assert.Panics(t, func() { query.Relation() })
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.SetRelation(e0, relID, targ)
+
+	filter2 :=
+		NewFilter3[testStruct0, testStruct1, testRelationA]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
 }
 
 func TestQuery4(t *testing.T) {
 	w := ecs.NewWorld()
 
 	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -301,18 +387,41 @@ func TestQuery4(t *testing.T) {
 		assert.Equal(t, cnt+2, int(c2.val))
 		assert.Equal(t, cnt+3, int(c3.val))
 		assert.Equal(t, cnt+4, int(c4.val))
+		assert.Panics(t, func() { query.Relation() })
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.SetRelation(e0, relID, targ)
+
+	filter2 :=
+		NewFilter4[
+			testStruct0, testStruct1, testStruct2, testRelationA,
+		]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
 }
 
 func TestQuery5(t *testing.T) {
 	w := ecs.NewWorld()
 
 	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -361,18 +470,42 @@ func TestQuery5(t *testing.T) {
 		assert.Equal(t, cnt+3, int(c3.val))
 		assert.Equal(t, cnt+4, int(c4.val))
 		assert.Equal(t, cnt+5, int(c5.val))
+		assert.Panics(t, func() { query.Relation() })
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.SetRelation(e0, relID, targ)
+
+	filter2 :=
+		NewFilter5[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testRelationA,
+		]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
 }
 
 func TestQuery6(t *testing.T) {
 	w := ecs.NewWorld()
 
 	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -426,18 +559,42 @@ func TestQuery6(t *testing.T) {
 		assert.Equal(t, cnt+4, int(c4.val))
 		assert.Equal(t, cnt+5, int(c5.val))
 		assert.Equal(t, cnt+6, int(c6.val))
+		assert.Panics(t, func() { query.Relation() })
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.SetRelation(e0, relID, targ)
+
+	filter2 :=
+		NewFilter6[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testRelationA,
+		]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
 }
 
 func TestQuery7(t *testing.T) {
 	w := ecs.NewWorld()
 
 	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -499,18 +656,42 @@ func TestQuery7(t *testing.T) {
 		assert.Equal(t, cnt+5, int(c5.val))
 		assert.Equal(t, cnt+6, int(c6.val))
 		assert.Equal(t, cnt+7, int(c7.val))
+		assert.Panics(t, func() { query.Relation() })
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.SetRelation(e0, relID, targ)
+
+	filter2 :=
+		NewFilter7[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testRelationA,
+		]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
 }
 
 func TestQuery8(t *testing.T) {
 	w := ecs.NewWorld()
 
 	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -569,12 +750,35 @@ func TestQuery8(t *testing.T) {
 		assert.Equal(t, cnt+6, int(c6.val))
 		assert.Equal(t, cnt+7, int(c7.val))
 		assert.Equal(t, cnt+8, int(c8.val))
+		assert.Panics(t, func() { query.Relation() })
 		cnt++
 	}
 	assert.Equal(t, 1, cnt)
 
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.SetRelation(e0, relID, targ)
+
+	filter2 :=
+		NewFilter8[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testRelationA,
+		]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
 }
 
 func TestQueryGeneric(t *testing.T) {
@@ -583,10 +787,13 @@ func TestQueryGeneric(t *testing.T) {
 
 	posID := ecs.ComponentID[testStruct2](&world)
 	rotID := ecs.ComponentID[testStruct3](&world)
+	relID := ecs.ComponentID[testRelationA](&world)
 
+	entities := make([]ecs.Entity, count)
 	for i := 0; i < count; i++ {
 		entity := world.NewEntity()
-		world.Add(entity, posID, rotID)
+		world.Add(entity, posID, rotID, relID)
+		entities[i] = entity
 	}
 	query := NewFilter2[testStruct2, testStruct3]()
 
@@ -601,6 +808,24 @@ func TestQueryGeneric(t *testing.T) {
 		cnt++
 	}
 	assert.Equal(t, count, cnt)
+
+	target := world.NewEntity(rotID)
+
+	world.SetRelation(entities[0], relID, target)
+
+	filter := NewFilter2[testStruct2, testRelationA]().WithRelation(T[testRelationA](), target)
+	q2 := filter.Query(&world)
+	assert.Equal(t, 1, q2.Count())
+	for q2.Next() {
+		trg := q2.Relation()
+		assert.Equal(t, target, trg)
+	}
+
+	filter = NewFilter2[testStruct2, testRelationA]().WithRelation(T[testRelationB](), target)
+	assert.Panics(t, func() { filter.Query(&world) })
+
+	filter = NewFilter2[testStruct2, testRelationA]().WithRelation(T[testStruct2](), target)
+	assert.Panics(t, func() { filter.Query(&world) })
 }
 
 func registerAll(w *ecs.World) []ecs.ID {

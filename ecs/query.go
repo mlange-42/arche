@@ -93,7 +93,7 @@ func (q *Query) Entity() Entity {
 // Relation returns the target entity for an entity relation.
 func (q *Query) Relation(comp ID) Entity {
 	if q.access.RelationComponent != int8(comp) {
-		panic(fmt.Sprintf("entity has no component %T, or it is not a relation component", q.world.registry.Types[comp]))
+		panic(fmt.Sprintf("entity has no component %v, or it is not a relation component", q.world.registry.Types[comp]))
 	}
 	return q.access.GetRelation()
 }

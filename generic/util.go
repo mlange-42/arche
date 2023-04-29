@@ -8,10 +8,12 @@ import (
 
 // filter is a helper to simplify generated generic filter code.
 type filter struct {
-	include  []Comp
-	optional []Comp
-	exclude  []Comp
-	compiled compiledQuery
+	include    []Comp
+	optional   []Comp
+	exclude    []Comp
+	targetType Comp
+	target     ecs.Entity
+	compiled   compiledQuery
 }
 
 // typeOf is a shortcut for getting the reflection type of a generic type argument.
