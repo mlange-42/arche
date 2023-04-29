@@ -897,7 +897,7 @@ func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 
 // Creates a node in the archetype graph.
 func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
-	w.graph.Add(newArchetypeNode(mask, relation))
+	w.graph.Add(newArchetypeNode(mask, relation, w.config.CapacityIncrement))
 	node := w.graph.Get(w.graph.Len() - 1)
 	return node
 }
@@ -930,7 +930,7 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, targetCompon
 
 	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
-	arch.Init(node, w.config.CapacityIncrement, forStorage, target, targetComponent, types...)
+	arch.Init(node, forStorage, target, targetComponent, types...)
 
 	node.SetArchetype(target, arch)
 

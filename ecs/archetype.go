@@ -13,29 +13,31 @@ var layoutSize = unsafe.Sizeof(layout{})
 
 // archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
-	mask             Mask       // Mask of the archetype
-	Ids              []ID       // List of component IDs.
-	archetype        *archetype // The archetype
-	archetypes       map[Entity]*archetype
-	TransitionAdd    idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
-	TransitionRemove idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
-	relation         int8
-	zeroValue        []byte         // Used as source for setting storage to zero
-	zeroPointer      unsafe.Pointer // Points to zeroValue for fast access
+	mask              Mask       // Mask of the archetype
+	Ids               []ID       // List of component IDs.
+	archetype         *archetype // The archetype
+	archetypes        map[Entity]*archetype
+	TransitionAdd     idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
+	TransitionRemove  idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
+	relation          int8
+	zeroValue         []byte         // Used as source for setting storage to zero
+	zeroPointer       unsafe.Pointer // Points to zeroValue for fast access
+	capacityIncrement uint32         // Capacity increment
 }
 
 // Creates a new archetypeNode
-func newArchetypeNode(mask Mask, relation int8) archetypeNode {
+func newArchetypeNode(mask Mask, relation int8, capacityIncrement int) archetypeNode {
 	var arch map[Entity]*archetype
 	if relation >= 0 {
 		arch = map[Entity]*archetype{}
 	}
 	return archetypeNode{
-		mask:             mask,
-		archetypes:       arch,
-		TransitionAdd:    newIDMap[*archetypeNode](),
-		TransitionRemove: newIDMap[*archetypeNode](),
-		relation:         relation,
+		mask:              mask,
+		archetypes:        arch,
+		TransitionAdd:     newIDMap[*archetypeNode](),
+		TransitionRemove:  newIDMap[*archetypeNode](),
+		relation:          relation,
+		capacityIncrement: uint32(capacityIncrement),
 	}
 }
 
@@ -109,19 +111,18 @@ func (l *layout) Get(index uintptr) unsafe.Pointer {
 
 // archetype represents an ECS archetype
 type archetype struct {
-	archetypeAccess                   // Access helper, passed to queries.
-	graphNode         *archetypeNode  // Node in the archetype graph.
-	layouts           []layout        // Column layouts by ID.
-	indices           idMap[uint32]   // Mapping from IDs to buffer indices.
-	buffers           []reflect.Value // Reflection arrays containing component data.
-	entityBuffer      reflect.Value   // Reflection array containing entity data.
-	len               uint32          // Current number of entities
-	cap               uint32          // Current capacity
-	capacityIncrement uint32          // Capacity increment
+	archetypeAccess                 // Access helper, passed to queries.
+	graphNode       *archetypeNode  // Node in the archetype graph.
+	layouts         []layout        // Column layouts by ID.
+	indices         idMap[uint32]   // Mapping from IDs to buffer indices.
+	buffers         []reflect.Value // Reflection arrays containing component data.
+	entityBuffer    reflect.Value   // Reflection array containing entity data.
+	len             uint32          // Current number of entities
+	cap             uint32          // Current capacity
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
+func (a *archetype) Init(node *archetypeNode, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
 	var mask Mask
 	if len(components) > 0 && len(node.Ids) == 0 {
 		node.Ids = make([]ID, len(components))
@@ -148,7 +149,7 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 
 	cap := 1
 	if forStorage {
-		cap = capacityIncrement
+		cap = int(node.capacityIncrement)
 	}
 
 	prev := -1
@@ -181,7 +182,6 @@ func (a *archetype) Init(node *archetypeNode, capacityIncrement int, forStorage 
 
 	a.graphNode = node
 
-	a.capacityIncrement = uint32(capacityIncrement)
 	a.len = 0
 	a.cap = uint32(cap)
 }
@@ -378,7 +378,7 @@ func (a *archetype) extend(by uint32) {
 	if a.cap >= required {
 		return
 	}
-	a.cap = capacityU32(required, a.capacityIncrement)
+	a.cap = capacityU32(required, a.graphNode.capacityIncrement)
 
 	old := a.entityBuffer
 	a.entityBuffer = reflect.New(reflect.ArrayOf(int(a.cap), entityType)).Elem()
