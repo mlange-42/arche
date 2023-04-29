@@ -41,6 +41,24 @@ func TestGenericMap(t *testing.T) {
 	assert.Panics(t, func() { get.Get(e0) })
 }
 
+func TestGenericMapRelations(t *testing.T) {
+	w := ecs.NewWorld()
+	get := NewMap[testRelationA](&w)
+	genTarg := NewMap1[Position](&w)
+	gen := NewMap2[testRelationA, Position](&w)
+
+	targ := genTarg.NewEntity()
+	e0 := gen.NewEntity()
+
+	targ2 := get.GetRelation(e0)
+	assert.Equal(t, ecs.Entity{}, targ2)
+
+	get.SetRelation(e0, targ)
+
+	targ2 = get.GetRelation(e0)
+	assert.Equal(t, targ, targ2)
+}
+
 func ExampleMap() {
 	// Create a world.
 	world := ecs.NewWorld()

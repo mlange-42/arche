@@ -71,3 +71,23 @@ func (g *Map[T]) HasUnchecked(entity ecs.Entity) bool {
 func (g *Map[T]) Set(entity ecs.Entity, comp *T) *T {
 	return (*T)(g.world.Set(entity, g.id, comp))
 }
+
+// GetRelation returns the target entity for the given entity and the Map's relation component.
+//
+// Panics if the entity does not have a component of that type.
+// Panics if the component is not a relation.
+//
+// See also [ecs.World.GetRelation].
+func (g *Map[T]) GetRelation(entity ecs.Entity) ecs.Entity {
+	return g.world.GetRelation(entity, g.id)
+}
+
+// SetRelation sets the target entity for the given entity and the Map's relation component.
+//
+// Panics if the entity does not have a component of that type.
+// Panics if the component is not a relation.
+//
+// See also [ecs.World.SetRelation].
+func (g *Map[T]) SetRelation(entity, target ecs.Entity) {
+	g.world.SetRelation(entity, g.id, target)
+}
