@@ -16,7 +16,7 @@ func runArcheIter(b *testing.B, count int) {
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
-	world.Batch().NewEntities(count, posID, rotID)
+	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -37,7 +37,7 @@ func runArcheGet(b *testing.B, count int) {
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
-	world.Batch().NewEntities(count, posID, rotID)
+	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
 	query := world.Query(ecs.All(posID, rotID))
 	for query.Next() {
@@ -63,7 +63,7 @@ func runArcheGetEntity(b *testing.B, count int) {
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
-	world.Batch().NewEntities(count, posID, rotID)
+	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
 	query := world.Query(ecs.All(posID, rotID))
 	for query.Next() {
@@ -90,7 +90,7 @@ func runArcheQuery(b *testing.B, count int) {
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
-	world.Batch().NewEntities(count, posID, rotID)
+	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -110,7 +110,7 @@ func runArcheQueryCached(b *testing.B, count int) {
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
-	world.Batch().NewEntities(count, posID, rotID)
+	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
 	cf := world.Cache().Register(ecs.All(posID, rotID))
 	var filter ecs.Filter = &cf
@@ -133,7 +133,7 @@ func runArcheFilter(b *testing.B, count int) {
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
-	world.Batch().NewEntities(count, posID, rotID)
+	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -153,7 +153,7 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
-	world.Batch().NewEntities(count, posID, rotID)
+	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
 	query := generic.NewFilter1[c.Position]()
 
@@ -178,7 +178,7 @@ func runArcheQuery5C(b *testing.B, count int) {
 	id3 := ecs.ComponentID[c.TestStruct3](&world)
 	id4 := ecs.ComponentID[c.TestStruct4](&world)
 
-	world.Batch().NewEntities(count, id0, id1, id2, id3, id4)
+	ecs.NewBuilder(&world, id0, id1, id2, id3, id4).NewBatch(count)
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -205,7 +205,7 @@ func runArcheQueryGeneric5C(b *testing.B, count int) {
 	id3 := ecs.ComponentID[c.TestStruct3](&world)
 	id4 := ecs.ComponentID[c.TestStruct4](&world)
 
-	world.Batch().NewEntities(count, id0, id1, id2, id3, id4)
+	ecs.NewBuilder(&world, id0, id1, id2, id3, id4).NewBatch(count)
 
 	query := generic.NewFilter5[c.TestStruct0, c.TestStruct1, c.TestStruct2, c.TestStruct3, c.TestStruct4]()
 
@@ -347,7 +347,8 @@ func runArcheQuery1Of1kArch(b *testing.B, count int) {
 			world.Add(entity, add...)
 		}
 	}
-	world.Batch().NewEntities(count, 10)
+
+	ecs.NewBuilder(&world, 10).NewBatch(count)
 
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
@@ -382,7 +383,8 @@ func runArcheQuery1Of1kArchCached(b *testing.B, count int) {
 			world.Add(entity, add...)
 		}
 	}
-	world.Batch().NewEntities(count, 10)
+
+	ecs.NewBuilder(&world, 10).NewBatch(count)
 
 	cf := world.Cache().Register(ecs.All(10))
 	var filter ecs.Filter = &cf

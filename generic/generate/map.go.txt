@@ -14,18 +14,25 @@
 type Map{{ .Index }}{{ .TypesFull }} struct {
 	world *ecs.World
 	mask ecs.Mask
+	target int8
 	ids []ecs.ID
 	{{ .IDTypes }}
 }
 
 // NewMap{{ .Index }} creates a new Map{{ .Index }} object.
-func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World) Map{{ .Index }}{{ .Types }} {
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World, relation ...Comp) Map{{ .Index }}{{ .Types }} {
 	m := Map{{ .Index }}{{ .Types }}{
 		world: w,
 		{{ .IDAssign }}
 	}
 	m.ids = []ecs.ID{ {{ .IDList }} }
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -47,29 +54,57 @@ func (m *Map{{ .Index }}{{ .Types }}) GetUnchecked(entity ecs.Entity) ({{ .Types
 	return {{ .ReturnAll }}
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map{{ .Index }}'s components.
+// New creates a new [ecs.Entity] with the Map{{ .Index }}'s components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
 // See also [ecs.World.NewEntity].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
+func (m *Map{{ .Index }}{{ .Types }}) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
-// NewEntities creates entities with the Map{{ .Index }}'s components.
+// NewBatch creates entities with the Map{{ .Index }}'s components.
 //
-// See also [Map{{ .Index }}.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+//
+// See also [Map{{ .Index }}.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
-// NewEntities creates entities with the Map{{ .Index }}'s components.
+// NewQuery creates entities with the Map{{ .Index }}'s components.
 // It returns a [Query{{ .Index }}] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map{{ .Index }}.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesQuery(count int) Query{{ .Index }}{{ .Types }} {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
+// See also [Map{{ .Index }}.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map{{ .Index }}{{ .Types }}) NewQuery(count int, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
+	var query ecs.Query
+	
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
+	}
+
 	return Query{{ .Index }}{{ .Types }}{
 		Query: query,
 		{{ .IDAssign2 }}
@@ -77,37 +112,6 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesQuery(count int) Query{{ .Index
 }
 
 {{if .ReturnAll}}
-// NewEntityWith creates a new [ecs.Entity] with the Map{{ .Index }}'s components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) ecs.Entity {
-	entity := m.world.NewEntityWith(
-		{{ .Components }}
-	)
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map{{ .Index }}'s components, using the supplied values.
-//
-// See also [Map{{ .Index }}.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWith(count int, {{ .Arguments }}) {
-	m.world.Batch().NewEntitiesWith(count, {{ .Components }})
-}
-
-// NewEntitiesWithQuery creates entities with the Map{{ .Index }}'s components, using the supplied values.
-// It returns a [Query{{ .Index }}] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map{{ .Index }}.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWithQuery(count int, {{ .Arguments }}) Query{{ .Index }}{{ .Types }} {
-	query := m.world.Batch().NewEntitiesWithQuery(count, {{ .Components }})
-	return Query{{ .Index }}{{ .Types }}{
-		Query: query,
-		{{ .IDAssign2 }}
-	}
-}
-
 // Add the Map{{ .Index }}'s components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -144,7 +148,7 @@ func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
 func (m *Map{{ .Index }}{{ .Types }}) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }

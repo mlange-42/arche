@@ -15,13 +15,13 @@ func benchmarkParentSlice(b *testing.B, numParents int) {
 	parentMapper := generic.NewMap1[ParentSlice](&world)
 	childMapper := generic.NewMap1[Child](&world)
 
-	spawnedPar := parentMapper.NewEntitiesQuery(numParents)
+	spawnedPar := parentMapper.NewQuery(numParents)
 	parents := make([]ecs.Entity, 0, numParents)
 	for spawnedPar.Next() {
 		parents = append(parents, spawnedPar.Entity())
 	}
 
-	spawnedChild := childMapper.NewEntitiesQuery(numParents * numChildren)
+	spawnedChild := childMapper.NewQuery(numParents * numChildren)
 	cnt := 0
 	for spawnedChild.Next() {
 		data := spawnedChild.Get()

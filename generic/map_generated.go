@@ -19,20 +19,27 @@ import (
 //	entity := mapper.NewEntity()
 //	a := mapper.Get(entity)
 type Map1[A any] struct {
-	world *ecs.World
-	mask  ecs.Mask
-	ids   []ecs.ID
-	id0   ecs.ID
+	world  *ecs.World
+	mask   ecs.Mask
+	target int8
+	ids    []ecs.ID
+	id0    ecs.ID
 }
 
 // NewMap1 creates a new Map1 object.
-func NewMap1[A any](w *ecs.World) Map1[A] {
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap1[A any](w *ecs.World, relation ...Comp) Map1[A] {
 	m := Map1[A]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
 	}
 	m.ids = []ecs.ID{m.id0}
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -54,60 +61,57 @@ func (m *Map1[A]) GetUnchecked(entity ecs.Entity) *A {
 	return (*A)(m.world.GetUnchecked(entity, m.id0))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map1's components.
+// New creates a new [ecs.Entity] with the Map1's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
 // See also [ecs.World.NewEntity].
-func (m *Map1[A]) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
-}
-
-// NewEntities creates entities with the Map1's components.
-//
-// See also [Map1.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map1[A]) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
-}
-
-// NewEntities creates entities with the Map1's components.
-// It returns a [Query1] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map1.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map1[A]) NewEntitiesQuery(count int) Query1[A] {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
-	return Query1[A]{
-		Query: query,
-		id0:   m.id0,
+func (m *Map1[A]) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
 	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
-// NewEntityWith creates a new [ecs.Entity] with the Map1's components, using the supplied values.
+// NewBatch creates entities with the Map1's components.
 //
-// See also [ecs.World.NewEntityWith].
-func (m *Map1[A]) NewEntityWith(a *A) ecs.Entity {
-	entity := m.world.NewEntityWith(
-		ecs.Component{ID: m.id0, Comp: a},
-	)
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map1's components, using the supplied values.
+// The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
-// See also [Map1.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map1[A]) NewEntitiesWith(count int, a *A) {
-	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a})
+// See also [Map1.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map1[A]) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
-// NewEntitiesWithQuery creates entities with the Map1's components, using the supplied values.
+// NewQuery creates entities with the Map1's components.
 // It returns a [Query1] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map1.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map1[A]) NewEntitiesWithQuery(count int, a *A) Query1[A] {
-	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a})
+// See also [Map1.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map1[A]) NewQuery(count int, target ...ecs.Entity) Query1[A] {
+	var query ecs.Query
+
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
+	}
+
 	return Query1[A]{
 		Query: query,
 		id0:   m.id0,
@@ -148,9 +152,9 @@ func (m *Map1[A]) Remove(entity ecs.Entity) {
 func (m *Map1[A]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -166,15 +170,18 @@ func (m *Map1[A]) RemoveEntities(exclusive bool) int {
 //	entity := mapper.NewEntity()
 //	a, b := mapper.Get(entity)
 type Map2[A any, B any] struct {
-	world *ecs.World
-	mask  ecs.Mask
-	ids   []ecs.ID
-	id0   ecs.ID
-	id1   ecs.ID
+	world  *ecs.World
+	mask   ecs.Mask
+	target int8
+	ids    []ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
 }
 
 // NewMap2 creates a new Map2 object.
-func NewMap2[A any, B any](w *ecs.World) Map2[A, B] {
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap2[A any, B any](w *ecs.World, relation ...Comp) Map2[A, B] {
 	m := Map2[A, B]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
@@ -182,6 +189,10 @@ func NewMap2[A any, B any](w *ecs.World) Map2[A, B] {
 	}
 	m.ids = []ecs.ID{m.id0, m.id1}
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -205,66 +216,57 @@ func (m *Map2[A, B]) GetUnchecked(entity ecs.Entity) (*A, *B) {
 		(*B)(m.world.GetUnchecked(entity, m.id1))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map2's components.
+// New creates a new [ecs.Entity] with the Map2's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
 // See also [ecs.World.NewEntity].
-func (m *Map2[A, B]) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
-}
-
-// NewEntities creates entities with the Map2's components.
-//
-// See also [Map2.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map2[A, B]) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
-}
-
-// NewEntities creates entities with the Map2's components.
-// It returns a [Query2] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map2.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map2[A, B]) NewEntitiesQuery(count int) Query2[A, B] {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
-	return Query2[A, B]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
+func (m *Map2[A, B]) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
 	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
-// NewEntityWith creates a new [ecs.Entity] with the Map2's components, using the supplied values.
+// NewBatch creates entities with the Map2's components.
 //
-// See also [ecs.World.NewEntityWith].
-func (m *Map2[A, B]) NewEntityWith(a *A, b *B) ecs.Entity {
-	entity := m.world.NewEntityWith(
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-	)
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map2's components, using the supplied values.
+// The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
-// See also [Map2.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map2[A, B]) NewEntitiesWith(count int, a *A, b *B) {
-	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-	)
+// See also [Map2.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map2[A, B]) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
-// NewEntitiesWithQuery creates entities with the Map2's components, using the supplied values.
+// NewQuery creates entities with the Map2's components.
 // It returns a [Query2] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map2.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map2[A, B]) NewEntitiesWithQuery(count int, a *A, b *B) Query2[A, B] {
-	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-	)
+// See also [Map2.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map2[A, B]) NewQuery(count int, target ...ecs.Entity) Query2[A, B] {
+	var query ecs.Query
+
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
+	}
+
 	return Query2[A, B]{
 		Query: query,
 		id0:   m.id0,
@@ -307,9 +309,9 @@ func (m *Map2[A, B]) Remove(entity ecs.Entity) {
 func (m *Map2[A, B]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -325,16 +327,19 @@ func (m *Map2[A, B]) RemoveEntities(exclusive bool) int {
 //	entity := mapper.NewEntity()
 //	a, b, c := mapper.Get(entity)
 type Map3[A any, B any, C any] struct {
-	world *ecs.World
-	mask  ecs.Mask
-	ids   []ecs.ID
-	id0   ecs.ID
-	id1   ecs.ID
-	id2   ecs.ID
+	world  *ecs.World
+	mask   ecs.Mask
+	target int8
+	ids    []ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
 }
 
 // NewMap3 creates a new Map3 object.
-func NewMap3[A any, B any, C any](w *ecs.World) Map3[A, B, C] {
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap3[A any, B any, C any](w *ecs.World, relation ...Comp) Map3[A, B, C] {
 	m := Map3[A, B, C]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
@@ -343,6 +348,10 @@ func NewMap3[A any, B any, C any](w *ecs.World) Map3[A, B, C] {
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2}
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -368,70 +377,57 @@ func (m *Map3[A, B, C]) GetUnchecked(entity ecs.Entity) (*A, *B, *C) {
 		(*C)(m.world.GetUnchecked(entity, m.id2))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map3's components.
+// New creates a new [ecs.Entity] with the Map3's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
 // See also [ecs.World.NewEntity].
-func (m *Map3[A, B, C]) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
-}
-
-// NewEntities creates entities with the Map3's components.
-//
-// See also [Map3.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map3[A, B, C]) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
-}
-
-// NewEntities creates entities with the Map3's components.
-// It returns a [Query3] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map3.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map3[A, B, C]) NewEntitiesQuery(count int) Query3[A, B, C] {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
-	return Query3[A, B, C]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
+func (m *Map3[A, B, C]) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
 	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
-// NewEntityWith creates a new [ecs.Entity] with the Map3's components, using the supplied values.
+// NewBatch creates entities with the Map3's components.
 //
-// See also [ecs.World.NewEntityWith].
-func (m *Map3[A, B, C]) NewEntityWith(a *A, b *B, c *C) ecs.Entity {
-	entity := m.world.NewEntityWith(
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-	)
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map3's components, using the supplied values.
+// The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
-// See also [Map3.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map3[A, B, C]) NewEntitiesWith(count int, a *A, b *B, c *C) {
-	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-	)
+// See also [Map3.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map3[A, B, C]) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
-// NewEntitiesWithQuery creates entities with the Map3's components, using the supplied values.
+// NewQuery creates entities with the Map3's components.
 // It returns a [Query3] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map3.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map3[A, B, C]) NewEntitiesWithQuery(count int, a *A, b *B, c *C) Query3[A, B, C] {
-	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-	)
+// See also [Map3.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map3[A, B, C]) NewQuery(count int, target ...ecs.Entity) Query3[A, B, C] {
+	var query ecs.Query
+
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
+	}
+
 	return Query3[A, B, C]{
 		Query: query,
 		id0:   m.id0,
@@ -476,9 +472,9 @@ func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
 func (m *Map3[A, B, C]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -494,17 +490,20 @@ func (m *Map3[A, B, C]) RemoveEntities(exclusive bool) int {
 //	entity := mapper.NewEntity()
 //	a, b, c, d := mapper.Get(entity)
 type Map4[A any, B any, C any, D any] struct {
-	world *ecs.World
-	mask  ecs.Mask
-	ids   []ecs.ID
-	id0   ecs.ID
-	id1   ecs.ID
-	id2   ecs.ID
-	id3   ecs.ID
+	world  *ecs.World
+	mask   ecs.Mask
+	target int8
+	ids    []ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
 }
 
 // NewMap4 creates a new Map4 object.
-func NewMap4[A any, B any, C any, D any](w *ecs.World) Map4[A, B, C, D] {
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap4[A any, B any, C any, D any](w *ecs.World, relation ...Comp) Map4[A, B, C, D] {
 	m := Map4[A, B, C, D]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
@@ -514,6 +513,10 @@ func NewMap4[A any, B any, C any, D any](w *ecs.World) Map4[A, B, C, D] {
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3}
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -541,74 +544,57 @@ func (m *Map4[A, B, C, D]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D) {
 		(*D)(m.world.GetUnchecked(entity, m.id3))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map4's components.
+// New creates a new [ecs.Entity] with the Map4's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
 // See also [ecs.World.NewEntity].
-func (m *Map4[A, B, C, D]) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
-}
-
-// NewEntities creates entities with the Map4's components.
-//
-// See also [Map4.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map4[A, B, C, D]) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
-}
-
-// NewEntities creates entities with the Map4's components.
-// It returns a [Query4] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map4.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map4[A, B, C, D]) NewEntitiesQuery(count int) Query4[A, B, C, D] {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
-	return Query4[A, B, C, D]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
+func (m *Map4[A, B, C, D]) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
 	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
-// NewEntityWith creates a new [ecs.Entity] with the Map4's components, using the supplied values.
+// NewBatch creates entities with the Map4's components.
 //
-// See also [ecs.World.NewEntityWith].
-func (m *Map4[A, B, C, D]) NewEntityWith(a *A, b *B, c *C, d *D) ecs.Entity {
-	entity := m.world.NewEntityWith(
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-	)
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map4's components, using the supplied values.
+// The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
-// See also [Map4.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map4[A, B, C, D]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D) {
-	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-	)
+// See also [Map4.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map4[A, B, C, D]) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
-// NewEntitiesWithQuery creates entities with the Map4's components, using the supplied values.
+// NewQuery creates entities with the Map4's components.
 // It returns a [Query4] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map4.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map4[A, B, C, D]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D) Query4[A, B, C, D] {
-	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-	)
+// See also [Map4.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map4[A, B, C, D]) NewQuery(count int, target ...ecs.Entity) Query4[A, B, C, D] {
+	var query ecs.Query
+
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
+	}
+
 	return Query4[A, B, C, D]{
 		Query: query,
 		id0:   m.id0,
@@ -655,9 +641,9 @@ func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
 func (m *Map4[A, B, C, D]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -673,18 +659,21 @@ func (m *Map4[A, B, C, D]) RemoveEntities(exclusive bool) int {
 //	entity := mapper.NewEntity()
 //	a, b, c, d, e := mapper.Get(entity)
 type Map5[A any, B any, C any, D any, E any] struct {
-	world *ecs.World
-	mask  ecs.Mask
-	ids   []ecs.ID
-	id0   ecs.ID
-	id1   ecs.ID
-	id2   ecs.ID
-	id3   ecs.ID
-	id4   ecs.ID
+	world  *ecs.World
+	mask   ecs.Mask
+	target int8
+	ids    []ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
 }
 
 // NewMap5 creates a new Map5 object.
-func NewMap5[A any, B any, C any, D any, E any](w *ecs.World) Map5[A, B, C, D, E] {
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap5[A any, B any, C any, D any, E any](w *ecs.World, relation ...Comp) Map5[A, B, C, D, E] {
 	m := Map5[A, B, C, D, E]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
@@ -695,6 +684,10 @@ func NewMap5[A any, B any, C any, D any, E any](w *ecs.World) Map5[A, B, C, D, E
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4}
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -724,78 +717,57 @@ func (m *Map5[A, B, C, D, E]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D, *
 		(*E)(m.world.GetUnchecked(entity, m.id4))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map5's components.
+// New creates a new [ecs.Entity] with the Map5's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
 // See also [ecs.World.NewEntity].
-func (m *Map5[A, B, C, D, E]) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
-}
-
-// NewEntities creates entities with the Map5's components.
-//
-// See also [Map5.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map5[A, B, C, D, E]) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
-}
-
-// NewEntities creates entities with the Map5's components.
-// It returns a [Query5] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map5.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map5[A, B, C, D, E]) NewEntitiesQuery(count int) Query5[A, B, C, D, E] {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
-	return Query5[A, B, C, D, E]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
+func (m *Map5[A, B, C, D, E]) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
 	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
-// NewEntityWith creates a new [ecs.Entity] with the Map5's components, using the supplied values.
+// NewBatch creates entities with the Map5's components.
 //
-// See also [ecs.World.NewEntityWith].
-func (m *Map5[A, B, C, D, E]) NewEntityWith(a *A, b *B, c *C, d *D, e *E) ecs.Entity {
-	entity := m.world.NewEntityWith(
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-	)
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map5's components, using the supplied values.
+// The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
-// See also [Map5.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map5[A, B, C, D, E]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E) {
-	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-	)
+// See also [Map5.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map5[A, B, C, D, E]) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
-// NewEntitiesWithQuery creates entities with the Map5's components, using the supplied values.
+// NewQuery creates entities with the Map5's components.
 // It returns a [Query5] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map5.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map5[A, B, C, D, E]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E) Query5[A, B, C, D, E] {
-	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-	)
+// See also [Map5.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map5[A, B, C, D, E]) NewQuery(count int, target ...ecs.Entity) Query5[A, B, C, D, E] {
+	var query ecs.Query
+
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
+	}
+
 	return Query5[A, B, C, D, E]{
 		Query: query,
 		id0:   m.id0,
@@ -844,9 +816,9 @@ func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
 func (m *Map5[A, B, C, D, E]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -862,19 +834,22 @@ func (m *Map5[A, B, C, D, E]) RemoveEntities(exclusive bool) int {
 //	entity := mapper.NewEntity()
 //	a, b, c, d, e, f := mapper.Get(entity)
 type Map6[A any, B any, C any, D any, E any, F any] struct {
-	world *ecs.World
-	mask  ecs.Mask
-	ids   []ecs.ID
-	id0   ecs.ID
-	id1   ecs.ID
-	id2   ecs.ID
-	id3   ecs.ID
-	id4   ecs.ID
-	id5   ecs.ID
+	world  *ecs.World
+	mask   ecs.Mask
+	target int8
+	ids    []ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
 }
 
 // NewMap6 creates a new Map6 object.
-func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World) Map6[A, B, C, D, E, F] {
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World, relation ...Comp) Map6[A, B, C, D, E, F] {
 	m := Map6[A, B, C, D, E, F]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
@@ -886,6 +861,10 @@ func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World) Map6[A, B, 
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5}
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -917,82 +896,57 @@ func (m *Map6[A, B, C, D, E, F]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D
 		(*F)(m.world.GetUnchecked(entity, m.id5))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map6's components.
+// New creates a new [ecs.Entity] with the Map6's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
 // See also [ecs.World.NewEntity].
-func (m *Map6[A, B, C, D, E, F]) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
-}
-
-// NewEntities creates entities with the Map6's components.
-//
-// See also [Map6.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map6[A, B, C, D, E, F]) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
-}
-
-// NewEntities creates entities with the Map6's components.
-// It returns a [Query6] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map6.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map6[A, B, C, D, E, F]) NewEntitiesQuery(count int) Query6[A, B, C, D, E, F] {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
-	return Query6[A, B, C, D, E, F]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
+func (m *Map6[A, B, C, D, E, F]) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
 	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
-// NewEntityWith creates a new [ecs.Entity] with the Map6's components, using the supplied values.
+// NewBatch creates entities with the Map6's components.
 //
-// See also [ecs.World.NewEntityWith].
-func (m *Map6[A, B, C, D, E, F]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F) ecs.Entity {
-	entity := m.world.NewEntityWith(
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-	)
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map6's components, using the supplied values.
+// The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
-// See also [Map6.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map6[A, B, C, D, E, F]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F) {
-	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-	)
+// See also [Map6.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map6[A, B, C, D, E, F]) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
-// NewEntitiesWithQuery creates entities with the Map6's components, using the supplied values.
+// NewQuery creates entities with the Map6's components.
 // It returns a [Query6] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map6.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map6[A, B, C, D, E, F]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F) Query6[A, B, C, D, E, F] {
-	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-	)
+// See also [Map6.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map6[A, B, C, D, E, F]) NewQuery(count int, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
+	var query ecs.Query
+
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
+	}
+
 	return Query6[A, B, C, D, E, F]{
 		Query: query,
 		id0:   m.id0,
@@ -1043,9 +997,9 @@ func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
 func (m *Map6[A, B, C, D, E, F]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1061,20 +1015,23 @@ func (m *Map6[A, B, C, D, E, F]) RemoveEntities(exclusive bool) int {
 //	entity := mapper.NewEntity()
 //	a, b, c, d, e, f, g := mapper.Get(entity)
 type Map7[A any, B any, C any, D any, E any, F any, G any] struct {
-	world *ecs.World
-	mask  ecs.Mask
-	ids   []ecs.ID
-	id0   ecs.ID
-	id1   ecs.ID
-	id2   ecs.ID
-	id3   ecs.ID
-	id4   ecs.ID
-	id5   ecs.ID
-	id6   ecs.ID
+	world  *ecs.World
+	mask   ecs.Mask
+	target int8
+	ids    []ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
+	id6    ecs.ID
 }
 
 // NewMap7 creates a new Map7 object.
-func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Map7[A, B, C, D, E, F, G] {
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World, relation ...Comp) Map7[A, B, C, D, E, F, G] {
 	m := Map7[A, B, C, D, E, F, G]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
@@ -1087,6 +1044,10 @@ func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World) Map7
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6}
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -1120,86 +1081,57 @@ func (m *Map7[A, B, C, D, E, F, G]) GetUnchecked(entity ecs.Entity) (*A, *B, *C,
 		(*G)(m.world.GetUnchecked(entity, m.id6))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map7's components.
+// New creates a new [ecs.Entity] with the Map7's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
 // See also [ecs.World.NewEntity].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
-}
-
-// NewEntities creates entities with the Map7's components.
-//
-// See also [Map7.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
-}
-
-// NewEntities creates entities with the Map7's components.
-// It returns a [Query7] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map7.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesQuery(count int) Query7[A, B, C, D, E, F, G] {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
-	return Query7[A, B, C, D, E, F, G]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
+func (m *Map7[A, B, C, D, E, F, G]) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
 	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
-// NewEntityWith creates a new [ecs.Entity] with the Map7's components, using the supplied values.
+// NewBatch creates entities with the Map7's components.
 //
-// See also [ecs.World.NewEntityWith].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G) ecs.Entity {
-	entity := m.world.NewEntityWith(
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-	)
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map7's components, using the supplied values.
+// The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
-// See also [Map7.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) {
-	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-	)
+// See also [Map7.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map7[A, B, C, D, E, F, G]) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
-// NewEntitiesWithQuery creates entities with the Map7's components, using the supplied values.
+// NewQuery creates entities with the Map7's components.
 // It returns a [Query7] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map7.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) Query7[A, B, C, D, E, F, G] {
-	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-	)
+// See also [Map7.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map7[A, B, C, D, E, F, G]) NewQuery(count int, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
+	var query ecs.Query
+
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
+	}
+
 	return Query7[A, B, C, D, E, F, G]{
 		Query: query,
 		id0:   m.id0,
@@ -1252,9 +1184,9 @@ func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
 func (m *Map7[A, B, C, D, E, F, G]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1270,21 +1202,24 @@ func (m *Map7[A, B, C, D, E, F, G]) RemoveEntities(exclusive bool) int {
 //	entity := mapper.NewEntity()
 //	a, b, c, d, e, f, g, h := mapper.Get(entity)
 type Map8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
-	world *ecs.World
-	mask  ecs.Mask
-	ids   []ecs.ID
-	id0   ecs.ID
-	id1   ecs.ID
-	id2   ecs.ID
-	id3   ecs.ID
-	id4   ecs.ID
-	id5   ecs.ID
-	id6   ecs.ID
-	id7   ecs.ID
+	world  *ecs.World
+	mask   ecs.Mask
+	target int8
+	ids    []ecs.ID
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
+	id6    ecs.ID
+	id7    ecs.ID
 }
 
 // NewMap8 creates a new Map8 object.
-func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World) Map8[A, B, C, D, E, F, G, H] {
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.World, relation ...Comp) Map8[A, B, C, D, E, F, G, H] {
 	m := Map8[A, B, C, D, E, F, G, H]{
 		world: w,
 		id0:   ecs.ComponentID[A](w),
@@ -1298,6 +1233,10 @@ func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.Worl
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7}
 	m.mask = ecs.All(m.ids...)
+	m.target = -1
+	if len(relation) > 0 {
+		m.target = int8(ecs.TypeID(w, relation[0]))
+	}
 	return m
 }
 
@@ -1333,90 +1272,57 @@ func (m *Map8[A, B, C, D, E, F, G, H]) GetUnchecked(entity ecs.Entity) (*A, *B, 
 		(*H)(m.world.GetUnchecked(entity, m.id7))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map8's components.
+// New creates a new [ecs.Entity] with the Map8's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
 // See also [ecs.World.NewEntity].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	return entity
-}
-
-// NewEntities creates entities with the Map8's components.
-//
-// See also [Map8.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntities(count int) {
-	m.world.Batch().NewEntities(count, m.ids...)
-}
-
-// NewEntities creates entities with the Map8's components.
-// It returns a [Query8] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map8.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesQuery(count int) Query8[A, B, C, D, E, F, G, H] {
-	query := m.world.Batch().NewEntitiesQuery(count, m.ids...)
-	return Query8[A, B, C, D, E, F, G, H]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
-		id7:   m.id7,
+func (m *Map8[A, B, C, D, E, F, G, H]) New(target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntity(m.ids...)
 	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
-// NewEntityWith creates a new [ecs.Entity] with the Map8's components, using the supplied values.
+// NewBatch creates entities with the Map8's components.
 //
-// See also [ecs.World.NewEntityWith].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) ecs.Entity {
-	entity := m.world.NewEntityWith(
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-	)
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map8's components, using the supplied values.
+// The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
-// See also [Map8.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) {
-	m.world.Batch().NewEntitiesWith(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-	)
+// See also [Map8.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewBatch(count int, target ...ecs.Entity) {
+	if len(target) == 0 {
+		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
+		return
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
-// NewEntitiesWithQuery creates entities with the Map8's components, using the supplied values.
+// NewQuery creates entities with the Map8's components.
 // It returns a [Query8] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map8.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) Query8[A, B, C, D, E, F, G, H] {
-	query := m.world.Batch().NewEntitiesWithQuery(count, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-	)
+// See also [Map8.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewQuery(count int, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
+	var query ecs.Query
+
+	if len(target) == 0 {
+		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
+	} else {
+		if m.target < 0 {
+			panic("map has no relation defined")
+		}
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
+	}
+
 	return Query8[A, B, C, D, E, F, G, H]{
 		Query: query,
 		id0:   m.id0,
@@ -1471,7 +1377,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity) {
 func (m *Map8[A, B, C, D, E, F, G, H]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.Batch().RemoveEntities(&filter)
+		return m.world.RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.RemoveEntities(m.mask)
 }

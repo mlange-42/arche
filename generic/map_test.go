@@ -47,8 +47,8 @@ func TestGenericMapRelations(t *testing.T) {
 	genTarg := NewMap1[Position](&w)
 	gen := NewMap2[testRelationA, Position](&w)
 
-	targ := genTarg.NewEntity()
-	e0 := gen.NewEntity()
+	targ := genTarg.New()
+	e0 := gen.New()
 
 	targ2 := get.GetRelation(e0)
 	assert.Equal(t, ecs.Entity{}, targ2)
@@ -65,7 +65,7 @@ func ExampleMap() {
 
 	// Spawn some entities using the generic API.
 	spawner := NewMap2[Position, Velocity](&world)
-	entity := spawner.NewEntity()
+	entity := spawner.New()
 
 	// Create a new Map.
 	mapper := NewMap[Position](&world)
