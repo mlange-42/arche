@@ -273,8 +273,9 @@ func (w *World) RemoveEntity(entity Entity) {
 		swapEntity := oldArch.GetEntity(index.index)
 		w.entities[swapEntity.id].index = index.index
 	}
-
 	index.arch = nil
+
+	w.cleanupArchetype(oldArch)
 }
 
 // removeEntities removes and recycles all entities matching a filter.
@@ -512,6 +513,8 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
 
+	w.cleanupArchetype(oldArch)
+
 	if w.listener != nil {
 		w.listener(&EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.graphNode.Ids, 0})
 	}
@@ -574,6 +577,8 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 		w.entities[swapEntity.id].index = index.index
 	}
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
+
+	w.cleanupArchetype(oldArch)
 }
 
 // Reset removes all entities and resources from the world.
@@ -950,6 +955,18 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 		}
 	}
 	return archetypePointers{arches}
+}
+
+// Removes the archetype if it is empty, and has a relation to a dead target.
+func (w *World) cleanupArchetype(arch *archetype) {
+	if arch.Len() > 0 || arch.graphNode.relation < 0 {
+		return
+	}
+	target := arch.Relation
+	if target.IsZero() || w.Alive(target) {
+		return
+	}
+	delete(arch.graphNode.archetypes, target)
 }
 
 // componentID returns the ID for a component type, and registers it if not already registered.
