@@ -571,6 +571,130 @@ func TestWorldRemoveEntities(t *testing.T) {
 	query.Close()
 }
 
+func TestWorldRelationSet(t *testing.T) {
+	world := NewWorld()
+
+	rotID := ComponentID[rotation](&world)
+	relID := ComponentID[testRelationA](&world)
+	rel2ID := ComponentID[testRelationB](&world)
+
+	targ := world.NewEntity()
+	e1 := world.NewEntity(relID, rotID)
+	e2 := world.NewEntity(relID, rotID)
+
+	assert.Equal(t, int32(3), world.graph.Len())
+	assert.Equal(t, int32(2), world.archetypes.Len())
+
+	assert.Equal(t, Entity{}, world.GetRelation(e1, relID))
+	world.SetRelation(e1, relID, targ)
+
+	assert.Equal(t, targ, world.GetRelation(e1, relID))
+	assert.Equal(t, int32(3), world.graph.Len())
+	assert.Equal(t, int32(3), world.archetypes.Len())
+
+	world.SetRelation(e1, relID, Entity{})
+
+	assert.Panics(t, func() { world.GetRelation(e1, rotID) })
+	assert.Panics(t, func() { world.GetRelation(e1, rel2ID) })
+	assert.Panics(t, func() { world.SetRelation(e1, rotID, Entity{}) })
+	assert.Panics(t, func() { world.SetRelation(e1, rel2ID, Entity{}) })
+
+	// Should do nothing
+	world.SetRelation(e1, relID, Entity{})
+
+	assert.Equal(t, Entity{}, world.GetRelation(e1, relID))
+	assert.Equal(t, int32(3), world.graph.Len())
+	assert.Equal(t, int32(3), world.archetypes.Len())
+
+	world.Remove(e2, relID)
+
+	assert.Panics(t, func() { world.GetRelation(e2, relID) })
+	assert.Panics(t, func() { world.SetRelation(e2, relID, Entity{}) })
+
+	assert.Panics(t, func() { world.NewEntity(relID, rel2ID) })
+	assert.Panics(t, func() { world.Add(e1, rel2ID) })
+
+	world.RemoveEntity(e1)
+	assert.Panics(t, func() { world.GetRelation(e1, relID) })
+	assert.Panics(t, func() { world.SetRelation(e1, relID, targ) })
+}
+
+func TestWorldRelationQuery(t *testing.T) {
+	world := NewWorld()
+
+	rotID := ComponentID[rotation](&world)
+	relID := ComponentID[testRelationA](&world)
+
+	targ1 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 1}})
+	targ2 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 2}})
+	targ3 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 3}})
+
+	for i := 0; i < 4; i++ {
+		e1 := world.NewEntity(relID)
+		world.SetRelation(e1, relID, targ1)
+
+		e2 := world.NewEntity(relID)
+		world.SetRelation(e2, relID, targ2)
+	}
+
+	filter := All(relID)
+	query := world.Query(filter)
+	assert.Equal(t, 8, query.Count())
+	query.Close()
+
+	filter2 := RelationFilter{Filter: All(relID), Target: targ1}
+	query = world.Query(&filter2)
+	assert.Equal(t, 4, query.Count())
+	query.Close()
+
+	filter2 = RelationFilter{Filter: All(relID), Target: targ2}
+	query = world.Query(&filter2)
+	assert.Equal(t, 4, query.Count())
+	query.Close()
+
+	filter2 = RelationFilter{Filter: All(relID), Target: targ3}
+	query = world.Query(&filter2)
+	assert.Equal(t, 0, query.Count())
+	query.Close()
+}
+
+func TestWorldRelation(t *testing.T) {
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	relID := ComponentID[testRelationA](&world)
+
+	parents := make([]Entity, 25)
+	for i := 0; i < 25; i++ {
+		parents[i] = world.NewEntityWith(Component{ID: posID, Comp: &Position{X: i, Y: 0}})
+	}
+
+	for i := 0; i < 2500; i++ {
+		par := parents[i/100]
+		e := world.NewEntity(relID)
+		world.SetRelation(e, relID, par)
+	}
+
+	parFilter := All(posID)
+	parQuery := world.Query(parFilter)
+	assert.Equal(t, 25, parQuery.Count())
+	for parQuery.Next() {
+		targ := (*Position)(parQuery.Get(posID))
+		filter := RelationFilter{Filter: All(relID), Target: parQuery.Entity()}
+		query := world.Query(&filter)
+		assert.Equal(t, 100, query.Count())
+		for query.Next() {
+			targ.Y++
+		}
+	}
+
+	parQuery = world.Query(parFilter)
+	for parQuery.Next() {
+		targ := (*Position)(parQuery.Get(posID))
+		assert.Equal(t, 100, targ.Y)
+	}
+}
+
 func TestWorldLock(t *testing.T) {
 	world := NewWorld()
 
@@ -725,23 +849,23 @@ func TestArchetypeGraph(t *testing.T) {
 	rotID := ComponentID[rotation](&world)
 
 	archEmpty := world.archetypes.Get(0)
-	arch0 := world.findOrCreateArchetype(archEmpty, []ID{posID, velID}, []ID{})
-	archEmpty2 := world.findOrCreateArchetype(arch0, []ID{}, []ID{velID, posID})
+	arch0 := world.findOrCreateArchetype(archEmpty, []ID{posID, velID}, []ID{}, Entity{}, -1)
+	archEmpty2 := world.findOrCreateArchetype(arch0, []ID{}, []ID{velID, posID}, Entity{}, -1)
 	assert.Equal(t, archEmpty, archEmpty2)
 	assert.Equal(t, int32(2), world.archetypes.Len())
 	assert.Equal(t, int32(3), world.graph.Len())
 
-	archEmpty3 := world.findOrCreateArchetype(arch0, []ID{}, []ID{posID, velID})
+	archEmpty3 := world.findOrCreateArchetype(arch0, []ID{}, []ID{posID, velID}, Entity{}, -1)
 	assert.Equal(t, archEmpty, archEmpty3)
 	assert.Equal(t, int32(2), world.archetypes.Len())
 	assert.Equal(t, int32(4), world.graph.Len())
 
-	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{})
-	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{})
+	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{}, Entity{}, -1)
+	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{}, Entity{}, -1)
 
 	assert.Equal(t, []ID{0, 1, 2}, arch012.Ids)
 
-	archEmpty4 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID})
+	archEmpty4 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID}, Entity{}, -1)
 	assert.Equal(t, archEmpty, archEmpty4)
 }
 

@@ -11,10 +11,10 @@ func TestMask(t *testing.T) {
 	filter := All(0, 2, 4)
 	other := All(0, 1, 2)
 
-	assert.False(t, filter.Matches(other))
+	assert.False(t, filter.Matches(other, nil))
 
 	other = All(0, 1, 2, 3, 4)
-	assert.True(t, filter.Matches(other))
+	assert.True(t, filter.Matches(other, nil))
 }
 
 func TestQuery(t *testing.T) {
@@ -176,7 +176,7 @@ func TestQueryCount(t *testing.T) {
 
 type testFilter struct{}
 
-func (f testFilter) Matches(bits Mask) bool {
+func (f testFilter) Matches(bits Mask, relation *Entity) bool {
 	return true
 }
 
@@ -327,6 +327,33 @@ func TestQueryNextArchetype(t *testing.T) {
 	assert.True(t, query.nextArchetype())
 	assert.False(t, query.nextArchetype())
 	assert.Panics(t, func() { query.nextArchetype() })
+}
+
+func TestQueryRelations(t *testing.T) {
+	world := NewWorld()
+
+	relID := ComponentID[testRelationA](&world)
+	rel2ID := ComponentID[testRelationB](&world)
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	targ := world.NewEntity(posID)
+
+	e1 := world.NewEntity(relID, velID)
+	world.SetRelation(e1, relID, targ)
+
+	filter := All(relID)
+	query := world.Query(filter)
+
+	for query.Next() {
+		targ2 := query.Relation(relID)
+
+		assert.Equal(t, targ, targ2)
+
+		assert.Panics(t, func() { query.Relation(rel2ID) })
+		assert.Panics(t, func() { query.Relation(posID) })
+		assert.Panics(t, func() { query.Relation(velID) })
+	}
 }
 
 func ExampleQuery() {

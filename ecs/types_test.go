@@ -16,6 +16,14 @@ type rotation struct {
 	Angle int
 }
 
+type testRelationA struct {
+	Relation
+}
+
+type testRelationB struct {
+	Relation
+}
+
 type testStruct0 struct{ Val int32 }
 type testStruct1 struct{ val int32 }
 type testStruct2 struct{ val int32 }

@@ -99,7 +99,7 @@ func (c *Cache) addArchetype(arch *archetype) {
 	ln := len(c.filters)
 	for i := 0; i < ln; i++ {
 		e := &c.filters[i]
-		if e.Filter.Matches(arch.Mask) {
+		if arch.Matches(e.Filter) {
 			e.Archetypes.Add(arch)
 		}
 	}

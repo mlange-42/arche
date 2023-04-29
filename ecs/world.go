@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"fmt"
 	"reflect"
 	"unsafe"
 
@@ -107,8 +108,8 @@ func fromConfig(conf Config) World {
 		resources:   newResources(),
 		filterCache: newCache(),
 	}
-	node := w.createArchetypeNode(Mask{})
-	w.createArchetype(node, false)
+	node := w.createArchetypeNode(Mask{}, -1)
+	w.createArchetype(node, Entity{}, 0, false)
 	return w
 }
 
@@ -132,7 +133,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil)
+		arch = w.findOrCreateArchetype(arch, comps, nil, Entity{}, 0)
 	}
 
 	entity := w.createEntity(arch)
@@ -166,7 +167,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	arch := w.archetypes.Get(0)
-	arch = w.findOrCreateArchetype(arch, ids, nil)
+	arch = w.findOrCreateArchetype(arch, ids, nil, Entity{}, 0)
 
 	entity := w.createEntity(arch)
 
@@ -292,7 +293,7 @@ func (w *World) removeEntities(filter Filter) int {
 	for i = 0; i < numArches; i++ {
 		arch := w.archetypes.Get(i)
 
-		if !filter.Matches(arch.Mask) {
+		if !arch.Matches(filter) {
 			continue
 		}
 
@@ -493,7 +494,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 
 	oldIDs := oldArch.Components()
 
-	arch := w.findOrCreateArchetype(oldArch, add, rem)
+	arch := w.findOrCreateArchetype(oldArch, add, rem, Entity{}, 0)
 	newIndex := arch.Alloc(entity)
 
 	for _, id := range oldIDs {
@@ -514,6 +515,65 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	if w.listener != nil {
 		w.listener(&EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.Ids, 0})
 	}
+}
+
+// GetRelation returns the target entity for an entity relation.
+func (w *World) GetRelation(entity Entity, comp ID) Entity {
+	if !w.entityPool.Alive(entity) {
+		panic("can't exchange components on a dead entity")
+	}
+
+	index := &w.entities[entity.id]
+	if index.arch.graphNode.relation != int8(comp) {
+		if !index.arch.HasComponent(comp) {
+			panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
+		}
+		panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
+	}
+
+	return index.arch.Relation
+}
+
+// SetRelation sets the target entity for an entity relation.
+func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
+	w.checkLocked()
+
+	if !w.entityPool.Alive(entity) {
+		panic("can't exchange components on a dead entity")
+	}
+
+	index := &w.entities[entity.id]
+	oldArch := index.arch
+
+	if oldArch.graphNode.relation != int8(comp) {
+		if !oldArch.HasComponent(comp) {
+			panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
+		}
+		panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
+	}
+
+	if index.arch.Relation == target {
+		return
+	}
+
+	arch := oldArch.graphNode.GetArchetype(target)
+	if arch == nil {
+		arch = w.createArchetype(oldArch.graphNode, target, int8(oldArch.graphNode.relation), true)
+	}
+
+	newIndex := arch.Alloc(entity)
+	for _, id := range oldArch.Ids {
+		comp := oldArch.Get(index.index, id)
+		arch.SetPointer(newIndex, id, comp)
+	}
+
+	swapped := oldArch.Remove(index.index)
+
+	if swapped {
+		swapEntity := oldArch.GetEntity(index.index)
+		w.entities[swapEntity.id].index = index.index
+	}
+	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
 }
 
 // Reset removes all entities and resources from the world.
@@ -674,7 +734,7 @@ func (w *World) newEntitiesNoNotify(count int, comps ...ID) (*archetype, uint32)
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil)
+		arch = w.findOrCreateArchetype(arch, comps, nil, Entity{}, 0)
 	}
 	startIdx := arch.Len()
 	w.createEntities(arch, uint32(count))
@@ -697,7 +757,7 @@ func (w *World) newEntitiesWithNoNotify(count int, ids []ID, comps ...Component)
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, ids, nil)
+		arch = w.findOrCreateArchetype(arch, ids, nil, Entity{}, 0)
 	}
 	startIdx := arch.Len()
 	w.createEntities(arch, uint32(count))
@@ -771,15 +831,19 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 // Tries to find an archetype by traversing the archetype graph,
 // searching by mask and extending the graph if necessary.
 // A new archetype is created for the final graph node if not already present.
-func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *archetype {
+func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, target Entity, targetComponent int8) *archetype {
 	curr := start.graphNode
 	mask := start.Mask
+	relation := start.graphNode.relation
 	for _, id := range rem {
 		mask.Set(id, false)
+		if w.registry.IsRelation.Get(id) {
+			relation = -1
+		}
 		if next, ok := curr.TransitionRemove.Get(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask)
+			next, _ := w.findOrCreateArchetypeSlow(mask, relation)
 			next.TransitionAdd.Set(id, curr)
 			curr.TransitionRemove.Set(id, next)
 			curr = next
@@ -787,28 +851,35 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID) *arc
 	}
 	for _, id := range add {
 		mask.Set(id, true)
+		if w.registry.IsRelation.Get(id) {
+			if relation >= 0 {
+				panic("entity already has a relation component")
+			}
+			relation = int8(id)
+		}
 		if next, ok := curr.TransitionAdd.Get(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask)
+			next, _ := w.findOrCreateArchetypeSlow(mask, relation)
 			next.TransitionRemove.Set(id, curr)
 			curr.TransitionAdd.Set(id, next)
 			curr = next
 		}
 	}
-	if curr.archetype == nil {
-		w.createArchetype(curr, true)
+	arch := curr.GetArchetype(target)
+	if arch == nil {
+		arch = w.createArchetype(curr, target, targetComponent, true)
 	}
-	return curr.archetype
+	return arch
 }
 
 // Tries to find an archetype for a mask, when it can't be reached through the archetype graph.
 // Creates an archetype graph node.
-func (w *World) findOrCreateArchetypeSlow(mask Mask) (*archetypeNode, bool) {
+func (w *World) findOrCreateArchetypeSlow(mask Mask, relation int8) (*archetypeNode, bool) {
 	if arch, ok := w.findArchetypeSlow(mask); ok {
 		return arch, false
 	}
-	return w.createArchetypeNode(mask), true
+	return w.createArchetypeNode(mask, relation), true
 }
 
 // Searches for an archetype by a mask.
@@ -825,8 +896,8 @@ func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 }
 
 // Creates a node in the archetype graph.
-func (w *World) createArchetypeNode(mask Mask) *archetypeNode {
-	w.graph.Add(newArchetypeNode(mask))
+func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
+	w.graph.Add(newArchetypeNode(mask, relation))
 	node := w.graph.Get(w.graph.Len() - 1)
 	return node
 }
@@ -834,7 +905,7 @@ func (w *World) createArchetypeNode(mask Mask) *archetypeNode {
 // Creates an archetype for the given archetype graph node.
 // Initializes the archetype with a capacity according to CapacityIncrement if forStorage is true,
 // and with a capacity of 1 otherwise.
-func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype {
+func (w *World) createArchetype(node *archetypeNode, target Entity, targetComponent int8, forStorage bool) *archetype {
 	mask := node.mask
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
@@ -859,8 +930,9 @@ func (w *World) createArchetype(node *archetypeNode, forStorage bool) *archetype
 
 	w.archetypes.Add(archetype{})
 	arch := w.archetypes.Get(w.archetypes.Len() - 1)
-	arch.Init(node, w.config.CapacityIncrement, forStorage, types...)
-	node.archetype = arch
+	arch.Init(node, w.config.CapacityIncrement, forStorage, target, targetComponent, types...)
+
+	node.SetArchetype(target, arch)
 
 	w.filterCache.addArchetype(arch)
 	return arch
@@ -873,7 +945,7 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 	var i int32
 	for i = 0; i < ln; i++ {
 		a := w.archetypes.Get(i)
-		if filter.Matches(a.Mask) {
+		if a.Matches(filter) {
 			arches = append(arches, a)
 		}
 	}

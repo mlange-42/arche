@@ -58,11 +58,22 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 	return q
 }
 
+// WithRelation restricts the query to entities that have the given relation.
+//
+// Create the required component ID with [T].
+func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ecs.Entity) *Filter{{ .Index }}{{ .Types }} {
+	q.targetType = comp
+	q.target = target
+	q.compiled.Reset()
+	return q
+}
+
 // Query builds a [Query{{ .Index }}] query for iteration.
 func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{ .Types }} {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return Query{{ .Index }}{{ .Types }}{
 		Query: w.Query(q.compiled.filter),
+		target: q.compiled.TargetID,
 		{{ .IDAssign }}
 	}
 }
@@ -72,7 +83,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World) Query{{ .Index }}{{
 // Can be passed to [ecs.World.Query].
 // For the intended generic use, however, generate a generic query with [Filter{{ .Index }}.Query].
 func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskFilter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	return q.compiled.maskFilter
 }
 
@@ -80,7 +91,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskFilter {
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter{{ .Index }}{{ .Types }}) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude)
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
 }
@@ -115,6 +126,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Unregister(w *ecs.World) {
 type Query{{ .Index }}{{ .TypesFull }} struct {
 	ecs.Query
 	{{ .IDTypes }}
+	target int8
 }
 
 {{if .ReturnAll}}
@@ -125,3 +137,11 @@ func (q *Query{{ .Index }}{{ .Types }}) Get() ({{ .TypesReturn }}) {
 	return {{ .ReturnAll }}
 }
 {{ end }}
+
+// Relation returns the target entity for the query's relation.
+func (q *Query{{ .Index }}{{ .Types }}) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
+}
