@@ -636,6 +636,9 @@ func TestWorldRelationRemove(t *testing.T) {
 	e1 := world.NewEntity(relID, rotID)
 	e2 := world.NewEntity(relID, rotID)
 
+	filter := RelationFilter{Filter: All(relID), Target: targ}
+	world.Cache().Register(&filter)
+
 	assert.Equal(t, int32(3), world.graph.Len())
 	assert.Equal(t, int32(2), world.archetypes.Len())
 

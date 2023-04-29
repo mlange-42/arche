@@ -1024,6 +1024,8 @@ func (w *World) deleteArchetype(arch *archetype, target Entity) {
 	w.freeArchetypes = append(w.freeArchetypes, idx)
 	w.archetypes.Get(idx).Deactivate()
 
+	w.filterCache.removeArchetype(arch)
+
 	if int(idx) < len(w.stats.Archetypes) {
 		w.stats.Archetypes[idx].Dirty = true
 	}

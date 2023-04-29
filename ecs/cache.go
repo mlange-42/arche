@@ -104,3 +104,16 @@ func (c *Cache) addArchetype(arch *archetype) {
 		}
 	}
 }
+
+// Removes an archetype.
+//
+// Iterates over all filters and removes the archetype from the resp. entry where the filter matches.
+func (c *Cache) removeArchetype(arch *archetype) {
+	ln := len(c.filters)
+	for i := 0; i < ln; i++ {
+		e := &c.filters[i]
+		if arch.Matches(e.Filter) {
+			e.Archetypes.Remove(arch)
+		}
+	}
+}
