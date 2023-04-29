@@ -397,9 +397,9 @@ func TestWorldNewEntities(t *testing.T) {
 	world.NewEntity(posID, rotID)
 	assert.Equal(t, 2, len(world.entities))
 
-	assert.Panics(t, func() { world.newEntitiesQuery(0, posID, rotID) })
+	assert.Panics(t, func() { world.newEntitiesQuery(0, -1, Entity{}, posID, rotID) })
 
-	query := world.newEntitiesQuery(100, posID, rotID)
+	query := world.newEntitiesQuery(100, -1, Entity{}, posID, rotID)
 	assert.Equal(t, 100, query.Count())
 	assert.Equal(t, 102, len(world.entities))
 	assert.Equal(t, 1, len(events))
@@ -427,7 +427,7 @@ func TestWorldNewEntities(t *testing.T) {
 	world.Reset()
 	assert.Equal(t, 1, len(world.entities))
 
-	query = world.newEntitiesQuery(100, posID, rotID)
+	query = world.newEntitiesQuery(100, -1, Entity{}, posID, rotID)
 	assert.Equal(t, 100, query.Count())
 	assert.Equal(t, 101, len(events))
 
@@ -446,13 +446,13 @@ func TestWorldNewEntities(t *testing.T) {
 	assert.Equal(t, 301, len(events))
 	assert.Equal(t, 101, len(world.entities))
 
-	query = world.newEntitiesQuery(100, posID, rotID)
+	query = world.newEntitiesQuery(100, -1, Entity{}, posID, rotID)
 	assert.Equal(t, 301, len(events))
 	query.Close()
 	assert.Equal(t, 401, len(events))
 	assert.Equal(t, 101, len(world.entities))
 
-	world.newEntities(100, posID, rotID)
+	world.newEntities(100, -1, Entity{}, posID, rotID)
 	assert.Equal(t, 501, len(events))
 	assert.Equal(t, 201, len(world.entities))
 }
@@ -477,15 +477,15 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world.NewEntity(posID, rotID)
 	assert.Equal(t, 1, len(events))
 
-	assert.Panics(t, func() { world.newEntitiesWithQuery(0, comps...) })
+	assert.Panics(t, func() { world.newEntitiesWithQuery(0, -1, Entity{}, comps...) })
 	assert.Equal(t, 1, len(events))
 
-	query := world.newEntitiesWithQuery(1)
+	query := world.newEntitiesWithQuery(1, -1, Entity{})
 	assert.Equal(t, 1, len(events))
 	query.Close()
 	assert.Equal(t, 2, len(events))
 
-	query = world.newEntitiesWithQuery(100, comps...)
+	query = world.newEntitiesWithQuery(100, -1, Entity{}, comps...)
 	assert.Equal(t, 100, query.Count())
 	assert.Equal(t, 2, len(events))
 
@@ -513,7 +513,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 
 	world.Reset()
 
-	query = world.newEntitiesWithQuery(100,
+	query = world.newEntitiesWithQuery(100, -1, Entity{},
 		Component{ID: posID, Comp: &Position{100, 200}},
 		Component{ID: rotID, Comp: &rotation{300}},
 	)
@@ -527,7 +527,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	assert.Equal(t, 100, cnt)
 	assert.Equal(t, 202, len(events))
 
-	world.newEntitiesWith(100, comps...)
+	world.newEntitiesWith(100, -1, Entity{}, comps...)
 	assert.Equal(t, 302, len(events))
 }
 
@@ -543,12 +543,12 @@ func TestWorldRemoveEntities(t *testing.T) {
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
 
-	query := world.newEntitiesQuery(100, posID)
+	query := world.newEntitiesQuery(100, -1, Entity{}, posID)
 	assert.Equal(t, 100, query.Count())
 	query.Close()
 	assert.Equal(t, 100, len(events))
 
-	query = world.newEntitiesQuery(100, posID, rotID)
+	query = world.newEntitiesQuery(100, -1, Entity{}, posID, rotID)
 	assert.Equal(t, 100, query.Count())
 	query.Close()
 	assert.Equal(t, 200, len(events))
@@ -1186,7 +1186,7 @@ func BenchmarkEntityAlive_1000(b *testing.B) {
 	posID := ComponentID[Position](&world)
 
 	entities := make([]Entity, 0, 1000)
-	q := world.newEntitiesQuery(1000, posID)
+	q := world.newEntitiesQuery(1000, -1, Entity{}, posID)
 	for q.Next() {
 		entities = append(entities, q.Entity())
 	}
@@ -1256,7 +1256,7 @@ func BenchmarkNewEntitiesBatch_10_000_New(b *testing.B) {
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
 
-		world.newEntities(10000, posID, velID)
+		world.newEntities(10000, -1, Entity{}, posID, velID)
 	}
 }
 
@@ -1294,7 +1294,7 @@ func BenchmarkNewEntitiesBatch_10_000_Reset(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		world.Reset()
-		world.newEntities(10000, posID, velID)
+		world.newEntities(10000, -1, Entity{}, posID, velID)
 	}
 }
 
@@ -1307,7 +1307,7 @@ func BenchmarkRemoveEntities_10_000(b *testing.B) {
 		velID := ComponentID[Velocity](&world)
 
 		entities := make([]Entity, 10000)
-		q := world.newEntitiesQuery(10000, posID, velID)
+		q := world.newEntitiesQuery(10000, -1, Entity{}, posID, velID)
 
 		cnt := 0
 		for q.Next() {
@@ -1331,7 +1331,7 @@ func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
 
-		q := world.newEntitiesQuery(10000, posID, velID)
+		q := world.newEntitiesQuery(10000, -1, Entity{}, posID, velID)
 		q.Close()
 		b.StartTimer()
 		world.removeEntities(All(posID, velID))

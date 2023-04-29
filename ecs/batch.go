@@ -17,7 +17,7 @@ type Batch struct {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (b *Batch) NewEntities(count int, comps ...ID) {
-	b.world.newEntities(count, comps...)
+	b.world.newEntities(count, -1, Entity{}, comps...)
 }
 
 // NewEntitiesQuery creates the given number of entities [Entity].
@@ -33,7 +33,7 @@ func (b *Batch) NewEntities(count int, comps ...ID) {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (b *Batch) NewEntitiesQuery(count int, comps ...ID) Query {
-	return b.world.newEntitiesQuery(count, comps...)
+	return b.world.newEntitiesQuery(count, -1, Entity{}, comps...)
 }
 
 // NewEntitiesWith creates the given number of entities [Entity].
@@ -46,7 +46,7 @@ func (b *Batch) NewEntitiesQuery(count int, comps ...ID) Query {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (b *Batch) NewEntitiesWith(count int, comps ...Component) {
-	b.world.newEntitiesWith(count, comps...)
+	b.world.newEntitiesWith(count, -1, Entity{}, comps...)
 }
 
 // NewEntitiesWithQuery creates the given number of entities [Entity].
@@ -62,7 +62,7 @@ func (b *Batch) NewEntitiesWith(count int, comps ...Component) {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (b *Batch) NewEntitiesWithQuery(count int, comps ...Component) Query {
-	return b.world.newEntitiesWithQuery(count, comps...)
+	return b.world.newEntitiesWithQuery(count, -1, Entity{}, comps...)
 }
 
 // RemoveEntities removes and recycles all entities matching a filter.

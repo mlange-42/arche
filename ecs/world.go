@@ -136,7 +136,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil, Entity{}, 0)
+		arch = w.findOrCreateArchetype(arch, comps, nil, Entity{}, -1)
 	}
 
 	entity := w.createEntity(arch)
@@ -170,7 +170,50 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	arch := w.archetypes.Get(0)
-	arch = w.findOrCreateArchetype(arch, ids, nil, Entity{}, 0)
+	arch = w.findOrCreateArchetype(arch, ids, nil, Entity{}, -1)
+
+	entity := w.createEntity(arch)
+
+	for _, c := range comps {
+		w.copyTo(entity, c.ID, c.Comp)
+	}
+
+	if w.listener != nil {
+		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.graphNode.Ids, 1})
+	}
+	return entity
+}
+
+func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity {
+	w.checkLocked()
+
+	arch := w.archetypes.Get(0)
+	if len(comps) > 0 {
+		arch = w.findOrCreateArchetype(arch, comps, nil, target, int8(targetID))
+	}
+
+	entity := w.createEntity(arch)
+
+	if w.listener != nil {
+		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.graphNode.Ids, 1})
+	}
+	return entity
+}
+
+func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Component) Entity {
+	w.checkLocked()
+
+	if len(comps) == 0 {
+		return w.NewEntity()
+	}
+
+	ids := make([]ID, len(comps))
+	for i, c := range comps {
+		ids[i] = c.ID
+	}
+
+	arch := w.archetypes.Get(0)
+	arch = w.findOrCreateArchetype(arch, ids, nil, target, int8(targetID))
 
 	entity := w.createEntity(arch)
 
@@ -186,8 +229,8 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 
 // Creates new entities without returning a query over them.
 // Used via [World.Batch].
-func (w *World) newEntities(count int, comps ...ID) (*archetype, uint32) {
-	arch, startIdx := w.newEntitiesNoNotify(count, comps...)
+func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID) (*archetype, uint32) {
+	arch, startIdx := w.newEntitiesNoNotify(count, targetID, target, comps...)
 
 	if w.listener != nil {
 		cnt := uint32(count)
@@ -204,21 +247,21 @@ func (w *World) newEntities(count int, comps ...ID) (*archetype, uint32) {
 
 // Creates new entities and returns a query over them.
 // Used via [World.Batch].
-func (w *World) newEntitiesQuery(count int, comps ...ID) Query {
-	arch, startIdx := w.newEntitiesNoNotify(count, comps...)
+func (w *World) newEntitiesQuery(count int, targetID int8, target Entity, comps ...ID) Query {
+	arch, startIdx := w.newEntitiesNoNotify(count, targetID, target, comps...)
 	lock := w.lock()
 	return newArchQuery(w, lock, arch, startIdx)
 }
 
 // Creates new entities with component values without returning a query over them.
 // Used via [World.Batch].
-func (w *World) newEntitiesWith(count int, comps ...Component) (*archetype, uint32) {
+func (w *World) newEntitiesWith(count int, targetID int8, target Entity, comps ...Component) (*archetype, uint32) {
 	ids := make([]ID, len(comps))
 	for i, c := range comps {
 		ids[i] = c.ID
 	}
 
-	arch, startIdx := w.newEntitiesWithNoNotify(count, ids, comps...)
+	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, target, ids, comps...)
 
 	if w.listener != nil {
 		var i uint32
@@ -235,13 +278,13 @@ func (w *World) newEntitiesWith(count int, comps ...Component) (*archetype, uint
 
 // Creates new entities with component values and returns a query over them.
 // Used via [World.Batch].
-func (w *World) newEntitiesWithQuery(count int, comps ...Component) Query {
+func (w *World) newEntitiesWithQuery(count int, targetID int8, target Entity, comps ...Component) Query {
 	ids := make([]ID, len(comps))
 	for i, c := range comps {
 		ids[i] = c.ID
 	}
 
-	arch, startIdx := w.newEntitiesWithNoNotify(count, ids, comps...)
+	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, target, ids, comps...)
 	lock := w.lock()
 	return newArchQuery(w, lock, arch, startIdx)
 }
@@ -515,7 +558,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 
 	oldIDs := oldArch.Components()
 
-	arch := w.findOrCreateArchetype(oldArch, add, rem, Entity{}, 0)
+	arch := w.findOrCreateArchetype(oldArch, add, rem, Entity{}, -1)
 	newIndex := arch.Alloc(entity)
 
 	for _, id := range oldIDs {
@@ -754,7 +797,7 @@ func (w *World) checkLocked() {
 }
 
 // Internal method to create new entities.
-func (w *World) newEntitiesNoNotify(count int, comps ...ID) (*archetype, uint32) {
+func (w *World) newEntitiesNoNotify(count int, targetID int8, target Entity, comps ...ID) (*archetype, uint32) {
 	w.checkLocked()
 
 	if count < 1 {
@@ -763,7 +806,7 @@ func (w *World) newEntitiesNoNotify(count int, comps ...ID) (*archetype, uint32)
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil, Entity{}, 0)
+		arch = w.findOrCreateArchetype(arch, comps, nil, target, targetID)
 	}
 	startIdx := arch.Len()
 	w.createEntities(arch, uint32(count))
@@ -772,21 +815,21 @@ func (w *World) newEntitiesNoNotify(count int, comps ...ID) (*archetype, uint32)
 }
 
 // Internal method to create new entities with component values.
-func (w *World) newEntitiesWithNoNotify(count int, ids []ID, comps ...Component) (*archetype, uint32) {
+func (w *World) newEntitiesWithNoNotify(count int, targetID int8, target Entity, ids []ID, comps ...Component) (*archetype, uint32) {
 	w.checkLocked()
 
 	if count < 1 {
 		panic("can only create a positive number of entities")
 	}
 	if len(comps) == 0 {
-		return w.newEntitiesNoNotify(count)
+		return w.newEntitiesNoNotify(count, targetID, target)
 	}
 
 	cnt := uint32(count)
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, ids, nil, Entity{}, 0)
+		arch = w.findOrCreateArchetype(arch, ids, nil, target, targetID)
 	}
 	startIdx := arch.Len()
 	w.createEntities(arch, uint32(count))
