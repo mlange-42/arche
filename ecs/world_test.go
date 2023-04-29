@@ -617,6 +617,59 @@ func TestWorldRelationSet(t *testing.T) {
 	world.RemoveEntity(e1)
 	assert.Panics(t, func() { world.GetRelation(e1, relID) })
 	assert.Panics(t, func() { world.SetRelation(e1, relID, targ) })
+
+	e3 := world.NewEntity(relID, rotID)
+	world.RemoveEntity(targ)
+	assert.Panics(t, func() { world.SetRelation(e3, relID, targ) })
+}
+
+func TestWorldRelationRemove(t *testing.T) {
+	world := NewWorld()
+
+	rotID := ComponentID[rotation](&world)
+	relID := ComponentID[testRelationA](&world)
+
+	targ := world.NewEntity()
+	targ2 := world.NewEntity()
+	targ3 := world.NewEntity()
+
+	e1 := world.NewEntity(relID, rotID)
+	e2 := world.NewEntity(relID, rotID)
+
+	assert.Equal(t, int32(3), world.graph.Len())
+	assert.Equal(t, int32(2), world.archetypes.Len())
+
+	world.SetRelation(e1, relID, targ)
+	world.SetRelation(e2, relID, targ)
+
+	assert.Equal(t, int32(3), world.archetypes.Len())
+
+	world.RemoveEntity(targ)
+	assert.Equal(t, int32(3), world.archetypes.Len())
+
+	world.SetRelation(e1, relID, Entity{})
+	world.SetRelation(e2, relID, Entity{})
+
+	assert.Equal(t, int32(3), world.archetypes.Len())
+
+	world.SetRelation(e1, relID, targ2)
+	world.SetRelation(e2, relID, targ2)
+
+	assert.Equal(t, int32(3), world.archetypes.Len())
+
+	world.SetRelation(e1, relID, Entity{})
+	world.SetRelation(e2, relID, Entity{})
+
+	world.RemoveEntity(targ2)
+	assert.Equal(t, int32(3), world.archetypes.Len())
+
+	world.SetRelation(e1, relID, targ3)
+	world.SetRelation(e2, relID, targ3)
+
+	assert.Equal(t, int32(3), world.archetypes.Len())
+
+	world.Batch().RemoveEntities(All())
+	world.Batch().RemoveEntities(All())
 }
 
 func TestWorldRelationQuery(t *testing.T) {
@@ -625,9 +678,14 @@ func TestWorldRelationQuery(t *testing.T) {
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
 
+	targ0 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 0}})
+
 	targ1 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 1}})
 	targ2 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 2}})
 	targ3 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 3}})
+
+	e1 := world.NewEntity(relID)
+	world.SetRelation(e1, relID, targ0)
 
 	for i := 0; i < 4; i++ {
 		e1 := world.NewEntity(relID)
@@ -636,6 +694,9 @@ func TestWorldRelationQuery(t *testing.T) {
 		e2 := world.NewEntity(relID)
 		world.SetRelation(e2, relID, targ2)
 	}
+
+	world.RemoveEntity(e1)
+	world.RemoveEntity(targ0)
 
 	filter := All(relID)
 	query := world.Query(filter)

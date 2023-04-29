@@ -156,7 +156,7 @@ func (q *Query) nextArchetype() bool {
 		q.archIndex++
 		a := q.archetypes.Get(q.archIndex)
 		aLen := a.Len()
-		if (q.isFiltered || a.Matches(q.filter)) && aLen > 0 {
+		if a.IsActive() && (q.isFiltered || a.Matches(q.filter)) && aLen > 0 {
 			q.access = &a.archetypeAccess
 			q.entityIndex = 0
 			q.entityIndexMax = uintptr(aLen) - 1
@@ -181,7 +181,7 @@ func (q *Query) countEntities() int {
 	var i int32
 	for i = 0; i < len; i++ {
 		a := q.archetypes.Get(i)
-		if q.isFiltered || a.Matches(q.filter) {
+		if a.IsActive() && (q.isFiltered || a.Matches(q.filter)) {
 			count += a.Len()
 		}
 	}

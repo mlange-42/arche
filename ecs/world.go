@@ -62,18 +62,19 @@ func AddResource[T any](w *World, res *T) ResID {
 
 // World is the central type holding [Entity] and component data, as well as resources.
 type World struct {
-	config        Config                    // World configuration.
-	listener      func(e *EntityEvent)      // Component change listener.
-	resources     Resources                 // World resources.
-	entities      []entityIndex             // Mapping from entities to archetype and index.
-	entityPool    entityPool                // Pool for entities.
-	archetypes    pagedSlice[archetype]     // The archetypes.
-	graph         pagedSlice[archetypeNode] // The archetype graph.
-	relationNodes []*archetypeNode          // Archetype nodes that have an entity relation.
-	locks         lockMask                  // World locks.
-	registry      componentRegistry[ID]     // Component registry.
-	filterCache   Cache                     // Cache for registered filters.
-	stats         stats.WorldStats          // Cached world statistics
+	config         Config                    // World configuration.
+	listener       func(e *EntityEvent)      // Component change listener.
+	resources      Resources                 // World resources.
+	entities       []entityIndex             // Mapping from entities to archetype and index.
+	entityPool     entityPool                // Pool for entities.
+	archetypes     pagedSlice[archetype]     // The archetypes.
+	freeArchetypes []int32                   // Indices of free archetypes.
+	graph          pagedSlice[archetypeNode] // The archetype graph.
+	relationNodes  []*archetypeNode          // Archetype nodes that have an entity relation.
+	locks          lockMask                  // World locks.
+	registry       componentRegistry[ID]     // Component registry.
+	filterCache    Cache                     // Cache for registered filters.
+	stats          stats.WorldStats          // Cached world statistics
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -301,6 +302,10 @@ func (w *World) removeEntities(filter Filter) int {
 	for i = 0; i < numArches; i++ {
 		arch := w.archetypes.Get(i)
 
+		if !arch.IsActive() {
+			continue
+		}
+
 		if !arch.Matches(filter) {
 			continue
 		}
@@ -326,6 +331,7 @@ func (w *World) removeEntities(filter Filter) int {
 		}
 
 		arch.Reset()
+		w.cleanupArchetype(arch)
 	}
 	w.unlock(lock)
 
@@ -952,9 +958,19 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, targetCompon
 		}
 	}
 
-	w.archetypes.Add(archetype{})
-	arch := w.archetypes.Get(w.archetypes.Len() - 1)
-	arch.Init(node, forStorage, target, targetComponent, types...)
+	var arch *archetype
+	var archIndex int32
+	lenFree := len(w.freeArchetypes)
+	if lenFree > 0 {
+		archIndex = w.freeArchetypes[lenFree-1]
+		arch = w.archetypes.Get(archIndex)
+		w.freeArchetypes = w.freeArchetypes[:lenFree-1]
+	} else {
+		w.archetypes.Add(archetype{})
+		archIndex = w.archetypes.Len() - 1
+		arch = w.archetypes.Get(archIndex)
+	}
+	arch.Init(node, archIndex, forStorage, target, targetComponent, types...)
 
 	node.SetArchetype(target, arch)
 
@@ -969,7 +985,7 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 	var i int32
 	for i = 0; i < ln; i++ {
 		a := w.archetypes.Get(i)
-		if a.Matches(filter) {
+		if a.IsActive() && a.Matches(filter) {
 			arches = append(arches, a)
 		}
 	}
@@ -985,7 +1001,11 @@ func (w *World) cleanupArchetype(arch *archetype) {
 	if target.IsZero() || w.Alive(target) {
 		return
 	}
+
 	delete(arch.graphNode.archetypes, target)
+	idx := arch.index
+	w.freeArchetypes = append(w.freeArchetypes, idx)
+	w.archetypes.Get(idx).Deactivate()
 }
 
 // Removes empty archetypes that have a target relation to the given entity.
@@ -993,6 +1013,9 @@ func (w *World) cleanupArchetypes(target Entity) {
 	for _, node := range w.relationNodes {
 		if arch, ok := node.archetypes[target]; ok && arch.Len() == 0 {
 			delete(node.archetypes, target)
+			idx := arch.index
+			w.freeArchetypes = append(w.freeArchetypes, idx)
+			w.archetypes.Get(idx).Deactivate()
 		}
 	}
 }

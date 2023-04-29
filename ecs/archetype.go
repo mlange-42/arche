@@ -117,12 +117,13 @@ type archetype struct {
 	indices         idMap[uint32]   // Mapping from IDs to buffer indices.
 	buffers         []reflect.Value // Reflection arrays containing component data.
 	entityBuffer    reflect.Value   // Reflection array containing entity data.
+	index           int32           // Index of the archetype in the world.
 	len             uint32          // Current number of entities
 	cap             uint32          // Current capacity
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archetypeNode, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
+func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
 	var mask Mask
 	if len(components) > 0 && len(node.Ids) == 0 {
 		node.Ids = make([]ID, len(components))
@@ -146,6 +147,7 @@ func (a *archetype) Init(node *archetypeNode, forStorage bool, relation Entity, 
 	a.buffers = make([]reflect.Value, len(components))
 	a.layouts = make([]layout, MaskTotalBits)
 	a.indices = newIDMap[uint32]()
+	a.index = index
 
 	cap := 1
 	if forStorage {
@@ -310,6 +312,20 @@ func (a *archetype) Reset() {
 	for _, buf := range a.buffers {
 		buf.SetZero()
 	}
+}
+
+func (a *archetype) Deactivate() {
+	a.Reset()
+	a.index = -1
+	a.graphNode = nil
+	a.layouts = nil
+	a.indices = newIDMap[uint32]()
+	a.buffers = nil
+	a.entityBuffer.SetZero()
+}
+
+func (a *archetype) IsActive() bool {
+	return a.index >= 0
 }
 
 // Components returns the component IDs for this archetype
