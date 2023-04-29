@@ -28,6 +28,8 @@ func NewBuilderWith(w *World, comps ...Component) *Builder {
 }
 
 // WithRelation sets the relation component for the builder.
+//
+// Use in conjunction with the optional target argument of [Builder.New], [Builder.NewBatch] and [Builder.NewQuery].
 func (b *Builder) WithRelation(comp ID) *Builder {
 	b.hasTarget = true
 	b.targetID = comp
@@ -35,26 +37,41 @@ func (b *Builder) WithRelation(comp ID) *Builder {
 }
 
 // New creates an entity.
-func (b *Builder) New() Entity {
+//
+// The optional argument can be used to set the target [Entity] for the Builder's [Relation].
+// See [Builder.WithRelation].
+func (b *Builder) New(target ...Entity) Entity {
+	if len(target) > 0 {
+		if !b.hasTarget {
+			panic("entity builder has no target")
+		}
+		if b.comps == nil {
+			return b.world.newEntityTarget(b.targetID, target[0], b.ids...)
+		}
+		return b.world.newEntityTargetWith(b.targetID, target[0], b.comps...)
+	}
 	if b.comps == nil {
 		return b.world.NewEntity(b.ids...)
 	}
 	return b.world.NewEntityWith(b.comps...)
 }
 
-// NewRelation creates an entity with a relation target.
-func (b *Builder) NewRelation(target Entity) Entity {
-	if !b.hasTarget {
-		panic("entity builder has no target")
-	}
-	if b.comps == nil {
-		return b.world.newEntityTarget(b.targetID, target, b.ids...)
-	}
-	return b.world.newEntityTargetWith(b.targetID, target, b.comps...)
-}
-
 // NewBatch creates many entities.
-func (b *Builder) NewBatch(count int) {
+//
+// The optional argument can be used to set the target [Entity] for the Builder's [Relation].
+// See [Builder.WithRelation].
+func (b *Builder) NewBatch(count int, target ...Entity) {
+	if len(target) > 0 {
+		if !b.hasTarget {
+			panic("entity builder has no target")
+		}
+		if b.comps == nil {
+			b.world.newEntities(count, int8(b.targetID), target[0], b.ids...)
+			return
+		}
+		b.world.newEntitiesWith(count, int8(b.targetID), target[0], b.comps...)
+		return
+	}
 	if b.comps == nil {
 		b.world.newEntities(count, -1, Entity{}, b.ids...)
 	} else {
@@ -62,33 +79,22 @@ func (b *Builder) NewBatch(count int) {
 	}
 }
 
-// NewBatchRelation creates many entities with a relation target.
-func (b *Builder) NewBatchRelation(count int, target Entity) {
-	if !b.hasTarget {
-		panic("entity builder has no target")
-	}
-	if b.comps == nil {
-		b.world.newEntities(count, int8(b.targetID), target, b.ids...)
-	} else {
-		b.world.newEntitiesWith(count, int8(b.targetID), target, b.comps...)
-	}
-}
-
 // NewQuery creates many entities and returns a query over them.
-func (b *Builder) NewQuery(count int) Query {
+//
+// The optional argument can be used to set the target [Entity] for the Builder's [Relation].
+// See [Builder.WithRelation].
+func (b *Builder) NewQuery(count int, target ...Entity) Query {
+	if len(target) > 0 {
+		if !b.hasTarget {
+			panic("entity builder has no target")
+		}
+		if b.comps == nil {
+			return b.world.newEntitiesQuery(count, int8(b.targetID), target[0], b.ids...)
+		}
+		return b.world.newEntitiesWithQuery(count, int8(b.targetID), target[0], b.comps...)
+	}
 	if b.comps == nil {
 		return b.world.newEntitiesQuery(count, -1, Entity{}, b.ids...)
 	}
 	return b.world.newEntitiesWithQuery(count, -1, Entity{}, b.comps...)
-}
-
-// NewQueryRelation creates many entities with a relation target and returns a query over them.
-func (b *Builder) NewQueryRelation(count int, target Entity) Query {
-	if !b.hasTarget {
-		panic("entity builder has no target")
-	}
-	if b.comps == nil {
-		return b.world.newEntitiesQuery(count, int8(b.targetID), target, b.ids...)
-	}
-	return b.world.newEntitiesWithQuery(count, int8(b.targetID), target, b.comps...)
 }

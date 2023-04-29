@@ -66,7 +66,7 @@ func (m *Map{{ .Index }}{{ .Types }}) New(target ...ecs.Entity) ecs.Entity {
 	if m.target < 0 {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewRelation(target[0])
+	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
 }
 
 // NewBatch creates entities with the Map{{ .Index }}'s components.
@@ -82,7 +82,7 @@ func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int, target ...ecs.Entity) 
 	if m.target < 0 {
 		panic("map has no relation defined")
 	}
-	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatchRelation(count, target[0])
+	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
 }
 
 // NewQuery creates entities with the Map{{ .Index }}'s components.
@@ -102,7 +102,7 @@ func (m *Map{{ .Index }}{{ .Types }}) NewQuery(count int, target ...ecs.Entity) 
 		if m.target < 0 {
 			panic("map has no relation defined")
 		}
-		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQueryRelation(count, target[0])
+		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
 	}
 
 	return Query{{ .Index }}{{ .Types }}{

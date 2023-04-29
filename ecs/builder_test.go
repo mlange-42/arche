@@ -21,9 +21,9 @@ func TestBuilder(t *testing.T) {
 	assert.True(t, w.Has(e1, posID))
 	assert.True(t, w.Has(e1, velID))
 
-	assert.Panics(t, func() { b1.NewRelation(target) })
-	assert.Panics(t, func() { b1.NewBatchRelation(10, target) })
-	assert.Panics(t, func() { b1.NewQueryRelation(10, target) })
+	assert.Panics(t, func() { b1.New(target) })
+	assert.Panics(t, func() { b1.NewBatch(10, target) })
+	assert.Panics(t, func() { b1.NewQuery(10, target) })
 
 	b1.NewBatch(10)
 	q := b1.NewQuery(10)
@@ -35,9 +35,9 @@ func TestBuilder(t *testing.T) {
 	e1 = b1.New()
 	assert.True(t, w.Has(e1, posID))
 
-	assert.Panics(t, func() { b1.NewRelation(target) })
-	assert.Panics(t, func() { b1.NewBatchRelation(10, target) })
-	assert.Panics(t, func() { b1.NewQueryRelation(10, target) })
+	assert.Panics(t, func() { b1.New(target) })
+	assert.Panics(t, func() { b1.NewBatch(10, target) })
+	assert.Panics(t, func() { b1.NewQuery(10, target) })
 
 	b1.NewBatch(10)
 	q = b1.NewQuery(10)
@@ -47,11 +47,11 @@ func TestBuilder(t *testing.T) {
 	b1 = NewBuilder(&w, posID, velID, relID).WithRelation(relID)
 
 	b1.New()
-	e2 := b1.NewRelation(target)
+	e2 := b1.New(target)
 	assert.Equal(t, target, w.GetRelation(e2, relID))
 
-	b1.NewBatchRelation(10, target)
-	q = b1.NewQueryRelation(10, target)
+	b1.NewBatch(10, target)
+	q = b1.NewQuery(10, target)
 	assert.Equal(t, 10, q.Count())
 	for q.Next() {
 		assert.Equal(t, target, q.Relation(relID))
@@ -63,11 +63,11 @@ func TestBuilder(t *testing.T) {
 	).WithRelation(relID)
 
 	b1.New()
-	e2 = b1.NewRelation(target)
+	e2 = b1.New(target)
 	assert.Equal(t, target, w.GetRelation(e2, relID))
 
-	b1.NewBatchRelation(10, target)
-	q = b1.NewQueryRelation(10, target)
+	b1.NewBatch(10, target)
+	q = b1.NewQuery(10, target)
 	assert.Equal(t, 10, q.Count())
 	for q.Next() {
 		assert.Equal(t, target, q.Relation(relID))
