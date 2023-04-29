@@ -34,16 +34,16 @@ func (b *Builder) WithRelation(comp ID) *Builder {
 	return b
 }
 
-// Build creates an entity.
-func (b *Builder) Build() Entity {
+// New creates an entity.
+func (b *Builder) New() Entity {
 	if b.comps == nil {
 		return b.world.NewEntity(b.ids...)
 	}
 	return b.world.NewEntityWith(b.comps...)
 }
 
-// BuildRelation creates an entity with a relation target.
-func (b *Builder) BuildRelation(target Entity) Entity {
+// NewRelation creates an entity with a relation target.
+func (b *Builder) NewRelation(target Entity) Entity {
 	if !b.hasTarget {
 		panic("entity builder has no target")
 	}
@@ -53,8 +53,8 @@ func (b *Builder) BuildRelation(target Entity) Entity {
 	return b.world.newEntityTargetWith(b.targetID, target, b.comps...)
 }
 
-// Batch creates many entities.
-func (b *Builder) Batch(count int) {
+// NewBatch creates many entities.
+func (b *Builder) NewBatch(count int) {
 	if b.comps == nil {
 		b.world.newEntities(count, -1, Entity{}, b.ids...)
 	} else {
@@ -62,8 +62,8 @@ func (b *Builder) Batch(count int) {
 	}
 }
 
-// BatchRelation creates many entities with a relation target.
-func (b *Builder) BatchRelation(count int, target Entity) {
+// NewBatchRelation creates many entities with a relation target.
+func (b *Builder) NewBatchRelation(count int, target Entity) {
 	if !b.hasTarget {
 		panic("entity builder has no target")
 	}
@@ -74,16 +74,16 @@ func (b *Builder) BatchRelation(count int, target Entity) {
 	}
 }
 
-// Query creates many entities and returns a query over them.
-func (b *Builder) Query(count int) Query {
+// NewQuery creates many entities and returns a query over them.
+func (b *Builder) NewQuery(count int) Query {
 	if b.comps == nil {
 		return b.world.newEntitiesQuery(count, -1, Entity{}, b.ids...)
 	}
 	return b.world.newEntitiesWithQuery(count, -1, Entity{}, b.comps...)
 }
 
-// QueryRelation creates many entities with a relation target and returns a query over them.
-func (b *Builder) QueryRelation(count int, target Entity) Query {
+// NewQueryRelation creates many entities with a relation target and returns a query over them.
+func (b *Builder) NewQueryRelation(count int, target Entity) Query {
 	if !b.hasTarget {
 		panic("entity builder has no target")
 	}

@@ -47,7 +47,7 @@ func run(rounds, iters, entityCount int) {
 
 		entities := make([]ecs.Entity, 0, entityCount)
 
-		query := ecs.NewBuilder(&world, posID, rotID).Query(entityCount)
+		query := ecs.NewBuilder(&world, posID, rotID).NewQuery(entityCount)
 
 		for query.Next() {
 			entities = append(entities, query.Entity())

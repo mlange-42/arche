@@ -14,7 +14,7 @@ func TestMap1Generated(t *testing.T) {
 	mut := NewMap1[testStruct0](&w)
 	map0 := NewMap[testStruct0](&w)
 
-	e := mut.NewEntity()
+	e := mut.New()
 	s0 := mut.Get(e)
 	assert.NotNil(t, s0)
 
@@ -29,24 +29,21 @@ func TestMap1Generated(t *testing.T) {
 	mut.Assign(e, &testStruct0{})
 	assert.True(t, map0.Has(e))
 
-	e = mut.NewEntityWith(&testStruct0{})
+	e = mut.New()
 	assert.True(t, map0.Has(e))
 
 	s0 = mut.Get(e)
 	assert.NotNil(t, s0)
 
-	mut.NewEntities(2)
-	mut.NewEntitiesWith(2, &testStruct0{})
+	mut.NewBatch(2)
 
-	q := mut.NewEntitiesQuery(2)
-	q.Close()
-	q = mut.NewEntitiesWithQuery(2, &testStruct0{})
+	q := mut.NewQuery(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
 
 	cnt := mut.RemoveEntities(true)
-	assert.Equal(t, 11, cnt)
+	assert.Equal(t, 7, cnt)
 	cnt = mut.RemoveEntities(false)
 	assert.Equal(t, 0, cnt)
 
@@ -61,7 +58,7 @@ func TestMap2Generated(t *testing.T) {
 	map0 := NewMap[testStruct0](&w)
 	map1 := NewMap[testStruct1](&w)
 
-	e := mut.NewEntity()
+	e := mut.New()
 	s0, s1 := mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -80,7 +77,7 @@ func TestMap2Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e = mut.NewEntityWith(&testStruct0{}, &testStruct1{})
+	e = mut.New()
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
@@ -88,14 +85,9 @@ func TestMap2Generated(t *testing.T) {
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
 
-	mut.NewEntities(2)
-	mut.NewEntitiesWith(2, &testStruct0{}, &testStruct1{})
+	mut.NewBatch(2)
 
-	q := mut.NewEntitiesQuery(2)
-	q.Close()
-	q = mut.NewEntitiesWithQuery(2,
-		&testStruct0{}, &testStruct1{},
-	)
+	q := mut.NewQuery(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -116,7 +108,7 @@ func TestMap3Generated(t *testing.T) {
 	map0 := NewMap[testStruct0](&w)
 	map1 := NewMap[testStruct1](&w)
 
-	e := mut.NewEntity()
+	e := mut.New()
 	s0, s1, _ := mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -137,9 +129,7 @@ func TestMap3Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e = mut.NewEntityWith(
-		&testStruct0{}, &testStruct1{}, &testStruct2{},
-	)
+	e = mut.New()
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
@@ -147,14 +137,9 @@ func TestMap3Generated(t *testing.T) {
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
 
-	mut.NewEntities(2)
-	mut.NewEntitiesWith(2, &testStruct0{}, &testStruct1{}, &testStruct2{})
+	mut.NewBatch(2)
 
-	q := mut.NewEntitiesQuery(2)
-	q.Close()
-	q = mut.NewEntitiesWithQuery(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{},
-	)
+	q := mut.NewQuery(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -175,7 +160,7 @@ func TestMap4Generated(t *testing.T) {
 	map0 := NewMap[testStruct0](&w)
 	map1 := NewMap[testStruct1](&w)
 
-	e := mut.NewEntity()
+	e := mut.New()
 	s0, s1, _, _ := mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -196,9 +181,7 @@ func TestMap4Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e = mut.NewEntityWith(
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-	)
+	e = mut.New()
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
@@ -206,14 +189,9 @@ func TestMap4Generated(t *testing.T) {
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
 
-	mut.NewEntities(2)
-	mut.NewEntitiesWith(2, &testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{})
+	mut.NewBatch(2)
 
-	q := mut.NewEntitiesQuery(2)
-	q.Close()
-	q = mut.NewEntitiesWithQuery(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-	)
+	q := mut.NewQuery(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -235,7 +213,7 @@ func TestMap5Generated(t *testing.T) {
 	map0 := NewMap[testStruct0](&w)
 	map1 := NewMap[testStruct1](&w)
 
-	e := mut.NewEntity()
+	e := mut.New()
 	s0, s1, _, _, _ := mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -257,10 +235,7 @@ func TestMap5Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e = mut.NewEntityWith(
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{},
-	)
+	e = mut.New()
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
@@ -268,18 +243,9 @@ func TestMap5Generated(t *testing.T) {
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
 
-	mut.NewEntities(2)
-	mut.NewEntitiesWith(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{},
-	)
+	mut.NewBatch(2)
 
-	q := mut.NewEntitiesQuery(2)
-	q.Close()
-	q = mut.NewEntitiesWithQuery(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{},
-	)
+	q := mut.NewQuery(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -301,7 +267,7 @@ func TestMap6Generated(t *testing.T) {
 	map0 := NewMap[testStruct0](&w)
 	map1 := NewMap[testStruct1](&w)
 
-	e := mut.NewEntity()
+	e := mut.New()
 	s0, s1, _, _, _, _ := mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -323,10 +289,7 @@ func TestMap6Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e = mut.NewEntityWith(
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{}, &testStruct5{},
-	)
+	e = mut.New()
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
@@ -334,18 +297,9 @@ func TestMap6Generated(t *testing.T) {
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
 
-	mut.NewEntities(2)
-	mut.NewEntitiesWith(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{}, &testStruct5{},
-	)
+	mut.NewBatch(2)
 
-	q := mut.NewEntitiesQuery(2)
-	q.Close()
-	q = mut.NewEntitiesWithQuery(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{}, &testStruct5{},
-	)
+	q := mut.NewQuery(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -367,7 +321,7 @@ func TestMap7Generated(t *testing.T) {
 	map0 := NewMap[testStruct0](&w)
 	map1 := NewMap[testStruct1](&w)
 
-	e := mut.NewEntity()
+	e := mut.New()
 	s0, s1, _, _, _, _, _ := mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -389,10 +343,7 @@ func TestMap7Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e = mut.NewEntityWith(
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{}, &testStruct5{}, &testStruct6{},
-	)
+	e = mut.New()
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
@@ -400,18 +351,9 @@ func TestMap7Generated(t *testing.T) {
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
 
-	mut.NewEntities(2)
-	mut.NewEntitiesWith(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{}, &testStruct5{}, &testStruct6{},
-	)
+	mut.NewBatch(2)
 
-	q := mut.NewEntitiesQuery(2)
-	q.Close()
-	q = mut.NewEntitiesWithQuery(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{}, &testStruct5{}, &testStruct6{},
-	)
+	q := mut.NewQuery(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -433,7 +375,7 @@ func TestMap8Generated(t *testing.T) {
 	map0 := NewMap[testStruct0](&w)
 	map1 := NewMap[testStruct1](&w)
 
-	e := mut.NewEntity()
+	e := mut.New()
 	s0, s1, _, _, _, _, _, _ := mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -455,10 +397,7 @@ func TestMap8Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
-	e = mut.NewEntityWith(
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
-	)
+	e = mut.New()
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
@@ -466,18 +405,9 @@ func TestMap8Generated(t *testing.T) {
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
 
-	mut.NewEntities(2)
-	mut.NewEntitiesWith(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
-	)
+	mut.NewBatch(2)
 
-	q := mut.NewEntitiesQuery(2)
-	q.Close()
-	q = mut.NewEntitiesWithQuery(2,
-		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
-		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
-	)
+	q := mut.NewQuery(2)
 	q.Close()
 
 	mut.GetUnchecked(e)

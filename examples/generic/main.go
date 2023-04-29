@@ -40,7 +40,7 @@ func main() {
 	// Create entities.
 	for i := 0; i < 1000; i++ {
 		// Create a new Entity with components.
-		e := mapper.NewEntity()
+		e := mapper.New()
 		pos, vel, _, _ := mapper.Get(e)
 
 		// Initialize component fields.

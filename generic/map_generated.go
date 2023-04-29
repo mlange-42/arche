@@ -54,64 +54,29 @@ func (m *Map1[A]) GetUnchecked(entity ecs.Entity) *A {
 	return (*A)(m.world.GetUnchecked(entity, m.id0))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map1's components.
+// New creates a new [ecs.Entity] with the Map1's components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map1[A]) NewEntity() ecs.Entity {
+func (m *Map1[A]) New() ecs.Entity {
 	entity := m.world.NewEntity(m.ids...)
 	return entity
 }
 
-// NewEntities creates entities with the Map1's components.
+// NewBatch creates entities with the Map1's components.
 //
-// See also [Map1.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map1[A]) NewEntities(count int) {
-	ecs.NewBuilder(m.world, m.ids...).Batch(count)
+// See also [Map1.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map1[A]) NewBatch(count int) {
+	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
 }
 
-// NewEntities creates entities with the Map1's components.
+// NewQuery creates entities with the Map1's components.
 // It returns a [Query1] over the new entities.
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map1.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map1[A]) NewEntitiesQuery(count int) Query1[A] {
-	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
-	return Query1[A]{
-		Query: query,
-		id0:   m.id0,
-	}
-}
-
-// NewEntityWith creates a new [ecs.Entity] with the Map1's components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map1[A]) NewEntityWith(a *A) ecs.Entity {
-	entity := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-	).Build()
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map1's components, using the supplied values.
-//
-// See also [Map1.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map1[A]) NewEntitiesWith(count int, a *A) {
-	ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-	).Batch(count)
-}
-
-// NewEntitiesWithQuery creates entities with the Map1's components, using the supplied values.
-// It returns a [Query1] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map1.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map1[A]) NewEntitiesWithQuery(count int, a *A) Query1[A] {
-	query := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-	).Query(count)
+// See also [Map1.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map1[A]) NewQuery(count int) Query1[A] {
+	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
 	return Query1[A]{
 		Query: query,
 		id0:   m.id0,
@@ -209,68 +174,29 @@ func (m *Map2[A, B]) GetUnchecked(entity ecs.Entity) (*A, *B) {
 		(*B)(m.world.GetUnchecked(entity, m.id1))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map2's components.
+// New creates a new [ecs.Entity] with the Map2's components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map2[A, B]) NewEntity() ecs.Entity {
+func (m *Map2[A, B]) New() ecs.Entity {
 	entity := m.world.NewEntity(m.ids...)
 	return entity
 }
 
-// NewEntities creates entities with the Map2's components.
+// NewBatch creates entities with the Map2's components.
 //
-// See also [Map2.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map2[A, B]) NewEntities(count int) {
-	ecs.NewBuilder(m.world, m.ids...).Batch(count)
+// See also [Map2.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map2[A, B]) NewBatch(count int) {
+	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
 }
 
-// NewEntities creates entities with the Map2's components.
+// NewQuery creates entities with the Map2's components.
 // It returns a [Query2] over the new entities.
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map2.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map2[A, B]) NewEntitiesQuery(count int) Query2[A, B] {
-	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
-	return Query2[A, B]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-	}
-}
-
-// NewEntityWith creates a new [ecs.Entity] with the Map2's components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map2[A, B]) NewEntityWith(a *A, b *B) ecs.Entity {
-	entity := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-	).Build()
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map2's components, using the supplied values.
-//
-// See also [Map2.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map2[A, B]) NewEntitiesWith(count int, a *A, b *B) {
-	ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-	).Batch(count)
-}
-
-// NewEntitiesWithQuery creates entities with the Map2's components, using the supplied values.
-// It returns a [Query2] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map2.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map2[A, B]) NewEntitiesWithQuery(count int, a *A, b *B) Query2[A, B] {
-	query := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-	).Query(count)
+// See also [Map2.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map2[A, B]) NewQuery(count int) Query2[A, B] {
+	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
 	return Query2[A, B]{
 		Query: query,
 		id0:   m.id0,
@@ -374,72 +300,29 @@ func (m *Map3[A, B, C]) GetUnchecked(entity ecs.Entity) (*A, *B, *C) {
 		(*C)(m.world.GetUnchecked(entity, m.id2))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map3's components.
+// New creates a new [ecs.Entity] with the Map3's components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map3[A, B, C]) NewEntity() ecs.Entity {
+func (m *Map3[A, B, C]) New() ecs.Entity {
 	entity := m.world.NewEntity(m.ids...)
 	return entity
 }
 
-// NewEntities creates entities with the Map3's components.
+// NewBatch creates entities with the Map3's components.
 //
-// See also [Map3.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map3[A, B, C]) NewEntities(count int) {
-	ecs.NewBuilder(m.world, m.ids...).Batch(count)
+// See also [Map3.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map3[A, B, C]) NewBatch(count int) {
+	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
 }
 
-// NewEntities creates entities with the Map3's components.
+// NewQuery creates entities with the Map3's components.
 // It returns a [Query3] over the new entities.
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map3.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map3[A, B, C]) NewEntitiesQuery(count int) Query3[A, B, C] {
-	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
-	return Query3[A, B, C]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-	}
-}
-
-// NewEntityWith creates a new [ecs.Entity] with the Map3's components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map3[A, B, C]) NewEntityWith(a *A, b *B, c *C) ecs.Entity {
-	entity := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-	).Build()
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map3's components, using the supplied values.
-//
-// See also [Map3.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map3[A, B, C]) NewEntitiesWith(count int, a *A, b *B, c *C) {
-	ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-	).Batch(count)
-}
-
-// NewEntitiesWithQuery creates entities with the Map3's components, using the supplied values.
-// It returns a [Query3] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map3.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map3[A, B, C]) NewEntitiesWithQuery(count int, a *A, b *B, c *C) Query3[A, B, C] {
-	query := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-	).Query(count)
+// See also [Map3.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map3[A, B, C]) NewQuery(count int) Query3[A, B, C] {
+	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
 	return Query3[A, B, C]{
 		Query: query,
 		id0:   m.id0,
@@ -549,76 +432,29 @@ func (m *Map4[A, B, C, D]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D) {
 		(*D)(m.world.GetUnchecked(entity, m.id3))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map4's components.
+// New creates a new [ecs.Entity] with the Map4's components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map4[A, B, C, D]) NewEntity() ecs.Entity {
+func (m *Map4[A, B, C, D]) New() ecs.Entity {
 	entity := m.world.NewEntity(m.ids...)
 	return entity
 }
 
-// NewEntities creates entities with the Map4's components.
+// NewBatch creates entities with the Map4's components.
 //
-// See also [Map4.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map4[A, B, C, D]) NewEntities(count int) {
-	ecs.NewBuilder(m.world, m.ids...).Batch(count)
+// See also [Map4.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map4[A, B, C, D]) NewBatch(count int) {
+	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
 }
 
-// NewEntities creates entities with the Map4's components.
+// NewQuery creates entities with the Map4's components.
 // It returns a [Query4] over the new entities.
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map4.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map4[A, B, C, D]) NewEntitiesQuery(count int) Query4[A, B, C, D] {
-	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
-	return Query4[A, B, C, D]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-	}
-}
-
-// NewEntityWith creates a new [ecs.Entity] with the Map4's components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map4[A, B, C, D]) NewEntityWith(a *A, b *B, c *C, d *D) ecs.Entity {
-	entity := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-	).Build()
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map4's components, using the supplied values.
-//
-// See also [Map4.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map4[A, B, C, D]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D) {
-	ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-	).Batch(count)
-}
-
-// NewEntitiesWithQuery creates entities with the Map4's components, using the supplied values.
-// It returns a [Query4] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map4.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map4[A, B, C, D]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D) Query4[A, B, C, D] {
-	query := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-	).Query(count)
+// See also [Map4.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map4[A, B, C, D]) NewQuery(count int) Query4[A, B, C, D] {
+	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
 	return Query4[A, B, C, D]{
 		Query: query,
 		id0:   m.id0,
@@ -734,80 +570,29 @@ func (m *Map5[A, B, C, D, E]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D, *
 		(*E)(m.world.GetUnchecked(entity, m.id4))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map5's components.
+// New creates a new [ecs.Entity] with the Map5's components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map5[A, B, C, D, E]) NewEntity() ecs.Entity {
+func (m *Map5[A, B, C, D, E]) New() ecs.Entity {
 	entity := m.world.NewEntity(m.ids...)
 	return entity
 }
 
-// NewEntities creates entities with the Map5's components.
+// NewBatch creates entities with the Map5's components.
 //
-// See also [Map5.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map5[A, B, C, D, E]) NewEntities(count int) {
-	ecs.NewBuilder(m.world, m.ids...).Batch(count)
+// See also [Map5.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map5[A, B, C, D, E]) NewBatch(count int) {
+	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
 }
 
-// NewEntities creates entities with the Map5's components.
+// NewQuery creates entities with the Map5's components.
 // It returns a [Query5] over the new entities.
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map5.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map5[A, B, C, D, E]) NewEntitiesQuery(count int) Query5[A, B, C, D, E] {
-	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
-	return Query5[A, B, C, D, E]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-	}
-}
-
-// NewEntityWith creates a new [ecs.Entity] with the Map5's components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map5[A, B, C, D, E]) NewEntityWith(a *A, b *B, c *C, d *D, e *E) ecs.Entity {
-	entity := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-	).Build()
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map5's components, using the supplied values.
-//
-// See also [Map5.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map5[A, B, C, D, E]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E) {
-	ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-	).Batch(count)
-}
-
-// NewEntitiesWithQuery creates entities with the Map5's components, using the supplied values.
-// It returns a [Query5] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map5.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map5[A, B, C, D, E]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E) Query5[A, B, C, D, E] {
-	query := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-	).Query(count)
+// See also [Map5.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map5[A, B, C, D, E]) NewQuery(count int) Query5[A, B, C, D, E] {
+	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
 	return Query5[A, B, C, D, E]{
 		Query: query,
 		id0:   m.id0,
@@ -929,84 +714,29 @@ func (m *Map6[A, B, C, D, E, F]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D
 		(*F)(m.world.GetUnchecked(entity, m.id5))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map6's components.
+// New creates a new [ecs.Entity] with the Map6's components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map6[A, B, C, D, E, F]) NewEntity() ecs.Entity {
+func (m *Map6[A, B, C, D, E, F]) New() ecs.Entity {
 	entity := m.world.NewEntity(m.ids...)
 	return entity
 }
 
-// NewEntities creates entities with the Map6's components.
+// NewBatch creates entities with the Map6's components.
 //
-// See also [Map6.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map6[A, B, C, D, E, F]) NewEntities(count int) {
-	ecs.NewBuilder(m.world, m.ids...).Batch(count)
+// See also [Map6.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map6[A, B, C, D, E, F]) NewBatch(count int) {
+	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
 }
 
-// NewEntities creates entities with the Map6's components.
+// NewQuery creates entities with the Map6's components.
 // It returns a [Query6] over the new entities.
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map6.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map6[A, B, C, D, E, F]) NewEntitiesQuery(count int) Query6[A, B, C, D, E, F] {
-	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
-	return Query6[A, B, C, D, E, F]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-	}
-}
-
-// NewEntityWith creates a new [ecs.Entity] with the Map6's components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map6[A, B, C, D, E, F]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F) ecs.Entity {
-	entity := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-	).Build()
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map6's components, using the supplied values.
-//
-// See also [Map6.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map6[A, B, C, D, E, F]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F) {
-	ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-	).Batch(count)
-}
-
-// NewEntitiesWithQuery creates entities with the Map6's components, using the supplied values.
-// It returns a [Query6] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map6.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map6[A, B, C, D, E, F]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F) Query6[A, B, C, D, E, F] {
-	query := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-	).Query(count)
+// See also [Map6.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map6[A, B, C, D, E, F]) NewQuery(count int) Query6[A, B, C, D, E, F] {
+	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
 	return Query6[A, B, C, D, E, F]{
 		Query: query,
 		id0:   m.id0,
@@ -1134,88 +864,29 @@ func (m *Map7[A, B, C, D, E, F, G]) GetUnchecked(entity ecs.Entity) (*A, *B, *C,
 		(*G)(m.world.GetUnchecked(entity, m.id6))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map7's components.
+// New creates a new [ecs.Entity] with the Map7's components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntity() ecs.Entity {
+func (m *Map7[A, B, C, D, E, F, G]) New() ecs.Entity {
 	entity := m.world.NewEntity(m.ids...)
 	return entity
 }
 
-// NewEntities creates entities with the Map7's components.
+// NewBatch creates entities with the Map7's components.
 //
-// See also [Map7.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntities(count int) {
-	ecs.NewBuilder(m.world, m.ids...).Batch(count)
+// See also [Map7.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map7[A, B, C, D, E, F, G]) NewBatch(count int) {
+	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
 }
 
-// NewEntities creates entities with the Map7's components.
+// NewQuery creates entities with the Map7's components.
 // It returns a [Query7] over the new entities.
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map7.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesQuery(count int) Query7[A, B, C, D, E, F, G] {
-	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
-	return Query7[A, B, C, D, E, F, G]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
-	}
-}
-
-// NewEntityWith creates a new [ecs.Entity] with the Map7's components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G) ecs.Entity {
-	entity := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-	).Build()
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map7's components, using the supplied values.
-//
-// See also [Map7.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) {
-	ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-	).Batch(count)
-}
-
-// NewEntitiesWithQuery creates entities with the Map7's components, using the supplied values.
-// It returns a [Query7] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map7.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map7[A, B, C, D, E, F, G]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G) Query7[A, B, C, D, E, F, G] {
-	query := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-	).Query(count)
+// See also [Map7.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map7[A, B, C, D, E, F, G]) NewQuery(count int) Query7[A, B, C, D, E, F, G] {
+	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
 	return Query7[A, B, C, D, E, F, G]{
 		Query: query,
 		id0:   m.id0,
@@ -1349,92 +1020,29 @@ func (m *Map8[A, B, C, D, E, F, G, H]) GetUnchecked(entity ecs.Entity) (*A, *B, 
 		(*H)(m.world.GetUnchecked(entity, m.id7))
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map8's components.
+// New creates a new [ecs.Entity] with the Map8's components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntity() ecs.Entity {
+func (m *Map8[A, B, C, D, E, F, G, H]) New() ecs.Entity {
 	entity := m.world.NewEntity(m.ids...)
 	return entity
 }
 
-// NewEntities creates entities with the Map8's components.
+// NewBatch creates entities with the Map8's components.
 //
-// See also [Map8.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntities(count int) {
-	ecs.NewBuilder(m.world, m.ids...).Batch(count)
+// See also [Map8.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewBatch(count int) {
+	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
 }
 
-// NewEntities creates entities with the Map8's components.
+// NewQuery creates entities with the Map8's components.
 // It returns a [Query8] over the new entities.
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map8.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesQuery(count int) Query8[A, B, C, D, E, F, G, H] {
-	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
-	return Query8[A, B, C, D, E, F, G, H]{
-		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
-		id7:   m.id7,
-	}
-}
-
-// NewEntityWith creates a new [ecs.Entity] with the Map8's components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntityWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) ecs.Entity {
-	entity := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-	).Build()
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map8's components, using the supplied values.
-//
-// See also [Map8.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWith(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) {
-	ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-	).Batch(count)
-}
-
-// NewEntitiesWithQuery creates entities with the Map8's components, using the supplied values.
-// It returns a [Query8] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map8.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewEntitiesWithQuery(count int, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) Query8[A, B, C, D, E, F, G, H] {
-	query := ecs.NewBuilderWith(m.world,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-	).Query(count)
+// See also [Map8.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewQuery(count int) Query8[A, B, C, D, E, F, G, H] {
+	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
 	return Query8[A, B, C, D, E, F, G, H]{
 		Query: query,
 		id0:   m.id0,

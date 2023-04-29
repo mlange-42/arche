@@ -125,9 +125,9 @@ func TestQueryCached(t *testing.T) {
 	assert.Equal(t, 0, q.Count())
 	q.Close()
 
-	NewBuilder(&w, posID).Batch(10)
-	NewBuilder(&w, velID).Batch(10)
-	NewBuilder(&w, posID, velID).Batch(10)
+	NewBuilder(&w, posID).NewBatch(10)
+	NewBuilder(&w, velID).NewBatch(10)
+	NewBuilder(&w, posID, velID).NewBatch(10)
 
 	q = w.Query(&filterPos)
 	assert.Equal(t, 20, q.Count())
@@ -137,7 +137,7 @@ func TestQueryCached(t *testing.T) {
 	assert.Equal(t, 10, q.Count())
 	q.Close()
 
-	NewBuilder(&w, posID).Batch(10)
+	NewBuilder(&w, posID).NewBatch(10)
 
 	q = w.Query(&filterPos)
 	assert.Equal(t, 30, q.Count())

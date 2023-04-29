@@ -40,10 +40,10 @@ func run() {
 	builder := ecs.NewBuilder(&world, posID, velID)
 
 	// Batch-create entities.
-	builder.Batch(100)
+	builder.NewBatch(100)
 
 	// Batch-create entities, and iterate them.
-	query := builder.Query(100)
+	query := builder.NewQuery(100)
 	for query.Next() {
 		pos := (*Position)(query.Get(posID))
 		pos.X = 1.0
@@ -68,10 +68,10 @@ func runGeneric() {
 	mapper := generic.NewMap2[Position, Velocity](&world)
 
 	// Batch-create entities using the mapper.
-	mapper.NewEntities(100)
+	mapper.NewBatch(100)
 
 	// Batch-create entities using the mapper, and iterate them.
-	query := mapper.NewEntitiesQuery(100)
+	query := mapper.NewQuery(100)
 	for query.Next() {
 		pos, _ := query.Get()
 		pos.X = 1.0

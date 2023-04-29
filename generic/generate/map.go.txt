@@ -47,29 +47,29 @@ func (m *Map{{ .Index }}{{ .Types }}) GetUnchecked(entity ecs.Entity) ({{ .Types
 	return {{ .ReturnAll }}
 }
 
-// NewEntity creates a new [ecs.Entity] with the Map{{ .Index }}'s components.
+// New creates a new [ecs.Entity] with the Map{{ .Index }}'s components.
 //
 // See also [ecs.World.NewEntity].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntity() ecs.Entity {
+func (m *Map{{ .Index }}{{ .Types }}) New() ecs.Entity {
 	entity := m.world.NewEntity(m.ids...)
 	return entity
 }
 
-// NewEntities creates entities with the Map{{ .Index }}'s components.
+// NewBatch creates entities with the Map{{ .Index }}'s components.
 //
-// See also [Map{{ .Index }}.NewEntitiesQuery] and [ecs.Batch.NewEntities].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntities(count int) {
-	ecs.NewBuilder(m.world, m.ids...).Batch(count)
+// See also [Map{{ .Index }}.NewQuery] and [ecs.Batch.NewBatch].
+func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int) {
+	ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
 }
 
-// NewEntities creates entities with the Map{{ .Index }}'s components.
+// NewQuery creates entities with the Map{{ .Index }}'s components.
 // It returns a [Query{{ .Index }}] over the new entities.
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map{{ .Index }}.NewEntities] and [ecs.Batch.NewEntitiesQuery].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesQuery(count int) Query{{ .Index }}{{ .Types }} {
-	query := ecs.NewBuilder(m.world, m.ids...).Query(count)
+// See also [Map{{ .Index }}.NewBatch] and [ecs.Builder.NewQuery].
+func (m *Map{{ .Index }}{{ .Types }}) NewQuery(count int) Query{{ .Index }}{{ .Types }} {
+	query := ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
 	return Query{{ .Index }}{{ .Types }}{
 		Query: query,
 		{{ .IDAssign2 }}
@@ -77,41 +77,6 @@ func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesQuery(count int) Query{{ .Index
 }
 
 {{if .ReturnAll}}
-// NewEntityWith creates a new [ecs.Entity] with the Map{{ .Index }}'s components, using the supplied values.
-//
-// See also [ecs.World.NewEntityWith].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntityWith({{ .Arguments }}) ecs.Entity {
-	entity := ecs.NewBuilderWith(m.world,
-		{{ .Components }}
-	).Build()
-	return entity
-}
-
-// NewEntitiesWith creates entities with the Map{{ .Index }}'s components, using the supplied values.
-//
-// See also [Map{{ .Index }}.NewEntitiesWithQuery] and [ecs.Batch.NewEntitiesWith].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWith(count int, {{ .Arguments }}) {
-	ecs.NewBuilderWith(m.world,
-		{{ .Components }}
-	).Batch(count)
-}
-
-// NewEntitiesWithQuery creates entities with the Map{{ .Index }}'s components, using the supplied values.
-// It returns a [Query{{ .Index }}] over the new entities.
-//
-// Listener notification is delayed until the query is closed of fully iterated.
-//
-// See also [Map{{ .Index }}.NewEntitiesWith] and [ecs.Batch.NewEntitiesWithQuery].
-func (m *Map{{ .Index }}{{ .Types }}) NewEntitiesWithQuery(count int, {{ .Arguments }}) Query{{ .Index }}{{ .Types }} {
-	query := ecs.NewBuilderWith(m.world,
-		{{ .Components }}
-	).Query(count)
-	return Query{{ .Index }}{{ .Types }}{
-		Query: query,
-		{{ .IDAssign2 }}
-	}
-}
-
 // Add the Map{{ .Index }}'s components to the given entity.
 //
 // See also [ecs.World.Add].

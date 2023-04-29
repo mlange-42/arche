@@ -46,7 +46,7 @@ func run(rounds, iters, entities int) {
 		mapper := generic.NewMap2[position, velocity](&world)
 
 		for j := 0; j < entities; j++ {
-			mapper.NewEntity()
+			mapper.New()
 		}
 
 		filter := generic.NewFilter2[position, velocity]()
