@@ -21,13 +21,13 @@ func benchmarkParentArray(b *testing.B, numParents int) {
 		parents = append(parents, spawnedPar.Entity())
 	}
 
-	spawnedChild := childMapper.NewQuery(numParents * numChildren)
+	spawnedChild := childMapper.NewQuery(numParents * numArrChildren)
 	cnt := 0
 	for spawnedChild.Next() {
 		data := spawnedChild.Get()
 		data.Value = 1
-		par := parentMapper.Get(parents[cnt/numChildren])
-		par.Children[cnt%numChildren] = spawnedChild.Entity()
+		par := parentMapper.Get(parents[cnt/numArrChildren])
+		par.Children[cnt%numArrChildren] = spawnedChild.Entity()
 		cnt++
 	}
 
@@ -50,7 +50,7 @@ func benchmarkParentArray(b *testing.B, numParents int) {
 	b.StopTimer()
 	query := parentFilter.Query(&world)
 
-	expected := numChildren * b.N
+	expected := numArrChildren * b.N
 	for query.Next() {
 		par := query.Get()
 		if par.Value != expected {
