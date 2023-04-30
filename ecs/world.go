@@ -200,6 +200,10 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 
 	entity := w.createEntity(arch)
 
+	if !target.IsZero() {
+		w.entities[target.id].isTarget = true
+	}
+
 	if w.listener != nil {
 		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.graphNode.Ids, 1})
 	}
@@ -223,6 +227,10 @@ func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Compone
 	w.checkRelation(arch, targetID)
 
 	entity := w.createEntity(arch)
+
+	if !target.IsZero() {
+		w.entities[target.id].isTarget = true
+	}
 
 	for _, c := range comps {
 		w.copyTo(entity, c.ID, c.Comp)
@@ -812,6 +820,9 @@ func (w *World) newEntitiesNoNotify(count int, targetID int8, target Entity, com
 	}
 	if targetID >= 0 {
 		w.checkRelation(arch, uint8(targetID))
+		if !target.IsZero() {
+			w.entities[target.id].isTarget = true
+		}
 	}
 
 	startIdx := arch.Len()
@@ -844,6 +855,9 @@ func (w *World) newEntitiesWithNoNotify(count int, targetID int8, target Entity,
 	}
 	if targetID >= 0 {
 		w.checkRelation(arch, uint8(targetID))
+		if !target.IsZero() {
+			w.entities[target.id].isTarget = true
+		}
 	}
 
 	startIdx := arch.Len()
