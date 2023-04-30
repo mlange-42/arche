@@ -13,7 +13,7 @@
 
 ### Features
 
-* Relation archetypes are removed when they are empty *and* the target entity is dead (#238)
+* Relation archetypes are removed when they are empty *and* the target entity is dead (#238, #242)
 
 ### Performance
 
