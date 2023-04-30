@@ -919,16 +919,26 @@ func TestWorldReset(t *testing.T) {
 	world := NewWorld()
 
 	world.SetListener(func(e *EntityEvent) {})
+	AddResource(&world, &rotation{100})
 
 	posID := ComponentID[Position](&world)
 	velID := ComponentID[Velocity](&world)
+	relID := ComponentID[testRelationA](&world)
 
-	world.NewEntity(posID)
+	target1 := world.NewEntity()
+	target2 := world.NewEntity()
+
 	world.NewEntity(velID)
 	world.NewEntity(posID, velID)
 	world.NewEntity(posID, velID)
+	e1 := world.NewEntity(posID, relID)
+	e2 := world.NewEntity(posID, relID)
 
-	AddResource(&world, &rotation{100})
+	world.SetRelation(e1, relID, target1)
+	world.SetRelation(e2, relID, target2)
+
+	world.RemoveEntity(e1)
+	world.RemoveEntity(target1)
 
 	world.Reset()
 
@@ -940,8 +950,8 @@ func TestWorldReset(t *testing.T) {
 	assert.Equal(t, 0, query.Count())
 	query.Close()
 
-	e1 := world.NewEntity(posID)
-	e2 := world.NewEntity(velID)
+	e1 = world.NewEntity(posID)
+	e2 = world.NewEntity(velID)
 	world.NewEntity(posID, velID)
 	world.NewEntity(posID, velID)
 

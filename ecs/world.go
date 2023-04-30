@@ -665,6 +665,7 @@ func (w *World) checkRelation(arch *archetype, comp ID) {
 // Reset removes all entities and resources from the world.
 //
 // Does NOT free reserved memory, remove archetypes, clear the registry, clear cached filters, etc.
+// However, it removes archetypes with a relation component that is not zero.
 //
 // Can be used to run systematic simulations without the need to re-allocate memory for each run.
 // Accelerates re-populating the world by a factor of 2-3.
@@ -679,7 +680,15 @@ func (w *World) Reset() {
 	len := w.archetypes.Len()
 	var i int32
 	for i = 0; i < len; i++ {
-		w.archetypes.Get(i).Reset()
+		arch := w.archetypes.Get(i)
+		if !arch.IsActive() {
+			continue
+		}
+		if arch.HasRelation() && !arch.Relation.IsZero() {
+			w.deleteArchetype(arch)
+		} else {
+			arch.Reset()
+		}
 	}
 }
 
@@ -1079,20 +1088,20 @@ func (w *World) cleanupArchetype(arch *archetype) {
 		return
 	}
 
-	w.deleteArchetype(arch, target)
+	w.deleteArchetype(arch)
 }
 
 // Removes empty archetypes that have a target relation to the given entity.
 func (w *World) cleanupArchetypes(target Entity) {
 	for _, node := range w.relationNodes {
 		if arch, ok := node.archetypes[target]; ok && arch.Len() == 0 {
-			w.deleteArchetype(arch, target)
+			w.deleteArchetype(arch)
 		}
 	}
 }
 
-func (w *World) deleteArchetype(arch *archetype, target Entity) {
-	delete(arch.graphNode.archetypes, target)
+func (w *World) deleteArchetype(arch *archetype) {
+	delete(arch.graphNode.archetypes, arch.Relation)
 	idx := arch.index
 	w.freeArchetypes = append(w.freeArchetypes, idx)
 	w.archetypes.Get(idx).Deactivate()
