@@ -2,7 +2,7 @@ package ecs
 
 // Cache entry for a [Filter].
 type cacheEntry struct {
-	ID         ID                // Filter ID.
+	ID         uint32            // Filter ID.
 	Filter     Filter            // The underlying filter.
 	Archetypes archetypePointers // Archetypes matching the filter.
 }
@@ -21,19 +21,18 @@ type cacheEntry struct {
 // Further, cached filters should be used for complex queries built with package [github.com/mlange-42/arche/filter].
 //
 // The overhead of tracking cached filters internally is very low, as updates are required only when new archetypes are created.
-// The number of cached filters is limited to [MaskTotalBits].
 type Cache struct {
-	indices       idMap[int]                       // Mapping from filter IDs to indices in filters
+	indices       map[uint32]int                   // Mapping from filter IDs to indices in filters
 	filters       []cacheEntry                     // The cached filters, indexed by indices
 	getArchetypes func(f Filter) archetypePointers // Callback for getting archetypes for a new filter from the world
-	bitPool       bitPool                          // Pool for filter IDs
+	intPool       intPool[uint32]                  // Pool for filter IDs
 }
 
 // newCache creates a new [Cache].
 func newCache() Cache {
 	return Cache{
-		bitPool: bitPool{},
-		indices: newIDMap[int](),
+		intPool: newIntPool[uint32](128),
+		indices: map[uint32]int{},
 		filters: []cacheEntry{},
 	}
 }
@@ -49,14 +48,14 @@ func (c *Cache) Register(f Filter) CachedFilter {
 	if _, ok := f.(*CachedFilter); ok {
 		panic("filter is already cached")
 	}
-	id := c.bitPool.Get()
+	id := c.intPool.Get()
 	c.filters = append(c.filters,
 		cacheEntry{
 			ID:         id,
 			Filter:     f,
 			Archetypes: c.getArchetypes(f),
 		})
-	c.indices.Set(id, len(c.filters)-1)
+	c.indices[id] = len(c.filters) - 1
 	return CachedFilter{f, id}
 }
 
@@ -64,17 +63,17 @@ func (c *Cache) Register(f Filter) CachedFilter {
 //
 // Returns the original filter.
 func (c *Cache) Unregister(f *CachedFilter) Filter {
-	idx, ok := c.indices.Get(f.id)
+	idx, ok := c.indices[f.id]
 	if !ok {
 		panic("no filter for id found to unregister")
 	}
 	filter := c.filters[idx].Filter
-	c.indices.Remove(f.id)
+	delete(c.indices, f.id)
 
 	last := len(c.filters) - 1
 	if idx != last {
 		c.filters[idx], c.filters[last] = c.filters[last], c.filters[idx]
-		c.indices.Set(c.filters[idx].ID, idx)
+		c.indices[c.filters[idx].ID] = idx
 	}
 	c.filters[last] = cacheEntry{}
 	c.filters = c.filters[:last]
@@ -86,7 +85,7 @@ func (c *Cache) Unregister(f *CachedFilter) Filter {
 //
 // Panics if there is no entry for the filter's ID.
 func (c *Cache) get(f *CachedFilter) *cacheEntry {
-	if idx, ok := c.indices.Get(f.id); ok {
+	if idx, ok := c.indices[f.id]; ok {
 		return &c.filters[idx]
 	}
 	panic("no filter for id found")

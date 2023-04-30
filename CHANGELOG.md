@@ -14,6 +14,7 @@
 ### Features
 
 * Relation archetypes are removed when they are empty *and* the target entity is dead (#238, #242)
+* Support an unlimited number of cached filters, instead of 128 (#245)
 
 ### Performance
 

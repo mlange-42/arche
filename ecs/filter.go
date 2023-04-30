@@ -39,7 +39,7 @@ func (f *RelationFilter) Matches(bits Mask, relation *Entity) bool {
 // Create it using [Cache.Register].
 type CachedFilter struct {
 	filter Filter
-	id     ID
+	id     uint32
 }
 
 // Matches matches a filter against a mask.
