@@ -85,9 +85,14 @@ func (a *archetypeAccess) GetRelation() Entity {
 	return a.Relation
 }
 
-// HasComponent returns whether the archetype contains the given component ID
+// HasComponent returns whether the archetype contains the given component ID.
 func (a *archetypeAccess) HasComponent(id ID) bool {
 	return a.getLayout(id).pointer != nil
+}
+
+// HasRelation returns whether the archetype has a relation component.
+func (a *archetypeAccess) HasRelation() bool {
+	return a.RelationComponent >= 0
 }
 
 // GetLayout returns the column layout for a component.
