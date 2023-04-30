@@ -34,8 +34,11 @@ func NewFilter{{ .Index }}{{ .TypesFull }}() *Filter{{ .Index }}{{ .Types }} {
 //
 // Only affects component types that were specified in the query.
 func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 {{ end }}
@@ -44,8 +47,11 @@ func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask ...Comp) *Filter{{ .Index
 //
 // Create the required mask items with [T].
 func (q *Filter{{ .Index }}{{ .Types }}) With(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.include = append(q.include, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -53,8 +59,11 @@ func (q *Filter{{ .Index }}{{ .Types }}) With(mask ...Comp) *Filter{{ .Index }}{
 //
 // Create the required mask items with [T].
 func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
+	q.compiled.Reset(false)
 	return q
 }
 
@@ -62,9 +71,12 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 //
 // Create the required component ID with [T].
 func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ecs.Entity) *Filter{{ .Index }}{{ .Types }} {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
 	q.targetType = comp
 	q.target = target
-	q.compiled.Reset()
+	q.compiled.Reset(true)
 	return q
 }
 
@@ -94,6 +106,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
 	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
 	q.compiled.filter = &q.compiled.cachedFilter
+	q.compiled.locked = true
 }
 
 // Unregister the filter from caching.
@@ -105,6 +118,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) Unregister(w *ecs.World) {
 	} else {
 		panic("can't unregister a filter that is not cached")
 	}
+	q.compiled.locked = false
 }
 
 // Query{{ .Index }} is a generic query iterator for {{ .NumberStr }} components.

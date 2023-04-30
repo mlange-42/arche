@@ -11,24 +11,30 @@ var relationType = reflect.TypeOf((*ecs.Relation)(nil)).Elem()
 
 // compiledQuery is a helper for compiling a generic filter into a [ecs.Filter].
 type compiledQuery struct {
-	maskFilter   ecs.MaskFilter
-	cachedFilter ecs.CachedFilter
-	filter       ecs.Filter
-	Ids          []ecs.ID
-	TargetID     int8
-	compiled     bool
+	maskFilter     ecs.MaskFilter
+	cachedFilter   ecs.CachedFilter
+	filter         ecs.Filter
+	Ids            []ecs.ID
+	TargetID       int8
+	compiled       bool
+	targetCompiled bool
+	locked         bool
 }
 
 // Compile compiles a generic filter.
 func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp, targetType Comp, target ecs.Entity) {
-	if q.compiled {
+	if q.targetCompiled {
 		return
 	}
-	q.Ids = toIds(w, include)
-	q.maskFilter = ecs.MaskFilter{
-		Include: toMaskOptional(w, q.Ids, optional),
-		Exclude: toMask(w, exclude),
+
+	if !q.compiled {
+		q.Ids = toIds(w, include)
+		q.maskFilter = ecs.MaskFilter{
+			Include: toMaskOptional(w, q.Ids, optional),
+			Exclude: toMask(w, exclude),
+		}
 	}
+
 	if targetType == nil {
 		q.filter = &q.maskFilter
 		q.TargetID = -1
@@ -53,10 +59,14 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 			Target: target,
 		}
 	}
+	q.targetCompiled = true
 	q.compiled = true
 }
 
 // Reset sets the compiledQuery to not compiled.
-func (q *compiledQuery) Reset() {
-	q.compiled = false
+func (q *compiledQuery) Reset(targetOnly bool) {
+	q.targetCompiled = false
+	if !targetOnly {
+		q.compiled = false
+	}
 }

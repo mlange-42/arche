@@ -136,6 +136,12 @@ func TestQuery0(t *testing.T) {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
 	}
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
 }
 
 func TestQuery1(t *testing.T) {
@@ -198,6 +204,13 @@ func TestQuery1(t *testing.T) {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
 	}
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
 }
 
 func TestQuery2(t *testing.T) {
@@ -266,6 +279,13 @@ func TestQuery2(t *testing.T) {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
 	}
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
 }
 
 func TestQuery3(t *testing.T) {
@@ -337,6 +357,13 @@ func TestQuery3(t *testing.T) {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
 	}
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
 }
 
 func TestQuery4(t *testing.T) {
@@ -415,6 +442,13 @@ func TestQuery4(t *testing.T) {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
 	}
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
 }
 
 func TestQuery5(t *testing.T) {
@@ -499,6 +533,13 @@ func TestQuery5(t *testing.T) {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
 	}
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
 }
 
 func TestQuery6(t *testing.T) {
@@ -588,6 +629,13 @@ func TestQuery6(t *testing.T) {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
 	}
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
 }
 
 func TestQuery7(t *testing.T) {
@@ -685,6 +733,13 @@ func TestQuery7(t *testing.T) {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
 	}
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
 }
 
 func TestQuery8(t *testing.T) {
@@ -779,6 +834,13 @@ func TestQuery8(t *testing.T) {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
 	}
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
 }
 
 func TestQueryGeneric(t *testing.T) {
