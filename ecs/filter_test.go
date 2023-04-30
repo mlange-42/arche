@@ -1,35 +1,40 @@
-package ecs
+package ecs_test
 
 import (
 	"testing"
 
+	"github.com/mlange-42/arche/ecs"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestCachedMaskFilter(t *testing.T) {
-	f := All(1, 2, 3).Without(4)
+	f := ecs.All(1, 2, 3).Without(4)
 
-	assert.True(t, f.Matches(All(1, 2, 3), nil))
-	assert.True(t, f.Matches(All(1, 2, 3, 5), nil))
+	assert.True(t, f.Matches(ecs.All(1, 2, 3), nil))
+	assert.True(t, f.Matches(ecs.All(1, 2, 3, 5), nil))
 
-	assert.False(t, f.Matches(All(1, 2), nil))
-	assert.False(t, f.Matches(All(1, 2, 3, 4), nil))
+	assert.False(t, f.Matches(ecs.All(1, 2), nil))
+	assert.False(t, f.Matches(ecs.All(1, 2, 3, 4), nil))
 }
 
 func TestCachedFilter(t *testing.T) {
-	f := All(1, 2, 3)
-	fc := CachedFilter{filter: f, id: 0}
+	w := ecs.NewWorld()
 
-	assert.Equal(t, f.Matches(All(1, 2, 3), nil), fc.Matches(All(1, 2, 3), nil))
-	assert.Equal(t, f.Matches(All(1, 2), nil), fc.Matches(All(1, 2), nil))
+	f := ecs.All(1, 2, 3)
+	fc := w.Cache().Register(f)
+
+	assert.Equal(t, f.Matches(ecs.All(1, 2, 3), nil), fc.Matches(ecs.All(1, 2, 3), nil))
+	assert.Equal(t, f.Matches(ecs.All(1, 2), nil), fc.Matches(ecs.All(1, 2), nil))
+
+	w.Cache().Unregister(&fc)
 }
 
 func ExampleMaskFilter() {
-	world := NewWorld()
-	posID := ComponentID[Position](&world)
-	velID := ComponentID[Velocity](&world)
+	world := ecs.NewWorld()
+	posID := ecs.ComponentID[Position](&world)
+	velID := ecs.ComponentID[Velocity](&world)
 
-	filter := All(posID).Without(velID)
+	filter := ecs.All(posID).Without(velID)
 	query := world.Query(&filter)
 
 	for query.Next() {
@@ -39,10 +44,10 @@ func ExampleMaskFilter() {
 }
 
 func ExampleCachedFilter() {
-	world := NewWorld()
-	posID := ComponentID[Position](&world)
+	world := ecs.NewWorld()
+	posID := ecs.ComponentID[Position](&world)
 
-	filter := All(posID)
+	filter := ecs.All(posID)
 	cached := world.Cache().Register(filter)
 
 	query := world.Query(&cached)
