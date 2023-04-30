@@ -664,7 +664,7 @@ func (w *World) checkRelation(arch *archetype, comp ID) {
 
 // Reset removes all entities and resources from the world.
 //
-// Does NOT free reserved memory, remove archetypes, clear the registry etc.
+// Does NOT free reserved memory, remove archetypes, clear the registry, clear cached filters, etc.
 //
 // Can be used to run systematic simulations without the need to re-allocate memory for each run.
 // Accelerates re-populating the world by a factor of 2-3.
@@ -781,6 +781,7 @@ func (w *World) Stats() *stats.WorldStats {
 	w.stats.ComponentTypes = types
 	w.stats.Locked = w.IsLocked()
 	w.stats.Memory = memory
+	w.stats.CachedFilters = len(w.filterCache.filters)
 
 	return &w.stats
 }

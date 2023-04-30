@@ -21,6 +21,8 @@ type WorldStats struct {
 	Archetypes []ArchetypeStats
 	// Memory used by entities and components
 	Memory int
+	// Number of cached filters
+	CachedFilters int
 }
 
 // EntityStats provide statistics about [World] entities.
@@ -61,8 +63,8 @@ func (s *WorldStats) String() string {
 	b := strings.Builder{}
 
 	fmt.Fprintf(
-		&b, "World -- Components: %d, Archetypes: %d, Memory: %.1f kB, Locked: %t\n",
-		s.ComponentCount, len(s.Archetypes), float64(s.Memory)/1024.0, s.Locked,
+		&b, "World -- Components: %d, Archetypes: %d, Filters: %d, Memory: %.1f kB, Locked: %t\n",
+		s.ComponentCount, len(s.Archetypes), s.CachedFilters, float64(s.Memory)/1024.0, s.Locked,
 	)
 
 	typeNames := make([]string, len(s.ComponentTypes))
