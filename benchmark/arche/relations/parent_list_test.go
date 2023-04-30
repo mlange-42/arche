@@ -7,7 +7,7 @@ import (
 	"github.com/mlange-42/arche/generic"
 )
 
-func benchmarkParentList(b *testing.B, numParents int) {
+func benchmarkParentList(b *testing.B, numParents int, numChildren int) {
 	b.StopTimer()
 
 	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
@@ -67,18 +67,54 @@ func benchmarkParentList(b *testing.B, numParents int) {
 	}
 }
 
+func BenchmarkRelationParentList_10_x_10(b *testing.B) {
+	benchmarkParentList(b, 10, 10)
+}
+
 func BenchmarkRelationParentList_100_x_10(b *testing.B) {
-	benchmarkParentList(b, 100)
+	benchmarkParentList(b, 100, 10)
 }
 
 func BenchmarkRelationParentList_1000_x_10(b *testing.B) {
-	benchmarkParentList(b, 1000)
+	benchmarkParentList(b, 1000, 10)
 }
 
-func BenchmarkRelationParentList_10000_x_10(b *testing.B) {
-	benchmarkParentList(b, 10000)
+func BenchmarkRelationParentList_10000_x_100(b *testing.B) {
+	benchmarkParentList(b, 10000, 100)
 }
 
-func BenchmarkRelationParentList_100000_x_10(b *testing.B) {
-	benchmarkParentList(b, 100000)
+func BenchmarkRelationParentList_10_x_100(b *testing.B) {
+	benchmarkParentList(b, 10, 100)
+}
+
+func BenchmarkRelationParentList_100_x_100(b *testing.B) {
+	benchmarkParentList(b, 100, 100)
+}
+
+func BenchmarkRelationParentList_1000_x_100(b *testing.B) {
+	benchmarkParentList(b, 1000, 100)
+}
+
+func BenchmarkRelationParentList_10000_x_1000(b *testing.B) {
+	benchmarkParentList(b, 10000, 1000)
+}
+
+func BenchmarkRelationParentList_10_x_1000(b *testing.B) {
+	benchmarkParentList(b, 10, 1000)
+}
+
+func BenchmarkRelationParentList_100_x_1000(b *testing.B) {
+	benchmarkParentList(b, 100, 1000)
+}
+
+func BenchmarkRelationParentList_1000_x_1000(b *testing.B) {
+	benchmarkParentList(b, 1000, 1000)
+}
+
+func BenchmarkRelationParentList_10_x_10000(b *testing.B) {
+	benchmarkParentList(b, 10, 10000)
+}
+
+func BenchmarkRelationParentList_100_x_10000(b *testing.B) {
+	benchmarkParentList(b, 100, 10000)
 }

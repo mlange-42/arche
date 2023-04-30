@@ -13,12 +13,18 @@ package relations
 
 import "github.com/mlange-42/arche/ecs"
 
-const numChildren = 10
+const numArrChildren = 10
 
 // Child component
 type Child struct {
 	Parent ecs.Entity
 	Value  int
+}
+
+// ChildRelation component
+type ChildRelation struct {
+	ecs.Relation
+	Value int
 }
 
 // ChildList component
@@ -29,7 +35,7 @@ type ChildList struct {
 
 // ParentArr component
 type ParentArr struct {
-	Children [numChildren]ecs.Entity
+	Children [numArrChildren]ecs.Entity
 	Value    int
 }
 
