@@ -44,12 +44,12 @@ func (a *archetypePointers) Get(index int32) *archetype {
 	return a.pointers[index]
 }
 
-// Add adds an element.
+// Add an element.
 func (a *archetypePointers) Add(arch *archetype) {
 	a.pointers = append(a.pointers, arch)
 }
 
-// Add adds an element.
+// Remove an element.
 func (a *archetypePointers) Remove(arch *archetype) {
 	for i := 0; i < len(a.pointers); i++ {
 		arch2 := a.pointers[i]
