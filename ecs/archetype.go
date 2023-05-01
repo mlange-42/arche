@@ -355,6 +355,9 @@ func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe
 //
 // Does NOT free the reserved memory.
 func (a *archetype) Reset() {
+	if a.len == 0 {
+		return
+	}
 	a.len = 0
 	for _, buf := range a.buffers {
 		buf.SetZero()
