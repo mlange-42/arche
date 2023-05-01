@@ -62,19 +62,18 @@ func AddResource[T any](w *World, res *T) ResID {
 
 // World is the central type holding [Entity] and component data, as well as resources.
 type World struct {
-	config         Config                    // World configuration.
-	listener       func(e *EntityEvent)      // Component change listener.
-	resources      Resources                 // World resources.
-	entities       []entityIndex             // Mapping from entities to archetype and index.
-	entityPool     entityPool                // Pool for entities.
-	archetypes     pagedSlice[archetype]     // The archetypes.
-	freeArchetypes []int32                   // Indices of free archetypes.
-	graph          pagedSlice[archetypeNode] // The archetype graph.
-	relationNodes  []*archetypeNode          // Archetype nodes that have an entity relation.
-	locks          lockMask                  // World locks.
-	registry       componentRegistry[ID]     // Component registry.
-	filterCache    Cache                     // Cache for registered filters.
-	stats          stats.WorldStats          // Cached world statistics
+	config        Config                    // World configuration.
+	listener      func(e *EntityEvent)      // Component change listener.
+	resources     Resources                 // World resources.
+	entities      []entityIndex             // Mapping from entities to archetype and index.
+	entityPool    entityPool                // Pool for entities.
+	archetypes    pagedSlice[archetype]     // The archetypes.
+	graph         pagedSlice[archetypeNode] // The archetype graph.
+	relationNodes []*archetypeNode          // Archetype nodes that have an entity relation.
+	locks         lockMask                  // World locks.
+	registry      componentRegistry[ID]     // Component registry.
+	filterCache   Cache                     // Cache for registered filters.
+	stats         stats.WorldStats          // Cached world statistics
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -354,42 +353,58 @@ func (w *World) RemoveEntities(filter Filter) int {
 	w.checkLocked()
 
 	lock := w.lock()
-	numArches := w.archetypes.Len()
+
 	var count uintptr
-	var i int32
-	for i = 0; i < numArches; i++ {
-		arch := w.archetypes.Get(i)
+	numNodes := w.graph.Len()
 
-		if !arch.IsActive() {
+	var n int32
+	for n = 0; n < numNodes; n++ {
+		node := w.graph.Get(n)
+
+		if !node.Matches(filter) {
 			continue
 		}
 
-		if !arch.Matches(filter) {
+		arches := node.Archetypes()
+		if arches == nil {
 			continue
 		}
 
-		len := uintptr(arch.Len())
-		count += len
+		numArches := arches.Len()
+		var i int32
+		for i = 0; i < numArches; i++ {
+			arch := arches.Get(i)
 
-		var j uintptr
-		for j = 0; j < len; j++ {
-			entity := arch.GetEntity(j)
-			if w.listener != nil {
-				w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, arch.graphNode.Ids, nil, -1})
-			}
-			index := &w.entities[entity.id]
-			index.arch = nil
-
-			if index.isTarget {
-				w.cleanupArchetypes(entity)
-				index.isTarget = false
+			if !arch.IsActive() {
+				continue
 			}
 
-			w.entityPool.Recycle(entity)
+			if !arch.Matches(filter) {
+				continue
+			}
+
+			len := uintptr(arch.Len())
+			count += len
+
+			var j uintptr
+			for j = 0; j < len; j++ {
+				entity := arch.GetEntity(j)
+				if w.listener != nil {
+					w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, node.Ids, nil, -1})
+				}
+				index := &w.entities[entity.id]
+				index.arch = nil
+
+				if index.isTarget {
+					w.cleanupArchetypes(entity)
+					index.isTarget = false
+				}
+
+				w.entityPool.Recycle(entity)
+			}
+			arch.Reset()
+			w.cleanupArchetype(arch)
 		}
-
-		arch.Reset()
-		w.cleanupArchetype(arch)
 	}
 	w.unlock(lock)
 
@@ -677,17 +692,27 @@ func (w *World) Reset() {
 	w.locks.Reset()
 	w.resources.reset()
 
-	len := w.archetypes.Len()
+	len := w.graph.Len()
 	var i int32
 	for i = 0; i < len; i++ {
-		arch := w.archetypes.Get(i)
-		if !arch.IsActive() {
+		node := w.graph.Get(i)
+		arches := node.Archetypes()
+		if arches == nil {
 			continue
 		}
-		if arch.HasRelation() && !arch.Relation.IsZero() {
-			w.deleteArchetype(arch)
-		} else {
-			arch.Reset()
+
+		lenArches := arches.Len()
+		var j int32
+		for j = 0; j < lenArches; j++ {
+			arch := arches.Get(j)
+			if !arch.IsActive() {
+				continue
+			}
+			if arch.HasRelation() && !arch.Relation.IsZero() {
+				w.deleteArchetype(arch)
+			} else {
+				arch.Reset()
+			}
 		}
 	}
 }
@@ -707,10 +732,10 @@ func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(*CachedFilter); ok {
 		archetypes := &w.filterCache.get(cached).Archetypes
-		return newQuery(w, cached, l, archetypes, true)
+		return newArchesQuery(w, cached, l, archetypes)
 	}
 
-	return newQuery(w, filter, l, &w.archetypes, false)
+	return newQuery(w, filter, l, &w.graph, false)
 }
 
 // Resources of the world.
@@ -998,9 +1023,9 @@ func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 	length := w.graph.Len()
 	var i int32
 	for i = 0; i < length; i++ {
-		arch := w.graph.Get(i)
-		if arch.mask == mask {
-			return arch, true
+		node := w.graph.Get(i)
+		if node.mask == mask {
+			return node, true
 		}
 	}
 	return nil, false
@@ -1041,24 +1066,15 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, targetCompon
 	}
 
 	var arch *archetype
-	var archIndex int32
-	lenFree := len(w.freeArchetypes)
-	if lenFree > 0 {
-		archIndex = w.freeArchetypes[lenFree-1]
-		arch = w.archetypes.Get(archIndex)
-		w.freeArchetypes = w.freeArchetypes[:lenFree-1]
-
-		if int(archIndex) < len(w.stats.Archetypes) {
-			w.stats.Archetypes[archIndex].Dirty = true
-		}
+	if node.HasRelation() {
+		arch = node.CreateArchetype(target, types...)
 	} else {
 		w.archetypes.Add(archetype{})
-		archIndex = w.archetypes.Len() - 1
+		archIndex := w.archetypes.Len() - 1
 		arch = w.archetypes.Get(archIndex)
+		arch.Init(node, archIndex, forStorage, target, targetComponent, types...)
+		node.SetArchetype(arch)
 	}
-	arch.Init(node, archIndex, forStorage, target, targetComponent, types...)
-
-	node.SetArchetype(target, arch)
 
 	w.filterCache.addArchetype(arch)
 	return arch
@@ -1067,20 +1083,34 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, targetCompon
 // Returns all archetypes that match the given filter. Used by [Cache].
 func (w *World) getArchetypes(filter Filter) archetypePointers {
 	arches := []*archetype{}
-	ln := int32(w.archetypes.Len())
+	ln := w.graph.Len()
 	var i int32
 	for i = 0; i < ln; i++ {
-		a := w.archetypes.Get(i)
-		if a.IsActive() && a.Matches(filter) {
-			arches = append(arches, a)
+		nd := w.graph.Get(i)
+		if !nd.Matches(filter) {
+			continue
+		}
+		nodeArches := nd.Archetypes()
+		if nodeArches == nil {
+			continue
+		}
+
+		ln2 := int32(nodeArches.Len())
+		var j int32
+		for j = 0; j < ln2; j++ {
+			a := nodeArches.Get(i)
+			if a.IsActive() && a.Matches(filter) {
+				arches = append(arches, a)
+			}
 		}
 	}
+
 	return archetypePointers{arches}
 }
 
 // Removes the archetype if it is empty, and has a relation to a dead target.
 func (w *World) cleanupArchetype(arch *archetype) {
-	if arch.Len() > 0 || arch.graphNode.relation < 0 {
+	if arch.Len() > 0 || !arch.graphNode.HasRelation() {
 		return
 	}
 	target := arch.Relation
@@ -1094,23 +1124,15 @@ func (w *World) cleanupArchetype(arch *archetype) {
 // Removes empty archetypes that have a target relation to the given entity.
 func (w *World) cleanupArchetypes(target Entity) {
 	for _, node := range w.relationNodes {
-		if arch, ok := node.archetypes[target]; ok && arch.Len() == 0 {
+		if arch, ok := node.archetypeMap[target]; ok && arch.Len() == 0 {
 			w.deleteArchetype(arch)
 		}
 	}
 }
 
 func (w *World) deleteArchetype(arch *archetype) {
-	delete(arch.graphNode.archetypes, arch.Relation)
-	idx := arch.index
-	w.freeArchetypes = append(w.freeArchetypes, idx)
-	w.archetypes.Get(idx).Deactivate()
-
+	arch.graphNode.DeleteArchetype(arch)
 	w.filterCache.removeArchetype(arch)
-
-	if int(idx) < len(w.stats.Archetypes) {
-		w.stats.Archetypes[idx].Dirty = true
-	}
 }
 
 // componentID returns the ID for a component type, and registers it if not already registered.
@@ -1125,6 +1147,7 @@ func (w *World) resourceID(tp reflect.Type) ResID {
 
 // closeQuery closes a query and unlocks the world.
 func (w *World) closeQuery(query *Query) {
+	query.nodeIndex = -2
 	query.archIndex = -2
 	w.unlock(query.lockBit)
 

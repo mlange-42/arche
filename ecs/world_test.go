@@ -356,12 +356,17 @@ func TestWorldIter(t *testing.T) {
 		world.Add(entity, posID, rotID)
 	}
 
-	for i := 0; i < 100; i++ {
+	world.NewEntity(rotID)
+
+	for i := 0; i < 10; i++ {
 		query := world.Query(All(posID, rotID))
+		cnt := 0
 		for query.Next() {
 			pos := (*Position)(query.Get(posID))
 			_ = pos
+			cnt++
 		}
+		assert.Equal(t, 1000, cnt)
 		assert.Panics(t, func() { query.Next() })
 	}
 
@@ -582,14 +587,16 @@ func TestWorldRelationSet(t *testing.T) {
 	e2 := world.NewEntity(relID, rotID)
 
 	assert.Equal(t, int32(3), world.graph.Len())
-	assert.Equal(t, int32(2), world.archetypes.Len())
+	assert.Equal(t, int32(1), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	assert.Equal(t, Entity{}, world.GetRelation(e1, relID))
 	world.SetRelation(e1, relID, targ)
 
 	assert.Equal(t, targ, world.GetRelation(e1, relID))
 	assert.Equal(t, int32(3), world.graph.Len())
-	assert.Equal(t, int32(3), world.archetypes.Len())
+	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.SetRelation(e1, relID, Entity{})
 
@@ -603,7 +610,7 @@ func TestWorldRelationSet(t *testing.T) {
 
 	assert.Equal(t, Entity{}, world.GetRelation(e1, relID))
 	assert.Equal(t, int32(3), world.graph.Len())
-	assert.Equal(t, int32(3), world.archetypes.Len())
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.Remove(e2, relID)
 
@@ -620,6 +627,10 @@ func TestWorldRelationSet(t *testing.T) {
 	e3 := world.NewEntity(relID, rotID)
 	world.RemoveEntity(targ)
 	assert.Panics(t, func() { world.SetRelation(e3, relID, targ) })
+
+	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.True(t, world.graph.Get(2).archetypes.Get(0).IsActive())
+	assert.False(t, world.graph.Get(2).archetypes.Get(1).IsActive())
 }
 
 func TestWorldRelationRemove(t *testing.T) {
@@ -639,25 +650,29 @@ func TestWorldRelationRemove(t *testing.T) {
 	world.Cache().Register(&filter)
 
 	assert.Equal(t, int32(3), world.graph.Len())
-	assert.Equal(t, int32(2), world.archetypes.Len())
+	assert.Equal(t, int32(1), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.SetRelation(e1, relID, targ)
 	world.SetRelation(e2, relID, targ)
 
-	assert.Equal(t, int32(3), world.archetypes.Len())
+	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.RemoveEntity(targ)
-	assert.Equal(t, int32(3), world.archetypes.Len())
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.SetRelation(e1, relID, Entity{})
 	world.SetRelation(e2, relID, Entity{})
 
-	assert.Equal(t, int32(3), world.archetypes.Len())
+	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.SetRelation(e1, relID, targ2)
 	world.SetRelation(e2, relID, targ2)
 
-	assert.Equal(t, int32(3), world.archetypes.Len())
+	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.SetRelation(e1, relID, Entity{})
 	world.SetRelation(e2, relID, Entity{})
@@ -665,15 +680,21 @@ func TestWorldRelationRemove(t *testing.T) {
 	_ = world.Stats()
 
 	world.RemoveEntity(targ2)
-	assert.Equal(t, int32(3), world.archetypes.Len())
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.SetRelation(e1, relID, targ3)
 	world.SetRelation(e2, relID, targ3)
 
-	assert.Equal(t, int32(3), world.archetypes.Len())
+	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, targ3, world.graph.Get(2).archetypes.Get(1).Relation)
+	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.RemoveEntities(All())
 	world.RemoveEntities(All())
+
+	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.True(t, world.graph.Get(2).archetypes.Get(0).IsActive())
+	assert.False(t, world.graph.Get(2).archetypes.Get(1).IsActive())
 }
 
 func TestWorldRelationQuery(t *testing.T) {
@@ -705,7 +726,11 @@ func TestWorldRelationQuery(t *testing.T) {
 	filter := All(relID)
 	query := world.Query(filter)
 	assert.Equal(t, 8, query.Count())
-	query.Close()
+	cnt := 0
+	for query.Next() {
+		cnt++
+	}
+	assert.Equal(t, 8, cnt)
 
 	filter2 := RelationFilter{Filter: All(relID), Target: targ1}
 	query = world.Query(&filter2)
@@ -913,6 +938,56 @@ func TestRegisterComponents(t *testing.T) {
 
 	assert.Equal(t, ID(0), ComponentID[Position](&world))
 	assert.Equal(t, ID(1), ComponentID[rotation](&world))
+}
+
+func TestWorldBatchRemove(t *testing.T) {
+	world := NewWorld()
+
+	rotID := ComponentID[rotation](&world)
+	relID := ComponentID[testRelationA](&world)
+
+	target1 := world.NewEntity()
+	target2 := world.NewEntity()
+	target3 := world.NewEntity()
+
+	builder := NewBuilder(&world, rotID, relID).WithRelation(relID)
+
+	builder.NewBatch(10, target1)
+	builder.NewBatch(10, target2)
+	builder.NewBatch(10, target3)
+
+	filter := All(rotID).Exclusive()
+	filter2 := world.Cache().Register(&filter)
+	world.RemoveEntities(&filter)
+	world.Cache().Unregister(&filter2)
+
+	world.RemoveEntities(
+		&RelationFilter{
+			Filter: All(rotID, relID),
+			Target: target1,
+		},
+	)
+
+	world.RemoveEntities(
+		&RelationFilter{
+			Filter: All(rotID, relID),
+			Target: target2,
+		},
+	)
+
+	filter = All().Exclusive()
+	world.RemoveEntities(&filter)
+
+	world.RemoveEntities(
+		&RelationFilter{
+			Filter: All(rotID, relID),
+			Target: target3,
+		},
+	)
+
+	query := world.Query(All())
+	assert.Equal(t, 0, query.Count())
+	query.Close()
 }
 
 func TestWorldReset(t *testing.T) {

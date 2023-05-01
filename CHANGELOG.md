@@ -21,6 +21,9 @@
 ### Performance
 
 * Reduce memory footprint of archetypes by moving properties to nodes (#237)
+* Queries iterate archetype graph nodes in an outer loop, potentially skipping nested relation archetypes (#248)
+* Relation archetypes are recycled in archetype graph nodes (#248)
+* Already empty archetypes are not zeroed on reset (#248)
 
 ### Other
 

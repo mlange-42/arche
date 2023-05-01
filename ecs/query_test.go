@@ -51,15 +51,18 @@ func TestQuery(t *testing.T) {
 	assert.Equal(t, 2, cnt)
 
 	q = w.Query(All(posID))
+	assert.Equal(t, 3, q.Count())
 	cnt = 0
+	entities := []Entity{}
 	for q.Next() {
 		ent := q.Entity()
 		pos := (*Position)(q.Get(posID))
 		_ = ent
 		_ = pos
 		cnt++
+		entities = append(entities, ent)
 	}
-	assert.Equal(t, 3, cnt)
+	assert.Equal(t, 3, len(entities))
 
 	q = w.Query(All(rotID))
 	cnt = 0

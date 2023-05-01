@@ -31,7 +31,7 @@ type RelationFilter struct {
 
 // Matches matches a filter against a mask.
 func (f *RelationFilter) Matches(bits Mask, relation *Entity) bool {
-	return f.Filter.Matches(bits, relation) && f.Target == *relation
+	return f.Filter.Matches(bits, relation) && (relation == nil || f.Target == *relation)
 }
 
 // CachedFilter is a filter that is cached by the world.
