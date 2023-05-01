@@ -129,6 +129,7 @@ func fromConfig(conf Config) World {
 //	// even faster
 //	world.NewEntity(ids...)
 //
+// For more advanced and batched entity creation, see [Builder].
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) NewEntity(comps ...ID) Entity {
 	w.checkLocked()
@@ -155,6 +156,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
 //
+// For more advanced and batched entity creation, see [Builder].
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) NewEntityWith(comps ...Component) Entity {
 	w.checkLocked()

@@ -32,6 +32,12 @@ func TestMap1Generated(t *testing.T) {
 	e = mut.New()
 	assert.True(t, map0.Has(e))
 
+	e = mut.NewWith(&testStruct0{})
+
+	assert.Panics(t, func() {
+		mut.NewWith(&testStruct0{}, e)
+	})
+
 	s0 = mut.Get(e)
 	assert.NotNil(t, s0)
 
@@ -43,7 +49,7 @@ func TestMap1Generated(t *testing.T) {
 	mut.GetUnchecked(e)
 
 	cnt := mut.RemoveEntities(true)
-	assert.Equal(t, 7, cnt)
+	assert.Equal(t, 8, cnt)
 	cnt = mut.RemoveEntities(false)
 	assert.Equal(t, 0, cnt)
 
@@ -63,6 +69,10 @@ func TestMap1Generated(t *testing.T) {
 	q2 := mut2.NewQuery(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
+
+	e = mut2.NewWith(&testRelationA{}, target)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
 }
 
 func TestMap2Generated(t *testing.T) {
@@ -95,6 +105,12 @@ func TestMap2Generated(t *testing.T) {
 	e = mut.New()
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
+
+	e = mut.NewWith(&testStruct0{}, &testStruct1{})
+
+	assert.Panics(t, func() {
+		mut.NewWith(&testStruct0{}, &testStruct1{}, e)
+	})
 
 	s0, s1 = mut.Get(e)
 	assert.NotNil(t, s0)
@@ -130,6 +146,10 @@ func TestMap2Generated(t *testing.T) {
 	q2 := mut2.NewQuery(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
+
+	e = mut2.NewWith(&testRelationA{}, &testStruct1{}, target)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
 }
 
 func TestMap3Generated(t *testing.T) {
@@ -167,6 +187,12 @@ func TestMap3Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
+	e = mut.NewWith(&testStruct0{}, &testStruct1{}, &testStruct2{})
+
+	assert.Panics(t, func() {
+		mut.NewWith(&testStruct0{}, &testStruct1{}, &testStruct2{}, e)
+	})
+
 	s0, s1, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -201,6 +227,10 @@ func TestMap3Generated(t *testing.T) {
 	q2 := mut2.NewQuery(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
+
+	e = mut2.NewWith(&testRelationA{}, &testStruct1{}, &testStruct2{}, target)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
 }
 
 func TestMap4Generated(t *testing.T) {
@@ -238,6 +268,15 @@ func TestMap4Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
+	e = mut.NewWith(&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{})
+
+	assert.Panics(t, func() {
+		mut.NewWith(
+			&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+			e,
+		)
+	})
+
 	s0, s1, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -272,6 +311,10 @@ func TestMap4Generated(t *testing.T) {
 	q2 := mut2.NewQuery(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
+
+	e = mut2.NewWith(&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{}, target)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
 }
 
 func TestMap5Generated(t *testing.T) {
@@ -311,6 +354,19 @@ func TestMap5Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
+	e = mut.NewWith(
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{},
+	)
+
+	assert.Panics(t, func() {
+		mut.NewWith(
+			&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+			&testStruct4{},
+			e,
+		)
+	})
+
 	s0, s1, _, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -347,6 +403,14 @@ func TestMap5Generated(t *testing.T) {
 	q2 := mut2.NewQuery(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
+
+	e = mut2.NewWith(
+		&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{},
+		target,
+	)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
 }
 
 func TestMap6Generated(t *testing.T) {
@@ -386,6 +450,19 @@ func TestMap6Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
+	e = mut.NewWith(
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{},
+	)
+
+	assert.Panics(t, func() {
+		mut.NewWith(
+			&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+			&testStruct4{}, &testStruct5{},
+			e,
+		)
+	})
+
 	s0, s1, _, _, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -422,6 +499,14 @@ func TestMap6Generated(t *testing.T) {
 	q2 := mut2.NewQuery(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
+
+	e = mut2.NewWith(
+		&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{},
+		target,
+	)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
 }
 
 func TestMap7Generated(t *testing.T) {
@@ -461,6 +546,19 @@ func TestMap7Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
+	e = mut.NewWith(
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{},
+	)
+
+	assert.Panics(t, func() {
+		mut.NewWith(
+			&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+			&testStruct4{}, &testStruct5{}, &testStruct6{},
+			e,
+		)
+	})
+
 	s0, s1, _, _, _, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -497,6 +595,14 @@ func TestMap7Generated(t *testing.T) {
 	q2 := mut2.NewQuery(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
+
+	e = mut2.NewWith(
+		&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{},
+		target,
+	)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
 }
 
 func TestMap8Generated(t *testing.T) {
@@ -536,6 +642,19 @@ func TestMap8Generated(t *testing.T) {
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
+	e = mut.NewWith(
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+	)
+
+	assert.Panics(t, func() {
+		mut.NewWith(
+			&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+			&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+			e,
+		)
+	})
+
 	s0, s1, _, _, _, _, _, _ = mut.Get(e)
 	assert.NotNil(t, s0)
 	assert.NotNil(t, s1)
@@ -572,4 +691,12 @@ func TestMap8Generated(t *testing.T) {
 	q2 := mut2.NewQuery(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
+
+	e = mut2.NewWith(
+		&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		target,
+	)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
 }
