@@ -24,6 +24,7 @@
 * Queries iterate archetype graph nodes in an outer loop, potentially skipping nested relation archetypes (#248)
 * Relation archetypes are recycled in archetype graph nodes (#248)
 * Already empty archetypes are not zeroed on reset (#248)
+* Optimize `RelationFilter`: get archetype directly instead of iterating complete node (#251)
 
 ### Other
 

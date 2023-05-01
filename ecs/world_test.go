@@ -745,7 +745,70 @@ func TestWorldRelationQuery(t *testing.T) {
 	filter2 = RelationFilter{Filter: All(relID), Target: targ3}
 	query = world.Query(&filter2)
 	assert.Equal(t, 0, query.Count())
+	cnt = 0
+	for query.Next() {
+		cnt++
+	}
+	assert.Equal(t, 0, cnt)
+}
+
+func TestWorldRelationQueryCached(t *testing.T) {
+	world := NewWorld()
+
+	rotID := ComponentID[rotation](&world)
+	relID := ComponentID[testRelationA](&world)
+
+	targ0 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 0}})
+
+	targ1 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 1}})
+	targ2 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 2}})
+	targ3 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 3}})
+
+	e1 := world.NewEntity(relID)
+	world.SetRelation(e1, relID, targ0)
+
+	for i := 0; i < 4; i++ {
+		e1 := world.NewEntity(relID)
+		world.SetRelation(e1, relID, targ1)
+
+		e2 := world.NewEntity(relID)
+		world.SetRelation(e2, relID, targ2)
+	}
+
+	world.RemoveEntity(e1)
+	world.RemoveEntity(targ0)
+
+	filter := All(relID)
+	regFilter := world.Cache().Register(filter)
+	query := world.Query(&regFilter)
+	assert.Equal(t, 8, query.Count())
+	cnt := 0
+	for query.Next() {
+		cnt++
+	}
+	assert.Equal(t, 8, cnt)
+	world.Cache().Unregister(&regFilter)
+
+	filter2 := RelationFilter{Filter: All(relID), Target: targ1}
+	regFilter2 := world.Cache().Register(&filter2)
+	query = world.Query(&regFilter2)
+	assert.Equal(t, 4, query.Count())
 	query.Close()
+	world.Cache().Unregister(&regFilter2)
+
+	filter2 = RelationFilter{Filter: All(relID), Target: targ2}
+	regFilter2 = world.Cache().Register(&filter2)
+	query = world.Query(&regFilter2)
+	assert.Equal(t, 4, query.Count())
+	query.Close()
+	world.Cache().Unregister(&regFilter2)
+
+	filter2 = RelationFilter{Filter: All(relID), Target: targ3}
+	regFilter2 = world.Cache().Register(&filter2)
+	query = world.Query(&regFilter2)
+	assert.Equal(t, 0, query.Count())
+	query.Close()
+	world.Cache().Unregister(&regFilter2)
 }
 
 func TestWorldRelation(t *testing.T) {

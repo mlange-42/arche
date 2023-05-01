@@ -203,14 +203,31 @@ func (q *Query) nextNode() bool {
 		q.nodeIndex++
 		n := q.nodes.Get(q.nodeIndex)
 		arches := n.Archetypes()
-		if arches != nil && n.Matches(q.filter) && arches.Len() > 0 {
-			q.archetypes = arches
-			q.archIndex = -1
-			q.entityIndex = 0
-			q.entityIndexMax = 0
-			if q.nextArchetypeSimple() {
-				return true
+
+		if arches == nil || !n.Matches(q.filter) || arches.Len() == 0 {
+			continue
+		}
+
+		if arches.Len() > 1 {
+			if rf, ok := q.filter.(*RelationFilter); ok {
+				target := rf.Target
+				if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
+					q.archetypes = nil
+					q.archIndex = arch.index
+					q.access = &arch.archetypeAccess
+					q.entityIndex = 0
+					q.entityIndexMax = uintptr(arch.Len()) - 1
+					return true
+				}
+				continue
 			}
+		}
+		q.archetypes = arches
+		q.archIndex = -1
+		q.entityIndex = 0
+		q.entityIndexMax = 0
+		if q.nextArchetypeSimple() {
+			return true
 		}
 	}
 	q.archetypes = nil
@@ -233,9 +250,7 @@ func (q *Query) countEntities() int {
 		var i int32
 		for i = 0; i < len; i++ {
 			a := q.archetypes.Get(i)
-			if a.IsActive() && (q.isFiltered || a.Matches(q.filter)) {
-				count += a.Len()
-			}
+			count += a.Len()
 		}
 		return int(count)
 	}
@@ -253,6 +268,16 @@ func (q *Query) countEntities() int {
 			continue
 		}
 		nArch := arches.Len()
+
+		if nArch > 1 {
+			if rf, ok := q.filter.(*RelationFilter); ok {
+				target := rf.Target
+				if arch, ok := nd.archetypeMap[target]; ok {
+					count += arch.Len()
+				}
+				continue
+			}
+		}
 
 		var j int32
 		for j = 0; j < nArch; j++ {
