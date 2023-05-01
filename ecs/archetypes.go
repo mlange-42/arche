@@ -51,10 +51,12 @@ func (a *archetypePointers) Add(arch *archetype) {
 
 // Remove an element.
 func (a *archetypePointers) Remove(arch *archetype) {
-	for i := 0; i < len(a.pointers); i++ {
+	ln := len(a.pointers)
+	for i := 0; i < ln; i++ {
 		arch2 := a.pointers[i]
 		if arch == arch2 {
-			a.pointers = append(a.pointers[:i], a.pointers[i+1:]...)
+			a.pointers[i], a.pointers[ln-1] = a.pointers[ln-1], nil
+			a.pointers = a.pointers[:ln-1]
 			return
 		}
 	}

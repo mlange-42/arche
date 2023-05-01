@@ -25,6 +25,7 @@
 * Relation archetypes are recycled in archetype graph nodes (#248)
 * Already empty archetypes are not zeroed on reset (#248)
 * Optimize `RelationFilter`: get archetype directly instead of iterating complete node (#251)
+* Cached filters use swap-remove when removing an archetype (#253)
 
 ### Other
 
