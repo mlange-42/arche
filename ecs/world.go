@@ -1124,7 +1124,7 @@ func (w *World) cleanupArchetype(arch *archetype) {
 // Removes empty archetypes that have a target relation to the given entity.
 func (w *World) cleanupArchetypes(target Entity) {
 	for _, node := range w.relationNodes {
-		if arch, ok := node.archetypeIndices[target]; ok && arch.Len() == 0 {
+		if arch, ok := node.archetypeMap[target]; ok && arch.Len() == 0 {
 			w.deleteArchetype(arch)
 		}
 	}

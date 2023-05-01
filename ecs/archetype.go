@@ -17,7 +17,7 @@ type archetypeNode struct {
 	Ids               []ID       // List of component IDs.
 	archetype         *archetype // The archetype
 	archetypes        pagedSlice[archetype]
-	archetypeIndices  map[Entity]*archetype
+	archetypeMap      map[Entity]*archetype
 	freeIndices       []int32
 	TransitionAdd     idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
 	TransitionRemove  idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
@@ -35,7 +35,7 @@ func newArchetypeNode(mask Mask, relation int8, capacityIncrement int) archetype
 	}
 	return archetypeNode{
 		mask:              mask,
-		archetypeIndices:  arch,
+		archetypeMap:      arch,
 		TransitionAdd:     newIDMap[*archetypeNode](),
 		TransitionRemove:  newIDMap[*archetypeNode](),
 		relation:          relation,
@@ -59,7 +59,7 @@ func (a *archetypeNode) Archetypes() archetypes {
 
 func (a *archetypeNode) GetArchetype(id Entity) *archetype {
 	if a.relation >= 0 {
-		return a.archetypeIndices[id]
+		return a.archetypeMap[id]
 	}
 	return a.archetype
 }
@@ -83,12 +83,12 @@ func (a *archetypeNode) CreateArchetype(target Entity, components ...componentTy
 		arch = a.archetypes.Get(archIndex)
 		arch.Init(a, archIndex, true, target, a.relation, components...)
 	}
-	a.archetypeIndices[target] = arch
+	a.archetypeMap[target] = arch
 	return arch
 }
 
 func (a *archetypeNode) DeleteArchetype(arch *archetype) {
-	delete(a.archetypeIndices, arch.Relation)
+	delete(a.archetypeMap, arch.Relation)
 	idx := arch.index
 	a.freeIndices = append(a.freeIndices, idx)
 	a.archetypes.Get(idx).Deactivate()
