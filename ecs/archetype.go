@@ -56,6 +56,10 @@ func (a *archetypeNode) SetArchetype(id Entity, arch *archetype) {
 	}
 }
 
+func (a *archetypeNode) HasRelation() bool {
+	return a.relation >= 0
+}
+
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
 	Mask              Mask           // Archetype's mask

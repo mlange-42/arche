@@ -1080,7 +1080,7 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 
 // Removes the archetype if it is empty, and has a relation to a dead target.
 func (w *World) cleanupArchetype(arch *archetype) {
-	if arch.Len() > 0 || arch.graphNode.relation < 0 {
+	if arch.Len() > 0 || !arch.graphNode.HasRelation() {
 		return
 	}
 	target := arch.Relation
