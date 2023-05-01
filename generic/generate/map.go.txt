@@ -112,6 +112,21 @@ func (m *Map{{ .Index }}{{ .Types }}) NewQuery(count int, target ...ecs.Entity) 
 }
 
 {{if .ReturnAll}}
+// NewWith creates a new [ecs.Entity] with the Map{{ .Index }}'s components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map{{ .Index }}{{ .Types }}) NewWith({{ .Arguments }}, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith({{ .Components }})
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, {{ .Components }}).WithRelation(uint8(m.target)).New(target[0])
+}
+
 // Add the Map{{ .Index }}'s components to the given entity.
 //
 // See also [ecs.World.Add].

@@ -9,7 +9,7 @@
 ### Breaking changes
 
 * Removed `World.Batch` for entity batch creation, use `Builder` instead (#239)
-* Rework of generic entity creation API, use `MapX.New`, `MapX.NewBatch` and `MapX.NewQuery` (#239)
+* Rework of generic entity creation API, use `MapX.New`, `MapX.NewWith`, `MapX.NewBatch` and `MapX.NewQuery` (#239, #252)
 
 ### Features
 

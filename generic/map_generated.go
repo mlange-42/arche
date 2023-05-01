@@ -118,6 +118,21 @@ func (m *Map1[A]) NewQuery(count int, target ...ecs.Entity) Query1[A] {
 	}
 }
 
+// NewWith creates a new [ecs.Entity] with the Map1's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map1[A]) NewWith(a *A, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a})
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a}).WithRelation(uint8(m.target)).New(target[0])
+}
+
 // Add the Map1's components to the given entity.
 //
 // See also [ecs.World.Add].
@@ -272,6 +287,25 @@ func (m *Map2[A, B]) NewQuery(count int, target ...ecs.Entity) Query2[A, B] {
 		id0:   m.id0,
 		id1:   m.id1,
 	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map2's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map2[A, B]) NewWith(a *A, b *B, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+		)
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+	).WithRelation(uint8(m.target)).New(target[0])
 }
 
 // Add the Map2's components to the given entity.
@@ -434,6 +468,27 @@ func (m *Map3[A, B, C]) NewQuery(count int, target ...ecs.Entity) Query3[A, B, C
 		id1:   m.id1,
 		id2:   m.id2,
 	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map3's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map3[A, B, C]) NewWith(a *A, b *B, c *C, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+		)
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+	).WithRelation(uint8(m.target)).New(target[0])
 }
 
 // Add the Map3's components to the given entity.
@@ -602,6 +657,29 @@ func (m *Map4[A, B, C, D]) NewQuery(count int, target ...ecs.Entity) Query4[A, B
 		id2:   m.id2,
 		id3:   m.id3,
 	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map4's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map4[A, B, C, D]) NewWith(a *A, b *B, c *C, d *D, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+			ecs.Component{ID: m.id3, Comp: d},
+		)
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+	).WithRelation(uint8(m.target)).New(target[0])
 }
 
 // Add the Map4's components to the given entity.
@@ -776,6 +854,31 @@ func (m *Map5[A, B, C, D, E]) NewQuery(count int, target ...ecs.Entity) Query5[A
 		id3:   m.id3,
 		id4:   m.id4,
 	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map5's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map5[A, B, C, D, E]) NewWith(a *A, b *B, c *C, d *D, e *E, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+			ecs.Component{ID: m.id3, Comp: d},
+			ecs.Component{ID: m.id4, Comp: e},
+		)
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+	).WithRelation(uint8(m.target)).New(target[0])
 }
 
 // Add the Map5's components to the given entity.
@@ -956,6 +1059,33 @@ func (m *Map6[A, B, C, D, E, F]) NewQuery(count int, target ...ecs.Entity) Query
 		id4:   m.id4,
 		id5:   m.id5,
 	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map6's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map6[A, B, C, D, E, F]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+			ecs.Component{ID: m.id3, Comp: d},
+			ecs.Component{ID: m.id4, Comp: e},
+			ecs.Component{ID: m.id5, Comp: f},
+		)
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+	).WithRelation(uint8(m.target)).New(target[0])
 }
 
 // Add the Map6's components to the given entity.
@@ -1142,6 +1272,35 @@ func (m *Map7[A, B, C, D, E, F, G]) NewQuery(count int, target ...ecs.Entity) Qu
 		id5:   m.id5,
 		id6:   m.id6,
 	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map7's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map7[A, B, C, D, E, F, G]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+			ecs.Component{ID: m.id3, Comp: d},
+			ecs.Component{ID: m.id4, Comp: e},
+			ecs.Component{ID: m.id5, Comp: f},
+			ecs.Component{ID: m.id6, Comp: g},
+		)
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+	).WithRelation(uint8(m.target)).New(target[0])
 }
 
 // Add the Map7's components to the given entity.
@@ -1334,6 +1493,37 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewQuery(count int, target ...ecs.Entity)
 		id6:   m.id6,
 		id7:   m.id7,
 	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map8's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+			ecs.Component{ID: m.id3, Comp: d},
+			ecs.Component{ID: m.id4, Comp: e},
+			ecs.Component{ID: m.id5, Comp: f},
+			ecs.Component{ID: m.id6, Comp: g},
+			ecs.Component{ID: m.id7, Comp: h},
+		)
+	}
+	if m.target < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+	).WithRelation(uint8(m.target)).New(target[0])
 }
 
 // Add the Map8's components to the given entity.
