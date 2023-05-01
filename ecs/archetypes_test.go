@@ -20,17 +20,20 @@ func TestArchetypePointers(t *testing.T) {
 
 	assert.Equal(t, int32(3), pt.Len())
 
-	for i := 0; i < 45; i++ {
-		pt.Add(&a3)
+	var last archetype
+	for i := 0; i < 15; i++ {
+		last = archetype{}
+		pt.Add(&last)
 	}
 
 	assert.Equal(t, unsafe.Pointer(&a1), unsafe.Pointer(pt.Get(0)))
 	assert.Equal(t, unsafe.Pointer(&a2), unsafe.Pointer(pt.Get(1)))
 	assert.Equal(t, unsafe.Pointer(&a3), unsafe.Pointer(pt.Get(2)))
 
-	assert.Equal(t, int32(48), pt.Len())
+	assert.Equal(t, int32(18), pt.Len())
 
 	pt.Remove(&a2)
-	assert.Equal(t, int32(47), pt.Len())
-	assert.Equal(t, unsafe.Pointer(&a3), unsafe.Pointer(pt.Get(1)))
+	assert.Equal(t, int32(17), pt.Len())
+	assert.Equal(t, unsafe.Pointer(&last), unsafe.Pointer(pt.Get(1)))
+	assert.Equal(t, unsafe.Pointer(&a3), unsafe.Pointer(pt.Get(2)))
 }
