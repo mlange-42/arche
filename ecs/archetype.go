@@ -51,6 +51,9 @@ func (a *archetypeNode) Archetypes() archetypes {
 	if a.HasRelation() {
 		return &a.archetypes
 	}
+	if a.archetype == nil {
+		return nil
+	}
 	return batchArchetype{Archetype: a.archetype, StartIndex: 0}
 }
 
@@ -61,12 +64,8 @@ func (a *archetypeNode) GetArchetype(id Entity) *archetype {
 	return a.archetype
 }
 
-func (a *archetypeNode) SetArchetype(id Entity, arch *archetype) {
-	if a.relation >= 0 {
-		a.archetypeIndices[id] = arch
-	} else {
-		a.archetype = arch
-	}
+func (a *archetypeNode) SetArchetype(arch *archetype) {
+	a.archetype = arch
 }
 
 func (a *archetypeNode) CreateArchetype(target Entity, components ...componentType) *archetype {
@@ -173,7 +172,7 @@ type archetype struct {
 // Init initializes an archetype
 func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
 	var mask Mask
-	if len(components) > 0 && len(node.Ids) == 0 {
+	if len(components) > 0 && node.Ids == nil {
 		node.Ids = make([]ID, len(components))
 
 		var maxSize uintptr = 0

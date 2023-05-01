@@ -15,18 +15,34 @@ import (
 type Query struct {
 	filter         Filter           // The filter used by the query.
 	archetypes     archetypes       // The query's archetypes (can be all, unfiltered archetypes).
+	nodes          nodes            // The query's nodes
 	world          *World           // The [World].
 	access         *archetypeAccess // Access helper for the archetype currently being iterated.
 	entityIndex    uintptr          // Iteration index of the current [Entity] current archetype.
 	entityIndexMax uintptr          // Maximum entity index in the current archetype.
 	archIndex      int32            // Iteration index of the current archetype.
+	nodeIndex      int32            // Iteration index of the current archetype.
 	count          int32            // Cached entity count.
 	lockBit        uint8            // The bit that was used to lock the [World] when the query was created.
 	isFiltered     bool             // Whether the list of archetypes is already filtered.
 }
 
 // newQuery creates a new Filter
-func newQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes, isFiltered bool) Query {
+func newQuery(world *World, filter Filter, lockBit uint8, nodes nodes, isFiltered bool) Query {
+	return Query{
+		filter:     filter,
+		world:      world,
+		nodes:      nodes,
+		archIndex:  -1,
+		nodeIndex:  -1,
+		lockBit:    lockBit,
+		count:      -1,
+		isFiltered: false,
+	}
+}
+
+// newArchesQuery creates a new Filter
+func newArchesQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes) Query {
 	return Query{
 		filter:     filter,
 		world:      world,
@@ -34,7 +50,7 @@ func newQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes,
 		archIndex:  -1,
 		lockBit:    lockBit,
 		count:      -1,
-		isFiltered: isFiltered,
+		isFiltered: true,
 	}
 }
 
@@ -151,6 +167,17 @@ func (q *Query) Close() {
 
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
+	if !q.isFiltered {
+		return q.nextNode()
+	}
+	if q.nextArchetypeSimple() {
+		return true
+	}
+	q.world.closeQuery(q)
+	return false
+}
+
+func (q *Query) nextArchetypeSimple() bool {
 	len := int32(q.archetypes.Len()) - 1
 	for q.archIndex < len {
 		q.archIndex++
@@ -163,6 +190,30 @@ func (q *Query) nextArchetype() bool {
 			return true
 		}
 	}
+	return false
+}
+
+func (q *Query) nextNode() bool {
+	if q.archetypes != nil && q.nextArchetypeSimple() {
+		return true
+	}
+
+	len := int32(q.nodes.Len()) - 1
+	for q.nodeIndex < len {
+		q.nodeIndex++
+		n := q.nodes.Get(q.nodeIndex)
+		arches := n.Archetypes()
+		if arches != nil && n.Matches(q.filter) && arches.Len() > 0 {
+			q.archetypes = arches
+			q.archIndex = -1
+			q.entityIndex = 0
+			q.entityIndexMax = 0
+			if q.nextArchetypeSimple() {
+				return true
+			}
+		}
+	}
+	q.archetypes = nil
 	q.world.closeQuery(q)
 	return false
 }
@@ -176,13 +227,39 @@ func (q *Query) stepArchetype(step uint32) (int, bool) {
 }
 
 func (q *Query) countEntities() int {
-	len := int32(q.archetypes.Len())
+	if q.isFiltered {
+		len := int32(q.archetypes.Len())
+		var count uint32 = 0
+		var i int32
+		for i = 0; i < len; i++ {
+			a := q.archetypes.Get(i)
+			if a.IsActive() && (q.isFiltered || a.Matches(q.filter)) {
+				count += a.Len()
+			}
+		}
+		return int(count)
+	}
+
+	len := int32(q.nodes.Len())
 	var count uint32 = 0
 	var i int32
 	for i = 0; i < len; i++ {
-		a := q.archetypes.Get(i)
-		if a.IsActive() && (q.isFiltered || a.Matches(q.filter)) {
-			count += a.Len()
+		nd := q.nodes.Get(i)
+		if !nd.Matches(q.filter) {
+			continue
+		}
+		arches := nd.Archetypes()
+		if arches == nil {
+			continue
+		}
+		nArch := arches.Len()
+
+		var j int32
+		for j = 0; j < nArch; j++ {
+			a := arches.Get(j)
+			if a.IsActive() && a.Matches(q.filter) {
+				count += a.Len()
+			}
 		}
 	}
 	return int(count)
