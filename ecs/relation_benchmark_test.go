@@ -73,7 +73,7 @@ func benchmarkRelationGetWorld(b *testing.B, count int) {
 	var tempTarget Entity
 	for i := 0; i < b.N; i++ {
 		for _, e := range entities {
-			tempTarget = world.GetRelation(e, relID)
+			tempTarget = world.Relations().Get(e, relID)
 		}
 	}
 
@@ -99,7 +99,7 @@ func benchmarkRelationGetWorldUnchecked(b *testing.B, count int) {
 	var tempTarget Entity
 	for i := 0; i < b.N; i++ {
 		for _, e := range entities {
-			tempTarget = world.GetRelationUnchecked(e, relID)
+			tempTarget = world.Relations().GetUnchecked(e, relID)
 		}
 	}
 
@@ -129,7 +129,7 @@ func benchmarkRelationSet(b *testing.B, count int) {
 			trg = target
 		}
 		for _, e := range entities {
-			world.SetRelation(e, relID, trg)
+			world.Relations().Set(e, relID, trg)
 		}
 	}
 

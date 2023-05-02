@@ -342,7 +342,7 @@ func TestQueryRelations(t *testing.T) {
 	targ := world.NewEntity(posID)
 
 	e1 := world.NewEntity(relID, velID)
-	world.SetRelation(e1, relID, targ)
+	world.Relations().Set(e1, relID, targ)
 
 	filter := All(relID)
 	query := world.Query(filter)

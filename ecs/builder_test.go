@@ -48,7 +48,7 @@ func TestBuilder(t *testing.T) {
 
 	b1.New()
 	e2 := b1.New(target)
-	assert.Equal(t, target, w.GetRelation(e2, relID))
+	assert.Equal(t, target, w.Relations().Get(e2, relID))
 
 	b1.NewBatch(10, target)
 	q = b1.NewQuery(10, target)
@@ -64,7 +64,7 @@ func TestBuilder(t *testing.T) {
 
 	b1.New()
 	e2 = b1.New(target)
-	assert.Equal(t, target, w.GetRelation(e2, relID))
+	assert.Equal(t, target, w.Relations().Get(e2, relID))
 
 	b1.NewBatch(10, target)
 	q = b1.NewQuery(10, target)

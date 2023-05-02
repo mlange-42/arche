@@ -73,6 +73,7 @@ type World struct {
 	locks         lockMask                  // World locks.
 	registry      componentRegistry[ID]     // Component registry.
 	filterCache   Cache                     // Cache for registered filters.
+	relations     Relations                 // Helper for accessing entity relations.
 	stats         stats.WorldStats          // Cached world statistics
 }
 
@@ -618,7 +619,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 }
 
-// GetRelation returns the target entity for an entity relation.
+// getRelation returns the target entity for an entity relation.
 //
 // Panics:
 //   - when called for a removed (and potentially recycled) entity.
@@ -626,7 +627,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 //   - when called for a component that is not a relation.
 //
 // See [Relation] for details and examples.
-func (w *World) GetRelation(entity Entity, comp ID) Entity {
+func (w *World) getRelation(entity Entity, comp ID) Entity {
 	if !w.entityPool.Alive(entity) {
 		panic("can't get relation on a dead entity")
 	}
@@ -637,16 +638,16 @@ func (w *World) GetRelation(entity Entity, comp ID) Entity {
 	return index.arch.Relation
 }
 
-// GetRelationUnchecked returns the target entity for an entity relation.
+// getRelationUnchecked returns the target entity for an entity relation.
 //
-// GetRelationUnchecked is an optimized version of [World.GetRelation].
+// getRelationUnchecked is an optimized version of [World.getRelation].
 // Does not check if the entity is alive or that the component ID is applicable.
-func (w *World) GetRelationUnchecked(entity Entity, comp ID) Entity {
+func (w *World) getRelationUnchecked(entity Entity, comp ID) Entity {
 	index := &w.entities[entity.id]
 	return index.arch.Relation
 }
 
-// SetRelation sets the target entity for an entity relation.
+// setRelation sets the target entity for an entity relation.
 //
 // Panics:
 //   - when called for a removed (and potentially recycled) entity.
@@ -656,7 +657,7 @@ func (w *World) GetRelationUnchecked(entity Entity, comp ID) Entity {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See [Relation] for details and examples.
-func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
+func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 	w.checkLocked()
 
 	if !w.entityPool.Alive(entity) {
@@ -786,6 +787,13 @@ func (w *World) Cache() *Cache {
 		w.filterCache.getArchetypes = w.getArchetypes
 	}
 	return &w.filterCache
+}
+
+// Relations returns the [Relations] of the world, for accessing entity [Relation] targets.
+//
+// See [Relations] for details.
+func (w *World) Relations() *Relations {
+	return &Relations{world: w}
 }
 
 // IsLocked returns whether the world is locked by any queries.

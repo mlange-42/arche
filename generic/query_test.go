@@ -123,7 +123,7 @@ func TestQuery0(t *testing.T) {
 	w.Add(e1, relID)
 	w.Add(e2, relID)
 
-	w.SetRelation(e0, relID, targ)
+	w.Relations().Set(e0, relID, targ)
 
 	filter2 :=
 		NewFilter0().
@@ -193,7 +193,7 @@ func TestQuery1(t *testing.T) {
 	w.Add(e1, relID)
 	w.Add(e2, relID)
 
-	w.SetRelation(e0, relID, targ)
+	w.Relations().Set(e0, relID, targ)
 
 	filter2 :=
 		NewFilter1[testRelationA]().
@@ -269,7 +269,7 @@ func TestQuery2(t *testing.T) {
 	w.Add(e1, relID)
 	w.Add(e2, relID)
 
-	w.SetRelation(e0, relID, targ)
+	w.Relations().Set(e0, relID, targ)
 
 	filter2 :=
 		NewFilter2[testStruct0, testRelationA]().
@@ -348,7 +348,7 @@ func TestQuery3(t *testing.T) {
 	w.Add(e1, relID)
 	w.Add(e2, relID)
 
-	w.SetRelation(e0, relID, targ)
+	w.Relations().Set(e0, relID, targ)
 
 	filter2 :=
 		NewFilter3[testStruct0, testStruct1, testRelationA]().
@@ -432,7 +432,7 @@ func TestQuery4(t *testing.T) {
 	w.Add(e1, relID)
 	w.Add(e2, relID)
 
-	w.SetRelation(e0, relID, targ)
+	w.Relations().Set(e0, relID, targ)
 
 	filter2 :=
 		NewFilter4[
@@ -523,7 +523,7 @@ func TestQuery5(t *testing.T) {
 	w.Add(e1, relID)
 	w.Add(e2, relID)
 
-	w.SetRelation(e0, relID, targ)
+	w.Relations().Set(e0, relID, targ)
 
 	filter2 :=
 		NewFilter5[
@@ -620,7 +620,7 @@ func TestQuery6(t *testing.T) {
 	w.Add(e1, relID)
 	w.Add(e2, relID)
 
-	w.SetRelation(e0, relID, targ)
+	w.Relations().Set(e0, relID, targ)
 
 	filter2 :=
 		NewFilter6[
@@ -725,7 +725,7 @@ func TestQuery7(t *testing.T) {
 	w.Add(e1, relID)
 	w.Add(e2, relID)
 
-	w.SetRelation(e0, relID, targ)
+	w.Relations().Set(e0, relID, targ)
 
 	filter2 :=
 		NewFilter7[
@@ -827,7 +827,7 @@ func TestQuery8(t *testing.T) {
 	w.Add(e1, relID)
 	w.Add(e2, relID)
 
-	w.SetRelation(e0, relID, targ)
+	w.Relations().Set(e0, relID, targ)
 
 	filter2 :=
 		NewFilter8[
@@ -882,7 +882,7 @@ func TestQueryGeneric(t *testing.T) {
 
 	target := world.NewEntity(rotID)
 
-	world.SetRelation(entities[0], relID, target)
+	world.Relations().Set(entities[0], relID, target)
 
 	filter := NewFilter2[testStruct2, testRelationA]().WithRelation(T[testRelationA](), target)
 	q2 := filter.Query(&world)

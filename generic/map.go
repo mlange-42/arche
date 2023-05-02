@@ -79,7 +79,7 @@ func (g *Map[T]) Set(entity ecs.Entity, comp *T) *T {
 //
 // See also [ecs.World.GetRelation].
 func (g *Map[T]) GetRelation(entity ecs.Entity) ecs.Entity {
-	return g.world.GetRelation(entity, g.id)
+	return g.world.Relations().Get(entity, g.id)
 }
 
 // GetRelation returns the target entity for the given entity and the Map's relation component.
@@ -89,7 +89,7 @@ func (g *Map[T]) GetRelation(entity ecs.Entity) ecs.Entity {
 //
 // See also [ecs.World.GetRelationUnchecked].
 func (g *Map[T]) GetRelationUnchecked(entity ecs.Entity) ecs.Entity {
-	return g.world.GetRelationUnchecked(entity, g.id)
+	return g.world.Relations().GetUnchecked(entity, g.id)
 }
 
 // SetRelation sets the target entity for the given entity and the Map's relation component.
@@ -99,5 +99,5 @@ func (g *Map[T]) GetRelationUnchecked(entity ecs.Entity) ecs.Entity {
 //
 // See also [ecs.World.SetRelation].
 func (g *Map[T]) SetRelation(entity, target ecs.Entity) {
-	g.world.SetRelation(entity, g.id, target)
+	g.world.Relations().Set(entity, g.id, target)
 }

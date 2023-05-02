@@ -602,45 +602,45 @@ func TestWorldRelationSet(t *testing.T) {
 	assert.Equal(t, int32(1), world.graph.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
-	assert.Equal(t, Entity{}, world.GetRelation(e1, relID))
-	assert.Equal(t, Entity{}, world.GetRelationUnchecked(e1, relID))
-	world.SetRelation(e1, relID, targ)
+	assert.Equal(t, Entity{}, world.Relations().Get(e1, relID))
+	assert.Equal(t, Entity{}, world.Relations().GetUnchecked(e1, relID))
+	world.Relations().Set(e1, relID, targ)
 
-	assert.Equal(t, targ, world.GetRelation(e1, relID))
-	assert.Equal(t, targ, world.GetRelationUnchecked(e1, relID))
+	assert.Equal(t, targ, world.Relations().Get(e1, relID))
+	assert.Equal(t, targ, world.Relations().GetUnchecked(e1, relID))
 	assert.Equal(t, int32(3), world.graph.Len())
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
-	world.SetRelation(e1, relID, Entity{})
+	world.Relations().Set(e1, relID, Entity{})
 
-	assert.Panics(t, func() { world.GetRelation(e1, rotID) })
-	assert.Panics(t, func() { world.GetRelation(e1, rel2ID) })
-	assert.Panics(t, func() { world.SetRelation(e1, rotID, Entity{}) })
-	assert.Panics(t, func() { world.SetRelation(e1, rel2ID, Entity{}) })
+	assert.Panics(t, func() { world.Relations().Get(e1, rotID) })
+	assert.Panics(t, func() { world.Relations().Get(e1, rel2ID) })
+	assert.Panics(t, func() { world.Relations().Set(e1, rotID, Entity{}) })
+	assert.Panics(t, func() { world.Relations().Set(e1, rel2ID, Entity{}) })
 
 	// Should do nothing
-	world.SetRelation(e1, relID, Entity{})
+	world.Relations().Set(e1, relID, Entity{})
 
-	assert.Equal(t, Entity{}, world.GetRelation(e1, relID))
+	assert.Equal(t, Entity{}, world.Relations().Get(e1, relID))
 	assert.Equal(t, int32(3), world.graph.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.Remove(e2, relID)
 
-	assert.Panics(t, func() { world.GetRelation(e2, relID) })
-	assert.Panics(t, func() { world.SetRelation(e2, relID, Entity{}) })
+	assert.Panics(t, func() { world.Relations().Get(e2, relID) })
+	assert.Panics(t, func() { world.Relations().Set(e2, relID, Entity{}) })
 
 	assert.Panics(t, func() { world.NewEntity(relID, rel2ID) })
 	assert.Panics(t, func() { world.Add(e1, rel2ID) })
 
 	world.RemoveEntity(e1)
-	assert.Panics(t, func() { world.GetRelation(e1, relID) })
-	assert.Panics(t, func() { world.SetRelation(e1, relID, targ) })
+	assert.Panics(t, func() { world.Relations().Get(e1, relID) })
+	assert.Panics(t, func() { world.Relations().Set(e1, relID, targ) })
 
 	e3 := world.NewEntity(relID, rotID)
 	world.RemoveEntity(targ)
-	assert.Panics(t, func() { world.SetRelation(e3, relID, targ) })
+	assert.Panics(t, func() { world.Relations().Set(e3, relID, targ) })
 
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
 	assert.True(t, world.graph.Get(2).archetypes.Get(0).IsActive())
@@ -667,8 +667,8 @@ func TestWorldRelationRemove(t *testing.T) {
 	assert.Equal(t, int32(1), world.graph.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
-	world.SetRelation(e1, relID, targ)
-	world.SetRelation(e2, relID, targ)
+	world.Relations().Set(e1, relID, targ)
+	world.Relations().Set(e2, relID, targ)
 
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
@@ -676,28 +676,28 @@ func TestWorldRelationRemove(t *testing.T) {
 	world.RemoveEntity(targ)
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
-	world.SetRelation(e1, relID, Entity{})
-	world.SetRelation(e2, relID, Entity{})
+	world.Relations().Set(e1, relID, Entity{})
+	world.Relations().Set(e2, relID, Entity{})
 
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
-	world.SetRelation(e1, relID, targ2)
-	world.SetRelation(e2, relID, targ2)
+	world.Relations().Set(e1, relID, targ2)
+	world.Relations().Set(e2, relID, targ2)
 
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
-	world.SetRelation(e1, relID, Entity{})
-	world.SetRelation(e2, relID, Entity{})
+	world.Relations().Set(e1, relID, Entity{})
+	world.Relations().Set(e2, relID, Entity{})
 
 	_ = world.Stats()
 
 	world.RemoveEntity(targ2)
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
-	world.SetRelation(e1, relID, targ3)
-	world.SetRelation(e2, relID, targ3)
+	world.Relations().Set(e1, relID, targ3)
+	world.Relations().Set(e2, relID, targ3)
 
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
 	assert.Equal(t, targ3, world.graph.Get(2).archetypes.Get(1).Relation)
@@ -724,14 +724,14 @@ func TestWorldRelationQuery(t *testing.T) {
 	targ3 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 3}})
 
 	e1 := world.NewEntity(relID)
-	world.SetRelation(e1, relID, targ0)
+	world.Relations().Set(e1, relID, targ0)
 
 	for i := 0; i < 4; i++ {
 		e1 := world.NewEntity(relID)
-		world.SetRelation(e1, relID, targ1)
+		world.Relations().Set(e1, relID, targ1)
 
 		e2 := world.NewEntity(relID)
-		world.SetRelation(e2, relID, targ2)
+		world.Relations().Set(e2, relID, targ2)
 	}
 
 	world.RemoveEntity(e1)
@@ -779,14 +779,14 @@ func TestWorldRelationQueryCached(t *testing.T) {
 	targ3 := world.NewEntityWith(Component{ID: rotID, Comp: &rotation{Angle: 3}})
 
 	e1 := world.NewEntity(relID)
-	world.SetRelation(e1, relID, targ0)
+	world.Relations().Set(e1, relID, targ0)
 
 	for i := 0; i < 4; i++ {
 		e1 := world.NewEntity(relID)
-		world.SetRelation(e1, relID, targ1)
+		world.Relations().Set(e1, relID, targ1)
 
 		e2 := world.NewEntity(relID)
-		world.SetRelation(e2, relID, targ2)
+		world.Relations().Set(e2, relID, targ2)
 	}
 
 	world.RemoveEntity(e1)
@@ -839,7 +839,7 @@ func TestWorldRelation(t *testing.T) {
 	for i := 0; i < 2500; i++ {
 		par := parents[i/100]
 		e := world.NewEntity(relID)
-		world.SetRelation(e, relID, par)
+		world.Relations().Set(e, relID, par)
 	}
 
 	parFilter := All(posID)
@@ -1115,8 +1115,8 @@ func TestWorldReset(t *testing.T) {
 	e1 := world.NewEntity(posID, relID)
 	e2 := world.NewEntity(posID, relID)
 
-	world.SetRelation(e1, relID, target1)
-	world.SetRelation(e2, relID, target2)
+	world.Relations().Set(e1, relID, target1)
+	world.Relations().Set(e2, relID, target2)
 
 	world.RemoveEntity(e1)
 	world.RemoveEntity(target1)

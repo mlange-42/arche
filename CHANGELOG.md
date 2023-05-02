@@ -19,7 +19,7 @@
 * `WorldStats` contains the number of cached filters (#247)
 * Archetypes with entity relations are removed on `World.Reset` (#247)
 * Capacity increment can be configured separately for relation archetypes (#257)
-* Adds methods `RelationUnchecked` / `GetRelationUnchecked` for faster, unchecked relation access (#259)
+* Adds methods `for faster, unchecked entity relation access (#259)
 
 ### Performance
 
