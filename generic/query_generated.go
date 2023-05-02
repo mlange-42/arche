@@ -130,6 +130,10 @@ type Query0 struct {
 }
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter0] was not prepared for relations
+// using [Filter0.WithRelation].
 func (q *Query0) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -138,6 +142,9 @@ func (q *Query0) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query0.Relation].
 // Does not check that the component ID is applicable.
@@ -295,6 +302,10 @@ func (q *Query1[A]) Get() *A {
 }
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter1] was not prepared for relations
+// using [Filter1.WithRelation].
 func (q *Query1[A]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -303,6 +314,9 @@ func (q *Query1[A]) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query1.Relation].
 // Does not check that the component ID is applicable.
@@ -464,6 +478,10 @@ func (q *Query2[A, B]) Get() (*A, *B) {
 }
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter2] was not prepared for relations
+// using [Filter2.WithRelation].
 func (q *Query2[A, B]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -472,6 +490,9 @@ func (q *Query2[A, B]) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query2.Relation].
 // Does not check that the component ID is applicable.
@@ -637,6 +658,10 @@ func (q *Query3[A, B, C]) Get() (*A, *B, *C) {
 }
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter3] was not prepared for relations
+// using [Filter3.WithRelation].
 func (q *Query3[A, B, C]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -645,6 +670,9 @@ func (q *Query3[A, B, C]) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query3.Relation].
 // Does not check that the component ID is applicable.
@@ -814,6 +842,10 @@ func (q *Query4[A, B, C, D]) Get() (*A, *B, *C, *D) {
 }
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter4] was not prepared for relations
+// using [Filter4.WithRelation].
 func (q *Query4[A, B, C, D]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -822,6 +854,9 @@ func (q *Query4[A, B, C, D]) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query4.Relation].
 // Does not check that the component ID is applicable.
@@ -995,6 +1030,10 @@ func (q *Query5[A, B, C, D, E]) Get() (*A, *B, *C, *D, *E) {
 }
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter5] was not prepared for relations
+// using [Filter5.WithRelation].
 func (q *Query5[A, B, C, D, E]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -1003,6 +1042,9 @@ func (q *Query5[A, B, C, D, E]) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query5.Relation].
 // Does not check that the component ID is applicable.
@@ -1180,6 +1222,10 @@ func (q *Query6[A, B, C, D, E, F]) Get() (*A, *B, *C, *D, *E, *F) {
 }
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter6] was not prepared for relations
+// using [Filter6.WithRelation].
 func (q *Query6[A, B, C, D, E, F]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -1188,6 +1234,9 @@ func (q *Query6[A, B, C, D, E, F]) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query6.Relation].
 // Does not check that the component ID is applicable.
@@ -1369,6 +1418,10 @@ func (q *Query7[A, B, C, D, E, F, G]) Get() (*A, *B, *C, *D, *E, *F, *G) {
 }
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter7] was not prepared for relations
+// using [Filter7.WithRelation].
 func (q *Query7[A, B, C, D, E, F, G]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -1377,6 +1430,9 @@ func (q *Query7[A, B, C, D, E, F, G]) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query7.Relation].
 // Does not check that the component ID is applicable.
@@ -1562,6 +1618,10 @@ func (q *Query8[A, B, C, D, E, F, G, H]) Get() (*A, *B, *C, *D, *E, *F, *G, *H) 
 }
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter8] was not prepared for relations
+// using [Filter8.WithRelation].
 func (q *Query8[A, B, C, D, E, F, G, H]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -1570,6 +1630,9 @@ func (q *Query8[A, B, C, D, E, F, G, H]) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query8.Relation].
 // Does not check that the component ID is applicable.
