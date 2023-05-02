@@ -74,8 +74,10 @@ func (g *Map[T]) Set(entity ecs.Entity, comp *T) *T {
 
 // GetRelation returns the target entity for the given entity and the Map's relation component.
 //
-// Panics if the entity does not have a component of that type.
-// Panics if the component is not a relation.
+// Panics:
+//   - if the entity does not have a component of that type.
+//   - if the component is not an [ecs.Relation].
+//   - if the entity has been removed/recycled.
 //
 // See also [ecs.World.GetRelation].
 func (g *Map[T]) GetRelation(entity ecs.Entity) ecs.Entity {
@@ -83,6 +85,9 @@ func (g *Map[T]) GetRelation(entity ecs.Entity) ecs.Entity {
 }
 
 // GetRelation returns the target entity for the given entity and the Map's relation component.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // GetRelationUnchecked is an optimized version of [Map.GetRelation].
 // Does not check if the entity is alive or that the component ID is applicable.

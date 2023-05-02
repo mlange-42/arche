@@ -628,7 +628,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 // See [Relation] for details and examples.
 func (w *World) getRelation(entity Entity, comp ID) Entity {
 	if !w.entityPool.Alive(entity) {
-		panic("can't get relation on a dead entity")
+		panic("can't get relation of a dead entity")
 	}
 
 	index := &w.entities[entity.id]

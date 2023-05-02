@@ -153,6 +153,10 @@ func (q *Query{{ .Index }}{{ .Types }}) Get() ({{ .TypesReturn }}) {
 {{ end }}
 
 // Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the underlying [Filter{{ .Index }}] was not prepared for relations
+// using [Filter{{ .Index }}.WithRelation].
 func (q *Query{{ .Index }}{{ .Types }}) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
@@ -161,6 +165,9 @@ func (q *Query{{ .Index }}{{ .Types }}) Relation() ecs.Entity {
 }
 
 // RelationUnchecked returns the target entity for the query's relation.
+//
+// Returns the zero entity if the entity does not have the given component,
+// or if the component is not an [ecs.Relation].
 //
 // RelationUnchecked is an optimized version of [Query{{ .Index }}.Relation].
 // Does not check that the component ID is applicable.
