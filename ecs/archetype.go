@@ -93,7 +93,7 @@ func (a *archetypeNode) CreateArchetype(target Entity, components ...componentTy
 		a.archetypes.Add(archetype{})
 		archIndex := a.archetypes.Len() - 1
 		arch = a.archetypes.Get(archIndex)
-		arch.Init(a, archIndex, true, target, a.relation, components...)
+		arch.Init(a, archIndex, true, target, components...)
 	}
 	a.archetypeMap[target] = arch
 	return arch
@@ -281,7 +281,7 @@ type archetype struct {
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
+func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity, components ...componentType) {
 	var mask Mask
 	if !node.IsActive() {
 		node.Ids = make([]ID, len(components))
@@ -337,7 +337,7 @@ func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, rela
 		entityPointer:     a.entityBuffer.Addr().UnsafePointer(),
 		Mask:              mask,
 		Relation:          relation,
-		RelationComponent: relationComp,
+		RelationComponent: node.relation,
 	}
 
 	a.graphNode = node

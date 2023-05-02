@@ -114,7 +114,7 @@ func fromConfig(conf Config) World {
 		filterCache:   newCache(),
 	}
 	node := w.createArchetypeNode(Mask{}, -1)
-	w.createArchetype(node, Entity{}, 0, false)
+	w.createArchetype(node, Entity{}, false)
 	return w
 }
 
@@ -139,7 +139,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil, Entity{}, -1)
+		arch = w.findOrCreateArchetype(arch, comps, nil, Entity{})
 	}
 
 	entity := w.createEntity(arch)
@@ -174,7 +174,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	arch := w.archetypes.Get(0)
-	arch = w.findOrCreateArchetype(arch, ids, nil, Entity{}, -1)
+	arch = w.findOrCreateArchetype(arch, ids, nil, Entity{})
 
 	entity := w.createEntity(arch)
 
@@ -199,7 +199,7 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 	arch := w.archetypes.Get(0)
 
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil, target, int8(targetID))
+		arch = w.findOrCreateArchetype(arch, comps, nil, target)
 	}
 	w.checkRelation(arch, targetID)
 
@@ -229,7 +229,7 @@ func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Compone
 	}
 
 	arch := w.archetypes.Get(0)
-	arch = w.findOrCreateArchetype(arch, ids, nil, target, int8(targetID))
+	arch = w.findOrCreateArchetype(arch, ids, nil, target)
 	w.checkRelation(arch, targetID)
 
 	entity := w.createEntity(arch)
@@ -593,7 +593,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 
 	oldIDs := oldArch.Components()
 
-	arch := w.findOrCreateArchetype(oldArch, add, rem, Entity{}, -1)
+	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.Relation)
 	newIndex := arch.Alloc(entity)
 
 	for _, id := range oldIDs {
@@ -677,7 +677,7 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 
 	arch := oldArch.graphNode.GetArchetype(target)
 	if arch == nil {
-		arch = w.createArchetype(oldArch.graphNode, target, int8(oldArch.graphNode.relation), true)
+		arch = w.createArchetype(oldArch.graphNode, target, true)
 	}
 
 	newIndex := arch.Alloc(entity)
@@ -901,7 +901,7 @@ func (w *World) newEntitiesNoNotify(count int, targetID int8, target Entity, com
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil, target, targetID)
+		arch = w.findOrCreateArchetype(arch, comps, nil, target)
 	}
 	if targetID >= 0 {
 		w.checkRelation(arch, uint8(targetID))
@@ -936,7 +936,7 @@ func (w *World) newEntitiesWithNoNotify(count int, targetID int8, target Entity,
 
 	arch := w.archetypes.Get(0)
 	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, ids, nil, target, targetID)
+		arch = w.findOrCreateArchetype(arch, ids, nil, target)
 	}
 	if targetID >= 0 {
 		w.checkRelation(arch, uint8(targetID))
@@ -1017,10 +1017,10 @@ func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 // Tries to find an archetype by traversing the archetype graph,
 // searching by mask and extending the graph if necessary.
 // A new archetype is created for the final graph node if not already present.
-func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, target Entity, targetComponent int8) *archetype {
+func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, target Entity) *archetype {
 	curr := start.graphNode
 	mask := start.Mask
-	relation := start.graphNode.relation
+	relation := start.RelationComponent
 	for _, id := range rem {
 		mask.Set(id, false)
 		if w.registry.IsRelation.Get(id) {
@@ -1054,7 +1054,7 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 	}
 	arch := curr.GetArchetype(target)
 	if arch == nil {
-		arch = w.createArchetype(curr, target, targetComponent, true)
+		arch = w.createArchetype(curr, target, true)
 	}
 	return arch
 }
@@ -1097,7 +1097,7 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
 // Creates an archetype for the given archetype graph node.
 // Initializes the archetype with a capacity according to CapacityIncrement if forStorage is true,
 // and with a capacity of 1 otherwise.
-func (w *World) createArchetype(node *archetypeNode, target Entity, targetComponent int8, forStorage bool) *archetype {
+func (w *World) createArchetype(node *archetypeNode, target Entity, forStorage bool) *archetype {
 	mask := node.mask
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
@@ -1127,7 +1127,7 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, targetCompon
 		w.archetypes.Add(archetype{})
 		archIndex := w.archetypes.Len() - 1
 		arch = w.archetypes.Get(archIndex)
-		arch.Init(node, archIndex, forStorage, target, targetComponent, types...)
+		arch.Init(node, archIndex, forStorage, target, types...)
 		node.SetArchetype(arch)
 	}
 
