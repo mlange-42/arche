@@ -95,6 +95,9 @@ func fromConfig(conf Config) World {
 	if conf.CapacityIncrement < 1 {
 		panic("invalid CapacityIncrement in config, must be > 0")
 	}
+	if conf.RelationCapacityIncrement < 1 {
+		conf.RelationCapacityIncrement = conf.CapacityIncrement
+	}
 	entities := make([]entityIndex, 1, conf.CapacityIncrement)
 	entities[0] = entityIndex{arch: nil, index: 0}
 	w := World{
@@ -1053,7 +1056,12 @@ func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 
 // Creates a node in the archetype graph.
 func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
-	w.graph.Add(newArchetypeNode(mask, relation, w.config.CapacityIncrement))
+	capInc := w.config.CapacityIncrement
+	if relation >= 0 {
+		capInc = w.config.RelationCapacityIncrement
+	}
+
+	w.graph.Add(newArchetypeNode(mask, relation, capInc))
 	node := w.graph.Get(w.graph.Len() - 1)
 	w.relationNodes = append(w.relationNodes, node)
 	return node

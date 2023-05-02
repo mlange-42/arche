@@ -15,6 +15,18 @@ func TestWorldConfig(t *testing.T) {
 
 	assert.Panics(t, func() { _ = NewWorld(Config{}) })
 	assert.Panics(t, func() { _ = NewWorld(Config{}, Config{}) })
+
+	world := NewWorld(
+		NewConfig().WithCapacityIncrement(32).WithRelationCapacityIncrement(8),
+	)
+
+	relID := ComponentID[testRelationA](&world)
+
+	world.NewEntity()
+	world.NewEntity(relID)
+
+	assert.Equal(t, uint32(32), world.graph.Get(0).capacityIncrement)
+	assert.Equal(t, uint32(8), world.graph.Get(1).capacityIncrement)
 }
 
 func TestWorldEntites(t *testing.T) {
