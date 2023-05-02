@@ -906,8 +906,8 @@ func TestWorldRelationMove(t *testing.T) {
 	world := NewWorld()
 	world.SetListener(func(e *EntityEvent) {})
 
-	relID := ComponentID[testRelationA](&world)
 	posID := ComponentID[Position](&world)
+	relID := ComponentID[testRelationA](&world)
 
 	target1 := world.NewEntity()
 	target2 := world.NewEntity()
@@ -922,6 +922,20 @@ func TestWorldRelationMove(t *testing.T) {
 
 	for _, e := range entities {
 		world.Add(e, posID)
+	}
+
+	for i, e := range entities {
+		trg := world.Relations().Get(e, relID)
+
+		if i < 100 {
+			assert.Equal(t, target1, trg)
+		} else {
+			assert.Equal(t, target2, trg)
+		}
+	}
+
+	for _, e := range entities {
+		world.Remove(e, posID)
 	}
 
 	for i, e := range entities {

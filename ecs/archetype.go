@@ -204,6 +204,8 @@ func (a *archetypeNode) UpdateStats(stats *stats.NodeStats, reg *componentRegist
 	}
 
 	stats.IsActive = true
+	stats.ArchetypeCount = int(cntNew)
+	stats.ActiveArchetypeCount = int(cntNew) - len(a.freeIndices)
 	stats.Capacity = cap
 	stats.Size = count
 	stats.Memory = memory
