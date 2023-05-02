@@ -114,6 +114,14 @@ func (q *Query) Relation(comp ID) Entity {
 	return q.access.GetRelation()
 }
 
+// RelationUnchecked returns the target entity for an entity relation.
+//
+// GetRelationUnchecked is an optimized version of [Query.Relation].
+// Does not check that the component ID is applicable.
+func (q *Query) RelationUnchecked(comp ID) Entity {
+	return q.access.GetRelation()
+}
+
 // Step advances the query iterator by the given number of entities.
 //
 // Query.Step(1) is equivalent to [Query.Next]().

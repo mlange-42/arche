@@ -603,9 +603,11 @@ func TestWorldRelationSet(t *testing.T) {
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	assert.Equal(t, Entity{}, world.GetRelation(e1, relID))
+	assert.Equal(t, Entity{}, world.GetRelationUnchecked(e1, relID))
 	world.SetRelation(e1, relID, targ)
 
 	assert.Equal(t, targ, world.GetRelation(e1, relID))
+	assert.Equal(t, targ, world.GetRelationUnchecked(e1, relID))
 	assert.Equal(t, int32(3), world.graph.Len())
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())

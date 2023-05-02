@@ -159,3 +159,11 @@ func (q *Query{{ .Index }}{{ .Types }}) Relation() ecs.Entity {
 	}
 	return q.Query.Relation(ecs.ID(q.target))
 }
+
+// RelationUnchecked returns the target entity for the query's relation.
+//
+// RelationUnchecked is an optimized version of [Query{{ .Index }}.Relation].
+// Does not check that the component ID is applicable.
+func (q *Query{{ .Index }}{{ .Types }}) RelationUnchecked() ecs.Entity {
+	return q.Query.RelationUnchecked(ecs.ID(q.target))
+}

@@ -82,6 +82,16 @@ func (g *Map[T]) GetRelation(entity ecs.Entity) ecs.Entity {
 	return g.world.GetRelation(entity, g.id)
 }
 
+// GetRelation returns the target entity for the given entity and the Map's relation component.
+//
+// GetRelationUnchecked is an optimized version of [Map.GetRelation].
+// Does not check if the entity is alive or that the component ID is applicable.
+//
+// See also [ecs.World.GetRelationUnchecked].
+func (g *Map[T]) GetRelationUnchecked(entity ecs.Entity) ecs.Entity {
+	return g.world.GetRelationUnchecked(entity, g.id)
+}
+
 // SetRelation sets the target entity for the given entity and the Map's relation component.
 //
 // Panics if the entity does not have a component of that type.

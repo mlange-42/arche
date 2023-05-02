@@ -628,12 +628,21 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 // See [Relation] for details and examples.
 func (w *World) GetRelation(entity Entity, comp ID) Entity {
 	if !w.entityPool.Alive(entity) {
-		panic("can't exchange components on a dead entity")
+		panic("can't get relation on a dead entity")
 	}
 
 	index := &w.entities[entity.id]
 	w.checkRelation(index.arch, comp)
 
+	return index.arch.Relation
+}
+
+// GetRelationUnchecked returns the target entity for an entity relation.
+//
+// GetRelationUnchecked is an optimized version of [World.GetRelation].
+// Does not check if the entity is alive or that the component ID is applicable.
+func (w *World) GetRelationUnchecked(entity Entity, comp ID) Entity {
+	index := &w.entities[entity.id]
 	return index.arch.Relation
 }
 
@@ -691,11 +700,15 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 
 func (w *World) checkRelation(arch *archetype, comp ID) {
 	if arch.graphNode.relation != int8(comp) {
-		if !arch.HasComponent(comp) {
-			panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
-		}
-		panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
+		w.relationError(arch, comp)
 	}
+}
+
+func (w *World) relationError(arch *archetype, comp ID) {
+	if !arch.HasComponent(comp) {
+		panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
+	}
+	panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
 }
 
 // Reset removes all entities and resources from the world.
