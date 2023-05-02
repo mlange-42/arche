@@ -16,6 +16,13 @@ type filter struct {
 	compiled   compiledQuery
 }
 
+func newFilter(include ...Comp) filter {
+	return filter{
+		include:  include,
+		compiled: newCompiledQuery(),
+	}
+}
+
 // typeOf is a shortcut for getting the reflection type of a generic type argument.
 func typeOf[T any]() Comp {
 	return reflect.TypeOf((*T)(nil)).Elem()

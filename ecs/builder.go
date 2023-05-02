@@ -1,6 +1,6 @@
 package ecs
 
-// Builder for more flexible entity creation.
+// Builder for more flexible and batched entity creation.
 type Builder struct {
 	world     *World
 	ids       []ID
