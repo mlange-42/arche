@@ -185,6 +185,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	return entity
 }
 
+// Creates a new entity with a relation and a target entity.
 func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity {
 	w.checkLocked()
 
@@ -211,6 +212,7 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 	return entity
 }
 
+// Creates a new entity with a relation and a target entity.
 func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Component) Entity {
 	w.checkLocked()
 
@@ -727,7 +729,7 @@ func (w *World) Reset() {
 				continue
 			}
 			if arch.HasRelation() && !arch.Relation.IsZero() {
-				w.deleteArchetype(arch)
+				w.removeArchetype(arch)
 			} else {
 				arch.Reset()
 			}
@@ -1146,20 +1148,21 @@ func (w *World) cleanupArchetype(arch *archetype) {
 		return
 	}
 
-	w.deleteArchetype(arch)
+	w.removeArchetype(arch)
 }
 
 // Removes empty archetypes that have a target relation to the given entity.
 func (w *World) cleanupArchetypes(target Entity) {
 	for _, node := range w.relationNodes {
 		if arch, ok := node.archetypeMap[target]; ok && arch.Len() == 0 {
-			w.deleteArchetype(arch)
+			w.removeArchetype(arch)
 		}
 	}
 }
 
-func (w *World) deleteArchetype(arch *archetype) {
-	arch.graphNode.DeleteArchetype(arch)
+// Removes/da-activates a relation archetype.
+func (w *World) removeArchetype(arch *archetype) {
+	arch.graphNode.RemoveArchetype(arch)
 	w.filterCache.removeArchetype(arch)
 }
 

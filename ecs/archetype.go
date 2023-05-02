@@ -13,18 +13,18 @@ var layoutSize = unsafe.Sizeof(layout{})
 
 // archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
-	mask              Mask       // Mask of the archetype
-	Ids               []ID       // List of component IDs.
-	archetype         *archetype // The archetype
-	archetypes        pagedSlice[archetype]
-	archetypeMap      map[Entity]*archetype
-	freeIndices       []int32
+	mask              Mask                  // Mask of the archetype
+	Ids               []ID                  // List of component IDs
+	archetype         *archetype            // The single archetype for nodes without entity
+	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
+	archetypeMap      map[Entity]*archetype // Mapping from relation targets to archetypes
+	freeIndices       []int32               // Indices of free/inactive archetypes
 	TransitionAdd     idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
 	TransitionRemove  idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
-	relation          int8
-	zeroValue         []byte         // Used as source for setting storage to zero
-	zeroPointer       unsafe.Pointer // Points to zeroValue for fast access
-	capacityIncrement uint32         // Capacity increment
+	relation          int8                  // The node's relation component ID. Negative value stands for no relation
+	zeroValue         []byte                // Used as source for setting storage to zero
+	zeroPointer       unsafe.Pointer        // Points to zeroValue for fast access
+	capacityIncrement uint32                // Capacity increment
 }
 
 // Creates a new archetypeNode
@@ -43,10 +43,15 @@ func newArchetypeNode(mask Mask, relation int8, capacityIncrement int) archetype
 	}
 }
 
+// Matches the archetype node against a filter.
+// Ignores the relation target.
 func (a *archetypeNode) Matches(f Filter) bool {
 	return f.Matches(a.mask, nil)
 }
 
+// Archetypes of the node.
+// Returns a single wrapped archetype if there are no relations.
+// Returns nil if the node has no archetype(s).
 func (a *archetypeNode) Archetypes() archetypes {
 	if a.HasRelation() {
 		return &a.archetypes
@@ -57,17 +62,24 @@ func (a *archetypeNode) Archetypes() archetypes {
 	return batchArchetype{Archetype: a.archetype, StartIndex: 0}
 }
 
-func (a *archetypeNode) GetArchetype(id Entity) *archetype {
+// GetArchetype returns the archetype for the given relation target.
+//
+// The target is ignored if the node has no relation component.
+func (a *archetypeNode) GetArchetype(target Entity) *archetype {
 	if a.relation >= 0 {
-		return a.archetypeMap[id]
+		return a.archetypeMap[target]
 	}
 	return a.archetype
 }
 
+// SetArchetype sets the archetype for a node without a relation.
+//
+// Do not use on nodes without a relation component!
 func (a *archetypeNode) SetArchetype(arch *archetype) {
 	a.archetype = arch
 }
 
+// CreateArchetype creates a new archetype in nodes with relation component.
 func (a *archetypeNode) CreateArchetype(target Entity, components ...componentType) *archetype {
 	var arch *archetype
 	var archIndex int32
@@ -87,13 +99,16 @@ func (a *archetypeNode) CreateArchetype(target Entity, components ...componentTy
 	return arch
 }
 
-func (a *archetypeNode) DeleteArchetype(arch *archetype) {
+// RemoveArchetype de-activates an archetype.
+// The archetype will be re-used by CreateArchetype.
+func (a *archetypeNode) RemoveArchetype(arch *archetype) {
 	delete(a.archetypeMap, arch.Relation)
 	idx := arch.index
 	a.freeIndices = append(a.freeIndices, idx)
 	a.archetypes.Get(idx).Deactivate()
 }
 
+// HasRelation returns whether the node has a relation component.
 func (a *archetypeNode) HasRelation() bool {
 	return a.relation >= 0
 }
@@ -364,16 +379,20 @@ func (a *archetype) Reset() {
 	}
 }
 
+// Deactivate the archetype for later re-use.
 func (a *archetype) Deactivate() {
 	a.Reset()
 	a.index = -1
 }
 
+// Activate reactivates a de-activated archetype.
 func (a *archetype) Activate(target Entity, index int32) {
 	a.index = index
 	a.Relation = target
 }
 
+// IsActive returns whether the archetype is active.
+// Otherwise, it is eligible for re-use.
 func (a *archetype) IsActive() bool {
 	return a.index >= 0
 }
