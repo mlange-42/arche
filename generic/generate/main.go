@@ -160,7 +160,7 @@ func generateQueries() {
 			variables = strings.Join(variableLetters[:i], ", ")
 			returnTypes = "*" + strings.Join(typeLetters[:i], ", *")
 			fullTypes = "[" + strings.Join(typeLetters[:i], " any, ") + " any]"
-			include = "[]Comp{\ntypeOf[" + strings.Join(typeLetters[:i], "](),\ntypeOf[") + "](),\n}"
+			include = "typeOf[" + strings.Join(typeLetters[:i], "](),\ntypeOf[") + "](),"
 			idTypes = "id" + strings.Join(numbers[:i], " ecs.ID\n\tid") + " ecs.ID"
 			for j := 0; j < i; j++ {
 				returnAll += fmt.Sprintf("(*%s)(q.Query.Get(q.id%d))", typeLetters[j], j)
@@ -170,7 +170,7 @@ func generateQueries() {
 				}
 			}
 		} else {
-			include = "[]Comp{}"
+			include = ""
 		}
 		data := query{
 			Index:       i,

@@ -27,9 +27,7 @@ type Filter0 filter
 //
 // See also [ecs.World.Query].
 func NewFilter0() *Filter0 {
-	f := Filter0(filter{
-		include: []Comp{},
-	})
+	f := Filter0(newFilter())
 	return &f
 }
 
@@ -161,11 +159,9 @@ type Filter1[A any] filter
 //
 // See also [ecs.World.Query].
 func NewFilter1[A any]() *Filter1[A] {
-	f := Filter1[A](filter{
-		include: []Comp{
-			typeOf[A](),
-		},
-	})
+	f := Filter1[A](newFilter(
+		typeOf[A](),
+	))
 	return &f
 }
 
@@ -320,12 +316,10 @@ type Filter2[A any, B any] filter
 //
 // See also [ecs.World.Query].
 func NewFilter2[A any, B any]() *Filter2[A, B] {
-	f := Filter2[A, B](filter{
-		include: []Comp{
-			typeOf[A](),
-			typeOf[B](),
-		},
-	})
+	f := Filter2[A, B](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+	))
 	return &f
 }
 
@@ -483,13 +477,11 @@ type Filter3[A any, B any, C any] filter
 //
 // See also [ecs.World.Query].
 func NewFilter3[A any, B any, C any]() *Filter3[A, B, C] {
-	f := Filter3[A, B, C](filter{
-		include: []Comp{
-			typeOf[A](),
-			typeOf[B](),
-			typeOf[C](),
-		},
-	})
+	f := Filter3[A, B, C](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+	))
 	return &f
 }
 
@@ -650,14 +642,12 @@ type Filter4[A any, B any, C any, D any] filter
 //
 // See also [ecs.World.Query].
 func NewFilter4[A any, B any, C any, D any]() *Filter4[A, B, C, D] {
-	f := Filter4[A, B, C, D](filter{
-		include: []Comp{
-			typeOf[A](),
-			typeOf[B](),
-			typeOf[C](),
-			typeOf[D](),
-		},
-	})
+	f := Filter4[A, B, C, D](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+		typeOf[D](),
+	))
 	return &f
 }
 
@@ -821,15 +811,13 @@ type Filter5[A any, B any, C any, D any, E any] filter
 //
 // See also [ecs.World.Query].
 func NewFilter5[A any, B any, C any, D any, E any]() *Filter5[A, B, C, D, E] {
-	f := Filter5[A, B, C, D, E](filter{
-		include: []Comp{
-			typeOf[A](),
-			typeOf[B](),
-			typeOf[C](),
-			typeOf[D](),
-			typeOf[E](),
-		},
-	})
+	f := Filter5[A, B, C, D, E](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+		typeOf[D](),
+		typeOf[E](),
+	))
 	return &f
 }
 
@@ -996,16 +984,14 @@ type Filter6[A any, B any, C any, D any, E any, F any] filter
 //
 // See also [ecs.World.Query].
 func NewFilter6[A any, B any, C any, D any, E any, F any]() *Filter6[A, B, C, D, E, F] {
-	f := Filter6[A, B, C, D, E, F](filter{
-		include: []Comp{
-			typeOf[A](),
-			typeOf[B](),
-			typeOf[C](),
-			typeOf[D](),
-			typeOf[E](),
-			typeOf[F](),
-		},
-	})
+	f := Filter6[A, B, C, D, E, F](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+		typeOf[D](),
+		typeOf[E](),
+		typeOf[F](),
+	))
 	return &f
 }
 
@@ -1175,17 +1161,15 @@ type Filter7[A any, B any, C any, D any, E any, F any, G any] filter
 //
 // See also [ecs.World.Query].
 func NewFilter7[A any, B any, C any, D any, E any, F any, G any]() *Filter7[A, B, C, D, E, F, G] {
-	f := Filter7[A, B, C, D, E, F, G](filter{
-		include: []Comp{
-			typeOf[A](),
-			typeOf[B](),
-			typeOf[C](),
-			typeOf[D](),
-			typeOf[E](),
-			typeOf[F](),
-			typeOf[G](),
-		},
-	})
+	f := Filter7[A, B, C, D, E, F, G](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+		typeOf[D](),
+		typeOf[E](),
+		typeOf[F](),
+		typeOf[G](),
+	))
 	return &f
 }
 
@@ -1358,18 +1342,16 @@ type Filter8[A any, B any, C any, D any, E any, F any, G any, H any] filter
 //
 // See also [ecs.World.Query].
 func NewFilter8[A any, B any, C any, D any, E any, F any, G any, H any]() *Filter8[A, B, C, D, E, F, G, H] {
-	f := Filter8[A, B, C, D, E, F, G, H](filter{
-		include: []Comp{
-			typeOf[A](),
-			typeOf[B](),
-			typeOf[C](),
-			typeOf[D](),
-			typeOf[E](),
-			typeOf[F](),
-			typeOf[G](),
-			typeOf[H](),
-		},
-	})
+	f := Filter8[A, B, C, D, E, F, G, H](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+		typeOf[D](),
+		typeOf[E](),
+		typeOf[F](),
+		typeOf[G](),
+		typeOf[H](),
+	))
 	return &f
 }
 

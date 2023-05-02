@@ -26,6 +26,7 @@
 * Already empty archetypes are not zeroed on reset (#248)
 * Optimize `RelationFilter`: get archetype directly instead of iterating complete node (#251)
 * Cached filters use swap-remove when removing an archetype (#253)
+* Speed up generic query re-compilation after changing the relation target (#255)
 
 ### Other
 

@@ -21,6 +21,12 @@ type compiledQuery struct {
 	locked         bool
 }
 
+func newCompiledQuery() compiledQuery {
+	return compiledQuery{
+		TargetID: -1,
+	}
+}
+
 // Compile compiles a generic filter.
 func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp, targetType Comp, target ecs.Entity) {
 	if q.targetCompiled {
@@ -40,18 +46,21 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 		q.TargetID = -1
 	} else {
 		targetID := ecs.TypeID(w, targetType)
-		q.TargetID = int8(targetID)
 
-		if !q.maskFilter.Include.Get(targetID) {
-			panic(fmt.Sprintf("relation component %v not in filter", targetType))
-		}
-		isRelation := false
-		if targetType.NumField() > 0 {
-			field := targetType.Field(0)
-			isRelation = field.Type == relationType && field.Name == relationType.Name()
-		}
-		if !isRelation {
-			panic(fmt.Sprintf("component type %v is not a relation", targetType))
+		if targetID != uint8(q.TargetID) {
+			q.TargetID = int8(targetID)
+
+			if !q.maskFilter.Include.Get(targetID) {
+				panic(fmt.Sprintf("relation component %v not in filter", targetType))
+			}
+			isRelation := false
+			if targetType.NumField() > 0 {
+				field := targetType.Field(0)
+				isRelation = field.Type == relationType && field.Name == relationType.Name()
+			}
+			if !isRelation {
+				panic(fmt.Sprintf("component type %v is not a relation", targetType))
+			}
 		}
 
 		q.filter = &ecs.RelationFilter{
