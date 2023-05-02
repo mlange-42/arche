@@ -50,7 +50,7 @@ func GetResource[T any](w *World) *T {
 //
 // Panics if there is already such a resource.
 //
-// Uses reflection. For more efficient access, see [World.AddResource],
+// Uses reflection. For more efficient access, see [World.Resources],
 // and [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
 //
 // The number of resources per [World] is limited to [MaskTotalBits].
@@ -73,7 +73,6 @@ type World struct {
 	locks         lockMask                  // World locks.
 	registry      componentRegistry[ID]     // Component registry.
 	filterCache   Cache                     // Cache for registered filters.
-	relations     Relations                 // Helper for accessing entity relations.
 	stats         stats.WorldStats          // Cached world statistics
 }
 

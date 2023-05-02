@@ -12,7 +12,7 @@ package ecs
 // to allow for inspection of it's components.
 // Therefore, the [World] is in a locked state during entity removal events.
 //
-// Events for batch-creation of entities using [World.Batch] are fired after all entities are created.
+// Events for batch-creation of entities using a [Builder] are fired after all entities are created.
 // For batch methods that return a [Query], events are fired after the [Query] is closed (or fully iterated).
 // This allows the [World] to be in an unlocked state, and notifies after potential entity initialization.
 //

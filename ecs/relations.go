@@ -21,7 +21,7 @@ func (r *Relations) Get(entity Entity, comp ID) Entity {
 
 // GetUnchecked returns the target entity for an entity relation.
 //
-// GetUnchecked is an optimized version of [World.GetRelation].
+// GetUnchecked is an optimized version of [Relations.Get].
 // Does not check if the entity is alive or that the component ID is applicable.
 func (r *Relations) GetUnchecked(entity Entity, comp ID) Entity {
 	return r.world.getRelationUnchecked(entity, comp)
