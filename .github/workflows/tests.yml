@@ -116,6 +116,7 @@ jobs:
           go run ./examples/random_access
           go run ./examples/random_sampling
           go run ./examples/readme
+          go run ./examples/relations
           go run ./examples/resources
           go run ./examples/systems
           go run ./examples/world_stats

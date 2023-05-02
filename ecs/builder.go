@@ -27,9 +27,11 @@ func NewBuilderWith(w *World, comps ...Component) *Builder {
 	}
 }
 
-// WithRelation sets the relation component for the builder.
+// WithRelation sets the [Relation] component for the builder.
 //
 // Use in conjunction with the optional target argument of [Builder.New], [Builder.NewBatch] and [Builder.NewQuery].
+//
+// See [Relation] for details and examples.
 func (b *Builder) WithRelation(comp ID) *Builder {
 	b.hasTarget = true
 	b.targetID = comp

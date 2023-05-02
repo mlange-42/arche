@@ -185,6 +185,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	return entity
 }
 
+// Creates a new entity with a relation and a target entity.
 func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity {
 	w.checkLocked()
 
@@ -211,6 +212,7 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 	return entity
 }
 
+// Creates a new entity with a relation and a target entity.
 func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Component) Entity {
 	w.checkLocked()
 
@@ -616,6 +618,13 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 }
 
 // GetRelation returns the target entity for an entity relation.
+//
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called for a missing component.
+//   - when called for a component that is not a relation.
+//
+// See [Relation] for details and examples.
 func (w *World) GetRelation(entity Entity, comp ID) Entity {
 	if !w.entityPool.Alive(entity) {
 		panic("can't exchange components on a dead entity")
@@ -628,6 +637,15 @@ func (w *World) GetRelation(entity Entity, comp ID) Entity {
 }
 
 // SetRelation sets the target entity for an entity relation.
+//
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called for a removed (and potentially recycled) target.
+//   - when called for a missing component.
+//   - when called for a component that is not a relation.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See [Relation] for details and examples.
 func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 	w.checkLocked()
 
@@ -711,7 +729,7 @@ func (w *World) Reset() {
 				continue
 			}
 			if arch.HasRelation() && !arch.Relation.IsZero() {
-				w.deleteArchetype(arch)
+				w.removeArchetype(arch)
 			} else {
 				arch.Reset()
 			}
@@ -1130,20 +1148,21 @@ func (w *World) cleanupArchetype(arch *archetype) {
 		return
 	}
 
-	w.deleteArchetype(arch)
+	w.removeArchetype(arch)
 }
 
 // Removes empty archetypes that have a target relation to the given entity.
 func (w *World) cleanupArchetypes(target Entity) {
 	for _, node := range w.relationNodes {
 		if arch, ok := node.archetypeMap[target]; ok && arch.Len() == 0 {
-			w.deleteArchetype(arch)
+			w.removeArchetype(arch)
 		}
 	}
 }
 
-func (w *World) deleteArchetype(arch *archetype) {
-	arch.graphNode.DeleteArchetype(arch)
+// Removes/da-activates a relation archetype.
+func (w *World) removeArchetype(arch *archetype) {
+	arch.graphNode.RemoveArchetype(arch)
 	w.filterCache.removeArchetype(arch)
 }
 

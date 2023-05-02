@@ -1,3 +1,5 @@
+# Architecture
+
 ## Archetype-based architecture
 
 *Arche* uses an archetype-based architecture.
@@ -34,3 +36,13 @@ Obviously, archetypes are an optimization for iteration speed.
 But they also come with a downside. Adding or removing components to/from an entity requires moving all the components of the entity to another archetype.
 This takes around 20ns per involved component.
 It is therefore recommended to add/remove/exchange multiple components at the same time rather than one after the other.
+
+## Entity relations
+
+*Arche* supports entity relations as first class feature.
+
+This means that queries with a specified relation target entity are as fast as usual queries for component compositions.
+This is achieved by subdividing archetypes with a relation component by their relation target. I.e. entities that reference a different target entity are stored in different archetypes.
+
+This feature is inspired by [Flecs](https://github.com/SanderMertens/flecs).
+However, the implementation in *Arche* is currently limited in that it only supports a single relation per entity.

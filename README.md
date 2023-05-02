@@ -24,6 +24,7 @@
 
 * Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 * Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
+* Entity relations as first-class feature. See [Architecture](https://github.com/mlange-42/arche/blob/main/ARCHITECTURE.md#entity-relations).
 * No systems. Just queries. Use your own structure (or the [Tools](#tools)).
 * No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
 * Probably the fastest Go ECS out there. See the [Benchmarks](#benchmarks).
@@ -125,7 +126,7 @@ Nevertheless, *Arche* can also be used for game development.
 
 The `ecs.World` object is a pure and simple ECS implementation in the sense of a data store
 for entities and components, with query and iteration capabilities.
-The core package `ecs` consists of only 1500 lines of easy-to-read, clean and well-documented Go code.
+The core package `ecs` consists of less than 2500 lines of easy-to-read, clean and well-documented Go code.
 
 There is neither an update loop nor systems.
 These should be implemented by the user.
