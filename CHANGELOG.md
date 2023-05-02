@@ -31,6 +31,7 @@
 ### Documentation
 
 * Adds an example for creating and querying entity relations (#256)
+* Adds a section on entity relations to the `ARCHITECTURE.md` document (#256)
 
 ### Other
 
