@@ -12,13 +12,24 @@ func TestStats(t *testing.T) {
 		ComponentCount: 1,
 		ComponentTypes: []reflect.Type{reflect.TypeOf(1)},
 		Locked:         false,
-		Archetypes: []ArchetypeStats{{
-			Size:           1,
-			Capacity:       128,
-			Components:     1,
-			ComponentIDs:   []uint8{0},
-			ComponentTypes: []reflect.Type{reflect.TypeOf(1)},
-		}},
+		Nodes: []NodeStats{
+			{
+				Size:           1,
+				Capacity:       128,
+				Components:     1,
+				ComponentIDs:   []uint8{0},
+				ComponentTypes: []reflect.Type{reflect.TypeOf(1)},
+			},
+			{
+				IsActive:       true,
+				Size:           1,
+				Capacity:       128,
+				Components:     1,
+				ComponentIDs:   []uint8{0},
+				ComponentTypes: []reflect.Type{reflect.TypeOf(1)},
+			},
+		},
 	}
 	fmt.Println(stats.String())
+
 }

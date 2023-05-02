@@ -934,29 +934,58 @@ func TestWorldStats(t *testing.T) {
 	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
 	velID := ComponentID[Velocity](&w)
+	relID := ComponentID[testRelationA](&w)
+
+	_ = w.Stats()
 
 	e0 := w.NewEntity()
-	e1 := w.NewEntity()
-	e2 := w.NewEntity()
-
-	w.Add(e0, posID)
-	w.Add(e1, posID, rotID)
-	w.Add(e2, posID, rotID)
+	e1 := w.NewEntity(posID, rotID)
+	w.NewEntity(posID, rotID)
 
 	stats := w.Stats()
-	fmt.Println(stats.String())
+	_ = stats.Nodes[1].String()
+	s := stats.Nodes[2].String()
+	fmt.Println(s)
 
-	assert.Equal(t, 3, len(stats.Archetypes))
+	assert.Equal(t, 3, len(stats.Nodes))
 	assert.Equal(t, 3, stats.Entities.Used)
+	_ = w.Stats()
+
+	w.Add(e0, posID)
 
 	w.NewEntity(velID)
 	stats = w.Stats()
-	assert.Equal(t, 4, len(stats.Archetypes))
+	assert.Equal(t, 4, len(stats.Nodes))
 	assert.Equal(t, 4, stats.Entities.Used)
 
-	w.stats.Archetypes[1].Dirty = true
 	stats = w.Stats()
-	assert.Equal(t, 4, len(stats.Archetypes))
+	assert.Equal(t, 4, len(stats.Nodes))
+
+	builder := NewBuilder(&w, relID).WithRelation(relID)
+
+	builder.NewBatch(10)
+	builder.NewBatch(10, e0)
+	_ = w.Stats()
+
+	builder.NewBatch(5, e1)
+
+	stats = w.Stats()
+	assert.Equal(t, 29, stats.Entities.Used)
+	assert.Equal(t, 5, len(stats.Nodes))
+
+	node := &stats.Nodes[4]
+	assert.Equal(t, 3, len(node.Archetypes))
+	assert.Equal(t, 10, node.Archetypes[0].Size)
+	assert.Equal(t, 10, node.Archetypes[1].Size)
+	assert.Equal(t, 5, node.Archetypes[2].Size)
+
+	f := All(relID).Exclusive()
+	w.RemoveEntities(&f)
+	w.RemoveEntity(e0)
+	stats = w.Stats()
+
+	s = stats.String()
+	fmt.Println(s)
 }
 
 func TestWorldResources(t *testing.T) {
@@ -1155,12 +1184,14 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 1, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity: e0, AddedRemoved: 1,
+		Current: []ID{},
 	}, events[len(events)-1])
 
 	w.RemoveEntity(e0)
 	assert.Equal(t, 2, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity: e0, AddedRemoved: -1,
+		Removed: []ID{},
 	}, events[len(events)-1])
 
 	e0 = w.NewEntity(posID, velID)
