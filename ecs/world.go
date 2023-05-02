@@ -367,16 +367,14 @@ func (w *World) RemoveEntities(filter Filter) int {
 	var n int32
 	for n = 0; n < numNodes; n++ {
 		node := w.graph.Get(n)
-
+		if !node.IsActive() {
+			continue
+		}
 		if !node.Matches(filter) {
 			continue
 		}
 
 		arches := node.Archetypes()
-		if arches == nil {
-			continue
-		}
-
 		numArches := arches.Len()
 		var i int32
 		for i = 0; i < numArches; i++ {
@@ -719,11 +717,10 @@ func (w *World) Reset() {
 	var i int32
 	for i = 0; i < len; i++ {
 		node := w.graph.Get(i)
-		arches := node.Archetypes()
-		if arches == nil {
+		if !node.IsActive() {
 			continue
 		}
-
+		arches := node.Archetypes()
 		lenArches := arches.Len()
 		var j int32
 		for j = 0; j < lenArches; j++ {
@@ -821,17 +818,26 @@ func (w *World) Stats() *stats.WorldStats {
 
 	memory := cap(w.entities)*int(entityIndexSize) + w.entityPool.TotalCap()*int(entitySize)
 
-	cntOld := int32(len(w.stats.Archetypes))
-	cntNew := int32(w.archetypes.Len())
+	cntOld := int32(len(w.stats.Nodes))
+	cntNew := int32(w.graph.Len())
+	cntActive := 0
 	var i int32
 	for i = 0; i < cntOld; i++ {
-		arch := &w.stats.Archetypes[i]
-		w.archetypes.Get(i).UpdateStats(arch, &w.registry)
-		memory += arch.Memory
+		node := w.graph.Get(i)
+		nodeStats := &w.stats.Nodes[i]
+		node.UpdateStats(nodeStats, &w.registry)
+		if node.IsActive() {
+			memory += nodeStats.Memory
+			cntActive++
+		}
 	}
 	for i = cntOld; i < cntNew; i++ {
-		w.stats.Archetypes = append(w.stats.Archetypes, w.archetypes.Get(i).Stats(&w.registry))
-		memory += w.stats.Archetypes[i].Memory
+		node := w.graph.Get(i)
+		w.stats.Nodes = append(w.stats.Nodes, node.Stats(&w.registry))
+		if node.IsActive() {
+			memory += w.stats.Nodes[i].Memory
+			cntActive++
+		}
 	}
 
 	w.stats.ComponentCount = compCount
@@ -839,6 +845,7 @@ func (w *World) Stats() *stats.WorldStats {
 	w.stats.Locked = w.IsLocked()
 	w.stats.Memory = memory
 	w.stats.CachedFilters = len(w.filterCache.filters)
+	w.stats.ActiveNodeCount = cntActive
 
 	return &w.stats
 }
@@ -1115,14 +1122,13 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 	var i int32
 	for i = 0; i < ln; i++ {
 		nd := w.graph.Get(i)
+		if !nd.IsActive() {
+			continue
+		}
 		if !nd.Matches(filter) {
 			continue
 		}
 		nodeArches := nd.Archetypes()
-		if nodeArches == nil {
-			continue
-		}
-
 		ln2 := int32(nodeArches.Len())
 		if ln2 > 1 {
 			if rf, ok := filter.(*RelationFilter); ok {

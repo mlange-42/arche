@@ -260,13 +260,13 @@ func (q *Query) countEntities() int {
 	var i int32
 	for i = 0; i < len; i++ {
 		nd := q.nodes.Get(i)
+		if !nd.IsActive() {
+			continue
+		}
 		if !nd.Matches(q.filter) {
 			continue
 		}
 		arches := nd.Archetypes()
-		if arches == nil {
-			continue
-		}
 		nArch := arches.Len()
 
 		if nArch > 1 {

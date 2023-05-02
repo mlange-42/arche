@@ -113,6 +113,102 @@ func (a *archetypeNode) HasRelation() bool {
 	return a.relation >= 0
 }
 
+// IsActive returns whether the node is active, i.e. has archetypes.
+func (a *archetypeNode) IsActive() bool {
+	return a.Ids != nil
+}
+
+// Stats generates statistics for an archetype node.
+func (a *archetypeNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
+	ids := a.Ids
+	aCompCount := len(ids)
+	aTypes := make([]reflect.Type, aCompCount)
+	for j, id := range ids {
+		aTypes[j], _ = reg.ComponentType(id)
+	}
+
+	arches := a.Archetypes()
+	var numArches int32
+	cap := 0
+	count := 0
+	memory := 0
+	var archStats []stats.ArchetypeStats
+	if arches != nil {
+		numArches = arches.Len()
+		archStats = make([]stats.ArchetypeStats, numArches)
+		var i int32
+		for i = 0; i < numArches; i++ {
+			archStats[i] = arches.Get(i).Stats(reg)
+			stats := &archStats[i]
+			cap += stats.Capacity
+			count += stats.Size
+			memory += stats.Memory
+		}
+	}
+
+	memPerEntity := 0
+	for j := range ids {
+		memPerEntity += int(aTypes[j].Size())
+	}
+
+	return stats.NodeStats{
+		ArchetypeCount:       int(numArches),
+		ActiveArchetypeCount: int(numArches) - len(a.freeIndices),
+		IsActive:             a.IsActive(),
+		HasRelation:          a.HasRelation(),
+		Components:           aCompCount,
+		ComponentIDs:         ids,
+		ComponentTypes:       aTypes,
+		Memory:               memory,
+		MemoryPerEntity:      memPerEntity,
+		Size:                 count,
+		Capacity:             cap,
+		Archetypes:           archStats,
+	}
+}
+
+// UpdateStats updates statistics for an archetype node.
+func (a *archetypeNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry[ID]) {
+	if !a.IsActive() {
+		return
+	}
+
+	arches := a.Archetypes()
+
+	if !stats.IsActive {
+		temp := a.Stats(reg)
+		*stats = temp
+		return
+	}
+
+	cap := 0
+	count := 0
+	memory := 0
+
+	cntOld := int32(len(stats.Archetypes))
+	cntNew := int32(arches.Len())
+	var i int32
+	for i = 0; i < cntOld; i++ {
+		arch := &stats.Archetypes[i]
+		arches.Get(i).UpdateStats(stats, arch, reg)
+		cap += arch.Capacity
+		count += arch.Size
+		memory += arch.Memory
+	}
+	for i = cntOld; i < cntNew; i++ {
+		arch := arches.Get(i).Stats(reg)
+		stats.Archetypes = append(stats.Archetypes, arch)
+		cap += arch.Capacity
+		count += arch.Size
+		memory += arch.Memory
+	}
+
+	stats.IsActive = true
+	stats.Capacity = cap
+	stats.Size = count
+	stats.Memory = memory
+}
+
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
 	Mask              Mask           // Archetype's mask
@@ -187,7 +283,7 @@ type archetype struct {
 // Init initializes an archetype
 func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity, relationComp int8, components ...componentType) {
 	var mask Mask
-	if len(components) > 0 && node.Ids == nil {
+	if !node.IsActive() {
 		node.Ids = make([]ID, len(components))
 
 		var maxSize uintptr = 0
@@ -430,48 +526,22 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 	memory := cap * (int(entitySize) + memPerEntity)
 
 	return stats.ArchetypeStats{
-		IsActive:        a.IsActive(),
-		Size:            int(a.Len()),
-		Capacity:        cap,
-		Components:      aCompCount,
-		ComponentIDs:    ids,
-		ComponentTypes:  aTypes,
-		Memory:          memory,
-		MemoryPerEntity: memPerEntity,
+		IsActive: a.IsActive(),
+		Size:     int(a.Len()),
+		Capacity: cap,
+		Memory:   memory,
 	}
 }
 
 // UpdateStats updates statistics for an archetype
-func (a *archetype) UpdateStats(stats *stats.ArchetypeStats, reg *componentRegistry[ID]) {
-	if stats.Dirty {
-		ids := a.Components()
-		aCompCount := len(ids)
-		aTypes := make([]reflect.Type, aCompCount)
-		for j, id := range ids {
-			aTypes[j], _ = reg.ComponentType(id)
-		}
-
-		memPerEntity := 0
-		for _, id := range a.graphNode.Ids {
-			lay := a.getLayout(id)
-			memPerEntity += int(lay.itemSize)
-		}
-
-		stats.IsActive = a.IsActive()
-		stats.Components = aCompCount
-		stats.ComponentIDs = ids
-		stats.ComponentTypes = aTypes
-		stats.MemoryPerEntity = memPerEntity
-		stats.Dirty = false
-	}
-
+func (a *archetype) UpdateStats(node *stats.NodeStats, stats *stats.ArchetypeStats, reg *componentRegistry[ID]) {
 	cap := int(a.Cap())
-	memory := cap * (int(entitySize) + stats.MemoryPerEntity)
+	memory := cap * (int(entitySize) + node.MemoryPerEntity)
 
+	stats.IsActive = a.IsActive()
 	stats.Size = int(a.Len())
 	stats.Capacity = cap
 	stats.Memory = memory
-
 }
 
 // copy from one pointer to another.
