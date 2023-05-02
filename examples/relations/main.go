@@ -34,7 +34,12 @@ func run() {
 	parent2 := world.NewEntity()
 
 	// Create an entity with a ChildOf relation to a parent entity.
-	childBuilder.New(parent1)
+	child := childBuilder.New(parent1)
+	// Change the child's relation target.
+	world.Relations().Set(child, childID, parent2)
+	// Get the child's relation target.
+	fmt.Println(world.Relations().Get(child, childID))
+
 	// Create entities with a relation in batches.
 	childBuilder.NewBatch(10, parent1)
 	childBuilder.NewBatch(10, parent2)
@@ -70,7 +75,14 @@ func runGeneric() {
 	parent2 := world.NewEntity()
 
 	// Create an entity with a ChildOf relation to a parent entity.
-	childBuilder.New(parent1)
+	child := childBuilder.New(parent1)
+	// To set or get the relation target via the world, a Map is required.
+	relationMap := generic.NewMap[ChildOf](&world)
+	// Change the child's relation target.
+	relationMap.SetRelation(child, parent2)
+	// Get the child's relation target.
+	fmt.Println(relationMap.GetRelation(child))
+
 	// Create entities with a relation in batches.
 	childBuilder.NewBatch(10, parent1)
 	childBuilder.NewBatch(10, parent2)
