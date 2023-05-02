@@ -616,6 +616,13 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 }
 
 // GetRelation returns the target entity for an entity relation.
+//
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called for a missing component.
+//   - when called for a component that is not a relation.
+//
+// See [Relation] for details and examples.
 func (w *World) GetRelation(entity Entity, comp ID) Entity {
 	if !w.entityPool.Alive(entity) {
 		panic("can't exchange components on a dead entity")
@@ -628,6 +635,15 @@ func (w *World) GetRelation(entity Entity, comp ID) Entity {
 }
 
 // SetRelation sets the target entity for an entity relation.
+//
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called for a removed (and potentially recycled) target.
+//   - when called for a missing component.
+//   - when called for a component that is not a relation.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See [Relation] for details and examples.
 func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 	w.checkLocked()
 

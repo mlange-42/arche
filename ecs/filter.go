@@ -23,7 +23,9 @@ func (f *MaskFilter) Matches(bits Mask, relation *Entity) bool {
 	return bits.Contains(f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
-// RelationFilter is a [Filter] for a relation target, in addition to components.
+// RelationFilter is a [Filter] for a [Relation] target, in addition to components.
+//
+// See [Relation] for details and examples.
 type RelationFilter struct {
 	Filter Filter // Components filter.
 	Target Entity // Relation target entity.

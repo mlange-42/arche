@@ -4,9 +4,14 @@ import "reflect"
 
 var relationType = reflect.TypeOf((*Relation)(nil)).Elem()
 
-// Relation must be embedded as first field into components that represent an entity relation.
+// Relation is a marker that for entity relation components.
+// It must be embedded as first field of a component that represent an entity relation.
 //
-//	type ChildOf struct {
-//		Relation
-//	}
+// Entity relations allow for fast queries using entity relationships.
+// E.g. to iterate over all entities that are the child of a certain target entity.
+//
+// Currently, each entity can only have a single relation component.
+//
+// See also [RelationFilter], [World.GetRelation], [World.SetRelation] and
+// [Builder.WithRelation].
 type Relation struct{}

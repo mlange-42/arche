@@ -28,6 +28,10 @@
 * Cached filters use swap-remove when removing an archetype (#253)
 * Speed up generic query re-compilation after changing the relation target (#255)
 
+### Documentation
+
+* Adds an example for creating and querying entity relations (#256)
+
 ### Other
 
 * Remove go-gameengine-ecs from Arche benchmarks (but not from competition!) (#228)
