@@ -19,6 +19,7 @@
 * `WorldStats` contains the number of cached filters (#247)
 * Archetypes with entity relations are removed on `World.Reset` (#247)
 * Capacity increment can be configured separately for relation archetypes (#257)
+* Adds methods for faster, unchecked entity relation access (#259)
 
 ### Performance
 
@@ -40,6 +41,7 @@
 * Remove go-gameengine-ecs from Arche benchmarks (but not from competition!) (#228)
 * Reduce memory size of `Query` and internal archetype list by 8 bytes (#230)
 * Generic filters are locked when registered for caching (#241)
+* Adds benchmarks for getting and setting entity relations (#259)
 
 ## [[v0.7.1]](https://github.com/mlange-42/arche/compare/v0.7.0...v0.7.1)
 

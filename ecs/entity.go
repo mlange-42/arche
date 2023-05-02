@@ -15,7 +15,7 @@ var entityIndexSize = reflect.TypeOf(entityIndex{}).Size()
 // Holds an entity ID and it's generation for recycling.
 //
 // Entities are only created via the [World], using [World.NewEntity] or [World.NewEntityWith].
-// Batch creation of entities is possible via [World.Batch].
+// Batch creation of entities is possible via [Builder].
 //
 // Entities are intended to be stored and passed around via copy, not via pointers.
 type Entity struct {

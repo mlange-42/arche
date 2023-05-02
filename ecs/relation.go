@@ -12,6 +12,6 @@ var relationType = reflect.TypeOf((*Relation)(nil)).Elem()
 //
 // Currently, each entity can only have a single relation component.
 //
-// See also [RelationFilter], [World.GetRelation], [World.SetRelation] and
+// See also [RelationFilter], [World.Relations], [Relations.Get], [Relations.Set] and
 // [Builder.WithRelation].
 type Relation struct{}

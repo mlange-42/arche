@@ -73,6 +73,7 @@ func TestMap1Generated(t *testing.T) {
 	e = mut2.NewWith(&testRelationA{}, target)
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
 }
 
 func TestMap2Generated(t *testing.T) {
@@ -150,6 +151,7 @@ func TestMap2Generated(t *testing.T) {
 	e = mut2.NewWith(&testRelationA{}, &testStruct1{}, target)
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
 }
 
 func TestMap3Generated(t *testing.T) {
@@ -231,6 +233,7 @@ func TestMap3Generated(t *testing.T) {
 	e = mut2.NewWith(&testRelationA{}, &testStruct1{}, &testStruct2{}, target)
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
 }
 
 func TestMap4Generated(t *testing.T) {
@@ -315,6 +318,7 @@ func TestMap4Generated(t *testing.T) {
 	e = mut2.NewWith(&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{}, target)
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
 }
 
 func TestMap5Generated(t *testing.T) {
@@ -411,6 +415,7 @@ func TestMap5Generated(t *testing.T) {
 	)
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
 }
 
 func TestMap6Generated(t *testing.T) {
@@ -507,6 +512,7 @@ func TestMap6Generated(t *testing.T) {
 	)
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
 }
 
 func TestMap7Generated(t *testing.T) {
@@ -603,6 +609,7 @@ func TestMap7Generated(t *testing.T) {
 	)
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
 }
 
 func TestMap8Generated(t *testing.T) {
@@ -699,4 +706,5 @@ func TestMap8Generated(t *testing.T) {
 	)
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
 }

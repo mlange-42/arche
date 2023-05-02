@@ -22,7 +22,7 @@ func ExampleRelation() {
 	child := childBuilder.New(parent)
 
 	// Get the relation target of the child.
-	_ = world.GetRelation(child, childID)
+	_ = world.Relations().Get(child, childID)
 
 	// Filter for the relation.
 	filter := ecs.RelationFilter{

@@ -50,7 +50,7 @@ func GetResource[T any](w *World) *T {
 //
 // Panics if there is already such a resource.
 //
-// Uses reflection. For more efficient access, see [World.AddResource],
+// Uses reflection. For more efficient access, see [World.Resources],
 // and [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
 //
 // The number of resources per [World] is limited to [MaskTotalBits].
@@ -618,7 +618,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 }
 
-// GetRelation returns the target entity for an entity relation.
+// getRelation returns the target entity for an entity relation.
 //
 // Panics:
 //   - when called for a removed (and potentially recycled) entity.
@@ -626,9 +626,9 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 //   - when called for a component that is not a relation.
 //
 // See [Relation] for details and examples.
-func (w *World) GetRelation(entity Entity, comp ID) Entity {
+func (w *World) getRelation(entity Entity, comp ID) Entity {
 	if !w.entityPool.Alive(entity) {
-		panic("can't exchange components on a dead entity")
+		panic("can't get relation on a dead entity")
 	}
 
 	index := &w.entities[entity.id]
@@ -637,7 +637,16 @@ func (w *World) GetRelation(entity Entity, comp ID) Entity {
 	return index.arch.Relation
 }
 
-// SetRelation sets the target entity for an entity relation.
+// getRelationUnchecked returns the target entity for an entity relation.
+//
+// getRelationUnchecked is an optimized version of [World.getRelation].
+// Does not check if the entity is alive or that the component ID is applicable.
+func (w *World) getRelationUnchecked(entity Entity, comp ID) Entity {
+	index := &w.entities[entity.id]
+	return index.arch.Relation
+}
+
+// setRelation sets the target entity for an entity relation.
 //
 // Panics:
 //   - when called for a removed (and potentially recycled) entity.
@@ -647,7 +656,7 @@ func (w *World) GetRelation(entity Entity, comp ID) Entity {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See [Relation] for details and examples.
-func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
+func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 	w.checkLocked()
 
 	if !w.entityPool.Alive(entity) {
@@ -691,11 +700,15 @@ func (w *World) SetRelation(entity Entity, comp ID, target Entity) {
 
 func (w *World) checkRelation(arch *archetype, comp ID) {
 	if arch.graphNode.relation != int8(comp) {
-		if !arch.HasComponent(comp) {
-			panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
-		}
-		panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
+		w.relationError(arch, comp)
 	}
+}
+
+func (w *World) relationError(arch *archetype, comp ID) {
+	if !arch.HasComponent(comp) {
+		panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
+	}
+	panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
 }
 
 // Reset removes all entities and resources from the world.
@@ -773,6 +786,13 @@ func (w *World) Cache() *Cache {
 		w.filterCache.getArchetypes = w.getArchetypes
 	}
 	return &w.filterCache
+}
+
+// Relations returns the [Relations] of the world, for accessing entity [Relation] targets.
+//
+// See [Relations] for details.
+func (w *World) Relations() *Relations {
+	return &Relations{world: w}
 }
 
 // IsLocked returns whether the world is locked by any queries.

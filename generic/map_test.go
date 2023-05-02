@@ -57,6 +57,8 @@ func TestGenericMapRelations(t *testing.T) {
 
 	targ2 = get.GetRelation(e0)
 	assert.Equal(t, targ, targ2)
+
+	assert.Equal(t, targ, get.GetRelationUnchecked(e0))
 }
 
 func ExampleMap() {

@@ -342,7 +342,7 @@ func TestQueryRelations(t *testing.T) {
 	targ := world.NewEntity(posID)
 
 	e1 := world.NewEntity(relID, velID)
-	world.SetRelation(e1, relID, targ)
+	world.Relations().Set(e1, relID, targ)
 
 	filter := All(relID)
 	query := world.Query(filter)
@@ -351,6 +351,7 @@ func TestQueryRelations(t *testing.T) {
 		targ2 := query.Relation(relID)
 
 		assert.Equal(t, targ, targ2)
+		assert.Equal(t, targ, query.RelationUnchecked(relID))
 
 		assert.Panics(t, func() { query.Relation(rel2ID) })
 		assert.Panics(t, func() { query.Relation(posID) })
