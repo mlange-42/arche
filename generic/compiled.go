@@ -76,3 +76,20 @@ func (q *compiledQuery) Reset(targetOnly bool) {
 		q.compiled = false
 	}
 }
+
+// Register the compiledQuery for caching.
+func (q *compiledQuery) Register(w *ecs.World) {
+	q.cachedFilter = w.Cache().Register(q.filter)
+	q.filter = &q.cachedFilter
+	q.locked = true
+}
+
+// Unregister the compiledQuery from caching.
+func (q *compiledQuery) Unregister(w *ecs.World) {
+	if cf, ok := q.filter.(*ecs.CachedFilter); ok {
+		q.filter = w.Cache().Unregister(cf)
+	} else {
+		panic("can't unregister a filter that is not cached")
+	}
+	q.locked = false
+}

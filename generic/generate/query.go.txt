@@ -104,21 +104,14 @@ func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter{{ .Index }}{{ .Types }}) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter{{ .Index }}{{ .Types }}) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query{{ .Index }} is a generic query iterator for {{ .NumberStr }} components.

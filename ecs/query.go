@@ -114,7 +114,7 @@ func (q *Query) Relation(comp ID) Entity {
 	if q.access.RelationComponent != int8(comp) {
 		panic(fmt.Sprintf("entity has no component %v, or it is not a relation component", q.world.registry.Types[comp]))
 	}
-	return q.access.GetRelation()
+	return q.access.RelationTarget
 }
 
 // RelationUnchecked returns the target entity for an entity relation.
@@ -125,7 +125,7 @@ func (q *Query) Relation(comp ID) Entity {
 // GetRelationUnchecked is an optimized version of [Query.Relation].
 // Does not check that the component ID is applicable.
 func (q *Query) RelationUnchecked(comp ID) Entity {
-	return q.access.GetRelation()
+	return q.access.RelationTarget
 }
 
 // Step advances the query iterator by the given number of entities.
@@ -226,20 +226,19 @@ func (q *Query) nextNode() bool {
 			continue
 		}
 
-		if arches.Len() > 1 {
-			if rf, ok := q.filter.(*relationFilter); ok {
-				target := rf.Target
-				if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
-					q.archetypes = nil
-					q.archIndex = arch.index
-					q.access = &arch.archetypeAccess
-					q.entityIndex = 0
-					q.entityIndexMax = uintptr(arch.Len()) - 1
-					return true
-				}
-				continue
+		if rf, ok := q.filter.(*relationFilter); ok {
+			target := rf.Target
+			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
+				q.archetypes = nil
+				q.archIndex = arch.index
+				q.access = &arch.archetypeAccess
+				q.entityIndex = 0
+				q.entityIndexMax = uintptr(arch.Len()) - 1
+				return true
 			}
+			continue
 		}
+
 		q.archetypes = arches
 		q.archIndex = -1
 		q.entityIndex = 0
@@ -278,25 +277,20 @@ func (q *Query) countEntities() int {
 	var i int32
 	for i = 0; i < len; i++ {
 		nd := q.nodes.Get(i)
-		if !nd.IsActive() {
+		if !nd.IsActive || !nd.Matches(q.filter) {
 			continue
 		}
-		if !nd.Matches(q.filter) {
+
+		if rf, ok := q.filter.(*relationFilter); ok {
+			target := rf.Target
+			if arch, ok := nd.archetypeMap[target]; ok {
+				count += arch.Len()
+			}
 			continue
 		}
+
 		arches := nd.Archetypes()
 		nArch := arches.Len()
-
-		if nArch > 1 {
-			if rf, ok := q.filter.(*relationFilter); ok {
-				target := rf.Target
-				if arch, ok := nd.archetypeMap[target]; ok {
-					count += arch.Len()
-				}
-				continue
-			}
-		}
-
 		var j int32
 		for j = 0; j < nArch; j++ {
 			a := arches.Get(j)

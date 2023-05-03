@@ -13,40 +13,73 @@ var layoutSize = unsafe.Sizeof(layout{})
 
 // archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
-	mask              Mask                  // Mask of the archetype
+	Mask              Mask                  // Mask of the archetype
 	Ids               []ID                  // List of component IDs
+	Types             []reflect.Type        // Component type per column
 	archetype         *archetype            // The single archetype for nodes without entity
 	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
 	archetypeMap      map[Entity]*archetype // Mapping from relation targets to archetypes
 	freeIndices       []int32               // Indices of free/inactive archetypes
 	TransitionAdd     idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
 	TransitionRemove  idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
-	relation          int8                  // The node's relation component ID. Negative value stands for no relation
+	Relation          int8                  // The node's relation component ID. Negative value stands for no relation
 	zeroValue         []byte                // Used as source for setting storage to zero
 	zeroPointer       unsafe.Pointer        // Points to zeroValue for fast access
 	capacityIncrement uint32                // Capacity increment
+	IsActive          bool
 }
 
 // Creates a new archetypeNode
-func newArchetypeNode(mask Mask, relation int8, capacityIncrement int) archetypeNode {
+func newArchetypeNode(mask Mask, relation int8, capacityIncrement int, components []componentType) archetypeNode {
 	var arch map[Entity]*archetype
 	if relation >= 0 {
 		arch = map[Entity]*archetype{}
 	}
+	ids := make([]ID, len(components))
+	types := make([]reflect.Type, len(components))
+
+	var maxSize uintptr = 0
+	prev := -1
+	for i, c := range components {
+		if int(c.ID) <= prev {
+			panic("component arguments must be sorted by ID")
+		}
+		prev = int(c.ID)
+
+		ids[i] = c.ID
+		types[i] = c.Type
+		size, align := c.Type.Size(), uintptr(c.Type.Align())
+		size = (size + (align - 1)) / align * align
+		if size > maxSize {
+			maxSize = size
+		}
+	}
+
+	var zeroValue []byte
+	var zeroPointer unsafe.Pointer
+	if maxSize > 0 {
+		zeroValue = make([]byte, maxSize)
+		zeroPointer = unsafe.Pointer(&zeroValue[0])
+	}
+
 	return archetypeNode{
-		mask:              mask,
+		Mask:              mask,
+		Ids:               ids,
+		Types:             types,
 		archetypeMap:      arch,
 		TransitionAdd:     newIDMap[*archetypeNode](),
 		TransitionRemove:  newIDMap[*archetypeNode](),
-		relation:          relation,
+		Relation:          relation,
 		capacityIncrement: uint32(capacityIncrement),
+		zeroValue:         zeroValue,
+		zeroPointer:       zeroPointer,
 	}
 }
 
 // Matches the archetype node against a filter.
 // Ignores the relation target.
 func (a *archetypeNode) Matches(f Filter) bool {
-	return f.Matches(a.mask, nil)
+	return f.Matches(a.Mask, nil)
 }
 
 // Archetypes of the node.
@@ -66,7 +99,7 @@ func (a *archetypeNode) Archetypes() archetypes {
 //
 // The target is ignored if the node has no relation component.
 func (a *archetypeNode) GetArchetype(target Entity) *archetype {
-	if a.relation >= 0 {
+	if a.Relation >= 0 {
 		return a.archetypeMap[target]
 	}
 	return a.archetype
@@ -80,7 +113,7 @@ func (a *archetypeNode) SetArchetype(arch *archetype) {
 }
 
 // CreateArchetype creates a new archetype in nodes with relation component.
-func (a *archetypeNode) CreateArchetype(target Entity, components ...componentType) *archetype {
+func (a *archetypeNode) CreateArchetype(target Entity) *archetype {
 	var arch *archetype
 	var archIndex int32
 	lenFree := len(a.freeIndices)
@@ -93,7 +126,7 @@ func (a *archetypeNode) CreateArchetype(target Entity, components ...componentTy
 		a.archetypes.Add(archetype{})
 		archIndex := a.archetypes.Len() - 1
 		arch = a.archetypes.Get(archIndex)
-		arch.Init(a, archIndex, true, target, components...)
+		arch.Init(a, archIndex, true, target)
 	}
 	a.archetypeMap[target] = arch
 	return arch
@@ -102,7 +135,7 @@ func (a *archetypeNode) CreateArchetype(target Entity, components ...componentTy
 // RemoveArchetype de-activates an archetype.
 // The archetype will be re-used by CreateArchetype.
 func (a *archetypeNode) RemoveArchetype(arch *archetype) {
-	delete(a.archetypeMap, arch.Relation)
+	delete(a.archetypeMap, arch.RelationTarget)
 	idx := arch.index
 	a.freeIndices = append(a.freeIndices, idx)
 	a.archetypes.Get(idx).Deactivate()
@@ -110,12 +143,7 @@ func (a *archetypeNode) RemoveArchetype(arch *archetype) {
 
 // HasRelation returns whether the node has a relation component.
 func (a *archetypeNode) HasRelation() bool {
-	return a.relation >= 0
-}
-
-// IsActive returns whether the node is active, i.e. has archetypes.
-func (a *archetypeNode) IsActive() bool {
-	return a.Ids != nil
+	return a.Relation >= 0
 }
 
 // Stats generates statistics for an archetype node.
@@ -154,7 +182,7 @@ func (a *archetypeNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 	return stats.NodeStats{
 		ArchetypeCount:       int(numArches),
 		ActiveArchetypeCount: int(numArches) - len(a.freeIndices),
-		IsActive:             a.IsActive(),
+		IsActive:             a.IsActive,
 		HasRelation:          a.HasRelation(),
 		Components:           aCompCount,
 		ComponentIDs:         ids,
@@ -169,7 +197,7 @@ func (a *archetypeNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 
 // UpdateStats updates statistics for an archetype node.
 func (a *archetypeNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry[ID]) {
-	if !a.IsActive() {
+	if !a.IsActive {
 		return
 	}
 
@@ -216,13 +244,13 @@ type archetypeAccess struct {
 	Mask              Mask           // Archetype's mask
 	basePointer       unsafe.Pointer // Pointer to the first component column layout.
 	entityPointer     unsafe.Pointer // Pointer to the entity storage
-	Relation          Entity
+	RelationTarget    Entity
 	RelationComponent int8
 }
 
 // Matches checks if the archetype matches the given mask.
 func (a *archetype) Matches(f Filter) bool {
-	return f.Matches(a.Mask, &a.Relation)
+	return f.Matches(a.Mask, &a.RelationTarget)
 }
 
 // GetEntity returns the entity at the given index
@@ -233,11 +261,6 @@ func (a *archetypeAccess) GetEntity(index uintptr) Entity {
 // Get returns the component with the given ID at the given index
 func (a *archetypeAccess) Get(index uintptr, id ID) unsafe.Pointer {
 	return a.getLayout(id).Get(index)
-}
-
-// GetEntity returns the entity at the given index
-func (a *archetypeAccess) GetRelation() Entity {
-	return a.Relation
 }
 
 // HasComponent returns whether the archetype contains the given component ID.
@@ -283,28 +306,12 @@ type archetype struct {
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity, components ...componentType) {
-	var mask Mask
-	if !node.IsActive() {
-		node.Ids = make([]ID, len(components))
-
-		var maxSize uintptr = 0
-		for i, c := range components {
-			node.Ids[i] = c.ID
-			size, align := c.Type.Size(), uintptr(c.Type.Align())
-			size = (size + (align - 1)) / align * align
-			if size > maxSize {
-				maxSize = size
-			}
-		}
-
-		if maxSize > 0 {
-			node.zeroValue = make([]byte, maxSize)
-			node.zeroPointer = unsafe.Pointer(&node.zeroValue[0])
-		}
+func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity) {
+	if !node.IsActive {
+		node.IsActive = true
 	}
 
-	a.buffers = make([]reflect.Value, len(components))
+	a.buffers = make([]reflect.Value, len(node.Ids))
 	a.layouts = make([]layout, MaskTotalBits)
 	a.indices = newIDMap[uint32]()
 	a.index = index
@@ -314,32 +321,26 @@ func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, rela
 		cap = int(node.capacityIncrement)
 	}
 
-	prev := -1
-	for i, c := range components {
-		if int(c.ID) <= prev {
-			panic("component arguments must be sorted by ID")
-		}
-		prev = int(c.ID)
-		mask.Set(c.ID, true)
-
-		size, align := c.Type.Size(), uintptr(c.Type.Align())
+	for i, id := range node.Ids {
+		tp := node.Types[i]
+		size, align := tp.Size(), uintptr(tp.Align())
 		size = (size + (align - 1)) / align * align
 
-		a.buffers[i] = reflect.New(reflect.ArrayOf(cap, c.Type)).Elem()
-		a.layouts[c.ID] = layout{
+		a.buffers[i] = reflect.New(reflect.ArrayOf(cap, tp)).Elem()
+		a.layouts[id] = layout{
 			a.buffers[i].Addr().UnsafePointer(),
 			size,
 		}
-		a.indices.Set(c.ID, uint32(i))
+		a.indices.Set(id, uint32(i))
 	}
 	a.entityBuffer = reflect.New(reflect.ArrayOf(cap, entityType)).Elem()
 
 	a.archetypeAccess = archetypeAccess{
 		basePointer:       unsafe.Pointer(&a.layouts[0]),
 		entityPointer:     a.entityBuffer.Addr().UnsafePointer(),
-		Mask:              mask,
-		Relation:          relation,
-		RelationComponent: node.relation,
+		Mask:              node.Mask,
+		RelationTarget:    relation,
+		RelationComponent: node.Relation,
 	}
 
 	a.graphNode = node
@@ -486,7 +487,7 @@ func (a *archetype) Deactivate() {
 // Activate reactivates a de-activated archetype.
 func (a *archetype) Activate(target Entity, index int32) {
 	a.index = index
-	a.Relation = target
+	a.RelationTarget = target
 }
 
 // IsActive returns whether the archetype is active.

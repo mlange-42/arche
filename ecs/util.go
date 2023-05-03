@@ -26,6 +26,30 @@ func capacityU32(size, increment uint32) uint32 {
 	return cap
 }
 
+func maskToTypes(mask Mask, reg *componentRegistry[ID]) []componentType {
+	count := int(mask.TotalBitsSet())
+	types := make([]componentType, count)
+
+	start := 0
+	end := MaskTotalBits
+	if mask.Lo == 0 {
+		start = wordSize
+	}
+	if mask.Hi == 0 {
+		end = wordSize
+	}
+
+	idx := 0
+	for i := start; i < end; i++ {
+		id := ID(i)
+		if mask.Get(id) {
+			types[idx] = componentType{ID: id, Type: reg.Types[id]}
+			idx++
+		}
+	}
+	return types
+}
+
 // Manages locks by mask bits.
 //
 // The number of simultaneous locks at a given time is limited to [MaskTotalBits].
@@ -110,8 +134,8 @@ func debugPrintWorld(w *World) string {
 	var i int32
 	for i = 0; i < ln; i++ {
 		nd := w.graph.Get(i)
-		if !nd.IsActive() {
-			fmt.Fprint(&sb, "Node ??? (inactive)\n")
+		if !nd.IsActive {
+			fmt.Fprintf(&sb, "Node %v (inactive)\n", nd.Ids)
 			continue
 		}
 		nodeArches := nd.Archetypes()
@@ -121,9 +145,9 @@ func debugPrintWorld(w *World) string {
 		for j = 0; j < ln2; j++ {
 			a := nodeArches.Get(j)
 			if a.IsActive() {
-				fmt.Fprintf(&sb, "   Arch %v (%d entities)\n", a.Relation, a.Len())
+				fmt.Fprintf(&sb, "   Arch %v (%d entities)\n", a.RelationTarget, a.Len())
 			} else {
-				fmt.Fprintf(&sb, "   Arch %v (inactive)\n", a.Relation)
+				fmt.Fprintf(&sb, "   Arch %v (inactive)\n", a.RelationTarget)
 			}
 		}
 	}

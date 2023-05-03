@@ -145,7 +145,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 	entity := w.createEntity(arch)
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.graphNode.Ids, 1, Entity{}, arch.Relation, false})
+		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.graphNode.Ids, 1, Entity{}, arch.RelationTarget, false})
 	}
 	return entity
 }
@@ -183,7 +183,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.graphNode.Ids, 1, Entity{}, arch.Relation, false})
+		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.graphNode.Ids, 1, Entity{}, arch.RelationTarget, false})
 	}
 	return entity
 }
@@ -210,7 +210,7 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 	}
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.graphNode.Ids, 1, Entity{}, arch.Relation, false})
+		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.graphNode.Ids, 1, Entity{}, arch.RelationTarget, false})
 	}
 	return entity
 }
@@ -243,7 +243,7 @@ func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Compone
 	}
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.graphNode.Ids, 1, Entity{}, arch.Relation, false})
+		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.graphNode.Ids, 1, Entity{}, arch.RelationTarget, false})
 	}
 	return entity
 }
@@ -259,7 +259,7 @@ func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID
 		for i = 0; i < cnt; i++ {
 			idx := startIdx + i
 			entity := arch.GetEntity(uintptr(idx))
-			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.graphNode.Ids, 1, Entity{}, arch.Relation, false})
+			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.graphNode.Ids, 1, Entity{}, arch.RelationTarget, false})
 		}
 	}
 
@@ -290,7 +290,7 @@ func (w *World) newEntitiesWith(count int, targetID int8, target Entity, comps .
 		for i = 0; i < cnt; i++ {
 			idx := startIdx + i
 			entity := arch.GetEntity(uintptr(idx))
-			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.graphNode.Ids, 1, Entity{}, arch.Relation, false})
+			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.graphNode.Ids, 1, Entity{}, arch.RelationTarget, false})
 		}
 	}
 
@@ -328,7 +328,7 @@ func (w *World) RemoveEntity(entity Entity) {
 
 	if w.listener != nil {
 		lock := w.lock()
-		w.listener(&EntityEvent{entity, oldArch.Mask, Mask{}, nil, oldArch.graphNode.Ids, nil, -1, oldArch.Relation, Entity{}, false})
+		w.listener(&EntityEvent{entity, oldArch.Mask, Mask{}, nil, oldArch.graphNode.Ids, nil, -1, oldArch.RelationTarget, Entity{}, false})
 		w.unlock(lock)
 	}
 
@@ -367,7 +367,7 @@ func (w *World) removeEntities(filter Filter) int {
 	var n int32
 	for n = 0; n < numNodes; n++ {
 		node := w.graph.Get(n)
-		if !node.IsActive() {
+		if !node.IsActive {
 			continue
 		}
 		if !node.Matches(filter) {
@@ -395,7 +395,7 @@ func (w *World) removeEntities(filter Filter) int {
 			for j = 0; j < len; j++ {
 				entity := arch.GetEntity(j)
 				if w.listener != nil {
-					w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, node.Ids, nil, -1, arch.Relation, Entity{}, false})
+					w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, node.Ids, nil, -1, arch.RelationTarget, Entity{}, false})
 				}
 				index := &w.entities[entity.id]
 				index.arch = nil
@@ -511,6 +511,7 @@ func (w *World) Assign(entity Entity, comps ...Component) {
 	w.assign(entity, -1, Entity{}, comps...)
 }
 
+// assign with relation target.
 func (w *World) assign(entity Entity, relation int8, target Entity, comps ...Component) {
 	len := len(comps)
 	if len == 0 {
@@ -572,6 +573,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.exchange(entity, add, rem, -1, Entity{})
 }
 
+// exchange with relation target.
 func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, target Entity) {
 	w.checkLocked()
 
@@ -586,7 +588,7 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, targe
 	oldArch := index.arch
 
 	oldMask := oldArch.Mask
-	mask := w.getExchangeMask(oldArch, add, rem)
+	mask := w.getExchangeMask(oldMask, add, rem)
 
 	if relation >= 0 {
 		if !mask.Get(ID(relation)) {
@@ -596,7 +598,7 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, targe
 			panic("can't add relation: this is not a relation component")
 		}
 	} else {
-		target = oldArch.Relation
+		target = oldArch.RelationTarget
 	}
 
 	oldIDs := oldArch.Components()
@@ -622,20 +624,20 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, targe
 	w.cleanupArchetype(oldArch)
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.graphNode.Ids, 0, oldArch.Relation, arch.Relation, false})
+		w.listener(&EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.graphNode.Ids, 0, oldArch.RelationTarget, arch.RelationTarget, false})
 	}
 }
 
-func (w *World) getExchangeMask(arch *archetype, add []ID, rem []ID) Mask {
-	mask := arch.Mask
+// Modify a mask by adding and removing IDs.
+func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 	for _, comp := range add {
-		if arch.HasComponent(comp) {
+		if mask.Get(comp) {
 			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp]))
 		}
 		mask.Set(comp, true)
 	}
 	for _, comp := range rem {
-		if !arch.HasComponent(comp) {
+		if !mask.Get(comp) {
 			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp]))
 		}
 		mask.Set(comp, false)
@@ -691,9 +693,9 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 }
 
 func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID) (*archetype, uint32) {
-	mask := w.getExchangeMask(oldArch, add, rem)
+	mask := w.getExchangeMask(oldArch.Mask, add, rem)
 	oldIDs := oldArch.Components()
-	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.Relation)
+	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.RelationTarget)
 
 	startIdx := uintptr(arch.Len())
 	count := uintptr(oldArchLen)
@@ -742,7 +744,7 @@ func (w *World) getRelation(entity Entity, comp ID) Entity {
 	index := &w.entities[entity.id]
 	w.checkRelation(index.arch, comp)
 
-	return index.arch.Relation
+	return index.arch.RelationTarget
 }
 
 // getRelationUnchecked returns the target entity for an entity relation.
@@ -751,7 +753,7 @@ func (w *World) getRelation(entity Entity, comp ID) Entity {
 // Does not check if the entity is alive or that the component ID is applicable.
 func (w *World) getRelationUnchecked(entity Entity, comp ID) Entity {
 	index := &w.entities[entity.id]
-	return index.arch.Relation
+	return index.arch.RelationTarget
 }
 
 // setRelation sets the target entity for an entity relation.
@@ -779,7 +781,7 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 
 	oldArch := index.arch
 
-	if index.arch.Relation == target {
+	if index.arch.RelationTarget == target {
 		return
 	}
 
@@ -806,10 +808,11 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 	w.cleanupArchetype(oldArch)
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, arch.Mask, arch.Mask, nil, nil, arch.graphNode.Ids, 0, oldArch.Relation, arch.Relation, true})
+		w.listener(&EntityEvent{entity, arch.Mask, arch.Mask, nil, nil, arch.graphNode.Ids, 0, oldArch.RelationTarget, arch.RelationTarget, true})
 	}
 }
 
+// set relation target in batches.
 func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback func(Query)) {
 	w.checkLocked()
 
@@ -850,7 +853,7 @@ func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback
 func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, target Entity) (*archetype, uint32, uint32) {
 	w.checkRelation(oldArch, comp)
 
-	if oldArch.Relation == target {
+	if oldArch.RelationTarget == target {
 		return oldArch, 0, oldArchLen
 	}
 	oldIDs := oldArch.Components()
@@ -890,7 +893,7 @@ func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, 
 }
 
 func (w *World) checkRelation(arch *archetype, comp ID) {
-	if arch.graphNode.relation != int8(comp) {
+	if arch.graphNode.Relation != int8(comp) {
 		w.relationError(arch, comp)
 	}
 }
@@ -921,7 +924,7 @@ func (w *World) Reset() {
 	var i int32
 	for i = 0; i < len; i++ {
 		node := w.graph.Get(i)
-		if !node.IsActive() {
+		if !node.IsActive {
 			continue
 		}
 		arches := node.Archetypes()
@@ -932,7 +935,7 @@ func (w *World) Reset() {
 			if !arch.IsActive() {
 				continue
 			}
-			if arch.HasRelation() && !arch.Relation.IsZero() {
+			if arch.HasRelation() && !arch.RelationTarget.IsZero() {
 				w.removeArchetype(arch)
 			} else {
 				arch.Reset()
@@ -1045,7 +1048,7 @@ func (w *World) Stats() *stats.WorldStats {
 		node := w.graph.Get(i)
 		nodeStats := &w.stats.Nodes[i]
 		node.UpdateStats(nodeStats, &w.registry)
-		if node.IsActive() {
+		if node.IsActive {
 			memory += nodeStats.Memory
 			cntActive++
 		}
@@ -1053,7 +1056,7 @@ func (w *World) Stats() *stats.WorldStats {
 	for i = cntOld; i < cntNew; i++ {
 		node := w.graph.Get(i)
 		w.stats.Nodes = append(w.stats.Nodes, node.Stats(&w.registry))
-		if node.IsActive() {
+		if node.IsActive {
 			memory += w.stats.Nodes[i].Memory
 			cntActive++
 		}
@@ -1273,7 +1276,7 @@ func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 	var i int32
 	for i = 0; i < length; i++ {
 		node := w.graph.Get(i)
-		if node.mask == mask {
+		if node.Mask == mask {
 			return node, true
 		}
 	}
@@ -1287,7 +1290,9 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
 		capInc = w.config.RelationCapacityIncrement
 	}
 
-	w.graph.Add(newArchetypeNode(mask, relation, capInc))
+	types := maskToTypes(mask, &w.registry)
+
+	w.graph.Add(newArchetypeNode(mask, relation, capInc, types))
 	node := w.graph.Get(w.graph.Len() - 1)
 	w.relationNodes = append(w.relationNodes, node)
 	return node
@@ -1297,36 +1302,14 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
 // Initializes the archetype with a capacity according to CapacityIncrement if forStorage is true,
 // and with a capacity of 1 otherwise.
 func (w *World) createArchetype(node *archetypeNode, target Entity, forStorage bool) *archetype {
-	mask := node.mask
-	count := int(mask.TotalBitsSet())
-	types := make([]componentType, count)
-
-	start := 0
-	end := MaskTotalBits
-	if mask.Lo == 0 {
-		start = wordSize
-	}
-	if mask.Hi == 0 {
-		end = wordSize
-	}
-
-	idx := 0
-	for i := start; i < end; i++ {
-		id := ID(i)
-		if mask.Get(id) {
-			types[idx] = componentType{ID: id, Type: w.registry.Types[id]}
-			idx++
-		}
-	}
-
 	var arch *archetype
 	if node.HasRelation() {
-		arch = node.CreateArchetype(target, types...)
+		arch = node.CreateArchetype(target)
 	} else {
 		w.archetypes.Add(archetype{})
 		archIndex := w.archetypes.Len() - 1
 		arch = w.archetypes.Get(archIndex)
-		arch.Init(node, archIndex, forStorage, target, types...)
+		arch.Init(node, archIndex, forStorage, target)
 		node.SetArchetype(arch)
 	}
 
@@ -1341,24 +1324,20 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 	var i int32
 	for i = 0; i < ln; i++ {
 		nd := w.graph.Get(i)
-		if !nd.IsActive() {
+		if !nd.IsActive || !nd.Matches(filter) {
 			continue
-		}
-		if !nd.Matches(filter) {
-			continue
-		}
-		nodeArches := nd.Archetypes()
-		ln2 := int32(nodeArches.Len())
-		if ln2 > 1 {
-			if rf, ok := filter.(*relationFilter); ok {
-				target := rf.Target
-				if arch, ok := nd.archetypeMap[target]; ok {
-					arches = append(arches, arch)
-				}
-				continue
-			}
 		}
 
+		if rf, ok := filter.(*relationFilter); ok {
+			target := rf.Target
+			if arch, ok := nd.archetypeMap[target]; ok {
+				arches = append(arches, arch)
+			}
+			continue
+		}
+
+		nodeArches := nd.Archetypes()
+		ln2 := int32(nodeArches.Len())
 		var j int32
 		for j = 0; j < ln2; j++ {
 			a := nodeArches.Get(j)
@@ -1376,7 +1355,7 @@ func (w *World) cleanupArchetype(arch *archetype) {
 	if arch.Len() > 0 || !arch.graphNode.HasRelation() {
 		return
 	}
-	target := arch.Relation
+	target := arch.RelationTarget
 	if target.IsZero() || w.Alive(target) {
 		return
 	}
@@ -1429,14 +1408,14 @@ func (w *World) notifyQuery(batchArch *batchArchetype) {
 
 	event := EntityEvent{
 		Entity{}, Mask{}, arch.Mask, batchArch.Added, batchArch.Removed, arch.graphNode.Ids, 1,
-		Entity{}, arch.Relation, false,
+		Entity{}, arch.RelationTarget, false,
 	}
 
 	oldArch := batchArch.OldArchetype
 	if oldArch != nil {
-		event.OldMask = oldArch.graphNode.mask
+		event.OldMask = oldArch.graphNode.Mask
 		event.AddedRemoved = 0
-		event.OldTarget = oldArch.Relation
+		event.OldTarget = oldArch.RelationTarget
 		event.TargetChanged = event.OldMask == event.NewMask
 	}
 
