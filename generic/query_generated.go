@@ -91,21 +91,14 @@ func (q *Filter0) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter0) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter0) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query0 is a generic query iterator for zero components.
@@ -255,21 +248,14 @@ func (q *Filter1[A]) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter1[A]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter1[A]) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query1 is a generic query iterator for one components.
@@ -429,21 +415,14 @@ func (q *Filter2[A, B]) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter2[A, B]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter2[A, B]) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query2 is a generic query iterator for two components.
@@ -607,21 +586,14 @@ func (q *Filter3[A, B, C]) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter3[A, B, C]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter3[A, B, C]) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query3 is a generic query iterator for three components.
@@ -789,21 +761,14 @@ func (q *Filter4[A, B, C, D]) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter4[A, B, C, D]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter4[A, B, C, D]) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query4 is a generic query iterator for four components.
@@ -975,21 +940,14 @@ func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter5[A, B, C, D, E]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter5[A, B, C, D, E]) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query5 is a generic query iterator for five components.
@@ -1165,21 +1123,14 @@ func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter6[A, B, C, D, E, F]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter6[A, B, C, D, E, F]) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query6 is a generic query iterator for six components.
@@ -1359,21 +1310,14 @@ func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter7[A, B, C, D, E, F, G]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter7[A, B, C, D, E, F, G]) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query7 is a generic query iterator for seven components.
@@ -1557,21 +1501,14 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World) ecs.MaskFilter {
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter8[A, B, C, D, E, F, G, H]) Register(w *ecs.World) {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target)
-	q.compiled.cachedFilter = w.Cache().Register(q.compiled.filter)
-	q.compiled.filter = &q.compiled.cachedFilter
-	q.compiled.locked = true
+	q.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
 func (q *Filter8[A, B, C, D, E, F, G, H]) Unregister(w *ecs.World) {
-	if cf, ok := q.compiled.filter.(*ecs.CachedFilter); ok {
-		q.compiled.filter = w.Cache().Unregister(cf)
-	} else {
-		panic("can't unregister a filter that is not cached")
-	}
-	q.compiled.locked = false
+	q.compiled.Unregister(w)
 }
 
 // Query8 is a generic query iterator for eight components.
