@@ -685,6 +685,7 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 			lock := w.lock()
 			query := newArchQuery(w, lock, batchArchetype{newArch, start, newArch.Len(), arch, add, rem})
 			callback(query)
+			w.checkLocked()
 		}
 	}
 }
@@ -841,6 +842,7 @@ func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback
 			lock := w.lock()
 			query := newArchQuery(w, lock, batchArchetype{newArch, start, end, arch, nil, nil})
 			callback(query)
+			w.checkLocked()
 		}
 	}
 }

@@ -346,6 +346,8 @@ func TestWorldExchangeBatch(t *testing.T) {
 
 	filter = All()
 	w.Batch().Add(filter, nil, velID)
+
+	assert.Panics(t, func() { w.Batch().Remove(All(velID), func(q Query) {}, velID) })
 }
 
 func TestWorldAssignSet(t *testing.T) {
@@ -801,6 +803,8 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	})
 
 	assert.Equal(t, 1304, len(events))
+
+	assert.Panics(t, func() { world.Batch().SetRelation(All(relID), relID, targ2, func(q Query) {}) })
 }
 
 func TestWorldRelationRemove(t *testing.T) {
