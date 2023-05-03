@@ -45,4 +45,4 @@ This means that queries with a specified relation target entity are as fast as u
 This is achieved by subdividing archetypes with a relation component by their relation target. I.e. entities that reference a different target entity are stored in different archetypes.
 
 This feature is inspired by [Flecs](https://github.com/SanderMertens/flecs).
-However, the implementation in *Arche* is currently limited in that it only supports a single relation per entity.
+However, the implementation in *Arche* is currently limited in that it only supports a single relation per entity, and no nested relation queries.
