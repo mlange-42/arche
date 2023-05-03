@@ -1344,7 +1344,7 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 		nodeArches := nd.Archetypes()
 		ln2 := int32(nodeArches.Len())
 		if ln2 > 1 {
-			if rf, ok := filter.(*RelationFilter); ok {
+			if rf, ok := filter.(*relationFilter); ok {
 				target := rf.Target
 				if arch, ok := nd.archetypeMap[target]; ok {
 					arches = append(arches, arch)
