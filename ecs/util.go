@@ -1,5 +1,10 @@
 package ecs
 
+import (
+	"fmt"
+	"strings"
+)
+
 // Page size of pagedSlice type
 const pageSize = 32
 
@@ -95,4 +100,33 @@ func (p *pagedSlice[T]) Set(index int32, value T) {
 // Len returns the current number of items in the paged slice.
 func (p *pagedSlice[T]) Len() int32 {
 	return p.len
+}
+
+// Prints world nodes and archetypes.
+func debugPrintWorld(w *World) string {
+	sb := strings.Builder{}
+
+	ln := w.graph.Len()
+	var i int32
+	for i = 0; i < ln; i++ {
+		nd := w.graph.Get(i)
+		if !nd.IsActive() {
+			fmt.Fprint(&sb, "Node ??? (inactive)\n")
+			continue
+		}
+		nodeArches := nd.Archetypes()
+		ln2 := int32(nodeArches.Len())
+		fmt.Fprintf(&sb, "Node %v (%d arch), relation: %t\n", nd.Ids, ln2, nd.HasRelation())
+		var j int32
+		for j = 0; j < ln2; j++ {
+			a := nodeArches.Get(j)
+			if a.IsActive() {
+				fmt.Fprintf(&sb, "   Arch %v (%d entities)\n", a.Relation, a.Len())
+			} else {
+				fmt.Fprintf(&sb, "   Arch %v (inactive)\n", a.Relation)
+			}
+		}
+	}
+
+	return sb.String()
 }

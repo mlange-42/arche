@@ -45,13 +45,10 @@ func run() {
 	childBuilder.NewBatch(10, parent2)
 
 	// Create a filter for a relation target.
-	filter := ecs.RelationFilter{
-		Filter: ecs.All(childID),
-		Target: parent1,
-	}
+	filter := ecs.RelationFilter(ecs.All(childID), parent1)
 
 	// Create a query from it.
-	query := world.Query(&filter)
+	query := world.Query(filter)
 
 	// Iterate the query.
 	for query.Next() {

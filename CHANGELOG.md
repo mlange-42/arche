@@ -22,6 +22,8 @@
 * Adds methods for faster, unchecked entity relation access (#259)
 * Re-introduce `World.Batch` for batch-processing of entities (add/remove/exchange) (#264)
 * New method `Builder.Add` for adding components with a target to entities (#264)
+* New method `Batch.SetRelation` for batch-setting entity relations (#265)
+* Sends an `EntityEvent` to the world listener on relation target changes (#265)
 
 ### Performance
 

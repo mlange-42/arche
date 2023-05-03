@@ -35,6 +35,7 @@ func (s singleArchetype) Len() int32 {
 type batchArchetype struct {
 	Archetype    *archetype
 	StartIndex   uint32
+	EndIndex     uint32
 	OldArchetype *archetype
 	Added        []ID
 	Removed      []ID

@@ -63,10 +63,7 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 			}
 		}
 
-		q.filter = &ecs.RelationFilter{
-			Filter: &q.maskFilter,
-			Target: target,
-		}
+		q.filter = ecs.RelationFilter(&q.maskFilter, target)
 	}
 	q.targetCompiled = true
 	q.compiled = true
