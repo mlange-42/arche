@@ -508,13 +508,17 @@ func (w *World) Add(entity Entity, comps ...ID) {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Assign(entity Entity, comps ...Component) {
+	w.assign(entity, -1, Entity{}, comps...)
+}
+
+func (w *World) assign(entity Entity, relation int8, target Entity, comps ...Component) {
 	len := len(comps)
 	if len == 0 {
 		panic("no components given to assign")
 	}
 	if len == 1 {
 		c := comps[0]
-		w.Exchange(entity, []ID{c.ID}, nil)
+		w.exchange(entity, []ID{c.ID}, nil, relation, target)
 		w.copyTo(entity, c.ID, c.Comp)
 		return
 	}
@@ -522,7 +526,7 @@ func (w *World) Assign(entity Entity, comps ...Component) {
 	for i, c := range comps {
 		ids[i] = c.ID
 	}
-	w.Exchange(entity, ids, nil)
+	w.exchange(entity, ids, nil, relation, target)
 	for _, c := range comps {
 		w.copyTo(entity, c.ID, c.Comp)
 	}
@@ -565,6 +569,10 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Exchange].
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
+	w.exchange(entity, add, rem, -1, Entity{})
+}
+
+func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, target Entity) {
 	w.checkLocked()
 
 	if !w.entityPool.Alive(entity) {
@@ -576,12 +584,24 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 	index := &w.entities[entity.id]
 	oldArch := index.arch
+
 	oldMask := oldArch.Mask
 	mask := w.getExchangeMask(oldArch, add, rem)
 
+	if relation >= 0 {
+		if !mask.Get(ID(relation)) {
+			panic("can't add relation: resulting entity has no relation")
+		}
+		if !w.registry.IsRelation.Get(ID(relation)) {
+			panic("can't add relation: this is not a relation component")
+		}
+	} else {
+		target = oldArch.Relation
+	}
+
 	oldIDs := oldArch.Components()
 
-	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.Relation)
+	arch := w.findOrCreateArchetype(oldArch, add, rem, target)
 	newIndex := arch.Alloc(entity)
 
 	for _, id := range oldIDs {

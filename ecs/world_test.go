@@ -215,6 +215,8 @@ func TestWorldExchange(t *testing.T) {
 	posID := ComponentID[Position](&w)
 	velID := ComponentID[Velocity](&w)
 	rotID := ComponentID[rotation](&w)
+	rel1ID := ComponentID[testRelationA](&w)
+	rel2ID := ComponentID[testRelationB](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -252,6 +254,15 @@ func TestWorldExchange(t *testing.T) {
 	w.RemoveEntity(e0)
 	_ = w.NewEntity()
 	assert.Panics(t, func() { w.Exchange(e0, []ID{posID}, []ID{}) })
+
+	target := w.NewEntity()
+	e0 = w.NewEntity(rel1ID)
+
+	assert.Panics(t, func() { w.exchange(e0, []ID{rel2ID}, nil, int8(rel2ID), target) })
+	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, int8(posID), target) })
+
+	w.Remove(e0, rel1ID)
+	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, int8(rel1ID), target) })
 }
 
 func TestWorldExchangeBatch(t *testing.T) {

@@ -20,6 +20,8 @@
 * Archetypes with entity relations are removed on `World.Reset` (#247)
 * Capacity increment can be configured separately for relation archetypes (#257)
 * Adds methods for faster, unchecked entity relation access (#259)
+* Re-introduce `World.Batch` for batch-processing of entities (add/remove/exchange) (#264)
+* New method `Builder.Add` for adding components with a target to entities (#264)
 
 ### Performance
 
