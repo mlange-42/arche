@@ -24,14 +24,15 @@ func (f *MaskFilter) Matches(bits Mask, relation *Entity) bool {
 }
 
 // RelationFilter is a [Filter] for a [Relation] target, in addition to components.
-//
-// See [Relation] for details and examples.
 type relationFilter struct {
 	Filter Filter // Components filter.
 	Target Entity // Relation target entity.
 }
 
 // RelationFilter creates a new [Relation] filter.
+// It is a [Filter] for a [Relation] target, in addition to components.
+//
+// See [Relation] for details and examples.
 func RelationFilter(filter Filter, target Entity) Filter {
 	return &relationFilter{
 		Filter: filter,
