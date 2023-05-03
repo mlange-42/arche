@@ -271,7 +271,7 @@ func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID
 func (w *World) newEntitiesQuery(count int, targetID int8, target Entity, comps ...ID) Query {
 	arch, startIdx := w.newEntitiesNoNotify(count, targetID, target, comps...)
 	lock := w.lock()
-	return newArchQuery(w, lock, batchArchetype{arch, startIdx, nil, arch.Components(), nil})
+	return newArchQuery(w, lock, batchArchetype{arch, startIdx, arch.Len(), nil, arch.Components(), nil})
 }
 
 // Creates new entities with component values without returning a query over them.
@@ -307,7 +307,7 @@ func (w *World) newEntitiesWithQuery(count int, targetID int8, target Entity, co
 
 	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, target, ids, comps...)
 	lock := w.lock()
-	return newArchQuery(w, lock, batchArchetype{arch, startIdx, nil, arch.Components(), nil})
+	return newArchQuery(w, lock, batchArchetype{arch, startIdx, arch.Len(), nil, arch.Components(), nil})
 }
 
 // RemoveEntity removes and recycles an [Entity].
@@ -638,65 +638,42 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 		return
 	}
 
-	ln := w.graph.Len()
+	arches := w.getArchetypes(filter)
+	ln := arches.Len()
+	lengths := make([]uint32, arches.Len())
 	var i int32
 	for i = 0; i < ln; i++ {
-		nd := w.graph.Get(i)
-		if !nd.IsActive() {
+		lengths[i] = arches.Get(i).Len()
+	}
+
+	for i = 0; i < ln; i++ {
+		arch := arches.Get(i)
+		archLen := lengths[i]
+
+		if archLen == 0 {
 			continue
-		}
-		if !nd.Matches(filter) {
-			continue
-		}
-		nodeArches := nd.Archetypes()
-		ln2 := int32(nodeArches.Len())
-		if ln2 > 1 {
-			if rf, ok := filter.(*RelationFilter); ok {
-				target := rf.Target
-				if arch, ok := nd.archetypeMap[target]; ok && arch.Len() > 0 {
-					newArch, start := w.exchangeArch(arch, add, rem)
-					if callback == nil {
-						if w.listener != nil {
-							w.notifyQuery(&batchArchetype{newArch, start, arch, add, rem})
-						}
-					} else {
-						lock := w.lock()
-						query := newArchQuery(w, lock, batchArchetype{newArch, start, arch, add, rem})
-						callback(query)
-					}
-				}
-				continue
-			}
 		}
 
-		var j int32
-		for j = 0; j < ln2; j++ {
-			arch := nodeArches.Get(j)
-			if arch.IsActive() && arch.Matches(filter) && arch.Len() > 0 {
-				fmt.Println(add, rem, arch.graphNode.Ids, arch.Len())
-				newArch, start := w.exchangeArch(arch, add, rem)
-				fmt.Println("   ", newArch.graphNode.Ids, newArch.Len())
-				if callback == nil {
-					if w.listener != nil {
-						w.notifyQuery(&batchArchetype{newArch, start, arch, add, rem})
-					}
-				} else {
-					lock := w.lock()
-					query := newArchQuery(w, lock, batchArchetype{newArch, start, arch, add, rem})
-					callback(query)
-				}
+		newArch, start := w.exchangeArch(arch, archLen, add, rem)
+		if callback == nil {
+			if w.listener != nil {
+				w.notifyQuery(&batchArchetype{newArch, start, start + archLen, arch, add, rem})
 			}
+		} else {
+			lock := w.lock()
+			query := newArchQuery(w, lock, batchArchetype{newArch, start, start + archLen, arch, add, rem})
+			callback(query)
 		}
 	}
 }
 
-func (w *World) exchangeArch(oldArch *archetype, add []ID, rem []ID) (*archetype, uint32) {
+func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID) (*archetype, uint32) {
 	mask := w.getExchangeMask(oldArch, add, rem)
 	oldIDs := oldArch.Components()
 	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.Relation)
 
 	startIdx := uintptr(arch.Len())
-	count := uintptr(oldArch.Len())
+	count := uintptr(oldArchLen)
 	arch.AllocN(uint32(count))
 
 	var i uintptr
@@ -715,6 +692,10 @@ func (w *World) exchangeArch(oldArch *archetype, add []ID, rem []ID) (*archetype
 		}
 	}
 
+	// Theoretically, it could be oldArchLen < oldArch.Len(),
+	// which means we can't reset the archetype.
+	// However, this should not be possible as processing an entity twice
+	// would mean an illegal component addition/removal.
 	oldArch.Reset()
 	w.cleanupArchetype(oldArch)
 
@@ -916,7 +897,7 @@ func (w *World) IsLocked() bool {
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (w *World) Mask(entity Entity) Mask {
 	if !w.entityPool.Alive(entity) {
-		panic("can't exchange components on a dead entity")
+		panic("can't get mask for a dead entity")
 	}
 	return w.entities[entity.id].arch.Mask
 }
@@ -1338,7 +1319,6 @@ func (w *World) closeQuery(query *Query) {
 func (w *World) notifyQuery(batchArch *batchArchetype) {
 	arch := batchArch.Archetype
 	var i uintptr
-	len := uintptr(arch.Len())
 	event := EntityEvent{Entity{}, Mask{}, arch.Mask, batchArch.Added, batchArch.Removed, arch.graphNode.Ids, 1}
 
 	oldArch := batchArch.OldArchetype
@@ -1347,7 +1327,8 @@ func (w *World) notifyQuery(batchArch *batchArchetype) {
 		event.AddedRemoved = 0
 	}
 
-	for i = uintptr(batchArch.StartIndex); i < len; i++ {
+	start, end := uintptr(batchArch.StartIndex), uintptr(batchArch.EndIndex)
+	for i = start; i < end; i++ {
 		entity := arch.GetEntity(i)
 		event.Entity = entity
 		w.listener(&event)

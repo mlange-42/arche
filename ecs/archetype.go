@@ -59,7 +59,7 @@ func (a *archetypeNode) Archetypes() archetypes {
 	if a.archetype == nil {
 		return nil
 	}
-	return batchArchetype{Archetype: a.archetype, StartIndex: 0}
+	return singleArchetype{Archetype: a.archetype}
 }
 
 // GetArchetype returns the archetype for the given relation target.
