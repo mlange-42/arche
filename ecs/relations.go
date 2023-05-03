@@ -40,3 +40,18 @@ func (r *Relations) GetUnchecked(entity Entity, comp ID) Entity {
 func (r *Relations) Set(entity Entity, comp ID, target Entity) {
 	r.world.setRelation(entity, comp, target)
 }
+
+// SetBatch sets the [Relation] target for many entities, matching a filter.
+//
+// If the callback argument is given, it is called with a [Query] over the affected entities,
+// one Query for each affected archetype.
+//
+// Panics:
+//   - when called for a missing component.
+//   - when called for a component that is not a relation.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See also [Relations.Set] and [Batch.SetRelation].
+func (r *Relations) SetBatch(filter Filter, comp ID, target Entity, callback func(Query)) {
+	r.world.setRelationBatch(filter, comp, target, callback)
+}

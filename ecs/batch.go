@@ -45,7 +45,7 @@ func (b *Batch) Remove(filter Filter, callback func(Query), comps ...ID) {
 //   - when called for a component that is not a relation.
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
-// See also [World.SetRelation].
+// See also [Relations.Set] and [Relations.SetBatch].
 func (b *Batch) SetRelation(filter Filter, comp ID, target Entity, callback func(Query)) {
 	b.world.setRelationBatch(filter, comp, target, callback)
 }

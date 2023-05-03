@@ -511,6 +511,7 @@ func (w *World) Assign(entity Entity, comps ...Component) {
 	w.assign(entity, -1, Entity{}, comps...)
 }
 
+// assign with relation target.
 func (w *World) assign(entity Entity, relation int8, target Entity, comps ...Component) {
 	len := len(comps)
 	if len == 0 {
@@ -572,6 +573,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.exchange(entity, add, rem, -1, Entity{})
 }
 
+// exchange with relation target.
 func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, target Entity) {
 	w.checkLocked()
 
@@ -586,7 +588,7 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, targe
 	oldArch := index.arch
 
 	oldMask := oldArch.Mask
-	mask := w.getExchangeMask(oldArch, add, rem)
+	mask := w.getExchangeMask(oldMask, add, rem)
 
 	if relation >= 0 {
 		if !mask.Get(ID(relation)) {
@@ -626,16 +628,16 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, targe
 	}
 }
 
-func (w *World) getExchangeMask(arch *archetype, add []ID, rem []ID) Mask {
-	mask := arch.Mask
+// Modify a mask by adding and removing IDs.
+func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 	for _, comp := range add {
-		if arch.HasComponent(comp) {
+		if mask.Get(comp) {
 			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp]))
 		}
 		mask.Set(comp, true)
 	}
 	for _, comp := range rem {
-		if !arch.HasComponent(comp) {
+		if !mask.Get(comp) {
 			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp]))
 		}
 		mask.Set(comp, false)
@@ -691,7 +693,7 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 }
 
 func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID) (*archetype, uint32) {
-	mask := w.getExchangeMask(oldArch, add, rem)
+	mask := w.getExchangeMask(oldArch.Mask, add, rem)
 	oldIDs := oldArch.Components()
 	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.Relation)
 
@@ -810,6 +812,7 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 	}
 }
 
+// set relation target in batches.
 func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback func(Query)) {
 	w.checkLocked()
 
@@ -1287,28 +1290,9 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
 		capInc = w.config.RelationCapacityIncrement
 	}
 
-	count := int(mask.TotalBitsSet())
-	types := make([]componentType, count)
+	types := maskToTypes(mask, &w.registry)
 
-	start := 0
-	end := MaskTotalBits
-	if mask.Lo == 0 {
-		start = wordSize
-	}
-	if mask.Hi == 0 {
-		end = wordSize
-	}
-
-	idx := 0
-	for i := start; i < end; i++ {
-		id := ID(i)
-		if mask.Get(id) {
-			types[idx] = componentType{ID: id, Type: w.registry.Types[id]}
-			idx++
-		}
-	}
-
-	w.graph.Add(newArchetypeNode(mask, relation, capInc, types...))
+	w.graph.Add(newArchetypeNode(mask, relation, capInc, types))
 	node := w.graph.Get(w.graph.Len() - 1)
 	w.relationNodes = append(w.relationNodes, node)
 	return node

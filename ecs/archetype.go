@@ -30,7 +30,7 @@ type archetypeNode struct {
 }
 
 // Creates a new archetypeNode
-func newArchetypeNode(mask Mask, relation int8, capacityIncrement int, components ...componentType) archetypeNode {
+func newArchetypeNode(mask Mask, relation int8, capacityIncrement int, components []componentType) archetypeNode {
 	var arch map[Entity]*archetype
 	if relation >= 0 {
 		arch = map[Entity]*archetype{}
