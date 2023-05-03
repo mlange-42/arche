@@ -114,7 +114,7 @@ func (q *Query) Relation(comp ID) Entity {
 	if q.access.RelationComponent != int8(comp) {
 		panic(fmt.Sprintf("entity has no component %v, or it is not a relation component", q.world.registry.Types[comp]))
 	}
-	return q.access.GetRelation()
+	return q.access.RelationTarget
 }
 
 // RelationUnchecked returns the target entity for an entity relation.
@@ -125,7 +125,7 @@ func (q *Query) Relation(comp ID) Entity {
 // GetRelationUnchecked is an optimized version of [Query.Relation].
 // Does not check that the component ID is applicable.
 func (q *Query) RelationUnchecked(comp ID) Entity {
-	return q.access.GetRelation()
+	return q.access.RelationTarget
 }
 
 // Step advances the query iterator by the given number of entities.

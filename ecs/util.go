@@ -145,9 +145,9 @@ func debugPrintWorld(w *World) string {
 		for j = 0; j < ln2; j++ {
 			a := nodeArches.Get(j)
 			if a.IsActive() {
-				fmt.Fprintf(&sb, "   Arch %v (%d entities)\n", a.Relation, a.Len())
+				fmt.Fprintf(&sb, "   Arch %v (%d entities)\n", a.RelationTarget, a.Len())
 			} else {
-				fmt.Fprintf(&sb, "   Arch %v (inactive)\n", a.Relation)
+				fmt.Fprintf(&sb, "   Arch %v (inactive)\n", a.RelationTarget)
 			}
 		}
 	}

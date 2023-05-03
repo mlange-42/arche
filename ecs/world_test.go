@@ -866,7 +866,7 @@ func TestWorldRelationRemove(t *testing.T) {
 	world.Relations().Set(e2, relID, targ3)
 
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
-	assert.Equal(t, targ3, world.graph.Get(2).archetypes.Get(1).Relation)
+	assert.Equal(t, targ3, world.graph.Get(2).archetypes.Get(1).RelationTarget)
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.Batch().RemoveEntities(All())

@@ -135,7 +135,7 @@ func (a *archetypeNode) CreateArchetype(target Entity) *archetype {
 // RemoveArchetype de-activates an archetype.
 // The archetype will be re-used by CreateArchetype.
 func (a *archetypeNode) RemoveArchetype(arch *archetype) {
-	delete(a.archetypeMap, arch.Relation)
+	delete(a.archetypeMap, arch.RelationTarget)
 	idx := arch.index
 	a.freeIndices = append(a.freeIndices, idx)
 	a.archetypes.Get(idx).Deactivate()
@@ -249,13 +249,13 @@ type archetypeAccess struct {
 	Mask              Mask           // Archetype's mask
 	basePointer       unsafe.Pointer // Pointer to the first component column layout.
 	entityPointer     unsafe.Pointer // Pointer to the entity storage
-	Relation          Entity
+	RelationTarget    Entity
 	RelationComponent int8
 }
 
 // Matches checks if the archetype matches the given mask.
 func (a *archetype) Matches(f Filter) bool {
-	return f.Matches(a.Mask, &a.Relation)
+	return f.Matches(a.Mask, &a.RelationTarget)
 }
 
 // GetEntity returns the entity at the given index
@@ -266,11 +266,6 @@ func (a *archetypeAccess) GetEntity(index uintptr) Entity {
 // Get returns the component with the given ID at the given index
 func (a *archetypeAccess) Get(index uintptr, id ID) unsafe.Pointer {
 	return a.getLayout(id).Get(index)
-}
-
-// GetEntity returns the entity at the given index
-func (a *archetypeAccess) GetRelation() Entity {
-	return a.Relation
 }
 
 // HasComponent returns whether the archetype contains the given component ID.
@@ -349,7 +344,7 @@ func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, rela
 		basePointer:       unsafe.Pointer(&a.layouts[0]),
 		entityPointer:     a.entityBuffer.Addr().UnsafePointer(),
 		Mask:              node.mask,
-		Relation:          relation,
+		RelationTarget:    relation,
 		RelationComponent: node.relation,
 	}
 
@@ -497,7 +492,7 @@ func (a *archetype) Deactivate() {
 // Activate reactivates a de-activated archetype.
 func (a *archetype) Activate(target Entity, index int32) {
 	a.index = index
-	a.Relation = target
+	a.RelationTarget = target
 }
 
 // IsActive returns whether the archetype is active.
