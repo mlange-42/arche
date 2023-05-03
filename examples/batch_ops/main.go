@@ -1,4 +1,4 @@
-// Demonstrates batch-creation and batch-removal of entities.
+// Demonstrates batch-creation, manipulation and removal of entities.
 //
 // Batch operations are an optimization for creating and removing many entities in one go.
 package main
@@ -49,6 +49,11 @@ func run() {
 		pos.X = 1.0
 		pos.Y = 1.0
 	}
+
+	// Batch-remove components.
+	world.Batch().Remove(ecs.All(posID, velID), nil, velID)
+	// Batch-add components.
+	world.Batch().Add(ecs.All(posID), nil, velID)
 
 	// Batch-remove all entities with exactly the given components.
 	filterExcl := ecs.All(posID, velID).Exclusive()
