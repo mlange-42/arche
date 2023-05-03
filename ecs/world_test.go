@@ -781,7 +781,6 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	total := 0
 	world.Batch().SetRelation(All(relID), relID, targ3, func(q Query) {
 		total += q.Count()
-		fmt.Println(q.Count())
 		for q.Next() {
 			assert.Equal(t, targ3, q.Relation(relID))
 		}
@@ -804,7 +803,11 @@ func TestWorldRelationSetBatch(t *testing.T) {
 
 	assert.Equal(t, 1304, len(events))
 
-	assert.Panics(t, func() { world.Batch().SetRelation(All(relID), relID, targ2, func(q Query) {}) })
+	assert.Panics(t, func() {
+		world.Batch().SetRelation(All(relID), relID, targ2, func(q Query) {})
+	})
+
+	fmt.Println(debugPrintWorld(&world))
 }
 
 func TestWorldRelationRemove(t *testing.T) {
