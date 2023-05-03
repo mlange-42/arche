@@ -161,7 +161,7 @@ func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
 		q := world.newEntitiesQuery(10000, -1, Entity{}, posID, velID)
 		q.Close()
 		b.StartTimer()
-		world.RemoveEntities(All(posID, velID))
+		world.Batch().RemoveEntities(All(posID, velID))
 	}
 }
 

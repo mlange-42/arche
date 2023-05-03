@@ -356,7 +356,7 @@ func (w *World) RemoveEntity(entity Entity) {
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
-func (w *World) RemoveEntities(filter Filter) int {
+func (w *World) removeEntities(filter Filter) int {
 	w.checkLocked()
 
 	lock := w.lock()
@@ -623,8 +623,17 @@ func (w *World) getExchangeMask(arch *archetype, add []ID, rem []ID) Mask {
 	return mask
 }
 
-// ExchangeBatch exchanges components for many entities.
-func (w *World) ExchangeBatch(filter Filter, add []ID, rem []ID, callback func(Query)) {
+// ExchangeBatch exchanges components for many entities, matching a filter.
+//
+// If the callback argument is given, it is called with a [Query] over the affected entities,
+// one Query for each affected archetype.
+//
+// Panics:
+//   - when called with components that can't be added or removed because they are already present/not present, respectively.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See also [World.Exchange].
+func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Query)) {
 	if len(add) == 0 && len(rem) == 0 {
 		return
 	}
@@ -664,7 +673,9 @@ func (w *World) ExchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 		for j = 0; j < ln2; j++ {
 			arch := nodeArches.Get(j)
 			if arch.IsActive() && arch.Matches(filter) && arch.Len() > 0 {
+				fmt.Println(add, rem, arch.graphNode.Ids, arch.Len())
 				newArch, start := w.exchangeArch(arch, add, rem)
+				fmt.Println("   ", newArch.graphNode.Ids, newArch.Len())
 				if callback == nil {
 					if w.listener != nil {
 						w.notifyQuery(&batchArchetype{newArch, start, arch, add, rem})
@@ -705,6 +716,8 @@ func (w *World) exchangeArch(oldArch *archetype, add []ID, rem []ID) (*archetype
 	}
 
 	oldArch.Reset()
+	w.cleanupArchetype(oldArch)
+
 	return arch, uint32(startIdx)
 }
 
@@ -876,6 +889,14 @@ func (w *World) Cache() *Cache {
 		w.filterCache.getArchetypes = w.getArchetypes
 	}
 	return &w.filterCache
+}
+
+// Batch creates a [Batch] processing helper.
+//
+// It provides the functionality manipulate large numbers of entities in batches,
+// in a more efficient way.
+func (w *World) Batch() *Batch {
+	return &Batch{w}
 }
 
 // Relations returns the [Relations] of the world, for accessing entity [Relation] targets.
