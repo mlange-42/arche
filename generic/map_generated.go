@@ -167,9 +167,9 @@ func (m *Map1[A]) Remove(entity ecs.Entity) {
 func (m *Map1[A]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.RemoveEntities(&filter)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -343,9 +343,9 @@ func (m *Map2[A, B]) Remove(entity ecs.Entity) {
 func (m *Map2[A, B]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.RemoveEntities(&filter)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -527,9 +527,9 @@ func (m *Map3[A, B, C]) Remove(entity ecs.Entity) {
 func (m *Map3[A, B, C]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.RemoveEntities(&filter)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -719,9 +719,9 @@ func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity) {
 func (m *Map4[A, B, C, D]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.RemoveEntities(&filter)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -919,9 +919,9 @@ func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity) {
 func (m *Map5[A, B, C, D, E]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.RemoveEntities(&filter)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1127,9 +1127,9 @@ func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity) {
 func (m *Map6[A, B, C, D, E, F]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.RemoveEntities(&filter)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1343,9 +1343,9 @@ func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity) {
 func (m *Map7[A, B, C, D, E, F, G]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.RemoveEntities(&filter)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1567,7 +1567,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity) {
 func (m *Map8[A, B, C, D, E, F, G, H]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
-		return m.world.RemoveEntities(&filter)
+		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(m.mask)
 }

@@ -215,6 +215,8 @@ func TestWorldExchange(t *testing.T) {
 	posID := ComponentID[Position](&w)
 	velID := ComponentID[Velocity](&w)
 	rotID := ComponentID[rotation](&w)
+	rel1ID := ComponentID[testRelationA](&w)
+	rel2ID := ComponentID[testRelationB](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
@@ -252,6 +254,98 @@ func TestWorldExchange(t *testing.T) {
 	w.RemoveEntity(e0)
 	_ = w.NewEntity()
 	assert.Panics(t, func() { w.Exchange(e0, []ID{posID}, []ID{}) })
+
+	target := w.NewEntity()
+	e0 = w.NewEntity(rel1ID)
+
+	assert.Panics(t, func() { w.exchange(e0, []ID{rel2ID}, nil, int8(rel2ID), target) })
+	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, int8(posID), target) })
+
+	w.Remove(e0, rel1ID)
+	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, int8(rel1ID), target) })
+}
+
+func TestWorldExchangeBatch(t *testing.T) {
+	w := NewWorld()
+
+	events := []EntityEvent{}
+	w.SetListener(func(e *EntityEvent) {
+		events = append(events, *e)
+	})
+
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
+	relID := ComponentID[testRelationA](&w)
+
+	target1 := w.NewEntity(velID)
+	target2 := w.NewEntity(velID)
+
+	builder := NewBuilder(&w, posID, relID).WithRelation(relID)
+	builder.NewBatch(100, target1)
+	builder.NewBatch(100, target2)
+
+	cnt := 0
+	filter := All(posID, relID)
+	w.Batch().Exchange(filter, []ID{velID}, []ID{posID}, func(q Query) {
+		assert.Equal(t, 100, q.Count())
+		for q.Next() {
+			assert.True(t, q.Has(velID))
+			assert.True(t, q.Has(relID))
+			assert.False(t, q.Has(posID))
+		}
+		cnt++
+	})
+	assert.Equal(t, 2, cnt)
+
+	query := w.Query(All(posID))
+	assert.Equal(t, 0, query.Count())
+	query.Close()
+
+	cnt = 0
+	filter2 := RelationFilter{Filter: All(relID), Target: target1}
+	w.Batch().Exchange(&filter2, []ID{posID}, []ID{velID}, func(q Query) {
+		assert.Equal(t, 100, q.Count())
+		for q.Next() {
+			assert.True(t, q.Has(posID))
+			assert.True(t, q.Has(relID))
+			assert.False(t, q.Has(velID))
+			assert.Equal(t, target1, q.Relation(relID))
+		}
+		cnt++
+	})
+	assert.Equal(t, 1, cnt)
+
+	query = w.Query(All(posID))
+	assert.Equal(t, 100, query.Count())
+	query.Close()
+
+	w.Batch().Exchange(All(posID), nil, nil, nil)
+
+	w.Batch().Exchange(&RelationFilter{Filter: All(relID), Target: target2}, nil, []ID{relID}, nil)
+	w.Batch().Exchange(All(relID), nil, []ID{relID}, nil)
+
+	w.Batch().RemoveEntities(All(posID))
+
+	assert.Equal(t, 802, len(events))
+	assert.Equal(t, 1, events[0].AddedRemoved)
+	assert.Equal(t, 1, events[1].AddedRemoved)
+	assert.Equal(t, 1, events[2].AddedRemoved)
+	assert.Equal(t, 1, events[201].AddedRemoved)
+
+	assert.Equal(t, 0, events[202].AddedRemoved)
+	assert.Equal(t, []ID{velID}, events[202].Added)
+	assert.Equal(t, []ID{posID}, events[202].Removed)
+
+	filter = All(velID)
+	w.Batch().Remove(filter, nil, velID)
+
+	filter = All(velID)
+	q := w.Query(filter)
+	assert.Equal(t, 0, q.Count())
+	q.Close()
+
+	filter = All()
+	w.Batch().Add(filter, nil, velID)
 }
 
 func TestWorldAssignSet(t *testing.T) {
@@ -574,7 +668,7 @@ func TestWorldRemoveEntities(t *testing.T) {
 	query.Close()
 
 	filter := All(posID).Exclusive()
-	cnt := world.RemoveEntities(&filter)
+	cnt := world.Batch().RemoveEntities(&filter)
 	assert.Equal(t, 100, cnt)
 	assert.Equal(t, 300, len(events))
 
@@ -703,8 +797,8 @@ func TestWorldRelationRemove(t *testing.T) {
 	assert.Equal(t, targ3, world.graph.Get(2).archetypes.Get(1).Relation)
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
-	world.RemoveEntities(All())
-	world.RemoveEntities(All())
+	world.Batch().RemoveEntities(All())
+	world.Batch().RemoveEntities(All())
 
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
 	assert.True(t, world.graph.Get(2).archetypes.Get(0).IsActive())
@@ -1033,7 +1127,7 @@ func TestWorldStats(t *testing.T) {
 	assert.Equal(t, 5, node.Archetypes[2].Size)
 
 	f := All(relID).Exclusive()
-	w.RemoveEntities(&f)
+	w.Batch().RemoveEntities(&f)
 	w.RemoveEntity(e0)
 	stats = w.Stats()
 
@@ -1115,17 +1209,17 @@ func TestWorldBatchRemove(t *testing.T) {
 
 	filter := All(rotID).Exclusive()
 	filter2 := world.Cache().Register(&filter)
-	world.RemoveEntities(&filter)
+	world.Batch().RemoveEntities(&filter)
 	world.Cache().Unregister(&filter2)
 
-	world.RemoveEntities(
+	world.Batch().RemoveEntities(
 		&RelationFilter{
 			Filter: All(rotID, relID),
 			Target: target1,
 		},
 	)
 
-	world.RemoveEntities(
+	world.Batch().RemoveEntities(
 		&RelationFilter{
 			Filter: All(rotID, relID),
 			Target: target2,
@@ -1133,9 +1227,9 @@ func TestWorldBatchRemove(t *testing.T) {
 	)
 
 	filter = All().Exclusive()
-	world.RemoveEntities(&filter)
+	world.Batch().RemoveEntities(&filter)
 
-	world.RemoveEntities(
+	world.Batch().RemoveEntities(
 		&RelationFilter{
 			Filter: All(rotID, relID),
 			Target: target3,

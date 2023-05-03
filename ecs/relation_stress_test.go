@@ -44,7 +44,7 @@ func TestRelationStress(t *testing.T) {
 				Filter: ecs.All(relID),
 				Target: parent,
 			}
-			removed := world.RemoveEntities(&childFilter)
+			removed := world.Batch().RemoveEntities(&childFilter)
 			world.RemoveEntity(parent)
 			assert.Equal(t, numChildren, removed)
 

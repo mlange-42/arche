@@ -59,7 +59,7 @@ func (a *archetypeNode) Archetypes() archetypes {
 	if a.archetype == nil {
 		return nil
 	}
-	return batchArchetype{Archetype: a.archetype, StartIndex: 0}
+	return singleArchetype{Archetype: a.archetype}
 }
 
 // GetArchetype returns the archetype for the given relation target.
@@ -357,13 +357,13 @@ func (a *archetype) Alloc(entity Entity) uintptr {
 	return idx
 }
 
-// Add adds storage to the archetype
+// AllocN allocates storage for the given number of entities.
 func (a *archetype) AllocN(count uint32) {
 	a.extend(count)
 	a.len += count
 }
 
-// Add adds an entity with components to the archetype
+// Add adds an entity with components to the archetype.
 func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 	if len(components) != len(a.graphNode.Ids) {
 		panic("Invalid number of components")

@@ -271,7 +271,7 @@ func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID
 func (w *World) newEntitiesQuery(count int, targetID int8, target Entity, comps ...ID) Query {
 	arch, startIdx := w.newEntitiesNoNotify(count, targetID, target, comps...)
 	lock := w.lock()
-	return newArchQuery(w, lock, arch, startIdx)
+	return newArchQuery(w, lock, batchArchetype{arch, startIdx, nil, arch.Components(), nil})
 }
 
 // Creates new entities with component values without returning a query over them.
@@ -307,7 +307,7 @@ func (w *World) newEntitiesWithQuery(count int, targetID int8, target Entity, co
 
 	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, target, ids, comps...)
 	lock := w.lock()
-	return newArchQuery(w, lock, arch, startIdx)
+	return newArchQuery(w, lock, batchArchetype{arch, startIdx, nil, arch.Components(), nil})
 }
 
 // RemoveEntity removes and recycles an [Entity].
@@ -356,7 +356,7 @@ func (w *World) RemoveEntity(entity Entity) {
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
-func (w *World) RemoveEntities(filter Filter) int {
+func (w *World) removeEntities(filter Filter) int {
 	w.checkLocked()
 
 	lock := w.lock()
@@ -508,13 +508,17 @@ func (w *World) Add(entity Entity, comps ...ID) {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Assign(entity Entity, comps ...Component) {
+	w.assign(entity, -1, Entity{}, comps...)
+}
+
+func (w *World) assign(entity Entity, relation int8, target Entity, comps ...Component) {
 	len := len(comps)
 	if len == 0 {
 		panic("no components given to assign")
 	}
 	if len == 1 {
 		c := comps[0]
-		w.Exchange(entity, []ID{c.ID}, nil)
+		w.exchange(entity, []ID{c.ID}, nil, relation, target)
 		w.copyTo(entity, c.ID, c.Comp)
 		return
 	}
@@ -522,7 +526,7 @@ func (w *World) Assign(entity Entity, comps ...Component) {
 	for i, c := range comps {
 		ids[i] = c.ID
 	}
-	w.Exchange(entity, ids, nil)
+	w.exchange(entity, ids, nil, relation, target)
 	for _, c := range comps {
 		w.copyTo(entity, c.ID, c.Comp)
 	}
@@ -565,6 +569,10 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Exchange].
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
+	w.exchange(entity, add, rem, -1, Entity{})
+}
+
+func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, target Entity) {
 	w.checkLocked()
 
 	if !w.entityPool.Alive(entity) {
@@ -576,24 +584,24 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 	index := &w.entities[entity.id]
 	oldArch := index.arch
-	mask := oldArch.Mask
-	oldMask := mask
-	for _, comp := range add {
-		if oldArch.HasComponent(comp) {
-			panic("entity already has this component, can't add")
+
+	oldMask := oldArch.Mask
+	mask := w.getExchangeMask(oldArch, add, rem)
+
+	if relation >= 0 {
+		if !mask.Get(ID(relation)) {
+			panic("can't add relation: resulting entity has no relation")
 		}
-		mask.Set(comp, true)
-	}
-	for _, comp := range rem {
-		if !oldArch.HasComponent(comp) {
-			panic("entity does not have this component, can't remove")
+		if !w.registry.IsRelation.Get(ID(relation)) {
+			panic("can't add relation: this is not a relation component")
 		}
-		mask.Set(comp, false)
+	} else {
+		target = oldArch.Relation
 	}
 
 	oldIDs := oldArch.Components()
 
-	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.Relation)
+	arch := w.findOrCreateArchetype(oldArch, add, rem, target)
 	newIndex := arch.Alloc(entity)
 
 	for _, id := range oldIDs {
@@ -616,6 +624,102 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	if w.listener != nil {
 		w.listener(&EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.graphNode.Ids, 0})
 	}
+}
+
+func (w *World) getExchangeMask(arch *archetype, add []ID, rem []ID) Mask {
+	mask := arch.Mask
+	for _, comp := range add {
+		if arch.HasComponent(comp) {
+			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp]))
+		}
+		mask.Set(comp, true)
+	}
+	for _, comp := range rem {
+		if !arch.HasComponent(comp) {
+			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp]))
+		}
+		mask.Set(comp, false)
+	}
+	return mask
+}
+
+// ExchangeBatch exchanges components for many entities, matching a filter.
+//
+// If the callback argument is given, it is called with a [Query] over the affected entities,
+// one Query for each affected archetype.
+//
+// Panics:
+//   - when called with components that can't be added or removed because they are already present/not present, respectively.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See also [World.Exchange].
+func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Query)) {
+	if len(add) == 0 && len(rem) == 0 {
+		return
+	}
+
+	arches := w.getArchetypes(filter)
+	ln := arches.Len()
+	lengths := make([]uint32, arches.Len())
+	var i int32
+	for i = 0; i < ln; i++ {
+		lengths[i] = arches.Get(i).Len()
+	}
+
+	for i = 0; i < ln; i++ {
+		arch := arches.Get(i)
+		archLen := lengths[i]
+
+		if archLen == 0 {
+			continue
+		}
+
+		newArch, start := w.exchangeArch(arch, archLen, add, rem)
+		if callback == nil {
+			if w.listener != nil {
+				w.notifyQuery(&batchArchetype{newArch, start, arch, add, rem})
+			}
+		} else {
+			lock := w.lock()
+			query := newArchQuery(w, lock, batchArchetype{newArch, start, arch, add, rem})
+			callback(query)
+		}
+	}
+}
+
+func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID) (*archetype, uint32) {
+	mask := w.getExchangeMask(oldArch, add, rem)
+	oldIDs := oldArch.Components()
+	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.Relation)
+
+	startIdx := uintptr(arch.Len())
+	count := uintptr(oldArchLen)
+	arch.AllocN(uint32(count))
+
+	var i uintptr
+	for i = 0; i < count; i++ {
+		idx := startIdx + i
+		entity := oldArch.GetEntity(i)
+		index := w.entities[entity.id]
+		arch.SetEntity(uintptr(idx), entity)
+		w.entities[entity.id] = entityIndex{arch: arch, index: uintptr(idx), isTarget: index.isTarget}
+
+		for _, id := range oldIDs {
+			if mask.Get(id) {
+				comp := oldArch.Get(i, id)
+				arch.SetPointer(idx, id, comp)
+			}
+		}
+	}
+
+	// Theoretically, it could be oldArchLen < oldArch.Len(),
+	// which means we can't reset the archetype.
+	// However, this should not be possible as processing an entity twice
+	// would mean an illegal component addition/removal.
+	oldArch.Reset()
+	w.cleanupArchetype(oldArch)
+
+	return arch, uint32(startIdx)
 }
 
 // getRelation returns the target entity for an entity relation.
@@ -788,6 +892,14 @@ func (w *World) Cache() *Cache {
 	return &w.filterCache
 }
 
+// Batch creates a [Batch] processing helper.
+//
+// It provides the functionality manipulate large numbers of entities in batches,
+// in a more efficient way.
+func (w *World) Batch() *Batch {
+	return &Batch{w}
+}
+
 // Relations returns the [Relations] of the world, for accessing entity [Relation] targets.
 //
 // See [Relations] for details.
@@ -805,7 +917,7 @@ func (w *World) IsLocked() bool {
 // Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (w *World) Mask(entity Entity) Mask {
 	if !w.entityPool.Alive(entity) {
-		panic("can't exchange components on a dead entity")
+		panic("can't get mask for a dead entity")
 	}
 	return w.entities[entity.id].arch.Mask
 }
@@ -1227,10 +1339,16 @@ func (w *World) closeQuery(query *Query) {
 func (w *World) notifyQuery(batchArch *batchArchetype) {
 	arch := batchArch.Archetype
 	var i uintptr
-	len := uintptr(arch.Len())
-	event := EntityEvent{Entity{}, Mask{}, arch.Mask, arch.graphNode.Ids, nil, arch.graphNode.Ids, 1}
+	event := EntityEvent{Entity{}, Mask{}, arch.Mask, batchArch.Added, batchArch.Removed, arch.graphNode.Ids, 1}
 
-	for i = uintptr(batchArch.StartIndex); i < len; i++ {
+	oldArch := batchArch.OldArchetype
+	if oldArch != nil {
+		event.OldMask = oldArch.graphNode.mask
+		event.AddedRemoved = 0
+	}
+
+	start, end := uintptr(batchArch.StartIndex), uintptr(arch.Len())
+	for i = start; i < end; i++ {
 		entity := arch.GetEntity(i)
 		event.Entity = entity
 		w.listener(&event)

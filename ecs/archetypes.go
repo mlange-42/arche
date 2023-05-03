@@ -14,11 +14,30 @@ type archetypes interface {
 
 // Implementation of an archetype iterator for a single archetype.
 // Implements [archetypes].
+type singleArchetype struct {
+	Archetype *archetype
+}
+
+// Get returns the value at the given index.
+func (s singleArchetype) Get(index int32) *archetype {
+	return s.Archetype
+}
+
+// Len returns the current number of items in the paged array.
+func (s singleArchetype) Len() int32 {
+	return 1
+}
+
+// Implementation of an archetype iterator for a single archetype and partial iteration.
+// Implements [archetypes].
 //
 // Used for the [Query] returned by entity batch creation methods.
 type batchArchetype struct {
-	Archetype  *archetype
-	StartIndex uint32
+	Archetype    *archetype
+	StartIndex   uint32
+	OldArchetype *archetype
+	Added        []ID
+	Removed      []ID
 }
 
 // Get returns the value at the given index.

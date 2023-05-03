@@ -55,29 +55,30 @@ func newArchesQuery(world *World, filter Filter, lockBit uint8, archetypes arche
 }
 
 // newQuery creates a query on a single archetype
-func newArchQuery(world *World, lockBit uint8, archetype *archetype, start uint32) Query {
-	if start > 0 {
+func newArchQuery(world *World, lockBit uint8, archetype batchArchetype) Query {
+	arch := archetype.Archetype
+	if archetype.StartIndex > 0 {
 		return Query{
 			filter:         nil,
 			isFiltered:     true,
 			world:          world,
-			archetypes:     batchArchetype{archetype, start},
-			access:         &archetype.archetypeAccess,
+			archetypes:     archetype,
+			access:         &arch.archetypeAccess,
 			archIndex:      0,
 			lockBit:        lockBit,
-			count:          int32(archetype.Len() - start),
-			entityIndex:    uintptr(start - 1),
-			entityIndexMax: uintptr(archetype.Len()) - 1,
+			count:          int32(arch.Len() - archetype.StartIndex),
+			entityIndex:    uintptr(archetype.StartIndex - 1),
+			entityIndexMax: uintptr(arch.Len() - 1),
 		}
 	}
 	return Query{
 		filter:     nil,
 		isFiltered: true,
 		world:      world,
-		archetypes: batchArchetype{archetype, start},
+		archetypes: archetype,
 		archIndex:  -1,
 		lockBit:    lockBit,
-		count:      int32(archetype.Len()),
+		count:      int32(arch.Len()),
 	}
 }
 
