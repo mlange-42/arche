@@ -35,6 +35,21 @@ func (b *Batch) Remove(filter Filter, callback func(Query), comps ...ID) {
 	b.world.exchangeBatch(filter, nil, comps, callback)
 }
 
+// SetRelation sets the [Relation] target for many entities, matching a filter.
+//
+// If the callback argument is given, it is called with a [Query] over the affected entities,
+// one Query for each affected archetype.
+//
+// Panics:
+//   - when called for a missing component.
+//   - when called for a component that is not a relation.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See also [World.SetRelation].
+func (b *Batch) SetRelation(filter Filter, comp ID, target Entity, callback func(Query)) {
+	b.world.setRelationBatch(filter, comp, target, callback)
+}
+
 // Exchange exchanges components for many entities, matching a filter.
 //
 // If the callback argument is given, it is called with a [Query] over the affected entities,

@@ -654,6 +654,8 @@ func (w *World) getExchangeMask(arch *archetype, add []ID, rem []ID) Mask {
 //
 // See also [World.Exchange].
 func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Query)) {
+	w.checkLocked()
+
 	if len(add) == 0 && len(rem) == 0 {
 		return
 	}
@@ -700,9 +702,10 @@ func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, re
 	for i = 0; i < count; i++ {
 		idx := startIdx + i
 		entity := oldArch.GetEntity(i)
-		index := w.entities[entity.id]
+		index := &w.entities[entity.id]
 		arch.SetEntity(uintptr(idx), entity)
-		w.entities[entity.id] = entityIndex{arch: arch, index: uintptr(idx), isTarget: index.isTarget}
+		index.arch = arch
+		index.index = uintptr(idx)
 
 		for _, id := range oldIDs {
 			if mask.Get(id) {
@@ -800,6 +803,84 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 	w.entities[target.id].isTarget = true
 
 	w.cleanupArchetype(oldArch)
+}
+
+func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback func(Query)) {
+	w.checkLocked()
+
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
+	}
+
+	arches := w.getArchetypes(filter)
+	ln := arches.Len()
+	lengths := make([]uint32, arches.Len())
+	var i int32
+	for i = 0; i < ln; i++ {
+		lengths[i] = arches.Get(i).Len()
+	}
+
+	for i = 0; i < ln; i++ {
+		arch := arches.Get(i)
+		archLen := lengths[i]
+
+		if archLen == 0 {
+			continue
+		}
+
+		newArch, start := w.setRelationArch(arch, archLen, comp, target)
+		if callback == nil {
+			if w.listener != nil {
+				w.notifyQuery(&batchArchetype{newArch, start, arch, nil, nil})
+			}
+		} else {
+			lock := w.lock()
+			query := newArchQuery(w, lock, batchArchetype{newArch, start, arch, nil, nil})
+			callback(query)
+		}
+	}
+}
+
+func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, target Entity) (*archetype, uint32) {
+	w.checkRelation(oldArch, comp)
+
+	if oldArch.Relation == target {
+		return oldArch, 0
+	}
+	oldIDs := oldArch.Components()
+
+	arch := oldArch.graphNode.GetArchetype(target)
+	if arch == nil {
+		arch = w.createArchetype(oldArch.graphNode, target, true)
+	}
+
+	startIdx := uintptr(arch.Len())
+	count := uintptr(oldArchLen)
+	arch.AllocN(uint32(count))
+
+	var i uintptr
+	for i = 0; i < count; i++ {
+		idx := startIdx + i
+		entity := oldArch.GetEntity(i)
+		index := &w.entities[entity.id]
+		arch.SetEntity(uintptr(idx), entity)
+		index.arch = arch
+		index.index = uintptr(idx)
+
+		for _, id := range oldIDs {
+			comp := oldArch.Get(i, id)
+			arch.SetPointer(idx, id, comp)
+		}
+	}
+
+	// Theoretically, it could be oldArchLen < oldArch.Len(),
+	// which means we can't reset the archetype.
+	// However, this should not be possible as processing an entity twice
+	// would mean an illegal component addition/removal.
+	oldArch.Reset()
+	w.cleanupArchetype(oldArch)
+
+	return arch, uint32(startIdx)
 }
 
 func (w *World) checkRelation(arch *archetype, comp ID) {
