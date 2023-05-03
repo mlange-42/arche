@@ -17,8 +17,11 @@ type archetypes interface {
 //
 // Used for the [Query] returned by entity batch creation methods.
 type batchArchetype struct {
-	Archetype  *archetype
-	StartIndex uint32
+	Archetype    *archetype
+	StartIndex   uint32
+	OldArchetype *archetype
+	Added        []ID
+	Removed      []ID
 }
 
 // Get returns the value at the given index.

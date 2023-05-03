@@ -271,7 +271,7 @@ func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID
 func (w *World) newEntitiesQuery(count int, targetID int8, target Entity, comps ...ID) Query {
 	arch, startIdx := w.newEntitiesNoNotify(count, targetID, target, comps...)
 	lock := w.lock()
-	return newArchQuery(w, lock, arch, startIdx)
+	return newArchQuery(w, lock, batchArchetype{arch, startIdx, nil, arch.Components(), nil})
 }
 
 // Creates new entities with component values without returning a query over them.
@@ -307,7 +307,7 @@ func (w *World) newEntitiesWithQuery(count int, targetID int8, target Entity, co
 
 	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, target, ids, comps...)
 	lock := w.lock()
-	return newArchQuery(w, lock, arch, startIdx)
+	return newArchQuery(w, lock, batchArchetype{arch, startIdx, nil, arch.Components(), nil})
 }
 
 // RemoveEntity removes and recycles an [Entity].
@@ -576,20 +576,8 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	}
 	index := &w.entities[entity.id]
 	oldArch := index.arch
-	mask := oldArch.Mask
-	oldMask := mask
-	for _, comp := range add {
-		if oldArch.HasComponent(comp) {
-			panic("entity already has this component, can't add")
-		}
-		mask.Set(comp, true)
-	}
-	for _, comp := range rem {
-		if !oldArch.HasComponent(comp) {
-			panic("entity does not have this component, can't remove")
-		}
-		mask.Set(comp, false)
-	}
+	oldMask := oldArch.Mask
+	mask := w.getExchangeMask(oldArch, add, rem)
 
 	oldIDs := oldArch.Components()
 
@@ -616,6 +604,108 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	if w.listener != nil {
 		w.listener(&EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.graphNode.Ids, 0})
 	}
+}
+
+func (w *World) getExchangeMask(arch *archetype, add []ID, rem []ID) Mask {
+	mask := arch.Mask
+	for _, comp := range add {
+		if arch.HasComponent(comp) {
+			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp]))
+		}
+		mask.Set(comp, true)
+	}
+	for _, comp := range rem {
+		if !arch.HasComponent(comp) {
+			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp]))
+		}
+		mask.Set(comp, false)
+	}
+	return mask
+}
+
+// ExchangeBatch exchanges components for many entities.
+func (w *World) ExchangeBatch(filter Filter, add []ID, rem []ID, callback func(Query)) {
+	if len(add) == 0 && len(rem) == 0 {
+		return
+	}
+
+	ln := w.graph.Len()
+	var i int32
+	for i = 0; i < ln; i++ {
+		nd := w.graph.Get(i)
+		if !nd.IsActive() {
+			continue
+		}
+		if !nd.Matches(filter) {
+			continue
+		}
+		nodeArches := nd.Archetypes()
+		ln2 := int32(nodeArches.Len())
+		if ln2 > 1 {
+			if rf, ok := filter.(*RelationFilter); ok {
+				target := rf.Target
+				if arch, ok := nd.archetypeMap[target]; ok && arch.Len() > 0 {
+					newArch, start := w.exchangeArch(arch, add, rem)
+					if callback == nil {
+						if w.listener != nil {
+							w.notifyQuery(&batchArchetype{newArch, start, arch, add, rem})
+						}
+					} else {
+						lock := w.lock()
+						query := newArchQuery(w, lock, batchArchetype{newArch, start, arch, add, rem})
+						callback(query)
+					}
+				}
+				continue
+			}
+		}
+
+		var j int32
+		for j = 0; j < ln2; j++ {
+			arch := nodeArches.Get(j)
+			if arch.IsActive() && arch.Matches(filter) && arch.Len() > 0 {
+				newArch, start := w.exchangeArch(arch, add, rem)
+				if callback == nil {
+					if w.listener != nil {
+						w.notifyQuery(&batchArchetype{newArch, start, arch, add, rem})
+					}
+				} else {
+					lock := w.lock()
+					query := newArchQuery(w, lock, batchArchetype{newArch, start, arch, add, rem})
+					callback(query)
+				}
+			}
+		}
+	}
+}
+
+func (w *World) exchangeArch(oldArch *archetype, add []ID, rem []ID) (*archetype, uint32) {
+	mask := w.getExchangeMask(oldArch, add, rem)
+	oldIDs := oldArch.Components()
+	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.Relation)
+
+	startIdx := uintptr(arch.Len())
+	count := uintptr(oldArch.Len())
+	arch.AllocN(uint32(count))
+
+	var i uintptr
+	for i = 0; i < count; i++ {
+		idx := startIdx + i
+		entity := oldArch.GetEntity(i)
+		index := w.entities[entity.id]
+		arch.SetEntity(uintptr(idx), entity)
+		w.entities[entity.id] = entityIndex{arch: arch, index: uintptr(idx), isTarget: index.isTarget}
+
+		for _, id := range oldIDs {
+			if mask.Get(id) {
+				comp := oldArch.Get(i, id)
+				arch.SetPointer(idx, id, comp)
+			}
+		}
+	}
+
+	oldArch.Reset()
+	return arch, uint32(startIdx)
 }
 
 // getRelation returns the target entity for an entity relation.
@@ -1228,7 +1318,13 @@ func (w *World) notifyQuery(batchArch *batchArchetype) {
 	arch := batchArch.Archetype
 	var i uintptr
 	len := uintptr(arch.Len())
-	event := EntityEvent{Entity{}, Mask{}, arch.Mask, arch.graphNode.Ids, nil, arch.graphNode.Ids, 1}
+	event := EntityEvent{Entity{}, Mask{}, arch.Mask, batchArch.Added, batchArch.Removed, arch.graphNode.Ids, 1}
+
+	oldArch := batchArch.OldArchetype
+	if oldArch != nil {
+		event.OldMask = oldArch.graphNode.mask
+		event.AddedRemoved = 0
+	}
 
 	for i = uintptr(batchArch.StartIndex); i < len; i++ {
 		entity := arch.GetEntity(i)

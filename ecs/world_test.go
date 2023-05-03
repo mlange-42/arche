@@ -254,6 +254,78 @@ func TestWorldExchange(t *testing.T) {
 	assert.Panics(t, func() { w.Exchange(e0, []ID{posID}, []ID{}) })
 }
 
+func TestWorldExchangeBatch(t *testing.T) {
+	w := NewWorld()
+
+	events := []EntityEvent{}
+	w.SetListener(func(e *EntityEvent) {
+		events = append(events, *e)
+	})
+
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
+	relID := ComponentID[testRelationA](&w)
+
+	target1 := w.NewEntity(velID)
+	target2 := w.NewEntity(velID)
+
+	builder := NewBuilder(&w, posID, relID).WithRelation(relID)
+	builder.NewBatch(100, target1)
+	builder.NewBatch(100, target2)
+
+	cnt := 0
+	filter := All(posID, relID)
+	w.ExchangeBatch(filter, []ID{velID}, []ID{posID}, func(q Query) {
+		assert.Equal(t, 100, q.Count())
+		for q.Next() {
+			assert.True(t, q.Has(velID))
+			assert.True(t, q.Has(relID))
+			assert.False(t, q.Has(posID))
+		}
+		cnt++
+	})
+	assert.Equal(t, 2, cnt)
+
+	query := w.Query(All(posID))
+	assert.Equal(t, 0, query.Count())
+	query.Close()
+
+	cnt = 0
+	filter2 := RelationFilter{Filter: All(relID), Target: target1}
+	w.ExchangeBatch(&filter2, []ID{posID}, []ID{velID}, func(q Query) {
+		assert.Equal(t, 100, q.Count())
+		for q.Next() {
+			assert.True(t, q.Has(posID))
+			assert.True(t, q.Has(relID))
+			assert.False(t, q.Has(velID))
+			assert.Equal(t, target1, q.Relation(relID))
+		}
+		cnt++
+	})
+	assert.Equal(t, 1, cnt)
+
+	query = w.Query(All(posID))
+	assert.Equal(t, 100, query.Count())
+	query.Close()
+
+	w.ExchangeBatch(All(posID), nil, nil, nil)
+
+	w.ExchangeBatch(&RelationFilter{Filter: All(relID), Target: target2}, nil, []ID{relID}, nil)
+	w.ExchangeBatch(All(relID), nil, []ID{relID}, nil)
+
+	w.RemoveEntities(All(posID))
+
+	assert.Equal(t, 802, len(events))
+	assert.Equal(t, 1, events[0].AddedRemoved)
+	assert.Equal(t, 1, events[1].AddedRemoved)
+	assert.Equal(t, 1, events[2].AddedRemoved)
+	assert.Equal(t, 1, events[201].AddedRemoved)
+
+	assert.Equal(t, 0, events[202].AddedRemoved)
+	assert.Equal(t, []ID{velID}, events[202].Added)
+	assert.Equal(t, []ID{posID}, events[202].Removed)
+}
+
 func TestWorldAssignSet(t *testing.T) {
 	w := NewWorld()
 
