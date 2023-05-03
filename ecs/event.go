@@ -23,6 +23,8 @@ type EntityEvent struct {
 	OldMask, NewMask        Mask   // The old and new component masks.
 	Added, Removed, Current []ID   // Components added, removed, and after the change. DO NOT MODIFY!
 	AddedRemoved            int    // Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
+	OldTarget, NewTarget    Entity // Old and new target entity
+	TargetChanged           bool   // Whether this is (only) a change of the relation target.
 }
 
 // EntityAdded reports whether the entity was newly added.

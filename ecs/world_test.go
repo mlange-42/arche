@@ -684,6 +684,11 @@ func TestWorldRemoveEntities(t *testing.T) {
 func TestWorldRelationSet(t *testing.T) {
 	world := NewWorld()
 
+	events := []EntityEvent{}
+	world.SetListener(func(e *EntityEvent) {
+		events = append(events, *e)
+	})
+
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
 	rel2ID := ComponentID[testRelationB](&world)
@@ -739,10 +744,17 @@ func TestWorldRelationSet(t *testing.T) {
 	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
 	assert.True(t, world.graph.Get(2).archetypes.Get(0).IsActive())
 	assert.False(t, world.graph.Get(2).archetypes.Get(1).IsActive())
+
+	assert.Equal(t, 9, len(events))
 }
 
 func TestWorldRelationSetBatch(t *testing.T) {
 	world := NewWorld()
+
+	events := []EntityEvent{}
+	world.SetListener(func(e *EntityEvent) {
+		events = append(events, *e)
+	})
 
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -787,10 +799,15 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	assert.Panics(t, func() {
 		world.Batch().SetRelation(All(relID), relID, targ3, nil)
 	})
+
+	assert.Equal(t, 1304, len(events))
 }
 
 func TestWorldRelationRemove(t *testing.T) {
 	world := NewWorld()
+
+	events := []EntityEvent{}
+	world.SetListener(func(e *EntityEvent) { events = append(events, *e) })
 
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
