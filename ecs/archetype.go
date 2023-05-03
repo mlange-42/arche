@@ -15,6 +15,7 @@ var layoutSize = unsafe.Sizeof(layout{})
 type archetypeNode struct {
 	mask              Mask                  // Mask of the archetype
 	Ids               []ID                  // List of component IDs
+	Types             []reflect.Type        // Component type per column
 	archetype         *archetype            // The single archetype for nodes without entity
 	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
 	archetypeMap      map[Entity]*archetype // Mapping from relation targets to archetypes
@@ -25,21 +26,53 @@ type archetypeNode struct {
 	zeroValue         []byte                // Used as source for setting storage to zero
 	zeroPointer       unsafe.Pointer        // Points to zeroValue for fast access
 	capacityIncrement uint32                // Capacity increment
+	isActive          bool
 }
 
 // Creates a new archetypeNode
-func newArchetypeNode(mask Mask, relation int8, capacityIncrement int) archetypeNode {
+func newArchetypeNode(mask Mask, relation int8, capacityIncrement int, components ...componentType) archetypeNode {
 	var arch map[Entity]*archetype
 	if relation >= 0 {
 		arch = map[Entity]*archetype{}
 	}
+	ids := make([]ID, len(components))
+	types := make([]reflect.Type, len(components))
+
+	var maxSize uintptr = 0
+	prev := -1
+	for i, c := range components {
+		if int(c.ID) <= prev {
+			panic("component arguments must be sorted by ID")
+		}
+		prev = int(c.ID)
+
+		ids[i] = c.ID
+		types[i] = c.Type
+		size, align := c.Type.Size(), uintptr(c.Type.Align())
+		size = (size + (align - 1)) / align * align
+		if size > maxSize {
+			maxSize = size
+		}
+	}
+
+	var zeroValue []byte
+	var zeroPointer unsafe.Pointer
+	if maxSize > 0 {
+		zeroValue = make([]byte, maxSize)
+		zeroPointer = unsafe.Pointer(&zeroValue[0])
+	}
+
 	return archetypeNode{
 		mask:              mask,
+		Ids:               ids,
+		Types:             types,
 		archetypeMap:      arch,
 		TransitionAdd:     newIDMap[*archetypeNode](),
 		TransitionRemove:  newIDMap[*archetypeNode](),
 		relation:          relation,
 		capacityIncrement: uint32(capacityIncrement),
+		zeroValue:         zeroValue,
+		zeroPointer:       zeroPointer,
 	}
 }
 
@@ -80,7 +113,7 @@ func (a *archetypeNode) SetArchetype(arch *archetype) {
 }
 
 // CreateArchetype creates a new archetype in nodes with relation component.
-func (a *archetypeNode) CreateArchetype(target Entity, components ...componentType) *archetype {
+func (a *archetypeNode) CreateArchetype(target Entity) *archetype {
 	var arch *archetype
 	var archIndex int32
 	lenFree := len(a.freeIndices)
@@ -93,7 +126,7 @@ func (a *archetypeNode) CreateArchetype(target Entity, components ...componentTy
 		a.archetypes.Add(archetype{})
 		archIndex := a.archetypes.Len() - 1
 		arch = a.archetypes.Get(archIndex)
-		arch.Init(a, archIndex, true, target, components...)
+		arch.Init(a, archIndex, true, target)
 	}
 	a.archetypeMap[target] = arch
 	return arch
@@ -115,7 +148,7 @@ func (a *archetypeNode) HasRelation() bool {
 
 // IsActive returns whether the node is active, i.e. has archetypes.
 func (a *archetypeNode) IsActive() bool {
-	return a.Ids != nil
+	return a.isActive
 }
 
 // Stats generates statistics for an archetype node.
@@ -283,28 +316,12 @@ type archetype struct {
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity, components ...componentType) {
-	var mask Mask
+func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity) {
 	if !node.IsActive() {
-		node.Ids = make([]ID, len(components))
-
-		var maxSize uintptr = 0
-		for i, c := range components {
-			node.Ids[i] = c.ID
-			size, align := c.Type.Size(), uintptr(c.Type.Align())
-			size = (size + (align - 1)) / align * align
-			if size > maxSize {
-				maxSize = size
-			}
-		}
-
-		if maxSize > 0 {
-			node.zeroValue = make([]byte, maxSize)
-			node.zeroPointer = unsafe.Pointer(&node.zeroValue[0])
-		}
+		node.isActive = true
 	}
 
-	a.buffers = make([]reflect.Value, len(components))
+	a.buffers = make([]reflect.Value, len(node.Ids))
 	a.layouts = make([]layout, MaskTotalBits)
 	a.indices = newIDMap[uint32]()
 	a.index = index
@@ -314,30 +331,24 @@ func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, rela
 		cap = int(node.capacityIncrement)
 	}
 
-	prev := -1
-	for i, c := range components {
-		if int(c.ID) <= prev {
-			panic("component arguments must be sorted by ID")
-		}
-		prev = int(c.ID)
-		mask.Set(c.ID, true)
-
-		size, align := c.Type.Size(), uintptr(c.Type.Align())
+	for i, id := range node.Ids {
+		tp := node.Types[i]
+		size, align := tp.Size(), uintptr(tp.Align())
 		size = (size + (align - 1)) / align * align
 
-		a.buffers[i] = reflect.New(reflect.ArrayOf(cap, c.Type)).Elem()
-		a.layouts[c.ID] = layout{
+		a.buffers[i] = reflect.New(reflect.ArrayOf(cap, tp)).Elem()
+		a.layouts[id] = layout{
 			a.buffers[i].Addr().UnsafePointer(),
 			size,
 		}
-		a.indices.Set(c.ID, uint32(i))
+		a.indices.Set(id, uint32(i))
 	}
 	a.entityBuffer = reflect.New(reflect.ArrayOf(cap, entityType)).Elem()
 
 	a.archetypeAccess = archetypeAccess{
 		basePointer:       unsafe.Pointer(&a.layouts[0]),
 		entityPointer:     a.entityBuffer.Addr().UnsafePointer(),
-		Mask:              mask,
+		Mask:              node.mask,
 		Relation:          relation,
 		RelationComponent: node.relation,
 	}

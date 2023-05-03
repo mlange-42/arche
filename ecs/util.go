@@ -111,7 +111,7 @@ func debugPrintWorld(w *World) string {
 	for i = 0; i < ln; i++ {
 		nd := w.graph.Get(i)
 		if !nd.IsActive() {
-			fmt.Fprint(&sb, "Node ??? (inactive)\n")
+			fmt.Fprintf(&sb, "Node %v (inactive)\n", nd.Ids)
 			continue
 		}
 		nodeArches := nd.Archetypes()

@@ -1287,17 +1287,6 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
 		capInc = w.config.RelationCapacityIncrement
 	}
 
-	w.graph.Add(newArchetypeNode(mask, relation, capInc))
-	node := w.graph.Get(w.graph.Len() - 1)
-	w.relationNodes = append(w.relationNodes, node)
-	return node
-}
-
-// Creates an archetype for the given archetype graph node.
-// Initializes the archetype with a capacity according to CapacityIncrement if forStorage is true,
-// and with a capacity of 1 otherwise.
-func (w *World) createArchetype(node *archetypeNode, target Entity, forStorage bool) *archetype {
-	mask := node.mask
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 
@@ -1319,14 +1308,24 @@ func (w *World) createArchetype(node *archetypeNode, target Entity, forStorage b
 		}
 	}
 
+	w.graph.Add(newArchetypeNode(mask, relation, capInc, types...))
+	node := w.graph.Get(w.graph.Len() - 1)
+	w.relationNodes = append(w.relationNodes, node)
+	return node
+}
+
+// Creates an archetype for the given archetype graph node.
+// Initializes the archetype with a capacity according to CapacityIncrement if forStorage is true,
+// and with a capacity of 1 otherwise.
+func (w *World) createArchetype(node *archetypeNode, target Entity, forStorage bool) *archetype {
 	var arch *archetype
 	if node.HasRelation() {
-		arch = node.CreateArchetype(target, types...)
+		arch = node.CreateArchetype(target)
 	} else {
 		w.archetypes.Add(archetype{})
 		archIndex := w.archetypes.Len() - 1
 		arch = w.archetypes.Get(archIndex)
-		arch.Init(node, archIndex, forStorage, target, types...)
+		arch.Init(node, archIndex, forStorage, target)
 		node.SetArchetype(arch)
 	}
 
