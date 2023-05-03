@@ -803,6 +803,8 @@ func TestWorldRelationSetBatch(t *testing.T) {
 
 	assert.Equal(t, 1304, len(events))
 
+	world.Relations().SetBatch(All(relID), relID, targ1, nil)
+
 	assert.Panics(t, func() {
 		world.Batch().SetRelation(All(relID), relID, targ2, func(q Query) {})
 	})

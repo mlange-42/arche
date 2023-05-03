@@ -13,7 +13,7 @@ var layoutSize = unsafe.Sizeof(layout{})
 
 // archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
-	mask              Mask                  // Mask of the archetype
+	Mask              Mask                  // Mask of the archetype
 	Ids               []ID                  // List of component IDs
 	Types             []reflect.Type        // Component type per column
 	archetype         *archetype            // The single archetype for nodes without entity
@@ -22,11 +22,11 @@ type archetypeNode struct {
 	freeIndices       []int32               // Indices of free/inactive archetypes
 	TransitionAdd     idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
 	TransitionRemove  idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
-	relation          int8                  // The node's relation component ID. Negative value stands for no relation
+	Relation          int8                  // The node's relation component ID. Negative value stands for no relation
 	zeroValue         []byte                // Used as source for setting storage to zero
 	zeroPointer       unsafe.Pointer        // Points to zeroValue for fast access
 	capacityIncrement uint32                // Capacity increment
-	isActive          bool
+	IsActive          bool
 }
 
 // Creates a new archetypeNode
@@ -63,13 +63,13 @@ func newArchetypeNode(mask Mask, relation int8, capacityIncrement int, component
 	}
 
 	return archetypeNode{
-		mask:              mask,
+		Mask:              mask,
 		Ids:               ids,
 		Types:             types,
 		archetypeMap:      arch,
 		TransitionAdd:     newIDMap[*archetypeNode](),
 		TransitionRemove:  newIDMap[*archetypeNode](),
-		relation:          relation,
+		Relation:          relation,
 		capacityIncrement: uint32(capacityIncrement),
 		zeroValue:         zeroValue,
 		zeroPointer:       zeroPointer,
@@ -79,7 +79,7 @@ func newArchetypeNode(mask Mask, relation int8, capacityIncrement int, component
 // Matches the archetype node against a filter.
 // Ignores the relation target.
 func (a *archetypeNode) Matches(f Filter) bool {
-	return f.Matches(a.mask, nil)
+	return f.Matches(a.Mask, nil)
 }
 
 // Archetypes of the node.
@@ -99,7 +99,7 @@ func (a *archetypeNode) Archetypes() archetypes {
 //
 // The target is ignored if the node has no relation component.
 func (a *archetypeNode) GetArchetype(target Entity) *archetype {
-	if a.relation >= 0 {
+	if a.Relation >= 0 {
 		return a.archetypeMap[target]
 	}
 	return a.archetype
@@ -143,12 +143,7 @@ func (a *archetypeNode) RemoveArchetype(arch *archetype) {
 
 // HasRelation returns whether the node has a relation component.
 func (a *archetypeNode) HasRelation() bool {
-	return a.relation >= 0
-}
-
-// IsActive returns whether the node is active, i.e. has archetypes.
-func (a *archetypeNode) IsActive() bool {
-	return a.isActive
+	return a.Relation >= 0
 }
 
 // Stats generates statistics for an archetype node.
@@ -187,7 +182,7 @@ func (a *archetypeNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 	return stats.NodeStats{
 		ArchetypeCount:       int(numArches),
 		ActiveArchetypeCount: int(numArches) - len(a.freeIndices),
-		IsActive:             a.IsActive(),
+		IsActive:             a.IsActive,
 		HasRelation:          a.HasRelation(),
 		Components:           aCompCount,
 		ComponentIDs:         ids,
@@ -202,7 +197,7 @@ func (a *archetypeNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 
 // UpdateStats updates statistics for an archetype node.
 func (a *archetypeNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry[ID]) {
-	if !a.IsActive() {
+	if !a.IsActive {
 		return
 	}
 
@@ -312,8 +307,8 @@ type archetype struct {
 
 // Init initializes an archetype
 func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity) {
-	if !node.IsActive() {
-		node.isActive = true
+	if !node.IsActive {
+		node.IsActive = true
 	}
 
 	a.buffers = make([]reflect.Value, len(node.Ids))
@@ -343,9 +338,9 @@ func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, rela
 	a.archetypeAccess = archetypeAccess{
 		basePointer:       unsafe.Pointer(&a.layouts[0]),
 		entityPointer:     a.entityBuffer.Addr().UnsafePointer(),
-		Mask:              node.mask,
+		Mask:              node.Mask,
 		RelationTarget:    relation,
-		RelationComponent: node.relation,
+		RelationComponent: node.Relation,
 	}
 
 	a.graphNode = node

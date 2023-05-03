@@ -134,7 +134,7 @@ func debugPrintWorld(w *World) string {
 	var i int32
 	for i = 0; i < ln; i++ {
 		nd := w.graph.Get(i)
-		if !nd.IsActive() {
+		if !nd.IsActive {
 			fmt.Fprintf(&sb, "Node %v (inactive)\n", nd.Ids)
 			continue
 		}

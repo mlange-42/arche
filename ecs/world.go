@@ -367,7 +367,7 @@ func (w *World) removeEntities(filter Filter) int {
 	var n int32
 	for n = 0; n < numNodes; n++ {
 		node := w.graph.Get(n)
-		if !node.IsActive() {
+		if !node.IsActive {
 			continue
 		}
 		if !node.Matches(filter) {
@@ -893,7 +893,7 @@ func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, 
 }
 
 func (w *World) checkRelation(arch *archetype, comp ID) {
-	if arch.graphNode.relation != int8(comp) {
+	if arch.graphNode.Relation != int8(comp) {
 		w.relationError(arch, comp)
 	}
 }
@@ -924,7 +924,7 @@ func (w *World) Reset() {
 	var i int32
 	for i = 0; i < len; i++ {
 		node := w.graph.Get(i)
-		if !node.IsActive() {
+		if !node.IsActive {
 			continue
 		}
 		arches := node.Archetypes()
@@ -1048,7 +1048,7 @@ func (w *World) Stats() *stats.WorldStats {
 		node := w.graph.Get(i)
 		nodeStats := &w.stats.Nodes[i]
 		node.UpdateStats(nodeStats, &w.registry)
-		if node.IsActive() {
+		if node.IsActive {
 			memory += nodeStats.Memory
 			cntActive++
 		}
@@ -1056,7 +1056,7 @@ func (w *World) Stats() *stats.WorldStats {
 	for i = cntOld; i < cntNew; i++ {
 		node := w.graph.Get(i)
 		w.stats.Nodes = append(w.stats.Nodes, node.Stats(&w.registry))
-		if node.IsActive() {
+		if node.IsActive {
 			memory += w.stats.Nodes[i].Memory
 			cntActive++
 		}
@@ -1276,7 +1276,7 @@ func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
 	var i int32
 	for i = 0; i < length; i++ {
 		node := w.graph.Get(i)
-		if node.mask == mask {
+		if node.Mask == mask {
 			return node, true
 		}
 	}
@@ -1324,24 +1324,20 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 	var i int32
 	for i = 0; i < ln; i++ {
 		nd := w.graph.Get(i)
-		if !nd.IsActive() {
+		if !nd.IsActive || !nd.Matches(filter) {
 			continue
-		}
-		if !nd.Matches(filter) {
-			continue
-		}
-		nodeArches := nd.Archetypes()
-		ln2 := int32(nodeArches.Len())
-		if ln2 > 1 {
-			if rf, ok := filter.(*relationFilter); ok {
-				target := rf.Target
-				if arch, ok := nd.archetypeMap[target]; ok {
-					arches = append(arches, arch)
-				}
-				continue
-			}
 		}
 
+		if rf, ok := filter.(*relationFilter); ok {
+			target := rf.Target
+			if arch, ok := nd.archetypeMap[target]; ok {
+				arches = append(arches, arch)
+			}
+			continue
+		}
+
+		nodeArches := nd.Archetypes()
+		ln2 := int32(nodeArches.Len())
 		var j int32
 		for j = 0; j < ln2; j++ {
 			a := nodeArches.Get(j)
@@ -1417,7 +1413,7 @@ func (w *World) notifyQuery(batchArch *batchArchetype) {
 
 	oldArch := batchArch.OldArchetype
 	if oldArch != nil {
-		event.OldMask = oldArch.graphNode.mask
+		event.OldMask = oldArch.graphNode.Mask
 		event.AddedRemoved = 0
 		event.OldTarget = oldArch.RelationTarget
 		event.TargetChanged = event.OldMask == event.NewMask
