@@ -271,7 +271,7 @@ func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID
 func (w *World) newEntitiesQuery(count int, targetID int8, target Entity, comps ...ID) Query {
 	arch, startIdx := w.newEntitiesNoNotify(count, targetID, target, comps...)
 	lock := w.lock()
-	return newArchQuery(w, lock, batchArchetype{arch, startIdx, nil, arch.Components(), nil})
+	return newArchQuery(w, lock, batchArchetype{arch, startIdx, arch.Len(), nil, arch.Components(), nil})
 }
 
 // Creates new entities with component values without returning a query over them.
@@ -307,7 +307,7 @@ func (w *World) newEntitiesWithQuery(count int, targetID int8, target Entity, co
 
 	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, target, ids, comps...)
 	lock := w.lock()
-	return newArchQuery(w, lock, batchArchetype{arch, startIdx, nil, arch.Components(), nil})
+	return newArchQuery(w, lock, batchArchetype{arch, startIdx, arch.Len(), nil, arch.Components(), nil})
 }
 
 // RemoveEntity removes and recycles an [Entity].
@@ -679,11 +679,11 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 		newArch, start := w.exchangeArch(arch, archLen, add, rem)
 		if callback == nil {
 			if w.listener != nil {
-				w.notifyQuery(&batchArchetype{newArch, start, arch, add, rem})
+				w.notifyQuery(&batchArchetype{newArch, start, newArch.Len(), arch, add, rem})
 			}
 		} else {
 			lock := w.lock()
-			query := newArchQuery(w, lock, batchArchetype{newArch, start, arch, add, rem})
+			query := newArchQuery(w, lock, batchArchetype{newArch, start, newArch.Len(), arch, add, rem})
 			callback(query)
 		}
 	}
@@ -828,24 +828,24 @@ func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback
 			continue
 		}
 
-		newArch, start := w.setRelationArch(arch, archLen, comp, target)
+		newArch, start, end := w.setRelationArch(arch, archLen, comp, target)
 		if callback == nil {
 			if w.listener != nil {
-				w.notifyQuery(&batchArchetype{newArch, start, arch, nil, nil})
+				w.notifyQuery(&batchArchetype{newArch, start, end, arch, nil, nil})
 			}
 		} else {
 			lock := w.lock()
-			query := newArchQuery(w, lock, batchArchetype{newArch, start, arch, nil, nil})
+			query := newArchQuery(w, lock, batchArchetype{newArch, start, end, arch, nil, nil})
 			callback(query)
 		}
 	}
 }
 
-func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, target Entity) (*archetype, uint32) {
+func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, target Entity) (*archetype, uint32, uint32) {
 	w.checkRelation(oldArch, comp)
 
 	if oldArch.Relation == target {
-		return oldArch, 0
+		return oldArch, 0, oldArchLen
 	}
 	oldIDs := oldArch.Components()
 
@@ -880,7 +880,7 @@ func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, 
 	oldArch.Reset()
 	w.cleanupArchetype(oldArch)
 
-	return arch, uint32(startIdx)
+	return arch, uint32(startIdx), arch.Len()
 }
 
 func (w *World) checkRelation(arch *archetype, comp ID) {
@@ -1428,7 +1428,7 @@ func (w *World) notifyQuery(batchArch *batchArchetype) {
 		event.AddedRemoved = 0
 	}
 
-	start, end := uintptr(batchArch.StartIndex), uintptr(arch.Len())
+	start, end := uintptr(batchArch.StartIndex), uintptr(batchArch.EndIndex)
 	for i = start; i < end; i++ {
 		entity := arch.GetEntity(i)
 		event.Entity = entity
