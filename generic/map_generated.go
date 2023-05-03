@@ -67,13 +67,7 @@ func (m *Map1[A]) GetUnchecked(entity ecs.Entity) *A {
 //
 // See also [ecs.World.NewEntity].
 func (m *Map1[A]) New(target ...ecs.Entity) ecs.Entity {
-	if len(target) == 0 {
-		return m.world.NewEntity(m.ids...)
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
+	return newEntity(m.world, m.ids, m.target, target...)
 }
 
 // NewBatch creates entities with the Map1's components.
@@ -82,14 +76,7 @@ func (m *Map1[A]) New(target ...ecs.Entity) ecs.Entity {
 //
 // See also [Map1.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map1[A]) NewBatch(count int, target ...ecs.Entity) {
-	if len(target) == 0 {
-		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
-		return
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
+	newBatch(m.world, count, m.ids, m.target, target...)
 }
 
 // NewQuery creates entities with the Map1's components.
@@ -101,17 +88,7 @@ func (m *Map1[A]) NewBatch(count int, target ...ecs.Entity) {
 //
 // See also [Map1.NewBatch] and [ecs.Builder.NewQuery].
 func (m *Map1[A]) NewQuery(count int, target ...ecs.Entity) Query1[A] {
-	var query ecs.Query
-
-	if len(target) == 0 {
-		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
-	} else {
-		if m.target < 0 {
-			panic("map has no relation defined")
-		}
-		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
-	}
-
+	query := newQuery(m.world, count, m.ids, m.target, target...)
 	return Query1[A]{
 		Query: query,
 		id0:   m.id0,
@@ -237,13 +214,7 @@ func (m *Map2[A, B]) GetUnchecked(entity ecs.Entity) (*A, *B) {
 //
 // See also [ecs.World.NewEntity].
 func (m *Map2[A, B]) New(target ...ecs.Entity) ecs.Entity {
-	if len(target) == 0 {
-		return m.world.NewEntity(m.ids...)
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
+	return newEntity(m.world, m.ids, m.target, target...)
 }
 
 // NewBatch creates entities with the Map2's components.
@@ -252,14 +223,7 @@ func (m *Map2[A, B]) New(target ...ecs.Entity) ecs.Entity {
 //
 // See also [Map2.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map2[A, B]) NewBatch(count int, target ...ecs.Entity) {
-	if len(target) == 0 {
-		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
-		return
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
+	newBatch(m.world, count, m.ids, m.target, target...)
 }
 
 // NewQuery creates entities with the Map2's components.
@@ -271,17 +235,7 @@ func (m *Map2[A, B]) NewBatch(count int, target ...ecs.Entity) {
 //
 // See also [Map2.NewBatch] and [ecs.Builder.NewQuery].
 func (m *Map2[A, B]) NewQuery(count int, target ...ecs.Entity) Query2[A, B] {
-	var query ecs.Query
-
-	if len(target) == 0 {
-		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
-	} else {
-		if m.target < 0 {
-			panic("map has no relation defined")
-		}
-		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
-	}
-
+	query := newQuery(m.world, count, m.ids, m.target, target...)
 	return Query2[A, B]{
 		Query: query,
 		id0:   m.id0,
@@ -417,13 +371,7 @@ func (m *Map3[A, B, C]) GetUnchecked(entity ecs.Entity) (*A, *B, *C) {
 //
 // See also [ecs.World.NewEntity].
 func (m *Map3[A, B, C]) New(target ...ecs.Entity) ecs.Entity {
-	if len(target) == 0 {
-		return m.world.NewEntity(m.ids...)
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
+	return newEntity(m.world, m.ids, m.target, target...)
 }
 
 // NewBatch creates entities with the Map3's components.
@@ -432,14 +380,7 @@ func (m *Map3[A, B, C]) New(target ...ecs.Entity) ecs.Entity {
 //
 // See also [Map3.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map3[A, B, C]) NewBatch(count int, target ...ecs.Entity) {
-	if len(target) == 0 {
-		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
-		return
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
+	newBatch(m.world, count, m.ids, m.target, target...)
 }
 
 // NewQuery creates entities with the Map3's components.
@@ -451,17 +392,7 @@ func (m *Map3[A, B, C]) NewBatch(count int, target ...ecs.Entity) {
 //
 // See also [Map3.NewBatch] and [ecs.Builder.NewQuery].
 func (m *Map3[A, B, C]) NewQuery(count int, target ...ecs.Entity) Query3[A, B, C] {
-	var query ecs.Query
-
-	if len(target) == 0 {
-		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
-	} else {
-		if m.target < 0 {
-			panic("map has no relation defined")
-		}
-		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
-	}
-
+	query := newQuery(m.world, count, m.ids, m.target, target...)
 	return Query3[A, B, C]{
 		Query: query,
 		id0:   m.id0,
@@ -605,13 +536,7 @@ func (m *Map4[A, B, C, D]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D) {
 //
 // See also [ecs.World.NewEntity].
 func (m *Map4[A, B, C, D]) New(target ...ecs.Entity) ecs.Entity {
-	if len(target) == 0 {
-		return m.world.NewEntity(m.ids...)
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
+	return newEntity(m.world, m.ids, m.target, target...)
 }
 
 // NewBatch creates entities with the Map4's components.
@@ -620,14 +545,7 @@ func (m *Map4[A, B, C, D]) New(target ...ecs.Entity) ecs.Entity {
 //
 // See also [Map4.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map4[A, B, C, D]) NewBatch(count int, target ...ecs.Entity) {
-	if len(target) == 0 {
-		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
-		return
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
+	newBatch(m.world, count, m.ids, m.target, target...)
 }
 
 // NewQuery creates entities with the Map4's components.
@@ -639,17 +557,7 @@ func (m *Map4[A, B, C, D]) NewBatch(count int, target ...ecs.Entity) {
 //
 // See also [Map4.NewBatch] and [ecs.Builder.NewQuery].
 func (m *Map4[A, B, C, D]) NewQuery(count int, target ...ecs.Entity) Query4[A, B, C, D] {
-	var query ecs.Query
-
-	if len(target) == 0 {
-		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
-	} else {
-		if m.target < 0 {
-			panic("map has no relation defined")
-		}
-		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
-	}
-
+	query := newQuery(m.world, count, m.ids, m.target, target...)
 	return Query4[A, B, C, D]{
 		Query: query,
 		id0:   m.id0,
@@ -801,13 +709,7 @@ func (m *Map5[A, B, C, D, E]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D, *
 //
 // See also [ecs.World.NewEntity].
 func (m *Map5[A, B, C, D, E]) New(target ...ecs.Entity) ecs.Entity {
-	if len(target) == 0 {
-		return m.world.NewEntity(m.ids...)
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
+	return newEntity(m.world, m.ids, m.target, target...)
 }
 
 // NewBatch creates entities with the Map5's components.
@@ -816,14 +718,7 @@ func (m *Map5[A, B, C, D, E]) New(target ...ecs.Entity) ecs.Entity {
 //
 // See also [Map5.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map5[A, B, C, D, E]) NewBatch(count int, target ...ecs.Entity) {
-	if len(target) == 0 {
-		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
-		return
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
+	newBatch(m.world, count, m.ids, m.target, target...)
 }
 
 // NewQuery creates entities with the Map5's components.
@@ -835,17 +730,7 @@ func (m *Map5[A, B, C, D, E]) NewBatch(count int, target ...ecs.Entity) {
 //
 // See also [Map5.NewBatch] and [ecs.Builder.NewQuery].
 func (m *Map5[A, B, C, D, E]) NewQuery(count int, target ...ecs.Entity) Query5[A, B, C, D, E] {
-	var query ecs.Query
-
-	if len(target) == 0 {
-		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
-	} else {
-		if m.target < 0 {
-			panic("map has no relation defined")
-		}
-		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
-	}
-
+	query := newQuery(m.world, count, m.ids, m.target, target...)
 	return Query5[A, B, C, D, E]{
 		Query: query,
 		id0:   m.id0,
@@ -1005,13 +890,7 @@ func (m *Map6[A, B, C, D, E, F]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D
 //
 // See also [ecs.World.NewEntity].
 func (m *Map6[A, B, C, D, E, F]) New(target ...ecs.Entity) ecs.Entity {
-	if len(target) == 0 {
-		return m.world.NewEntity(m.ids...)
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
+	return newEntity(m.world, m.ids, m.target, target...)
 }
 
 // NewBatch creates entities with the Map6's components.
@@ -1020,14 +899,7 @@ func (m *Map6[A, B, C, D, E, F]) New(target ...ecs.Entity) ecs.Entity {
 //
 // See also [Map6.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map6[A, B, C, D, E, F]) NewBatch(count int, target ...ecs.Entity) {
-	if len(target) == 0 {
-		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
-		return
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
+	newBatch(m.world, count, m.ids, m.target, target...)
 }
 
 // NewQuery creates entities with the Map6's components.
@@ -1039,17 +911,7 @@ func (m *Map6[A, B, C, D, E, F]) NewBatch(count int, target ...ecs.Entity) {
 //
 // See also [Map6.NewBatch] and [ecs.Builder.NewQuery].
 func (m *Map6[A, B, C, D, E, F]) NewQuery(count int, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
-	var query ecs.Query
-
-	if len(target) == 0 {
-		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
-	} else {
-		if m.target < 0 {
-			panic("map has no relation defined")
-		}
-		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
-	}
-
+	query := newQuery(m.world, count, m.ids, m.target, target...)
 	return Query6[A, B, C, D, E, F]{
 		Query: query,
 		id0:   m.id0,
@@ -1217,13 +1079,7 @@ func (m *Map7[A, B, C, D, E, F, G]) GetUnchecked(entity ecs.Entity) (*A, *B, *C,
 //
 // See also [ecs.World.NewEntity].
 func (m *Map7[A, B, C, D, E, F, G]) New(target ...ecs.Entity) ecs.Entity {
-	if len(target) == 0 {
-		return m.world.NewEntity(m.ids...)
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
+	return newEntity(m.world, m.ids, m.target, target...)
 }
 
 // NewBatch creates entities with the Map7's components.
@@ -1232,14 +1088,7 @@ func (m *Map7[A, B, C, D, E, F, G]) New(target ...ecs.Entity) ecs.Entity {
 //
 // See also [Map7.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map7[A, B, C, D, E, F, G]) NewBatch(count int, target ...ecs.Entity) {
-	if len(target) == 0 {
-		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
-		return
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
+	newBatch(m.world, count, m.ids, m.target, target...)
 }
 
 // NewQuery creates entities with the Map7's components.
@@ -1251,17 +1100,7 @@ func (m *Map7[A, B, C, D, E, F, G]) NewBatch(count int, target ...ecs.Entity) {
 //
 // See also [Map7.NewBatch] and [ecs.Builder.NewQuery].
 func (m *Map7[A, B, C, D, E, F, G]) NewQuery(count int, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
-	var query ecs.Query
-
-	if len(target) == 0 {
-		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
-	} else {
-		if m.target < 0 {
-			panic("map has no relation defined")
-		}
-		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
-	}
-
+	query := newQuery(m.world, count, m.ids, m.target, target...)
 	return Query7[A, B, C, D, E, F, G]{
 		Query: query,
 		id0:   m.id0,
@@ -1437,13 +1276,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) GetUnchecked(entity ecs.Entity) (*A, *B, 
 //
 // See also [ecs.World.NewEntity].
 func (m *Map8[A, B, C, D, E, F, G, H]) New(target ...ecs.Entity) ecs.Entity {
-	if len(target) == 0 {
-		return m.world.NewEntity(m.ids...)
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	return ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).New(target[0])
+	return newEntity(m.world, m.ids, m.target, target...)
 }
 
 // NewBatch creates entities with the Map8's components.
@@ -1452,14 +1285,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) New(target ...ecs.Entity) ecs.Entity {
 //
 // See also [Map8.NewQuery] and [ecs.Batch.NewBatch].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewBatch(count int, target ...ecs.Entity) {
-	if len(target) == 0 {
-		ecs.NewBuilder(m.world, m.ids...).NewBatch(count)
-		return
-	}
-	if m.target < 0 {
-		panic("map has no relation defined")
-	}
-	ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewBatch(count, target[0])
+	newBatch(m.world, count, m.ids, m.target, target...)
 }
 
 // NewQuery creates entities with the Map8's components.
@@ -1471,17 +1297,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewBatch(count int, target ...ecs.Entity)
 //
 // See also [Map8.NewBatch] and [ecs.Builder.NewQuery].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewQuery(count int, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
-	var query ecs.Query
-
-	if len(target) == 0 {
-		query = ecs.NewBuilder(m.world, m.ids...).NewQuery(count)
-	} else {
-		if m.target < 0 {
-			panic("map has no relation defined")
-		}
-		query = ecs.NewBuilder(m.world, m.ids...).WithRelation(uint8(m.target)).NewQuery(count, target[0])
-	}
-
+	query := newQuery(m.world, count, m.ids, m.target, target...)
 	return Query8[A, B, C, D, E, F, G, H]{
 		Query: query,
 		id0:   m.id0,
