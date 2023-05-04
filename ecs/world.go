@@ -1180,9 +1180,9 @@ func (w *World) createEntity(arch *archetype) Entity {
 			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
 			copy(w.entities, old)
 
-			w.targetEntities.ExtendTo(len + w.config.CapacityIncrement)
 		}
 		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
+		w.targetEntities.ExtendTo(len + w.config.CapacityIncrement)
 	} else {
 		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
 		w.targetEntities.Set(entity.id, false)
@@ -1197,16 +1197,15 @@ func (w *World) createEntities(arch *archetype, count uint32) {
 
 	len := len(w.entities)
 	required := len + int(count) - w.entityPool.Available()
+	capacity := capacity(required, w.config.CapacityIncrement)
 	if required > cap(w.entities) {
-		cap := capacity(required, w.config.CapacityIncrement)
 		old := w.entities
-		w.entities = make([]entityIndex, required, cap)
+		w.entities = make([]entityIndex, required, capacity)
 		copy(w.entities, old)
-
-		w.targetEntities.ExtendTo(cap)
 	} else if required > len {
 		w.entities = w.entities[:required]
 	}
+	w.targetEntities.ExtendTo(capacity)
 
 	var i uint32
 	for i = 0; i < count; i++ {

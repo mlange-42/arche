@@ -41,7 +41,7 @@ func (b *bitSet) ExtendTo(length int) {
 	}
 
 	old := b.data
-	b.data = make([]uint64, chunks, chunks)
+	b.data = make([]uint64, chunks)
 
 	copy(b.data, old)
 }
