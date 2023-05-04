@@ -57,3 +57,21 @@ func ExampleCachedFilter() {
 	}
 	// Output:
 }
+
+func ExampleRelationFilter() {
+	world := ecs.NewWorld()
+	childID := ecs.ComponentID[ChildOf](&world)
+
+	target := world.NewEntity()
+
+	builder := ecs.NewBuilder(&world, childID).WithRelation(childID)
+	builder.NewBatch(100, target)
+
+	filter := ecs.RelationFilter(ecs.All(childID), target)
+
+	query := world.Query(filter)
+	for query.Next() {
+		// ...
+	}
+	// Output:
+}

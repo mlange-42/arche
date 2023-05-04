@@ -223,6 +223,15 @@ func ExampleWorld_Cache() {
 	// Output:
 }
 
+func ExampleWorld_Batch() {
+	world := ecs.NewWorld()
+	posID := ecs.ComponentID[Position](&world)
+
+	filter := ecs.All(posID)
+	world.Batch().RemoveEntities(filter)
+	// Output:
+}
+
 func ExampleWorld_SetListener() {
 	world := ecs.NewWorld()
 

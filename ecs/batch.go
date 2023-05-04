@@ -16,7 +16,7 @@ type Batch struct {
 //   - when called with components that can't be added because they are already present.
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
-// See also [World.Exchange].
+// See also [World.Add].
 func (b *Batch) Add(filter Filter, callback func(Query), comps ...ID) {
 	b.world.exchangeBatch(filter, comps, nil, callback)
 }
@@ -30,7 +30,7 @@ func (b *Batch) Add(filter Filter, callback func(Query), comps ...ID) {
 //   - when called with components that can't be removed because they are not present.
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
-// See also [World.Exchange].
+// See also [World.Remove].
 func (b *Batch) Remove(filter Filter, callback func(Query), comps ...ID) {
 	b.world.exchangeBatch(filter, nil, comps, callback)
 }
@@ -70,6 +70,8 @@ func (b *Batch) Exchange(filter Filter, add []ID, rem []ID, callback func(Query)
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
+//
+// See also [World.RemoveEntity]
 func (b *Batch) RemoveEntities(filter Filter) int {
 	return b.world.removeEntities(filter)
 }
