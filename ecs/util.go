@@ -130,10 +130,10 @@ func (p *pagedSlice[T]) Len() int32 {
 func debugPrintWorld(w *World) string {
 	sb := strings.Builder{}
 
-	ln := w.graph.Len()
+	ln := w.nodes.Len()
 	var i int32
 	for i = 0; i < ln; i++ {
-		nd := w.graph.Get(i)
+		nd := w.nodes.Get(i)
 		if !nd.IsActive {
 			fmt.Fprintf(&sb, "Node %v (inactive)\n", nd.Ids)
 			continue
