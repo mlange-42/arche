@@ -55,7 +55,11 @@ func (q *Filter0) Without(mask ...Comp) *Filter0 {
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter0.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter0) WithRelation(comp Comp, target ...ecs.Entity) *Filter0 {
@@ -71,7 +75,14 @@ func (q *Filter0) WithRelation(comp Comp, target ...ecs.Entity) *Filter0 {
 	return q
 }
 
-// Query builds a [Query0] query for iteration.
+// Query builds a [Query0] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter0.WithRelation] was not called
+//   - if the target was already set via [Filter0.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter0) Query(w *ecs.World, target ...ecs.Entity) Query0 {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
@@ -130,7 +141,7 @@ type Query0 struct {
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter0] was not prepared for relations
 // using [Filter0.WithRelation].
 func (q *Query0) Relation() ecs.Entity {
@@ -206,7 +217,11 @@ func (q *Filter1[A]) Without(mask ...Comp) *Filter1[A] {
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter1.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter1[A]) WithRelation(comp Comp, target ...ecs.Entity) *Filter1[A] {
@@ -222,7 +237,14 @@ func (q *Filter1[A]) WithRelation(comp Comp, target ...ecs.Entity) *Filter1[A] {
 	return q
 }
 
-// Query builds a [Query1] query for iteration.
+// Query builds a [Query1] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter1.WithRelation] was not called
+//   - if the target was already set via [Filter1.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter1[A]) Query(w *ecs.World, target ...ecs.Entity) Query1[A] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
@@ -290,7 +312,7 @@ func (q *Query1[A]) Get() *A {
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter1] was not prepared for relations
 // using [Filter1.WithRelation].
 func (q *Query1[A]) Relation() ecs.Entity {
@@ -367,7 +389,11 @@ func (q *Filter2[A, B]) Without(mask ...Comp) *Filter2[A, B] {
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter2.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter2[A, B]) WithRelation(comp Comp, target ...ecs.Entity) *Filter2[A, B] {
@@ -383,7 +409,14 @@ func (q *Filter2[A, B]) WithRelation(comp Comp, target ...ecs.Entity) *Filter2[A
 	return q
 }
 
-// Query builds a [Query2] query for iteration.
+// Query builds a [Query2] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter2.WithRelation] was not called
+//   - if the target was already set via [Filter2.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter2[A, B]) Query(w *ecs.World, target ...ecs.Entity) Query2[A, B] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
@@ -454,7 +487,7 @@ func (q *Query2[A, B]) Get() (*A, *B) {
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter2] was not prepared for relations
 // using [Filter2.WithRelation].
 func (q *Query2[A, B]) Relation() ecs.Entity {
@@ -532,7 +565,11 @@ func (q *Filter3[A, B, C]) Without(mask ...Comp) *Filter3[A, B, C] {
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter3.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter3[A, B, C]) WithRelation(comp Comp, target ...ecs.Entity) *Filter3[A, B, C] {
@@ -548,7 +585,14 @@ func (q *Filter3[A, B, C]) WithRelation(comp Comp, target ...ecs.Entity) *Filter
 	return q
 }
 
-// Query builds a [Query3] query for iteration.
+// Query builds a [Query3] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter3.WithRelation] was not called
+//   - if the target was already set via [Filter3.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter3[A, B, C]) Query(w *ecs.World, target ...ecs.Entity) Query3[A, B, C] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
@@ -622,7 +666,7 @@ func (q *Query3[A, B, C]) Get() (*A, *B, *C) {
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter3] was not prepared for relations
 // using [Filter3.WithRelation].
 func (q *Query3[A, B, C]) Relation() ecs.Entity {
@@ -701,7 +745,11 @@ func (q *Filter4[A, B, C, D]) Without(mask ...Comp) *Filter4[A, B, C, D] {
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter4.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter4[A, B, C, D]) WithRelation(comp Comp, target ...ecs.Entity) *Filter4[A, B, C, D] {
@@ -717,7 +765,14 @@ func (q *Filter4[A, B, C, D]) WithRelation(comp Comp, target ...ecs.Entity) *Fil
 	return q
 }
 
-// Query builds a [Query4] query for iteration.
+// Query builds a [Query4] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter4.WithRelation] was not called
+//   - if the target was already set via [Filter4.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter4[A, B, C, D]) Query(w *ecs.World, target ...ecs.Entity) Query4[A, B, C, D] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
@@ -794,7 +849,7 @@ func (q *Query4[A, B, C, D]) Get() (*A, *B, *C, *D) {
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter4] was not prepared for relations
 // using [Filter4.WithRelation].
 func (q *Query4[A, B, C, D]) Relation() ecs.Entity {
@@ -874,7 +929,11 @@ func (q *Filter5[A, B, C, D, E]) Without(mask ...Comp) *Filter5[A, B, C, D, E] {
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter5.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter5[A, B, C, D, E]) WithRelation(comp Comp, target ...ecs.Entity) *Filter5[A, B, C, D, E] {
@@ -890,7 +949,14 @@ func (q *Filter5[A, B, C, D, E]) WithRelation(comp Comp, target ...ecs.Entity) *
 	return q
 }
 
-// Query builds a [Query5] query for iteration.
+// Query builds a [Query5] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter5.WithRelation] was not called
+//   - if the target was already set via [Filter5.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World, target ...ecs.Entity) Query5[A, B, C, D, E] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
@@ -970,7 +1036,7 @@ func (q *Query5[A, B, C, D, E]) Get() (*A, *B, *C, *D, *E) {
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter5] was not prepared for relations
 // using [Filter5.WithRelation].
 func (q *Query5[A, B, C, D, E]) Relation() ecs.Entity {
@@ -1051,7 +1117,11 @@ func (q *Filter6[A, B, C, D, E, F]) Without(mask ...Comp) *Filter6[A, B, C, D, E
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter6.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter6[A, B, C, D, E, F]) WithRelation(comp Comp, target ...ecs.Entity) *Filter6[A, B, C, D, E, F] {
@@ -1067,7 +1137,14 @@ func (q *Filter6[A, B, C, D, E, F]) WithRelation(comp Comp, target ...ecs.Entity
 	return q
 }
 
-// Query builds a [Query6] query for iteration.
+// Query builds a [Query6] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter6.WithRelation] was not called
+//   - if the target was already set via [Filter6.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
@@ -1150,7 +1227,7 @@ func (q *Query6[A, B, C, D, E, F]) Get() (*A, *B, *C, *D, *E, *F) {
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter6] was not prepared for relations
 // using [Filter6.WithRelation].
 func (q *Query6[A, B, C, D, E, F]) Relation() ecs.Entity {
@@ -1232,7 +1309,11 @@ func (q *Filter7[A, B, C, D, E, F, G]) Without(mask ...Comp) *Filter7[A, B, C, D
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter7.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter7[A, B, C, D, E, F, G]) WithRelation(comp Comp, target ...ecs.Entity) *Filter7[A, B, C, D, E, F, G] {
@@ -1248,7 +1329,14 @@ func (q *Filter7[A, B, C, D, E, F, G]) WithRelation(comp Comp, target ...ecs.Ent
 	return q
 }
 
-// Query builds a [Query7] query for iteration.
+// Query builds a [Query7] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter7.WithRelation] was not called
+//   - if the target was already set via [Filter7.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
@@ -1334,7 +1422,7 @@ func (q *Query7[A, B, C, D, E, F, G]) Get() (*A, *B, *C, *D, *E, *F, *G) {
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter7] was not prepared for relations
 // using [Filter7.WithRelation].
 func (q *Query7[A, B, C, D, E, F, G]) Relation() ecs.Entity {
@@ -1417,7 +1505,11 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Without(mask ...Comp) *Filter8[A, B, C
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter8.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter8[A, B, C, D, E, F, G, H]) WithRelation(comp Comp, target ...ecs.Entity) *Filter8[A, B, C, D, E, F, G, H] {
@@ -1433,7 +1525,14 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) WithRelation(comp Comp, target ...ecs.
 	return q
 }
 
-// Query builds a [Query8] query for iteration.
+// Query builds a [Query8] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter8.WithRelation] was not called
+//   - if the target was already set via [Filter8.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
@@ -1522,7 +1621,7 @@ func (q *Query8[A, B, C, D, E, F, G, H]) Get() (*A, *B, *C, *D, *E, *F, *G, *H) 
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter8] was not prepared for relations
 // using [Filter8.WithRelation].
 func (q *Query8[A, B, C, D, E, F, G, H]) Relation() ecs.Entity {

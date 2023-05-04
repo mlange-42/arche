@@ -67,7 +67,11 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 	return q
 }
 
-// WithRelation restricts the query to entities that have the given relation.
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter{{ .Index }}.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
 func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ...ecs.Entity) *Filter{{ .Index }}{{ .Types }} {
@@ -83,7 +87,14 @@ func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ...ecs.E
 	return q
 }
 
-// Query builds a [Query{{ .Index }}] query for iteration.
+// Query builds a [Query{{ .Index }}] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter{{ .Index }}.WithRelation] was not called
+//   - if the target was already set via [Filter{{ .Index }}.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
 func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 	
@@ -153,7 +164,7 @@ func (q *Query{{ .Index }}{{ .Types }}) Get() ({{ .TypesReturn }}) {
 
 // Relation returns the target entity for the query's relation.
 //
-// Panics if the entity does not have the given component, or if the component is not a [Relation].
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
 // Panics if the underlying [Filter{{ .Index }}] was not prepared for relations
 // using [Filter{{ .Index }}.WithRelation].
 func (q *Query{{ .Index }}{{ .Types }}) Relation() ecs.Entity {
