@@ -13,6 +13,7 @@ type filter struct {
 	exclude    []Comp
 	targetType Comp
 	target     ecs.Entity
+	hasTarget  bool
 	compiled   compiledQuery
 }
 

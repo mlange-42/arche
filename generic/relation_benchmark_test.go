@@ -1,53 +1,35 @@
-package ecs
+package generic_test
 
 import (
 	"testing"
+
+	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/generic"
 )
+
+type testRelationA struct {
+	ecs.Relation
+}
 
 func benchmarkRelationGetQuery(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
-	relID := ComponentID[testRelationA](&world)
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	relID := ecs.ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
 
-	builder := NewBuilder(&world, relID).WithRelation(relID)
+	builder := ecs.NewBuilder(&world, relID).WithRelation(relID)
 	builder.NewBatch(count, target)
 
-	filter := All(relID)
+	filter := generic.NewFilter1[testRelationA]().WithRelation(generic.T[testRelationA](), target)
 	b.StartTimer()
 
-	var tempTarget Entity
+	var tempTarget ecs.Entity
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := filter.Query(&world)
 		for query.Next() {
-			tempTarget = query.Relation(relID)
-		}
-	}
-
-	_ = tempTarget
-}
-
-func benchmarkRelationGetQueryUnchecked(b *testing.B, count int) {
-	b.StopTimer()
-
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
-	relID := ComponentID[testRelationA](&world)
-
-	target := world.NewEntity()
-
-	builder := NewBuilder(&world, relID).WithRelation(relID)
-	builder.NewBatch(count, target)
-
-	filter := All(relID)
-	b.StartTimer()
-
-	var tempTarget Entity
-	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
-		for query.Next() {
-			tempTarget = query.relationUnchecked(relID)
+			tempTarget = query.Relation()
 		}
 	}
 
@@ -57,23 +39,25 @@ func benchmarkRelationGetQueryUnchecked(b *testing.B, count int) {
 func benchmarkRelationGetWorld(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
-	relID := ComponentID[testRelationA](&world)
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	relID := ecs.ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
 
-	builder := NewBuilder(&world, relID).WithRelation(relID)
+	builder := ecs.NewBuilder(&world, relID).WithRelation(relID)
 	q := builder.NewQuery(count, target)
-	entities := make([]Entity, 0, count)
+	entities := make([]ecs.Entity, 0, count)
 	for q.Next() {
 		entities = append(entities, q.Entity())
 	}
+
+	mapper := generic.NewMap[testRelationA](&world)
 	b.StartTimer()
 
-	var tempTarget Entity
+	var tempTarget ecs.Entity
 	for i := 0; i < b.N; i++ {
 		for _, e := range entities {
-			tempTarget = world.Relations().Get(e, relID)
+			tempTarget = mapper.GetRelation(e)
 		}
 	}
 
@@ -83,23 +67,24 @@ func benchmarkRelationGetWorld(b *testing.B, count int) {
 func benchmarkRelationGetWorldUnchecked(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
-	relID := ComponentID[testRelationA](&world)
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	relID := ecs.ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
 
-	builder := NewBuilder(&world, relID).WithRelation(relID)
+	builder := ecs.NewBuilder(&world, relID).WithRelation(relID)
 	q := builder.NewQuery(count, target)
-	entities := make([]Entity, 0, count)
+	entities := make([]ecs.Entity, 0, count)
 	for q.Next() {
 		entities = append(entities, q.Entity())
 	}
+	mapper := generic.NewMap[testRelationA](&world)
 	b.StartTimer()
 
-	var tempTarget Entity
+	var tempTarget ecs.Entity
 	for i := 0; i < b.N; i++ {
 		for _, e := range entities {
-			tempTarget = world.Relations().GetUnchecked(e, relID)
+			tempTarget = mapper.GetRelationUnchecked(e)
 		}
 	}
 
@@ -109,22 +94,22 @@ func benchmarkRelationGetWorldUnchecked(b *testing.B, count int) {
 func benchmarkRelationSet(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
-	relID := ComponentID[testRelationA](&world)
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	relID := ecs.ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
 
-	builder := NewBuilder(&world, relID).WithRelation(relID)
+	builder := ecs.NewBuilder(&world, relID).WithRelation(relID)
 	q := builder.NewQuery(count)
-	entities := make([]Entity, 0, count)
+	entities := make([]ecs.Entity, 0, count)
 	for q.Next() {
 		entities = append(entities, q.Entity())
 	}
 	b.StartTimer()
 
-	var tempTarget Entity
+	var tempTarget ecs.Entity
 	for i := 0; i < b.N; i++ {
-		trg := Entity{}
+		trg := ecs.Entity{}
 		if i%2 == 0 {
 			trg = target
 		}
@@ -146,18 +131,6 @@ func BenchmarkRelationGetQuery_10000(b *testing.B) {
 
 func BenchmarkRelationGetQuery_100000(b *testing.B) {
 	benchmarkRelationGetQuery(b, 100000)
-}
-
-func BenchmarkRelationGetQueryUnchecked_1000(b *testing.B) {
-	benchmarkRelationGetQueryUnchecked(b, 1000)
-}
-
-func BenchmarkRelationGetQueryUnchecked_10000(b *testing.B) {
-	benchmarkRelationGetQueryUnchecked(b, 10000)
-}
-
-func BenchmarkRelationGetQueryUnchecked_100000(b *testing.B) {
-	benchmarkRelationGetQueryUnchecked(b, 100000)
 }
 
 func BenchmarkRelationGetWorld_1000(b *testing.B) {

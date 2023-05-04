@@ -4,13 +4,14 @@
 
 ### Highlights
 
-* Support for entity relations that can be queries like components (#231)
+* Support for entity relations that can be queries like components (#231, #271)
 
 ### Breaking changes
 
 * Removed `World.Batch` for entity batch creation, use `Builder` instead (#239)
 * Rework of generic entity creation API, use `MapX.New`, `MapX.NewWith`, `MapX.NewBatch` and `MapX.NewQuery` (#239, #252)
 * Stats object `WorldStats` etc. adapted for new structure of archetypes nested in nodes (#258)
+* Removed generic filter method `FilterX.Filter` (#271)
 
 ### Features
 
@@ -34,6 +35,7 @@
 * Optimize `RelationFilter`: get archetype directly instead of iterating complete node (#251)
 * Cached filters use swap-remove when removing an archetype (#253)
 * Speed up generic query re-compilation after changing the relation target (#255)
+* Speed up archetype and node iteration to be as fast as before the new nested structure (#270)
 
 ### Documentation
 

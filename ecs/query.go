@@ -124,7 +124,7 @@ func (q *Query) Relation(comp ID) Entity {
 //
 // GetRelationUnchecked is an optimized version of [Query.Relation].
 // Does not check that the component ID is applicable.
-func (q *Query) RelationUnchecked(comp ID) Entity {
+func (q *Query) relationUnchecked(comp ID) Entity {
 	return q.access.RelationTarget
 }
 

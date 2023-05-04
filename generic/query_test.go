@@ -102,8 +102,6 @@ func TestQuery0(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	f := ecs.All(8).Without(9)
-	assert.Equal(t, f, filter.Filter(&w))
 	filter.Register(&w)
 
 	query := filter.Query(&w)
@@ -135,10 +133,23 @@ func TestQuery0(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter0().
+			With(T[testRelationA]()).
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
@@ -171,8 +182,6 @@ func TestQuery1(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	f := ecs.All(0, 8).Without(9)
-	assert.Equal(t, f, filter.Filter(&w))
 	filter.Register(&w)
 
 	query := filter.Query(&w)
@@ -204,10 +213,22 @@ func TestQuery1(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter1[testRelationA]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -243,8 +264,6 @@ func TestQuery2(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	f := ecs.All(0, 8).Without(9)
-	assert.Equal(t, f, filter.Filter(&w))
 	filter.Register(&w)
 
 	for i := 0; i < 10; i++ {
@@ -280,10 +299,24 @@ func TestQuery2(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter2[
+			testStruct0, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -324,8 +357,6 @@ func TestQuery3(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	f := ecs.All(0, 2, 8).Without(9)
-	assert.Equal(t, f, filter.Filter(&w))
 	filter.Register(&w)
 
 	query := filter.Query(&w)
@@ -359,10 +390,24 @@ func TestQuery3(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter3[
+			testStruct0, testStruct1, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -407,8 +452,6 @@ func TestQuery4(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	f := ecs.All(0, 2, 3, 8).Without(9)
-	assert.Equal(t, f, filter.Filter(&w))
 	filter.Register(&w)
 
 	query := filter.Query(&w)
@@ -445,10 +488,24 @@ func TestQuery4(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter4[
+			testStruct0, testStruct1, testStruct2, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -497,8 +554,6 @@ func TestQuery5(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	f := ecs.All(0, 2, 3, 4, 8).Without(9)
-	assert.Equal(t, f, filter.Filter(&w))
 	filter.Register(&w)
 
 	query := filter.Query(&w)
@@ -537,10 +592,25 @@ func TestQuery5(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter5[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -593,8 +663,6 @@ func TestQuery6(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	f := ecs.All(0, 2, 3, 4, 5, 8).Without(9)
-	assert.Equal(t, f, filter.Filter(&w))
 	filter.Register(&w)
 
 	query := filter.Query(&w)
@@ -634,10 +702,25 @@ func TestQuery6(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter6[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -697,8 +780,6 @@ func TestQuery7(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	f := ecs.All(0, 2, 3, 4, 5, 6, 8).Without(9)
-	assert.Equal(t, f, filter.Filter(&w))
 	filter.Register(&w)
 
 	query := filter.Query(&w)
@@ -739,10 +820,25 @@ func TestQuery7(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter7[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -798,8 +894,6 @@ func TestQuery8(t *testing.T) {
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
 
-	f := ecs.All(0, 2, 3, 4, 5, 6, 7, 8).Without(9)
-	assert.Equal(t, f, filter.Filter(&w))
 	filter.Register(&w)
 
 	query := filter.Query(&w)
@@ -841,10 +935,25 @@ func TestQuery8(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter8[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 2, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
