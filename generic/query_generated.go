@@ -73,11 +73,7 @@ func (q *Filter0) WithRelation(comp Comp, target ...ecs.Entity) *Filter0 {
 
 // Query builds a [Query0] query for iteration.
 func (q *Filter0) Query(w *ecs.World, target ...ecs.Entity) Query0 {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -141,17 +137,6 @@ func (q *Query0) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query0.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query0) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }
 
@@ -239,11 +224,7 @@ func (q *Filter1[A]) WithRelation(comp Comp, target ...ecs.Entity) *Filter1[A] {
 
 // Query builds a [Query1] query for iteration.
 func (q *Filter1[A]) Query(w *ecs.World, target ...ecs.Entity) Query1[A] {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -316,17 +297,6 @@ func (q *Query1[A]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query1.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query1[A]) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }
 
@@ -415,11 +385,7 @@ func (q *Filter2[A, B]) WithRelation(comp Comp, target ...ecs.Entity) *Filter2[A
 
 // Query builds a [Query2] query for iteration.
 func (q *Filter2[A, B]) Query(w *ecs.World, target ...ecs.Entity) Query2[A, B] {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -495,17 +461,6 @@ func (q *Query2[A, B]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query2.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query2[A, B]) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }
 
@@ -595,11 +550,7 @@ func (q *Filter3[A, B, C]) WithRelation(comp Comp, target ...ecs.Entity) *Filter
 
 // Query builds a [Query3] query for iteration.
 func (q *Filter3[A, B, C]) Query(w *ecs.World, target ...ecs.Entity) Query3[A, B, C] {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -678,17 +629,6 @@ func (q *Query3[A, B, C]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query3.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query3[A, B, C]) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }
 
@@ -779,11 +719,7 @@ func (q *Filter4[A, B, C, D]) WithRelation(comp Comp, target ...ecs.Entity) *Fil
 
 // Query builds a [Query4] query for iteration.
 func (q *Filter4[A, B, C, D]) Query(w *ecs.World, target ...ecs.Entity) Query4[A, B, C, D] {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -865,17 +801,6 @@ func (q *Query4[A, B, C, D]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query4.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query4[A, B, C, D]) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }
 
@@ -967,11 +892,7 @@ func (q *Filter5[A, B, C, D, E]) WithRelation(comp Comp, target ...ecs.Entity) *
 
 // Query builds a [Query5] query for iteration.
 func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World, target ...ecs.Entity) Query5[A, B, C, D, E] {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -1056,17 +977,6 @@ func (q *Query5[A, B, C, D, E]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query5.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query5[A, B, C, D, E]) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }
 
@@ -1159,11 +1069,7 @@ func (q *Filter6[A, B, C, D, E, F]) WithRelation(comp Comp, target ...ecs.Entity
 
 // Query builds a [Query6] query for iteration.
 func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -1251,17 +1157,6 @@ func (q *Query6[A, B, C, D, E, F]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query6.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query6[A, B, C, D, E, F]) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }
 
@@ -1355,11 +1250,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) WithRelation(comp Comp, target ...ecs.Ent
 
 // Query builds a [Query7] query for iteration.
 func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -1450,17 +1341,6 @@ func (q *Query7[A, B, C, D, E, F, G]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query7.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query7[A, B, C, D, E, F, G]) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }
 
@@ -1555,11 +1435,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) WithRelation(comp Comp, target ...ecs.
 
 // Query builds a [Query8] query for iteration.
 func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -1653,16 +1529,5 @@ func (q *Query8[A, B, C, D, E, F, G, H]) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query8.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query8[A, B, C, D, E, F, G, H]) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }

@@ -85,11 +85,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ...ecs.E
 
 // Query builds a [Query{{ .Index }}] query for iteration.
 func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
-	if q.hasTarget {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, true)
-	} else {
-		q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, ecs.Entity{}, false)
-	}
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 	
 	filter := q.compiled.filter
 	if len(target) > 0 {
@@ -164,16 +160,5 @@ func (q *Query{{ .Index }}{{ .Types }}) Relation() ecs.Entity {
 	if q.target < 0 {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(ecs.ID(q.target))
-}
-
-// RelationUnchecked returns the target entity for the query's relation.
-//
-// Returns the zero entity if the entity does not have the given component,
-// or if the component is not an [ecs.Relation].
-//
-// RelationUnchecked is an optimized version of [Query{{ .Index }}.Relation].
-// Does not check that the component ID is applicable.
-func (q *Query{{ .Index }}{{ .Types }}) RelationUnchecked() ecs.Entity {
 	return q.Query.Relation(ecs.ID(q.target))
 }

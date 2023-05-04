@@ -36,31 +36,6 @@ func benchmarkRelationGetQuery(b *testing.B, count int) {
 	_ = tempTarget
 }
 
-func benchmarkRelationGetQueryUnchecked(b *testing.B, count int) {
-	b.StopTimer()
-
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
-	relID := ecs.ComponentID[testRelationA](&world)
-
-	target := world.NewEntity()
-
-	builder := ecs.NewBuilder(&world, relID).WithRelation(relID)
-	builder.NewBatch(count, target)
-
-	filter := generic.NewFilter1[testRelationA]().WithRelation(generic.T[testRelationA](), target)
-	b.StartTimer()
-
-	var tempTarget ecs.Entity
-	for i := 0; i < b.N; i++ {
-		query := filter.Query(&world)
-		for query.Next() {
-			tempTarget = query.RelationUnchecked()
-		}
-	}
-
-	_ = tempTarget
-}
-
 func benchmarkRelationGetWorld(b *testing.B, count int) {
 	b.StopTimer()
 
@@ -156,18 +131,6 @@ func BenchmarkRelationGetQuery_10000(b *testing.B) {
 
 func BenchmarkRelationGetQuery_100000(b *testing.B) {
 	benchmarkRelationGetQuery(b, 100000)
-}
-
-func BenchmarkRelationGetQueryUnchecked_1000(b *testing.B) {
-	benchmarkRelationGetQueryUnchecked(b, 1000)
-}
-
-func BenchmarkRelationGetQueryUnchecked_10000(b *testing.B) {
-	benchmarkRelationGetQueryUnchecked(b, 10000)
-}
-
-func BenchmarkRelationGetQueryUnchecked_100000(b *testing.B) {
-	benchmarkRelationGetQueryUnchecked(b, 100000)
 }
 
 func BenchmarkRelationGetWorld_1000(b *testing.B) {

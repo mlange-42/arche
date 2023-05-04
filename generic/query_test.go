@@ -133,7 +133,6 @@ func TestQuery0(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
@@ -214,7 +213,6 @@ func TestQuery1(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
@@ -301,7 +299,6 @@ func TestQuery2(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
@@ -393,7 +390,6 @@ func TestQuery3(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
@@ -492,7 +488,6 @@ func TestQuery4(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
@@ -597,7 +592,6 @@ func TestQuery5(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
@@ -708,7 +702,6 @@ func TestQuery6(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
@@ -827,7 +820,6 @@ func TestQuery7(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
@@ -943,7 +935,6 @@ func TestQuery8(t *testing.T) {
 	for q.Next() {
 		trg := q.Relation()
 		assert.Equal(t, targ, trg)
-		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
