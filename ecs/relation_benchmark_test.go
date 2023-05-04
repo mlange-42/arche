@@ -47,7 +47,7 @@ func benchmarkRelationGetQueryUnchecked(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		query := world.Query(filter)
 		for query.Next() {
-			tempTarget = query.RelationUnchecked(relID)
+			tempTarget = query.relationUnchecked(relID)
 		}
 	}
 

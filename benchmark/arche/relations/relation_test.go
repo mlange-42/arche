@@ -29,13 +29,11 @@ func benchmarkRelation(b *testing.B, numParents int, numChildren int) {
 		}
 	}
 
-	comp := generic.T[ChildRelation]()
 	parentFilter := generic.NewFilter1[ParentList]()
 	parentFilter.Register(&world)
 
-	childFilter := generic.NewFilter1[ChildRelation]().WithRelation(comp, ecs.Entity{})
-	childF := childFilter.Filter(&world)
 	childID := ecs.ComponentID[ChildRelation](&world)
+	childF := ecs.All(childID)
 
 	b.StartTimer()
 
