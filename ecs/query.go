@@ -55,7 +55,7 @@ func newArchesQuery(world *World, filter Filter, lockBit uint8, archetypes arche
 }
 
 // newQuery creates a query on a single archetype
-func newArchQuery(world *World, lockBit uint8, archetype batchArchetype) Query {
+func newArchQuery(world *World, lockBit uint8, archetype *batchArchetype) Query {
 	arch := archetype.Archetype
 	if archetype.StartIndex > 0 {
 		return Query{
@@ -200,7 +200,7 @@ func (q *Query) nextArchetypeSimple() bool {
 		if a.IsActive() && (q.isFiltered || a.Matches(q.filter)) && aLen > 0 {
 			q.access = &a.archetypeAccess
 			q.entityIndex = 0
-			if batch, ok := q.archetypes.(batchArchetype); ok {
+			if batch, ok := q.archetypes.(*batchArchetype); ok {
 				q.entityIndexMax = uintptr(batch.EndIndex) - 1
 			} else {
 				q.entityIndexMax = uintptr(aLen) - 1

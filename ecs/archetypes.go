@@ -42,12 +42,12 @@ type batchArchetype struct {
 }
 
 // Get returns the value at the given index.
-func (s batchArchetype) Get(index int32) *archetype {
+func (s *batchArchetype) Get(index int32) *archetype {
 	return s.Archetype
 }
 
 // Len returns the current number of items in the paged array.
-func (s batchArchetype) Len() int32 {
+func (s *batchArchetype) Len() int32 {
 	return 1
 }
 
