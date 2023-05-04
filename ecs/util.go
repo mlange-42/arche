@@ -140,7 +140,7 @@ func debugPrintWorld(w *World) string {
 		}
 		nodeArches := nd.Archetypes()
 		ln2 := int32(nodeArches.Len())
-		fmt.Fprintf(&sb, "Node %v (%d arch), relation: %t\n", nd.Ids, ln2, nd.HasRelation())
+		fmt.Fprintf(&sb, "Node %v (%d arch), relation: %t\n", nd.Ids, ln2, nd.HasRelation)
 		var j int32
 		for j = 0; j < ln2; j++ {
 			a := nodeArches.Get(j)

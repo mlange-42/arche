@@ -15,6 +15,7 @@ type archNode struct {
 	TransitionRemove idMap[*archNode] // Mapping from component ID to remove to the resulting archetype
 	Relation         int8             // The node's relation component ID. Negative value stands for no relation
 	IsActive         bool
+	HasRelation      bool
 }
 
 type nodeData struct {
@@ -75,6 +76,7 @@ func newArchNode(mask Mask, data *nodeData, relation int8, capacityIncrement int
 		TransitionAdd:    newIDMap[*archNode](),
 		TransitionRemove: newIDMap[*archNode](),
 		Relation:         relation,
+		HasRelation:      relation >= 0,
 	}
 }
 
@@ -88,11 +90,8 @@ func (a *archNode) Matches(f Filter) bool {
 // Returns a single wrapped archetype if there are no relations.
 // Returns nil if the node has no archetype(s).
 func (a *archNode) Archetypes() archetypes {
-	if a.HasRelation() {
-		return &a.archetypes
-	}
 	if a.archetype == nil {
-		return nil
+		return &a.archetypes
 	}
 	return singleArchetype{Archetype: a.archetype}
 }
@@ -143,11 +142,6 @@ func (a *archNode) RemoveArchetype(arch *archetype) {
 	a.archetypes.Get(idx).Deactivate()
 }
 
-// HasRelation returns whether the node has a relation component.
-func (a *archNode) HasRelation() bool {
-	return a.Relation >= 0
-}
-
 // Stats generates statistics for an archetype node.
 func (a *archNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 	ids := a.Ids
@@ -185,7 +179,7 @@ func (a *archNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 		ArchetypeCount:       int(numArches),
 		ActiveArchetypeCount: int(numArches) - len(a.freeIndices),
 		IsActive:             a.IsActive,
-		HasRelation:          a.HasRelation(),
+		HasRelation:          a.HasRelation,
 		Components:           aCompCount,
 		ComponentIDs:         ids,
 		ComponentTypes:       aTypes,
