@@ -136,7 +136,21 @@ func TestQuery0(t *testing.T) {
 		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter0().
+			With(T[testRelationA]()).
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
@@ -203,7 +217,20 @@ func TestQuery1(t *testing.T) {
 		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter1[testRelationA]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -277,7 +304,22 @@ func TestQuery2(t *testing.T) {
 		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter2[
+			testStruct0, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -354,7 +396,22 @@ func TestQuery3(t *testing.T) {
 		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter3[
+			testStruct0, testStruct1, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -438,7 +495,22 @@ func TestQuery4(t *testing.T) {
 		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter4[
+			testStruct0, testStruct1, testStruct2, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -528,7 +600,23 @@ func TestQuery5(t *testing.T) {
 		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter5[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -623,7 +711,23 @@ func TestQuery6(t *testing.T) {
 		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter6[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -726,7 +830,23 @@ func TestQuery7(t *testing.T) {
 		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter7[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 3, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
@@ -826,7 +946,23 @@ func TestQuery8(t *testing.T) {
 		assert.Equal(t, targ, q.RelationUnchecked())
 	}
 
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter8[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 2, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
 	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })

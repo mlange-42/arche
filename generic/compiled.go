@@ -42,9 +42,6 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 	}
 
 	if targetType == nil {
-		if hasTarget {
-			panic("can't query with relation target: filter has no relation")
-		}
 		q.filter = &q.maskFilter
 		q.TargetComp = -1
 	} else {
