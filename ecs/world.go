@@ -62,20 +62,20 @@ func AddResource[T any](w *World, res *T) ResID {
 
 // World is the central type holding [Entity] and component data, as well as resources.
 type World struct {
-	config         Config                    // World configuration.
-	listener       func(e *EntityEvent)      // Component change listener.
-	resources      Resources                 // World resources.
-	entities       []entityIndex             // Mapping from entities to archetype and index.
-	targetEntities bitSet                    // Whether entities are potential relation targets.
-	entityPool     entityPool                // Pool for entities.
-	archetypes     pagedSlice[archetype]     // The archetypes.
-	nodes          pagedSlice[archetypeNode] // The archetype graph.
-	nodeData       pagedSlice[nodeData]      // The archetype graph's data.
-	relationNodes  []*archetypeNode          // Archetype nodes that have an entity relation.
-	locks          lockMask                  // World locks.
-	registry       componentRegistry[ID]     // Component registry.
-	filterCache    Cache                     // Cache for registered filters.
-	stats          stats.WorldStats          // Cached world statistics
+	config         Config                // World configuration.
+	listener       func(e *EntityEvent)  // Component change listener.
+	resources      Resources             // World resources.
+	entities       []entityIndex         // Mapping from entities to archetype and index.
+	targetEntities bitSet                // Whether entities are potential relation targets.
+	entityPool     entityPool            // Pool for entities.
+	archetypes     pagedSlice[archetype] // The archetypes.
+	nodes          pagedSlice[archNode]  // The archetype graph.
+	nodeData       pagedSlice[nodeData]  // The archetype graph's data.
+	relationNodes  []*archNode           // Archetype nodes that have an entity relation.
+	locks          lockMask              // World locks.
+	registry       componentRegistry[ID] // Component registry.
+	filterCache    Cache                 // Cache for registered filters.
+	stats          stats.WorldStats      // Cached world statistics
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -112,8 +112,8 @@ func fromConfig(conf Config) World {
 		entityPool:     newEntityPool(uint32(conf.CapacityIncrement)),
 		registry:       newComponentRegistry(),
 		archetypes:     newPagedSlice[archetype](),
-		nodes:          newPagedSlice[archetypeNode](),
-		relationNodes:  []*archetypeNode{},
+		nodes:          newPagedSlice[archNode](),
+		relationNodes:  []*archNode{},
 		locks:          lockMask{},
 		listener:       nil,
 		resources:      newResources(),
@@ -1276,7 +1276,7 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 
 // Tries to find an archetype for a mask, when it can't be reached through the archetype graph.
 // Creates an archetype graph node.
-func (w *World) findOrCreateArchetypeSlow(mask Mask, relation int8) (*archetypeNode, bool) {
+func (w *World) findOrCreateArchetypeSlow(mask Mask, relation int8) (*archNode, bool) {
 	if arch, ok := w.findArchetypeSlow(mask); ok {
 		return arch, false
 	}
@@ -1284,20 +1284,20 @@ func (w *World) findOrCreateArchetypeSlow(mask Mask, relation int8) (*archetypeN
 }
 
 // Searches for an archetype by a mask.
-func (w *World) findArchetypeSlow(mask Mask) (*archetypeNode, bool) {
+func (w *World) findArchetypeSlow(mask Mask) (*archNode, bool) {
 	length := w.nodes.Len()
 	var i int32
 	for i = 0; i < length; i++ {
-		node := w.nodes.Get(i)
-		if node.Mask == mask {
-			return node, true
+		nd := w.nodes.Get(i)
+		if nd.Mask == mask {
+			return nd, true
 		}
 	}
 	return nil, false
 }
 
 // Creates a node in the archetype graph.
-func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
+func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
 	capInc := w.config.CapacityIncrement
 	if relation >= 0 {
 		capInc = w.config.RelationCapacityIncrement
@@ -1306,16 +1306,16 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archetypeNode {
 	types := maskToTypes(mask, &w.registry)
 
 	w.nodeData.Add(nodeData{})
-	w.nodes.Add(newArchetypeNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, capInc, types))
-	node := w.nodes.Get(w.nodes.Len() - 1)
-	w.relationNodes = append(w.relationNodes, node)
-	return node
+	w.nodes.Add(newArchNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, capInc, types))
+	nd := w.nodes.Get(w.nodes.Len() - 1)
+	w.relationNodes = append(w.relationNodes, nd)
+	return nd
 }
 
 // Creates an archetype for the given archetype graph node.
 // Initializes the archetype with a capacity according to CapacityIncrement if forStorage is true,
 // and with a capacity of 1 otherwise.
-func (w *World) createArchetype(node *archetypeNode, target Entity, forStorage bool) *archetype {
+func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) *archetype {
 	var arch *archetype
 	if node.HasRelation() {
 		arch = node.CreateArchetype(target)

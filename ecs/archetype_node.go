@@ -7,13 +7,13 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
-// archetypeNode is a node in the archetype graph.
-type archetypeNode struct {
+// archNode is a node in the archetype graph.
+type archNode struct {
 	*nodeData
-	Mask             Mask                  // Mask of the archetype
-	TransitionAdd    idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
-	TransitionRemove idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
-	Relation         int8                  // The node's relation component ID. Negative value stands for no relation
+	Mask             Mask             // Mask of the archetype
+	TransitionAdd    idMap[*archNode] // Mapping from component ID to add to the resulting archetype
+	TransitionRemove idMap[*archNode] // Mapping from component ID to remove to the resulting archetype
+	Relation         int8             // The node's relation component ID. Negative value stands for no relation
 	IsActive         bool
 }
 
@@ -29,8 +29,8 @@ type nodeData struct {
 	capacityIncrement uint32                // Capacity increment
 }
 
-// Creates a new archetypeNode
-func newArchetypeNode(mask Mask, data *nodeData, relation int8, capacityIncrement int, components []componentType) archetypeNode {
+// Creates a new archNode
+func newArchNode(mask Mask, data *nodeData, relation int8, capacityIncrement int, components []componentType) archNode {
 	var arch map[Entity]*archetype
 	if relation >= 0 {
 		arch = map[Entity]*archetype{}
@@ -69,25 +69,25 @@ func newArchetypeNode(mask Mask, data *nodeData, relation int8, capacityIncremen
 	data.zeroValue = zeroValue
 	data.zeroPointer = zeroPointer
 
-	return archetypeNode{
+	return archNode{
 		nodeData:         data,
 		Mask:             mask,
-		TransitionAdd:    newIDMap[*archetypeNode](),
-		TransitionRemove: newIDMap[*archetypeNode](),
+		TransitionAdd:    newIDMap[*archNode](),
+		TransitionRemove: newIDMap[*archNode](),
 		Relation:         relation,
 	}
 }
 
 // Matches the archetype node against a filter.
 // Ignores the relation target.
-func (a *archetypeNode) Matches(f Filter) bool {
+func (a *archNode) Matches(f Filter) bool {
 	return f.Matches(a.Mask, nil)
 }
 
 // Archetypes of the node.
 // Returns a single wrapped archetype if there are no relations.
 // Returns nil if the node has no archetype(s).
-func (a *archetypeNode) Archetypes() archetypes {
+func (a *archNode) Archetypes() archetypes {
 	if a.HasRelation() {
 		return &a.archetypes
 	}
@@ -100,7 +100,7 @@ func (a *archetypeNode) Archetypes() archetypes {
 // GetArchetype returns the archetype for the given relation target.
 //
 // The target is ignored if the node has no relation component.
-func (a *archetypeNode) GetArchetype(target Entity) *archetype {
+func (a *archNode) GetArchetype(target Entity) *archetype {
 	if a.Relation >= 0 {
 		return a.archetypeMap[target]
 	}
@@ -110,12 +110,12 @@ func (a *archetypeNode) GetArchetype(target Entity) *archetype {
 // SetArchetype sets the archetype for a node without a relation.
 //
 // Do not use on nodes without a relation component!
-func (a *archetypeNode) SetArchetype(arch *archetype) {
+func (a *archNode) SetArchetype(arch *archetype) {
 	a.archetype = arch
 }
 
 // CreateArchetype creates a new archetype in nodes with relation component.
-func (a *archetypeNode) CreateArchetype(target Entity) *archetype {
+func (a *archNode) CreateArchetype(target Entity) *archetype {
 	var arch *archetype
 	var archIndex int32
 	lenFree := len(a.freeIndices)
@@ -136,7 +136,7 @@ func (a *archetypeNode) CreateArchetype(target Entity) *archetype {
 
 // RemoveArchetype de-activates an archetype.
 // The archetype will be re-used by CreateArchetype.
-func (a *archetypeNode) RemoveArchetype(arch *archetype) {
+func (a *archNode) RemoveArchetype(arch *archetype) {
 	delete(a.archetypeMap, arch.RelationTarget)
 	idx := arch.index
 	a.freeIndices = append(a.freeIndices, idx)
@@ -144,12 +144,12 @@ func (a *archetypeNode) RemoveArchetype(arch *archetype) {
 }
 
 // HasRelation returns whether the node has a relation component.
-func (a *archetypeNode) HasRelation() bool {
+func (a *archNode) HasRelation() bool {
 	return a.Relation >= 0
 }
 
 // Stats generates statistics for an archetype node.
-func (a *archetypeNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
+func (a *archNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 	ids := a.Ids
 	aCompCount := len(ids)
 	aTypes := make([]reflect.Type, aCompCount)
@@ -198,7 +198,7 @@ func (a *archetypeNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 }
 
 // UpdateStats updates statistics for an archetype node.
-func (a *archetypeNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry[ID]) {
+func (a *archNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry[ID]) {
 	if !a.IsActive {
 		return
 	}

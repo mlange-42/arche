@@ -1598,7 +1598,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[pagedSlice[archetype]]("pagedArr32")
 	printTypeSize[archetype]()
 	printTypeSize[archetypeAccess]()
-	printTypeSize[archetypeNode]()
+	printTypeSize[archNode]()
 	printTypeSize[nodeData]()
 	printTypeSize[layout]()
 	printTypeSize[entityPool]()

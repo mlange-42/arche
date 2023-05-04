@@ -67,7 +67,7 @@ func (l *layout) Get(index uintptr) unsafe.Pointer {
 // archetype represents an ECS archetype
 type archetype struct {
 	archetypeAccess                 // Access helper, passed to queries.
-	node            *archetypeNode  // Node in the archetype graph.
+	node            *archNode       // Node in the archetype graph.
 	layouts         []layout        // Column layouts by ID.
 	indices         idMap[uint32]   // Mapping from IDs to buffer indices.
 	buffers         []reflect.Value // Reflection arrays containing component data.
@@ -78,7 +78,7 @@ type archetype struct {
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, relation Entity) {
+func (a *archetype) Init(node *archNode, index int32, forStorage bool, relation Entity) {
 	if !node.IsActive {
 		node.IsActive = true
 	}
