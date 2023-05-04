@@ -67,7 +67,7 @@ func (l *layout) Get(index uintptr) unsafe.Pointer {
 // archetype represents an ECS archetype
 type archetype struct {
 	archetypeAccess                 // Access helper, passed to queries.
-	graphNode       *archetypeNode  // Node in the archetype graph.
+	node            *archetypeNode  // Node in the archetype graph.
 	layouts         []layout        // Column layouts by ID.
 	indices         idMap[uint32]   // Mapping from IDs to buffer indices.
 	buffers         []reflect.Value // Reflection arrays containing component data.
@@ -115,7 +115,7 @@ func (a *archetype) Init(node *archetypeNode, index int32, forStorage bool, rela
 		RelationComponent: node.Relation,
 	}
 
-	a.graphNode = node
+	a.node = node
 
 	a.len = 0
 	a.cap = uint32(cap)
@@ -138,7 +138,7 @@ func (a *archetype) AllocN(count uint32) {
 
 // Add adds an entity with components to the archetype.
 func (a *archetype) Add(entity Entity, components ...Component) uintptr {
-	if len(components) != len(a.graphNode.Ids) {
+	if len(components) != len(a.node.Ids) {
 		panic("Invalid number of components")
 	}
 	idx := uintptr(a.len)
@@ -169,7 +169,7 @@ func (a *archetype) Remove(index uintptr) bool {
 	old := uintptr(a.len - 1)
 
 	if index != old {
-		for _, id := range a.graphNode.Ids {
+		for _, id := range a.node.Ids {
 			lay := a.getLayout(id)
 			size := lay.itemSize
 			if size == 0 {
@@ -188,7 +188,7 @@ func (a *archetype) Remove(index uintptr) bool {
 
 // ZeroAll resets a block of storage in all buffers.
 func (a *archetype) ZeroAll(index uintptr) {
-	for _, id := range a.graphNode.Ids {
+	for _, id := range a.node.Ids {
 		a.Zero(index, id)
 	}
 }
@@ -201,7 +201,7 @@ func (a *archetype) Zero(index uintptr, id ID) {
 		return
 	}
 	dst := unsafe.Add(lay.pointer, index*size)
-	a.copy(a.graphNode.zeroPointer, dst, size)
+	a.copy(a.node.zeroPointer, dst, size)
 }
 
 // SetEntity overwrites an entity
@@ -270,7 +270,7 @@ func (a *archetype) IsActive() bool {
 
 // Components returns the component IDs for this archetype
 func (a *archetype) Components() []ID {
-	return a.graphNode.Ids
+	return a.node.Ids
 }
 
 // Len reports the number of entities in the archetype
@@ -294,7 +294,7 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 
 	cap := int(a.Cap())
 	memPerEntity := 0
-	for _, id := range a.graphNode.Ids {
+	for _, id := range a.node.Ids {
 		lay := a.getLayout(id)
 		memPerEntity += int(lay.itemSize)
 	}
@@ -332,14 +332,14 @@ func (a *archetype) extend(by uint32) {
 	if a.cap >= required {
 		return
 	}
-	a.cap = capacityU32(required, a.graphNode.capacityIncrement)
+	a.cap = capacityU32(required, a.node.capacityIncrement)
 
 	old := a.entityBuffer
 	a.entityBuffer = reflect.New(reflect.ArrayOf(int(a.cap), entityType)).Elem()
 	a.entityPointer = a.entityBuffer.Addr().UnsafePointer()
 	reflect.Copy(a.entityBuffer, old)
 
-	for _, id := range a.graphNode.Ids {
+	for _, id := range a.node.Ids {
 		lay := a.getLayout(id)
 		if lay.itemSize == 0 {
 			continue

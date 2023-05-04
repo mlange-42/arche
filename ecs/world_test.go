@@ -25,8 +25,8 @@ func TestWorldConfig(t *testing.T) {
 	world.NewEntity()
 	world.NewEntity(relID)
 
-	assert.Equal(t, uint32(32), world.graph.Get(0).capacityIncrement)
-	assert.Equal(t, uint32(8), world.graph.Get(1).capacityIncrement)
+	assert.Equal(t, uint32(32), world.nodes.Get(0).capacityIncrement)
+	assert.Equal(t, uint32(8), world.nodes.Get(1).capacityIncrement)
 }
 
 func TestWorldEntites(t *testing.T) {
@@ -699,8 +699,8 @@ func TestWorldRelationSet(t *testing.T) {
 	e1 := world.NewEntity(relID, rotID)
 	e2 := world.NewEntity(relID, rotID)
 
-	assert.Equal(t, int32(3), world.graph.Len())
-	assert.Equal(t, int32(1), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(3), world.nodes.Len())
+	assert.Equal(t, int32(1), world.nodes.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	assert.Equal(t, Entity{}, world.Relations().Get(e1, relID))
@@ -709,8 +709,8 @@ func TestWorldRelationSet(t *testing.T) {
 
 	assert.Equal(t, targ, world.Relations().Get(e1, relID))
 	assert.Equal(t, targ, world.Relations().GetUnchecked(e1, relID))
-	assert.Equal(t, int32(3), world.graph.Len())
-	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(3), world.nodes.Len())
+	assert.Equal(t, int32(2), world.nodes.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.Relations().Set(e1, relID, Entity{})
@@ -724,7 +724,7 @@ func TestWorldRelationSet(t *testing.T) {
 	world.Relations().Set(e1, relID, Entity{})
 
 	assert.Equal(t, Entity{}, world.Relations().Get(e1, relID))
-	assert.Equal(t, int32(3), world.graph.Len())
+	assert.Equal(t, int32(3), world.nodes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.Remove(e2, relID)
@@ -743,9 +743,9 @@ func TestWorldRelationSet(t *testing.T) {
 	world.RemoveEntity(targ)
 	assert.Panics(t, func() { world.Relations().Set(e3, relID, targ) })
 
-	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
-	assert.True(t, world.graph.Get(2).archetypes.Get(0).IsActive())
-	assert.False(t, world.graph.Get(2).archetypes.Get(1).IsActive())
+	assert.Equal(t, int32(2), world.nodes.Get(2).archetypes.Len())
+	assert.True(t, world.nodes.Get(2).archetypes.Get(0).IsActive())
+	assert.False(t, world.nodes.Get(2).archetypes.Get(1).IsActive())
 
 	assert.Equal(t, 9, len(events))
 }
@@ -831,14 +831,14 @@ func TestWorldRelationRemove(t *testing.T) {
 	filter := RelationFilter(All(relID), targ)
 	world.Cache().Register(filter)
 
-	assert.Equal(t, int32(3), world.graph.Len())
-	assert.Equal(t, int32(1), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(3), world.nodes.Len())
+	assert.Equal(t, int32(1), world.nodes.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.Relations().Set(e1, relID, targ)
 	world.Relations().Set(e2, relID, targ)
 
-	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(2), world.nodes.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.RemoveEntity(targ)
@@ -847,13 +847,13 @@ func TestWorldRelationRemove(t *testing.T) {
 	world.Relations().Set(e1, relID, Entity{})
 	world.Relations().Set(e2, relID, Entity{})
 
-	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(2), world.nodes.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.Relations().Set(e1, relID, targ2)
 	world.Relations().Set(e2, relID, targ2)
 
-	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
+	assert.Equal(t, int32(2), world.nodes.Get(2).archetypes.Len())
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.Relations().Set(e1, relID, Entity{})
@@ -867,16 +867,16 @@ func TestWorldRelationRemove(t *testing.T) {
 	world.Relations().Set(e1, relID, targ3)
 	world.Relations().Set(e2, relID, targ3)
 
-	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
-	assert.Equal(t, targ3, world.graph.Get(2).archetypes.Get(1).RelationTarget)
+	assert.Equal(t, int32(2), world.nodes.Get(2).archetypes.Len())
+	assert.Equal(t, targ3, world.nodes.Get(2).archetypes.Get(1).RelationTarget)
 	assert.Equal(t, int32(1), world.archetypes.Len())
 
 	world.Batch().RemoveEntities(All())
 	world.Batch().RemoveEntities(All())
 
-	assert.Equal(t, int32(2), world.graph.Get(2).archetypes.Len())
-	assert.True(t, world.graph.Get(2).archetypes.Get(0).IsActive())
-	assert.False(t, world.graph.Get(2).archetypes.Get(1).IsActive())
+	assert.Equal(t, int32(2), world.nodes.Get(2).archetypes.Len())
+	assert.True(t, world.nodes.Get(2).archetypes.Get(0).IsActive())
+	assert.False(t, world.nodes.Get(2).archetypes.Get(1).IsActive())
 }
 
 func TestWorldRelationQuery(t *testing.T) {
@@ -1362,17 +1362,17 @@ func TestArchetypeGraph(t *testing.T) {
 	archEmpty2 := world.findOrCreateArchetype(arch0, []ID{}, []ID{velID, posID}, Entity{})
 	assert.Equal(t, archEmpty, archEmpty2)
 	assert.Equal(t, int32(2), world.archetypes.Len())
-	assert.Equal(t, int32(3), world.graph.Len())
+	assert.Equal(t, int32(3), world.nodes.Len())
 
 	archEmpty3 := world.findOrCreateArchetype(arch0, []ID{}, []ID{posID, velID}, Entity{})
 	assert.Equal(t, archEmpty, archEmpty3)
 	assert.Equal(t, int32(2), world.archetypes.Len())
-	assert.Equal(t, int32(4), world.graph.Len())
+	assert.Equal(t, int32(4), world.nodes.Len())
 
 	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{}, Entity{})
 	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{}, Entity{})
 
-	assert.Equal(t, []ID{0, 1, 2}, arch012.graphNode.Ids)
+	assert.Equal(t, []ID{0, 1, 2}, arch012.node.Ids)
 
 	archEmpty4 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID}, Entity{})
 	assert.Equal(t, archEmpty, archEmpty4)
@@ -1599,6 +1599,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[archetype]()
 	printTypeSize[archetypeAccess]()
 	printTypeSize[archetypeNode]()
+	printTypeSize[nodeData]()
 	printTypeSize[layout]()
 	printTypeSize[entityPool]()
 	printTypeSizeName[componentRegistry[ID]]("componentRegistry")

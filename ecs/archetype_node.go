@@ -9,24 +9,28 @@ import (
 
 // archetypeNode is a node in the archetype graph.
 type archetypeNode struct {
-	Mask              Mask                  // Mask of the archetype
+	*nodeData
+	Mask             Mask                  // Mask of the archetype
+	TransitionAdd    idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
+	TransitionRemove idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
+	Relation         int8                  // The node's relation component ID. Negative value stands for no relation
+	IsActive         bool
+}
+
+type nodeData struct {
 	Ids               []ID                  // List of component IDs
 	Types             []reflect.Type        // Component type per column
 	archetype         *archetype            // The single archetype for nodes without entity
 	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
 	archetypeMap      map[Entity]*archetype // Mapping from relation targets to archetypes
 	freeIndices       []int32               // Indices of free/inactive archetypes
-	TransitionAdd     idMap[*archetypeNode] // Mapping from component ID to add to the resulting archetype
-	TransitionRemove  idMap[*archetypeNode] // Mapping from component ID to remove to the resulting archetype
-	Relation          int8                  // The node's relation component ID. Negative value stands for no relation
 	zeroValue         []byte                // Used as source for setting storage to zero
 	zeroPointer       unsafe.Pointer        // Points to zeroValue for fast access
 	capacityIncrement uint32                // Capacity increment
-	IsActive          bool
 }
 
 // Creates a new archetypeNode
-func newArchetypeNode(mask Mask, relation int8, capacityIncrement int, components []componentType) archetypeNode {
+func newArchetypeNode(mask Mask, data *nodeData, relation int8, capacityIncrement int, components []componentType) archetypeNode {
 	var arch map[Entity]*archetype
 	if relation >= 0 {
 		arch = map[Entity]*archetype{}
@@ -58,17 +62,19 @@ func newArchetypeNode(mask Mask, relation int8, capacityIncrement int, component
 		zeroPointer = unsafe.Pointer(&zeroValue[0])
 	}
 
+	data.Ids = ids
+	data.Types = types
+	data.archetypeMap = arch
+	data.capacityIncrement = uint32(capacityIncrement)
+	data.zeroValue = zeroValue
+	data.zeroPointer = zeroPointer
+
 	return archetypeNode{
-		Mask:              mask,
-		Ids:               ids,
-		Types:             types,
-		archetypeMap:      arch,
-		TransitionAdd:     newIDMap[*archetypeNode](),
-		TransitionRemove:  newIDMap[*archetypeNode](),
-		Relation:          relation,
-		capacityIncrement: uint32(capacityIncrement),
-		zeroValue:         zeroValue,
-		zeroPointer:       zeroPointer,
+		nodeData:         data,
+		Mask:             mask,
+		TransitionAdd:    newIDMap[*archetypeNode](),
+		TransitionRemove: newIDMap[*archetypeNode](),
+		Relation:         relation,
 	}
 }
 

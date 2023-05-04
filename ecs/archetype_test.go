@@ -13,7 +13,7 @@ func TestArchetype(t *testing.T) {
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	node := newArchetypeNode(All(0, 1), -1, 32, comps)
+	node := newArchetypeNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	arch.Init(&node, 0, false, Entity{})
 
@@ -71,7 +71,7 @@ func TestNewArchetype(t *testing.T) {
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	node := newArchetypeNode(All(0, 1), -1, 32, comps)
+	node := newArchetypeNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	arch.Init(&node, 0, true, Entity{})
 	assert.Equal(t, 32, int(arch.Cap()))
@@ -85,7 +85,7 @@ func TestNewArchetype(t *testing.T) {
 		{ID: 0, Type: reflect.TypeOf(Position{})},
 	}
 	assert.Panics(t, func() {
-		node := newArchetypeNode(All(0, 1), -1, 32, comps)
+		node := newArchetypeNode(All(0, 1), &nodeData{}, -1, 32, comps)
 		arch := archetype{}
 		arch.Init(&node, 0, true, Entity{})
 	})
@@ -97,7 +97,7 @@ func TestArchetypeExtend(t *testing.T) {
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	node := newArchetypeNode(All(0, 1), -1, 8, comps)
+	node := newArchetypeNode(All(0, 1), &nodeData{}, -1, 8, comps)
 	arch := archetype{}
 	arch.Init(&node, 0, true, Entity{})
 
@@ -119,7 +119,7 @@ func TestArchetypeAlloc(t *testing.T) {
 		{ID: 0, Type: reflect.TypeOf(Position{})},
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
-	node := newArchetypeNode(All(0, 1), -1, 8, comps)
+	node := newArchetypeNode(All(0, 1), &nodeData{}, -1, 8, comps)
 	arch := archetype{}
 	arch.Init(&node, 0, true, Entity{})
 
@@ -144,7 +144,7 @@ func TestArchetypeAddGetSet(t *testing.T) {
 		{ID: 1, Type: reflect.TypeOf(label{})},
 	}
 
-	node := newArchetypeNode(All(0, 1), -1, 1, comps)
+	node := newArchetypeNode(All(0, 1), &nodeData{}, -1, 1, comps)
 	a := archetype{}
 	a.Init(&node, 0, true, Entity{})
 
@@ -179,7 +179,7 @@ func TestArchetypeReset(t *testing.T) {
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	node := newArchetypeNode(All(0, 1), -1, 32, comps)
+	node := newArchetypeNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	arch.Init(&node, 0, false, Entity{})
 
@@ -225,7 +225,7 @@ func TestArchetypeZero(t *testing.T) {
 		{ID: 1, Type: reflect.TypeOf(rotation{})},
 	}
 
-	node := newArchetypeNode(All(0, 1), -1, 32, comps)
+	node := newArchetypeNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	arch.Init(&node, 0, false, Entity{})
 
@@ -257,7 +257,7 @@ func BenchmarkIterArchetype_1000(b *testing.B) {
 		{ID: 0, Type: reflect.TypeOf(testStruct0{})},
 	}
 
-	node := newArchetypeNode(All(0), -1, 32, comps)
+	node := newArchetypeNode(All(0), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	arch.Init(&node, 0, true, Entity{})
 
