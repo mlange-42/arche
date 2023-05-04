@@ -184,10 +184,30 @@ func (q *Query) nextArchetype() bool {
 	if !q.isFiltered {
 		return q.nextNode()
 	}
-	if q.nextArchetypeSimple() {
+	if q.nextArchetypeFiltered() {
 		return true
 	}
 	q.world.closeQuery(q)
+	return false
+}
+
+func (q *Query) nextArchetypeFiltered() bool {
+	len := int32(q.archetypes.Len()) - 1
+	for q.archIndex < len {
+		q.archIndex++
+		a := q.archetypes.Get(q.archIndex)
+		aLen := a.Len()
+		if aLen > 0 {
+			q.access = &a.archetypeAccess
+			q.entityIndex = 0
+			if batch, ok := q.archetypes.(*batchArchetype); ok {
+				q.entityIndexMax = uintptr(batch.EndIndex) - 1
+			} else {
+				q.entityIndexMax = uintptr(aLen) - 1
+			}
+			return true
+		}
+	}
 	return false
 }
 
@@ -197,14 +217,10 @@ func (q *Query) nextArchetypeSimple() bool {
 		q.archIndex++
 		a := q.archetypes.Get(q.archIndex)
 		aLen := a.Len()
-		if a.IsActive() && (q.isFiltered || a.Matches(q.filter)) && aLen > 0 {
+		if a.Matches(q.filter) && aLen > 0 {
 			q.access = &a.archetypeAccess
 			q.entityIndex = 0
-			if batch, ok := q.archetypes.(*batchArchetype); ok {
-				q.entityIndexMax = uintptr(batch.EndIndex) - 1
-			} else {
-				q.entityIndexMax = uintptr(aLen) - 1
-			}
+			q.entityIndexMax = uintptr(aLen) - 1
 			return true
 		}
 	}
@@ -222,7 +238,20 @@ func (q *Query) nextNode() bool {
 		n := q.nodes.Get(q.nodeIndex)
 		arches := n.Archetypes()
 
-		if arches == nil || !n.Matches(q.filter) || arches.Len() == 0 {
+		if !n.Matches(q.filter) || (arches == nil || arches.Len() == 0) {
+			continue
+		}
+
+		if !n.HasRelation {
+			arch := arches.Get(0)
+			if arch.Len() > 0 {
+				q.archetypes = nil
+				q.archIndex = arch.index
+				q.access = &arch.archetypeAccess
+				q.entityIndex = 0
+				q.entityIndexMax = uintptr(arch.Len()) - 1
+				return true
+			}
 			continue
 		}
 

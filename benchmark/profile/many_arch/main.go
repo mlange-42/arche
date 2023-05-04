@@ -14,7 +14,7 @@ import (
 
 func main() {
 
-	count := 250
+	count := 100
 	iters := 10000
 	entities := 1000
 

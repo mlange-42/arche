@@ -1316,7 +1316,7 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
 // and with a capacity of 1 otherwise.
 func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) *archetype {
 	var arch *archetype
-	if node.HasRelation() {
+	if node.HasRelation {
 		arch = node.CreateArchetype(target)
 	} else {
 		w.archetypes.Add(archetype{})
@@ -1365,7 +1365,7 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 
 // Removes the archetype if it is empty, and has a relation to a dead target.
 func (w *World) cleanupArchetype(arch *archetype) {
-	if arch.Len() > 0 || !arch.node.HasRelation() {
+	if arch.Len() > 0 || !arch.node.HasRelation {
 		return
 	}
 	target := arch.RelationTarget
