@@ -217,7 +217,7 @@ func (q *Query) nextArchetypeSimple() bool {
 		q.archIndex++
 		a := q.archetypes.Get(q.archIndex)
 		aLen := a.Len()
-		if a.Matches(q.filter) && aLen > 0 {
+		if aLen > 0 {
 			q.access = &a.archetypeAccess
 			q.entityIndex = 0
 			q.entityIndexMax = uintptr(aLen) - 1

@@ -1358,7 +1358,7 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 		var j int32
 		for j = 0; j < ln2; j++ {
 			a := nodeArches.Get(j)
-			if a.IsActive() && a.Matches(filter) {
+			if a.IsActive() {
 				arches = append(arches, a)
 			}
 		}
