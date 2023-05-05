@@ -368,54 +368,38 @@ func (w *World) removeEntities(filter Filter) int {
 	lock := w.lock()
 
 	var count uintptr
-	numNodes := w.nodes.Len()
 
-	var n int32
-	for n = 0; n < numNodes; n++ {
-		node := w.nodes.Get(n)
-		if !node.IsActive {
+	arches := w.getArchetypes(filter)
+	numArches := arches.Len()
+	var i int32
+	for i = 0; i < numArches; i++ {
+		arch := arches.Get(i)
+
+		if !arch.IsActive() {
 			continue
 		}
-		if !node.Matches(filter) {
-			continue
+
+		len := uintptr(arch.Len())
+		count += len
+
+		var j uintptr
+		for j = 0; j < len; j++ {
+			entity := arch.GetEntity(j)
+			if w.listener != nil {
+				w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, arch.node.Ids, nil, -1, arch.RelationTarget, Entity{}, false})
+			}
+			index := &w.entities[entity.id]
+			index.arch = nil
+
+			if w.targetEntities.Get(entity.id) {
+				w.cleanupArchetypes(entity)
+				w.targetEntities.Set(entity.id, false)
+			}
+
+			w.entityPool.Recycle(entity)
 		}
-
-		arches := node.Archetypes()
-		numArches := arches.Len()
-		var i int32
-		for i = 0; i < numArches; i++ {
-			arch := arches.Get(i)
-
-			if !arch.IsActive() {
-				continue
-			}
-
-			if !arch.Matches(filter) {
-				continue
-			}
-
-			len := uintptr(arch.Len())
-			count += len
-
-			var j uintptr
-			for j = 0; j < len; j++ {
-				entity := arch.GetEntity(j)
-				if w.listener != nil {
-					w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, node.Ids, nil, -1, arch.RelationTarget, Entity{}, false})
-				}
-				index := &w.entities[entity.id]
-				index.arch = nil
-
-				if w.targetEntities.Get(entity.id) {
-					w.cleanupArchetypes(entity)
-					w.targetEntities.Set(entity.id, false)
-				}
-
-				w.entityPool.Recycle(entity)
-			}
-			arch.Reset()
-			w.cleanupArchetype(arch)
-		}
+		arch.Reset()
+		w.cleanupArchetype(arch)
 	}
 	w.unlock(lock)
 
