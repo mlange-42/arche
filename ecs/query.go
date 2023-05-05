@@ -184,14 +184,14 @@ func (q *Query) nextArchetype() bool {
 	if !q.isFiltered {
 		return q.nextNode()
 	}
-	if q.nextArchetypeFiltered() {
+	if q.nextArchetypeBatch() {
 		return true
 	}
 	q.world.closeQuery(q)
 	return false
 }
 
-func (q *Query) nextArchetypeFiltered() bool {
+func (q *Query) nextArchetypeBatch() bool {
 	len := int32(q.archetypes.Len()) - 1
 	for q.archIndex < len {
 		q.archIndex++
