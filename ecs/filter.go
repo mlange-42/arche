@@ -32,6 +32,8 @@ type relationFilter struct {
 // RelationFilter creates a new [Relation] filter.
 // It is a [Filter] for a [Relation] target, in addition to components.
 //
+// Logic filters ignore relation targets. Thus, a relation filter should be the outermost filter.
+//
 // See [Relation] for details and examples.
 func RelationFilter(filter Filter, target Entity) Filter {
 	return &relationFilter{
