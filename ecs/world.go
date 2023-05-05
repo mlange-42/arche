@@ -1332,6 +1332,10 @@ func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) 
 
 // Returns all archetypes that match the given filter. Used by [Cache].
 func (w *World) getArchetypes(filter Filter) archetypePointers {
+	if cached, ok := filter.(*CachedFilter); ok {
+		return w.filterCache.get(cached).Archetypes
+	}
+
 	arches := []*archetype{}
 	ln := w.nodes.Len()
 	var i int32
