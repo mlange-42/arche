@@ -11,6 +11,10 @@ type Rotation struct {
 	Angle int
 }
 
+type ChildOf struct {
+	ecs.Relation
+}
+
 type TestStruct0 struct{ Val int32 }
 type TestStruct1 struct{ Val int32 }
 type TestStruct2 struct{ Val int32 }
