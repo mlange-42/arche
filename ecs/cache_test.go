@@ -7,16 +7,27 @@ import (
 )
 
 func TestFilterCache(t *testing.T) {
-	cache := newCache()
-	cache.getArchetypes = getArchetypes
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+	rotID := ComponentID[rotation](&world)
 
-	all1 := All(0, 1)
-	all2 := All(0, 1, 2)
+	cache := world.Cache()
+
+	world.NewEntity()
+	world.NewEntity(posID, velID)
+	world.NewEntity(posID, velID, rotID)
+
+	all1 := All(posID, velID)
+	all2 := All(posID, velID, rotID)
 
 	f1 := cache.Register(all1)
 	f2 := cache.Register(all2)
 	assert.Equal(t, 0, int(f1.id))
 	assert.Equal(t, 1, int(f2.id))
+
+	assert.Equal(t, 2, len(world.getArchetypes(&f1).pointers))
+	assert.Equal(t, 1, len(world.getArchetypes(&f2).pointers))
 
 	assert.Panics(t, func() { cache.Register(&f2) })
 
@@ -34,10 +45,6 @@ func TestFilterCache(t *testing.T) {
 
 	assert.Panics(t, func() { cache.Unregister(&f1) })
 	assert.Panics(t, func() { cache.get(&f1) })
-}
-
-func getArchetypes(f Filter) archetypePointers {
-	return archetypePointers{}
 }
 
 func ExampleCache() {

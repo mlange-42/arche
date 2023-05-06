@@ -368,54 +368,34 @@ func (w *World) removeEntities(filter Filter) int {
 	lock := w.lock()
 
 	var count uintptr
-	numNodes := w.nodes.Len()
 
-	var n int32
-	for n = 0; n < numNodes; n++ {
-		node := w.nodes.Get(n)
-		if !node.IsActive {
-			continue
-		}
-		if !node.Matches(filter) {
-			continue
-		}
+	arches := w.getArchetypes(filter)
+	numArches := arches.Len()
+	var i int32
+	for i = 0; i < numArches; i++ {
+		arch := arches.Get(i)
 
-		arches := node.Archetypes()
-		numArches := arches.Len()
-		var i int32
-		for i = 0; i < numArches; i++ {
-			arch := arches.Get(i)
+		len := uintptr(arch.Len())
+		count += len
 
-			if !arch.IsActive() {
-				continue
+		var j uintptr
+		for j = 0; j < len; j++ {
+			entity := arch.GetEntity(j)
+			if w.listener != nil {
+				w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, arch.node.Ids, nil, -1, arch.RelationTarget, Entity{}, false})
+			}
+			index := &w.entities[entity.id]
+			index.arch = nil
+
+			if w.targetEntities.Get(entity.id) {
+				w.cleanupArchetypes(entity)
+				w.targetEntities.Set(entity.id, false)
 			}
 
-			if !arch.Matches(filter) {
-				continue
-			}
-
-			len := uintptr(arch.Len())
-			count += len
-
-			var j uintptr
-			for j = 0; j < len; j++ {
-				entity := arch.GetEntity(j)
-				if w.listener != nil {
-					w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, node.Ids, nil, -1, arch.RelationTarget, Entity{}, false})
-				}
-				index := &w.entities[entity.id]
-				index.arch = nil
-
-				if w.targetEntities.Get(entity.id) {
-					w.cleanupArchetypes(entity)
-					w.targetEntities.Set(entity.id, false)
-				}
-
-				w.entityPool.Recycle(entity)
-			}
-			arch.Reset()
-			w.cleanupArchetype(arch)
+			w.entityPool.Recycle(entity)
 		}
+		arch.Reset()
+		w.cleanupArchetype(arch)
 	}
 	w.unlock(lock)
 
@@ -1332,6 +1312,10 @@ func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) 
 
 // Returns all archetypes that match the given filter. Used by [Cache].
 func (w *World) getArchetypes(filter Filter) archetypePointers {
+	if cached, ok := filter.(*CachedFilter); ok {
+		return w.filterCache.get(cached).Archetypes
+	}
+
 	arches := []*archetype{}
 	ln := w.nodes.Len()
 	var i int32
@@ -1354,7 +1338,7 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 		var j int32
 		for j = 0; j < ln2; j++ {
 			a := nodeArches.Get(j)
-			if a.IsActive() && a.Matches(filter) {
+			if a.IsActive() {
 				arches = append(arches, a)
 			}
 		}
