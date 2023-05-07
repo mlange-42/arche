@@ -27,9 +27,9 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="px"
      showgrid="false"
-     inkscape:zoom="0.84096521"
-     inkscape:cx="90.966902"
-     inkscape:cy="482.18404"
+     inkscape:zoom="0.5946522"
+     inkscape:cx="56.335451"
+     inkscape:cy="402.75643"
      inkscape:window-width="1920"
      inkscape:window-height="1013"
      inkscape:window-x="-11"
@@ -63,13 +63,6 @@
        style="font-variation-settings:normal;fill:#ffffff;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;stop-color:#000000"
        d="M 65.333034,23.649976 17.058632,119.43139 c -0.294502,0.58738 -0.0022,0.7317 0.186216,0.6334 16.12131,-7.63547 39.456954,-12.26948 58.438113,-6.58019 18.981146,5.6893 29.984869,6.24089 42.850369,2.23148 V 22.276629 c 0,-2.852036 -2.45766,-5.343297 -5.28556,-5.343297 H 74.730004 c -4.714937,0 -7.601449,3.047421 -9.39697,6.716644 z"
        sodipodi:nodetypes="cccscsscc" />
-    <ellipse
-       style="fill:#0d1117;fill-opacity:1;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stop-color:#000000"
-       id="path2222-6-1-1-9-7"
-       cx="88.900002"
-       cy="50.799995"
-       rx="12.7"
-       ry="12.699999" />
     <g
        id="g449">
       <path
@@ -83,5 +76,11 @@
          d="m 92.069379,93.133282 c 2.186206,8.492088 -3.1751,33.811808 -17.99166,33.866668 -15.01986,0.0556 -20.10834,-25.17806 -17.99167,-33.866668 z"
          sodipodi:nodetypes="cscc" />
     </g>
+    <circle
+       style="fill:#0d1117;stroke-width:0;stroke-linecap:round;stroke-linejoin:round;stop-color:#000000"
+       id="path475"
+       cx="88.900002"
+       cy="50.799995"
+       r="12.7" />
   </g>
 </svg>
