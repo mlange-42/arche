@@ -238,12 +238,9 @@ func (q *Query) nextNode() bool {
 			// There should be at least one archetype.
 			// Otherwise, the node would be inactive.
 			arch := arches.Get(0)
-			if arch.Len() > 0 {
-				q.archetypes = nil
-				q.archIndex = arch.index
-				q.access = &arch.archetypeAccess
-				q.entityIndex = 0
-				q.entityIndexMax = uintptr(arch.Len()) - 1
+			archLen := arch.Len()
+			if archLen > 0 {
+				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
 				return true
 			}
 			continue
@@ -252,20 +249,13 @@ func (q *Query) nextNode() bool {
 		if rf, ok := q.filter.(*relationFilter); ok {
 			target := rf.Target
 			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
-				q.archetypes = nil
-				q.archIndex = arch.index
-				q.access = &arch.archetypeAccess
-				q.entityIndex = 0
-				q.entityIndexMax = uintptr(arch.Len()) - 1
+				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
 				return true
 			}
 			continue
 		}
 
-		q.archetypes = arches
-		q.archIndex = -1
-		q.entityIndex = 0
-		q.entityIndexMax = 0
+		q.setArchetype(arches, nil, nil, -1, 0)
 		if q.nextArchetypeSimple() {
 			return true
 		}
@@ -273,6 +263,14 @@ func (q *Query) nextNode() bool {
 	q.archetypes = nil
 	q.world.closeQuery(q)
 	return false
+}
+
+func (q *Query) setArchetype(arches archetypes, arch *archetype, access *archetypeAccess, archIndex int32, maxIndex uintptr) {
+	q.archetypes = arches
+	q.archIndex = archIndex
+	q.access = access
+	q.entityIndex = 0
+	q.entityIndexMax = maxIndex
 }
 
 func (q *Query) stepArchetype(step uint32) (int, bool) {
