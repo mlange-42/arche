@@ -12,6 +12,8 @@ func benchmarkParentSlice(b *testing.B, numParents int, numChildren int) {
 	b.StopTimer()
 
 	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	parentID := ecs.ComponentID[ParentSlice](&world)
+	childID := ecs.ComponentID[Child](&world)
 
 	parentMapper := generic.NewMap1[ParentSlice](&world)
 	childMapper := generic.NewMap1[Child](&world)
@@ -36,28 +38,28 @@ func benchmarkParentSlice(b *testing.B, numParents int, numChildren int) {
 		par.Children = append(par.Children, e)
 	}
 
-	parentFilter := generic.NewFilter1[ParentSlice]()
-	parentFilter.Register(&world)
+	parentFilter := ecs.All(parentID)
+	cf := world.Cache().Register(parentFilter)
 
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := parentFilter.Query(&world)
+		query := world.Query(&cf)
 		for query.Next() {
-			par := query.Get()
+			par := (*ParentSlice)(query.Get(parentID))
 			for i := 0; i < len(par.Children); i++ {
-				childData := childMapper.Get(par.Children[i])
+				childData := (*Child)(world.Get(par.Children[i], childID))
 				par.Value += childData.Value
 			}
 		}
 	}
 
 	b.StopTimer()
-	query := parentFilter.Query(&world)
+	query := world.Query(parentFilter)
 
 	expected := numChildren * b.N
 	for query.Next() {
-		par := query.Get()
+		par := (*ParentSlice)(query.Get(parentID))
 		if par.Value != expected {
 			panic("wrong number of children")
 		}

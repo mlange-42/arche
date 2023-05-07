@@ -12,6 +12,8 @@ func benchmarkParentList(b *testing.B, numParents int, numChildren int) {
 	b.StopTimer()
 
 	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	parentID := ecs.ComponentID[ParentList](&world)
+	childID := ecs.ComponentID[ChildList](&world)
 
 	parentMapper := generic.NewMap1[ParentList](&world)
 	childMapper := generic.NewMap1[ChildList](&world)
@@ -40,18 +42,18 @@ func benchmarkParentList(b *testing.B, numParents int, numChildren int) {
 		par.FirstChild = e
 	}
 
-	parentFilter := generic.NewFilter1[ParentList]()
-	parentFilter.Register(&world)
+	parentFilter := ecs.All(parentID)
+	cf := world.Cache().Register(parentFilter)
 
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := parentFilter.Query(&world)
+		query := world.Query(&cf)
 		for query.Next() {
-			par := query.Get()
+			par := (*ParentList)(query.Get(parentID))
 			child := par.FirstChild
 			for !child.IsZero() {
-				childList := childMapper.Get(child)
+				childList := (*ChildList)(world.Get(child, childID))
 				par.Value += childList.Value
 				child = childList.Next
 			}
@@ -59,11 +61,11 @@ func benchmarkParentList(b *testing.B, numParents int, numChildren int) {
 	}
 
 	b.StopTimer()
-	query := parentFilter.Query(&world)
+	query := world.Query(&cf)
 
 	expected := numChildren * b.N
 	for query.Next() {
-		par := query.Get()
+		par := (*ParentList)(query.Get(parentID))
 		if par.Value != expected {
 			panic("wrong number of children")
 		}

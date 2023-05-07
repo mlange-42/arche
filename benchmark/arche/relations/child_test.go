@@ -12,6 +12,8 @@ func benchmarkChild(b *testing.B, numParents int, numChildren int) {
 	b.StopTimer()
 
 	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	parentID := ecs.ComponentID[ParentList](&world)
+	childID := ecs.ComponentID[Child](&world)
 
 	parentMapper := generic.NewMap1[ParentList](&world)
 	childMapper := generic.NewMap1[Child](&world)
@@ -37,16 +39,16 @@ func benchmarkChild(b *testing.B, numParents int, numChildren int) {
 
 	parentFilter := generic.NewFilter1[ParentList]()
 	parentFilter.Register(&world)
-	childFilter := generic.NewFilter1[Child]()
-	childFilter.Register(&world)
+	childFilter := ecs.All(childID)
+	cf := world.Cache().Register(&childFilter)
 
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := childFilter.Query(&world)
+		query := world.Query(&cf)
 		for query.Next() {
-			child := query.Get()
-			parData := parentMapper.Get(child.Parent)
+			child := (*Child)(query.Get(childID))
+			parData := (*ParentList)(world.Get(child.Parent, parentID))
 
 			parData.Value += child.Value
 		}

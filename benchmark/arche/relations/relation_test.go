@@ -12,6 +12,8 @@ func benchmarkRelation(b *testing.B, numParents int, numChildren int) {
 	b.StopTimer()
 
 	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	parentID := ecs.ComponentID[ParentList](&world)
+	childID := ecs.ComponentID[ChildRelation](&world)
 
 	parentMapper := generic.NewMap1[ParentList](&world)
 	childMapper := generic.NewMap1[ChildRelation](&world, generic.T[ChildRelation]())
@@ -37,18 +39,17 @@ func benchmarkRelation(b *testing.B, numParents int, numChildren int) {
 		targetMapper.SetRelation(e, parent)
 	}
 
-	parentFilter := generic.NewFilter1[ParentList]()
-	parentFilter.Register(&world)
+	parentFilter := ecs.All(parentID)
+	cf := world.Cache().Register(parentFilter)
 
-	childID := ecs.ComponentID[ChildRelation](&world)
 	childF := ecs.All(childID)
 
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := parentFilter.Query(&world)
+		query := world.Query(&cf)
 		for query.Next() {
-			parData := query.Get()
+			parData := (*ParentList)(query.Get(parentID))
 			par := query.Entity()
 
 			cf := ecs.RelationFilter(&childF, par)
@@ -63,11 +64,11 @@ func benchmarkRelation(b *testing.B, numParents int, numChildren int) {
 
 	b.StopTimer()
 
-	parQuery := parentFilter.Query(&world)
+	parQuery := world.Query(parentFilter)
 
 	expected := numChildren * b.N
 	for parQuery.Next() {
-		par := parQuery.Get()
+		par := (*ParentList)(parQuery.Get(parentID))
 		if par.Value != expected {
 			panic("wrong number of children")
 		}

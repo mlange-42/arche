@@ -9,13 +9,16 @@ import (
 )
 
 type ChildFilter struct {
-	Filter generic.Filter1[ChildRelation]
+	Filter ecs.CachedFilter
 }
 
 func benchmarkRelationCached(b *testing.B, numParents int, numChildren int) {
 	b.StopTimer()
 
 	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	parentID := ecs.ComponentID[ParentList](&world)
+	filterID := ecs.ComponentID[ChildFilter](&world)
+	childID := ecs.ComponentID[ChildRelation](&world)
 
 	parentMapper := generic.NewMap2[ParentList, ChildFilter](&world)
 	childMapper := generic.NewMap1[ChildRelation](&world, generic.T[ChildRelation]())
@@ -26,8 +29,8 @@ func benchmarkRelationCached(b *testing.B, numParents int, numChildren int) {
 	for spawnedPar.Next() {
 		par := spawnedPar.Entity()
 		_, fl := spawnedPar.Get()
-		fl.Filter = *generic.NewFilter1[ChildRelation]().WithRelation(generic.T[ChildRelation](), par)
-		fl.Filter.Register(&world)
+		rf := ecs.RelationFilter(ecs.All(childID), par)
+		fl.Filter = world.Cache().Register(rf)
 
 		parents = append(parents, par)
 	}
@@ -46,19 +49,19 @@ func benchmarkRelationCached(b *testing.B, numParents int, numChildren int) {
 		targetMapper.SetRelation(e, parent)
 	}
 
-	parentFilter := generic.NewFilter2[ParentList, ChildFilter]()
-	parentFilter.Register(&world)
+	parentFilter := ecs.All(parentID, filterID)
+	cf := world.Cache().Register(parentFilter)
 
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := parentFilter.Query(&world)
+		query := world.Query(&cf)
 		for query.Next() {
-			parData, filter := query.Get()
+			parData, filter := (*ParentList)(query.Get(parentID)), (*ChildFilter)(query.Get(filterID))
 
-			childQuery := filter.Filter.Query(&world)
+			childQuery := world.Query(&filter.Filter)
 			for childQuery.Next() {
-				child := childQuery.Get()
+				child := (*ChildRelation)(childQuery.Get(childID))
 				parData.Value += child.Value
 			}
 		}
@@ -66,11 +69,11 @@ func benchmarkRelationCached(b *testing.B, numParents int, numChildren int) {
 
 	b.StopTimer()
 
-	parQuery := parentFilter.Query(&world)
+	parQuery := world.Query(parentFilter)
 
 	expected := numChildren * b.N
 	for parQuery.Next() {
-		par, _ := parQuery.Get()
+		par := (*ParentList)(parQuery.Get(parentID))
 		if par.Value != expected {
 			panic("wrong number of children")
 		}
