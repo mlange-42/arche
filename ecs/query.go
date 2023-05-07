@@ -193,8 +193,6 @@ func (q *Query) nextArchetypeBatch() bool {
 			q.entityIndex = 0
 			if batch, ok := q.archetypes.(*batchArchetype); ok {
 				q.entityIndexMax = uintptr(batch.EndIndex) - 1
-			} else {
-				q.entityIndexMax = uintptr(aLen) - 1
 			}
 			return true
 		}
@@ -236,11 +234,10 @@ func (q *Query) nextNode() bool {
 		}
 
 		arches := n.Archetypes()
-		if arches.Len() == 0 {
-			continue
-		}
 
 		if !n.HasRelation {
+			// There should be at least one archetype.
+			// Otherwise, the node would be inactive.
 			arch := arches.Get(0)
 			if arch.Len() > 0 {
 				q.archetypes = nil
@@ -288,16 +285,8 @@ func (q *Query) stepArchetype(step uint32) (int, bool) {
 }
 
 func (q *Query) countEntities() int {
-	if q.isBatch {
-		len := int32(q.archetypes.Len())
-		var count uint32 = 0
-		var i int32
-		for i = 0; i < len; i++ {
-			a := q.archetypes.Get(i)
-			count += a.Len()
-		}
-		return int(count)
-	}
+	// This is not necessary as batch queries get their count upon construction.
+	// if q.isBatch {}
 
 	len := int32(q.nodes.Len())
 	var count uint32 = 0

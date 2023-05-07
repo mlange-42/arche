@@ -1355,10 +1355,6 @@ func (w *World) getArchetypes(filter Filter) pointers[archetype] {
 
 // Returns all nodes that match the given filter. Used by [Cache].
 func (w *World) getNodes(filter Filter) pointers[archNode] {
-	if cached, ok := filter.(*CachedFilter); ok {
-		return w.filterCache.get(cached).Nodes
-	}
-
 	nodes := []*archNode{}
 	ln := w.nodes.Len()
 	var i int32
