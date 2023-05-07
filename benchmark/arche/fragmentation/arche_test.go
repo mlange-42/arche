@@ -310,7 +310,8 @@ func runQuery1Of1kTargetsCached(b *testing.B, count int) {
 	target := targets[0]
 	childBuilder.NewBatch(count, target)
 
-	cf := world.Cache().Register(ecs.RelationFilter(ecs.All(posID, relID), target))
+	rf := ecs.RelationFilter(ecs.All(posID, relID), target)
+	cf := world.Cache().Register(rf)
 	var filter ecs.Filter = &cf
 
 	for i := 0; i < b.N; i++ {

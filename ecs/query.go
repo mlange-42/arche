@@ -25,6 +25,7 @@ type Query struct {
 	count          int32            // Cached entity count.
 	lockBit        uint8            // The bit that was used to lock the [World] when the query was created.
 	isFiltered     bool             // Whether the list of archetypes is already filtered.
+	isBatch        bool
 }
 
 // newQuery creates a new Filter
@@ -38,19 +39,7 @@ func newQuery(world *World, filter Filter, lockBit uint8, nodes nodes, isFiltere
 		lockBit:    lockBit,
 		count:      -1,
 		isFiltered: false,
-	}
-}
-
-// newArchesQuery creates a new Filter
-func newArchesQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes) Query {
-	return Query{
-		filter:     filter,
-		world:      world,
-		archetypes: archetypes,
-		archIndex:  -1,
-		lockBit:    lockBit,
-		count:      -1,
-		isFiltered: true,
+		isBatch:    false,
 	}
 }
 
@@ -61,6 +50,7 @@ func newArchQuery(world *World, lockBit uint8, archetype *batchArchetype) Query 
 		return Query{
 			filter:         nil,
 			isFiltered:     true,
+			isBatch:        true,
 			world:          world,
 			archetypes:     archetype,
 			access:         &arch.archetypeAccess,
@@ -74,6 +64,7 @@ func newArchQuery(world *World, lockBit uint8, archetype *batchArchetype) Query 
 	return Query{
 		filter:     nil,
 		isFiltered: true,
+		isBatch:    true,
 		world:      world,
 		archetypes: archetype,
 		archIndex:  -1,
@@ -181,7 +172,7 @@ func (q *Query) Close() {
 
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
-	if !q.isFiltered {
+	if !q.isBatch {
 		return q.nextNode()
 	}
 	if q.nextArchetypeBatch() {
@@ -236,9 +227,16 @@ func (q *Query) nextNode() bool {
 	for q.nodeIndex < len {
 		q.nodeIndex++
 		n := q.nodes.Get(q.nodeIndex)
-		arches := n.Archetypes()
 
-		if !n.Matches(q.filter) || (arches == nil || arches.Len() == 0) {
+		if !n.IsActive {
+			continue
+		}
+		if !q.isFiltered && !n.Matches(q.filter) {
+			continue
+		}
+
+		arches := n.Archetypes()
+		if arches.Len() == 0 {
 			continue
 		}
 
@@ -290,7 +288,7 @@ func (q *Query) stepArchetype(step uint32) (int, bool) {
 }
 
 func (q *Query) countEntities() int {
-	if q.isFiltered {
+	if q.isBatch {
 		len := int32(q.archetypes.Len())
 		var count uint32 = 0
 		var i int32
@@ -306,7 +304,7 @@ func (q *Query) countEntities() int {
 	var i int32
 	for i = 0; i < len; i++ {
 		nd := q.nodes.Get(i)
-		if !nd.IsActive || !nd.Matches(q.filter) {
+		if !nd.IsActive || (!q.isFiltered && !nd.Matches(q.filter)) {
 			continue
 		}
 
