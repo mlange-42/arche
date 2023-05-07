@@ -17,12 +17,12 @@ func runIter(b *testing.B, count int) {
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
 	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
+	filter := ecs.All(posID, rotID)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(ecs.All(posID, rotID))
+		query := world.Query(filter)
 		cnt := 0
-		b.StartTimer()
 		for query.Next() {
 			cnt++
 		}
@@ -91,11 +91,11 @@ func runQuery(b *testing.B, count int) {
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
 	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
+	filter := ecs.All(posID, rotID)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(ecs.All(posID, rotID))
-		b.StartTimer()
+		query := world.Query(filter)
 		for query.Next() {
 			pos := (*c.Position)(query.Get(posID))
 			pos.X = 1.0
@@ -114,11 +114,10 @@ func runQueryCached(b *testing.B, count int) {
 
 	cf := world.Cache().Register(ecs.All(posID, rotID))
 	var filter ecs.Filter = &cf
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
 		query := world.Query(filter)
-		b.StartTimer()
 		for query.Next() {
 			pos := (*c.Position)(query.Get(posID))
 			pos.X = 1.0
@@ -134,11 +133,11 @@ func runFilter(b *testing.B, count int) {
 	rotID := ecs.ComponentID[c.Rotation](&world)
 
 	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
+	filter := filter.All(posID, rotID)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(filter.All(posID, rotID))
-		b.StartTimer()
+		query := world.Query(filter)
 		for query.Next() {
 			pos := (*c.Position)(query.Get(posID))
 			pos.X = 1.0
@@ -156,11 +155,10 @@ func runQueryGeneric(b *testing.B, count int) {
 	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
 	query := generic.NewFilter1[c.Position]()
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
 		q := query.Query(&world)
-		b.StartTimer()
 		for q.Next() {
 			pos := q.Get()
 			pos.X = 1.0
@@ -179,11 +177,11 @@ func runQuery5C(b *testing.B, count int) {
 	id4 := ecs.ComponentID[c.TestStruct4](&world)
 
 	ecs.NewBuilder(&world, id0, id1, id2, id3, id4).NewBatch(count)
+	filter := ecs.All(id0, id1, id2, id3, id4)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(ecs.All(id0, id1, id2, id3, id4))
-		b.StartTimer()
+		query := world.Query(filter)
 		for query.Next() {
 			t1 := (*c.TestStruct0)(query.Get(id0))
 			t2 := (*c.TestStruct1)(query.Get(id1))
@@ -208,11 +206,10 @@ func runQueryGeneric5C(b *testing.B, count int) {
 	ecs.NewBuilder(&world, id0, id1, id2, id3, id4).NewBatch(count)
 
 	query := generic.NewFilter5[c.TestStruct0, c.TestStruct1, c.TestStruct2, c.TestStruct3, c.TestStruct4]()
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
 		q := query.Query(&world)
-		b.StartTimer()
 		for q.Next() {
 			t1, t2, t3, t4, t5 := q.Get()
 			t1.Val, t2.Val, t3.Val, t4.Val, t5.Val = 1, 1, 1, 1, 1
