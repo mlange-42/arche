@@ -59,54 +59,50 @@ func benchmarkParentSlice(b *testing.B, numParents int, numChildren int) {
 	}
 }
 
-func BenchmarkRelationParentSlice_10_x_10(b *testing.B) {
-	benchmarkParentSlice(b, 10, 10)
-}
-
-func BenchmarkRelationParentSlice_100_x_10(b *testing.B) {
-	benchmarkParentSlice(b, 100, 10)
-}
-
-func BenchmarkRelationParentSlice_1000_x_10(b *testing.B) {
-	benchmarkParentSlice(b, 1000, 10)
-}
-
-func BenchmarkRelationParentSlice_10000_x_10(b *testing.B) {
-	benchmarkParentSlice(b, 10000, 10)
-}
-
-func BenchmarkRelationParentSlice_10_x_100(b *testing.B) {
+func BenchmarkRelationParentSlice_1k_10_x_100(b *testing.B) {
 	benchmarkParentSlice(b, 10, 100)
 }
 
-func BenchmarkRelationParentSlice_100_x_100(b *testing.B) {
-	benchmarkParentSlice(b, 100, 100)
+func BenchmarkRelationParentSlice_1k_100_x_10(b *testing.B) {
+	benchmarkParentSlice(b, 100, 10)
 }
 
-func BenchmarkRelationParentSlice_1000_x_100(b *testing.B) {
-	benchmarkParentSlice(b, 1000, 100)
-}
-
-func BenchmarkRelationParentSlice_10000_x_100(b *testing.B) {
-	benchmarkParentSlice(b, 10000, 100)
-}
-
-func BenchmarkRelationParentSlice_10_x_1000(b *testing.B) {
+func BenchmarkRelationParentSlice_10k_10_x_1000(b *testing.B) {
 	benchmarkParentSlice(b, 10, 1000)
 }
 
-func BenchmarkRelationParentSlice_100_x_1000(b *testing.B) {
-	benchmarkParentSlice(b, 100, 1000)
+func BenchmarkRelationParentSlice_10k_100_x_100(b *testing.B) {
+	benchmarkParentSlice(b, 100, 100)
 }
 
-func BenchmarkRelationParentSlice_1000_x_1000(b *testing.B) {
-	benchmarkParentSlice(b, 1000, 1000)
+func BenchmarkRelationParentSlice_10k_1000_x_10(b *testing.B) {
+	benchmarkParentSlice(b, 1000, 10)
 }
 
-func BenchmarkRelationParentSlice_10_x_10000(b *testing.B) {
+func BenchmarkRelationParentSlice_100k_10_x_10000(b *testing.B) {
 	benchmarkParentSlice(b, 10, 10000)
 }
 
-func BenchmarkRelationParentSlice_100_x_10000(b *testing.B) {
+func BenchmarkRelationParentSlice_100k_100_x_1000(b *testing.B) {
+	benchmarkParentSlice(b, 100, 1000)
+}
+
+func BenchmarkRelationParentSlice_100k_1000_x_100(b *testing.B) {
+	benchmarkParentSlice(b, 1000, 100)
+}
+
+func BenchmarkRelationParentSlice_100k_10000_x_10(b *testing.B) {
+	benchmarkParentSlice(b, 1000, 100)
+}
+
+func BenchmarkRelationParentSlice_1M_100_x_10000(b *testing.B) {
 	benchmarkParentSlice(b, 100, 10000)
+}
+
+func BenchmarkRelationParentSlice_1M_1000_x_1000(b *testing.B) {
+	benchmarkParentSlice(b, 1000, 1000)
+}
+
+func BenchmarkRelationParentSlice_1M_10000_x_100(b *testing.B) {
+	benchmarkParentSlice(b, 10000, 100)
 }
