@@ -153,6 +153,47 @@ func TestQueryCached(t *testing.T) {
 	q.Close()
 }
 
+func TestQueryCachedRelation(t *testing.T) {
+	w := NewWorld()
+
+	relID := ComponentID[testRelationA](&w)
+
+	target1 := w.NewEntity()
+	target2 := w.NewEntity()
+
+	relFilter := RelationFilter(All(relID), target1)
+	cf := w.Cache().Register(relFilter)
+
+	q := w.Query(&cf)
+	assert.Equal(t, 0, q.Count())
+	cnt := 0
+	for q.Next() {
+		cnt++
+	}
+	assert.Equal(t, 0, cnt)
+
+	NewBuilder(&w, relID).WithRelation(relID).NewBatch(10, target1)
+
+	q = w.Query(&cf)
+	assert.Equal(t, 10, q.Count())
+	cnt = 0
+	for q.Next() {
+		cnt++
+	}
+	assert.Equal(t, 10, cnt)
+
+	relFilter = RelationFilter(All(relID), target2)
+	cf = w.Cache().Register(relFilter)
+
+	q = w.Query(&cf)
+	assert.Equal(t, 0, q.Count())
+	cnt = 0
+	for q.Next() {
+		cnt++
+	}
+	assert.Equal(t, 0, cnt)
+}
+
 func TestQueryEmptyNode(t *testing.T) {
 	w := NewWorld()
 
@@ -179,6 +220,15 @@ func TestQueryEmptyNode(t *testing.T) {
 	q := w.Query(All())
 	assert.Equal(t, 1, q.Count())
 	q.Close()
+
+	cf := w.Cache().Register(All())
+	q = w.Query(&cf)
+	assert.Equal(t, 1, q.Count())
+	cnt := 0
+	for q.Next() {
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
 }
 
 func TestQueryCount(t *testing.T) {

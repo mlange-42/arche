@@ -277,14 +277,6 @@ func (q *Query) nextNodeFiltered() bool {
 	for q.nodeIndex < len {
 		q.nodeIndex++
 		n := q.nodes[q.nodeIndex]
-
-		if !n.IsActive {
-			continue
-		}
-		if !n.Matches(q.filter) {
-			continue
-		}
-
 		arches := n.Archetypes()
 
 		if !n.HasRelation {
@@ -347,6 +339,15 @@ func (q *Query) countEntities() int {
 			continue
 		}
 
+		if !nd.HasRelation {
+			// There should be at least one archetype.
+			// Otherwise, the node would be inactive.
+			arches := nd.Archetypes()
+			arch := arches.Get(0)
+			count += arch.Len()
+			continue
+		}
+
 		if rf, ok := q.filter.(*relationFilter); ok {
 			target := rf.Target
 			if arch, ok := nd.archetypeMap[target]; ok {
@@ -360,7 +361,7 @@ func (q *Query) countEntities() int {
 		var j int32
 		for j = 0; j < nArch; j++ {
 			a := arches.Get(j)
-			if a.IsActive() && a.Matches(q.filter) {
+			if a.IsActive() {
 				count += a.Len()
 			}
 		}
