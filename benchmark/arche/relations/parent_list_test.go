@@ -1,6 +1,7 @@
 package relations
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
@@ -22,19 +23,21 @@ func benchmarkParentList(b *testing.B, numParents int, numChildren int) {
 	}
 
 	spawnedChild := childMapper.NewQuery(numParents * numChildren)
-	cnt := 0
+	children := make([]ecs.Entity, 0, numParents*numChildren)
 	for spawnedChild.Next() {
-		childEntity := spawnedChild.Entity()
-		child := spawnedChild.Get()
+		children = append(children, spawnedChild.Entity())
+	}
+	rand.Shuffle(len(children), func(i, j int) { children[i], children[j] = children[j], children[i] })
+
+	for i, e := range children {
+		child := childMapper.Get(e)
 		child.Value = 1
-		par := parentMapper.Get(parents[cnt/numChildren])
+		par := parentMapper.Get(parents[i/numChildren])
 
 		if !par.FirstChild.IsZero() {
 			child.Next = par.FirstChild
 		}
-		par.FirstChild = childEntity
-
-		cnt++
+		par.FirstChild = e
 	}
 
 	parentFilter := generic.NewFilter1[ParentList]()
@@ -67,50 +70,46 @@ func benchmarkParentList(b *testing.B, numParents int, numChildren int) {
 	}
 }
 
-func BenchmarkRelationParentList_10_x_10(b *testing.B) {
-	benchmarkParentList(b, 10, 10)
-}
-
-func BenchmarkRelationParentList_100_x_10(b *testing.B) {
-	benchmarkParentList(b, 100, 10)
-}
-
-func BenchmarkRelationParentList_1000_x_10(b *testing.B) {
-	benchmarkParentList(b, 1000, 10)
-}
-
-func BenchmarkRelationParentList_10000_x_100(b *testing.B) {
-	benchmarkParentList(b, 10000, 100)
-}
-
-func BenchmarkRelationParentList_10_x_100(b *testing.B) {
+func BenchmarkRelationParentList_1k_10_x_100(b *testing.B) {
 	benchmarkParentList(b, 10, 100)
 }
 
-func BenchmarkRelationParentList_100_x_100(b *testing.B) {
-	benchmarkParentList(b, 100, 100)
+func BenchmarkRelationParentList_1k_100_x_10(b *testing.B) {
+	benchmarkParentList(b, 100, 10)
 }
 
-func BenchmarkRelationParentList_1000_x_100(b *testing.B) {
-	benchmarkParentList(b, 1000, 100)
-}
-
-func BenchmarkRelationParentList_10_x_1000(b *testing.B) {
+func BenchmarkRelationParentList_10k_10_x_1000(b *testing.B) {
 	benchmarkParentList(b, 10, 1000)
 }
 
-func BenchmarkRelationParentList_100_x_1000(b *testing.B) {
-	benchmarkParentList(b, 100, 1000)
+func BenchmarkRelationParentList_10k_100_x_100(b *testing.B) {
+	benchmarkParentList(b, 100, 100)
 }
 
-func BenchmarkRelationParentList_1000_x_1000(b *testing.B) {
-	benchmarkParentList(b, 1000, 1000)
+func BenchmarkRelationParentList_10k_1000_x_10(b *testing.B) {
+	benchmarkParentList(b, 1000, 10)
 }
 
-func BenchmarkRelationParentList_10_x_10000(b *testing.B) {
+func BenchmarkRelationParentList_100k_10_x_10000(b *testing.B) {
 	benchmarkParentList(b, 10, 10000)
 }
 
-func BenchmarkRelationParentList_100_x_10000(b *testing.B) {
+func BenchmarkRelationParentList_100k_100_x_1000(b *testing.B) {
+	benchmarkParentList(b, 100, 1000)
+}
+
+func BenchmarkRelationParentList_100k_1000_x_100(b *testing.B) {
+	benchmarkParentList(b, 1000, 100)
+}
+
+func BenchmarkRelationParentList_1M_100_x_10000(b *testing.B) {
 	benchmarkParentList(b, 100, 10000)
+}
+
+func BenchmarkRelationParentList_1M_1000_x_1000(b *testing.B) {
+	benchmarkParentList(b, 1000, 1000)
+}
+
+func BenchmarkRelationParentList_1M_10000_x_100(b *testing.B) {
+	benchmarkParentList(b, 10000, 100)
 }
