@@ -30,11 +30,11 @@ func runQuery1kArch(b *testing.B, count int) {
 			world.NewEntity(add...)
 		}
 	}
+	filter := ecs.All(10)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(ecs.All(10))
-		b.StartTimer()
+		query := world.Query(filter)
 		for query.Next() {
 			pos := (*c.TestStruct10)(query.Get(10))
 			pos.Val = 1
@@ -67,11 +67,10 @@ func runQuery1kArchCached(b *testing.B, count int) {
 
 	cf := world.Cache().Register(ecs.All(10))
 	var filter ecs.Filter = &cf
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
 		query := world.Query(filter)
-		b.StartTimer()
 		for query.Next() {
 			pos := (*c.TestStruct10)(query.Get(10))
 			pos.Val = 1
@@ -102,11 +101,11 @@ func runFilter1kArch(b *testing.B, count int) {
 			world.Add(entity, add...)
 		}
 	}
+	filter := filter.All(10)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(filter.All(10))
-		b.StartTimer()
+		query := world.Query(filter)
 		for query.Next() {
 			pos := (*c.TestStruct10)(query.Get(10))
 			pos.Val = 1
@@ -138,11 +137,11 @@ func runQuery1Of1kArch(b *testing.B, count int) {
 	}
 
 	ecs.NewBuilder(&world, 10).NewBatch(count)
+	filter := ecs.All(10)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
-		query := world.Query(ecs.All(10))
-		b.StartTimer()
+		query := world.Query(filter)
 		for query.Next() {
 			pos := (*c.TestStruct6)(query.Get(10))
 			pos.Val = 1
@@ -177,11 +176,10 @@ func runQuery1Of1kArchCached(b *testing.B, count int) {
 
 	cf := world.Cache().Register(ecs.All(10))
 	var filter ecs.Filter = &cf
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
 		query := world.Query(filter)
-		b.StartTimer()
 		for query.Next() {
 			pos := (*c.TestStruct10)(query.Get(10))
 			pos.Val = 1
@@ -210,11 +208,10 @@ func runQuery1kTargets(b *testing.B, count int) {
 	}
 
 	filter := ecs.All(posID, relID)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
 		query := world.Query(filter)
-		b.StartTimer()
 		for query.Next() {
 			pos := (*c.TestStruct0)(query.Get(posID))
 			pos.Val = 1
@@ -244,11 +241,10 @@ func runQuery1kTargetsCached(b *testing.B, count int) {
 
 	cf := world.Cache().Register(ecs.All(posID, relID))
 	var filter ecs.Filter = &cf
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
 		query := world.Query(filter)
-		b.StartTimer()
 		for query.Next() {
 			pos := (*c.TestStruct0)(query.Get(posID))
 			pos.Val = 1
@@ -277,11 +273,10 @@ func runQuery1Of1kTargets(b *testing.B, count int) {
 	childBuilder.NewBatch(count, target)
 
 	filter := ecs.RelationFilter(ecs.All(posID, relID), target)
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
 		query := world.Query(filter)
-		b.StartTimer()
 		for query.Next() {
 			pos := (*c.TestStruct0)(query.Get(posID))
 			pos.Val = 1
