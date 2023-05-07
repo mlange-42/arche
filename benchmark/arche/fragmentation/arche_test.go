@@ -426,9 +426,9 @@ func BenchmarkIter1Of1kTargetsCached_1_000(b *testing.B) {
 }
 
 func BenchmarkIter1Of1kTargetsCached_10_000(b *testing.B) {
-	runQuery1kTargetsCached(b, 10000)
+	runQuery1Of1kTargetsCached(b, 10000)
 }
 
 func BenchmarkIter1Of1kTargetsCached_100_000(b *testing.B) {
-	runQuery1kTargetsCached(b, 100000)
+	runQuery1Of1kTargetsCached(b, 100000)
 }
