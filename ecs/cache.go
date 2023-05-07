@@ -2,9 +2,9 @@ package ecs
 
 // Cache entry for a [Filter].
 type cacheEntry struct {
-	ID     uint32             // Filter ID.
-	Filter Filter             // The underlying filter.
-	Nodes  pointers[archNode] // Nodes matching the filter.
+	ID     uint32      // Filter ID.
+	Filter Filter      // The underlying filter.
+	Nodes  []*archNode // Nodes matching the filter.
 }
 
 // Cache provides [Filter] caching to speed up queries.
@@ -22,10 +22,10 @@ type cacheEntry struct {
 //
 // The overhead of tracking cached filters internally is very low, as updates are required only when new archetypes are created.
 type Cache struct {
-	indices  map[uint32]int                    // Mapping from filter IDs to indices in filters
-	filters  []cacheEntry                      // The cached filters, indexed by indices
-	getNodes func(f Filter) pointers[archNode] // Callback for getting archetypes for a new filter from the world
-	intPool  intPool[uint32]                   // Pool for filter IDs
+	indices  map[uint32]int             // Mapping from filter IDs to indices in filters
+	filters  []cacheEntry               // The cached filters, indexed by indices
+	getNodes func(f Filter) []*archNode // Callback for getting archetypes for a new filter from the world
+	intPool  intPool[uint32]            // Pool for filter IDs
 }
 
 // newCache creates a new [Cache].
@@ -99,7 +99,7 @@ func (c *Cache) addNode(node *archNode) {
 	for i := 0; i < ln; i++ {
 		e := &c.filters[i]
 		if node.Matches(e.Filter) {
-			e.Nodes.Add(node)
+			e.Nodes = append(e.Nodes, node)
 		}
 	}
 }

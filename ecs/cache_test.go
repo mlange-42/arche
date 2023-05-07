@@ -26,8 +26,8 @@ func TestFilterCache(t *testing.T) {
 	assert.Equal(t, 0, int(f1.id))
 	assert.Equal(t, 1, int(f2.id))
 
-	assert.Equal(t, 2, len(world.getArchetypes(&f1).pointers))
-	assert.Equal(t, 1, len(world.getArchetypes(&f2).pointers))
+	assert.Equal(t, 2, len(world.getArchetypes(&f1)))
+	assert.Equal(t, 1, len(world.getArchetypes(&f2)))
 
 	assert.Panics(t, func() { cache.Register(&f2) })
 

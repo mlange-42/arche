@@ -71,6 +71,7 @@ type World struct {
 	archetypes     pagedSlice[archetype] // The archetypes.
 	nodes          pagedSlice[archNode]  // The archetype graph.
 	nodeData       pagedSlice[nodeData]  // The archetype graph's data.
+	nodePointers   []*archNode
 	relationNodes  []*archNode           // Archetype nodes that have an entity relation.
 	locks          lockMask              // World locks.
 	registry       componentRegistry[ID] // Component registry.
@@ -370,10 +371,10 @@ func (w *World) removeEntities(filter Filter) int {
 	var count uintptr
 
 	arches := w.getArchetypes(filter)
-	numArches := arches.Len()
+	numArches := int32(len(arches))
 	var i int32
 	for i = 0; i < numArches; i++ {
-		arch := arches.Get(i)
+		arch := arches[i]
 
 		len := uintptr(arch.Len())
 		count += len
@@ -649,15 +650,15 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 	}
 
 	arches := w.getArchetypes(filter)
-	ln := arches.Len()
-	lengths := make([]uint32, arches.Len())
+	ln := int32(len(arches))
+	lengths := make([]uint32, ln)
 	var i int32
 	for i = 0; i < ln; i++ {
-		lengths[i] = arches.Get(i).Len()
+		lengths[i] = arches[i].Len()
 	}
 
 	for i = 0; i < ln; i++ {
-		arch := arches.Get(i)
+		arch := arches[i]
 		archLen := lengths[i]
 
 		if archLen == 0 {
@@ -807,15 +808,15 @@ func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback
 	}
 
 	arches := w.getArchetypes(filter)
-	ln := arches.Len()
-	lengths := make([]uint32, arches.Len())
+	ln := int32(len(arches))
+	lengths := make([]uint32, ln)
 	var i int32
 	for i = 0; i < ln; i++ {
-		lengths[i] = arches.Get(i).Len()
+		lengths[i] = arches[i].Len()
 	}
 
 	for i = 0; i < ln; i++ {
-		arch := arches.Get(i)
+		arch := arches[i]
 		archLen := lengths[i]
 
 		if archLen == 0 {
@@ -945,11 +946,11 @@ func (w *World) Reset() {
 func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(*CachedFilter); ok {
-		nodes := &w.filterCache.get(cached).Nodes
+		nodes := w.filterCache.get(cached).Nodes
 		return newQuery(w, cached.filter, l, nodes, true)
 	}
 
-	return newQuery(w, filter, l, &w.nodes, false)
+	return newQuery(w, filter, l, w.nodePointers, false)
 }
 
 // Resources of the world.
@@ -1288,6 +1289,7 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
 	w.nodes.Add(newArchNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, capInc, types))
 	nd := w.nodes.Get(w.nodes.Len() - 1)
 	w.relationNodes = append(w.relationNodes, nd)
+	w.nodePointers = append(w.nodePointers, nd)
 
 	w.filterCache.addNode(nd)
 	return nd
@@ -1311,22 +1313,22 @@ func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) 
 }
 
 // Returns all archetypes that match the given filter. Used by [Cache].
-func (w *World) getArchetypes(filter Filter) pointers[archetype] {
+func (w *World) getArchetypes(filter Filter) []*archetype {
 	arches := []*archetype{}
 
-	var nodes nodes
+	var nodes []*archNode
 	filtered := false
 	if cached, ok := filter.(*CachedFilter); ok {
-		nodes = &w.filterCache.get(cached).Nodes
+		nodes = w.filterCache.get(cached).Nodes
 		filtered = true
 	} else {
-		nodes = &w.nodes
+		nodes = w.nodePointers
 	}
 
-	ln := nodes.Len()
+	ln := int32(len(nodes))
 	var i int32
 	for i = 0; i < ln; i++ {
-		nd := nodes.Get(i)
+		nd := nodes[i]
 		if !nd.IsActive || (!filtered && !nd.Matches(filter)) {
 			continue
 		}
@@ -1350,11 +1352,11 @@ func (w *World) getArchetypes(filter Filter) pointers[archetype] {
 		}
 	}
 
-	return pointers[archetype]{arches}
+	return arches
 }
 
 // Returns all nodes that match the given filter. Used by [Cache].
-func (w *World) getNodes(filter Filter) pointers[archNode] {
+func (w *World) getNodes(filter Filter) []*archNode {
 	nodes := []*archNode{}
 	ln := w.nodes.Len()
 	var i int32
@@ -1367,7 +1369,7 @@ func (w *World) getNodes(filter Filter) pointers[archNode] {
 		nodes = append(nodes, nd)
 	}
 
-	return pointers[archNode]{nodes}
+	return nodes
 }
 
 // Removes the archetype if it is empty, and has a relation to a dead target.

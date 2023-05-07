@@ -15,7 +15,7 @@ import (
 type Query struct {
 	filter         Filter           // The filter used by the query.
 	archetypes     archetypes       // The query's archetypes (can be all, unfiltered archetypes).
-	nodes          nodes            // The query's nodes
+	nodes          []*archNode      // The query's nodes
 	world          *World           // The [World].
 	access         *archetypeAccess // Access helper for the archetype currently being iterated.
 	entityIndex    uintptr          // Iteration index of the current [Entity] current archetype.
@@ -29,7 +29,7 @@ type Query struct {
 }
 
 // newQuery creates a new Filter
-func newQuery(world *World, filter Filter, lockBit uint8, nodes nodes, isFiltered bool) Query {
+func newQuery(world *World, filter Filter, lockBit uint8, nodes []*archNode, isFiltered bool) Query {
 	return Query{
 		filter:     filter,
 		world:      world,
@@ -221,10 +221,10 @@ func (q *Query) nextNode() bool {
 		return true
 	}
 
-	len := int32(q.nodes.Len()) - 1
+	len := int32(len(q.nodes)) - 1
 	for q.nodeIndex < len {
 		q.nodeIndex++
-		n := q.nodes.Get(q.nodeIndex)
+		n := q.nodes[q.nodeIndex]
 
 		if !n.IsActive {
 			continue
@@ -288,11 +288,11 @@ func (q *Query) countEntities() int {
 	// This is not necessary as batch queries get their count upon construction.
 	// if q.isBatch {}
 
-	len := int32(q.nodes.Len())
+	len := int32(len(q.nodes))
 	var count uint32 = 0
 	var i int32
 	for i = 0; i < len; i++ {
-		nd := q.nodes.Get(i)
+		nd := q.nodes[i]
 		if !nd.IsActive || (!q.isFiltered && !nd.Matches(q.filter)) {
 			continue
 		}

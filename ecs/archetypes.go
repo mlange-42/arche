@@ -1,11 +1,5 @@
 package ecs
 
-// Interface for an iterator over multiple archetypes.
-type nodes interface {
-	Get(index int32) *archNode
-	Len() int32
-}
-
 // Interface for an iterator over archetypes.
 type archetypes interface {
 	Get(index int32) *archetype
