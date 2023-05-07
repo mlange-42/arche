@@ -172,14 +172,17 @@ func (q *Query) Close() {
 
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
-	if !q.isBatch {
-		return q.nextNode()
+	if q.isBatch {
+		if q.nextArchetypeBatch() {
+			return true
+		}
+		q.world.closeQuery(q)
+		return false
 	}
-	if q.nextArchetypeBatch() {
-		return true
+	if q.isFiltered {
+		return q.nextNodeFiltered()
 	}
-	q.world.closeQuery(q)
-	return false
+	return q.nextNode()
 }
 
 func (q *Query) nextArchetypeBatch() bool {
@@ -228,7 +231,57 @@ func (q *Query) nextNode() bool {
 		if !n.IsActive {
 			continue
 		}
-		if !q.isFiltered && !n.Matches(q.filter) {
+		if !n.Matches(q.filter) {
+			continue
+		}
+
+		arches := n.Archetypes()
+
+		if !n.HasRelation {
+			// There should be at least one archetype.
+			// Otherwise, the node would be inactive.
+			arch := arches.Get(0)
+			archLen := arch.Len()
+			if archLen > 0 {
+				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
+				return true
+			}
+			continue
+		}
+
+		if rf, ok := q.filter.(*relationFilter); ok {
+			target := rf.Target
+			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
+				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
+				return true
+			}
+			continue
+		}
+
+		q.setArchetype(arches, nil, nil, -1, 0)
+		if q.nextArchetypeSimple() {
+			return true
+		}
+	}
+	q.archetypes = nil
+	q.world.closeQuery(q)
+	return false
+}
+
+func (q *Query) nextNodeFiltered() bool {
+	if q.archetypes != nil && q.nextArchetypeSimple() {
+		return true
+	}
+
+	len := int32(len(q.nodes)) - 1
+	for q.nodeIndex < len {
+		q.nodeIndex++
+		n := q.nodes[q.nodeIndex]
+
+		if !n.IsActive {
+			continue
+		}
+		if !n.Matches(q.filter) {
 			continue
 		}
 
