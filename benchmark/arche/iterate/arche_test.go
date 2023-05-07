@@ -9,7 +9,7 @@ import (
 	"github.com/mlange-42/arche/generic"
 )
 
-func runArcheIter(b *testing.B, count int) {
+func runIter(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -30,7 +30,7 @@ func runArcheIter(b *testing.B, count int) {
 	}
 }
 
-func runArcheGet(b *testing.B, count int) {
+func runGet(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -56,7 +56,7 @@ func runArcheGet(b *testing.B, count int) {
 	}
 }
 
-func runArcheGetEntity(b *testing.B, count int) {
+func runGetEntity(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -83,7 +83,7 @@ func runArcheGetEntity(b *testing.B, count int) {
 	}
 }
 
-func runArcheQuery(b *testing.B, count int) {
+func runQuery(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -103,7 +103,7 @@ func runArcheQuery(b *testing.B, count int) {
 	}
 }
 
-func runArcheQueryCached(b *testing.B, count int) {
+func runQueryCached(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -126,7 +126,7 @@ func runArcheQueryCached(b *testing.B, count int) {
 	}
 }
 
-func runArcheFilter(b *testing.B, count int) {
+func runFilter(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -146,7 +146,7 @@ func runArcheFilter(b *testing.B, count int) {
 	}
 }
 
-func runArcheQueryGeneric(b *testing.B, count int) {
+func runQueryGeneric(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -168,7 +168,7 @@ func runArcheQueryGeneric(b *testing.B, count int) {
 	}
 }
 
-func runArcheQuery5C(b *testing.B, count int) {
+func runQuery5C(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -195,7 +195,7 @@ func runArcheQuery5C(b *testing.B, count int) {
 	}
 }
 
-func runArcheQueryGeneric5C(b *testing.B, count int) {
+func runQueryGeneric5C(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
 
@@ -220,110 +220,110 @@ func runArcheQueryGeneric5C(b *testing.B, count int) {
 	}
 }
 
-func BenchmarkArcheIter_1_000(b *testing.B) {
-	runArcheIter(b, 1000)
+func BenchmarkIter_1_000(b *testing.B) {
+	runIter(b, 1000)
 }
 
-func BenchmarkArcheIter_10_000(b *testing.B) {
-	runArcheIter(b, 10000)
+func BenchmarkIter_10_000(b *testing.B) {
+	runIter(b, 10000)
 }
 
-func BenchmarkArcheIter_100_000(b *testing.B) {
-	runArcheIter(b, 100000)
+func BenchmarkIter_100_000(b *testing.B) {
+	runIter(b, 100000)
 }
 
-func BenchmarkArcheGet_1_000(b *testing.B) {
-	runArcheGet(b, 1000)
+func BenchmarkGet_1_000(b *testing.B) {
+	runGet(b, 1000)
 }
 
-func BenchmarkArcheGet_10_000(b *testing.B) {
-	runArcheGet(b, 10000)
+func BenchmarkGet_10_000(b *testing.B) {
+	runGet(b, 10000)
 }
 
-func BenchmarkArcheGet_100_000(b *testing.B) {
-	runArcheGet(b, 100000)
+func BenchmarkGet_100_000(b *testing.B) {
+	runGet(b, 100000)
 }
 
-func BenchmarkArcheGetEntity_1_000(b *testing.B) {
-	runArcheGetEntity(b, 1000)
+func BenchmarkGetEntity_1_000(b *testing.B) {
+	runGetEntity(b, 1000)
 }
 
-func BenchmarkArcheGetEntity_10_000(b *testing.B) {
-	runArcheGetEntity(b, 10000)
+func BenchmarkGetEntity_10_000(b *testing.B) {
+	runGetEntity(b, 10000)
 }
 
-func BenchmarkArcheGetEntity_100_000(b *testing.B) {
-	runArcheGetEntity(b, 100000)
+func BenchmarkGetEntity_100_000(b *testing.B) {
+	runGetEntity(b, 100000)
 }
 
-func BenchmarkArcheIterQueryID_1_000(b *testing.B) {
-	runArcheQuery(b, 1000)
+func BenchmarkIterQueryID_1_000(b *testing.B) {
+	runQuery(b, 1000)
 }
 
-func BenchmarkArcheIterQueryID_10_000(b *testing.B) {
-	runArcheQuery(b, 10000)
+func BenchmarkIterQueryID_10_000(b *testing.B) {
+	runQuery(b, 10000)
 }
 
-func BenchmarkArcheIterQueryID_100_000(b *testing.B) {
-	runArcheQuery(b, 100000)
+func BenchmarkIterQueryID_100_000(b *testing.B) {
+	runQuery(b, 100000)
 }
 
-func BenchmarkArcheIterQueryIDCached_1_000(b *testing.B) {
-	runArcheQueryCached(b, 1000)
+func BenchmarkIterQueryIDCached_1_000(b *testing.B) {
+	runQueryCached(b, 1000)
 }
 
-func BenchmarkArcheIterQueryIDCached_10_000(b *testing.B) {
-	runArcheQueryCached(b, 10000)
+func BenchmarkIterQueryIDCached_10_000(b *testing.B) {
+	runQueryCached(b, 10000)
 }
 
-func BenchmarkArcheIterQueryIDCached_100_000(b *testing.B) {
-	runArcheQueryCached(b, 100000)
+func BenchmarkIterQueryIDCached_100_000(b *testing.B) {
+	runQueryCached(b, 100000)
 }
 
-func BenchmarkArcheIterFilter_1_000(b *testing.B) {
-	runArcheFilter(b, 1000)
+func BenchmarkIterFilter_1_000(b *testing.B) {
+	runFilter(b, 1000)
 }
 
-func BenchmarkArcheIterFilter_10_000(b *testing.B) {
-	runArcheFilter(b, 10000)
+func BenchmarkIterFilter_10_000(b *testing.B) {
+	runFilter(b, 10000)
 }
 
-func BenchmarkArcheIterFilter_100_000(b *testing.B) {
-	runArcheFilter(b, 100000)
+func BenchmarkIterFilter_100_000(b *testing.B) {
+	runFilter(b, 100000)
 }
 
-func BenchmarkArcheIterQueryGeneric_1_000(b *testing.B) {
-	runArcheQueryGeneric(b, 1000)
+func BenchmarkIterQueryGeneric_1_000(b *testing.B) {
+	runQueryGeneric(b, 1000)
 }
 
-func BenchmarkArcheIterQueryGeneric_10_000(b *testing.B) {
-	runArcheQueryGeneric(b, 10000)
+func BenchmarkIterQueryGeneric_10_000(b *testing.B) {
+	runQueryGeneric(b, 10000)
 }
 
-func BenchmarkArcheIterQueryGeneric_100_000(b *testing.B) {
-	runArcheQueryGeneric(b, 100000)
+func BenchmarkIterQueryGeneric_100_000(b *testing.B) {
+	runQueryGeneric(b, 100000)
 }
 
-func BenchmarkArcheIterQueryID_5C_1_000(b *testing.B) {
-	runArcheQuery5C(b, 1000)
+func BenchmarkIterQueryID_5C_1_000(b *testing.B) {
+	runQuery5C(b, 1000)
 }
 
-func BenchmarkArcheIterQueryID_5C_10_000(b *testing.B) {
-	runArcheQuery5C(b, 10000)
+func BenchmarkIterQueryID_5C_10_000(b *testing.B) {
+	runQuery5C(b, 10000)
 }
 
-func BenchmarkArcheIterQueryID_5C_100_000(b *testing.B) {
-	runArcheQuery5C(b, 100000)
+func BenchmarkIterQueryID_5C_100_000(b *testing.B) {
+	runQuery5C(b, 100000)
 }
 
-func BenchmarkArcheIterQueryGeneric_5C_1_000(b *testing.B) {
-	runArcheQueryGeneric5C(b, 1000)
+func BenchmarkIterQueryGeneric_5C_1_000(b *testing.B) {
+	runQueryGeneric5C(b, 1000)
 }
 
-func BenchmarkArcheIterQueryGeneric_5C_10_000(b *testing.B) {
-	runArcheQueryGeneric5C(b, 10000)
+func BenchmarkIterQueryGeneric_5C_10_000(b *testing.B) {
+	runQueryGeneric5C(b, 10000)
 }
 
-func BenchmarkArcheIterQueryGeneric_5C_100_000(b *testing.B) {
-	runArcheQueryGeneric5C(b, 100000)
+func BenchmarkIterQueryGeneric_5C_100_000(b *testing.B) {
+	runQueryGeneric5C(b, 100000)
 }
