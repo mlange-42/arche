@@ -308,11 +308,10 @@ func runQuery1Of1kTargetsCached(b *testing.B, count int) {
 	rf := ecs.RelationFilter(ecs.All(posID, relID), target)
 	cf := world.Cache().Register(rf)
 	var filter ecs.Filter = &cf
+	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		b.StopTimer()
 		query := world.Query(filter)
-		b.StartTimer()
 		for query.Next() {
 			pos := (*c.TestStruct0)(query.Get(posID))
 			pos.Val = 1

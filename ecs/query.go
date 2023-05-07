@@ -191,9 +191,8 @@ func (q *Query) nextArchetypeBatch() bool {
 		if aLen > 0 {
 			q.access = &a.archetypeAccess
 			q.entityIndex = 0
-			if batch, ok := q.archetypes.(*batchArchetype); ok {
-				q.entityIndexMax = uintptr(batch.EndIndex) - 1
-			}
+			batch := q.archetypes.(*batchArchetype)
+			q.entityIndexMax = uintptr(batch.EndIndex) - 1
 			return true
 		}
 	}
