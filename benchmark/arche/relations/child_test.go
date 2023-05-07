@@ -1,6 +1,7 @@
 package relations
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
@@ -22,12 +23,16 @@ func benchmarkChild(b *testing.B, numParents int, numChildren int) {
 	}
 
 	spawnedChild := childMapper.NewQuery(numParents * numChildren)
-	cnt := 0
+	children := make([]ecs.Entity, 0, numParents*numChildren)
 	for spawnedChild.Next() {
-		child := spawnedChild.Get()
+		children = append(children, spawnedChild.Entity())
+	}
+	rand.Shuffle(len(children), func(i, j int) { children[i], children[j] = children[j], children[i] })
+
+	for i, e := range children {
+		child := childMapper.Get(e)
 		child.Value = 1
-		child.Parent = parents[cnt/numChildren]
-		cnt++
+		child.Parent = parents[i/numChildren]
 	}
 
 	parentFilter := generic.NewFilter1[ParentList]()
