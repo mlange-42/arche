@@ -8,7 +8,7 @@ import (
 )
 
 func TestArchetypePointers(t *testing.T) {
-	pt := archetypePointers{}
+	pt := pointers[archetype]{}
 
 	a1 := archetype{}
 	a2 := archetype{}

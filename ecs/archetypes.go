@@ -55,26 +55,26 @@ func (s *batchArchetype) Len() int32 {
 // Implements [archetypes].
 //
 // Used for tracking filter archetypes in [Cache].
-type archetypePointers struct {
-	pointers []*archetype
+type pointers[T any] struct {
+	pointers []*T
 }
 
 // Get returns the value at the given index.
-func (a *archetypePointers) Get(index int32) *archetype {
+func (a *pointers[T]) Get(index int32) *T {
 	return a.pointers[index]
 }
 
 // Add an element.
-func (a *archetypePointers) Add(arch *archetype) {
-	a.pointers = append(a.pointers, arch)
+func (a *pointers[T]) Add(elem *T) {
+	a.pointers = append(a.pointers, elem)
 }
 
 // Remove an element.
-func (a *archetypePointers) Remove(arch *archetype) {
+func (a *pointers[T]) Remove(elem *T) {
 	ln := len(a.pointers)
 	for i := 0; i < ln; i++ {
 		arch2 := a.pointers[i]
-		if arch == arch2 {
+		if elem == arch2 {
 			a.pointers[i], a.pointers[ln-1] = a.pointers[ln-1], nil
 			a.pointers = a.pointers[:ln-1]
 			return
@@ -83,6 +83,6 @@ func (a *archetypePointers) Remove(arch *archetype) {
 }
 
 // Len returns the current number of items in the paged array.
-func (a *archetypePointers) Len() int32 {
+func (a *pointers[T]) Len() int32 {
 	return int32(len(a.pointers))
 }

@@ -1311,7 +1311,7 @@ func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) 
 }
 
 // Returns all archetypes that match the given filter. Used by [Cache].
-func (w *World) getArchetypes(filter Filter) archetypePointers {
+func (w *World) getArchetypes(filter Filter) pointers[archetype] {
 	if cached, ok := filter.(*CachedFilter); ok {
 		return w.filterCache.get(cached).Archetypes
 	}
@@ -1344,7 +1344,7 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 		}
 	}
 
-	return archetypePointers{arches}
+	return pointers[archetype]{arches}
 }
 
 // Removes the archetype if it is empty, and has a relation to a dead target.
