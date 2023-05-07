@@ -15,7 +15,7 @@ import (
 type Query struct {
 	filter         Filter           // The filter used by the query.
 	archetypes     archetypes       // The query's archetypes (can be all, unfiltered archetypes).
-	nodes          nodes            // The query's nodes
+	nodes          []*archNode      // The query's nodes
 	world          *World           // The [World].
 	access         *archetypeAccess // Access helper for the archetype currently being iterated.
 	entityIndex    uintptr          // Iteration index of the current [Entity] current archetype.
@@ -25,10 +25,11 @@ type Query struct {
 	count          int32            // Cached entity count.
 	lockBit        uint8            // The bit that was used to lock the [World] when the query was created.
 	isFiltered     bool             // Whether the list of archetypes is already filtered.
+	isBatch        bool
 }
 
 // newQuery creates a new Filter
-func newQuery(world *World, filter Filter, lockBit uint8, nodes nodes, isFiltered bool) Query {
+func newQuery(world *World, filter Filter, lockBit uint8, nodes []*archNode, isFiltered bool) Query {
 	return Query{
 		filter:     filter,
 		world:      world,
@@ -37,20 +38,8 @@ func newQuery(world *World, filter Filter, lockBit uint8, nodes nodes, isFiltere
 		nodeIndex:  -1,
 		lockBit:    lockBit,
 		count:      -1,
-		isFiltered: false,
-	}
-}
-
-// newArchesQuery creates a new Filter
-func newArchesQuery(world *World, filter Filter, lockBit uint8, archetypes archetypes) Query {
-	return Query{
-		filter:     filter,
-		world:      world,
-		archetypes: archetypes,
-		archIndex:  -1,
-		lockBit:    lockBit,
-		count:      -1,
-		isFiltered: true,
+		isFiltered: isFiltered,
+		isBatch:    false,
 	}
 }
 
@@ -61,6 +50,7 @@ func newArchQuery(world *World, lockBit uint8, archetype *batchArchetype) Query 
 		return Query{
 			filter:         nil,
 			isFiltered:     true,
+			isBatch:        true,
 			world:          world,
 			archetypes:     archetype,
 			access:         &arch.archetypeAccess,
@@ -74,6 +64,7 @@ func newArchQuery(world *World, lockBit uint8, archetype *batchArchetype) Query 
 	return Query{
 		filter:     nil,
 		isFiltered: true,
+		isBatch:    true,
 		world:      world,
 		archetypes: archetype,
 		archIndex:  -1,
@@ -181,14 +172,17 @@ func (q *Query) Close() {
 
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
-	if !q.isFiltered {
-		return q.nextNode()
+	if q.isBatch {
+		if q.nextArchetypeBatch() {
+			return true
+		}
+		q.world.closeQuery(q)
+		return false
 	}
-	if q.nextArchetypeBatch() {
-		return true
+	if q.isFiltered {
+		return q.nextNodeFiltered()
 	}
-	q.world.closeQuery(q)
-	return false
+	return q.nextNode()
 }
 
 func (q *Query) nextArchetypeBatch() bool {
@@ -200,11 +194,8 @@ func (q *Query) nextArchetypeBatch() bool {
 		if aLen > 0 {
 			q.access = &a.archetypeAccess
 			q.entityIndex = 0
-			if batch, ok := q.archetypes.(*batchArchetype); ok {
-				q.entityIndexMax = uintptr(batch.EndIndex) - 1
-			} else {
-				q.entityIndexMax = uintptr(aLen) - 1
-			}
+			batch := q.archetypes.(*batchArchetype)
+			q.entityIndexMax = uintptr(batch.EndIndex) - 1
 			return true
 		}
 	}
@@ -232,24 +223,27 @@ func (q *Query) nextNode() bool {
 		return true
 	}
 
-	len := int32(q.nodes.Len()) - 1
+	len := int32(len(q.nodes)) - 1
 	for q.nodeIndex < len {
 		q.nodeIndex++
-		n := q.nodes.Get(q.nodeIndex)
-		arches := n.Archetypes()
+		n := q.nodes[q.nodeIndex]
 
-		if !n.Matches(q.filter) || (arches == nil || arches.Len() == 0) {
+		if !n.IsActive {
+			continue
+		}
+		if !n.Matches(q.filter) {
 			continue
 		}
 
+		arches := n.Archetypes()
+
 		if !n.HasRelation {
+			// There should be at least one archetype.
+			// Otherwise, the node would be inactive.
 			arch := arches.Get(0)
-			if arch.Len() > 0 {
-				q.archetypes = nil
-				q.archIndex = arch.index
-				q.access = &arch.archetypeAccess
-				q.entityIndex = 0
-				q.entityIndexMax = uintptr(arch.Len()) - 1
+			archLen := arch.Len()
+			if archLen > 0 {
+				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
 				return true
 			}
 			continue
@@ -258,20 +252,13 @@ func (q *Query) nextNode() bool {
 		if rf, ok := q.filter.(*relationFilter); ok {
 			target := rf.Target
 			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
-				q.archetypes = nil
-				q.archIndex = arch.index
-				q.access = &arch.archetypeAccess
-				q.entityIndex = 0
-				q.entityIndexMax = uintptr(arch.Len()) - 1
+				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
 				return true
 			}
 			continue
 		}
 
-		q.archetypes = arches
-		q.archIndex = -1
-		q.entityIndex = 0
-		q.entityIndexMax = 0
+		q.setArchetype(arches, nil, nil, -1, 0)
 		if q.nextArchetypeSimple() {
 			return true
 		}
@@ -279,6 +266,56 @@ func (q *Query) nextNode() bool {
 	q.archetypes = nil
 	q.world.closeQuery(q)
 	return false
+}
+
+func (q *Query) nextNodeFiltered() bool {
+	if q.archetypes != nil && q.nextArchetypeSimple() {
+		return true
+	}
+
+	len := int32(len(q.nodes)) - 1
+	for q.nodeIndex < len {
+		q.nodeIndex++
+		n := q.nodes[q.nodeIndex]
+		arches := n.Archetypes()
+
+		if !n.HasRelation {
+			// There should be at least one archetype.
+			// Otherwise, the node would be inactive.
+			arch := arches.Get(0)
+			archLen := arch.Len()
+			if archLen > 0 {
+				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
+				return true
+			}
+			continue
+		}
+
+		if rf, ok := q.filter.(*relationFilter); ok {
+			target := rf.Target
+			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
+				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
+				return true
+			}
+			continue
+		}
+
+		q.setArchetype(arches, nil, nil, -1, 0)
+		if q.nextArchetypeSimple() {
+			return true
+		}
+	}
+	q.archetypes = nil
+	q.world.closeQuery(q)
+	return false
+}
+
+func (q *Query) setArchetype(arches archetypes, arch *archetype, access *archetypeAccess, archIndex int32, maxIndex uintptr) {
+	q.archetypes = arches
+	q.archIndex = archIndex
+	q.access = access
+	q.entityIndex = 0
+	q.entityIndexMax = maxIndex
 }
 
 func (q *Query) stepArchetype(step uint32) (int, bool) {
@@ -290,23 +327,24 @@ func (q *Query) stepArchetype(step uint32) (int, bool) {
 }
 
 func (q *Query) countEntities() int {
-	if q.isFiltered {
-		len := int32(q.archetypes.Len())
-		var count uint32 = 0
-		var i int32
-		for i = 0; i < len; i++ {
-			a := q.archetypes.Get(i)
-			count += a.Len()
-		}
-		return int(count)
-	}
+	// This is not necessary as batch queries get their count upon construction.
+	// if q.isBatch {}
 
-	len := int32(q.nodes.Len())
+	len := int32(len(q.nodes))
 	var count uint32 = 0
 	var i int32
 	for i = 0; i < len; i++ {
-		nd := q.nodes.Get(i)
-		if !nd.IsActive || !nd.Matches(q.filter) {
+		nd := q.nodes[i]
+		if !nd.IsActive || (!q.isFiltered && !nd.Matches(q.filter)) {
+			continue
+		}
+
+		if !nd.HasRelation {
+			// There should be at least one archetype.
+			// Otherwise, the node would be inactive.
+			arches := nd.Archetypes()
+			arch := arches.Get(0)
+			count += arch.Len()
 			continue
 		}
 
@@ -323,7 +361,7 @@ func (q *Query) countEntities() int {
 		var j int32
 		for j = 0; j < nArch; j++ {
 			a := arches.Get(j)
-			if a.IsActive() && a.Matches(q.filter) {
+			if a.IsActive() {
 				count += a.Len()
 			}
 		}

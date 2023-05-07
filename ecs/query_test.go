@@ -153,6 +153,84 @@ func TestQueryCached(t *testing.T) {
 	q.Close()
 }
 
+func TestQueryCachedRelation(t *testing.T) {
+	w := NewWorld()
+
+	relID := ComponentID[testRelationA](&w)
+
+	target1 := w.NewEntity()
+	target2 := w.NewEntity()
+
+	relFilter := RelationFilter(All(relID), target1)
+	cf := w.Cache().Register(relFilter)
+
+	q := w.Query(&cf)
+	assert.Equal(t, 0, q.Count())
+	cnt := 0
+	for q.Next() {
+		cnt++
+	}
+	assert.Equal(t, 0, cnt)
+
+	NewBuilder(&w, relID).WithRelation(relID).NewBatch(10, target1)
+
+	q = w.Query(&cf)
+	assert.Equal(t, 10, q.Count())
+	cnt = 0
+	for q.Next() {
+		cnt++
+	}
+	assert.Equal(t, 10, cnt)
+
+	relFilter = RelationFilter(All(relID), target2)
+	cf = w.Cache().Register(relFilter)
+
+	q = w.Query(&cf)
+	assert.Equal(t, 0, q.Count())
+	cnt = 0
+	for q.Next() {
+		cnt++
+	}
+	assert.Equal(t, 0, cnt)
+}
+
+func TestQueryEmptyNode(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
+	relID := ComponentID[testRelationA](&w)
+
+	target := w.NewEntity(posID)
+
+	assert.False(t, w.nodes.Get(2).IsActive)
+
+	builder := NewBuilder(&w, relID).WithRelation(relID)
+	child := builder.New(target)
+
+	w.RemoveEntity(child)
+	w.RemoveEntity(target)
+
+	assert.True(t, w.nodes.Get(2).HasRelation)
+	assert.True(t, w.nodes.Get(2).IsActive)
+	assert.Equal(t, 1, int(w.nodes.Get(2).archetypes.Len()))
+
+	w.NewEntity(velID)
+
+	q := w.Query(All())
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
+	cf := w.Cache().Register(All())
+	q = w.Query(&cf)
+	assert.Equal(t, 1, q.Count())
+	cnt := 0
+	for q.Next() {
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
+}
+
 func TestQueryCount(t *testing.T) {
 	w := NewWorld()
 
@@ -173,7 +251,11 @@ func TestQueryCount(t *testing.T) {
 
 	q := w.Query(All(posID))
 	assert.Equal(t, 4, q.Count())
-	assert.Equal(t, 4, q.Count())
+	q.Close()
+
+	q = NewBuilder(&w, posID, rotID).NewQuery(25)
+	assert.Equal(t, 25, q.Count())
+	q.Close()
 }
 
 type testFilter struct{}

@@ -71,6 +71,7 @@ type World struct {
 	archetypes     pagedSlice[archetype] // The archetypes.
 	nodes          pagedSlice[archNode]  // The archetype graph.
 	nodeData       pagedSlice[nodeData]  // The archetype graph's data.
+	nodePointers   []*archNode
 	relationNodes  []*archNode           // Archetype nodes that have an entity relation.
 	locks          lockMask              // World locks.
 	registry       componentRegistry[ID] // Component registry.
@@ -370,10 +371,10 @@ func (w *World) removeEntities(filter Filter) int {
 	var count uintptr
 
 	arches := w.getArchetypes(filter)
-	numArches := arches.Len()
+	numArches := int32(len(arches))
 	var i int32
 	for i = 0; i < numArches; i++ {
-		arch := arches.Get(i)
+		arch := arches[i]
 
 		len := uintptr(arch.Len())
 		count += len
@@ -649,15 +650,15 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 	}
 
 	arches := w.getArchetypes(filter)
-	ln := arches.Len()
-	lengths := make([]uint32, arches.Len())
+	ln := int32(len(arches))
+	lengths := make([]uint32, ln)
 	var i int32
 	for i = 0; i < ln; i++ {
-		lengths[i] = arches.Get(i).Len()
+		lengths[i] = arches[i].Len()
 	}
 
 	for i = 0; i < ln; i++ {
-		arch := arches.Get(i)
+		arch := arches[i]
 		archLen := lengths[i]
 
 		if archLen == 0 {
@@ -807,15 +808,15 @@ func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback
 	}
 
 	arches := w.getArchetypes(filter)
-	ln := arches.Len()
-	lengths := make([]uint32, arches.Len())
+	ln := int32(len(arches))
+	lengths := make([]uint32, ln)
 	var i int32
 	for i = 0; i < ln; i++ {
-		lengths[i] = arches.Get(i).Len()
+		lengths[i] = arches[i].Len()
 	}
 
 	for i = 0; i < ln; i++ {
-		arch := arches.Get(i)
+		arch := arches[i]
 		archLen := lengths[i]
 
 		if archLen == 0 {
@@ -945,11 +946,11 @@ func (w *World) Reset() {
 func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(*CachedFilter); ok {
-		archetypes := &w.filterCache.get(cached).Archetypes
-		return newArchesQuery(w, cached, l, archetypes)
+		nodes := w.filterCache.get(cached).Nodes
+		return newQuery(w, cached.filter, l, nodes, true)
 	}
 
-	return newQuery(w, filter, l, &w.nodes, false)
+	return newQuery(w, filter, l, w.nodePointers, false)
 }
 
 // Resources of the world.
@@ -963,8 +964,8 @@ func (w *World) Resources() *Resources {
 //
 // See [Cache] for details on filter caching.
 func (w *World) Cache() *Cache {
-	if w.filterCache.getArchetypes == nil {
-		w.filterCache.getArchetypes = w.getArchetypes
+	if w.filterCache.getNodes == nil {
+		w.filterCache.getNodes = w.getNodes
 	}
 	return &w.filterCache
 }
@@ -1288,6 +1289,9 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
 	w.nodes.Add(newArchNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, capInc, types))
 	nd := w.nodes.Get(w.nodes.Len() - 1)
 	w.relationNodes = append(w.relationNodes, nd)
+	w.nodePointers = append(w.nodePointers, nd)
+
+	w.filterCache.addNode(nd)
 	return nd
 }
 
@@ -1305,23 +1309,27 @@ func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) 
 		arch.Init(node, archIndex, forStorage, target)
 		node.SetArchetype(arch)
 	}
-
-	w.filterCache.addArchetype(arch)
 	return arch
 }
 
 // Returns all archetypes that match the given filter. Used by [Cache].
-func (w *World) getArchetypes(filter Filter) archetypePointers {
+func (w *World) getArchetypes(filter Filter) []*archetype {
+	arches := []*archetype{}
+
+	var nodes []*archNode
+	filtered := false
 	if cached, ok := filter.(*CachedFilter); ok {
-		return w.filterCache.get(cached).Archetypes
+		nodes = w.filterCache.get(cached).Nodes
+		filtered = true
+	} else {
+		nodes = w.nodePointers
 	}
 
-	arches := []*archetype{}
-	ln := w.nodes.Len()
+	ln := int32(len(nodes))
 	var i int32
 	for i = 0; i < ln; i++ {
-		nd := w.nodes.Get(i)
-		if !nd.IsActive || !nd.Matches(filter) {
+		nd := nodes[i]
+		if !nd.IsActive || (!filtered && !nd.Matches(filter)) {
 			continue
 		}
 
@@ -1344,7 +1352,24 @@ func (w *World) getArchetypes(filter Filter) archetypePointers {
 		}
 	}
 
-	return archetypePointers{arches}
+	return arches
+}
+
+// Returns all nodes that match the given filter. Used by [Cache].
+func (w *World) getNodes(filter Filter) []*archNode {
+	nodes := []*archNode{}
+	ln := w.nodes.Len()
+	var i int32
+	for i = 0; i < ln; i++ {
+		nd := w.nodes.Get(i)
+		if !nd.IsActive || !nd.Matches(filter) {
+			continue
+		}
+
+		nodes = append(nodes, nd)
+	}
+
+	return nodes
 }
 
 // Removes the archetype if it is empty, and has a relation to a dead target.
@@ -1372,7 +1397,6 @@ func (w *World) cleanupArchetypes(target Entity) {
 // Removes/da-activates a relation archetype.
 func (w *World) removeArchetype(arch *archetype) {
 	arch.node.RemoveArchetype(arch)
-	w.filterCache.removeArchetype(arch)
 }
 
 // componentID returns the ID for a component type, and registers it if not already registered.

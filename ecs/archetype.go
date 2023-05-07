@@ -20,11 +20,6 @@ type archetypeAccess struct {
 	RelationComponent int8
 }
 
-// Matches checks if the archetype matches the given mask.
-func (a *archetype) Matches(f Filter) bool {
-	return f.Matches(a.Mask, &a.RelationTarget)
-}
-
 // GetEntity returns the entity at the given index
 func (a *archetypeAccess) GetEntity(index uintptr) Entity {
 	return *(*Entity)(unsafe.Add(a.entityPointer, entitySize*index))
