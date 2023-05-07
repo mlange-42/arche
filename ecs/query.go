@@ -38,7 +38,7 @@ func newQuery(world *World, filter Filter, lockBit uint8, nodes []*archNode, isF
 		nodeIndex:  -1,
 		lockBit:    lockBit,
 		count:      -1,
-		isFiltered: false,
+		isFiltered: isFiltered,
 		isBatch:    false,
 	}
 }
