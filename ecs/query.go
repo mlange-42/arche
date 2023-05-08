@@ -254,7 +254,7 @@ func (q *Query) nextNodeFilter() bool {
 			arch := arches.Get(0)
 			archLen := arch.Len()
 			if archLen > 0 {
-				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
 				return true
 			}
 			continue
@@ -263,13 +263,13 @@ func (q *Query) nextNodeFilter() bool {
 		if rf, ok := q.filter.(*relationFilter); ok {
 			target := rf.Target
 			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
-				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
 				return true
 			}
 			continue
 		}
 
-		q.setArchetype(arches, nil, nil, -1, 0)
+		q.setArchetype(arches, nil, -1, 0)
 		if q.nextArchetypeSimple() {
 			return true
 		}
@@ -292,7 +292,7 @@ func (q *Query) nextNodeAll() bool {
 			arch := arches.Get(0)
 			archLen := arch.Len()
 			if archLen > 0 {
-				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
 				return true
 			}
 			continue
@@ -301,13 +301,13 @@ func (q *Query) nextNodeAll() bool {
 		if rf, ok := q.filter.(*relationFilter); ok {
 			target := rf.Target
 			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
-				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
 				return true
 			}
 			continue
 		}
 
-		q.setArchetype(arches, nil, nil, -1, 0)
+		q.setArchetype(arches, nil, -1, 0)
 		if q.nextArchetypeSimple() {
 			return true
 		}
@@ -317,7 +317,7 @@ func (q *Query) nextNodeAll() bool {
 	return false
 }
 
-func (q *Query) setArchetype(arches archetypes, arch *archetype, access *archetypeAccess, archIndex int32, maxIndex uintptr) {
+func (q *Query) setArchetype(arches archetypes, access *archetypeAccess, archIndex int32, maxIndex uintptr) {
 	q.archetypes = arches
 	q.archIndex = archIndex
 	q.access = access
