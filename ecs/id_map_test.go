@@ -139,3 +139,23 @@ func BenchmarkIdMapping_HashMap(b *testing.B) {
 	}
 	_ = ptr
 }
+
+func BenchmarkIdMapping_HashMapEntity(b *testing.B) {
+	b.StopTimer()
+
+	entities := [MaskTotalBits]Entity{}
+	m := make(map[Entity]*Entity, MaskTotalBits)
+
+	for i := 0; i < MaskTotalBits; i++ {
+		entities[i] = Entity{eid(i), 0}
+		m[Entity{eid(i), 0}] = &entities[i]
+	}
+
+	b.StartTimer()
+
+	var ptr *Entity = nil
+	for i := 0; i < b.N; i++ {
+		ptr = m[Entity{eid(i % MaskTotalBits), 0}]
+	}
+	_ = ptr
+}
