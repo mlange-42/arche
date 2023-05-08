@@ -24,8 +24,8 @@ type Query struct {
 	nodeIndex      int32            // Iteration index of the current archetype.
 	count          int32            // Cached entity count.
 	lockBit        uint8            // The bit that was used to lock the [World] when the query was created.
-	isFiltered     bool             // Whether the list of archetypes is already filtered.
-	isBatch        bool
+	isFiltered     bool             // Whether the list of archetype nodes is already filtered.
+	isBatch        bool             // Marks the query as a query over a batch iteration.
 }
 
 // newQuery creates a new Filter
@@ -191,8 +191,7 @@ func (q *Query) nextArchetypeBatch() bool {
 	for q.archIndex < len {
 		q.archIndex++
 		a := q.archetypes.Get(q.archIndex)
-		aLen := a.Len()
-		if aLen > 0 {
+		if a.Len() > 0 {
 			q.access = &a.archetypeAccess
 			q.entityIndex = 0
 			batch := q.archetypes.(*batchArchetype)
@@ -254,7 +253,7 @@ func (q *Query) nextNodeFilter() bool {
 			arch := arches.Get(0)
 			archLen := arch.Len()
 			if archLen > 0 {
-				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
 				return true
 			}
 			continue
@@ -263,13 +262,13 @@ func (q *Query) nextNodeFilter() bool {
 		if rf, ok := q.filter.(*relationFilter); ok {
 			target := rf.Target
 			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
-				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
 				return true
 			}
 			continue
 		}
 
-		q.setArchetype(arches, nil, nil, -1, 0)
+		q.setArchetype(arches, nil, -1, 0)
 		if q.nextArchetypeSimple() {
 			return true
 		}
@@ -292,7 +291,7 @@ func (q *Query) nextNodeAll() bool {
 			arch := arches.Get(0)
 			archLen := arch.Len()
 			if archLen > 0 {
-				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch.index, uintptr(archLen)-1)
 				return true
 			}
 			continue
@@ -301,13 +300,13 @@ func (q *Query) nextNodeAll() bool {
 		if rf, ok := q.filter.(*relationFilter); ok {
 			target := rf.Target
 			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
-				q.setArchetype(nil, arch, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch.index, uintptr(arch.Len())-1)
 				return true
 			}
 			continue
 		}
 
-		q.setArchetype(arches, nil, nil, -1, 0)
+		q.setArchetype(arches, nil, -1, 0)
 		if q.nextArchetypeSimple() {
 			return true
 		}
@@ -317,7 +316,7 @@ func (q *Query) nextNodeAll() bool {
 	return false
 }
 
-func (q *Query) setArchetype(arches archetypes, arch *archetype, access *archetypeAccess, archIndex int32, maxIndex uintptr) {
+func (q *Query) setArchetype(arches archetypes, access *archetypeAccess, archIndex int32, maxIndex uintptr) {
 	q.archetypes = arches
 	q.archIndex = archIndex
 	q.access = access
@@ -368,9 +367,7 @@ func (q *Query) countEntities() int {
 		var j int32
 		for j = 0; j < nArch; j++ {
 			a := arches.Get(j)
-			if a.IsActive() {
-				count += a.Len()
-			}
+			count += a.Len()
 		}
 	}
 	return int(count)
