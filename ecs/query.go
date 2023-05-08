@@ -173,16 +173,17 @@ func (q *Query) Close() {
 // nextArchetype proceeds to the next archetype, and returns whether this was successful/possible.
 func (q *Query) nextArchetype() bool {
 	if q.isBatch {
-		if q.nextArchetypeBatch() {
-			return true
-		}
-		q.world.closeQuery(q)
-		return false
+		return q.nextBatch()
 	}
-	if q.isFiltered {
-		return q.nextNodeFiltered()
+	return q.nextNodeOrArchetype()
+}
+
+func (q *Query) nextBatch() bool {
+	if q.nextArchetypeBatch() {
+		return true
 	}
-	return q.nextNode()
+	q.world.closeQuery(q)
+	return false
 }
 
 func (q *Query) nextArchetypeBatch() bool {
@@ -218,11 +219,21 @@ func (q *Query) nextArchetypeSimple() bool {
 	return false
 }
 
-func (q *Query) nextNode() bool {
+func (q *Query) nextNodeOrArchetype() bool {
 	if q.archetypes != nil && q.nextArchetypeSimple() {
 		return true
 	}
+	return q.nextNode()
+}
 
+func (q *Query) nextNode() bool {
+	if q.isFiltered {
+		return q.nextNodeAll()
+	}
+	return q.nextNodeFilter()
+}
+
+func (q *Query) nextNodeFilter() bool {
 	len := int32(len(q.nodes)) - 1
 	for q.nodeIndex < len {
 		q.nodeIndex++
@@ -268,11 +279,7 @@ func (q *Query) nextNode() bool {
 	return false
 }
 
-func (q *Query) nextNodeFiltered() bool {
-	if q.archetypes != nil && q.nextArchetypeSimple() {
-		return true
-	}
-
+func (q *Query) nextNodeAll() bool {
 	len := int32(len(q.nodes)) - 1
 	for q.nodeIndex < len {
 		q.nodeIndex++
