@@ -24,8 +24,8 @@ type Query struct {
 	nodeIndex      int32            // Iteration index of the current archetype.
 	count          int32            // Cached entity count.
 	lockBit        uint8            // The bit that was used to lock the [World] when the query was created.
-	isFiltered     bool             // Whether the list of archetypes is already filtered.
-	isBatch        bool
+	isFiltered     bool             // Whether the list of archetype nodes is already filtered.
+	isBatch        bool             // Marks the query as a query over a batch iteration.
 }
 
 // newQuery creates a new Filter
