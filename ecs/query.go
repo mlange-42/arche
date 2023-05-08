@@ -191,8 +191,7 @@ func (q *Query) nextArchetypeBatch() bool {
 	for q.archIndex < len {
 		q.archIndex++
 		a := q.archetypes.Get(q.archIndex)
-		aLen := a.Len()
-		if aLen > 0 {
+		if a.Len() > 0 {
 			q.access = &a.archetypeAccess
 			q.entityIndex = 0
 			batch := q.archetypes.(*batchArchetype)
@@ -368,9 +367,7 @@ func (q *Query) countEntities() int {
 		var j int32
 		for j = 0; j < nArch; j++ {
 			a := arches.Get(j)
-			if a.IsActive() {
-				count += a.Len()
-			}
+			count += a.Len()
 		}
 	}
 	return int(count)
