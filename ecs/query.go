@@ -321,7 +321,7 @@ func (q *Query) setArchetype(arches archetypes, access *archetypeAccess, archInd
 	q.archIndex = archIndex
 	q.access = access
 	q.entityIndex = 0
-	q.entityIndexMax = uint32(maxIndex)
+	q.entityIndexMax = maxIndex
 }
 
 func (q *Query) stepArchetype(step uint32) (int, bool) {

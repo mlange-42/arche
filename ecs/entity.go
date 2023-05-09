@@ -9,7 +9,7 @@ var entityType = reflect.TypeOf(Entity{})
 var entitySize uint32 = uint32(entityType.Size())
 
 // Size of an [entityIndex] in memory.
-var entityIndexSize = reflect.TypeOf(entityIndex{}).Size()
+var entityIndexSize uint32 = uint32(reflect.TypeOf(entityIndex{}).Size())
 
 // Entity identifier.
 // Holds an entity ID and it's generation for recycling.

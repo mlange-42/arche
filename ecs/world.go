@@ -712,7 +712,7 @@ func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, re
 	oldArch.Reset()
 	w.cleanupArchetype(oldArch)
 
-	return arch, uint32(startIdx)
+	return arch, startIdx
 }
 
 // getRelation returns the target entity for an entity relation.
@@ -1174,7 +1174,7 @@ func (w *World) createEntity(arch *archetype) Entity {
 // createEntity creates multiple Entities and adds them to the given archetype.
 func (w *World) createEntities(arch *archetype, count uint32) {
 	startIdx := arch.Len()
-	arch.AllocN(uint32(count))
+	arch.AllocN(count)
 
 	len := len(w.entities)
 	required := len + int(count) - w.entityPool.Available()
