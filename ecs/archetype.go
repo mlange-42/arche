@@ -9,7 +9,7 @@ import (
 )
 
 // layoutSize is the size of an archetype column layout in bytes.
-var layoutSize = unsafe.Sizeof(layout{})
+var layoutSize uint32 = uint32(unsafe.Sizeof(layout{}))
 
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
@@ -21,12 +21,12 @@ type archetypeAccess struct {
 }
 
 // GetEntity returns the entity at the given index
-func (a *archetypeAccess) GetEntity(index uintptr) Entity {
+func (a *archetypeAccess) GetEntity(index uint32) Entity {
 	return *(*Entity)(unsafe.Add(a.entityPointer, entitySize*index))
 }
 
 // Get returns the component with the given ID at the given index
-func (a *archetypeAccess) Get(index uintptr, id ID) unsafe.Pointer {
+func (a *archetypeAccess) Get(index uint32, id ID) unsafe.Pointer {
 	return a.getLayout(id).Get(index)
 }
 
@@ -42,17 +42,17 @@ func (a *archetypeAccess) HasRelation() bool {
 
 // GetLayout returns the column layout for a component.
 func (a *archetypeAccess) getLayout(id ID) *layout {
-	return (*layout)(unsafe.Add(a.basePointer, layoutSize*uintptr(id)))
+	return (*layout)(unsafe.Add(a.basePointer, layoutSize*uint32(id)))
 }
 
 // layout specification of a component column.
 type layout struct {
 	pointer  unsafe.Pointer // Pointer to the first element in the component column.
-	itemSize uintptr        // Component/step size
+	itemSize uint32         // Component/step size
 }
 
 // Get returns a pointer to the item at the given index.
-func (l *layout) Get(index uintptr) unsafe.Pointer {
+func (l *layout) Get(index uint32) unsafe.Pointer {
 	if l.pointer == nil {
 		return nil
 	}
@@ -96,7 +96,7 @@ func (a *archetype) Init(node *archNode, index int32, forStorage bool, relation 
 		a.buffers[i] = reflect.New(reflect.ArrayOf(cap, tp)).Elem()
 		a.layouts[id] = layout{
 			a.buffers[i].Addr().UnsafePointer(),
-			size,
+			uint32(size),
 		}
 		a.indices.Set(id, uint32(i))
 	}
@@ -117,8 +117,8 @@ func (a *archetype) Init(node *archNode, index int32, forStorage bool, relation 
 }
 
 // Add adds an entity with optionally zeroed components to the archetype
-func (a *archetype) Alloc(entity Entity) uintptr {
-	idx := uintptr(a.len)
+func (a *archetype) Alloc(entity Entity) uint32 {
+	idx := a.len
 	a.extend(1)
 	a.addEntity(idx, &entity)
 	a.len++
@@ -132,11 +132,11 @@ func (a *archetype) AllocN(count uint32) {
 }
 
 // Add adds an entity with components to the archetype.
-func (a *archetype) Add(entity Entity, components ...Component) uintptr {
+func (a *archetype) Add(entity Entity, components ...Component) uint32 {
 	if len(components) != len(a.node.Ids) {
 		panic("Invalid number of components")
 	}
-	idx := uintptr(a.len)
+	idx := a.len
 
 	a.extend(1)
 	a.addEntity(idx, &entity)
@@ -147,7 +147,7 @@ func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 			continue
 		}
 		src := reflect.ValueOf(c.Comp).UnsafePointer()
-		dst := a.Get(uintptr(idx), c.ID)
+		dst := a.Get(idx, c.ID)
 		a.copy(src, dst, size)
 	}
 	a.len++
@@ -158,10 +158,10 @@ func (a *archetype) Add(entity Entity, components ...Component) uintptr {
 //
 // Performs a swap-remove and reports whether a swap was necessary
 // (i.e. not the last entity that was removed).
-func (a *archetype) Remove(index uintptr) bool {
+func (a *archetype) Remove(index uint32) bool {
 	swapped := a.removeEntity(index)
 
-	old := uintptr(a.len - 1)
+	old := a.len - 1
 
 	if index != old {
 		for _, id := range a.node.Ids {
@@ -182,14 +182,14 @@ func (a *archetype) Remove(index uintptr) bool {
 }
 
 // ZeroAll resets a block of storage in all buffers.
-func (a *archetype) ZeroAll(index uintptr) {
+func (a *archetype) ZeroAll(index uint32) {
 	for _, id := range a.node.Ids {
 		a.Zero(index, id)
 	}
 }
 
 // ZeroAll resets a block of storage in one buffer.
-func (a *archetype) Zero(index uintptr, id ID) {
+func (a *archetype) Zero(index uint32, id ID) {
 	lay := a.getLayout(id)
 	size := lay.itemSize
 	if size == 0 {
@@ -200,12 +200,12 @@ func (a *archetype) Zero(index uintptr, id ID) {
 }
 
 // SetEntity overwrites an entity
-func (a *archetype) SetEntity(index uintptr, entity Entity) {
+func (a *archetype) SetEntity(index uint32, entity Entity) {
 	a.addEntity(index, &entity)
 }
 
 // Set overwrites a component with the data behind the given pointer
-func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
+func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
 	lay := a.getLayout(id)
 	dst := a.Get(index, id)
 	size := lay.itemSize
@@ -220,7 +220,7 @@ func (a *archetype) Set(index uintptr, id ID, comp interface{}) unsafe.Pointer {
 }
 
 // SetPointer overwrites a component with the data behind the given pointer
-func (a *archetype) SetPointer(index uintptr, id ID, comp unsafe.Pointer) unsafe.Pointer {
+func (a *archetype) SetPointer(index uint32, id ID, comp unsafe.Pointer) unsafe.Pointer {
 	lay := a.getLayout(id)
 	dst := a.Get(index, id)
 	size := lay.itemSize
@@ -315,7 +315,7 @@ func (a *archetype) UpdateStats(node *stats.NodeStats, stats *stats.ArchetypeSta
 }
 
 // copy from one pointer to another.
-func (a *archetype) copy(src, dst unsafe.Pointer, itemSize uintptr) {
+func (a *archetype) copy(src, dst unsafe.Pointer, itemSize uint32) {
 	dstSlice := (*[math.MaxInt32]byte)(dst)[:itemSize:itemSize]
 	srcSlice := (*[math.MaxInt32]byte)(src)[:itemSize:itemSize]
 	copy(dstSlice, srcSlice)
@@ -348,7 +348,7 @@ func (a *archetype) extend(by uint32) {
 }
 
 // Adds an entity at the given index. Does not extend the entity buffer.
-func (a *archetype) addEntity(index uintptr, entity *Entity) {
+func (a *archetype) addEntity(index uint32, entity *Entity) {
 	dst := unsafe.Add(a.entityPointer, entitySize*index)
 	src := unsafe.Pointer(entity)
 	a.copy(src, dst, entitySize)
@@ -356,8 +356,8 @@ func (a *archetype) addEntity(index uintptr, entity *Entity) {
 
 // removeEntity removes an entity from tne archetype.
 // Components need to be removed separately.
-func (a *archetype) removeEntity(index uintptr) bool {
-	old := uintptr(a.len - 1)
+func (a *archetype) removeEntity(index uint32) bool {
+	old := a.len - 1
 
 	if index == old {
 		return false

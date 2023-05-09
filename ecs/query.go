@@ -90,12 +90,12 @@ func (q *Query) Has(comp ID) bool {
 
 // Get returns the pointer to the given component at the iterator's position.
 func (q *Query) Get(comp ID) unsafe.Pointer {
-	return q.access.Get(uintptr(q.entityIndex), comp)
+	return q.access.Get(q.entityIndex, comp)
 }
 
 // Entity returns the entity at the iterator's position.
 func (q *Query) Entity() Entity {
-	return q.access.GetEntity(uintptr(q.entityIndex))
+	return q.access.GetEntity(q.entityIndex)
 }
 
 // Relation returns the target entity for an entity relation.

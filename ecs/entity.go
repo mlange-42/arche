@@ -6,7 +6,7 @@ import "reflect"
 var entityType = reflect.TypeOf(Entity{})
 
 // Size of an [Entity] in memory, in bytes.
-var entitySize = entityType.Size()
+var entitySize uint32 = uint32(entityType.Size())
 
 // Size of an [entityIndex] in memory.
 var entityIndexSize = reflect.TypeOf(entityIndex{}).Size()
@@ -41,5 +41,5 @@ func (e Entity) IsZero() bool {
 // entityIndex indicates where an entity is currently stored.
 type entityIndex struct {
 	arch  *archetype // Entity's current archetype
-	index uintptr    // Entity's current index in the archetype
+	index uint32     // Entity's current index in the archetype
 }
