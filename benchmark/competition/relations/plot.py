@@ -1,4 +1,4 @@
-"""Plots benchmarking results of Arche vs. AoS and AoP"""
+"""Plots benchmarking results for ways to represent entity relations"""
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
@@ -6,31 +6,10 @@ from matplotlib import pyplot as plt
 if __name__ == "__main__":
     data = pd.read_csv("results.csv", sep=";")
 
-    model_names = {
-        "Arche": "Arche",
-        "ArrOfPointers": "AoP",
-        "ArrOfStructs": "AoS",
-        "LinkedList": "LL",
-    }
-
-    data["Model"] = ""
-    data["Entities"] = 0
-    data["Bytes"] = 0
-
-    data["Benchmark"] = data["Benchmark"].str.replace("Benchmark", "")
-    for index, row in data.iterrows():
-        parts = row["Benchmark"].split("_")
-        data.loc[index, "Model"] = model_names[parts[0]]
-        data.loc[index, "Entities"] = int(parts[2]) * 1000
-        data.loc[index, "Bytes"] = int(parts[1].replace("B", ""))
-
-    data["Time"] = data["TotalTime"] / data["Entities"]
-
-    data = data[data["Model"] != "LL"]
-
     models = np.unique(data["Model"])
     entities = np.unique(data["Entities"])
-    bts = np.unique(data["Bytes"])
+    parents = np.unique(data["Parents"])
+    children = np.unique(data["Children"])
 
     colors = {
         "Arche": "black",
@@ -38,11 +17,11 @@ if __name__ == "__main__":
         "AoP": "blue",
         "LL": "grey",
     }
+    
     linesEntities = {
         1000: ("dotted", 1.0),
         10000: ("dashed", 1.2),
         100000: ("solid", 1.5),
-        # 250000: ("-.", 1.0),
     }
 
     plt.rcParams["svg.fonttype"] = "none"
@@ -61,11 +40,9 @@ if __name__ == "__main__":
     for model in reversed(models):
         for ent in entities:
             extr = data[(data["Model"] == model) & (data["Entities"] == ent)]
-            extr = extr.groupby("Bytes").mean()
-
             line = linesEntities[ent]
             ax.plot(
-                extr.index,
+                extr["Bytes"],
                 extr["Time"],
                 linestyle=line[0],
                 linewidth=line[1],
