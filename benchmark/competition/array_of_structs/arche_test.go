@@ -169,10 +169,6 @@ func BenchmarkArche_16B_100_000(b *testing.B) {
 	runArche16B(b, 100000)
 }
 
-func BenchmarkArche_16B_250_000(b *testing.B) {
-	runArche16B(b, 250000)
-}
-
 func BenchmarkArche_32B_1_000(b *testing.B) {
 	runArche32B(b, 1000)
 }
@@ -183,10 +179,6 @@ func BenchmarkArche_32B_10_000(b *testing.B) {
 
 func BenchmarkArche_32B_100_000(b *testing.B) {
 	runArche32B(b, 100000)
-}
-
-func BenchmarkArche_32B_250_000(b *testing.B) {
-	runArche32B(b, 250000)
 }
 
 func BenchmarkArche_64B_1_000(b *testing.B) {
@@ -201,10 +193,6 @@ func BenchmarkArche_64B_100_000(b *testing.B) {
 	runArche64B(b, 100000)
 }
 
-func BenchmarkArche_64B_250_000(b *testing.B) {
-	runArche64B(b, 250000)
-}
-
 func BenchmarkArche_128B_1_000(b *testing.B) {
 	runArche128B(b, 1000)
 }
@@ -217,10 +205,6 @@ func BenchmarkArche_128B_100_000(b *testing.B) {
 	runArche128B(b, 100000)
 }
 
-func BenchmarkArche_128B_250_000(b *testing.B) {
-	runArche128B(b, 250000)
-}
-
 func BenchmarkArche_256B_1_000(b *testing.B) {
 	runArche256B(b, 1000)
 }
@@ -231,8 +215,4 @@ func BenchmarkArche_256B_10_000(b *testing.B) {
 
 func BenchmarkArche_256B_100_000(b *testing.B) {
 	runArche256B(b, 100000)
-}
-
-func BenchmarkArche_256B_250_000(b *testing.B) {
-	runArche256B(b, 250000)
 }

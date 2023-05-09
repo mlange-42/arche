@@ -51,6 +51,7 @@
 * Generic filters are locked when registered for caching (#241)
 * Adds benchmarks for getting and setting entity relations (#259)
 * Arche now has an official logo (#273)
+* Use for loop with counter in AoS competition benchmarks, to allow for pointers (284)
 
 ## [[v0.7.1]](https://github.com/mlange-42/arche/compare/v0.7.0...v0.7.1)
 
