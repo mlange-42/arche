@@ -75,6 +75,10 @@ func BenchmarkRelationChild_1k_100_x_10(b *testing.B) {
 	benchmarkChild(b, 100, 10)
 }
 
+func BenchmarkRelationChild_1k_1000_x_1(b *testing.B) {
+	benchmarkChild(b, 1000, 1)
+}
+
 func BenchmarkRelationChild_10k_10_x_1000(b *testing.B) {
 	benchmarkChild(b, 10, 1000)
 }
@@ -101,6 +105,10 @@ func BenchmarkRelationChild_100k_1000_x_100(b *testing.B) {
 
 func BenchmarkRelationChild_100k_10000_x_10(b *testing.B) {
 	benchmarkChild(b, 10000, 10)
+}
+
+func BenchmarkRelationChild_1M_10_x_100000(b *testing.B) {
+	benchmarkChild(b, 10, 100000)
 }
 
 func BenchmarkRelationChild_1M_100_x_10000(b *testing.B) {
