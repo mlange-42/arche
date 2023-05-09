@@ -265,7 +265,7 @@ func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID
 		var i uint32
 		for i = 0; i < cnt; i++ {
 			idx := startIdx + i
-			entity := arch.GetEntity(uintptr(idx))
+			entity := arch.GetEntity(idx)
 			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.node.Ids, 1, Entity{}, arch.RelationTarget, false})
 		}
 	}
@@ -296,7 +296,7 @@ func (w *World) newEntitiesWith(count int, targetID int8, target Entity, comps .
 		cnt := uint32(count)
 		for i = 0; i < cnt; i++ {
 			idx := startIdx + i
-			entity := arch.GetEntity(uintptr(idx))
+			entity := arch.GetEntity(idx)
 			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.node.Ids, 1, Entity{}, arch.RelationTarget, false})
 		}
 	}
@@ -368,7 +368,7 @@ func (w *World) removeEntities(filter Filter) int {
 
 	lock := w.lock()
 
-	var count uintptr
+	var count uint32
 
 	arches := w.getArchetypes(filter)
 	numArches := int32(len(arches))
@@ -376,10 +376,10 @@ func (w *World) removeEntities(filter Filter) int {
 	for i = 0; i < numArches; i++ {
 		arch := arches[i]
 
-		len := uintptr(arch.Len())
+		len := arch.Len()
 		count += len
 
-		var j uintptr
+		var j uint32
 		for j = 0; j < len; j++ {
 			entity := arch.GetEntity(j)
 			if w.listener != nil {
@@ -684,18 +684,18 @@ func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, re
 	oldIDs := oldArch.Components()
 	arch := w.findOrCreateArchetype(oldArch, add, rem, oldArch.RelationTarget)
 
-	startIdx := uintptr(arch.Len())
-	count := uintptr(oldArchLen)
+	startIdx := arch.Len()
+	count := oldArchLen
 	arch.AllocN(uint32(count))
 
-	var i uintptr
+	var i uint32
 	for i = 0; i < count; i++ {
 		idx := startIdx + i
 		entity := oldArch.GetEntity(i)
 		index := &w.entities[entity.id]
-		arch.SetEntity(uintptr(idx), entity)
+		arch.SetEntity(idx, entity)
 		index.arch = arch
-		index.index = uintptr(idx)
+		index.index = idx
 
 		for _, id := range oldIDs {
 			if mask.Get(id) {
@@ -712,7 +712,7 @@ func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, re
 	oldArch.Reset()
 	w.cleanupArchetype(oldArch)
 
-	return arch, uint32(startIdx)
+	return arch, startIdx
 }
 
 // getRelation returns the target entity for an entity relation.
@@ -850,18 +850,18 @@ func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, 
 		arch = w.createArchetype(oldArch.node, target, true)
 	}
 
-	startIdx := uintptr(arch.Len())
-	count := uintptr(oldArchLen)
-	arch.AllocN(uint32(count))
+	startIdx := arch.Len()
+	count := oldArchLen
+	arch.AllocN(count)
 
-	var i uintptr
+	var i uint32
 	for i = 0; i < count; i++ {
 		idx := startIdx + i
 		entity := oldArch.GetEntity(i)
 		index := &w.entities[entity.id]
-		arch.SetEntity(uintptr(idx), entity)
+		arch.SetEntity(idx, entity)
 		index.arch = arch
-		index.index = uintptr(idx)
+		index.index = idx
 
 		for _, id := range oldIDs {
 			comp := oldArch.Get(i, id)
@@ -1141,7 +1141,7 @@ func (w *World) newEntitiesWithNoNotify(count int, targetID int8, target Entity,
 	var i uint32
 	for i = 0; i < cnt; i++ {
 		idx := startIdx + i
-		entity := arch.GetEntity(uintptr(idx))
+		entity := arch.GetEntity(idx)
 		for _, c := range comps {
 			w.copyTo(entity, c.ID, c.Comp)
 		}
@@ -1174,7 +1174,7 @@ func (w *World) createEntity(arch *archetype) Entity {
 // createEntity creates multiple Entities and adds them to the given archetype.
 func (w *World) createEntities(arch *archetype, count uint32) {
 	startIdx := arch.Len()
-	arch.AllocN(uint32(count))
+	arch.AllocN(count)
 
 	len := len(w.entities)
 	required := len + int(count) - w.entityPool.Available()
@@ -1192,8 +1192,8 @@ func (w *World) createEntities(arch *archetype, count uint32) {
 	for i = 0; i < count; i++ {
 		idx := startIdx + i
 		entity := w.entityPool.Get()
-		arch.SetEntity(uintptr(idx), entity)
-		w.entities[entity.id] = entityIndex{arch: arch, index: uintptr(idx)}
+		arch.SetEntity(idx, entity)
+		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
 		w.targetEntities.Set(entity.id, false)
 	}
 }
@@ -1425,7 +1425,7 @@ func (w *World) closeQuery(query *Query) {
 // notifies the listener for all entities on a batch query.
 func (w *World) notifyQuery(batchArch *batchArchetype) {
 	arch := batchArch.Archetype
-	var i uintptr
+	var i uint32
 
 	event := EntityEvent{
 		Entity{}, Mask{}, arch.Mask, batchArch.Added, batchArch.Removed, arch.node.Ids, 1,
@@ -1440,7 +1440,7 @@ func (w *World) notifyQuery(batchArch *batchArchetype) {
 		event.TargetChanged = event.OldMask == event.NewMask
 	}
 
-	start, end := uintptr(batchArch.StartIndex), uintptr(batchArch.EndIndex)
+	start, end := batchArch.StartIndex, batchArch.EndIndex
 	for i = start; i < end; i++ {
 		entity := arch.GetEntity(i)
 		event.Entity = entity

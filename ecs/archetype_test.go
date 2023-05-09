@@ -267,9 +267,9 @@ func BenchmarkIterArchetype_1000(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		len := uintptr(arch.Len())
+		len := arch.Len()
 		id := ID(0)
-		var j uintptr
+		var j uint32
 		for j = 0; j < len; j++ {
 			pos := (*testStruct0)(arch.Get(j, id))
 			pos.Val++

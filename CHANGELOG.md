@@ -37,6 +37,7 @@
 * Speed up generic query re-compilation after changing the relation target (#255)
 * Speed up archetype and node iteration to be as fast as before the new nested structure (#270)
 * Filter cache stores archetype graph nodes instead of archetypes (#276)
+* Use `uint32` instead of `uintptr` for indices and query iteration counter (#283)
 
 ### Documentation
 
