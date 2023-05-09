@@ -80,6 +80,10 @@ func BenchmarkRelationParentList_1k_100_x_10(b *testing.B) {
 	benchmarkParentList(b, 100, 10)
 }
 
+func BenchmarkRelationParentList_1k_1000_x_1(b *testing.B) {
+	benchmarkParentList(b, 1000, 1)
+}
+
 func BenchmarkRelationParentList_10k_10_x_1000(b *testing.B) {
 	benchmarkParentList(b, 10, 1000)
 }
@@ -102,6 +106,10 @@ func BenchmarkRelationParentList_100k_100_x_1000(b *testing.B) {
 
 func BenchmarkRelationParentList_100k_1000_x_100(b *testing.B) {
 	benchmarkParentList(b, 1000, 100)
+}
+
+func BenchmarkRelationParentList_1M_10_x_100000(b *testing.B) {
+	benchmarkParentList(b, 10, 100000)
 }
 
 func BenchmarkRelationParentList_1M_100_x_10000(b *testing.B) {

@@ -88,6 +88,10 @@ func BenchmarkRelationCached_1k_100_x_10(b *testing.B) {
 	benchmarkRelationCached(b, 100, 10)
 }
 
+func BenchmarkRelationCached_1k_1000_x_1(b *testing.B) {
+	benchmarkRelationCached(b, 1000, 1)
+}
+
 func BenchmarkRelationCached_10k_10_x_1000(b *testing.B) {
 	benchmarkRelationCached(b, 10, 1000)
 }
@@ -114,6 +118,10 @@ func BenchmarkRelationCached_100k_1000_x_100(b *testing.B) {
 
 func BenchmarkRelationCached_100k_10000_x_10(b *testing.B) {
 	benchmarkRelationCached(b, 1000, 100)
+}
+
+func BenchmarkRelationCached_1M_10_x_100000(b *testing.B) {
+	benchmarkRelationCached(b, 10, 100000)
 }
 
 func BenchmarkRelationCached_1M_100_x_10000(b *testing.B) {
