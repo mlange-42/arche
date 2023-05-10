@@ -1341,23 +1341,6 @@ func (w *World) getArchetypes(filter Filter) []*archetype {
 	return arches
 }
 
-// Returns all nodes that match the given filter. Used by [Cache].
-func (w *World) getNodes(filter Filter) []*archNode {
-	nodes := []*archNode{}
-	ln := w.nodes.Len()
-	var i int32
-	for i = 0; i < ln; i++ {
-		nd := w.nodes.Get(i)
-		if !nd.IsActive || !nd.Matches(filter) {
-			continue
-		}
-
-		nodes = append(nodes, nd)
-	}
-
-	return nodes
-}
-
 // Removes the archetype if it is empty, and has a relation to a dead target.
 func (w *World) cleanupArchetype(arch *archetype) {
 	if arch.Len() > 0 || !arch.node.HasRelation {

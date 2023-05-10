@@ -47,6 +47,20 @@ func TestFilterCache(t *testing.T) {
 	assert.Panics(t, func() { cache.get(&f1) })
 }
 
+func TestFilterCacheRelation(t *testing.T) {
+	world := NewWorld()
+	relID := ComponentID[testRelationA](&world)
+
+	target1 := world.NewEntity()
+
+	cache := world.Cache()
+
+	f1 := All(relID)
+	_ = cache.Register(f1)
+
+	NewBuilder(&world, relID).WithRelation(relID).NewBatch(10, target1)
+}
+
 func ExampleCache() {
 	world := NewWorld()
 	posID := ComponentID[Position](&world)
