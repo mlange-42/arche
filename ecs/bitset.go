@@ -24,8 +24,7 @@ func (b *bitSet) Set(bit eid, value bool) {
 
 // Reset all values.
 func (b *bitSet) Reset() {
-	ln := len(b.data)
-	for i := 0; i < ln; i++ {
+	for i := range b.data {
 		b.data[i] = 0
 	}
 }

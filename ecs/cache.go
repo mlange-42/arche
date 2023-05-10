@@ -95,8 +95,7 @@ func (c *Cache) get(f *CachedFilter) *cacheEntry {
 //
 // Iterates over all filters and adds the node to the resp. entry where the filter matches.
 func (c *Cache) addNode(node *archNode) {
-	ln := len(c.filters)
-	for i := 0; i < ln; i++ {
+	for i := range c.filters {
 		e := &c.filters[i]
 		if node.Matches(e.Filter) {
 			e.Nodes = append(e.Nodes, node)

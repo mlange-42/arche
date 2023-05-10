@@ -650,15 +650,12 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 	}
 
 	arches := w.getArchetypes(filter)
-	ln := int32(len(arches))
-	lengths := make([]uint32, ln)
-	var i int32
-	for i = 0; i < ln; i++ {
-		lengths[i] = arches[i].Len()
+	lengths := make([]uint32, len(arches))
+	for i, arch := range arches {
+		lengths[i] = arch.Len()
 	}
 
-	for i = 0; i < ln; i++ {
-		arch := arches[i]
+	for i, arch := range arches {
 		archLen := lengths[i]
 
 		if archLen == 0 {
@@ -808,15 +805,12 @@ func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback
 	}
 
 	arches := w.getArchetypes(filter)
-	ln := int32(len(arches))
-	lengths := make([]uint32, ln)
-	var i int32
-	for i = 0; i < ln; i++ {
-		lengths[i] = arches[i].Len()
+	lengths := make([]uint32, len(arches))
+	for i, arch := range arches {
+		lengths[i] = arch.Len()
 	}
 
-	for i = 0; i < ln; i++ {
-		arch := arches[i]
+	for i, arch := range arches {
 		archLen := lengths[i]
 
 		if archLen == 0 {
@@ -1325,10 +1319,7 @@ func (w *World) getArchetypes(filter Filter) []*archetype {
 		nodes = w.nodePointers
 	}
 
-	ln := int32(len(nodes))
-	var i int32
-	for i = 0; i < ln; i++ {
-		nd := nodes[i]
+	for _, nd := range nodes {
 		if !nd.IsActive || (!filtered && !nd.Matches(filter)) {
 			continue
 		}

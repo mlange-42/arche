@@ -336,11 +336,8 @@ func (q *Query) countEntities() int {
 	// This is not necessary as batch queries get their count upon construction.
 	// if q.isBatch {}
 
-	len := int32(len(q.nodes))
 	var count uint32 = 0
-	var i int32
-	for i = 0; i < len; i++ {
-		nd := q.nodes[i]
+	for _, nd := range q.nodes {
 		if !nd.IsActive || (!q.isFiltered && !nd.Matches(q.filter)) {
 			continue
 		}
