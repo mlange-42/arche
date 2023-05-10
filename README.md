@@ -214,10 +214,11 @@ For AoS and AoP, time per access increases with memory per entity as well as num
 
 In the given example with components of 16 bytes each, from 64 bytes per entity onwards (i.e. 4 components or 8 `float64` values),
 Arche outperforms AoS and AoP, particularly with a large number of entities.
+Note that the maximum shown here corresponds to only 25 MB of entity data!
 
 <div align="center" width="100%">
 
-![Benchmark vs. AoS and AoP](https://user-images.githubusercontent.com/44003176/227033985-587b5d02-c159-4e00-b2a5-dc8b2f65b124.svg)  
+![Benchmark vs. AoS and AoP](https://user-images.githubusercontent.com/44003176/237245154-0070bba0-c8fe-447e-a710-e370af1dcdab.svg)  
 *CPU benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue).*
 </div>
 

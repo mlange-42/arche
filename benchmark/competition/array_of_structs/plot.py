@@ -5,8 +5,28 @@ from matplotlib import pyplot as plt
 
 if __name__ == "__main__":
     data = pd.read_csv("results.csv", sep=";")
+    
+    model_names = {
+        "Arche": "Arche",
+        "ArrOfPointers": "AoP",
+        "ArrOfStructs": "AoS",
+        "LinkedList": "LL",
+    }
+    
+    data["Model"] = ""
+    data["Entities"] = 0
+    data["Bytes"] = 0
+    
+    data["Benchmark"] = data["Benchmark"].str.replace("Benchmark","")
+    for index, row in data.iterrows():
+        parts = row["Benchmark"].split("_")
+        data.loc[index, "Model"] = model_names[parts[0]]
+        data.loc[index, "Entities"] = int(parts[2]) * 1000
+        data.loc[index, "Bytes"] = int(parts[1].replace("B", ""))
+    
+    data["Time"] = data["TotalTime"] / data["Entities"]
+    
     data = data[data["Model"] != "LL"]
-    data = data[data["Entities"] <= 100000]
 
     models = np.unique(data["Model"])
     entities = np.unique(data["Entities"])
@@ -41,9 +61,11 @@ if __name__ == "__main__":
     for model in reversed(models):
         for ent in entities:
             extr = data[(data["Model"] == model) & (data["Entities"] == ent)]
+            extr = extr.groupby("Bytes"). mean()
+            
             line = linesEntities[ent]
             ax.plot(
-                extr["Bytes"],
+                extr.index,
                 extr["Time"],
                 linestyle=line[0],
                 linewidth=line[1],
