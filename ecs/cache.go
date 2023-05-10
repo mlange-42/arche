@@ -2,9 +2,9 @@ package ecs
 
 // Cache entry for a [Filter].
 type cacheEntry struct {
-	ID     uint32      // Filter ID.
-	Filter Filter      // The underlying filter.
-	Nodes  []*archNode // Nodes matching the filter.
+	ID         uint32              // Filter ID.
+	Filter     Filter              // The underlying filter.
+	Archetypes pointers[archetype] // Nodes matching the filter.
 }
 
 // Cache provides [Filter] caching to speed up queries.
@@ -22,10 +22,10 @@ type cacheEntry struct {
 //
 // The overhead of tracking cached filters internally is very low, as updates are required only when new archetypes are created.
 type Cache struct {
-	indices  map[uint32]int             // Mapping from filter IDs to indices in filters
-	filters  []cacheEntry               // The cached filters, indexed by indices
-	getNodes func(f Filter) []*archNode // Callback for getting archetypes for a new filter from the world
-	intPool  intPool[uint32]            // Pool for filter IDs
+	indices       map[uint32]int              // Mapping from filter IDs to indices in filters
+	filters       []cacheEntry                // The cached filters, indexed by indices
+	getArchetypes func(f Filter) []*archetype // Callback for getting archetypes for a new filter from the world
+	intPool       intPool[uint32]             // Pool for filter IDs
 }
 
 // newCache creates a new [Cache].
@@ -51,9 +51,9 @@ func (c *Cache) Register(f Filter) CachedFilter {
 	id := c.intPool.Get()
 	c.filters = append(c.filters,
 		cacheEntry{
-			ID:     id,
-			Filter: f,
-			Nodes:  c.getNodes(f),
+			ID:         id,
+			Filter:     f,
+			Archetypes: pointers[archetype]{c.getArchetypes(f)},
 		})
 	c.indices[id] = len(c.filters) - 1
 	return CachedFilter{f, id}
@@ -94,11 +94,49 @@ func (c *Cache) get(f *CachedFilter) *cacheEntry {
 // Adds a node.
 //
 // Iterates over all filters and adds the node to the resp. entry where the filter matches.
-func (c *Cache) addNode(node *archNode) {
+func (c *Cache) addArchetype(arch *archetype) {
+	if !arch.HasRelation() {
+		for i := range c.filters {
+			e := &c.filters[i]
+			if !e.Filter.Matches(arch.Mask) {
+				continue
+			}
+			e.Archetypes.Add(arch)
+		}
+		return
+	}
+
 	for i := range c.filters {
 		e := &c.filters[i]
-		if node.Matches(e.Filter) {
-			e.Nodes = append(e.Nodes, node)
+		if !e.Filter.Matches(arch.Mask) {
+			continue
 		}
+		if rf, ok := e.Filter.(*RelationFilter); ok {
+			if rf.Target == arch.RelationTarget {
+				e.Archetypes.Add(arch)
+			}
+			continue
+		}
+		e.Archetypes.Add(arch)
+	}
+}
+
+// Removes an archetype.
+//
+// Iterates over all filters and removes the archetype from the resp. entry where the filter matches.
+func (c *Cache) removeArchetype(arch *archetype) {
+	for i := range c.filters {
+		e := &c.filters[i]
+		if !e.Filter.Matches(arch.Mask) {
+			continue
+		}
+
+		if rf, ok := e.Filter.(*RelationFilter); ok {
+			if rf.Target == arch.RelationTarget {
+				e.Archetypes.Remove(arch)
+			}
+			continue
+		}
+		e.Archetypes.Remove(arch)
 	}
 }

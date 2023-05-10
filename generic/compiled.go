@@ -12,6 +12,7 @@ var relationType = reflect.TypeOf((*ecs.Relation)(nil)).Elem()
 // compiledQuery is a helper for compiling a generic filter into a [ecs.Filter].
 type compiledQuery struct {
 	maskFilter     ecs.MaskFilter
+	relationFilter ecs.RelationFilter
 	cachedFilter   ecs.CachedFilter
 	filter         ecs.Filter
 	Ids            []ecs.ID
@@ -65,7 +66,8 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 		if hasTarget {
 			q.HasTarget = true
 			q.Target = target
-			q.filter = ecs.RelationFilter(&q.maskFilter, target)
+			q.relationFilter = ecs.NewRelationFilter(&q.maskFilter, target)
+			q.filter = &q.relationFilter
 		} else {
 			q.filter = &q.maskFilter
 		}

@@ -9,7 +9,8 @@ import (
 )
 
 type ChildFilter struct {
-	Filter ecs.CachedFilter
+	RelFilter ecs.RelationFilter
+	Filter    ecs.CachedFilter
 }
 
 func benchmarkRelationCached(b *testing.B, numParents int, numChildren int) {
@@ -29,8 +30,8 @@ func benchmarkRelationCached(b *testing.B, numParents int, numChildren int) {
 	for spawnedPar.Next() {
 		par := spawnedPar.Entity()
 		_, fl := spawnedPar.Get()
-		rf := ecs.RelationFilter(ecs.All(childID), par)
-		fl.Filter = world.Cache().Register(rf)
+		fl.RelFilter = ecs.NewRelationFilter(ecs.All(childID), par)
+		fl.Filter = world.Cache().Register(&fl.RelFilter)
 
 		parents = append(parents, par)
 	}

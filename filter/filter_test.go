@@ -183,7 +183,7 @@ func TestFilter(t *testing.T) {
 }
 
 func match(f ecs.Filter, m ecs.Mask) bool {
-	return f.Matches(m, nil)
+	return f.Matches(m)
 }
 
 func TestInterface(t *testing.T) {
@@ -204,7 +204,7 @@ func BenchmarkFilterStackOr(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = filter.Matches(ecs.Mask(mask), nil)
+		_ = filter.Matches(ecs.Mask(mask))
 	}
 }
 
@@ -216,7 +216,7 @@ func BenchmarkFilterHeapOr(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = filter.Matches(ecs.Mask(mask), nil)
+		_ = filter.Matches(ecs.Mask(mask))
 	}
 }
 
@@ -231,7 +231,7 @@ func BenchmarkFilterStack5And(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = filter.Matches(ecs.Mask(mask), nil)
+		_ = filter.Matches(ecs.Mask(mask))
 	}
 }
 
@@ -243,6 +243,6 @@ func BenchmarkFilterHeap5And(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = filter.Matches(ecs.Mask(mask), nil)
+		_ = filter.Matches(ecs.Mask(mask))
 	}
 }

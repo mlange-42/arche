@@ -37,3 +37,11 @@ func TestArchetypePointers(t *testing.T) {
 	assert.Equal(t, unsafe.Pointer(&last), unsafe.Pointer(pt.Get(1)))
 	assert.Equal(t, unsafe.Pointer(&a3), unsafe.Pointer(pt.Get(2)))
 }
+
+func TestBatchArchetype(t *testing.T) {
+	arch := archetype{}
+	batch := batchArchetype{Archetype: &arch}
+
+	assert.Equal(t, &arch, batch.Get(0))
+	assert.Equal(t, int32(1), batch.Len())
+}

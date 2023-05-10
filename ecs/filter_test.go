@@ -10,11 +10,11 @@ import (
 func TestCachedMaskFilter(t *testing.T) {
 	f := ecs.All(1, 2, 3).Without(4)
 
-	assert.True(t, f.Matches(ecs.All(1, 2, 3), nil))
-	assert.True(t, f.Matches(ecs.All(1, 2, 3, 5), nil))
+	assert.True(t, f.Matches(ecs.All(1, 2, 3)))
+	assert.True(t, f.Matches(ecs.All(1, 2, 3, 5)))
 
-	assert.False(t, f.Matches(ecs.All(1, 2), nil))
-	assert.False(t, f.Matches(ecs.All(1, 2, 3, 4), nil))
+	assert.False(t, f.Matches(ecs.All(1, 2)))
+	assert.False(t, f.Matches(ecs.All(1, 2, 3, 4)))
 }
 
 func TestCachedFilter(t *testing.T) {
@@ -23,8 +23,8 @@ func TestCachedFilter(t *testing.T) {
 	f := ecs.All(1, 2, 3)
 	fc := w.Cache().Register(f)
 
-	assert.Equal(t, f.Matches(ecs.All(1, 2, 3), nil), fc.Matches(ecs.All(1, 2, 3), nil))
-	assert.Equal(t, f.Matches(ecs.All(1, 2), nil), fc.Matches(ecs.All(1, 2), nil))
+	assert.Equal(t, f.Matches(ecs.All(1, 2, 3)), fc.Matches(ecs.All(1, 2, 3)))
+	assert.Equal(t, f.Matches(ecs.All(1, 2)), fc.Matches(ecs.All(1, 2)))
 
 	w.Cache().Unregister(&fc)
 }
@@ -67,9 +67,9 @@ func ExampleRelationFilter() {
 	builder := ecs.NewBuilder(&world, childID).WithRelation(childID)
 	builder.NewBatch(100, target)
 
-	filter := ecs.RelationFilter(ecs.All(childID), target)
+	filter := ecs.NewRelationFilter(ecs.All(childID), target)
 
-	query := world.Query(filter)
+	query := world.Query(&filter)
 	for query.Next() {
 		// ...
 	}

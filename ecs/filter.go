@@ -8,7 +8,7 @@ package ecs
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
 type Filter interface {
 	// Matches the filter against a bitmask, i.e. a component composition.
-	Matches(bits Mask, relation *Entity) bool
+	Matches(bits Mask) bool
 }
 
 // MaskFilter is a [Filter] for including and excluding certain components.
@@ -19,32 +19,32 @@ type MaskFilter struct {
 }
 
 // Matches matches a filter against a mask.
-func (f *MaskFilter) Matches(bits Mask, relation *Entity) bool {
+func (f *MaskFilter) Matches(bits Mask) bool {
 	return bits.Contains(f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
 }
 
 // RelationFilter is a [Filter] for a [Relation] target, in addition to components.
-type relationFilter struct {
+type RelationFilter struct {
 	Filter Filter // Components filter.
 	Target Entity // Relation target entity.
 }
 
-// RelationFilter creates a new [Relation] filter.
+// NewRelationFilter creates a new [Relation] filter.
 // It is a [Filter] for a [Relation] target, in addition to components.
 //
 // Logic filters ignore relation targets. Thus, a relation filter should be the outermost filter.
 //
 // See [Relation] for details and examples.
-func RelationFilter(filter Filter, target Entity) Filter {
-	return &relationFilter{
+func NewRelationFilter(filter Filter, target Entity) RelationFilter {
+	return RelationFilter{
 		Filter: filter,
 		Target: target,
 	}
 }
 
 // Matches matches a filter against a mask.
-func (f *relationFilter) Matches(bits Mask, relation *Entity) bool {
-	return f.Filter.Matches(bits, relation) && (relation == nil || f.Target == *relation)
+func (f *RelationFilter) Matches(bits Mask) bool {
+	return f.Filter.Matches(bits)
 }
 
 // CachedFilter is a filter that is cached by the world.
@@ -56,6 +56,6 @@ type CachedFilter struct {
 }
 
 // Matches matches a filter against a mask.
-func (f *CachedFilter) Matches(bits Mask, relation *Entity) bool {
-	return f.filter.Matches(bits, relation)
+func (f *CachedFilter) Matches(bits Mask) bool {
+	return f.filter.Matches(bits)
 }

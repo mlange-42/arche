@@ -94,7 +94,9 @@ func (q *Filter0) Query(w *ecs.World, target ...ecs.Entity) Query0 {
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query0{
@@ -256,7 +258,9 @@ func (q *Filter1[A]) Query(w *ecs.World, target ...ecs.Entity) Query1[A] {
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query1[A]{
@@ -428,7 +432,9 @@ func (q *Filter2[A, B]) Query(w *ecs.World, target ...ecs.Entity) Query2[A, B] {
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query2[A, B]{
@@ -604,7 +610,9 @@ func (q *Filter3[A, B, C]) Query(w *ecs.World, target ...ecs.Entity) Query3[A, B
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query3[A, B, C]{
@@ -784,7 +792,9 @@ func (q *Filter4[A, B, C, D]) Query(w *ecs.World, target ...ecs.Entity) Query4[A
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query4[A, B, C, D]{
@@ -968,7 +978,9 @@ func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World, target ...ecs.Entity) Query
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query5[A, B, C, D, E]{
@@ -1156,7 +1168,9 @@ func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World, target ...ecs.Entity) Qu
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query6[A, B, C, D, E, F]{
@@ -1348,7 +1362,9 @@ func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World, target ...ecs.Entity)
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query7[A, B, C, D, E, F, G]{
@@ -1544,7 +1560,9 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World, target ...ecs.Enti
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query8[A, B, C, D, E, F, G, H]{

@@ -272,11 +272,11 @@ func runQuery1Of1kTargets(b *testing.B, count int) {
 	target := targets[0]
 	childBuilder.NewBatch(count, target)
 
-	filter := ecs.RelationFilter(ecs.All(posID, relID), target)
+	filter := ecs.NewRelationFilter(ecs.All(posID, relID), target)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			pos := (*c.TestStruct0)(query.Get(posID))
 			pos.Val = 1
@@ -305,8 +305,8 @@ func runQuery1Of1kTargetsCached(b *testing.B, count int) {
 	target := targets[0]
 	childBuilder.NewBatch(count, target)
 
-	rf := ecs.RelationFilter(ecs.All(posID, relID), target)
-	cf := world.Cache().Register(rf)
+	rf := ecs.NewRelationFilter(ecs.All(posID, relID), target)
+	cf := world.Cache().Register(&rf)
 	var filter ecs.Filter = &cf
 	b.StartTimer()
 

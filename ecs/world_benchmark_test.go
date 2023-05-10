@@ -150,6 +150,80 @@ func BenchmarkRemoveEntities_10_000(b *testing.B) {
 	}
 }
 
+func BenchmarkWorldNewQuery(b *testing.B) {
+	b.StopTimer()
+	world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	NewBuilder(&world, posID, velID).NewBatch(25)
+
+	filter := All(posID, velID)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		q := world.Query(filter)
+		q.Close()
+	}
+}
+
+func BenchmarkWorldNewQueryNext(b *testing.B) {
+	b.StopTimer()
+	world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	NewBuilder(&world, posID, velID).NewBatch(25)
+
+	filter := All(posID, velID)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		q := world.Query(filter)
+		q.Next()
+		q.Close()
+	}
+}
+
+func BenchmarkWorldNewQueryCached(b *testing.B) {
+	b.StopTimer()
+	world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	NewBuilder(&world, posID, velID).NewBatch(25)
+
+	filter := All(posID, velID)
+	cf := world.Cache().Register(filter)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		q := world.Query(&cf)
+		q.Close()
+	}
+}
+
+func BenchmarkWorldNewQueryNextCached(b *testing.B) {
+	b.StopTimer()
+	world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	NewBuilder(&world, posID, velID).NewBatch(25)
+
+	filter := All(posID, velID)
+	cf := world.Cache().Register(filter)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		q := world.Query(&cf)
+		q.Next()
+		q.Close()
+	}
+}
+
 func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
