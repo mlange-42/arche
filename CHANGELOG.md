@@ -35,8 +35,8 @@
 * Optimize `RelationFilter`: get archetype directly instead of iterating complete node (#251)
 * Cached filters use swap-remove when removing an archetype (#253)
 * Speed up generic query re-compilation after changing the relation target (#255)
-* Speed up archetype and node iteration to be as fast as before the new nested structure (#270)
-* Filter cache stores archetype graph nodes instead of archetypes (#276)
+* Speed up archetype and node iteration to be as fast as before the new nested structure (#270, #288)
+* ~~Filter cache stores archetype graph nodes instead of archetypes (#276)~~ (#289)
 * Use `uint32` instead of `uintptr` for indices and query iteration counter (#283)
 
 ### Documentation

@@ -940,11 +940,10 @@ func (w *World) Reset() {
 func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(*CachedFilter); ok {
-		nodes := w.filterCache.get(cached).Nodes
-		return newQuery(w, cached.filter, l, nodes, true)
+		return newCachedQuery(w, cached.filter, l, w.filterCache.get(cached).Archetypes)
 	}
 
-	return newQuery(w, filter, l, w.nodePointers, false)
+	return newQuery(w, filter, l, w.nodePointers)
 }
 
 // Resources of the world.
@@ -958,8 +957,8 @@ func (w *World) Resources() *Resources {
 //
 // See [Cache] for details on filter caching.
 func (w *World) Cache() *Cache {
-	if w.filterCache.getNodes == nil {
-		w.filterCache.getNodes = w.getNodes
+	if w.filterCache.getArchetypes == nil {
+		w.filterCache.getArchetypes = w.getArchetypes
 	}
 	return &w.filterCache
 }
@@ -1285,7 +1284,6 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
 	w.relationNodes = append(w.relationNodes, nd)
 	w.nodePointers = append(w.nodePointers, nd)
 
-	w.filterCache.addNode(nd)
 	return nd
 }
 
@@ -1303,24 +1301,21 @@ func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) 
 		arch.Init(node, archIndex, forStorage, target)
 		node.SetArchetype(arch)
 	}
+	w.filterCache.addArchetype(arch)
 	return arch
 }
 
 // Returns all archetypes that match the given filter. Used by [Cache].
 func (w *World) getArchetypes(filter Filter) []*archetype {
-	arches := []*archetype{}
-
-	var nodes []*archNode
-	filtered := false
 	if cached, ok := filter.(*CachedFilter); ok {
-		nodes = w.filterCache.get(cached).Nodes
-		filtered = true
-	} else {
-		nodes = w.nodePointers
+		return w.filterCache.get(cached).Archetypes
 	}
 
+	arches := []*archetype{}
+	nodes := w.nodePointers
+
 	for _, nd := range nodes {
-		if !nd.IsActive || (!filtered && !nd.Matches(filter)) {
+		if !nd.IsActive || !nd.Matches(filter) {
 			continue
 		}
 
@@ -1407,7 +1402,7 @@ func (w *World) closeQuery(query *Query) {
 	w.unlock(query.lockBit)
 
 	if w.listener != nil {
-		if arch, ok := query.archetypes.(*batchArchetype); ok {
+		if arch, ok := query.nodeArchetypes.(*batchArchetype); ok {
 			w.notifyQuery(arch)
 		}
 	}
