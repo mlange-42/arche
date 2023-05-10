@@ -55,21 +55,42 @@ func TestFilterCacheRelation(t *testing.T) {
 
 	target1 := world.NewEntity()
 	target2 := world.NewEntity()
+	target3 := world.NewEntity()
 
 	cache := world.Cache()
 
 	f1 := All(rel1ID)
-	_ = cache.Register(f1)
+	ff1 := cache.Register(f1)
 
 	f2 := NewRelationFilter(f1, target1)
-	_ = cache.Register(&f2)
+	ff2 := cache.Register(&f2)
 
 	f3 := NewRelationFilter(f1, target2)
-	_ = cache.Register(&f3)
+	ff3 := cache.Register(&f3)
+
+	c1 := world.Cache().get(&ff1)
+	c2 := world.Cache().get(&ff2)
+	c3 := world.Cache().get(&ff3)
 
 	NewBuilder(&world, posID).NewBatch(10)
+
+	assert.Equal(t, int32(0), c1.Archetypes.Len())
+	assert.Equal(t, int32(0), c2.Archetypes.Len())
+	assert.Equal(t, int32(0), c3.Archetypes.Len())
+
 	NewBuilder(&world, rel1ID).WithRelation(rel1ID).NewBatch(10, target1)
+	assert.Equal(t, int32(1), c1.Archetypes.Len())
+	assert.Equal(t, int32(1), c2.Archetypes.Len())
+
+	NewBuilder(&world, rel1ID).WithRelation(rel1ID).NewBatch(10, target3)
+	assert.Equal(t, int32(2), c1.Archetypes.Len())
+	assert.Equal(t, int32(1), c2.Archetypes.Len())
+
 	NewBuilder(&world, rel2ID).WithRelation(rel2ID).NewBatch(10, target2)
+
+	world.Batch().RemoveEntities(All())
+	assert.Equal(t, int32(0), c1.Archetypes.Len())
+	assert.Equal(t, int32(0), c2.Archetypes.Len())
 }
 
 func ExampleCache() {

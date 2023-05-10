@@ -940,7 +940,7 @@ func (w *World) Reset() {
 func (w *World) Query(filter Filter) Query {
 	l := w.lock()
 	if cached, ok := filter.(*CachedFilter); ok {
-		return newCachedQuery(w, cached.filter, l, w.filterCache.get(cached).Archetypes)
+		return newCachedQuery(w, cached.filter, l, w.filterCache.get(cached).Archetypes.pointers)
 	}
 
 	return newQuery(w, filter, l, w.nodePointers)
@@ -1308,7 +1308,7 @@ func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) 
 // Returns all archetypes that match the given filter. Used by [Cache].
 func (w *World) getArchetypes(filter Filter) []*archetype {
 	if cached, ok := filter.(*CachedFilter); ok {
-		return w.filterCache.get(cached).Archetypes
+		return w.filterCache.get(cached).Archetypes.pointers
 	}
 
 	arches := []*archetype{}
@@ -1366,6 +1366,7 @@ func (w *World) cleanupArchetypes(target Entity) {
 // Removes/da-activates a relation archetype.
 func (w *World) removeArchetype(arch *archetype) {
 	arch.node.RemoveArchetype(arch)
+	w.Cache().removeArchetype(arch)
 }
 
 // componentID returns the ID for a component type, and registers it if not already registered.
