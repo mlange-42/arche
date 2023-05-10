@@ -60,7 +60,7 @@ func newCachedQuery(world *World, filter Filter, lockBit uint8, archetypes []*ar
 }
 
 // newQuery creates a query on a single archetype
-func newArchQuery(world *World, lockBit uint8, archetype *batchArchetype) Query {
+func newBatchQuery(world *World, lockBit uint8, archetype *batchArchetype) Query {
 	arch := archetype.Archetype
 	if archetype.StartIndex > 0 {
 		return Query{
@@ -206,19 +206,16 @@ func (q *Query) nextBatch() bool {
 }
 
 func (q *Query) nextArchetypeBatch() bool {
-	len := int32(q.nodeArchetypes.Len()) - 1
-	for q.archIndex < len {
-		q.archIndex++
-		a := q.nodeArchetypes.Get(q.archIndex)
-		if a.Len() > 0 {
-			q.access = &a.archetypeAccess
-			q.entityIndex = 0
-			batch := q.nodeArchetypes.(*batchArchetype)
-			q.entityIndexMax = batch.EndIndex - 1
-			return true
-		}
+	if q.archIndex >= 0 {
+		return false
 	}
-	return false
+	q.archIndex++
+	a := q.nodeArchetypes.Get(q.archIndex)
+	q.access = &a.archetypeAccess
+	q.entityIndex = 0
+	batch := q.nodeArchetypes.(*batchArchetype)
+	q.entityIndexMax = batch.EndIndex - 1
+	return true
 }
 
 func (q *Query) nextArchetypeSimple() bool {
@@ -227,12 +224,13 @@ func (q *Query) nextArchetypeSimple() bool {
 		q.archIndex++
 		a := q.nodeArchetypes.Get(q.archIndex)
 		aLen := a.Len()
-		if aLen > 0 {
-			q.access = &a.archetypeAccess
-			q.entityIndex = 0
-			q.entityIndexMax = aLen - 1
-			return true
+		if aLen == 0 {
+			continue
 		}
+		q.access = &a.archetypeAccess
+		q.entityIndex = 0
+		q.entityIndexMax = aLen - 1
+		return true
 	}
 	return false
 }
@@ -243,12 +241,13 @@ func (q *Query) nextArchetypeFiltered() bool {
 		q.archIndex++
 		a := q.archetypes[q.archIndex]
 		aLen := a.Len()
-		if aLen > 0 {
-			q.access = &a.archetypeAccess
-			q.entityIndex = 0
-			q.entityIndexMax = aLen - 1
-			return true
+		if aLen == 0 {
+			continue
 		}
+		q.access = &a.archetypeAccess
+		q.entityIndex = 0
+		q.entityIndexMax = aLen - 1
+		return true
 	}
 	q.world.closeQuery(q)
 	return false
