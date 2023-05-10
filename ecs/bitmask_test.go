@@ -46,24 +46,24 @@ func TestBitMask(t *testing.T) {
 
 func TestBitMaskWithoutExclusive(t *testing.T) {
 	mask := ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13))
-	assert.True(t, mask.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13)), nil))
-	assert.True(t, mask.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27)), nil))
+	assert.True(t, mask.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13))))
+	assert.True(t, mask.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27))))
 
-	assert.False(t, mask.Matches(ecs.All(ecs.ID(1), ecs.ID(2)), nil))
+	assert.False(t, mask.Matches(ecs.All(ecs.ID(1), ecs.ID(2))))
 
 	without := mask.Without(ecs.ID(3))
 
-	assert.True(t, without.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13)), nil))
-	assert.True(t, without.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27)), nil))
+	assert.True(t, without.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13))))
+	assert.True(t, without.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27))))
 
-	assert.False(t, without.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(3), ecs.ID(13)), nil))
-	assert.False(t, without.Matches(ecs.All(ecs.ID(1), ecs.ID(2)), nil))
+	assert.False(t, without.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(3), ecs.ID(13))))
+	assert.False(t, without.Matches(ecs.All(ecs.ID(1), ecs.ID(2))))
 
 	excl := mask.Exclusive()
 
-	assert.True(t, excl.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13)), nil))
-	assert.False(t, excl.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27)), nil))
-	assert.False(t, excl.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(3), ecs.ID(13)), nil))
+	assert.True(t, excl.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13))))
+	assert.False(t, excl.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27))))
+	assert.False(t, excl.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(3), ecs.ID(13))))
 }
 
 func TestBitMask128(t *testing.T) {
@@ -191,7 +191,7 @@ func BenchmarkMaskFilter(b *testing.B) {
 	b.StartTimer()
 	var v bool
 	for i := 0; i < b.N; i++ {
-		v = mask.Matches(bits, nil)
+		v = mask.Matches(bits)
 	}
 	b.StopTimer()
 	v = !v
@@ -233,7 +233,7 @@ func BenchmarkMask(b *testing.B) {
 	b.StartTimer()
 	var v bool
 	for i := 0; i < b.N; i++ {
-		v = mask.Matches(bits, nil)
+		v = mask.Matches(bits)
 	}
 	b.StopTimer()
 	v = !v

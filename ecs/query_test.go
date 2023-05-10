@@ -10,10 +10,10 @@ func TestMask(t *testing.T) {
 	filter := All(0, 2, 4)
 	other := All(0, 1, 2)
 
-	assert.False(t, filter.Matches(other, nil))
+	assert.False(t, filter.Matches(other))
 
 	other = All(0, 1, 2, 3, 4)
-	assert.True(t, filter.Matches(other, nil))
+	assert.True(t, filter.Matches(other))
 }
 
 func TestQuery(t *testing.T) {
@@ -260,7 +260,7 @@ func TestQueryCount(t *testing.T) {
 
 type testFilter struct{}
 
-func (f testFilter) Matches(bits Mask, relation *Entity) bool {
+func (f testFilter) Matches(bits Mask) bool {
 	return true
 }
 

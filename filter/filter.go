@@ -20,7 +20,7 @@ func Any(comps ...ecs.ID) ANY {
 }
 
 // Matches matches a filter against a bitmask
-func (f ANY) Matches(bits ecs.Mask, target *ecs.Entity) bool {
+func (f ANY) Matches(bits ecs.Mask) bool {
 	return bits.ContainsAny(ecs.Mask(f))
 }
 
@@ -33,7 +33,7 @@ func NoneOf(comps ...ecs.ID) NoneOF {
 }
 
 // Matches matches a filter against a bitmask
-func (f NoneOF) Matches(bits ecs.Mask, target *ecs.Entity) bool {
+func (f NoneOF) Matches(bits ecs.Mask) bool {
 	return !bits.ContainsAny(ecs.Mask(f))
 }
 
@@ -46,7 +46,7 @@ func AnyNot(comps ...ecs.ID) AnyNOT {
 }
 
 // Matches matches a filter against a bitmask
-func (f AnyNOT) Matches(bits ecs.Mask, target *ecs.Entity) bool {
+func (f AnyNOT) Matches(bits ecs.Mask) bool {
 	return !bits.Contains(ecs.Mask(f))
 }
 
@@ -66,8 +66,8 @@ func And(l, r ecs.Filter) *AND {
 }
 
 // Matches matches a filter against a bitmask.
-func (f *AND) Matches(bits ecs.Mask, target *ecs.Entity) bool {
-	return f.L.Matches(bits, nil) && f.R.Matches(bits, nil)
+func (f *AND) Matches(bits ecs.Mask) bool {
+	return f.L.Matches(bits) && f.R.Matches(bits)
 }
 
 // OR combines two filters using OR.
@@ -86,8 +86,8 @@ func Or(l, r ecs.Filter) *OR {
 }
 
 // Matches matches a filter against a bitmask.
-func (f *OR) Matches(bits ecs.Mask, target *ecs.Entity) bool {
-	return f.L.Matches(bits, nil) || f.R.Matches(bits, nil)
+func (f *OR) Matches(bits ecs.Mask) bool {
+	return f.L.Matches(bits) || f.R.Matches(bits)
 }
 
 // XOR combines two filters using XOR.
@@ -106,8 +106,8 @@ func XOr(l, r ecs.Filter) *XOR {
 }
 
 // Matches matches a filter against a bitmask.
-func (f *XOR) Matches(bits ecs.Mask, target *ecs.Entity) bool {
-	return f.L.Matches(bits, nil) != f.R.Matches(bits, nil)
+func (f *XOR) Matches(bits ecs.Mask) bool {
+	return f.L.Matches(bits) != f.R.Matches(bits)
 }
 
 // NOT inverts a filter. It matches if the inner filter does not.
@@ -123,6 +123,6 @@ func Not(f ecs.Filter) *NOT {
 }
 
 // Matches matches a filter against a bitmask.
-func (f *NOT) Matches(bits ecs.Mask, target *ecs.Entity) bool {
-	return !f.F.Matches(bits, target)
+func (f *NOT) Matches(bits ecs.Mask) bool {
+	return !f.F.Matches(bits)
 }
