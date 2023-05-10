@@ -45,7 +45,10 @@ if __name__ == "__main__":
     plt.rcParams["svg.fonttype"] = "none"
     plt.rcParams["font.family"] = "Arial"
 
-    for column, title, loc in [("Parents", "Parent entities", 2), ("Children", "Children per parent", 1)]:
+    for column, title, loc in [
+        ("Parents", "Parent entities", 2),
+        ("Children", "Children per parent", 1),
+    ]:
         fig, ax = plt.subplots(figsize=(6, 4))
         ax.set_title("Benchmarks of ways to represent relations")
         ax.set_xscale("log")
@@ -77,7 +80,7 @@ if __name__ == "__main__":
                     markersize=3,
                     label=model if ent == 100000 else None,
                 )
-        
+
         for ent in reversed(entities):
             line = linesEntities[ent]
             ax.plot(
@@ -92,5 +95,5 @@ if __name__ == "__main__":
 
         fig.tight_layout()
         fig.savefig(f"results-{column}.svg")
-    
+
     plt.show()
