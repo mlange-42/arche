@@ -5,6 +5,7 @@ type cacheEntry struct {
 	ID         uint32              // Filter ID.
 	Filter     Filter              // The underlying filter.
 	Archetypes pointers[archetype] // Nodes matching the filter.
+	Indices    map[Entity]int      // Map of archetype indices for removal.
 }
 
 // Cache provides [Filter] caching to speed up queries.
@@ -49,11 +50,19 @@ func (c *Cache) Register(f Filter) CachedFilter {
 		panic("filter is already cached")
 	}
 	id := c.intPool.Get()
+	arches := c.getArchetypes(f)
+	indices := map[Entity]int{}
+	for i, arch := range arches {
+		if arch.HasRelation() {
+			indices[arch.RelationTarget] = i
+		}
+	}
 	c.filters = append(c.filters,
 		cacheEntry{
 			ID:         id,
 			Filter:     f,
-			Archetypes: pointers[archetype]{c.getArchetypes(f)},
+			Archetypes: pointers[archetype]{arches},
+			Indices:    indices,
 		})
 	c.indices[id] = len(c.filters) - 1
 	return CachedFilter{f, id}
@@ -114,29 +123,28 @@ func (c *Cache) addArchetype(arch *archetype) {
 		if rf, ok := e.Filter.(*RelationFilter); ok {
 			if rf.Target == arch.RelationTarget {
 				e.Archetypes.Add(arch)
+				e.Indices[arch.RelationTarget] = int(e.Archetypes.Len() - 1)
 			}
 			continue
 		}
 		e.Archetypes.Add(arch)
+		e.Indices[arch.RelationTarget] = int(e.Archetypes.Len() - 1)
 	}
 }
 
 // Removes an archetype.
 //
-// Iterates over all filters and removes the archetype from the resp. entry where the filter matches.
+// Can only be used for archetypes that have a relation target.
+// Archetypes without a relation are never removed.
 func (c *Cache) removeArchetype(arch *archetype) {
 	for i := range c.filters {
 		e := &c.filters[i]
-		if !e.Filter.Matches(arch.Mask) {
-			continue
-		}
 
-		if rf, ok := e.Filter.(*RelationFilter); ok {
-			if rf.Target == arch.RelationTarget {
-				e.Archetypes.Remove(arch)
+		if idx, ok := e.Indices[arch.RelationTarget]; ok {
+			swap := e.Archetypes.RemoveAt(idx)
+			if swap {
+				e.Indices[e.Archetypes.Get(int32(idx)).RelationTarget] = idx
 			}
-			continue
 		}
-		e.Archetypes.Remove(arch)
 	}
 }
