@@ -64,7 +64,7 @@ func (r *Resources) Has(id ResID) bool {
 
 // reset removes all resources.
 func (r *Resources) reset() {
-	for i := 0; i < len(r.resources); i++ {
+	for i := range r.resources {
 		r.resources[i] = nil
 	}
 }

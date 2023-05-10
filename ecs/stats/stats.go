@@ -94,7 +94,7 @@ func (s *WorldStats) String() string {
 	fmt.Fprintf(&b, "  Components: %s\n", strings.Join(typeNames, ", "))
 	fmt.Fprint(&b, s.Entities.String())
 
-	for i := 0; i < len(s.Nodes); i++ {
+	for i := range s.Nodes {
 		fmt.Fprint(&b, s.Nodes[i].String())
 	}
 
