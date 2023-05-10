@@ -43,6 +43,10 @@ jobs:
         run: |
           cd benchmark
           go test -benchmem -run=^$ -bench ^.*$ ./competition/array_of_structs/...
+      - name: Benchmark entity relations
+        run: |
+          cd benchmark
+          go test -benchmem -run=^$ -bench ^.*$ ./competition/relations/...
       - name: Benchmark vs. other ECS impl.
         run: |
           cd benchmark

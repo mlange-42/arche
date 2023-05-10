@@ -117,7 +117,7 @@ func BenchmarkRelationCached_100k_1000_x_100(b *testing.B) {
 }
 
 func BenchmarkRelationCached_100k_10000_x_10(b *testing.B) {
-	benchmarkRelationCached(b, 1000, 100)
+	benchmarkRelationCached(b, 10000, 10)
 }
 
 func BenchmarkRelationCached_1M_10_x_100000(b *testing.B) {
