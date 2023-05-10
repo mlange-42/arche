@@ -75,7 +75,11 @@ func run(rounds, iters, numParents, numChildren int) {
 		parentFilter := ecs.All(parentID)
 		cf := world.Cache().Register(parentFilter)
 
-		childF := ecs.All(childID)
+		var childF ecs.Filter = ecs.All(childID)
+		chf := ecs.RelationFilter{
+			Filter: childF,
+			Target: ecs.Entity{},
+		}
 
 		for i := 0; i < iters; i++ {
 			query := world.Query(&cf)
@@ -83,9 +87,9 @@ func run(rounds, iters, numParents, numChildren int) {
 				parData := (*ParentList)(query.Get(parentID))
 				par := query.Entity()
 
-				cf := ecs.RelationFilter(&childF, par)
+				chf.Target = par
 
-				childQuery := world.Query(cf)
+				childQuery := world.Query(&chf)
 				for childQuery.Next() {
 					child := (*ChildRelation)(childQuery.Get(childID))
 					parData.Value += child.Value

@@ -42,7 +42,7 @@ func benchmarkRelation(b *testing.B, numParents int, numChildren int) {
 	parentFilter := ecs.All(parentID)
 	cf := world.Cache().Register(parentFilter)
 
-	childF := ecs.All(childID)
+	var childF ecs.Filter = ecs.All(childID)
 
 	b.StartTimer()
 
@@ -52,9 +52,9 @@ func benchmarkRelation(b *testing.B, numParents int, numChildren int) {
 			parData := (*ParentList)(query.Get(parentID))
 			par := query.Entity()
 
-			cf := ecs.RelationFilter(&childF, par)
+			cf := ecs.NewRelationFilter(childF, par)
 
-			childQuery := world.Query(cf)
+			childQuery := world.Query(&cf)
 			for childQuery.Next() {
 				child := (*ChildRelation)(childQuery.Get(childID))
 				parData.Value += child.Value

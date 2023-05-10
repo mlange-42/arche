@@ -106,7 +106,9 @@ func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entit
 		if q.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		filter = ecs.RelationFilter(&q.compiled.maskFilter, target[0])
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
 	}
 
 	return Query{{ .Index }}{{ .Types }}{

@@ -25,9 +25,9 @@ func ExampleRelation() {
 	_ = world.Relations().Get(child, childID)
 
 	// Filter for the relation.
-	filter := ecs.RelationFilter(ecs.All(childID), parent)
+	filter := ecs.NewRelationFilter(ecs.All(childID), parent)
 
-	query := world.Query(filter)
+	query := world.Query(&filter)
 	for query.Next() {
 		fmt.Println(
 			query.Entity(),

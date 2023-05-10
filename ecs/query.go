@@ -259,7 +259,7 @@ func (q *Query) nextNodeFilter() bool {
 			continue
 		}
 
-		if rf, ok := q.filter.(*relationFilter); ok {
+		if rf, ok := q.filter.(*RelationFilter); ok {
 			target := rf.Target
 			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
 				q.setArchetype(nil, &arch.archetypeAccess, arch.index, arch.Len()-1)
@@ -297,7 +297,7 @@ func (q *Query) nextNodeAll() bool {
 			continue
 		}
 
-		if rf, ok := q.filter.(*relationFilter); ok {
+		if rf, ok := q.filter.(*RelationFilter); ok {
 			target := rf.Target
 			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
 				q.setArchetype(nil, &arch.archetypeAccess, arch.index, arch.Len()-1)
@@ -351,7 +351,7 @@ func (q *Query) countEntities() int {
 			continue
 		}
 
-		if rf, ok := q.filter.(*relationFilter); ok {
+		if rf, ok := q.filter.(*RelationFilter); ok {
 			target := rf.Target
 			if arch, ok := nd.archetypeMap[target]; ok {
 				count += arch.Len()

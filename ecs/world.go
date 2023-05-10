@@ -1324,7 +1324,7 @@ func (w *World) getArchetypes(filter Filter) []*archetype {
 			continue
 		}
 
-		if rf, ok := filter.(*relationFilter); ok {
+		if rf, ok := filter.(*RelationFilter); ok {
 			target := rf.Target
 			if arch, ok := nd.archetypeMap[target]; ok {
 				arches = append(arches, arch)

@@ -29,8 +29,8 @@ func benchmarkRelationCached(b *testing.B, numParents int, numChildren int) {
 	for spawnedPar.Next() {
 		par := spawnedPar.Entity()
 		_, fl := spawnedPar.Get()
-		rf := ecs.RelationFilter(ecs.All(childID), par)
-		fl.Filter = world.Cache().Register(rf)
+		rf := ecs.NewRelationFilter(ecs.All(childID), par)
+		fl.Filter = world.Cache().Register(&rf)
 
 		parents = append(parents, par)
 	}

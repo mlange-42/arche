@@ -67,9 +67,9 @@ func ExampleRelationFilter() {
 	builder := ecs.NewBuilder(&world, childID).WithRelation(childID)
 	builder.NewBatch(100, target)
 
-	filter := ecs.RelationFilter(ecs.All(childID), target)
+	filter := ecs.NewRelationFilter(ecs.All(childID), target)
 
-	query := world.Query(filter)
+	query := world.Query(&filter)
 	for query.Next() {
 		// ...
 	}

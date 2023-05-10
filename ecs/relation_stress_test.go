@@ -40,8 +40,8 @@ func TestRelationStress(t *testing.T) {
 			parIdx := rand.Intn(numParents)
 			parent := parents[parIdx]
 
-			childFilter := ecs.RelationFilter(ecs.All(relID), parent)
-			removed := world.Batch().RemoveEntities(childFilter)
+			childFilter := ecs.NewRelationFilter(ecs.All(relID), parent)
+			removed := world.Batch().RemoveEntities(&childFilter)
 			world.RemoveEntity(parent)
 			assert.Equal(t, numChildren, removed)
 

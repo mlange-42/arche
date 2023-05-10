@@ -24,26 +24,26 @@ func (f *MaskFilter) Matches(bits Mask) bool {
 }
 
 // RelationFilter is a [Filter] for a [Relation] target, in addition to components.
-type relationFilter struct {
+type RelationFilter struct {
 	Filter Filter // Components filter.
 	Target Entity // Relation target entity.
 }
 
-// RelationFilter creates a new [Relation] filter.
+// NewRelationFilter creates a new [Relation] filter.
 // It is a [Filter] for a [Relation] target, in addition to components.
 //
 // Logic filters ignore relation targets. Thus, a relation filter should be the outermost filter.
 //
 // See [Relation] for details and examples.
-func RelationFilter(filter Filter, target Entity) Filter {
-	return &relationFilter{
+func NewRelationFilter(filter Filter, target Entity) RelationFilter {
+	return RelationFilter{
 		Filter: filter,
 		Target: target,
 	}
 }
 
 // Matches matches a filter against a mask.
-func (f *relationFilter) Matches(bits Mask) bool {
+func (f *RelationFilter) Matches(bits Mask) bool {
 	return f.Filter.Matches(bits)
 }
 

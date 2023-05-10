@@ -161,8 +161,8 @@ func TestQueryCachedRelation(t *testing.T) {
 	target1 := w.NewEntity()
 	target2 := w.NewEntity()
 
-	relFilter := RelationFilter(All(relID), target1)
-	cf := w.Cache().Register(relFilter)
+	relFilter := NewRelationFilter(All(relID), target1)
+	cf := w.Cache().Register(&relFilter)
 
 	q := w.Query(&cf)
 	assert.Equal(t, 0, q.Count())
@@ -182,8 +182,8 @@ func TestQueryCachedRelation(t *testing.T) {
 	}
 	assert.Equal(t, 10, cnt)
 
-	relFilter = RelationFilter(All(relID), target2)
-	cf = w.Cache().Register(relFilter)
+	relFilter = NewRelationFilter(All(relID), target2)
+	cf = w.Cache().Register(&relFilter)
 
 	q = w.Query(&cf)
 	assert.Equal(t, 0, q.Count())
