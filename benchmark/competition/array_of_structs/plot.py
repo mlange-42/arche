@@ -61,9 +61,11 @@ if __name__ == "__main__":
     for model in reversed(models):
         for ent in entities:
             extr = data[(data["Model"] == model) & (data["Entities"] == ent)]
+            extr = extr.groupby("Bytes"). mean()
+            
             line = linesEntities[ent]
             ax.plot(
-                extr["Bytes"],
+                extr.index,
                 extr["Time"],
                 linestyle=line[0],
                 linewidth=line[1],
