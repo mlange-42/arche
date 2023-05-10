@@ -75,58 +75,58 @@ func benchmarkRelation(b *testing.B, numParents int, numChildren int) {
 	}
 }
 
-func BenchmarkRelation_1k_10_x_100(b *testing.B) {
+func BenchmarkRelationDefault_1k_10_x_100(b *testing.B) {
 	benchmarkRelation(b, 10, 100)
 }
 
-func BenchmarkRelation_1k_100_x_10(b *testing.B) {
+func BenchmarkRelationDefault_1k_100_x_10(b *testing.B) {
 	benchmarkRelation(b, 100, 10)
 }
 
-func BenchmarkRelation_1k_1000_x_1(b *testing.B) {
+func BenchmarkRelationDefault_1k_1000_x_1(b *testing.B) {
 	benchmarkRelation(b, 1000, 1)
 }
 
-func BenchmarkRelation_10k_10_x_1000(b *testing.B) {
+func BenchmarkRelationDefault_10k_10_x_1000(b *testing.B) {
 	benchmarkRelation(b, 10, 1000)
 }
 
-func BenchmarkRelation_10k_100_x_100(b *testing.B) {
+func BenchmarkRelationDefault_10k_100_x_100(b *testing.B) {
 	benchmarkRelation(b, 100, 100)
 }
 
-func BenchmarkRelation_10k_1000_x_10(b *testing.B) {
+func BenchmarkRelationDefault_10k_1000_x_10(b *testing.B) {
 	benchmarkRelation(b, 1000, 10)
 }
 
-func BenchmarkRelation_100k_10_x_10000(b *testing.B) {
+func BenchmarkRelationDefault_100k_10_x_10000(b *testing.B) {
 	benchmarkRelation(b, 10, 10000)
 }
 
-func BenchmarkRelation_100k_100_x_1000(b *testing.B) {
+func BenchmarkRelationDefault_100k_100_x_1000(b *testing.B) {
 	benchmarkRelation(b, 100, 1000)
 }
 
-func BenchmarkRelation_100k_1000_x_100(b *testing.B) {
+func BenchmarkRelationDefault_100k_1000_x_100(b *testing.B) {
 	benchmarkRelation(b, 1000, 100)
 }
 
-func BenchmarkRelation_100k_10000_x_10(b *testing.B) {
-	benchmarkRelation(b, 1000, 100)
+func BenchmarkRelationDefault_100k_10000_x_10(b *testing.B) {
+	benchmarkRelation(b, 10000, 10)
 }
 
-func BenchmarkRelation_1M_10_x_100000(b *testing.B) {
+func BenchmarkRelationDefault_1M_10_x_100000(b *testing.B) {
 	benchmarkRelation(b, 10, 100000)
 }
 
-func BenchmarkRelation_1M_100_x_10000(b *testing.B) {
+func BenchmarkRelationDefault_1M_100_x_10000(b *testing.B) {
 	benchmarkRelation(b, 100, 10000)
 }
 
-func BenchmarkRelation_1M_1000_x_1000(b *testing.B) {
+func BenchmarkRelationDefault_1M_1000_x_1000(b *testing.B) {
 	benchmarkRelation(b, 1000, 1000)
 }
 
-func BenchmarkRelation_1M_10000_x_100(b *testing.B) {
+func BenchmarkRelationDefault_1M_10000_x_100(b *testing.B) {
 	benchmarkRelation(b, 10000, 100)
 }

@@ -103,7 +103,7 @@ func BenchmarkRelationParentSlice_100k_1000_x_100(b *testing.B) {
 }
 
 func BenchmarkRelationParentSlice_100k_10000_x_10(b *testing.B) {
-	benchmarkParentSlice(b, 1000, 100)
+	benchmarkParentSlice(b, 10000, 10)
 }
 
 func BenchmarkRelationParentSlice_1M_10_x_100000(b *testing.B) {

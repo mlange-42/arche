@@ -6,43 +6,39 @@ from matplotlib import pyplot as plt
 if __name__ == "__main__":
     data = pd.read_csv("results.csv", sep=";")
 
-    model_names = {
-        "Arche": "Arche",
-        "ArrOfPointers": "AoP",
-        "ArrOfStructs": "AoS",
-        "LinkedList": "LL",
-    }
-
     data["Model"] = ""
     data["Entities"] = 0
-    data["Bytes"] = 0
+    data["Parents"] = 0
+    data["Children"] = 0
 
-    data["Benchmark"] = data["Benchmark"].str.replace("Benchmark", "")
+    data["Benchmark"] = data["Benchmark"].str.replace("BenchmarkRelation", "")
     for index, row in data.iterrows():
-        parts = row["Benchmark"].split("_")
-        data.loc[index, "Model"] = model_names[parts[0]]
-        data.loc[index, "Entities"] = int(parts[2]) * 1000
-        data.loc[index, "Bytes"] = int(parts[1].replace("B", ""))
+        parts = row["Benchmark"].split("-")[0].split("_")
+        data.loc[index, "Model"] = parts[0]
+        data.loc[index, "Parents"] = int(parts[2])
+        data.loc[index, "Children"] = int(parts[4])
 
+    data["Entities"] = data["Parents"] * data["Children"]
     data["Time"] = data["TotalTime"] / data["Entities"]
 
-    data = data[data["Model"] != "LL"]
+    data = data[data["Entities"] > 1000]
 
-    models = np.unique(data["Model"])
-    entities = np.unique(data["Entities"])
-    bts = np.unique(data["Bytes"])
+    models = ["ParentList", "ParentSlice", "Child", "Default", "Cached"]
+    parents = np.unique(data["Parents"])
+    children = np.unique(data["Children"])
 
     colors = {
-        "Arche": "black",
-        "AoS": "red",
-        "AoP": "blue",
-        "LL": "grey",
+        "Default": "blue",
+        "Cached": "black",
+        "Child": "green",
+        "ParentSlice": "red",
+        "ParentList": "purple",
     }
     linesEntities = {
         1000: ("dotted", 1.0),
         10000: ("dashed", 1.2),
         100000: ("solid", 1.5),
-        # 250000: ("-.", 1.0),
+        1000000: ("solid", 2.5),
     }
 
     plt.rcParams["svg.fonttype"] = "none"
@@ -51,17 +47,22 @@ if __name__ == "__main__":
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.set_title("Iter & get 16 byte")
     ax.set_xscale("log")
-    ax.set_xticks([16, 32, 64, 128, 256])
-    ax.set_xticklabels([16, 32, 64, 128, 256])
-    ax.set_xlabel("Memory per Entity [byte]", fontsize=11)
+    ax.set_yscale("log")
+    ax.set_xticks([10, 100, 1000, 10000])
+    ax.set_xticklabels([10, 100, 1000, 10000])
+    ax.set_yticks([1, 2, 5, 10, 20, 50, 100, 200])
+    ax.set_yticklabels([1, 2, 5, 10, 20, 50, 100, 200])
+    ax.set_xlabel("Number of parents", fontsize=11)
     ax.set_ylabel("Time per Entity [ns]", fontsize=11)
 
-    ax.set_ylim(0, np.max(data["Time"]) * 1.05)
+    ax.set_ylim(1, np.max(data["Time"]) * 1.2)
 
-    for model in reversed(models):
+    for model in models:
+        mod_data = data[(data["Model"] == model)]
+        entities = np.unique(mod_data["Entities"])
         for ent in entities:
-            extr = data[(data["Model"] == model) & (data["Entities"] == ent)]
-            extr = extr.groupby("Bytes").mean()
+            extr = mod_data[mod_data["Entities"] == ent]
+            extr = extr.groupby("Parents").mean()
 
             line = linesEntities[ent]
             ax.plot(
@@ -74,6 +75,7 @@ if __name__ == "__main__":
                 markersize=3,
                 label=model if ent == 100000 else None,
             )
+    
     for ent in reversed(entities):
         line = linesEntities[ent]
         ax.plot(
