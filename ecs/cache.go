@@ -95,13 +95,20 @@ func (c *Cache) get(f *CachedFilter) *cacheEntry {
 //
 // Iterates over all filters and adds the node to the resp. entry where the filter matches.
 func (c *Cache) addArchetype(arch *archetype) {
+	if !arch.HasRelation() {
+		for i := range c.filters {
+			e := &c.filters[i]
+			if !e.Filter.Matches(arch.Mask) {
+				continue
+			}
+			e.Archetypes = append(e.Archetypes, arch)
+		}
+		return
+	}
+
 	for i := range c.filters {
 		e := &c.filters[i]
 		if !e.Filter.Matches(arch.Mask) {
-			continue
-		}
-		if !arch.HasRelation() {
-			e.Archetypes = append(e.Archetypes, arch)
 			continue
 		}
 		if rf, ok := e.Filter.(*RelationFilter); ok {

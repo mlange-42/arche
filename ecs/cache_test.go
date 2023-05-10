@@ -49,16 +49,27 @@ func TestFilterCache(t *testing.T) {
 
 func TestFilterCacheRelation(t *testing.T) {
 	world := NewWorld()
-	relID := ComponentID[testRelationA](&world)
+	posID := ComponentID[Position](&world)
+	rel1ID := ComponentID[testRelationA](&world)
+	rel2ID := ComponentID[testRelationB](&world)
 
 	target1 := world.NewEntity()
+	target2 := world.NewEntity()
 
 	cache := world.Cache()
 
-	f1 := All(relID)
+	f1 := All(rel1ID)
 	_ = cache.Register(f1)
 
-	NewBuilder(&world, relID).WithRelation(relID).NewBatch(10, target1)
+	f2 := NewRelationFilter(f1, target1)
+	_ = cache.Register(&f2)
+
+	f3 := NewRelationFilter(f1, target2)
+	_ = cache.Register(&f3)
+
+	NewBuilder(&world, posID).NewBatch(10)
+	NewBuilder(&world, rel1ID).WithRelation(rel1ID).NewBatch(10, target1)
+	NewBuilder(&world, rel2ID).WithRelation(rel2ID).NewBatch(10, target2)
 }
 
 func ExampleCache() {
