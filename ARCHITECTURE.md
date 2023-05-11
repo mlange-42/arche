@@ -46,3 +46,30 @@ This is achieved by subdividing archetypes with a relation component by their re
 
 This feature is inspired by [Flecs](https://github.com/SanderMertens/flecs).
 However, the implementation in *Arche* is currently limited in that it only supports a single relation per entity, and no nested relation queries.
+
+### Benchmarks
+
+The figure below compares the iteration time per entity for different ways of representing entity relations.
+The task is to sum up values of children for each parent.
+
+* **ParentList** (purple): Children form an implicit linked list. The parent references the first child.
+  * Outer loop over parents, inner loop over children using world access.
+* **ParentSlice** (red): The parent holds a slice of all it's children.
+  * Same as above.
+* **Child** (green): Each child references it's parent.
+  * Loop over all child entities and retrieval of the parent using world access.
+* **Default** (blue): Using Arche's relations feature without filter caching.
+  * Outer loop over parents, inner loop over children using relation queries.
+* **Cached** (black): Using Arche's relations feature with filter caching.
+  * Same as above.
+
+Besides the ergonomics provided by Arche’s relation feature,
+the benchmarks show that the feature outperforms the other options, except when there are very few children per parent.
+Only when there is a huge number of parents and significantly fewer than 100 children per parent,
+the *Child* representation should perform better.
+
+<div align="center" width="100%">
+
+![Benchmarks Entity relations](https://github.com/mlange-42/arche/assets/44003176/c30414bd-def3-43b3-be14-a4bf7fe0e812)  
+*Iteration time per entity for different ways of representing entity relations. Line style: total number of child entities, color: ways to represent entity relations.*
+</div>
