@@ -70,6 +70,6 @@ the *Child* representation should perform better.
 
 <div align="center" width="100%">
 
-![Benchmarks Entity relations](https://github.com/mlange-42/arche/assets/44003176/c30414bd-def3-43b3-be14-a4bf7fe0e812)  
-*Iteration time per entity for different ways of representing entity relations. Line style: total number of child entities, color: ways to represent entity relations.*
+![Benchmarks Entity relations](https://user-images.githubusercontent.com/44003176/237807460-cfac6c95-41c2-4438-a99b-c82893e5c3f6.svg)  
+*Iteration time per entity for different ways of representing entity relations. Color: ways to represent entity relations; Line style: total number of child entities; Markers: number of children per parent entity*
 </div>
