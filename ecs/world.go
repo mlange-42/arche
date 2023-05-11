@@ -375,8 +375,11 @@ func (w *World) removeEntities(filter Filter) int {
 	var i int32
 	for i = 0; i < numArches; i++ {
 		arch := arches[i]
-
 		len := arch.Len()
+		if len == 0 {
+			continue
+		}
+
 		count += len
 
 		var j uint32

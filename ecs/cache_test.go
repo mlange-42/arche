@@ -56,6 +56,7 @@ func TestFilterCacheRelation(t *testing.T) {
 	target1 := world.NewEntity()
 	target2 := world.NewEntity()
 	target3 := world.NewEntity()
+	target4 := world.NewEntity()
 
 	cache := world.Cache()
 
@@ -78,15 +79,27 @@ func TestFilterCacheRelation(t *testing.T) {
 	assert.Equal(t, int32(0), c2.Archetypes.Len())
 	assert.Equal(t, int32(0), c3.Archetypes.Len())
 
-	NewBuilder(&world, rel1ID).WithRelation(rel1ID).NewBatch(10, target1)
+	e1 := NewBuilder(&world, rel1ID).WithRelation(rel1ID).New(target1)
 	assert.Equal(t, int32(1), c1.Archetypes.Len())
 	assert.Equal(t, int32(1), c2.Archetypes.Len())
 
-	NewBuilder(&world, rel1ID).WithRelation(rel1ID).NewBatch(10, target3)
+	_ = NewBuilder(&world, rel1ID).WithRelation(rel1ID).New(target3)
 	assert.Equal(t, int32(2), c1.Archetypes.Len())
 	assert.Equal(t, int32(1), c2.Archetypes.Len())
 
-	NewBuilder(&world, rel2ID).WithRelation(rel2ID).NewBatch(10, target2)
+	_ = NewBuilder(&world, rel2ID).WithRelation(rel2ID).New(target2)
+
+	world.RemoveEntity(e1)
+	world.RemoveEntity(target1)
+	assert.Equal(t, int32(1), c1.Archetypes.Len())
+	assert.Equal(t, int32(0), c2.Archetypes.Len())
+
+	_ = NewBuilder(&world, rel1ID).WithRelation(rel1ID).New(target2)
+	_ = NewBuilder(&world, rel1ID, posID).WithRelation(rel1ID).New(target2)
+	_ = NewBuilder(&world, rel1ID, posID).WithRelation(rel1ID).New(target3)
+	_ = NewBuilder(&world, rel1ID, posID).WithRelation(rel1ID).New(target4)
+	assert.Equal(t, int32(5), c1.Archetypes.Len())
+	assert.Equal(t, int32(2), c3.Archetypes.Len())
 
 	world.Batch().RemoveEntities(All())
 	assert.Equal(t, int32(0), c1.Archetypes.Len())
