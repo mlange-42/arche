@@ -63,17 +63,19 @@ func (a *pointers[T]) Add(elem *T) {
 	a.pointers = append(a.pointers, elem)
 }
 
-// Remove an element.
-func (a *pointers[T]) Remove(elem *T) {
+// RemoveAt swap-removes an element at a given index.
+//
+// Returns whether it was a swap.
+func (a *pointers[T]) RemoveAt(index int) bool {
 	ln := len(a.pointers)
-	for i := 0; i < ln; i++ {
-		arch2 := a.pointers[i]
-		if elem == arch2 {
-			a.pointers[i], a.pointers[ln-1] = a.pointers[ln-1], nil
-			a.pointers = a.pointers[:ln-1]
-			return
-		}
+	if index == ln-1 {
+		a.pointers[index] = nil
+		a.pointers = a.pointers[:index]
+		return false
 	}
+	a.pointers[index], a.pointers[ln-1] = a.pointers[ln-1], nil
+	a.pointers = a.pointers[:ln-1]
+	return true
 }
 
 // Len returns the current number of items in the paged array.

@@ -112,8 +112,8 @@ func fromConfig(conf Config) World {
 		targetEntities: targetEntities,
 		entityPool:     newEntityPool(uint32(conf.CapacityIncrement)),
 		registry:       newComponentRegistry(),
-		archetypes:     newPagedSlice[archetype](),
-		nodes:          newPagedSlice[archNode](),
+		archetypes:     pagedSlice[archetype]{},
+		nodes:          pagedSlice[archNode]{},
 		relationNodes:  []*archNode{},
 		locks:          lockMask{},
 		listener:       nil,
@@ -375,8 +375,11 @@ func (w *World) removeEntities(filter Filter) int {
 	var i int32
 	for i = 0; i < numArches; i++ {
 		arch := arches[i]
-
 		len := arch.Len()
+		if len == 0 {
+			continue
+		}
+
 		count += len
 
 		var j uint32

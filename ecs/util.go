@@ -95,11 +95,6 @@ type pagedSlice[T any] struct {
 	lenLast int32
 }
 
-// newPagedSlice creates a new pagedSlice with the given page size/capacity increment.
-func newPagedSlice[T any]() pagedSlice[T] {
-	return pagedSlice[T]{}
-}
-
 // Add adds a value to the paged slice.
 func (p *pagedSlice[T]) Add(value T) {
 	if p.len == 0 || p.lenLast == pageSize {
