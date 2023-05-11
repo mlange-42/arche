@@ -50,21 +50,21 @@ However, the implementation in *Arche* is currently limited in that it only supp
 ### Benchmarks
 
 The figure below compares the iteration time per entity for different ways of representing entity relations.
-The task is to sum up values of children for each parent.
+The task is to sum up a value over the children of each parent.
 
 * **ParentList** (purple): Children form an implicit linked list. The parent references the first child.
-  * Outer loop over parents, inner loop over children using world access.
+  * Query over parents, inner loop implicit linked list of children, using world access for next child and value component.
 * **ParentSlice** (red): The parent holds a slice of all it's children.
-  * Same as above.
+  * Query over parents, inner loop over slice of children using world access for value component.
 * **Child** (green): Each child references it's parent.
-  * Loop over all child entities and retrieval of the parent using world access.
+  * Query over all child entities and retrieval of the parent sum component using world access.
 * **Default** (blue): Using Arche's relations feature without filter caching.
-  * Outer loop over parents, inner loop over children using relation queries.
+  * Outer query over parents, inner loop over children using relation queries.
 * **Cached** (black): Using Arche's relations feature with filter caching.
-  * Same as above.
+  * Same as above, using an additional component per parent to store cached filters.
 
 Besides the ergonomics provided by Arche’s relation feature,
-the benchmarks show that the feature outperforms the other options, except when there are very few children per parent.
+the benchmarks show that it outperforms the other options, except when there are very few children per parent.
 Only when there is a huge number of parents and significantly fewer than 100 children per parent,
 the *Child* representation should perform better.
 
