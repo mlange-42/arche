@@ -11,7 +11,7 @@
 - [Manipulating entities]()
 - [Entity relations]()
 - [Batch operations]()
-- [Performance tips]()
+- [Performance tips](./performance.md)
 - [Background]()
   - [Design decisions]()
   - [Architecture]()
