@@ -44,7 +44,7 @@ func TestLockMask(t *testing.T) {
 }
 
 func TestPagedSlice(t *testing.T) {
-	a := newPagedSlice[int32]()
+	a := pagedSlice[int32]{}
 
 	var i int32
 	for i = 0; i < 66; i++ {
@@ -58,7 +58,7 @@ func TestPagedSlice(t *testing.T) {
 }
 
 func TestPagedSlicePointerPersistence(t *testing.T) {
-	a := newPagedSlice[int32]()
+	a := pagedSlice[int32]{}
 
 	a.Add(0)
 	p1 := a.Get(0)
@@ -80,7 +80,7 @@ func BenchmarkPagedSlice_Get(b *testing.B) {
 	b.StopTimer()
 
 	count := 128
-	s := newPagedSlice[int]()
+	s := pagedSlice[int]{}
 
 	for i := 0; i < count; i++ {
 		s.Add(1)
