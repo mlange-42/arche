@@ -40,36 +40,42 @@ It is therefore recommended to add/remove/exchange multiple components at the sa
 ## Entity relations
 
 *Arche* supports entity relations as first class feature.
+Relations are used to represent graphs of entities, e.g. hierarchies.
+Relations are added to and removed from entities just like components.
 
-This means that queries with a specified relation target entity are as fast as usual queries for component compositions.
-This is achieved by subdividing archetypes with a relation component by their relation target. I.e. entities that reference a different target entity are stored in different archetypes.
+In Arche, queries can specify a target entity for a relation.
+These relation queries are as fast as usual queries for component compositions.
+This is achieved by subdividing archetypes with a relation component by their relation target. I.e. entities that reference a different target entity are stored in separate archetypes.
 
-This feature is inspired by [Flecs](https://github.com/SanderMertens/flecs).
+The feature is inspired by [Flecs](https://github.com/SanderMertens/flecs).
 However, the implementation in *Arche* is currently limited in that it only supports a single relation per entity, and no nested relation queries.
 
 ### Benchmarks
 
 The figure below compares the iteration time per entity for different ways of representing entity relations.
-The task is to sum up values of children for each parent.
+The task is to sum up a value over the children of each parent.
+
+The following ways to represent entity relations are shown in the figure:
 
 * **ParentList** (purple): Children form an implicit linked list. The parent references the first child.
-  * Outer loop over parents, inner loop over children using world access.
+  * Query over parents, inner loop implicit linked list of children, using world access for next child and value component.
 * **ParentSlice** (red): The parent holds a slice of all it's children.
-  * Same as above.
+  * Query over parents, inner loop over slice of children using world access for value component.
 * **Child** (green): Each child references it's parent.
-  * Loop over all child entities and retrieval of the parent using world access.
+  * Query over all child entities and retrieval of the parent sum component using world access.
 * **Default** (blue): Using Arche's relations feature without filter caching.
-  * Outer loop over parents, inner loop over children using relation queries.
+  * Outer query over parents, inner loop over children using relation queries.
 * **Cached** (black): Using Arche's relations feature with filter caching.
-  * Same as above.
+  * Same as above, using an additional component per parent to store cached filters.
 
-Besides the ergonomics provided by Arche’s relation feature,
-the benchmarks show that the feature outperforms the other options, except when there are very few children per parent.
-Only when there is a huge number of parents and significantly fewer than 100 children per parent,
-the *Child* representation should perform better.
+The first three representations are possible in any ECS, while the last two use Arche's relations feature.
 
 <div align="center" width="100%">
 
 ![Benchmarks Entity relations](https://user-images.githubusercontent.com/44003176/237807460-cfac6c95-41c2-4438-a99b-c82893e5c3f6.svg)  
 *Iteration time per entity for different ways of representing entity relations. Color: ways to represent entity relations; Line style: total number of child entities; Markers: number of children per parent entity*
 </div>
+
+The benchmarks show that Arche's relations feature outperforms the other representations, except when there are very few children per parent.
+Only when there is a huge number of parents and significantly fewer than 100 children per parent,
+the *Child* representation should perform better.
