@@ -12,7 +12,8 @@ type Filter interface {
 }
 
 // MaskFilter is a [Filter] for including and excluding certain components.
-// See [All] and [Mask.Without].
+//
+// See [All], [Mask.Without] and [Mask.Exclusive].
 type MaskFilter struct {
 	Include Mask // Components to include.
 	Exclude Mask // Components to exclude.
@@ -24,6 +25,10 @@ func (f *MaskFilter) Matches(bits Mask) bool {
 }
 
 // RelationFilter is a [Filter] for a [Relation] target, in addition to components.
+//
+// Logic filters ignore relation targets. Thus, a relation filter should be the outermost filter.
+//
+// See [Relation] for details and examples.
 type RelationFilter struct {
 	Filter Filter // Components filter.
 	Target Entity // Relation target entity.
@@ -31,10 +36,6 @@ type RelationFilter struct {
 
 // NewRelationFilter creates a new [Relation] filter.
 // It is a [Filter] for a [Relation] target, in addition to components.
-//
-// Logic filters ignore relation targets. Thus, a relation filter should be the outermost filter.
-//
-// See [Relation] for details and examples.
 func NewRelationFilter(filter Filter, target Entity) RelationFilter {
 	return RelationFilter{
 		Filter: filter,
@@ -49,7 +50,8 @@ func (f *RelationFilter) Matches(bits Mask) bool {
 
 // CachedFilter is a filter that is cached by the world.
 //
-// Create it using [Cache.Register].
+// Create a cached filter from any other filter using [Cache.Register].
+// For details on caching, see [Cache].
 type CachedFilter struct {
 	filter Filter
 	id     uint32

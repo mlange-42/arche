@@ -7,6 +7,8 @@ import (
 // All matches entities that have all the given components.
 //
 // Like [And] for combining individual components.
+//
+// See also [ecs.All], [ecs.Mask], [ecs.Mask.Without] and [ecs.Mask.Exclusive].
 func All(comps ...ecs.ID) ecs.Mask {
 	return ecs.All(comps...)
 }
