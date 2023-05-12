@@ -9,7 +9,10 @@ const MaskTotalBits = 128
 const wordSize = 64
 
 // Mask is a 128 bit bitmask.
-// It is also a [Filter] for including certain components (see [All] and [Mask.Without]).
+// It is also a [Filter] for including certain components.
+//
+// Use [All] to create a mask for a list of component IDs.
+// A mask can be further specified using [Mask.Without] or [Mask.Exclusive].
 type Mask struct {
 	Lo uint64 // First 64 bits of the mask
 	Hi uint64 // Second 64 bits of the mask

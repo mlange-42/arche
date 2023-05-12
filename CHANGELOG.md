@@ -46,6 +46,7 @@
 * Adds a section on entity relations to the `ARCHITECTURE.md` document (#256)
 * Replace Aos benchmarks plot in README for pointer iteration fix #284 (#285)
 * Adds a plot for entity relation benchmarks to ARCHITECTURE.md (#290)
+* Adds an outline of the most important types and functions to each sub-package (#295)
 
 ### Other
 
