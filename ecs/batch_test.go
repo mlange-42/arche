@@ -11,7 +11,7 @@ func ExampleBatch() {
 	builder := ecs.NewBuilder(&world, posID, velID)
 	builder.NewBatch(100)
 
-	world.Batch().Remove(ecs.All(posID, velID), nil, velID)
+	world.Batch().Remove(ecs.All(posID, velID), velID)
 	world.Batch().RemoveEntities(ecs.All(posID))
 }
 
@@ -25,7 +25,7 @@ func ExampleBatch_Add() {
 	builder.NewBatch(100)
 
 	filter := ecs.All(posID)
-	world.Batch().Add(filter, nil, velID)
+	world.Batch().Add(filter, velID)
 }
 
 func ExampleBatch_Remove() {
@@ -38,7 +38,7 @@ func ExampleBatch_Remove() {
 	builder.NewBatch(100)
 
 	filter := ecs.All(posID, velID)
-	world.Batch().Remove(filter, nil, velID)
+	world.Batch().Remove(filter, velID)
 }
 
 func ExampleBatch_Exchange() {
@@ -55,7 +55,6 @@ func ExampleBatch_Exchange() {
 		filter,          // Filter
 		[]ecs.ID{velID}, // Add components
 		[]ecs.ID{posID}, // Remove components
-		nil,             // Optional callback
 	)
 }
 
@@ -83,5 +82,5 @@ func ExampleBatch_SetRelation() {
 	builder.NewBatch(100)
 
 	filter := ecs.All(childID)
-	world.Batch().SetRelation(filter, childID, target, nil)
+	world.Batch().SetRelation(filter, childID, target)
 }

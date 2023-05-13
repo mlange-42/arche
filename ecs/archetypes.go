@@ -26,23 +26,30 @@ func (s singleArchetype) Len() int32 {
 // Implements [archetypes].
 //
 // Used for the [Query] returned by entity batch creation methods.
-type batchArchetype struct {
-	Archetype    *archetype
-	StartIndex   uint32
-	EndIndex     uint32
-	OldArchetype *archetype
+type batchArchetypes struct {
+	Archetype    []*archetype
+	StartIndex   []uint32
+	EndIndex     []uint32
+	OldArchetype []*archetype
 	Added        []ID
 	Removed      []ID
 }
 
 // Get returns the value at the given index.
-func (s *batchArchetype) Get(index int32) *archetype {
-	return s.Archetype
+func (s *batchArchetypes) Get(index int32) *archetype {
+	return s.Archetype[index]
 }
 
 // Len returns the current number of items in the paged array.
-func (s *batchArchetype) Len() int32 {
-	return 1
+func (s *batchArchetypes) Len() int32 {
+	return int32(len(s.Archetype))
+}
+
+func (s *batchArchetypes) Add(arch, oldArch *archetype, start, end uint32) {
+	s.Archetype = append(s.Archetype, arch)
+	s.OldArchetype = append(s.OldArchetype, oldArch)
+	s.StartIndex = append(s.StartIndex, start)
+	s.EndIndex = append(s.EndIndex, end)
 }
 
 // Implementation of an archetype iterator for pointers.

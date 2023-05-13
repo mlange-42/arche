@@ -278,7 +278,13 @@ func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID
 func (w *World) newEntitiesQuery(count int, targetID int8, target Entity, comps ...ID) Query {
 	arch, startIdx := w.newEntitiesNoNotify(count, targetID, target, comps...)
 	lock := w.lock()
-	return newBatchQuery(w, lock, &batchArchetype{arch, startIdx, arch.Len(), nil, arch.Components(), nil})
+
+	batches := batchArchetypes{
+		Added:   arch.Components(),
+		Removed: nil,
+	}
+	batches.Add(arch, nil, startIdx, arch.Len())
+	return newBatchQuery(w, lock, &batches)
 }
 
 // Creates new entities with component values without returning a query over them.
@@ -314,7 +320,12 @@ func (w *World) newEntitiesWithQuery(count int, targetID int8, target Entity, co
 
 	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, target, ids, comps...)
 	lock := w.lock()
-	return newBatchQuery(w, lock, &batchArchetype{arch, startIdx, arch.Len(), nil, arch.Components(), nil})
+	batches := batchArchetypes{
+		Added:   arch.Components(),
+		Removed: nil,
+	}
+	batches.Add(arch, nil, startIdx, arch.Len())
+	return newBatchQuery(w, lock, &batches)
 }
 
 // RemoveEntity removes and recycles an [Entity].
@@ -645,7 +656,32 @@ func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [World.Exchange].
-func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Query)) {
+func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID) {
+	batches := batchArchetypes{
+		Added:   add,
+		Removed: rem,
+	}
+
+	w.exchangeBatchNoNotify(filter, add, rem, &batches)
+
+	if w.listener != nil {
+		w.notifyQuery(&batches)
+	}
+}
+
+func (w *World) exchangeBatchQuery(filter Filter, add []ID, rem []ID) Query {
+	batches := batchArchetypes{
+		Added:   add,
+		Removed: rem,
+	}
+
+	w.exchangeBatchNoNotify(filter, add, rem, &batches)
+
+	lock := w.lock()
+	return newBatchQuery(w, lock, &batches)
+}
+
+func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, batches *batchArchetypes) {
 	w.checkLocked()
 
 	if len(add) == 0 && len(rem) == 0 {
@@ -666,16 +702,7 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 		}
 
 		newArch, start := w.exchangeArch(arch, archLen, add, rem)
-		if callback == nil {
-			if w.listener != nil {
-				w.notifyQuery(&batchArchetype{newArch, start, newArch.Len(), arch, add, rem})
-			}
-		} else {
-			lock := w.lock()
-			query := newBatchQuery(w, lock, &batchArchetype{newArch, start, newArch.Len(), arch, add, rem})
-			callback(query)
-			w.checkLocked()
-		}
+		batches.Add(newArch, arch, start, newArch.Len())
 	}
 }
 
@@ -800,7 +827,22 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 }
 
 // set relation target in batches.
-func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback func(Query)) {
+func (w *World) setRelationBatch(filter Filter, comp ID, target Entity) {
+	batches := batchArchetypes{}
+	w.setRelationBatchNoNotify(filter, comp, target, &batches)
+	if w.listener != nil {
+		w.notifyQuery(&batches)
+	}
+}
+
+func (w *World) setRelationBatchQuery(filter Filter, comp ID, target Entity) Query {
+	batches := batchArchetypes{}
+	w.setRelationBatchNoNotify(filter, comp, target, &batches)
+	lock := w.lock()
+	return newBatchQuery(w, lock, &batches)
+}
+
+func (w *World) setRelationBatchNoNotify(filter Filter, comp ID, target Entity, batches *batchArchetypes) {
 	w.checkLocked()
 
 	if !target.IsZero() && !w.entityPool.Alive(target) {
@@ -821,16 +863,7 @@ func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback
 		}
 
 		newArch, start, end := w.setRelationArch(arch, archLen, comp, target)
-		if callback == nil {
-			if w.listener != nil {
-				w.notifyQuery(&batchArchetype{newArch, start, end, arch, nil, nil})
-			}
-		} else {
-			lock := w.lock()
-			query := newBatchQuery(w, lock, &batchArchetype{newArch, start, end, arch, nil, nil})
-			callback(query)
-			w.checkLocked()
-		}
+		batches.Add(newArch, arch, start, end)
 	}
 }
 
@@ -1372,34 +1405,37 @@ func (w *World) closeQuery(query *Query) {
 	w.unlock(query.lockBit)
 
 	if w.listener != nil {
-		if arch, ok := query.nodeArchetypes.(*batchArchetype); ok {
+		if arch, ok := query.nodeArchetypes.(*batchArchetypes); ok {
 			w.notifyQuery(arch)
 		}
 	}
 }
 
 // notifies the listener for all entities on a batch query.
-func (w *World) notifyQuery(batchArch *batchArchetype) {
-	arch := batchArch.Archetype
-	var i uint32
+func (w *World) notifyQuery(batchArch *batchArchetypes) {
+	count := batchArch.Len()
+	var i int32
+	for i = 0; i < count; i++ {
+		arch := batchArch.Get(i)
+		event := EntityEvent{
+			Entity{}, Mask{}, arch.Mask, batchArch.Added, batchArch.Removed, arch.node.Ids, 1,
+			Entity{}, arch.RelationTarget, false,
+		}
 
-	event := EntityEvent{
-		Entity{}, Mask{}, arch.Mask, batchArch.Added, batchArch.Removed, arch.node.Ids, 1,
-		Entity{}, arch.RelationTarget, false,
-	}
+		oldArch := batchArch.OldArchetype[i]
+		if oldArch != nil {
+			event.OldMask = oldArch.node.Mask
+			event.AddedRemoved = 0
+			event.OldTarget = oldArch.RelationTarget
+			event.TargetChanged = event.OldMask == event.NewMask
+		}
 
-	oldArch := batchArch.OldArchetype
-	if oldArch != nil {
-		event.OldMask = oldArch.node.Mask
-		event.AddedRemoved = 0
-		event.OldTarget = oldArch.RelationTarget
-		event.TargetChanged = event.OldMask == event.NewMask
-	}
-
-	start, end := batchArch.StartIndex, batchArch.EndIndex
-	for i = start; i < end; i++ {
-		entity := arch.GetEntity(i)
-		event.Entity = entity
-		w.listener(&event)
+		start, end := batchArch.StartIndex[i], batchArch.EndIndex[i]
+		var e uint32
+		for e = start; e < end; e++ {
+			entity := arch.GetEntity(e)
+			event.Entity = entity
+			w.listener(&event)
+		}
 	}
 }
