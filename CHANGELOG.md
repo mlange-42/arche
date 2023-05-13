@@ -12,6 +12,7 @@
 * Rework of generic entity creation API, use `MapX.New`, `MapX.NewWith`, `MapX.NewBatch` and `MapX.NewQuery` (#239, #252)
 * Stats object `WorldStats` etc. adapted for new structure of archetypes nested in nodes (#258)
 * Removed generic filter method `FilterX.Filter` (#271)
+* All batch creation method `Batch.NewQuery` renamed to `Batch.NewBatchQ` (#298)
 
 ### Features
 
@@ -24,7 +25,7 @@
 * Re-introduce `World.Batch` for batch-processing of entities (add/remove/exchange) (#264)
 * New method `Builder.Add` for adding components with a target to entities (#264)
 * New method `Batch.SetRelation` for batch-setting entity relations (#265)
-* New methods `Builder.AddQuery`, `Builder.RemoveQuery` etc. to get a query over batch-processed entities (#297)
+* New methods `Builder.AddQ`, `Builder.RemoveQ` etc. to get a query over batch-processed entities (#297)
 * Sends an `EntityEvent` to the world listener on relation target changes (#265)
 
 ### Performance

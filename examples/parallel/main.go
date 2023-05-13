@@ -86,7 +86,7 @@ func runModel(w *ecs.World) {
 
 	// Create 10k entities, each with a countdown.
 	mapper := generic.NewMap1[Countdown](w)
-	query := mapper.NewQuery(1000)
+	query := mapper.NewBatchQ(1000)
 
 	// Initialize the just created entities.
 	cnt := 0

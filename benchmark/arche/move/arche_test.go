@@ -27,7 +27,7 @@ func runArcheMove(b *testing.B, count int, add, rem []g.Comp) {
 
 		entities := make([]ecs.Entity, count)
 
-		query := ecs.NewBuilder(&world, addIDs...).NewQuery(count)
+		query := ecs.NewBuilder(&world, addIDs...).NewBatchQ(count)
 
 		cnt := 0
 		for query.Next() {

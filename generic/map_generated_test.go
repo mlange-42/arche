@@ -43,7 +43,7 @@ func TestMap1Generated(t *testing.T) {
 
 	mut.NewBatch(2)
 
-	q := mut.NewQuery(2)
+	q := mut.NewBatchQ(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -60,13 +60,13 @@ func TestMap1Generated(t *testing.T) {
 
 	assert.Panics(t, func() { mut.New(target) })
 	assert.Panics(t, func() { mut.NewBatch(5, target) })
-	assert.Panics(t, func() { mut.NewQuery(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
 
 	mut2 := NewMap1[testRelationA](&w, T[testRelationA]())
 
 	mut2.New(target)
 	mut2.NewBatch(5, target)
-	q2 := mut2.NewQuery(5, target)
+	q2 := mut2.NewBatchQ(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
 
@@ -119,7 +119,7 @@ func TestMap2Generated(t *testing.T) {
 
 	mut.NewBatch(2)
 
-	q := mut.NewQuery(2)
+	q := mut.NewBatchQ(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -136,7 +136,7 @@ func TestMap2Generated(t *testing.T) {
 
 	assert.Panics(t, func() { mut.New(target) })
 	assert.Panics(t, func() { mut.NewBatch(5, target) })
-	assert.Panics(t, func() { mut.NewQuery(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
 
 	mut2 := NewMap2[
 		testRelationA, testStruct1,
@@ -144,7 +144,7 @@ func TestMap2Generated(t *testing.T) {
 
 	mut2.New(target)
 	mut2.NewBatch(5, target)
-	q2 := mut2.NewQuery(5, target)
+	q2 := mut2.NewBatchQ(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
 
@@ -201,7 +201,7 @@ func TestMap3Generated(t *testing.T) {
 
 	mut.NewBatch(2)
 
-	q := mut.NewQuery(2)
+	q := mut.NewBatchQ(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -218,7 +218,7 @@ func TestMap3Generated(t *testing.T) {
 
 	assert.Panics(t, func() { mut.New(target) })
 	assert.Panics(t, func() { mut.NewBatch(5, target) })
-	assert.Panics(t, func() { mut.NewQuery(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
 
 	mut2 := NewMap3[
 		testRelationA, testStruct1, testStruct2,
@@ -226,7 +226,7 @@ func TestMap3Generated(t *testing.T) {
 
 	mut2.New(target)
 	mut2.NewBatch(5, target)
-	q2 := mut2.NewQuery(5, target)
+	q2 := mut2.NewBatchQ(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
 
@@ -286,7 +286,7 @@ func TestMap4Generated(t *testing.T) {
 
 	mut.NewBatch(2)
 
-	q := mut.NewQuery(2)
+	q := mut.NewBatchQ(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -303,7 +303,7 @@ func TestMap4Generated(t *testing.T) {
 
 	assert.Panics(t, func() { mut.New(target) })
 	assert.Panics(t, func() { mut.NewBatch(5, target) })
-	assert.Panics(t, func() { mut.NewQuery(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
 
 	mut2 := NewMap4[
 		testRelationA, testStruct1, testStruct2, testStruct3,
@@ -311,7 +311,7 @@ func TestMap4Generated(t *testing.T) {
 
 	mut2.New(target)
 	mut2.NewBatch(5, target)
-	q2 := mut2.NewQuery(5, target)
+	q2 := mut2.NewBatchQ(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
 
@@ -377,7 +377,7 @@ func TestMap5Generated(t *testing.T) {
 
 	mut.NewBatch(2)
 
-	q := mut.NewQuery(2)
+	q := mut.NewBatchQ(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -395,7 +395,7 @@ func TestMap5Generated(t *testing.T) {
 
 	assert.Panics(t, func() { mut.New(target) })
 	assert.Panics(t, func() { mut.NewBatch(5, target) })
-	assert.Panics(t, func() { mut.NewQuery(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
 
 	mut2 := NewMap5[
 		testRelationA, testStruct1, testStruct2, testStruct3,
@@ -404,7 +404,7 @@ func TestMap5Generated(t *testing.T) {
 
 	mut2.New(target)
 	mut2.NewBatch(5, target)
-	q2 := mut2.NewQuery(5, target)
+	q2 := mut2.NewBatchQ(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
 
@@ -474,7 +474,7 @@ func TestMap6Generated(t *testing.T) {
 
 	mut.NewBatch(2)
 
-	q := mut.NewQuery(2)
+	q := mut.NewBatchQ(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -492,7 +492,7 @@ func TestMap6Generated(t *testing.T) {
 
 	assert.Panics(t, func() { mut.New(target) })
 	assert.Panics(t, func() { mut.NewBatch(5, target) })
-	assert.Panics(t, func() { mut.NewQuery(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
 
 	mut2 := NewMap6[
 		testRelationA, testStruct1, testStruct2, testStruct3,
@@ -501,7 +501,7 @@ func TestMap6Generated(t *testing.T) {
 
 	mut2.New(target)
 	mut2.NewBatch(5, target)
-	q2 := mut2.NewQuery(5, target)
+	q2 := mut2.NewBatchQ(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
 
@@ -571,7 +571,7 @@ func TestMap7Generated(t *testing.T) {
 
 	mut.NewBatch(2)
 
-	q := mut.NewQuery(2)
+	q := mut.NewBatchQ(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -589,7 +589,7 @@ func TestMap7Generated(t *testing.T) {
 
 	assert.Panics(t, func() { mut.New(target) })
 	assert.Panics(t, func() { mut.NewBatch(5, target) })
-	assert.Panics(t, func() { mut.NewQuery(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
 
 	mut2 := NewMap7[
 		testRelationA, testStruct1, testStruct2, testStruct3,
@@ -598,7 +598,7 @@ func TestMap7Generated(t *testing.T) {
 
 	mut2.New(target)
 	mut2.NewBatch(5, target)
-	q2 := mut2.NewQuery(5, target)
+	q2 := mut2.NewBatchQ(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
 
@@ -668,7 +668,7 @@ func TestMap8Generated(t *testing.T) {
 
 	mut.NewBatch(2)
 
-	q := mut.NewQuery(2)
+	q := mut.NewBatchQ(2)
 	q.Close()
 
 	mut.GetUnchecked(e)
@@ -686,7 +686,7 @@ func TestMap8Generated(t *testing.T) {
 
 	assert.Panics(t, func() { mut.New(target) })
 	assert.Panics(t, func() { mut.NewBatch(5, target) })
-	assert.Panics(t, func() { mut.NewQuery(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
 
 	mut2 := NewMap8[
 		testRelationA, testStruct1, testStruct2, testStruct3,
@@ -695,7 +695,7 @@ func TestMap8Generated(t *testing.T) {
 
 	mut2.New(target)
 	mut2.NewBatch(5, target)
-	q2 := mut2.NewQuery(5, target)
+	q2 := mut2.NewBatchQ(5, target)
 	assert.Equal(t, 5, q2.Count())
 	q2.Close()
 

@@ -63,7 +63,7 @@ func benchmarkRelationGetWorld(b *testing.B, count int) {
 	target := world.NewEntity()
 
 	builder := NewBuilder(&world, relID).WithRelation(relID)
-	q := builder.NewQuery(count, target)
+	q := builder.NewBatchQ(count, target)
 	entities := make([]Entity, 0, count)
 	for q.Next() {
 		entities = append(entities, q.Entity())
@@ -89,7 +89,7 @@ func benchmarkRelationGetWorldUnchecked(b *testing.B, count int) {
 	target := world.NewEntity()
 
 	builder := NewBuilder(&world, relID).WithRelation(relID)
-	q := builder.NewQuery(count, target)
+	q := builder.NewBatchQ(count, target)
 	entities := make([]Entity, 0, count)
 	for q.Next() {
 		entities = append(entities, q.Entity())
@@ -115,7 +115,7 @@ func benchmarkRelationSet(b *testing.B, count int) {
 	target := world.NewEntity()
 
 	builder := NewBuilder(&world, relID).WithRelation(relID)
-	q := builder.NewQuery(count)
+	q := builder.NewBatchQ(count)
 	entities := make([]Entity, 0, count)
 	for q.Next() {
 		entities = append(entities, q.Entity())

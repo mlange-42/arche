@@ -25,7 +25,7 @@ func benchmarkRelationCached(b *testing.B, numParents int, numChildren int) {
 	childMapper := generic.NewMap1[ChildRelation](&world, generic.T[ChildRelation]())
 	targetMapper := generic.NewMap[ChildRelation](&world)
 
-	spawnedPar := parentMapper.NewQuery(numParents)
+	spawnedPar := parentMapper.NewBatchQ(numParents)
 	parents := make([]ecs.Entity, 0, numParents)
 	for spawnedPar.Next() {
 		par := spawnedPar.Entity()
@@ -36,7 +36,7 @@ func benchmarkRelationCached(b *testing.B, numParents int, numChildren int) {
 		parents = append(parents, par)
 	}
 
-	spawnedChild := childMapper.NewQuery(numParents * numChildren)
+	spawnedChild := childMapper.NewBatchQ(numParents * numChildren)
 	children := make([]ecs.Entity, 0, numParents*numChildren)
 	for spawnedChild.Next() {
 		children = append(children, spawnedChild.Entity())

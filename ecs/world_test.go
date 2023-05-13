@@ -285,7 +285,7 @@ func TestWorldExchangeBatch(t *testing.T) {
 	builder.NewBatch(100, target2)
 
 	filter := All(posID, relID)
-	query := w.Batch().ExchangeQuery(filter, []ID{velID}, []ID{posID})
+	query := w.Batch().ExchangeQ(filter, []ID{velID}, []ID{posID})
 	assert.Equal(t, 200, query.Count())
 	for query.Next() {
 		assert.True(t, query.Has(velID))
@@ -298,7 +298,7 @@ func TestWorldExchangeBatch(t *testing.T) {
 	query.Close()
 
 	filter2 := NewRelationFilter(All(relID), target1)
-	query = w.Batch().ExchangeQuery(&filter2, []ID{posID}, []ID{velID})
+	query = w.Batch().ExchangeQ(&filter2, []ID{posID}, []ID{velID})
 	assert.Equal(t, 100, query.Count())
 	for query.Next() {
 		assert.True(t, query.Has(posID))
@@ -347,12 +347,12 @@ func TestWorldExchangeBatch(t *testing.T) {
 	builder.NewBatch(100, target1)
 
 	filter = All(velID)
-	q = w.Batch().RemoveQuery(filter, velID)
+	q = w.Batch().RemoveQ(filter, velID)
 	assert.Equal(t, 1, q.Count())
 	q.Close()
 
 	filter = All()
-	q = w.Batch().AddQuery(filter, velID)
+	q = w.Batch().AddQ(filter, velID)
 	assert.Equal(t, 101, q.Count())
 	q.Close()
 }
@@ -779,7 +779,7 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	builder.NewBatch(100, targ3)
 
 	relFilter := NewRelationFilter(All(relID), targ2)
-	q := world.Batch().SetRelationQuery(&relFilter, relID, targ1)
+	q := world.Batch().SetRelationQ(&relFilter, relID, targ1)
 	assert.Equal(t, 100, q.Count())
 	cnt := 0
 	for q.Next() {
@@ -788,7 +788,7 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	}
 	assert.Equal(t, 100, cnt)
 
-	q = world.Batch().SetRelationQuery(All(relID), relID, targ3)
+	q = world.Batch().SetRelationQ(All(relID), relID, targ3)
 	assert.Equal(t, 300, q.Count())
 	cnt = 0
 	for q.Next() {
@@ -798,7 +798,7 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	assert.Equal(t, 300, cnt)
 
 	relFilter = NewRelationFilter(All(relID), targ3)
-	q = world.Batch().SetRelationQuery(&relFilter, relID, Entity{})
+	q = world.Batch().SetRelationQ(&relFilter, relID, Entity{})
 	assert.Equal(t, 300, q.Count())
 	cnt = 0
 	for q.Next() {
@@ -819,7 +819,7 @@ func TestWorldRelationSetBatch(t *testing.T) {
 
 	world.Relations().SetBatch(All(relID), relID, targ1)
 
-	q = world.Relations().SetBatchQuery(All(relID), relID, targ2)
+	q = world.Relations().SetBatchQ(All(relID), relID, targ2)
 	assert.Equal(t, 300, q.Count())
 	q.Close()
 
@@ -1098,7 +1098,7 @@ func TestWorldRelationMove(t *testing.T) {
 
 	entities := []Entity{}
 	for _, trg := range [...]Entity{target1, target2} {
-		query := NewBuilder(&world, relID).WithRelation(relID).NewQuery(100, trg)
+		query := NewBuilder(&world, relID).WithRelation(relID).NewBatchQ(100, trg)
 		for query.Next() {
 			entities = append(entities, query.Entity())
 		}

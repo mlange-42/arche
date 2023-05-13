@@ -43,7 +43,7 @@ func run() {
 	builder.NewBatch(100)
 
 	// Batch-create entities, and iterate them.
-	query := builder.NewQuery(100)
+	query := builder.NewBatchQ(100)
 	for query.Next() {
 		pos := (*Position)(query.Get(posID))
 		pos.X = 1.0
@@ -76,7 +76,7 @@ func runGeneric() {
 	mapper.NewBatch(100)
 
 	// Batch-create entities using the mapper, and iterate them.
-	query := mapper.NewQuery(100)
+	query := mapper.NewBatchQ(100)
 	for query.Next() {
 		pos, _ := query.Get()
 		pos.X = 1.0
