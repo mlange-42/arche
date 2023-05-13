@@ -40,7 +40,8 @@ func TestArchetypePointers(t *testing.T) {
 
 func TestBatchArchetype(t *testing.T) {
 	arch := archetype{}
-	batch := batchArchetype{Archetype: &arch}
+	batch := batchArchetypes{}
+	batch.Add(&arch, nil, 0, 1)
 
 	assert.Equal(t, &arch, batch.Get(0))
 	assert.Equal(t, int32(1), batch.Len())

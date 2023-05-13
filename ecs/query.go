@@ -60,23 +60,7 @@ func newCachedQuery(world *World, filter Filter, lockBit uint8, archetypes []*ar
 }
 
 // newQuery creates a query on a single archetype
-func newBatchQuery(world *World, lockBit uint8, archetype *batchArchetype) Query {
-	arch := archetype.Archetype
-	if archetype.StartIndex > 0 {
-		return Query{
-			filter:         nil,
-			isFiltered:     false,
-			isBatch:        true,
-			world:          world,
-			nodeArchetypes: archetype,
-			access:         &arch.archetypeAccess,
-			archIndex:      0,
-			lockBit:        lockBit,
-			count:          int32(archetype.EndIndex - archetype.StartIndex),
-			entityIndex:    archetype.StartIndex - 1,
-			entityIndexMax: archetype.EndIndex - 1,
-		}
-	}
+func newBatchQuery(world *World, lockBit uint8, archetype *batchArchetypes) Query {
 	return Query{
 		filter:         nil,
 		isFiltered:     false,
@@ -85,7 +69,7 @@ func newBatchQuery(world *World, lockBit uint8, archetype *batchArchetype) Query
 		nodeArchetypes: archetype,
 		archIndex:      -1,
 		lockBit:        lockBit,
-		count:          int32(archetype.EndIndex),
+		count:          -1,
 	}
 }
 
@@ -206,16 +190,20 @@ func (q *Query) nextBatch() bool {
 }
 
 func (q *Query) nextArchetypeBatch() bool {
-	if q.archIndex >= 0 {
-		return false
+	len := int32(q.nodeArchetypes.Len()) - 1
+	for q.archIndex < len {
+		q.archIndex++
+		a := q.nodeArchetypes.Get(q.archIndex)
+		aLen := a.Len()
+		if aLen > 0 {
+			q.access = &a.archetypeAccess
+			batch := q.nodeArchetypes.(*batchArchetypes)
+			q.entityIndex = batch.StartIndex[q.archIndex]
+			q.entityIndexMax = batch.EndIndex[q.archIndex] - 1
+			return true
+		}
 	}
-	q.archIndex++
-	a := q.nodeArchetypes.Get(q.archIndex)
-	q.access = &a.archetypeAccess
-	q.entityIndex = 0
-	batch := q.nodeArchetypes.(*batchArchetype)
-	q.entityIndexMax = batch.EndIndex - 1
-	return true
+	return false
 }
 
 func (q *Query) nextArchetypeSimple() bool {
@@ -324,6 +312,15 @@ func (q *Query) stepArchetype(step uint32) (int, bool) {
 
 func (q *Query) countEntities() int {
 	var count uint32 = 0
+
+	if q.isBatch {
+		batch := q.nodeArchetypes.(*batchArchetypes)
+		nArch := batch.Len()
+		var j int32
+		for j = 0; j < nArch; j++ {
+			count += batch.EndIndex[j] - batch.StartIndex[j]
+		}
+	}
 
 	if q.isFiltered {
 		ln := int32(len(q.archetypes))

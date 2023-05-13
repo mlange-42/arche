@@ -287,7 +287,7 @@ func TestWorldExchangeBatch(t *testing.T) {
 	cnt := 0
 	filter := All(posID, relID)
 	w.Batch().Exchange(filter, []ID{velID}, []ID{posID}, func(q Query) {
-		assert.Equal(t, 100, q.Count())
+		assert.Equal(t, 200, q.Count())
 		for q.Next() {
 			assert.True(t, q.Has(velID))
 			assert.True(t, q.Has(relID))
@@ -295,7 +295,7 @@ func TestWorldExchangeBatch(t *testing.T) {
 		}
 		cnt++
 	})
-	assert.Equal(t, 2, cnt)
+	assert.Equal(t, 1, cnt)
 
 	query := w.Query(All(posID))
 	assert.Equal(t, 0, query.Count())
