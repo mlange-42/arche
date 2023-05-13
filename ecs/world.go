@@ -68,10 +68,10 @@ type World struct {
 	entities       []entityIndex         // Mapping from entities to archetype and index.
 	targetEntities bitSet                // Whether entities are potential relation targets.
 	entityPool     entityPool            // Pool for entities.
-	archetypes     pagedSlice[archetype] // The archetypes.
+	archetypes     pagedSlice[archetype] // Archetypes that have no relations components.
 	nodes          pagedSlice[archNode]  // The archetype graph.
 	nodeData       pagedSlice[nodeData]  // The archetype graph's data.
-	nodePointers   []*archNode
+	nodePointers   []*archNode           // Helper list of all node pointers for queries.
 	relationNodes  []*archNode           // Archetype nodes that have an entity relation.
 	locks          lockMask              // World locks.
 	registry       componentRegistry[ID] // Component registry.
@@ -908,24 +908,7 @@ func (w *World) Reset() {
 	len := w.nodes.Len()
 	var i int32
 	for i = 0; i < len; i++ {
-		node := w.nodes.Get(i)
-		if !node.IsActive {
-			continue
-		}
-		arches := node.Archetypes()
-		lenArches := arches.Len()
-		var j int32
-		for j = 0; j < lenArches; j++ {
-			arch := arches.Get(j)
-			if !arch.IsActive() {
-				continue
-			}
-			if arch.HasRelation() && !arch.RelationTarget.IsZero() {
-				w.removeArchetype(arch)
-			} else {
-				arch.Reset()
-			}
-		}
+		w.nodes.Get(i).Reset(w.Cache())
 	}
 }
 
