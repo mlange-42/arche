@@ -142,6 +142,31 @@ func (a *archNode) RemoveArchetype(arch *archetype) {
 	a.archetypes.Get(idx).Deactivate()
 }
 
+func (a *archNode) Reset(cache *Cache) {
+	if !a.IsActive {
+		return
+	}
+	if !a.HasRelation {
+		a.archetype.Reset()
+		return
+	}
+
+	lenArches := a.archetypes.Len()
+	var j int32
+	for j = 0; j < lenArches; j++ {
+		arch := a.archetypes.Get(j)
+		if !arch.IsActive() {
+			continue
+		}
+		if !arch.RelationTarget.IsZero() {
+			a.RemoveArchetype(arch)
+			cache.removeArchetype(arch)
+		} else {
+			arch.Reset()
+		}
+	}
+}
+
 // Stats generates statistics for an archetype node.
 func (a *archNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 	ids := a.Ids

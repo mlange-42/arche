@@ -1335,6 +1335,7 @@ func TestWorldReset(t *testing.T) {
 	world.Reset()
 
 	assert.Equal(t, 0, int(world.archetypes.Get(0).Len()))
+	assert.Equal(t, 0, int(world.archetypes.Get(1).Len()))
 	assert.Equal(t, 0, world.entityPool.Len())
 	assert.Equal(t, 1, len(world.entities))
 
@@ -1349,6 +1350,10 @@ func TestWorldReset(t *testing.T) {
 
 	assert.Equal(t, Entity{1, 0}, e1)
 	assert.Equal(t, Entity{2, 0}, e2)
+
+	query = world.Query(All())
+	assert.Equal(t, 4, query.Count())
+	query.Close()
 }
 
 func TestArchetypeGraph(t *testing.T) {
