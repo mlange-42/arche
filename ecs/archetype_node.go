@@ -142,6 +142,8 @@ func (a *archNode) RemoveArchetype(arch *archetype) {
 	a.archetypes.Get(idx).Deactivate()
 }
 
+// Reset resets the archetypes in this node.
+// Relation archetypes with non-zero target are de-activated for re-use.
 func (a *archNode) Reset(cache *Cache) {
 	if !a.IsActive {
 		return

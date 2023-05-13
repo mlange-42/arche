@@ -819,7 +819,13 @@ func TestWorldRelationSetBatch(t *testing.T) {
 
 	world.Relations().SetBatch(All(relID), relID, targ1)
 
+	q = world.Relations().SetBatchQuery(All(relID), relID, targ2)
+	assert.Equal(t, 300, q.Count())
+	q.Close()
+
 	fmt.Println(debugPrintWorld(&world))
+
+	world.Reset()
 }
 
 func TestWorldRelationRemove(t *testing.T) {
