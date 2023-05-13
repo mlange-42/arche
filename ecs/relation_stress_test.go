@@ -27,7 +27,7 @@ func TestRelationStress(t *testing.T) {
 		parBuilder := ecs.NewBuilder(&world, posID)
 		childBuilder := ecs.NewBuilder(&world, relID).WithRelation(relID)
 
-		query := parBuilder.NewQuery(numParents)
+		query := parBuilder.NewBatchQ(numParents)
 		for query.Next() {
 			parents = append(parents, query.Entity())
 		}

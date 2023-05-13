@@ -48,12 +48,12 @@ func (r *Relations) Set(entity Entity, comp ID, target Entity) {
 //   - when called for a component that is not a relation.
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
-// See also [Relations.Set], [Relations.SetBatchQuery] and [Batch.SetRelation].
+// See also [Relations.Set], [Relations.SetBatchQ] and [Batch.SetRelation].
 func (r *Relations) SetBatch(filter Filter, comp ID, target Entity) {
 	r.world.setRelationBatch(filter, comp, target)
 }
 
-// SetBatchQuery sets the [Relation] target for many entities, matching a filter.
+// SetBatchQ sets the [Relation] target for many entities, matching a filter.
 // Returns a query over all affected entities.
 //
 // Panics:
@@ -62,6 +62,6 @@ func (r *Relations) SetBatch(filter Filter, comp ID, target Entity) {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [Relations.Set], [Relations.SetBatch] and [Batch.SetRelation].
-func (r *Relations) SetBatchQuery(filter Filter, comp ID, target Entity) Query {
+func (r *Relations) SetBatchQ(filter Filter, comp ID, target Entity) Query {
 	return r.world.setRelationBatchQuery(filter, comp, target)
 }

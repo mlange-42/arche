@@ -67,20 +67,20 @@ func (m *Map{{ .Index }}{{ .Types }}) New(target ...ecs.Entity) ecs.Entity {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
-// See also [Map{{ .Index }}.NewQuery] and [ecs.Batch.NewBatch].
+// See also [Map{{ .Index }}.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int, target ...ecs.Entity) {
 	newBatch(m.world, count, m.ids, m.relation, target...)
 }
 
-// NewQuery creates entities with the Map{{ .Index }}'s components.
+// NewBatchQ creates entities with the Map{{ .Index }}'s components.
 // It returns a [Query{{ .Index }}] over the new entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map{{ .Index }}.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map{{ .Index }}{{ .Types }}) NewQuery(count int, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
+// See also [Map{{ .Index }}.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map{{ .Index }}{{ .Types }}) NewBatchQ(count int, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
 	query := newQuery(m.world, count, m.ids, m.relation, target...)
 	return Query{{ .Index }}{{ .Types }}{
 		Query: query,

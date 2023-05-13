@@ -36,7 +36,7 @@ func run(rounds, iters, entities int) {
 		perArch := entities / 1000
 
 		builder := ecs.NewBuilder(&world)
-		targetQuery := builder.NewQuery(1000)
+		targetQuery := builder.NewBatchQ(1000)
 		targets := make([]ecs.Entity, 0, 1000)
 		for targetQuery.Next() {
 			targets = append(targets, targetQuery.Entity())

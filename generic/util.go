@@ -81,12 +81,12 @@ func newQuery(w *ecs.World, count int, ids []ecs.ID, relation int8, target ...ec
 	var query ecs.Query
 
 	if len(target) == 0 {
-		query = ecs.NewBuilder(w, ids...).NewQuery(count)
+		query = ecs.NewBuilder(w, ids...).NewBatchQ(count)
 	} else {
 		if relation < 0 {
 			panic("map has no relation defined")
 		}
-		query = ecs.NewBuilder(w, ids...).WithRelation(uint8(relation)).NewQuery(count, target[0])
+		query = ecs.NewBuilder(w, ids...).WithRelation(uint8(relation)).NewBatchQ(count, target[0])
 	}
 
 	return query

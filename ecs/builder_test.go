@@ -27,11 +27,11 @@ func TestBuilder(t *testing.T) {
 
 	assert.Panics(t, func() { b1.New(target) })
 	assert.Panics(t, func() { b1.NewBatch(10, target) })
-	assert.Panics(t, func() { b1.NewQuery(10, target) })
+	assert.Panics(t, func() { b1.NewBatchQ(10, target) })
 	assert.Panics(t, func() { b1.Add(e1, target) })
 
 	b1.NewBatch(10)
-	q := b1.NewQuery(10)
+	q := b1.NewBatchQ(10)
 	assert.Equal(t, 10, q.Count())
 	q.Close()
 
@@ -46,11 +46,11 @@ func TestBuilder(t *testing.T) {
 
 	assert.Panics(t, func() { b1.New(target) })
 	assert.Panics(t, func() { b1.NewBatch(10, target) })
-	assert.Panics(t, func() { b1.NewQuery(10, target) })
+	assert.Panics(t, func() { b1.NewBatchQ(10, target) })
 	assert.Panics(t, func() { b1.Add(e2, target) })
 
 	b1.NewBatch(10)
-	q = b1.NewQuery(10)
+	q = b1.NewBatchQ(10)
 	assert.Equal(t, 10, q.Count())
 	q.Close()
 
@@ -65,7 +65,7 @@ func TestBuilder(t *testing.T) {
 	assert.Equal(t, target, w.Relations().Get(e2, relID))
 
 	b1.NewBatch(10, target)
-	q = b1.NewQuery(10, target)
+	q = b1.NewBatchQ(10, target)
 	assert.Equal(t, 10, q.Count())
 	for q.Next() {
 		assert.Equal(t, target, q.Relation(relID))
@@ -85,7 +85,7 @@ func TestBuilder(t *testing.T) {
 	assert.Equal(t, target, w.Relations().Get(e2, relID))
 
 	b1.NewBatch(10, target)
-	q = b1.NewQuery(10, target)
+	q = b1.NewBatchQ(10, target)
 	assert.Equal(t, 10, q.Count())
 	for q.Next() {
 		assert.Equal(t, target, q.Relation(relID))
@@ -152,14 +152,14 @@ func ExampleBuilder_NewBatch() {
 	// Output:
 }
 
-func ExampleBuilder_NewQuery() {
+func ExampleBuilder_NewBatchQ() {
 	world := ecs.NewWorld()
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
 	builder := ecs.NewBuilder(&world, posID, velID)
 
-	query := builder.NewQuery(1000)
+	query := builder.NewBatchQ(1000)
 
 	for query.Next() {
 		// initialize components of the newly created entities

@@ -9,7 +9,7 @@
 //   - [Relations] provide access to and manipulation of entity relations,
 //     like [Relations.Get] and [Relations.Set].
 //   - [Builder] provides advanced entity creation and batched creation with
-//     [Builder.NewBatch] and [Builder.NewQuery].
+//     [Builder.NewBatch] and [Builder.NewBatchQ].
 //   - [Batch] provides batch-manipulation of entities,
 //     like [Batch.Add], [Batch.Remove] and [Batch.SetRelation].
 //   - [Cache] serves for registering and un-registering cached filters

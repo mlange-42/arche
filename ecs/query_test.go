@@ -253,7 +253,7 @@ func TestQueryCount(t *testing.T) {
 	assert.Equal(t, 4, q.Count())
 	q.Close()
 
-	q = NewBuilder(&w, posID, rotID).NewQuery(25)
+	q = NewBuilder(&w, posID, rotID).NewBatchQ(25)
 	assert.Equal(t, 25, q.Count())
 	q.Close()
 }

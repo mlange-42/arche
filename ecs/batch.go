@@ -13,12 +13,12 @@ type Batch struct {
 //   - when called with components that can't be added because they are already present.
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
-// See also [Batch.AddQuery] and [World.Add].
+// See also [Batch.AddQ] and [World.Add].
 func (b *Batch) Add(filter Filter, comps ...ID) {
 	b.world.exchangeBatch(filter, comps, nil)
 }
 
-// AddQuery adds components to many entities, matching a filter.
+// AddQ adds components to many entities, matching a filter.
 // It returns a query over the affected entities.
 //
 // Panics:
@@ -26,7 +26,7 @@ func (b *Batch) Add(filter Filter, comps ...ID) {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [Batch.Add] and [World.Add].
-func (b *Batch) AddQuery(filter Filter, comps ...ID) Query {
+func (b *Batch) AddQ(filter Filter, comps ...ID) Query {
 	return b.world.exchangeBatchQuery(filter, comps, nil)
 }
 
@@ -36,12 +36,12 @@ func (b *Batch) AddQuery(filter Filter, comps ...ID) Query {
 //   - when called with components that can't be removed because they are not present.
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
-// See also [Batch.RemoveQuery] and [World.Remove].
+// See also [Batch.RemoveQ] and [World.Remove].
 func (b *Batch) Remove(filter Filter, comps ...ID) {
 	b.world.exchangeBatch(filter, nil, comps)
 }
 
-// RemoveQuery removes components from many entities, matching a filter.
+// RemoveQ removes components from many entities, matching a filter.
 // It returns a query over the affected entities.
 //
 // Panics:
@@ -49,7 +49,7 @@ func (b *Batch) Remove(filter Filter, comps ...ID) {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [Batch.Remove] and [World.Remove].
-func (b *Batch) RemoveQuery(filter Filter, comps ...ID) Query {
+func (b *Batch) RemoveQ(filter Filter, comps ...ID) Query {
 	return b.world.exchangeBatchQuery(filter, nil, comps)
 }
 
@@ -65,7 +65,7 @@ func (b *Batch) SetRelation(filter Filter, comp ID, target Entity) {
 	b.world.setRelationBatch(filter, comp, target)
 }
 
-// SetRelationQuery sets the [Relation] target for many entities, matching a filter.
+// SetRelationQ sets the [Relation] target for many entities, matching a filter.
 // It returns a query over the affected entities.
 //
 // Panics:
@@ -74,7 +74,7 @@ func (b *Batch) SetRelation(filter Filter, comp ID, target Entity) {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [Relations.Set] and [Relations.SetBatch].
-func (b *Batch) SetRelationQuery(filter Filter, comp ID, target Entity) Query {
+func (b *Batch) SetRelationQ(filter Filter, comp ID, target Entity) Query {
 	return b.world.setRelationBatchQuery(filter, comp, target)
 }
 
@@ -84,12 +84,12 @@ func (b *Batch) SetRelationQuery(filter Filter, comp ID, target Entity) Query {
 //   - when called with components that can't be added or removed because they are already present/not present, respectively.
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
-// See also [Batch.ExchangeQuery] and [World.Exchange].
+// See also [Batch.ExchangeQ] and [World.Exchange].
 func (b *Batch) Exchange(filter Filter, add []ID, rem []ID) {
 	b.world.exchangeBatch(filter, add, rem)
 }
 
-// ExchangeQuery exchanges components for many entities, matching a filter.
+// ExchangeQ exchanges components for many entities, matching a filter.
 // It returns a query over the affected entities.
 //
 // Panics:
@@ -97,7 +97,7 @@ func (b *Batch) Exchange(filter Filter, add []ID, rem []ID) {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [Batch.Exchange] and [World.Exchange].
-func (b *Batch) ExchangeQuery(filter Filter, add []ID, rem []ID) Query {
+func (b *Batch) ExchangeQ(filter Filter, add []ID, rem []ID) Query {
 	return b.world.exchangeBatchQuery(filter, add, rem)
 }
 

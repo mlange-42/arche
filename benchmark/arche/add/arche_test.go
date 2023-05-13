@@ -72,7 +72,7 @@ func addSetArcheBatch(b *testing.B, count int) {
 		comps := []ecs.ID{posID, rotID}
 		b.StartTimer()
 
-		query := ecs.NewBuilder(&world, comps...).NewQuery(count)
+		query := ecs.NewBuilder(&world, comps...).NewBatchQ(count)
 		for query.Next() {
 			pos := (*c.Position)(query.Get(posID))
 			rot := (*c.Rotation)(query.Get(rotID))
@@ -133,7 +133,7 @@ func addSetArcheGenericBatch(b *testing.B, count int) {
 		mut := generic.NewMap2[c.Position, c.Rotation](&world)
 		b.StartTimer()
 
-		query := mut.NewQuery(count)
+		query := mut.NewBatchQ(count)
 
 		for query.Next() {
 			pos, rot := query.Get()

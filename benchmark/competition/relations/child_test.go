@@ -18,13 +18,13 @@ func benchmarkChild(b *testing.B, numParents int, numChildren int) {
 	parentMapper := generic.NewMap1[ParentList](&world)
 	childMapper := generic.NewMap1[Child](&world)
 
-	spawnedPar := parentMapper.NewQuery(numParents)
+	spawnedPar := parentMapper.NewBatchQ(numParents)
 	parents := make([]ecs.Entity, 0, numParents)
 	for spawnedPar.Next() {
 		parents = append(parents, spawnedPar.Entity())
 	}
 
-	spawnedChild := childMapper.NewQuery(numParents * numChildren)
+	spawnedChild := childMapper.NewBatchQ(numParents * numChildren)
 	children := make([]ecs.Entity, 0, numParents*numChildren)
 	for spawnedChild.Next() {
 		children = append(children, spawnedChild.Entity())

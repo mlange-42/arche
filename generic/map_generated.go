@@ -74,20 +74,20 @@ func (m *Map1[A]) New(target ...ecs.Entity) ecs.Entity {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
-// See also [Map1.NewQuery] and [ecs.Batch.NewBatch].
+// See also [Map1.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map1[A]) NewBatch(count int, target ...ecs.Entity) {
 	newBatch(m.world, count, m.ids, m.relation, target...)
 }
 
-// NewQuery creates entities with the Map1's components.
+// NewBatchQ creates entities with the Map1's components.
 // It returns a [Query1] over the new entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map1.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map1[A]) NewQuery(count int, target ...ecs.Entity) Query1[A] {
+// See also [Map1.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map1[A]) NewBatchQ(count int, target ...ecs.Entity) Query1[A] {
 	query := newQuery(m.world, count, m.ids, m.relation, target...)
 	return Query1[A]{
 		Query: query,
@@ -221,20 +221,20 @@ func (m *Map2[A, B]) New(target ...ecs.Entity) ecs.Entity {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
-// See also [Map2.NewQuery] and [ecs.Batch.NewBatch].
+// See also [Map2.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map2[A, B]) NewBatch(count int, target ...ecs.Entity) {
 	newBatch(m.world, count, m.ids, m.relation, target...)
 }
 
-// NewQuery creates entities with the Map2's components.
+// NewBatchQ creates entities with the Map2's components.
 // It returns a [Query2] over the new entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map2.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map2[A, B]) NewQuery(count int, target ...ecs.Entity) Query2[A, B] {
+// See also [Map2.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map2[A, B]) NewBatchQ(count int, target ...ecs.Entity) Query2[A, B] {
 	query := newQuery(m.world, count, m.ids, m.relation, target...)
 	return Query2[A, B]{
 		Query: query,
@@ -378,20 +378,20 @@ func (m *Map3[A, B, C]) New(target ...ecs.Entity) ecs.Entity {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
-// See also [Map3.NewQuery] and [ecs.Batch.NewBatch].
+// See also [Map3.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map3[A, B, C]) NewBatch(count int, target ...ecs.Entity) {
 	newBatch(m.world, count, m.ids, m.relation, target...)
 }
 
-// NewQuery creates entities with the Map3's components.
+// NewBatchQ creates entities with the Map3's components.
 // It returns a [Query3] over the new entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map3.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map3[A, B, C]) NewQuery(count int, target ...ecs.Entity) Query3[A, B, C] {
+// See also [Map3.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map3[A, B, C]) NewBatchQ(count int, target ...ecs.Entity) Query3[A, B, C] {
 	query := newQuery(m.world, count, m.ids, m.relation, target...)
 	return Query3[A, B, C]{
 		Query: query,
@@ -543,20 +543,20 @@ func (m *Map4[A, B, C, D]) New(target ...ecs.Entity) ecs.Entity {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
-// See also [Map4.NewQuery] and [ecs.Batch.NewBatch].
+// See also [Map4.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map4[A, B, C, D]) NewBatch(count int, target ...ecs.Entity) {
 	newBatch(m.world, count, m.ids, m.relation, target...)
 }
 
-// NewQuery creates entities with the Map4's components.
+// NewBatchQ creates entities with the Map4's components.
 // It returns a [Query4] over the new entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map4.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map4[A, B, C, D]) NewQuery(count int, target ...ecs.Entity) Query4[A, B, C, D] {
+// See also [Map4.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map4[A, B, C, D]) NewBatchQ(count int, target ...ecs.Entity) Query4[A, B, C, D] {
 	query := newQuery(m.world, count, m.ids, m.relation, target...)
 	return Query4[A, B, C, D]{
 		Query: query,
@@ -716,20 +716,20 @@ func (m *Map5[A, B, C, D, E]) New(target ...ecs.Entity) ecs.Entity {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
-// See also [Map5.NewQuery] and [ecs.Batch.NewBatch].
+// See also [Map5.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map5[A, B, C, D, E]) NewBatch(count int, target ...ecs.Entity) {
 	newBatch(m.world, count, m.ids, m.relation, target...)
 }
 
-// NewQuery creates entities with the Map5's components.
+// NewBatchQ creates entities with the Map5's components.
 // It returns a [Query5] over the new entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map5.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map5[A, B, C, D, E]) NewQuery(count int, target ...ecs.Entity) Query5[A, B, C, D, E] {
+// See also [Map5.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map5[A, B, C, D, E]) NewBatchQ(count int, target ...ecs.Entity) Query5[A, B, C, D, E] {
 	query := newQuery(m.world, count, m.ids, m.relation, target...)
 	return Query5[A, B, C, D, E]{
 		Query: query,
@@ -897,20 +897,20 @@ func (m *Map6[A, B, C, D, E, F]) New(target ...ecs.Entity) ecs.Entity {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
-// See also [Map6.NewQuery] and [ecs.Batch.NewBatch].
+// See also [Map6.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map6[A, B, C, D, E, F]) NewBatch(count int, target ...ecs.Entity) {
 	newBatch(m.world, count, m.ids, m.relation, target...)
 }
 
-// NewQuery creates entities with the Map6's components.
+// NewBatchQ creates entities with the Map6's components.
 // It returns a [Query6] over the new entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map6.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map6[A, B, C, D, E, F]) NewQuery(count int, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
+// See also [Map6.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map6[A, B, C, D, E, F]) NewBatchQ(count int, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
 	query := newQuery(m.world, count, m.ids, m.relation, target...)
 	return Query6[A, B, C, D, E, F]{
 		Query: query,
@@ -1086,20 +1086,20 @@ func (m *Map7[A, B, C, D, E, F, G]) New(target ...ecs.Entity) ecs.Entity {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
-// See also [Map7.NewQuery] and [ecs.Batch.NewBatch].
+// See also [Map7.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map7[A, B, C, D, E, F, G]) NewBatch(count int, target ...ecs.Entity) {
 	newBatch(m.world, count, m.ids, m.relation, target...)
 }
 
-// NewQuery creates entities with the Map7's components.
+// NewBatchQ creates entities with the Map7's components.
 // It returns a [Query7] over the new entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map7.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map7[A, B, C, D, E, F, G]) NewQuery(count int, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
+// See also [Map7.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map7[A, B, C, D, E, F, G]) NewBatchQ(count int, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
 	query := newQuery(m.world, count, m.ids, m.relation, target...)
 	return Query7[A, B, C, D, E, F, G]{
 		Query: query,
@@ -1283,20 +1283,20 @@ func (m *Map8[A, B, C, D, E, F, G, H]) New(target ...ecs.Entity) ecs.Entity {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
-// See also [Map8.NewQuery] and [ecs.Batch.NewBatch].
+// See also [Map8.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewBatch(count int, target ...ecs.Entity) {
 	newBatch(m.world, count, m.ids, m.relation, target...)
 }
 
-// NewQuery creates entities with the Map8's components.
+// NewBatchQ creates entities with the Map8's components.
 // It returns a [Query8] over the new entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
 // Listener notification is delayed until the query is closed of fully iterated.
 //
-// See also [Map8.NewBatch] and [ecs.Builder.NewQuery].
-func (m *Map8[A, B, C, D, E, F, G, H]) NewQuery(count int, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
+// See also [Map8.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map8[A, B, C, D, E, F, G, H]) NewBatchQ(count int, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
 	query := newQuery(m.world, count, m.ids, m.relation, target...)
 	return Query8[A, B, C, D, E, F, G, H]{
 		Query: query,

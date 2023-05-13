@@ -196,7 +196,7 @@ func runQuery1kTargets(b *testing.B, count int) {
 	perArch := count / 1000
 
 	builder := ecs.NewBuilder(&world)
-	targetQuery := builder.NewQuery(1000)
+	targetQuery := builder.NewBatchQ(1000)
 	targets := make([]ecs.Entity, 0, 1000)
 	for targetQuery.Next() {
 		targets = append(targets, targetQuery.Entity())
@@ -228,7 +228,7 @@ func runQuery1kTargetsCached(b *testing.B, count int) {
 	perArch := count / 1000
 
 	builder := ecs.NewBuilder(&world)
-	targetQuery := builder.NewQuery(1000)
+	targetQuery := builder.NewBatchQ(1000)
 	targets := make([]ecs.Entity, 0, 1000)
 	for targetQuery.Next() {
 		targets = append(targets, targetQuery.Entity())
@@ -259,7 +259,7 @@ func runQuery1Of1kTargets(b *testing.B, count int) {
 	relID := ecs.ComponentID[c.ChildOf](&world)
 
 	builder := ecs.NewBuilder(&world)
-	targetQuery := builder.NewQuery(1000)
+	targetQuery := builder.NewBatchQ(1000)
 	targets := make([]ecs.Entity, 0, 1000)
 	for targetQuery.Next() {
 		targets = append(targets, targetQuery.Entity())
@@ -291,7 +291,7 @@ func runQuery1Of1kTargetsCached(b *testing.B, count int) {
 	relID := ecs.ComponentID[c.ChildOf](&world)
 
 	builder := ecs.NewBuilder(&world)
-	targetQuery := builder.NewQuery(1000)
+	targetQuery := builder.NewBatchQ(1000)
 	targets := make([]ecs.Entity, 0, 1000)
 	for targetQuery.Next() {
 		targets = append(targets, targetQuery.Entity())
