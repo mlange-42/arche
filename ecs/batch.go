@@ -19,7 +19,7 @@ func (b *Batch) Add(filter Filter, comps ...ID) {
 }
 
 // AddQuery adds components to many entities, matching a filter.
-// It returns a query over the altered entities.
+// It returns a query over the affected entities.
 //
 // Panics:
 //   - when called with components that can't be added because they are already present.
@@ -42,7 +42,7 @@ func (b *Batch) Remove(filter Filter, comps ...ID) {
 }
 
 // RemoveQuery removes components from many entities, matching a filter.
-// It returns a query over the altered entities.
+// It returns a query over the affected entities.
 //
 // Panics:
 //   - when called with components that can't be removed because they are not present.
@@ -55,8 +55,18 @@ func (b *Batch) RemoveQuery(filter Filter, comps ...ID) Query {
 
 // SetRelation sets the [Relation] target for many entities, matching a filter.
 //
-// If the callback argument is given, it is called with a [Query] over the affected entities,
-// one Query for each affected archetype.
+// Panics:
+//   - when called for a missing component.
+//   - when called for a component that is not a relation.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See also [Relations.Set] and [Relations.SetBatch].
+func (b *Batch) SetRelation(filter Filter, comp ID, target Entity) {
+	b.world.setRelationBatch(filter, comp, target)
+}
+
+// SetRelationQuery sets the [Relation] target for many entities, matching a filter.
+// It returns a query over the affected entities.
 //
 // Panics:
 //   - when called for a missing component.
@@ -64,8 +74,8 @@ func (b *Batch) RemoveQuery(filter Filter, comps ...ID) Query {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [Relations.Set] and [Relations.SetBatch].
-func (b *Batch) SetRelation(filter Filter, comp ID, target Entity, callback func(Query)) {
-	b.world.setRelationBatch(filter, comp, target, callback)
+func (b *Batch) SetRelationQuery(filter Filter, comp ID, target Entity) Query {
+	return b.world.setRelationBatchQuery(filter, comp, target)
 }
 
 // Exchange exchanges components for many entities, matching a filter.
@@ -80,7 +90,7 @@ func (b *Batch) Exchange(filter Filter, add []ID, rem []ID) {
 }
 
 // ExchangeQuery exchanges components for many entities, matching a filter.
-// It returns a query over the altered entities.
+// It returns a query over the affected entities.
 //
 // Panics:
 //   - when called with components that can't be added or removed because they are already present/not present, respectively.

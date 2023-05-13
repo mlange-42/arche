@@ -827,7 +827,22 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 }
 
 // set relation target in batches.
-func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback func(Query)) {
+func (w *World) setRelationBatch(filter Filter, comp ID, target Entity) {
+	batches := batchArchetypes{}
+	w.setRelationBatchNoNotify(filter, comp, target, &batches)
+	if w.listener != nil {
+		w.notifyQuery(&batches)
+	}
+}
+
+func (w *World) setRelationBatchQuery(filter Filter, comp ID, target Entity) Query {
+	batches := batchArchetypes{}
+	w.setRelationBatchNoNotify(filter, comp, target, &batches)
+	lock := w.lock()
+	return newBatchQuery(w, lock, &batches)
+}
+
+func (w *World) setRelationBatchNoNotify(filter Filter, comp ID, target Entity, batches *batchArchetypes) {
 	w.checkLocked()
 
 	if !target.IsZero() && !w.entityPool.Alive(target) {
@@ -840,8 +855,6 @@ func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback
 		lengths[i] = arch.Len()
 	}
 
-	batches := batchArchetypes{}
-
 	for i, arch := range arches {
 		archLen := lengths[i]
 
@@ -851,16 +864,6 @@ func (w *World) setRelationBatch(filter Filter, comp ID, target Entity, callback
 
 		newArch, start, end := w.setRelationArch(arch, archLen, comp, target)
 		batches.Add(newArch, arch, start, end)
-	}
-	if callback == nil {
-		if w.listener != nil {
-			w.notifyQuery(&batches)
-		}
-	} else {
-		lock := w.lock()
-		query := newBatchQuery(w, lock, &batches)
-		callback(query)
-		w.checkLocked()
 	}
 }
 

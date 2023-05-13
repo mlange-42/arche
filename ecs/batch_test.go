@@ -82,5 +82,5 @@ func ExampleBatch_SetRelation() {
 	builder.NewBatch(100)
 
 	filter := ecs.All(childID)
-	world.Batch().SetRelation(filter, childID, target, nil)
+	world.Batch().SetRelation(filter, childID, target)
 }

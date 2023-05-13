@@ -763,45 +763,45 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	builder.NewBatch(100, targ3)
 
 	relFilter := NewRelationFilter(All(relID), targ2)
-	world.Batch().SetRelation(&relFilter, relID, targ1, func(q Query) {
-		assert.Equal(t, 100, q.Count())
-		for q.Next() {
-			assert.Equal(t, targ1, q.Relation(relID))
-		}
-	})
+	q := world.Batch().SetRelationQuery(&relFilter, relID, targ1)
+	assert.Equal(t, 100, q.Count())
+	cnt := 0
+	for q.Next() {
+		assert.Equal(t, targ1, q.Relation(relID))
+		cnt++
+	}
+	assert.Equal(t, 100, cnt)
 
-	total := 0
-	world.Batch().SetRelation(All(relID), relID, targ3, func(q Query) {
-		total += q.Count()
-		for q.Next() {
-			assert.Equal(t, targ3, q.Relation(relID))
-		}
-	})
-	assert.Equal(t, 300, total)
+	q = world.Batch().SetRelationQuery(All(relID), relID, targ3)
+	assert.Equal(t, 300, q.Count())
+	cnt = 0
+	for q.Next() {
+		assert.Equal(t, targ3, q.Relation(relID))
+		cnt++
+	}
+	assert.Equal(t, 300, cnt)
 
 	relFilter = NewRelationFilter(All(relID), targ3)
-	world.Batch().SetRelation(&relFilter, relID, Entity{}, func(q Query) {
-		assert.Equal(t, 300, q.Count())
-		for q.Next() {
-			assert.True(t, q.Relation(relID).IsZero())
-		}
-	})
+	q = world.Batch().SetRelationQuery(&relFilter, relID, Entity{})
+	assert.Equal(t, 300, q.Count())
+	cnt = 0
+	for q.Next() {
+		assert.True(t, q.Relation(relID).IsZero())
+		cnt++
+	}
+	assert.Equal(t, 300, cnt)
 
 	relFilter = NewRelationFilter(All(relID), Entity{})
-	world.Batch().SetRelation(&relFilter, relID, targ1, nil)
+	world.Batch().SetRelation(&relFilter, relID, targ1)
 
 	world.RemoveEntity(targ3)
 	assert.Panics(t, func() {
-		world.Batch().SetRelation(All(relID), relID, targ3, nil)
+		world.Batch().SetRelation(All(relID), relID, targ3)
 	})
 
 	assert.Equal(t, 1304, len(events))
 
-	world.Relations().SetBatch(All(relID), relID, targ1, nil)
-
-	assert.Panics(t, func() {
-		world.Batch().SetRelation(All(relID), relID, targ2, func(q Query) {})
-	})
+	world.Relations().SetBatch(All(relID), relID, targ1)
 
 	fmt.Println(debugPrintWorld(&world))
 }
