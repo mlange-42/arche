@@ -339,6 +339,22 @@ func TestWorldExchangeBatch(t *testing.T) {
 
 	filter = All()
 	w.Batch().Add(filter, velID)
+
+	w.Reset()
+
+	target1 = w.NewEntity(velID)
+	builder = NewBuilder(&w, posID, relID).WithRelation(relID)
+	builder.NewBatch(100, target1)
+
+	filter = All(velID)
+	q = w.Batch().RemoveQuery(filter, velID)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
+	filter = All()
+	q = w.Batch().AddQuery(filter, velID)
+	assert.Equal(t, 101, q.Count())
+	q.Close()
 }
 
 func TestWorldAssignSet(t *testing.T) {
