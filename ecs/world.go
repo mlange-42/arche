@@ -656,7 +656,32 @@ func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [World.Exchange].
-func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Query)) {
+func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID) {
+	batches := batchArchetypes{
+		Added:   add,
+		Removed: rem,
+	}
+
+	w.exchangeBatchNoNotify(filter, add, rem, &batches)
+
+	if w.listener != nil {
+		w.notifyQuery(&batches)
+	}
+}
+
+func (w *World) exchangeBatchQuery(filter Filter, add []ID, rem []ID) Query {
+	batches := batchArchetypes{
+		Added:   add,
+		Removed: rem,
+	}
+
+	w.exchangeBatchNoNotify(filter, add, rem, &batches)
+
+	lock := w.lock()
+	return newBatchQuery(w, lock, &batches)
+}
+
+func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, batches *batchArchetypes) {
 	w.checkLocked()
 
 	if len(add) == 0 && len(rem) == 0 {
@@ -669,11 +694,6 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 		lengths[i] = arch.Len()
 	}
 
-	batches := batchArchetypes{
-		Added:   add,
-		Removed: rem,
-	}
-
 	for i, arch := range arches {
 		archLen := lengths[i]
 
@@ -683,16 +703,6 @@ func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, callback func(Q
 
 		newArch, start := w.exchangeArch(arch, archLen, add, rem)
 		batches.Add(newArch, arch, start, newArch.Len())
-	}
-	if callback == nil {
-		if w.listener != nil {
-			w.notifyQuery(&batches)
-		}
-	} else {
-		lock := w.lock()
-		query := newBatchQuery(w, lock, &batches)
-		callback(query)
-		w.checkLocked()
 	}
 }
 

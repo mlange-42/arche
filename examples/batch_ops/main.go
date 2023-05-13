@@ -51,9 +51,9 @@ func run() {
 	}
 
 	// Batch-remove components.
-	world.Batch().Remove(ecs.All(posID, velID), nil, velID)
+	world.Batch().Remove(ecs.All(posID, velID), velID)
 	// Batch-add components.
-	world.Batch().Add(ecs.All(posID), nil, velID)
+	world.Batch().Add(ecs.All(posID), velID)
 
 	// Batch-remove all entities with exactly the given components.
 	filterExcl := ecs.All(posID, velID).Exclusive()
