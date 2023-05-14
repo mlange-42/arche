@@ -6,11 +6,9 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-var count = 100000
-
-func BenchmarkCompSizeSimple_1_x_08B(bench *testing.B) {
+func benchmarkCompSizeSimple1x08B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
 
 	aID := ecs.ComponentID[A](&world)
 
@@ -27,9 +25,9 @@ func BenchmarkCompSizeSimple_1_x_08B(bench *testing.B) {
 	}
 }
 
-func BenchmarkCompSizeSimple_1_x_16B(bench *testing.B) {
+func benchmarkCompSizeSimple1x16B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
 
 	abID := ecs.ComponentID[AB](&world)
 
@@ -47,9 +45,9 @@ func BenchmarkCompSizeSimple_1_x_16B(bench *testing.B) {
 	}
 }
 
-func BenchmarkCompSizeSimple_1_x_32B(bench *testing.B) {
+func benchmarkCompSizeSimple1x32B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
 
 	abcdID := ecs.ComponentID[ABCD](&world)
 
@@ -67,9 +65,9 @@ func BenchmarkCompSizeSimple_1_x_32B(bench *testing.B) {
 	}
 }
 
-func BenchmarkCompSizeSimple_1_x_64B(bench *testing.B) {
+func benchmarkCompSizeSimple1x64B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
 
 	allID := ecs.ComponentID[All](&world)
 
@@ -87,9 +85,9 @@ func BenchmarkCompSizeSimple_1_x_64B(bench *testing.B) {
 	}
 }
 
-func BenchmarkCompSizeSimple_1_x_128B(bench *testing.B) {
+func benchmarkCompSizeSimple1x128B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
 
 	allID := ecs.ComponentID[All128B](&world)
 
@@ -107,9 +105,9 @@ func BenchmarkCompSizeSimple_1_x_128B(bench *testing.B) {
 	}
 }
 
-func BenchmarkCompSize_8_x_08B(bench *testing.B) {
+func benchmarkCompSize8x08B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
 
 	aID := ecs.ComponentID[A](&world)
 	bID := ecs.ComponentID[B](&world)
@@ -141,9 +139,9 @@ func BenchmarkCompSize_8_x_08B(bench *testing.B) {
 	}
 }
 
-func BenchmarkCompSize_4_x_16B(bench *testing.B) {
+func benchmarkCompSize4x16B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
 
 	abID := ecs.ComponentID[AB](&world)
 	cdID := ecs.ComponentID[CD](&world)
@@ -167,9 +165,9 @@ func BenchmarkCompSize_4_x_16B(bench *testing.B) {
 	}
 }
 
-func BenchmarkCompSize_2_x_32B(bench *testing.B) {
+func benchmarkCompSize2x32B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
 
 	abcdID := ecs.ComponentID[ABCD](&world)
 	efghID := ecs.ComponentID[EFGH](&world)
@@ -189,9 +187,9 @@ func BenchmarkCompSize_2_x_32B(bench *testing.B) {
 	}
 }
 
-func BenchmarkCompSize_1_x_64B(bench *testing.B) {
+func benchmarkCompSize1x64B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld()
+	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
 
 	allID := ecs.ComponentID[All](&world)
 
@@ -207,6 +205,98 @@ func BenchmarkCompSize_1_x_64B(bench *testing.B) {
 			all.V1 = all.V2 + all.V3 + all.V4 + all.V5 + all.V6 + all.V7 + all.V8
 		}
 	}
+}
+
+func BenchmarkCompSizeSimple_1_x_08B_10_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x08B(bench, 10000)
+}
+
+func BenchmarkCompSizeSimple_1_x_08B_100_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x08B(bench, 100000)
+}
+
+func BenchmarkCompSizeSimple_1_x_08B_1_000_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x08B(bench, 1000000)
+}
+
+func BenchmarkCompSizeSimple_1_x_16B_10_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x16B(bench, 10000)
+}
+
+func BenchmarkCompSizeSimple_1_x_16B_100_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x16B(bench, 100000)
+}
+
+func BenchmarkCompSizeSimple_1_x_16B_1_000_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x16B(bench, 1000000)
+}
+
+func BenchmarkCompSizeSimple_1_x_32B_10_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x32B(bench, 10000)
+}
+
+func BenchmarkCompSizeSimple_1_x_32B_100_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x32B(bench, 100000)
+}
+
+func BenchmarkCompSizeSimple_1_x_32B_1_000_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x32B(bench, 1000000)
+}
+
+func BenchmarkCompSizeSimple_1_x_64B_10_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x64B(bench, 10000)
+}
+
+func BenchmarkCompSizeSimple_1_x_64B_100_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x64B(bench, 100000)
+}
+
+func BenchmarkCompSizeSimple_1_x_64B_1_000_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x64B(bench, 1000000)
+}
+
+func BenchmarkCompSizeSimple_1_x_128B_10_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x128B(bench, 10000)
+}
+
+func BenchmarkCompSizeSimple_1_x_128B_100_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x128B(bench, 100000)
+}
+
+func BenchmarkCompSizeSimple_1_x_128B_1_000_000(bench *testing.B) {
+	benchmarkCompSizeSimple1x128B(bench, 1000000)
+}
+
+func BenchmarkCompSize_8_x_08B_10_000(bench *testing.B) {
+	benchmarkCompSize8x08B(bench, 10000)
+}
+
+func BenchmarkCompSize_8_x_08B_100_000(bench *testing.B) {
+	benchmarkCompSize8x08B(bench, 100000)
+}
+
+func BenchmarkCompSize_4_x_16B_10_000(bench *testing.B) {
+	benchmarkCompSize4x16B(bench, 10000)
+}
+
+func BenchmarkCompSize_4_x_16B_100_000(bench *testing.B) {
+	benchmarkCompSize4x16B(bench, 100000)
+}
+
+func BenchmarkCompSize_2_x_32B_10_000(bench *testing.B) {
+	benchmarkCompSize2x32B(bench, 10000)
+}
+
+func BenchmarkCompSize_2_x_32B_100_000(bench *testing.B) {
+	benchmarkCompSize2x32B(bench, 100000)
+}
+
+func BenchmarkCompSize_1_x_64B_10_000(bench *testing.B) {
+	benchmarkCompSize1x64B(bench, 10000)
+}
+
+func BenchmarkCompSize_1_x_64B_100_000(bench *testing.B) {
+	benchmarkCompSize1x64B(bench, 100000)
 }
 
 type A struct {
