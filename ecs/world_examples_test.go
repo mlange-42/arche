@@ -196,6 +196,20 @@ func ExampleWorld_Query() {
 	}
 	// Output:
 }
+
+func ExampleWorld_Relations() {
+	world := ecs.NewWorld()
+
+	relID := ecs.ComponentID[ChildOf](&world)
+
+	parent := world.NewEntity()
+	child := world.NewEntity(relID)
+
+	world.Relations().Set(child, relID, parent)
+	fmt.Println(world.Relations().Get(child, relID))
+	// Output: {1 0}
+}
+
 func ExampleWorld_Resources() {
 	world := ecs.NewWorld()
 
