@@ -72,7 +72,7 @@ The first three representations are possible in any ECS, while the last two use 
 
 <div align="center" width="100%">
 
-![Benchmarks Entity relations](https://user-images.githubusercontent.com/44003176/237807460-cfac6c95-41c2-4438-a99b-c82893e5c3f6.svg)  
+![Benchmarks Entity relations](https://user-images.githubusercontent.com/44003176/238461931-7824bfeb-4a03-49e8-9de8-0650032259c0.svg)  
 *Iteration time per entity for different ways of representing entity relations. Color: ways to represent entity relations; Line style: total number of child entities; Markers: number of children per parent entity*
 </div>
 
