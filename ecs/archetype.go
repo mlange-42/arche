@@ -69,11 +69,11 @@ type archetype struct {
 }
 
 type archetypeData struct {
-	layouts      []layout        // Column layouts by ID.
-	indices      idMap[uint32]   // Mapping from IDs to buffer indices.
-	buffers      []reflect.Value // Reflection arrays containing component data.
-	entityBuffer reflect.Value   // Reflection array containing entity data.
-	index        int32           // Index of the archetype in the world.
+	layouts      [MaskTotalBits]layout // Column layouts by ID.
+	indices      idMap[uint32]         // Mapping from IDs to buffer indices.
+	buffers      []reflect.Value       // Reflection arrays containing component data.
+	entityBuffer reflect.Value         // Reflection array containing entity data.
+	index        int32                 // Index of the archetype in the world.
 }
 
 // Init initializes an archetype
@@ -84,7 +84,6 @@ func (a *archetype) Init(node *archNode, data *archetypeData, index int32, forSt
 
 	a.archetypeData = data
 	a.buffers = make([]reflect.Value, len(node.Ids))
-	a.layouts = make([]layout, MaskTotalBits)
 	a.indices = newIDMap[uint32]()
 	a.index = index
 
