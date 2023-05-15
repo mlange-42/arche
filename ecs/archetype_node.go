@@ -10,19 +10,20 @@ import (
 // archNode is a node in the archetype graph.
 type archNode struct {
 	*nodeData
-	Mask             Mask             // Mask of the archetype
-	TransitionAdd    idMap[*archNode] // Mapping from component ID to add to the resulting archetype
-	TransitionRemove idMap[*archNode] // Mapping from component ID to remove to the resulting archetype
-	Relation         int8             // The node's relation component ID. Negative value stands for no relation
-	IsActive         bool
-	HasRelation      bool
+	Mask        Mask // Mask of the archetype
+	Relation    int8 // The node's relation component ID. Negative value stands for no relation
+	IsActive    bool
+	HasRelation bool
 }
 
 type nodeData struct {
 	Ids               []ID                  // List of component IDs
 	Types             []reflect.Type        // Component type per column
+	TransitionAdd     idMap[*archNode]      // Mapping from component ID to add to the resulting archetype
+	TransitionRemove  idMap[*archNode]      // Mapping from component ID to remove to the resulting archetype
 	archetype         *archetype            // The single archetype for nodes without entity
 	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
+	archetypeData     pagedSlice[archetypeData]
 	archetypeMap      map[Entity]*archetype // Mapping from relation targets to archetypes
 	freeIndices       []int32               // Indices of free/inactive archetypes
 	zeroValue         []byte                // Used as source for setting storage to zero
@@ -69,14 +70,14 @@ func newArchNode(mask Mask, data *nodeData, relation int8, capacityIncrement int
 	data.capacityIncrement = uint32(capacityIncrement)
 	data.zeroValue = zeroValue
 	data.zeroPointer = zeroPointer
+	data.TransitionAdd = newIDMap[*archNode]()
+	data.TransitionRemove = newIDMap[*archNode]()
 
 	return archNode{
-		nodeData:         data,
-		Mask:             mask,
-		TransitionAdd:    newIDMap[*archNode](),
-		TransitionRemove: newIDMap[*archNode](),
-		Relation:         relation,
-		HasRelation:      relation >= 0,
+		nodeData:    data,
+		Mask:        mask,
+		Relation:    relation,
+		HasRelation: relation >= 0,
 	}
 }
 
@@ -125,9 +126,10 @@ func (a *archNode) CreateArchetype(target Entity) *archetype {
 		arch.Activate(target, archIndex)
 	} else {
 		a.archetypes.Add(archetype{})
+		a.archetypeData.Add(archetypeData{})
 		archIndex := a.archetypes.Len() - 1
 		arch = a.archetypes.Get(archIndex)
-		arch.Init(a, archIndex, true, target)
+		arch.Init(a, a.archetypeData.Get(archIndex), archIndex, true, target)
 	}
 	a.archetypeMap[target] = arch
 	return arch

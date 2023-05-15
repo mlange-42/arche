@@ -15,7 +15,8 @@ func TestArchetype(t *testing.T) {
 
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
-	arch.Init(&node, 0, false, Entity{})
+	data := archetypeData{}
+	arch.Init(&node, &data, 0, false, Entity{})
 
 	arch.Add(
 		newEntity(0),
@@ -73,11 +74,13 @@ func TestNewArchetype(t *testing.T) {
 
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
-	arch.Init(&node, 0, true, Entity{})
+	data := archetypeData{}
+	arch.Init(&node, &data, 0, true, Entity{})
 	assert.Equal(t, 32, int(arch.Cap()))
 
 	arch = archetype{}
-	arch.Init(&node, 0, false, Entity{})
+	data = archetypeData{}
+	arch.Init(&node, &data, 0, false, Entity{})
 	assert.Equal(t, 1, int(arch.Cap()))
 
 	comps = []componentType{
@@ -87,7 +90,8 @@ func TestNewArchetype(t *testing.T) {
 	assert.Panics(t, func() {
 		node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 		arch := archetype{}
-		arch.Init(&node, 0, true, Entity{})
+		data := archetypeData{}
+		arch.Init(&node, &data, 0, true, Entity{})
 	})
 }
 
@@ -99,7 +103,8 @@ func TestArchetypeExtend(t *testing.T) {
 
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 8, comps)
 	arch := archetype{}
-	arch.Init(&node, 0, true, Entity{})
+	data := archetypeData{}
+	arch.Init(&node, &data, 0, true, Entity{})
 
 	assert.Equal(t, 8, int(arch.Cap()))
 	assert.Equal(t, 0, int(arch.Len()))
@@ -121,7 +126,8 @@ func TestArchetypeAlloc(t *testing.T) {
 	}
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 8, comps)
 	arch := archetype{}
-	arch.Init(&node, 0, true, Entity{})
+	data := archetypeData{}
+	arch.Init(&node, &data, 0, true, Entity{})
 
 	assert.Equal(t, 8, int(arch.Cap()))
 	assert.Equal(t, 0, int(arch.Len()))
@@ -146,7 +152,8 @@ func TestArchetypeAddGetSet(t *testing.T) {
 
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 1, comps)
 	a := archetype{}
-	a.Init(&node, 0, true, Entity{})
+	data := archetypeData{}
+	a.Init(&node, &data, 0, true, Entity{})
 
 	assert.Equal(t, 1, int(a.Cap()))
 	assert.Equal(t, 0, int(a.Len()))
@@ -181,7 +188,8 @@ func TestArchetypeReset(t *testing.T) {
 
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
-	arch.Init(&node, 0, false, Entity{})
+	data := archetypeData{}
+	arch.Init(&node, &data, 0, false, Entity{})
 
 	arch.Add(
 		newEntity(0),
@@ -227,7 +235,8 @@ func TestArchetypeZero(t *testing.T) {
 
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
-	arch.Init(&node, 0, false, Entity{})
+	data := archetypeData{}
+	arch.Init(&node, &data, 0, false, Entity{})
 
 	arch.Alloc(newEntity(0))
 	arch.Alloc(newEntity(1))
@@ -259,7 +268,8 @@ func BenchmarkIterArchetype_1000(b *testing.B) {
 
 	node := newArchNode(All(0), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
-	arch.Init(&node, 0, true, Entity{})
+	data := archetypeData{}
+	arch.Init(&node, &data, 0, true, Entity{})
 
 	for i := 0; i < 1000; i++ {
 		arch.Alloc(newEntity(eid(i)))

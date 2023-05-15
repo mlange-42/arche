@@ -61,23 +61,28 @@ func (l *layout) Get(index uint32) unsafe.Pointer {
 
 // archetype represents an ECS archetype
 type archetype struct {
-	archetypeAccess                 // Access helper, passed to queries.
-	node            *archNode       // Node in the archetype graph.
-	layouts         []layout        // Column layouts by ID.
-	indices         idMap[uint32]   // Mapping from IDs to buffer indices.
-	buffers         []reflect.Value // Reflection arrays containing component data.
-	entityBuffer    reflect.Value   // Reflection array containing entity data.
-	index           int32           // Index of the archetype in the world.
-	len             uint32          // Current number of entities
-	cap             uint32          // Current capacity
+	archetypeAccess // Access helper, passed to queries.
+	*archetypeData
+	node *archNode // Node in the archetype graph.
+	len  uint32    // Current number of entities
+	cap  uint32    // Current capacity
+}
+
+type archetypeData struct {
+	layouts      []layout        // Column layouts by ID.
+	indices      idMap[uint32]   // Mapping from IDs to buffer indices.
+	buffers      []reflect.Value // Reflection arrays containing component data.
+	entityBuffer reflect.Value   // Reflection array containing entity data.
+	index        int32           // Index of the archetype in the world.
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archNode, index int32, forStorage bool, relation Entity) {
+func (a *archetype) Init(node *archNode, data *archetypeData, index int32, forStorage bool, relation Entity) {
 	if !node.IsActive {
 		node.IsActive = true
 	}
 
+	a.archetypeData = data
 	a.buffers = make([]reflect.Value, len(node.Ids))
 	a.layouts = make([]layout, MaskTotalBits)
 	a.indices = newIDMap[uint32]()

@@ -69,6 +69,7 @@ type World struct {
 	targetEntities bitSet                // Whether entities are potential relation targets.
 	entityPool     entityPool            // Pool for entities.
 	archetypes     pagedSlice[archetype] // Archetypes that have no relations components.
+	archetypeData  pagedSlice[archetypeData]
 	nodes          pagedSlice[archNode]  // The archetype graph.
 	nodeData       pagedSlice[nodeData]  // The archetype graph's data.
 	nodePointers   []*archNode           // Helper list of all node pointers for queries.
@@ -113,6 +114,7 @@ func fromConfig(conf Config) World {
 		entityPool:     newEntityPool(uint32(conf.CapacityIncrement)),
 		registry:       newComponentRegistry(),
 		archetypes:     pagedSlice[archetype]{},
+		archetypeData:  pagedSlice[archetypeData]{},
 		nodes:          pagedSlice[archNode]{},
 		relationNodes:  []*archNode{},
 		locks:          lockMask{},
@@ -1315,9 +1317,10 @@ func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) 
 		arch = node.CreateArchetype(target)
 	} else {
 		w.archetypes.Add(archetype{})
+		w.archetypeData.Add(archetypeData{})
 		archIndex := w.archetypes.Len() - 1
 		arch = w.archetypes.Get(archIndex)
-		arch.Init(node, archIndex, forStorage, target)
+		arch.Init(node, w.archetypeData.Get(archIndex), archIndex, forStorage, target)
 		node.SetArchetype(arch)
 	}
 	w.filterCache.addArchetype(arch)
