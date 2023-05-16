@@ -63,6 +63,19 @@ func ExampleWorld() {
 	// Output:
 }
 
+func ExampleNewWorld() {
+	defaultWorld := ecs.NewWorld()
+
+	configWorld := ecs.NewWorld(
+		ecs.NewConfig().
+			WithCapacityIncrement(1024).
+			WithRelationCapacityIncrement(64),
+	)
+
+	_, _ = defaultWorld, configWorld
+	// Output:
+}
+
 func ExampleWorld_NewEntity() {
 	world := ecs.NewWorld()
 
@@ -91,6 +104,19 @@ func ExampleWorld_RemoveEntity() {
 	e := world.NewEntity()
 	world.RemoveEntity(e)
 	// Output:
+}
+
+func ExampleWorld_Alive() {
+	world := ecs.NewWorld()
+
+	e := world.NewEntity()
+	fmt.Println(world.Alive(e))
+
+	world.RemoveEntity(e)
+	fmt.Println(world.Alive(e))
+	// Output:
+	// true
+	// false
 }
 
 func ExampleWorld_Get() {

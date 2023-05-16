@@ -34,13 +34,15 @@ func ResourceID[T any](w *World) ResID {
 	return w.resourceID(tp)
 }
 
-// GetResource returns a pointer to the given resource type in world.
+// GetResource returns a pointer to the given resource type in the world.
 //
 // Returns nil if there is no such resource.
 //
 // Uses reflection. For more efficient access, see [World.Resources],
 // and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
 // These methods are more than 20 times faster than the GetResource function.
+//
+// See also [AddResource].
 func GetResource[T any](w *World) *T {
 	return w.resources.Get(ResourceID[T](w)).(*T)
 }
@@ -60,7 +62,13 @@ func AddResource[T any](w *World, res *T) ResID {
 	return id
 }
 
-// World is the central type holding [Entity] and component data, as well as resources.
+// World is the central type holding entity and component data, as well as resources.
+//
+// The World provides all the basic ECS functionality of Arche,
+// like [World.Query], [World.NewEntity], [World.Add], [World.Remove] or [World.RemoveEntity].
+//
+// For more advanced functionality, see [World.Relations], [World.Resources],
+// [World.Batch], [World.Cache] and [Builder].
 type World struct {
 	config         Config                // World configuration.
 	listener       func(e *EntityEvent)  // Component change listener.
@@ -330,9 +338,7 @@ func (w *World) newEntitiesWithQuery(count int, targetID int8, target Entity, co
 	return newBatchQuery(w, lock, &batches)
 }
 
-// RemoveEntity removes and recycles an [Entity].
-//
-// Panics when called for a removed (and potentially recycled) entity.
+// RemoveEntity removes an [Entity], making it eligible for recycling.
 //
 // Panics when called on a locked world or for an already removed entity.
 // Do not use during [Query] iteration!
@@ -494,6 +500,7 @@ func (w *World) HasUnchecked(entity Entity, comp ID) bool {
 //	// even faster
 //	world.Add(entity, ids...)
 //
+// See also [World.Exchange].
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
@@ -536,7 +543,7 @@ func (w *World) assign(entity Entity, relation int8, target Entity, comps ...Com
 	}
 }
 
-// Set overwrites a component for an [Entity], using a given pointer for the content.
+// Set overwrites a component for an [Entity], using the given pointer for the content.
 //
 // The passed component must be a pointer.
 // Returns a pointer to the assigned memory.
@@ -559,12 +566,14 @@ func (w *World) Set(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 //   - when called with components that can't be removed because they are not present.
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
+// See also [World.Exchange].
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Remove(entity Entity, comps ...ID) {
 	w.Exchange(entity, nil, comps)
 }
 
 // Exchange adds and removes components in one pass.
+// This is more efficient than subsequent use of [World.Add] and [World.Remove].
 //
 // Panics:
 //   - when called for a removed (and potentially recycled) entity.
@@ -949,12 +958,11 @@ func (w *World) Reset() {
 
 // Query creates a [Query] iterator.
 //
-// The [ecs] core package provides only the filter [All] for querying the given components.
-// Further, it can be chained with [Mask.Without] (see the examples) to exclude components.
-//
 // Locks the world to prevent changes to component compositions.
 // The lock is released automatically when the query finishes iteration, or when [Query.Close] is called.
 // The number of simultaneous locks (and thus open queries) at a given time is limited to [MaskTotalBits].
+//
+// To create a [Filter] for querying, see [All], [Mask.Without], [Mask.Exclusive] and [RelationFilter].
 //
 // For type-safe generics queries, see package [github.com/mlange-42/arche/generic].
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
@@ -985,9 +993,8 @@ func (w *World) Cache() *Cache {
 }
 
 // Batch creates a [Batch] processing helper.
-//
-// It provides the functionality manipulate large numbers of entities in batches,
-// in a more efficient way.
+// It provides the functionality to manipulate large numbers of entities in batches,
+// which is more efficient than handling them one by one.
 func (w *World) Batch() *Batch {
 	return &Batch{w}
 }
@@ -1019,7 +1026,7 @@ func (w *World) ComponentType(id ID) (reflect.Type, bool) {
 	return w.registry.ComponentType(id)
 }
 
-// SetListener sets a listener callback func(e EntityEvent) for the world.
+// SetListener sets a listener callback func(e *EntityEvent) for the world.
 // The listener is immediately called on every [ecs.Entity] change.
 // Replaces the current listener. Call with nil to remove a listener.
 //
@@ -1029,6 +1036,10 @@ func (w *World) SetListener(listener func(e *EntityEvent)) {
 }
 
 // Stats reports statistics for inspecting the World.
+//
+// The underlying [stats.WorldStats] object is re-used and updated between calls.
+// The returned pointer should thus not be stored for later analysis.
+// Rather, the required data should be extracted immediately.
 func (w *World) Stats() *stats.WorldStats {
 	w.stats.Entities = stats.EntityStats{
 		Used:     w.entityPool.Len(),

@@ -89,8 +89,11 @@ jobs:
         run: |
           go get .
           go install golang.org/x/exp/cmd/gorelease@latest
+      - name: Get latest tag
+        uses: actions-ecosystem/action-get-latest-tag@v1
+        id: latest-tag
       - name: Run gorelease
-        run: gorelease
+        run: gorelease -base=${{ steps.latest-tag.outputs.tag }}
 
   examples:
     name: Run examples

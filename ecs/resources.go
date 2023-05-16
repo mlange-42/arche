@@ -21,7 +21,7 @@ func newResources() Resources {
 	}
 }
 
-// Add adds a resource to the world.
+// Add a resource to the world.
 // The resource should always be a pointer.
 //
 // Panics if there is already a resource of the given type.
@@ -34,7 +34,7 @@ func (r *Resources) Add(id ResID, res any) {
 	r.resources[id] = res
 }
 
-// Remove removes a resource from the world.
+// Remove a resource from the world.
 //
 // Panics if there is no resource of the given type.
 //

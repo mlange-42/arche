@@ -19,11 +19,11 @@ type Mask struct {
 }
 
 // All creates a new Mask from a list of IDs.
-// Matches al entities that have the respective components, and potentially further components.
+// Matches all entities that have the respective components, and potentially further components.
 //
 // See also [Mask.Without] and [Mask.Exclusive]
 //
-// If any [ID] is bigger or equal [MaskTotalBits], it'll not be added to the mask.
+// If any [ID] is greater than or equal to [MaskTotalBits], it will not be added to the mask.
 func All(ids ...ID) Mask {
 	var mask Mask
 	for _, id := range ids {
@@ -32,7 +32,7 @@ func All(ids ...ID) Mask {
 	return mask
 }
 
-// Matches matches a filter against a bitmask.
+// Matches the mask as filter against another mask.
 func (b Mask) Matches(bits Mask) bool {
 	return bits.Contains(b)
 }
@@ -55,9 +55,9 @@ func (b Mask) Exclusive() MaskFilter {
 	}
 }
 
-// Get reports if bit index defined by [ID] is true or false.
+// Get reports whether the bit at the given index [ID] is set.
 //
-// The return will be always false for bit >= [MaskTotalBits].
+// Returns false for bit >= [MaskTotalBits].
 func (b *Mask) Get(bit ID) bool {
 	if bit < wordSize {
 		mask := uint64(1 << bit)
@@ -67,9 +67,9 @@ func (b *Mask) Get(bit ID) bool {
 	return b.Hi&mask == mask
 }
 
-// Set sets the state of bit index to true or false.
+// Set sets the state of bit at the given index.
 //
-// This function has no effect for bit >= [MaskTotalBits].
+// Has no effect for bit >= [MaskTotalBits].
 func (b *Mask) Set(bit ID, value bool) {
 	if bit < wordSize {
 		if value {
@@ -93,22 +93,22 @@ func (b *Mask) Not() Mask {
 	}
 }
 
-// IsZero returns whether no bits are set in the bitmask.
+// IsZero returns whether no bits are set in the mask.
 func (b *Mask) IsZero() bool {
 	return b.Lo == 0 && b.Hi == 0
 }
 
-// Reset changes the state of all bits to false.
+// Reset the mask setting all bits to false.
 func (b *Mask) Reset() {
 	b.Lo, b.Lo = 0, 0
 }
 
-// Contains reports if other mask is a subset of this mask.
+// Contains reports if the other mask is a subset of this mask.
 func (b *Mask) Contains(other Mask) bool {
 	return b.Lo&other.Lo == other.Lo && b.Hi&other.Hi == other.Hi
 }
 
-// ContainsAny reports if any bit of other mask is in this mask.
+// ContainsAny reports if any bit of the other mask is in this mask.
 func (b *Mask) ContainsAny(other Mask) bool {
 	return b.Lo&other.Lo != 0 || b.Hi&other.Hi != 0
 }

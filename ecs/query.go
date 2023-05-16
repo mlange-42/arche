@@ -74,6 +74,8 @@ func newBatchQuery(world *World, lockBit uint8, archetype *batchArchetypes) Quer
 }
 
 // Next proceeds to the next [Entity] in the Query.
+//
+// Returns false if no next entity could be found.
 func (q *Query) Next() bool {
 	if q.entityIndex < q.entityIndexMax {
 		q.entityIndex++
@@ -147,6 +149,8 @@ func (q *Query) Step(step int) bool {
 //
 // Involves a small overhead of iterating through archetypes when called the first time.
 // However, this is still much faster than manual counting via iteration.
+//
+// Does not close the query.
 func (q *Query) Count() int {
 	if q.count >= 0 {
 		return int(q.count)

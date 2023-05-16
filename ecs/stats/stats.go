@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-// WorldStats provide statistics for a [World].
+// WorldStats provide statistics for an [ecs.World].
 type WorldStats struct {
 	// Entity statistics
 	Entities EntityStats
@@ -27,7 +27,7 @@ type WorldStats struct {
 	CachedFilters int
 }
 
-// EntityStats provide statistics about [World] entities.
+// EntityStats provide statistics about [ecs.World] entities.
 type EntityStats struct {
 	// Currently used/alive entities
 	Used int
