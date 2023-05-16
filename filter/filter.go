@@ -21,7 +21,7 @@ func Any(comps ...ecs.ID) ANY {
 	return ANY(ecs.All(comps...))
 }
 
-// Matches matches a filter against a bitmask
+// Matches the filter against a mask.
 func (f ANY) Matches(bits ecs.Mask) bool {
 	return bits.ContainsAny(ecs.Mask(f))
 }
@@ -34,7 +34,7 @@ func NoneOf(comps ...ecs.ID) NoneOF {
 	return NoneOF(ecs.All(comps...))
 }
 
-// Matches matches a filter against a bitmask
+// Matches the filter against a mask.
 func (f NoneOF) Matches(bits ecs.Mask) bool {
 	return !bits.ContainsAny(ecs.Mask(f))
 }
@@ -47,7 +47,7 @@ func AnyNot(comps ...ecs.ID) AnyNOT {
 	return AnyNOT(ecs.All(comps...))
 }
 
-// Matches matches a filter against a bitmask
+// Matches the filter against a mask.
 func (f AnyNOT) Matches(bits ecs.Mask) bool {
 	return !bits.Contains(ecs.Mask(f))
 }
@@ -67,7 +67,7 @@ func And(l, r ecs.Filter) *AND {
 	return &AND{L: l, R: r}
 }
 
-// Matches matches a filter against a bitmask.
+// Matches the filter against a mask.
 func (f *AND) Matches(bits ecs.Mask) bool {
 	return f.L.Matches(bits) && f.R.Matches(bits)
 }
@@ -87,7 +87,7 @@ func Or(l, r ecs.Filter) *OR {
 	return &OR{L: l, R: r}
 }
 
-// Matches matches a filter against a bitmask.
+// Matches the filter against a mask.
 func (f *OR) Matches(bits ecs.Mask) bool {
 	return f.L.Matches(bits) || f.R.Matches(bits)
 }
@@ -107,7 +107,7 @@ func XOr(l, r ecs.Filter) *XOR {
 	return &XOR{L: l, R: r}
 }
 
-// Matches matches a filter against a bitmask.
+// Matches the filter against a mask.
 func (f *XOR) Matches(bits ecs.Mask) bool {
 	return f.L.Matches(bits) != f.R.Matches(bits)
 }
@@ -124,7 +124,7 @@ func Not(f ecs.Filter) *NOT {
 	return &NOT{F: f}
 }
 
-// Matches matches a filter against a bitmask.
+// Matches the filter against a mask.
 func (f *NOT) Matches(bits ecs.Mask) bool {
 	return !f.F.Matches(bits)
 }
