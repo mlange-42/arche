@@ -90,7 +90,7 @@ jobs:
           go get .
           go install golang.org/x/exp/cmd/gorelease@latest
       - name: Run gorelease
-        run: gorelease
+        run: gorelease -base=$(git describe --tags --abbrev=0)
 
   examples:
     name: Run examples
