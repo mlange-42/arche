@@ -4,7 +4,12 @@
 
 ### Highlights
 
-* Support for entity relations that can be queries like components (#231, #271)
+Entity relations were added as a first-class feature (#231, #271)
+
+Relations are used to represent graphs of entities, e.g. hierarchies.
+They can be added, removed and queried just like normal components.
+The new feature offers ergonomic handling of entity relations,
+and provides relation queries with native performance.
 
 ### Breaking changes
 
@@ -12,7 +17,7 @@
 * Rework of generic entity creation API, use `MapX.New`, `MapX.NewWith`, `MapX.NewBatch` and `MapX.NewQuery` (#239, #252)
 * Stats object `WorldStats` etc. adapted for new structure of archetypes nested in nodes (#258)
 * Removed generic filter method `FilterX.Filter` (#271)
-* All batch creation method `Batch.NewQuery` renamed to `Batch.NewBatchQ` (#298)
+* Method `Batch.NewQuery` renamed to `Batch.NewBatchQ` (#298)
 
 ### Features
 
