@@ -141,6 +141,9 @@ func fromConfig(conf Config) World {
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
 //
+// ⚠️ Important:
+// Entities are intended to be stored and passed around via copy, not via pointers! See [Entity].
+//
 // Note that calling a method with varargs in Go causes a slice allocation.
 // For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
 //
@@ -175,6 +178,9 @@ func (w *World) NewEntity(comps ...ID) Entity {
 //
 // Panics when called on a locked world.
 // Do not use during [Query] iteration!
+//
+// ⚠️ Important:
+// Entities are intended to be stored and passed around via copy, not via pointers! See [Entity].
 //
 // For more advanced and batched entity creation, see [Builder].
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.

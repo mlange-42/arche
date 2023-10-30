@@ -17,7 +17,9 @@ var entityIndexSize uint32 = uint32(reflect.TypeOf(entityIndex{}).Size())
 // Entities are only created via the [World], using [World.NewEntity] or [World.NewEntityWith].
 // Batch creation of entities is possible via [Builder].
 //
-// Entities are intended to be stored and passed around via copy, not via pointers.
+// ⚠️ Important:
+// Entities are intended to be stored and passed around via copy, not via pointers!
+// The zero value should be used to indicate "nil", and can be checked with [Entity.IsZero].
 type Entity struct {
 	id  eid    // Entity ID
 	gen uint16 // Entity generation
