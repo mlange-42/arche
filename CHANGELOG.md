@@ -1,5 +1,11 @@
 # Changelog
 
+## [[v0.8.1]](https://github.com/mlange-42/arche/compare/v0.8.0...v0.8.1)
+
+### Documentation
+
+* Emphasize in `Entity` and `World` docs that entities are intended to be stored and passed by copy, not by pointer (#306)
+
 ## [[v0.8.0]](https://github.com/mlange-42/arche/compare/v0.7.1...v0.8.0)
 
 ### Highlights
