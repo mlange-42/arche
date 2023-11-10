@@ -15,6 +15,6 @@
 //   - [Cache] serves for registering and un-registering cached filters
 //     with [Cache.Register] and [Cache.Unregister].
 //   - [Resources] provide a storage for global resources, with functionality like
-//     with [Resources.Get], [Resources.Add] and [Resources.Remove].
+//     [Resources.Get], [Resources.Add] and [Resources.Remove].
 //   - Useful functions: [All], [ComponentID], [ResourceID], [GetResource], [AddResource].
 package ecs
