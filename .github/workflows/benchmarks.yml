@@ -51,4 +51,4 @@ jobs:
         run: |
           cd benchmark
           go test -benchmem -run=^$ -bench ^.*$ ./competition/pos_vel/... --count 25
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/pos_vel/... --count 25
+          go test -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 25
