@@ -8,7 +8,7 @@ package ecs
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
 type Filter interface {
 	// Matches the filter against a mask, i.e. a component composition.
-	Matches(bits Mask) bool
+	Matches(bits *Mask) bool
 }
 
 // MaskFilter is a [Filter] for including and excluding certain components.
@@ -20,8 +20,8 @@ type MaskFilter struct {
 }
 
 // Matches the filter against a mask.
-func (f *MaskFilter) Matches(bits Mask) bool {
-	return bits.Contains(f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
+func (f *MaskFilter) Matches(bits *Mask) bool {
+	return bits.Contains(&f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(&f.Exclude))
 }
 
 // RelationFilter is a [Filter] for a [Relation] target, in addition to components.
@@ -42,7 +42,7 @@ func NewRelationFilter(filter Filter, target Entity) RelationFilter {
 }
 
 // Matches the filter against a mask.
-func (f *RelationFilter) Matches(bits Mask) bool {
+func (f *RelationFilter) Matches(bits *Mask) bool {
 	return f.Filter.Matches(bits)
 }
 
@@ -56,6 +56,6 @@ type CachedFilter struct {
 }
 
 // Matches the filter against a mask.
-func (f *CachedFilter) Matches(bits Mask) bool {
+func (f *CachedFilter) Matches(bits *Mask) bool {
 	return f.filter.Matches(bits)
 }

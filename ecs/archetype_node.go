@@ -84,7 +84,7 @@ func newArchNode(mask Mask, data *nodeData, relation int8, capacityIncrement int
 // Matches the archetype node against a filter.
 // Ignores the relation target.
 func (a *archNode) Matches(f Filter) bool {
-	return f.Matches(a.Mask)
+	return f.Matches(&a.Mask)
 }
 
 // Archetypes of the node.
