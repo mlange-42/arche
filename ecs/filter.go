@@ -21,7 +21,7 @@ type MaskFilter struct {
 
 // Matches the filter against a mask.
 func (f *MaskFilter) Matches(bits *Mask) bool {
-	return bits.Contains(&f.Include) && (f.Exclude.IsZero() || !bits.ContainsAny(&f.Exclude))
+	return bits.Contains(&f.Include) && (!bits.ContainsAny(&f.Exclude) || f.Exclude.IsZero())
 }
 
 // RelationFilter is a [Filter] for a [Relation] target, in addition to components.
