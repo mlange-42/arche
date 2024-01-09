@@ -1,8 +1,8 @@
 package ecs
 
 const (
-	numChunks = 8
 	chunkSize = 16
+	numChunks = MaskTotalBits / chunkSize
 )
 
 // idMap maps component IDs to values.

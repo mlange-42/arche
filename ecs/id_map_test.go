@@ -12,10 +12,12 @@ func TestIDMap(t *testing.T) {
 	e0 := Entity{0, 0}
 	e1 := Entity{1, 0}
 	e121 := Entity{121, 0}
+	e200 := Entity{200, 0}
 
 	m.Set(0, &e0)
 	m.Set(1, &e1)
 	m.Set(121, &e121)
+	m.Set(200, &e200)
 
 	e, ok := m.Get(0)
 	assert.True(t, ok)
@@ -28,6 +30,10 @@ func TestIDMap(t *testing.T) {
 	e, ok = m.Get(121)
 	assert.True(t, ok)
 	assert.Equal(t, e121, *e)
+
+	e, ok = m.Get(200)
+	assert.True(t, ok)
+	assert.Equal(t, e200, *e)
 
 	e, ok = m.Get(15)
 	assert.False(t, ok)
@@ -49,10 +55,12 @@ func TestIDMapPointers(t *testing.T) {
 	e0 := Entity{0, 0}
 	e1 := Entity{1, 0}
 	e121 := Entity{121, 0}
+	e200 := Entity{200, 0}
 
 	m.Set(0, e0)
 	m.Set(1, e1)
 	m.Set(121, e121)
+	m.Set(200, e200)
 
 	e, ok := m.GetPointer(0)
 	assert.True(t, ok)
@@ -65,6 +73,10 @@ func TestIDMapPointers(t *testing.T) {
 	e, ok = m.GetPointer(121)
 	assert.True(t, ok)
 	assert.Equal(t, e121, *e)
+
+	e, ok = m.GetPointer(200)
+	assert.True(t, ok)
+	assert.Equal(t, e200, *e)
 
 	e, ok = m.GetPointer(15)
 	assert.False(t, ok)
