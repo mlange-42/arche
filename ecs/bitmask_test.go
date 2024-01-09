@@ -9,17 +9,20 @@ import (
 )
 
 func TestBitMask(t *testing.T) {
-	mask := ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27))
+	mask := ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27), ecs.ID(200))
 
-	assert.Equal(t, 4, mask.TotalBitsSet())
+	assert.Equal(t, 5, mask.TotalBitsSet())
 
 	assert.True(t, mask.Get(1))
 	assert.True(t, mask.Get(2))
 	assert.True(t, mask.Get(13))
 	assert.True(t, mask.Get(27))
+	assert.True(t, mask.Get(200))
 
 	assert.False(t, mask.Get(0))
 	assert.False(t, mask.Get(3))
+	assert.False(t, mask.Get(199))
+	assert.False(t, mask.Get(201))
 
 	mask.Set(ecs.ID(0), true)
 	mask.Set(ecs.ID(1), false)
@@ -66,7 +69,7 @@ func TestBitMaskWithoutExclusive(t *testing.T) {
 	assert.False(t, excl.Matches(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(3), ecs.ID(13))))
 }
 
-func TestBitMask128(t *testing.T) {
+func TestBitMask256(t *testing.T) {
 	for i := 0; i < ecs.MaskTotalBits; i++ {
 		mask := ecs.All(ecs.ID(i))
 		assert.Equal(t, 1, mask.TotalBitsSet())
@@ -93,7 +96,7 @@ func TestBitMask128(t *testing.T) {
 func TestBitMask64(t *testing.T) {
 	mask := newBitMask64(ecs.ID(1))
 	assert.True(t, mask.Get(ecs.ID(1)))
-	for i := 0; i < ecs.MaskTotalBits/2; i++ {
+	for i := 0; i < 64; i++ {
 		mask.Set(ecs.ID(i), true)
 		assert.True(t, mask.Get(ecs.ID(i)))
 		mask.Set(ecs.ID(i), false)
@@ -240,7 +243,7 @@ func BenchmarkMask(b *testing.B) {
 	_ = v
 }
 
-// bitMask64 is there just for performance comparison with the new 128 bit Mask.
+// bitMask64 is there just for performance comparison with the new 256 bit Mask.
 type bitMask64 uint64
 
 func newBitMask64(ids ...ecs.ID) bitMask64 {
@@ -268,7 +271,7 @@ type maskFilterPointer struct {
 	Exclude ecs.Mask
 }
 
-// Matches matches a filter against a mask.
+// Matches a filter against a mask.
 func (f maskFilterPointer) Matches(bits ecs.Mask) bool {
 	return bits.Contains(f.Mask) &&
 		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
@@ -276,7 +279,7 @@ func (f maskFilterPointer) Matches(bits ecs.Mask) bool {
 
 type maskPointer ecs.Mask
 
-// Matches matches a filter against a mask.
+// Matches a filter against a mask.
 func (f *maskPointer) Matches(bits ecs.Mask) bool {
 	return bits.Contains(ecs.Mask(*f))
 }

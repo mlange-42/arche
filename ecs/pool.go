@@ -98,7 +98,7 @@ func (p *entityPool) Available() int {
 type bitPool struct {
 	bits      [MaskTotalBits]uint8
 	next      uint8
-	length    uint8
+	length    uint16
 	available uint8
 }
 
@@ -116,9 +116,9 @@ func (p *bitPool) Get() uint8 {
 // Allocates and returns a new bit. For internal use.
 func (p *bitPool) getNew() uint8 {
 	if p.length >= MaskTotalBits {
-		panic("run out of the maximum of 128 bits")
+		panic("run out of the maximum of 256 bits")
 	}
-	b := p.length
+	b := uint8(p.length)
 	p.bits[p.length] = b
 	p.length++
 	return b
