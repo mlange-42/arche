@@ -167,7 +167,7 @@ To the best of the author's knowledge, there are only a handful of ECS implement
 * [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs)
 * [Donburi](https://github.com/yohamta/donburi)
 * [Ento](https://github.com/wwfranczyk/ento)
-* [Entitas-Go](https://github.com/Falldot/Entitas-Go) (archived repository)
+* [unitoftime/ecs](github.com/unitoftime/ecs)
 
 Here, *Arche* is benchmarked against these implementations.
 Feel free to open an issue if you have suggestions for improvements on the benchmarking code or other engines to include.
@@ -183,7 +183,7 @@ Iterate:
 
 <div align="center" width="100%">
 
-![Benchmark vs. Go ECSs - Pos/Vel](https://user-images.githubusercontent.com/44003176/227806196-857b9c24-2acd-4803-9993-27d7c0460c79.svg)  
+![Benchmark vs. Go ECSs - Pos/Vel](https://github.com/mlange-42/arche/assets/44003176/7b73f9d8-238c-4d7a-98a1-267ad0b5e4a8)  
 *Position/Velocity benchmarks of Arche (left-most) vs. other Go ECS implementations.
 Left panel: query iteration (log scale), right panel: world setup and entity creation.*
 </div>
@@ -202,7 +202,7 @@ Iterate:
 
 <div align="center" width="100%">
 
-![Benchmark vs. Go ECSs - Add/remove](https://user-images.githubusercontent.com/44003176/227808722-45dd7e09-5a0d-4f66-83de-5b9ce1ffc250.svg)  
+![Benchmark vs. Go ECSs - Add/remove](https://github.com/mlange-42/arche/assets/44003176/7a127568-e71a-441f-91b0-6e626b3fcf19)  
 *Add/remove component benchmarks of Arche (left-most) vs. other Go ECS implementations.
 Left panel: iteration, right panel: world setup and entity creation.*
 </div>
