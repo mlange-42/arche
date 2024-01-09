@@ -10,10 +10,10 @@ func TestMask(t *testing.T) {
 	filter := All(0, 2, 4)
 	other := All(0, 1, 2)
 
-	assert.False(t, filter.Matches(other))
+	assert.False(t, filter.Matches(&other))
 
 	other = All(0, 1, 2, 3, 4)
-	assert.True(t, filter.Matches(other))
+	assert.True(t, filter.Matches(&other))
 }
 
 func TestQuery(t *testing.T) {
@@ -260,7 +260,7 @@ func TestQueryCount(t *testing.T) {
 
 type testFilter struct{}
 
-func (f testFilter) Matches(bits Mask) bool {
+func (f testFilter) Matches(bits *Mask) bool {
 	return true
 }
 
@@ -282,7 +282,8 @@ func TestQueryInterface(t *testing.T) {
 	w.Add(e3, posID, rotID)
 	w.Add(e4, rotID)
 
-	q := w.Query(testFilter{})
+	filter := testFilter{}
+	q := w.Query(&filter)
 
 	cnt := 0
 	for q.Next() {

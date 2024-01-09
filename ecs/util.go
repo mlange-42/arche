@@ -30,21 +30,17 @@ func maskToTypes(mask Mask, reg *componentRegistry[ID]) []componentType {
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 
-	start := 0
-	end := MaskTotalBits
-	if mask.Lo == 0 {
-		start = wordSize
-	}
-	if mask.Hi == 0 {
-		end = wordSize
-	}
-
 	idx := 0
-	for i := start; i < end; i++ {
-		id := ID(i)
-		if mask.Get(id) {
-			types[idx] = componentType{ID: id, Type: reg.Types[id]}
-			idx++
+	for i := range mask.bits {
+		if mask.bits[i] == 0 {
+			continue
+		}
+		for j := 0; j < wordSize; j++ {
+			id := ID(i*wordSize + j)
+			if mask.Get(id) {
+				types[idx] = componentType{ID: id, Type: reg.Types[id]}
+				idx++
+			}
 		}
 	}
 	return types

@@ -80,5 +80,5 @@ func ExampleEntityEvent() {
 	world.SetListener(listener)
 
 	world.NewEntity()
-	// Output: &{{1 0} {0 0} {0 0} [] [] [] 1 {0 0} {0 0} false}
+	// Output: &{{1 0} {[0 0 0 0]} {[0 0 0 0]} [] [] [] 1 {0 0} {0 0} false}
 }

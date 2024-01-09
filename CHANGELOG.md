@@ -1,5 +1,18 @@
 # Changelog
 
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.9.0...main)
+
+### Highlights
+
+* Arche now supports 256 instead of 128 component types as well as resource types and engine locks (#313)
+
+### Breaking changes
+
+* `MaskTotalBits` changed from 128 to 256 (#313)
+* Removed `Mask.Lo` and `Mask.Hi`, internal mask representation is now private (#313)
+* `Filters.Matches(Mask)` became `Filters.Matches(*Mask)`; same for all `Filter` implementations (#313)  
+This change was necessary to get the same performance as before, despite the more heavyweight implementation of the now 256 bits `Mask`.
+
 ## [[v0.9.0]](https://github.com/mlange-42/arche/compare/v0.8.1...v0.9.0)
 
 ### Infrastructure

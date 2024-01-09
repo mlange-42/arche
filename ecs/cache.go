@@ -98,7 +98,7 @@ func (c *Cache) addArchetype(arch *archetype) {
 	if !arch.HasRelation() {
 		for i := range c.filters {
 			e := &c.filters[i]
-			if !e.Filter.Matches(arch.Mask) {
+			if !e.Filter.Matches(&arch.Mask) {
 				continue
 			}
 			e.Archetypes.Add(arch)
@@ -108,7 +108,7 @@ func (c *Cache) addArchetype(arch *archetype) {
 
 	for i := range c.filters {
 		e := &c.filters[i]
-		if !e.Filter.Matches(arch.Mask) {
+		if !e.Filter.Matches(&arch.Mask) {
 			continue
 		}
 		if rf, ok := e.Filter.(*RelationFilter); ok {
@@ -135,7 +135,7 @@ func (c *Cache) removeArchetype(arch *archetype) {
 	for i := range c.filters {
 		e := &c.filters[i]
 
-		if e.Indices == nil && e.Filter.Matches(arch.Mask) {
+		if e.Indices == nil && e.Filter.Matches(&arch.Mask) {
 			c.mapArchetypes(e)
 		}
 

@@ -6,22 +6,27 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-type Struct16B0 struct{ ecs.Mask }
-type Struct16B1 struct{ ecs.Mask }
-type Struct16B2 struct{ ecs.Mask }
-type Struct16B3 struct{ ecs.Mask }
-type Struct16B4 struct{ ecs.Mask }
-type Struct16B5 struct{ ecs.Mask }
-type Struct16B6 struct{ ecs.Mask }
-type Struct16B7 struct{ ecs.Mask }
-type Struct16B8 struct{ ecs.Mask }
-type Struct16B9 struct{ ecs.Mask }
-type Struct16B10 struct{ ecs.Mask }
-type Struct16B11 struct{ ecs.Mask }
-type Struct16B12 struct{ ecs.Mask }
-type Struct16B13 struct{ ecs.Mask }
-type Struct16B14 struct{ ecs.Mask }
-type Struct16B15 struct{ ecs.Mask }
+type Mask struct {
+	Lo uint64
+	Hi uint64
+}
+
+type Struct16B0 struct{ Mask }
+type Struct16B1 struct{ Mask }
+type Struct16B2 struct{ Mask }
+type Struct16B3 struct{ Mask }
+type Struct16B4 struct{ Mask }
+type Struct16B5 struct{ Mask }
+type Struct16B6 struct{ Mask }
+type Struct16B7 struct{ Mask }
+type Struct16B8 struct{ Mask }
+type Struct16B9 struct{ Mask }
+type Struct16B10 struct{ Mask }
+type Struct16B11 struct{ Mask }
+type Struct16B12 struct{ Mask }
+type Struct16B13 struct{ Mask }
+type Struct16B14 struct{ Mask }
+type Struct16B15 struct{ Mask }
 
 func runArche16B(b *testing.B, count int) {
 	b.StopTimer()

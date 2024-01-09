@@ -5,17 +5,16 @@ import "math/bits"
 // MaskTotalBits is the size of Mask in bits.
 //
 // It is the maximum number of component types that may exist in any [World].
-const MaskTotalBits = 128
+const MaskTotalBits = 256
 const wordSize = 64
 
-// Mask is a 128 bit bitmask.
+// Mask is a 256 bit bitmask.
 // It is also a [Filter] for including certain components.
 //
 // Use [All] to create a mask for a list of component IDs.
 // A mask can be further specified using [Mask.Without] or [Mask.Exclusive].
 type Mask struct {
-	Lo uint64 // First 64 bits of the mask
-	Hi uint64 // Second 64 bits of the mask
+	bits [4]uint64 // 4x 64 bits of the mask
 }
 
 // All creates a new Mask from a list of IDs.
@@ -33,8 +32,8 @@ func All(ids ...ID) Mask {
 }
 
 // Matches the mask as filter against another mask.
-func (b Mask) Matches(bits Mask) bool {
-	return bits.Contains(b)
+func (b Mask) Matches(bits *Mask) bool {
+	return bits.Contains(&b)
 }
 
 // Without creates a [MaskFilter] which filters for including the mask's components,
@@ -59,61 +58,59 @@ func (b Mask) Exclusive() MaskFilter {
 //
 // Returns false for bit >= [MaskTotalBits].
 func (b *Mask) Get(bit ID) bool {
-	if bit < wordSize {
-		mask := uint64(1 << bit)
-		return b.Lo&mask == mask
-	}
-	mask := uint64(1 << (bit - wordSize))
-	return b.Hi&mask == mask
+	idx := bit / 64
+	offset := bit - (64 * idx)
+	mask := uint64(1 << offset)
+	return b.bits[idx]&mask == mask
 }
 
-// Set sets the state of bit at the given index.
+// Set sets the state of the bit at the given index.
 //
 // Has no effect for bit >= [MaskTotalBits].
 func (b *Mask) Set(bit ID, value bool) {
-	if bit < wordSize {
-		if value {
-			b.Lo |= uint64(1 << bit)
-		} else {
-			b.Lo &= uint64(^(1 << bit))
-		}
-	}
+	idx := bit / 64
+	offset := bit - (64 * idx)
 	if value {
-		b.Hi |= uint64(1 << (bit - wordSize))
+		b.bits[idx] |= (1 << offset)
 	} else {
-		b.Hi &= uint64(^(1 << (bit - wordSize)))
+		b.bits[idx] &= ^(1 << offset)
 	}
 }
 
 // Not returns the inversion of this mask.
 func (b *Mask) Not() Mask {
 	return Mask{
-		Lo: ^b.Lo,
-		Hi: ^b.Hi,
+		bits: [4]uint64{^b.bits[0], ^b.bits[1], ^b.bits[2], ^b.bits[3]},
 	}
 }
 
 // IsZero returns whether no bits are set in the mask.
 func (b *Mask) IsZero() bool {
-	return b.Lo == 0 && b.Hi == 0
+	return b.bits[0] == 0 && b.bits[1] == 0 && b.bits[2] == 0 && b.bits[3] == 0
 }
 
 // Reset the mask setting all bits to false.
 func (b *Mask) Reset() {
-	b.Lo, b.Lo = 0, 0
+	b.bits = [4]uint64{0, 0, 0, 0}
 }
 
 // Contains reports if the other mask is a subset of this mask.
-func (b *Mask) Contains(other Mask) bool {
-	return b.Lo&other.Lo == other.Lo && b.Hi&other.Hi == other.Hi
+func (b *Mask) Contains(other *Mask) bool {
+	return b.bits[0]&other.bits[0] == other.bits[0] &&
+		b.bits[1]&other.bits[1] == other.bits[1] &&
+		b.bits[2]&other.bits[2] == other.bits[2] &&
+		b.bits[3]&other.bits[3] == other.bits[3]
 }
 
 // ContainsAny reports if any bit of the other mask is in this mask.
-func (b *Mask) ContainsAny(other Mask) bool {
-	return b.Lo&other.Lo != 0 || b.Hi&other.Hi != 0
+func (b *Mask) ContainsAny(other *Mask) bool {
+	return b.bits[0]&other.bits[0] != 0 ||
+		b.bits[1]&other.bits[1] != 0 ||
+		b.bits[2]&other.bits[2] != 0 ||
+		b.bits[3]&other.bits[3] != 0
 }
 
 // TotalBitsSet returns how many bits are set in this mask.
 func (b *Mask) TotalBitsSet() int {
-	return bits.OnesCount64(b.Hi) + bits.OnesCount64(b.Lo)
+	return bits.OnesCount64(b.bits[0]) + bits.OnesCount64(b.bits[1]) + bits.OnesCount64(b.bits[2]) + bits.OnesCount64(b.bits[3])
 }
