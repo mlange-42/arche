@@ -49,7 +49,7 @@ func toMask(w *ecs.World, types []Comp) ecs.Mask {
 
 // toMaskOptional extracts an [ecs.Mask] from a sequence of [Comp]s, ignoring the given optional [Comp]s.
 func toMaskOptional(w *ecs.World, include []ecs.ID, optional []Comp) ecs.Mask {
-	mask := ecs.All(include...)
+	mask := *ecs.All(include...)
 	for _, t := range optional {
 		mask.Set(ecs.TypeID(w, t), false)
 	}

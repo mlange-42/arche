@@ -28,7 +28,7 @@ func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World, relation ...Comp) Map{{ .I
 		{{ .IDAssign }}
 	}
 	m.ids = []ecs.ID{ {{ .IDList }} }
-	m.mask = ecs.All(m.ids...)
+	m.mask = *ecs.All(m.ids...)
 	m.relation = -1
 	if len(relation) > 0 {
 		m.relation = int8(ecs.TypeID(w, relation[0]))
@@ -142,5 +142,5 @@ func (m *Map{{ .Index }}{{ .Types }}) RemoveEntities(exclusive bool) int {
 		filter := m.mask.Exclusive()
 		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(&m.mask)
 }

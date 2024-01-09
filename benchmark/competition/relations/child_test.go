@@ -40,7 +40,7 @@ func benchmarkChild(b *testing.B, numParents int, numChildren int) {
 	parentFilter := generic.NewFilter1[ParentList]()
 	parentFilter.Register(&world)
 	childFilter := ecs.All(childID)
-	cf := world.Cache().Register(&childFilter)
+	cf := world.Cache().Register(childFilter)
 
 	b.StartTimer()
 

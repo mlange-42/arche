@@ -9,7 +9,7 @@ import (
 // Like [And] for combining individual components.
 //
 // See also [ecs.All], [ecs.Mask], [ecs.Mask.Without] and [ecs.Mask.Exclusive].
-func All(comps ...ecs.ID) ecs.Mask {
+func All(comps ...ecs.ID) *ecs.Mask {
 	return ecs.All(comps...)
 }
 
@@ -18,12 +18,13 @@ type ANY ecs.Mask
 
 // Any matches entities that have any of the given components.
 func Any(comps ...ecs.ID) ANY {
-	return ANY(ecs.All(comps...))
+	return ANY(*ecs.All(comps...))
 }
 
 // Matches the filter against a mask.
-func (f ANY) Matches(bits ecs.Mask) bool {
-	return bits.ContainsAny(ecs.Mask(f))
+func (f ANY) Matches(bits *ecs.Mask) bool {
+	m := ecs.Mask(f)
+	return bits.ContainsAny(&m)
 }
 
 // NoneOF matches entities that are missing all the given components.
@@ -31,12 +32,13 @@ type NoneOF ecs.Mask
 
 // NoneOf matches entities that are missing all the given components.
 func NoneOf(comps ...ecs.ID) NoneOF {
-	return NoneOF(ecs.All(comps...))
+	return NoneOF(*ecs.All(comps...))
 }
 
 // Matches the filter against a mask.
-func (f NoneOF) Matches(bits ecs.Mask) bool {
-	return !bits.ContainsAny(ecs.Mask(f))
+func (f NoneOF) Matches(bits *ecs.Mask) bool {
+	m := ecs.Mask(f)
+	return !bits.ContainsAny(&m)
 }
 
 // AnyNOT matches entities that are missing any of the given components.
@@ -44,12 +46,13 @@ type AnyNOT ecs.Mask
 
 // AnyNot matches entities that are missing any of the given components.
 func AnyNot(comps ...ecs.ID) AnyNOT {
-	return AnyNOT(ecs.All(comps...))
+	return AnyNOT(*ecs.All(comps...))
 }
 
 // Matches the filter against a mask.
-func (f AnyNOT) Matches(bits ecs.Mask) bool {
-	return !bits.Contains(ecs.Mask(f))
+func (f AnyNOT) Matches(bits *ecs.Mask) bool {
+	m := ecs.Mask(f)
+	return !bits.Contains(&m)
 }
 
 // AND combines two filters using AND.
@@ -68,7 +71,7 @@ func And(l, r ecs.Filter) *AND {
 }
 
 // Matches the filter against a mask.
-func (f *AND) Matches(bits ecs.Mask) bool {
+func (f *AND) Matches(bits *ecs.Mask) bool {
 	return f.L.Matches(bits) && f.R.Matches(bits)
 }
 
@@ -88,7 +91,7 @@ func Or(l, r ecs.Filter) *OR {
 }
 
 // Matches the filter against a mask.
-func (f *OR) Matches(bits ecs.Mask) bool {
+func (f *OR) Matches(bits *ecs.Mask) bool {
 	return f.L.Matches(bits) || f.R.Matches(bits)
 }
 
@@ -108,7 +111,7 @@ func XOr(l, r ecs.Filter) *XOR {
 }
 
 // Matches the filter against a mask.
-func (f *XOR) Matches(bits ecs.Mask) bool {
+func (f *XOR) Matches(bits *ecs.Mask) bool {
 	return f.L.Matches(bits) != f.R.Matches(bits)
 }
 
@@ -125,6 +128,6 @@ func Not(f ecs.Filter) *NOT {
 }
 
 // Matches the filter against a mask.
-func (f *NOT) Matches(bits ecs.Mask) bool {
+func (f *NOT) Matches(bits *ecs.Mask) bool {
 	return !f.F.Matches(bits)
 }

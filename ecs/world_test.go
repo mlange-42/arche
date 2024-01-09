@@ -77,10 +77,10 @@ func TestWorldNewEntites(t *testing.T) {
 	)
 	e3 := w.NewEntityWith()
 
-	assert.Equal(t, All(), w.Mask(e0))
-	assert.Equal(t, All(posID, velID, rotID), w.Mask(e1))
-	assert.Equal(t, All(posID, velID, rotID), w.Mask(e2))
-	assert.Equal(t, All(), w.Mask(e3))
+	assert.Equal(t, *All(), w.Mask(e0))
+	assert.Equal(t, *All(posID, velID, rotID), w.Mask(e1))
+	assert.Equal(t, *All(posID, velID, rotID), w.Mask(e2))
+	assert.Equal(t, *All(), w.Mask(e3))
 
 	pos := (*Position)(w.Get(e2, posID))
 	vel := (*Velocity)(w.Get(e2, velID))
@@ -137,8 +137,8 @@ func TestWorldComponents(t *testing.T) {
 	w.Add(e2, posID, rotID)
 	assert.Equal(t, int32(3), w.archetypes.Len())
 
-	assert.Equal(t, All(posID), w.Mask(e0))
-	assert.Equal(t, All(posID, rotID), w.Mask(e1))
+	assert.Equal(t, *All(posID), w.Mask(e0))
+	assert.Equal(t, *All(posID, rotID), w.Mask(e1))
 
 	w.Remove(e2, posID)
 
@@ -1428,7 +1428,7 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 3, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		NewMask:      All(posID, velID),
+		NewMask:      *All(posID, velID),
 		Added:        []ID{posID, velID},
 		Current:      []ID{posID, velID},
 		AddedRemoved: 1,
@@ -1438,7 +1438,7 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 4, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		OldMask:      All(posID, velID),
+		OldMask:      *All(posID, velID),
 		NewMask:      Mask{},
 		Removed:      []ID{posID, velID},
 		Current:      nil,
@@ -1449,7 +1449,7 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 5, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		NewMask:      All(posID, velID),
+		NewMask:      *All(posID, velID),
 		Added:        []ID{posID, velID},
 		Current:      []ID{posID, velID},
 		AddedRemoved: 1,
@@ -1459,8 +1459,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 6, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		OldMask:      All(posID, velID),
-		NewMask:      All(posID, velID, rotID),
+		OldMask:      *All(posID, velID),
+		NewMask:      *All(posID, velID, rotID),
 		Added:        []ID{rotID},
 		Current:      []ID{posID, velID, rotID},
 		AddedRemoved: 0,
@@ -1470,8 +1470,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 7, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
-		OldMask:      All(posID, velID, rotID),
-		NewMask:      All(velID, rotID),
+		OldMask:      *All(posID, velID, rotID),
+		NewMask:      *All(velID, rotID),
 		Removed:      []ID{posID},
 		Current:      []ID{velID, rotID},
 		AddedRemoved: 0,

@@ -84,7 +84,7 @@ func TestBitMask256(t *testing.T) {
 		assert.True(t, mask.Get(ecs.ID(i)))
 	}
 
-	mask = ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27), ecs.ID(63), ecs.ID(64), ecs.ID(65))
+	mask = *ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27), ecs.ID(63), ecs.ID(64), ecs.ID(65))
 
 	assert.True(t, mask.Contains(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(63), ecs.ID(64))))
 	assert.False(t, mask.Contains(ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(63), ecs.ID(90))))
@@ -203,7 +203,7 @@ func BenchmarkMaskFilter(b *testing.B) {
 
 func BenchmarkMaskFilterNoPointer(b *testing.B) {
 	b.StopTimer()
-	mask := maskFilterPointer{ecs.All(0, 1, 2), ecs.All()}
+	mask := maskFilterPointer{*ecs.All(0, 1, 2), *ecs.All()}
 	bits := ecs.All(0, 1, 2)
 	b.StartTimer()
 	var v bool
@@ -217,7 +217,7 @@ func BenchmarkMaskFilterNoPointer(b *testing.B) {
 
 func BenchmarkMaskPointer(b *testing.B) {
 	b.StopTimer()
-	mask := maskPointer(ecs.All(0, 1, 2))
+	mask := maskPointer(*ecs.All(0, 1, 2))
 	bits := ecs.All(0, 1, 2)
 	b.StartTimer()
 	var v bool
@@ -272,16 +272,17 @@ type maskFilterPointer struct {
 }
 
 // Matches a filter against a mask.
-func (f maskFilterPointer) Matches(bits ecs.Mask) bool {
-	return bits.Contains(f.Mask) &&
-		(f.Exclude.IsZero() || !bits.ContainsAny(f.Exclude))
+func (f maskFilterPointer) Matches(bits *ecs.Mask) bool {
+	return bits.Contains(&f.Mask) &&
+		(f.Exclude.IsZero() || !bits.ContainsAny(&f.Exclude))
 }
 
 type maskPointer ecs.Mask
 
 // Matches a filter against a mask.
-func (f *maskPointer) Matches(bits ecs.Mask) bool {
-	return bits.Contains(ecs.Mask(*f))
+func (f *maskPointer) Matches(bits *ecs.Mask) bool {
+	m := ecs.Mask(*f)
+	return bits.Contains(&m)
 }
 
 func ExampleMask() {

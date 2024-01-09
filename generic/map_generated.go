@@ -35,7 +35,7 @@ func NewMap1[A any](w *ecs.World, relation ...Comp) Map1[A] {
 		id0:   ecs.ComponentID[A](w),
 	}
 	m.ids = []ecs.ID{m.id0}
-	m.mask = ecs.All(m.ids...)
+	m.mask = *ecs.All(m.ids...)
 	m.relation = -1
 	if len(relation) > 0 {
 		m.relation = int8(ecs.TypeID(w, relation[0]))
@@ -146,7 +146,7 @@ func (m *Map1[A]) RemoveEntities(exclusive bool) int {
 		filter := m.mask.Exclusive()
 		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(&m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -180,7 +180,7 @@ func NewMap2[A any, B any](w *ecs.World, relation ...Comp) Map2[A, B] {
 		id1:   ecs.ComponentID[B](w),
 	}
 	m.ids = []ecs.ID{m.id0, m.id1}
-	m.mask = ecs.All(m.ids...)
+	m.mask = *ecs.All(m.ids...)
 	m.relation = -1
 	if len(relation) > 0 {
 		m.relation = int8(ecs.TypeID(w, relation[0]))
@@ -299,7 +299,7 @@ func (m *Map2[A, B]) RemoveEntities(exclusive bool) int {
 		filter := m.mask.Exclusive()
 		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(&m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -335,7 +335,7 @@ func NewMap3[A any, B any, C any](w *ecs.World, relation ...Comp) Map3[A, B, C] 
 		id2:   ecs.ComponentID[C](w),
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2}
-	m.mask = ecs.All(m.ids...)
+	m.mask = *ecs.All(m.ids...)
 	m.relation = -1
 	if len(relation) > 0 {
 		m.relation = int8(ecs.TypeID(w, relation[0]))
@@ -460,7 +460,7 @@ func (m *Map3[A, B, C]) RemoveEntities(exclusive bool) int {
 		filter := m.mask.Exclusive()
 		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(&m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -498,7 +498,7 @@ func NewMap4[A any, B any, C any, D any](w *ecs.World, relation ...Comp) Map4[A,
 		id3:   ecs.ComponentID[D](w),
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3}
-	m.mask = ecs.All(m.ids...)
+	m.mask = *ecs.All(m.ids...)
 	m.relation = -1
 	if len(relation) > 0 {
 		m.relation = int8(ecs.TypeID(w, relation[0]))
@@ -629,7 +629,7 @@ func (m *Map4[A, B, C, D]) RemoveEntities(exclusive bool) int {
 		filter := m.mask.Exclusive()
 		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(&m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -669,7 +669,7 @@ func NewMap5[A any, B any, C any, D any, E any](w *ecs.World, relation ...Comp) 
 		id4:   ecs.ComponentID[E](w),
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4}
-	m.mask = ecs.All(m.ids...)
+	m.mask = *ecs.All(m.ids...)
 	m.relation = -1
 	if len(relation) > 0 {
 		m.relation = int8(ecs.TypeID(w, relation[0]))
@@ -806,7 +806,7 @@ func (m *Map5[A, B, C, D, E]) RemoveEntities(exclusive bool) int {
 		filter := m.mask.Exclusive()
 		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(&m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -848,7 +848,7 @@ func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World, relation ..
 		id5:   ecs.ComponentID[F](w),
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5}
-	m.mask = ecs.All(m.ids...)
+	m.mask = *ecs.All(m.ids...)
 	m.relation = -1
 	if len(relation) > 0 {
 		m.relation = int8(ecs.TypeID(w, relation[0]))
@@ -991,7 +991,7 @@ func (m *Map6[A, B, C, D, E, F]) RemoveEntities(exclusive bool) int {
 		filter := m.mask.Exclusive()
 		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(&m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1035,7 +1035,7 @@ func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World, rela
 		id6:   ecs.ComponentID[G](w),
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6}
-	m.mask = ecs.All(m.ids...)
+	m.mask = *ecs.All(m.ids...)
 	m.relation = -1
 	if len(relation) > 0 {
 		m.relation = int8(ecs.TypeID(w, relation[0]))
@@ -1184,7 +1184,7 @@ func (m *Map7[A, B, C, D, E, F, G]) RemoveEntities(exclusive bool) int {
 		filter := m.mask.Exclusive()
 		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(&m.mask)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1230,7 +1230,7 @@ func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.Worl
 		id7:   ecs.ComponentID[H](w),
 	}
 	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7}
-	m.mask = ecs.All(m.ids...)
+	m.mask = *ecs.All(m.ids...)
 	m.relation = -1
 	if len(relation) > 0 {
 		m.relation = int8(ecs.TypeID(w, relation[0]))
@@ -1385,5 +1385,5 @@ func (m *Map8[A, B, C, D, E, F, G, H]) RemoveEntities(exclusive bool) int {
 		filter := m.mask.Exclusive()
 		return m.world.Batch().RemoveEntities(&filter)
 	}
-	return m.world.Batch().RemoveEntities(m.mask)
+	return m.world.Batch().RemoveEntities(&m.mask)
 }

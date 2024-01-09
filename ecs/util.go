@@ -26,7 +26,7 @@ func capacityU32(size, increment uint32) uint32 {
 	return cap
 }
 
-func maskToTypes(mask Mask, reg *componentRegistry[ID]) []componentType {
+func maskToTypes(mask *Mask, reg *componentRegistry[ID]) []componentType {
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 

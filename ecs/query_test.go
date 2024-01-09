@@ -260,7 +260,7 @@ func TestQueryCount(t *testing.T) {
 
 type testFilter struct{}
 
-func (f testFilter) Matches(bits Mask) bool {
+func (f testFilter) Matches(bits *Mask) bool {
 	return true
 }
 

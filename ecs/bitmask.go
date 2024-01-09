@@ -23,16 +23,16 @@ type Mask struct {
 // See also [Mask.Without] and [Mask.Exclusive]
 //
 // If any [ID] is greater than or equal to [MaskTotalBits], it will not be added to the mask.
-func All(ids ...ID) Mask {
+func All(ids ...ID) *Mask {
 	var mask Mask
 	for _, id := range ids {
 		mask.Set(id, true)
 	}
-	return mask
+	return &mask
 }
 
 // Matches the mask as filter against another mask.
-func (b Mask) Matches(bits Mask) bool {
+func (b *Mask) Matches(bits *Mask) bool {
 	return bits.Contains(b)
 }
 
@@ -41,7 +41,7 @@ func (b Mask) Matches(bits Mask) bool {
 func (b Mask) Without(comps ...ID) MaskFilter {
 	return MaskFilter{
 		Include: b,
-		Exclude: All(comps...),
+		Exclude: *All(comps...),
 	}
 }
 
@@ -95,7 +95,7 @@ func (b *Mask) Reset() {
 }
 
 // Contains reports if the other mask is a subset of this mask.
-func (b *Mask) Contains(other Mask) bool {
+func (b *Mask) Contains(other *Mask) bool {
 	for i := range b.Bits {
 		if b.Bits[i]&other.Bits[i] != other.Bits[i] {
 			return false
@@ -105,7 +105,7 @@ func (b *Mask) Contains(other Mask) bool {
 }
 
 // ContainsAny reports if any bit of the other mask is in this mask.
-func (b *Mask) ContainsAny(other Mask) bool {
+func (b *Mask) ContainsAny(other *Mask) bool {
 	for i := range b.Bits {
 		if b.Bits[i]&other.Bits[i] != 0 {
 			return true

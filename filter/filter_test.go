@@ -60,7 +60,7 @@ func TestLogicFilters(t *testing.T) {
 	assert.True(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = &hasAll
+	filter = hasAll
 	assert.True(t, match(filter, hasAll))
 	assert.False(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
@@ -96,7 +96,7 @@ func TestLogicFilters(t *testing.T) {
 	assert.False(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = And(hasA, AnyNOT(hasB))
+	filter = And(hasA, AnyNOT(*hasB))
 	assert.False(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
@@ -108,7 +108,7 @@ func TestLogicFilters(t *testing.T) {
 	assert.False(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = Or(Any(0, 1), AnyNOT(hasB))
+	filter = Or(Any(0, 1), AnyNOT(*hasB))
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
@@ -172,7 +172,7 @@ func TestFilter(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Query(&AND{L: All(rotID), R: AnyNOT(All(posID))})
+	q = w.Query(&AND{L: All(rotID), R: AnyNOT(*All(posID))})
 
 	cnt = 0
 	for q.Next() {
@@ -182,7 +182,7 @@ func TestFilter(t *testing.T) {
 	assert.Equal(t, 2, cnt)
 }
 
-func match(f ecs.Filter, m ecs.Mask) bool {
+func match(f ecs.Filter, m *ecs.Mask) bool {
 	return f.Matches(m)
 }
 
@@ -198,31 +198,31 @@ func TestInterface(t *testing.T) {
 
 func BenchmarkFilterStackOr(b *testing.B) {
 	b.StopTimer()
-	mask := All(1, 2, 3, 4, 5)
+	mask := *All(1, 2, 3, 4, 5)
 
 	filter := OR{All(1), All(2)}
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = filter.Matches(ecs.Mask(mask))
+		_ = filter.Matches(&mask)
 	}
 }
 
 func BenchmarkFilterHeapOr(b *testing.B) {
 	b.StopTimer()
-	mask := All(1, 2, 3, 4, 5)
+	mask := *All(1, 2, 3, 4, 5)
 
 	filter := Or(All(1), All(2))
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = filter.Matches(ecs.Mask(mask))
+		_ = filter.Matches(&mask)
 	}
 }
 
 func BenchmarkFilterStack5And(b *testing.B) {
 	b.StopTimer()
-	mask := All(1, 2, 3, 4, 5)
+	mask := *All(1, 2, 3, 4, 5)
 
 	a1 := AND{All(1), All(2)}
 	a2 := AND{&a1, All(3)}
@@ -231,18 +231,18 @@ func BenchmarkFilterStack5And(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = filter.Matches(ecs.Mask(mask))
+		_ = filter.Matches(&mask)
 	}
 }
 
 func BenchmarkFilterHeap5And(b *testing.B) {
 	b.StopTimer()
-	mask := All(1, 2, 3, 4, 5)
+	mask := *All(1, 2, 3, 4, 5)
 
 	filter := And(All(1), And(All(2), And(All(3), And(All(4), All(5)))))
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		_ = filter.Matches(ecs.Mask(mask))
+		_ = filter.Matches(&mask)
 	}
 }

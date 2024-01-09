@@ -61,7 +61,7 @@ func run() {
 
 	// Batch-remove all entities with the given components (and potentially further components).
 	filter := ecs.All(posID, velID)
-	world.Batch().RemoveEntities(&filter)
+	world.Batch().RemoveEntities(filter)
 }
 
 // Uses the type-safe generic API.

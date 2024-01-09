@@ -130,7 +130,7 @@ func fromConfig(conf Config) World {
 		resources:      newResources(),
 		filterCache:    newCache(),
 	}
-	node := w.createArchetypeNode(Mask{}, -1)
+	node := w.createArchetypeNode(&Mask{}, -1)
 	w.createArchetype(node, Entity{}, false)
 	return w
 }
@@ -1255,7 +1255,7 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 		if next, ok := curr.TransitionRemove.Get(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask, relation)
+			next, _ := w.findOrCreateArchetypeSlow(&mask, relation)
 			next.TransitionAdd.Set(id, curr)
 			curr.TransitionRemove.Set(id, next)
 			curr = next
@@ -1272,7 +1272,7 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 		if next, ok := curr.TransitionAdd.Get(id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask, relation)
+			next, _ := w.findOrCreateArchetypeSlow(&mask, relation)
 			next.TransitionRemove.Set(id, curr)
 			curr.TransitionAdd.Set(id, next)
 			curr = next
@@ -1287,7 +1287,7 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 
 // Tries to find an archetype for a mask, when it can't be reached through the archetype graph.
 // Creates an archetype graph node.
-func (w *World) findOrCreateArchetypeSlow(mask Mask, relation int8) (*archNode, bool) {
+func (w *World) findOrCreateArchetypeSlow(mask *Mask, relation int8) (*archNode, bool) {
 	if arch, ok := w.findArchetypeSlow(mask); ok {
 		return arch, false
 	}
@@ -1295,12 +1295,12 @@ func (w *World) findOrCreateArchetypeSlow(mask Mask, relation int8) (*archNode, 
 }
 
 // Searches for an archetype by a mask.
-func (w *World) findArchetypeSlow(mask Mask) (*archNode, bool) {
+func (w *World) findArchetypeSlow(mask *Mask) (*archNode, bool) {
 	length := w.nodes.Len()
 	var i int32
 	for i = 0; i < length; i++ {
 		nd := w.nodes.Get(i)
-		if nd.Mask == mask {
+		if nd.Mask == *mask { // TODO: avoid copy?
 			return nd, true
 		}
 	}
@@ -1308,7 +1308,7 @@ func (w *World) findArchetypeSlow(mask Mask) (*archNode, bool) {
 }
 
 // Creates a node in the archetype graph.
-func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
+func (w *World) createArchetypeNode(mask *Mask, relation int8) *archNode {
 	capInc := w.config.CapacityIncrement
 	if relation >= 0 {
 		capInc = w.config.RelationCapacityIncrement
@@ -1317,7 +1317,7 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
 	types := maskToTypes(mask, &w.registry)
 
 	w.nodeData.Add(nodeData{})
-	w.nodes.Add(newArchNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, capInc, types))
+	w.nodes.Add(newArchNode(*mask, w.nodeData.Get(w.nodeData.Len()-1), relation, capInc, types))
 	nd := w.nodes.Get(w.nodes.Len() - 1)
 	w.relationNodes = append(w.relationNodes, nd)
 	w.nodePointers = append(w.nodePointers, nd)
