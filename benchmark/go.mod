@@ -8,7 +8,7 @@ require (
 	github.com/marioolofo/go-gameengine-ecs v0.9.0
 	github.com/mlange-42/arche v0.9.0
 	github.com/pkg/profile v1.7.0
-	github.com/unitoftime/ecs v0.0.1
+	github.com/unitoftime/ecs v0.0.2-0.20240109122000-af4227c75194
 	github.com/wfranczyk/ento v0.1.0
 	github.com/yohamta/donburi v1.3.4
 )
