@@ -96,22 +96,18 @@ func (b *Mask) Reset() {
 
 // Contains reports if the other mask is a subset of this mask.
 func (b *Mask) Contains(other *Mask) bool {
-	for i := range b.Bits {
-		if b.Bits[i]&other.Bits[i] != other.Bits[i] {
-			return false
-		}
-	}
-	return true
+	return b.Bits[0]&other.Bits[0] == other.Bits[0] &&
+		b.Bits[1]&other.Bits[1] == other.Bits[1] &&
+		b.Bits[2]&other.Bits[2] == other.Bits[2] &&
+		b.Bits[3]&other.Bits[3] == other.Bits[3]
 }
 
 // ContainsAny reports if any bit of the other mask is in this mask.
 func (b *Mask) ContainsAny(other *Mask) bool {
-	for i := range b.Bits {
-		if b.Bits[i]&other.Bits[i] != 0 {
-			return true
-		}
-	}
-	return false
+	return b.Bits[0]&other.Bits[0] != 0 ||
+		b.Bits[1]&other.Bits[1] != 0 ||
+		b.Bits[2]&other.Bits[2] != 0 ||
+		b.Bits[3]&other.Bits[3] != 0
 }
 
 // TotalBitsSet returns how many bits are set in this mask.

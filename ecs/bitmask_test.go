@@ -147,18 +147,18 @@ func BenchmarkBitmask128Get(b *testing.B) {
 
 func BenchmarkBitmaskContains(b *testing.B) {
 	b.StopTimer()
-	mask := ecs.All()
+	mask := *ecs.All()
 	for i := 0; i < ecs.MaskTotalBits; i++ {
 		if rand.Float64() < 0.5 {
 			mask.Set(ecs.ID(i), true)
 		}
 	}
-	filter := ecs.All(ecs.ID(rand.Intn(ecs.MaskTotalBits)))
+	filter := *ecs.All(ecs.ID(rand.Intn(ecs.MaskTotalBits)))
 	b.StartTimer()
 
 	var v bool
 	for i := 0; i < b.N; i++ {
-		v = mask.Contains(filter)
+		v = mask.Contains(&filter)
 	}
 
 	b.StopTimer()
@@ -168,18 +168,18 @@ func BenchmarkBitmaskContains(b *testing.B) {
 
 func BenchmarkBitmaskContainsAny(b *testing.B) {
 	b.StopTimer()
-	mask := ecs.All()
+	mask := *ecs.All()
 	for i := 0; i < ecs.MaskTotalBits; i++ {
 		if rand.Float64() < 0.5 {
 			mask.Set(ecs.ID(i), true)
 		}
 	}
-	filter := ecs.All(ecs.ID(rand.Intn(ecs.MaskTotalBits)))
+	filter := *ecs.All(ecs.ID(rand.Intn(ecs.MaskTotalBits)))
 	b.StartTimer()
 
 	var v bool
 	for i := 0; i < b.N; i++ {
-		v = mask.ContainsAny(filter)
+		v = mask.ContainsAny(&filter)
 	}
 
 	b.StopTimer()
