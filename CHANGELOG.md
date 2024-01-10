@@ -13,6 +13,11 @@
 * `Filters.Matches(Mask)` became `Filters.Matches(*Mask)`; same for all `Filter` implementations (#313)  
 This change was necessary to get the same performance as before, despite the more heavyweight implementation of the now 256 bits `Mask`.
 
+### Features
+
+* Adds functions `ComponentType(*World, ID) reflect.Type` and `ResourceType(*World, ID) reflect.Type` (#315)
+* Adds methods `World.Ids(Entity) []ID` and `Query.Ids() []ID` (#315)
+
 ## [[v0.9.0]](https://github.com/mlange-42/arche/compare/v0.8.1...v0.9.0)
 
 ### Infrastructure
