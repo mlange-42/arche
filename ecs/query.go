@@ -160,10 +160,13 @@ func (q *Query) Count() int {
 }
 
 // Mask returns the archetype [Mask] for the [Entity] at the iterator's current position.
-//
-// Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (q *Query) Mask() Mask {
 	return q.access.Mask
+}
+
+// Ids returns the component IDs for the archetype of the [Entity] at the iterator's current position.
+func (q *Query) Ids() []ID {
+	return q.archetypes[q.archIndex].node.Ids
 }
 
 // Close closes the Query and unlocks the world.
