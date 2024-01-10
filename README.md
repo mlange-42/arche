@@ -114,6 +114,7 @@ Several tools for *Arche* are provided in separate modules:
 * [arche-model](https://github.com/mlange-42/arche-model) provides a wrapper around *Arche*, and some common systems and resources.
 It's purpose is to get started with prototyping and developing simulation models immediately, focussing on the model logic.
 * [arche-pixel](https://github.com/mlange-42/arche-pixel) provides OpenGL graphics and live plots for *Arche* using the [Pixel](https://github.com/gopxl/pixel) game engine.
+* [arche-serde](https://github.com/mlange-42/arche-serde) provides JSON serialization and deserialization for *Arche*'s World.
 
 ## Design
 
