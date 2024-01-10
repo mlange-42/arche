@@ -25,6 +25,11 @@ func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
+// ComponentType returns the reflect.Type for a component [ID], and whether the ID is assigned.
+func ComponentType(w *World, id ID) (reflect.Type, bool) {
+	return w.registry.ComponentType(id)
+}
+
 // ResourceID returns the [ResID] for a resource type via generics.
 // Registers the type if it is not already registered.
 //
@@ -32,6 +37,11 @@ func TypeID(w *World, tp reflect.Type) ID {
 func ResourceID[T any](w *World) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.resourceID(tp)
+}
+
+// ResourceType returns the reflect.Type for a resource [ResID], and whether the ID is assigned.
+func ResourceType(w *World, id ResID) (reflect.Type, bool) {
+	return w.resources.registry.ComponentType(id)
 }
 
 // GetResource returns a pointer to the given resource type in the world.
