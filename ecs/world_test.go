@@ -182,6 +182,48 @@ func TestWorldComponents(t *testing.T) {
 	assert.Panics(t, func() { w.Get(newEntityGen(1, 0), posID) })
 }
 
+func TestWorldTypes(t *testing.T) {
+	w := NewWorld()
+	_ = ComponentID[Velocity](&w)
+	posID := ComponentID[Position](&w)
+
+	tp, ok := ComponentType(&w, posID)
+	assert.True(t, ok)
+	assert.Equal(t, tp, reflect.TypeOf(Position{}))
+
+	tp, ok = ComponentType(&w, 3)
+	assert.False(t, ok)
+	assert.Equal(t, tp, nil)
+
+	resID := ResourceID[Velocity](&w)
+
+	tp, ok = ResourceType(&w, resID)
+	assert.True(t, ok)
+	assert.Equal(t, tp, reflect.TypeOf(Velocity{}))
+
+	tp, ok = ResourceType(&w, 3)
+	assert.False(t, ok)
+	assert.Equal(t, tp, nil)
+}
+
+func TestWorldIds(t *testing.T) {
+	w := NewWorld()
+	velID := ComponentID[Velocity](&w)
+	posID := ComponentID[Position](&w)
+
+	e1 := w.NewEntity(posID)
+	e2 := w.NewEntity(posID, velID)
+	e3 := w.NewEntity(velID)
+
+	assert.Equal(t, w.Ids(e1), []ID{1})
+	assert.Equal(t, w.Ids(e2), []ID{0, 1})
+	assert.Equal(t, w.Ids(e3), []ID{0})
+
+	w.RemoveEntity(e1)
+
+	assert.Panics(t, func() { _ = w.Ids(e1) })
+}
+
 func TestWorldLabels(t *testing.T) {
 	w := NewWorld()
 

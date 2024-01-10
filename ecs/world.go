@@ -25,6 +25,11 @@ func TypeID(w *World, tp reflect.Type) ID {
 	return w.componentID(tp)
 }
 
+// ComponentType returns the reflect.Type for a component [ID], and whether the ID is assigned.
+func ComponentType(w *World, id ID) (reflect.Type, bool) {
+	return w.registry.ComponentType(id)
+}
+
 // ResourceID returns the [ResID] for a resource type via generics.
 // Registers the type if it is not already registered.
 //
@@ -32,6 +37,11 @@ func TypeID(w *World, tp reflect.Type) ID {
 func ResourceID[T any](w *World) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.resourceID(tp)
+}
+
+// ResourceType returns the reflect.Type for a resource [ResID], and whether the ID is assigned.
+func ResourceType(w *World, id ResID) (reflect.Type, bool) {
+	return w.resources.registry.ComponentType(id)
 }
 
 // GetResource returns a pointer to the given resource type in the world.
@@ -1018,13 +1028,19 @@ func (w *World) IsLocked() bool {
 }
 
 // Mask returns the archetype [Mask] for the given [Entity].
-//
-// Can be used for fast checks of the entity composition, e.g. using a [Filter].
 func (w *World) Mask(entity Entity) Mask {
 	if !w.entityPool.Alive(entity) {
 		panic("can't get mask for a dead entity")
 	}
 	return w.entities[entity.id].arch.Mask
+}
+
+// Ids returns the component IDs for the archetype of the given [Entity].
+func (w *World) Ids(entity Entity) []ID {
+	if !w.entityPool.Alive(entity) {
+		panic("can't get mask for a dead entity")
+	}
+	return w.entities[entity.id].arch.node.Ids
 }
 
 // ComponentType returns the reflect.Type for a given component ID, as well as whether the ID is in use.
