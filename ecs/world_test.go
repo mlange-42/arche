@@ -206,6 +206,24 @@ func TestWorldTypes(t *testing.T) {
 	assert.Equal(t, tp, nil)
 }
 
+func TestWorldIds(t *testing.T) {
+	w := NewWorld()
+	velID := ComponentID[Velocity](&w)
+	posID := ComponentID[Position](&w)
+
+	e1 := w.NewEntity(posID)
+	e2 := w.NewEntity(posID, velID)
+	e3 := w.NewEntity(velID)
+
+	assert.Equal(t, w.Ids(e1), []ID{1})
+	assert.Equal(t, w.Ids(e2), []ID{0, 1})
+	assert.Equal(t, w.Ids(e3), []ID{0})
+
+	w.RemoveEntity(e1)
+
+	assert.Panics(t, func() { _ = w.Ids(e1) })
+}
+
 func TestWorldLabels(t *testing.T) {
 	w := NewWorld()
 

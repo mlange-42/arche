@@ -19,6 +19,7 @@ type Query struct {
 	nodes          []*archNode      // The query's nodes.
 	world          *World           // The [World].
 	access         *archetypeAccess // Access helper for the archetype currently being iterated.
+	archetype      *archetype       // The archetype currently being iterated.
 	entityIndex    uint32           // Iteration index of the current [Entity] current archetype.
 	entityIndexMax uint32           // Maximum entity index in the current archetype.
 	archIndex      int32            // Iteration index of the current archetype.
@@ -166,7 +167,7 @@ func (q *Query) Mask() Mask {
 
 // Ids returns the component IDs for the archetype of the [Entity] at the iterator's current position.
 func (q *Query) Ids() []ID {
-	return q.archetypes[q.archIndex].node.Ids
+	return q.archetype.node.Ids
 }
 
 // Close closes the Query and unlocks the world.
@@ -204,6 +205,7 @@ func (q *Query) nextArchetypeBatch() bool {
 		aLen := a.Len()
 		if aLen > 0 {
 			q.access = &a.archetypeAccess
+			q.archetype = a
 			batch := q.nodeArchetypes.(*batchArchetypes)
 			q.entityIndex = batch.StartIndex[q.archIndex]
 			q.entityIndexMax = batch.EndIndex[q.archIndex] - 1
@@ -223,6 +225,7 @@ func (q *Query) nextArchetypeSimple() bool {
 			continue
 		}
 		q.access = &a.archetypeAccess
+		q.archetype = a
 		q.entityIndex = 0
 		q.entityIndexMax = aLen - 1
 		return true
@@ -240,6 +243,7 @@ func (q *Query) nextArchetypeFiltered() bool {
 			continue
 		}
 		q.access = &a.archetypeAccess
+		q.archetype = a
 		q.entityIndex = 0
 		q.entityIndexMax = aLen - 1
 		return true
@@ -276,7 +280,7 @@ func (q *Query) nextNode() bool {
 			arch := arches.Get(0)
 			archLen := arch.Len()
 			if archLen > 0 {
-				q.setArchetype(nil, &arch.archetypeAccess, arch.index, archLen-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch, arch.index, archLen-1)
 				return true
 			}
 			continue
@@ -285,13 +289,13 @@ func (q *Query) nextNode() bool {
 		if rf, ok := q.filter.(*RelationFilter); ok {
 			target := rf.Target
 			if arch, ok := n.archetypeMap[target]; ok && arch.Len() > 0 {
-				q.setArchetype(nil, &arch.archetypeAccess, arch.index, arch.Len()-1)
+				q.setArchetype(nil, &arch.archetypeAccess, arch, arch.index, arch.Len()-1)
 				return true
 			}
 			continue
 		}
 
-		q.setArchetype(arches, nil, -1, 0)
+		q.setArchetype(arches, nil, nil, -1, 0)
 		if q.nextArchetypeSimple() {
 			return true
 		}
@@ -301,10 +305,11 @@ func (q *Query) nextNode() bool {
 	return false
 }
 
-func (q *Query) setArchetype(arches archetypes, access *archetypeAccess, archIndex int32, maxIndex uint32) {
+func (q *Query) setArchetype(arches archetypes, access *archetypeAccess, arch *archetype, archIndex int32, maxIndex uint32) {
 	q.nodeArchetypes = arches
 	q.archIndex = archIndex
 	q.access = access
+	q.archetype = arch
 	q.entityIndex = 0
 	q.entityIndexMax = maxIndex
 }

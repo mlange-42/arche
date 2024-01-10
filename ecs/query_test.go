@@ -441,3 +441,21 @@ func TestQueryRelations(t *testing.T) {
 		assert.Panics(t, func() { query.Relation(velID) })
 	}
 }
+
+func TestQueryIds(t *testing.T) {
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	_ = world.NewEntity(velID)
+	_ = world.NewEntity(velID, posID)
+
+	filter := All()
+	query := world.Query(filter)
+
+	query.Next()
+	assert.Equal(t, query.Ids(), []ID{1})
+	query.Next()
+	assert.Equal(t, query.Ids(), []ID{0, 1})
+}
