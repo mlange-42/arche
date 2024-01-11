@@ -20,7 +20,7 @@ type entityPool struct {
 // newEntityPool creates a new, initialized Entity pool.
 func newEntityPool(capacityIncrement uint32) entityPool {
 	entities := make([]Entity, 1, capacityIncrement)
-	entities[0] = Entity{0, math.MaxUint16}
+	entities[0] = Entity{0, math.MaxUint32}
 	return entityPool{
 		entities:          entities,
 		next:              0,
