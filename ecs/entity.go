@@ -22,7 +22,7 @@ var entityIndexSize uint32 = uint32(reflect.TypeOf(entityIndex{}).Size())
 // The zero value should be used to indicate "nil", and can be checked with [Entity.IsZero].
 type Entity struct {
 	id  eid    // Entity ID
-	gen uint16 // Entity generation
+	gen uint32 // Entity generation
 }
 
 // newEntity creates a new Entity.
@@ -31,7 +31,7 @@ func newEntity(id eid) Entity {
 }
 
 // newEntityGen creates a new Entity with a given generation.
-func newEntityGen(id eid, gen uint16) Entity {
+func newEntityGen(id eid, gen uint32) Entity {
 	return Entity{id, gen}
 }
 
