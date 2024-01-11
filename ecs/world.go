@@ -1157,10 +1157,7 @@ func (w *World) MarshalEntities() ([]byte, error) {
 		Alive:             alive,
 	}
 
-	jsonData, err := json.Marshal(&data)
-	if err != nil {
-		return nil, err
-	}
+	jsonData, _ := json.Marshal(&data)
 	return jsonData, nil
 }
 

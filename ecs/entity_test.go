@@ -43,7 +43,7 @@ func TestEntityMarshal(t *testing.T) {
 
 	assert.Equal(t, e2, e)
 
-	err = json.Unmarshal([]byte("pft"), &e2)
+	err = e2.UnmarshalJSON([]byte("pft"))
 	assert.NotNil(t, err)
 }
 

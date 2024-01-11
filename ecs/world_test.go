@@ -1710,6 +1710,10 @@ func TestMarshalEntities(t *testing.T) {
 	query := w2.Query(All())
 	assert.Equal(t, query.Count(), 3)
 	query.Close()
+
+	w2 = NewWorld()
+	err = w2.UnmarshalEntities([]byte("pft"))
+	assert.NotNil(t, err)
 }
 
 func printTypeSize[T any]() {
