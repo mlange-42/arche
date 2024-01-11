@@ -1116,17 +1116,6 @@ func (w *World) Stats() *stats.WorldStats {
 	return &w.stats
 }
 
-// EntityData is a dump of the entire entity data of the world.
-//
-// See [World.GetEntityData] and [World.SetEntityData].
-type EntityData struct {
-	Ids       []uint32 // Entity IDs in the World's entity pool.
-	Gens      []uint32 // Entity generations in the World's entity pool.
-	Alive     []uint32 // IDs of all alive entities in query iteration order.
-	Next      uint32   // The next free entity of the World's entity pool.
-	Available uint32   // The number of allocated and available entities in the World's entity pool.
-}
-
 // GetEntityData dumps entity information into an [EntityData] object.
 // This dump can be used with [World.SetEntityData] to set the World's entity state.
 func (w *World) GetEntityData() EntityData {
@@ -1161,8 +1150,14 @@ func (w *World) GetEntityData() EntityData {
 // as the original world. This is necessary for proper serialization of entity relations.
 // However, the entities will not have any components.
 //
-// Should be used only on a fresh world!
+// Panics if the world is not fresh or was reset.
 func (w *World) SetEntityData(data *EntityData) {
+	w.checkLocked()
+
+	if len(w.entityPool.entities) > 1 || w.entityPool.available > 0 {
+		panic("can set entity data only on a fresh or reset world")
+	}
+
 	// TODO: only allow on a fresh world!
 	capacity := capacity(len(data.Ids), w.config.CapacityIncrement)
 

@@ -1724,6 +1724,21 @@ func TestWorldEntityDataEmpty(t *testing.T) {
 	query.Close()
 }
 
+func TestWorldEntityDataFail(t *testing.T) {
+	w := NewWorld()
+	_ = w.NewEntity()
+
+	eData := w.GetEntityData()
+
+	w2 := NewWorld()
+	e1 := w2.NewEntity()
+	w2.RemoveEntity(e1)
+
+	assert.Panics(t, func() {
+		w2.SetEntityData(&eData)
+	})
+}
+
 func printTypeSize[T any]() {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	fmt.Printf("%18s: %5d B\n", tp.Name(), tp.Size())
