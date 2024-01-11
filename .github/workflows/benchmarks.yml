@@ -10,7 +10,7 @@ on:
 
 jobs:
   internal:
-    name: Benchmark internals
+    name: Internals
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -29,7 +29,7 @@ jobs:
           go test -benchmem -run=^$ -bench ^.*$ ./arche/...
   
   relations:
-    name: Benchmark entity relations
+    name: Entity relations
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -45,7 +45,7 @@ jobs:
           go test -benchmem -run=^$ -bench ^.*$ ./competition/relations/...
   
   other_methods:
-    name: Benchmark vs. Array of Structs
+    name: vs. Array of Structs
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -61,7 +61,7 @@ jobs:
           go test -benchmem -run=^$ -bench ^.*$ ./competition/array_of_structs/...
   
   competition:
-    name: Benchmark ECS competition
+    name: ECS competition
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
