@@ -23,6 +23,10 @@ github.com/stretchr/testify v1.7.1/go.mod h1:6Fq8oRcR53rry900zMqJjRRixrwX3KX962/
 github.com/stretchr/testify v1.8.0/go.mod h1:yNjHg4UonilssWZ8iaSj1OCr/vHnekPRkoO+kdMU+MU=
 github.com/stretchr/testify v1.8.2 h1:+h33VjcLVPDHtOdpUCuF+7gSuG3yGIftsP1YvFihtJ8=
 github.com/stretchr/testify v1.8.2/go.mod h1:w2LPCIKwWwSfY2zedu0+kehJoqGctiVI29o6fzry7u4=
+github.com/unitoftime/cod v0.0.0-20230616173404-085cf4fe3918 h1:C1W4LPOwKCBq0cAzb81508ePBIfAR9ecP9GBR5zi/AI=
+github.com/unitoftime/cod v0.0.0-20230616173404-085cf4fe3918/go.mod h1:Iufibv9gn5GJb4Qzkf8e8xaXOV77OgkrB5kkBZTEN+M=
+github.com/unitoftime/ecs v0.0.2-0.20240109122000-af4227c75194 h1:JRt/yW/9TA3VZasAexsKDzaQpeFDEoZf1U9a0OuupAA=
+github.com/unitoftime/ecs v0.0.2-0.20240109122000-af4227c75194/go.mod h1:3i8ercdQPj5M8lq9B3qGjywG7RRq0tBjbP/7THI5mtc=
 github.com/wfranczyk/ento v0.1.0 h1:BMuty7VOn8qNp7EbUhlimQXnckuwrjuJSgJ46NFdk2E=
 github.com/wfranczyk/ento v0.1.0/go.mod h1:oiJdFEvu66RU8kZwEySB/xfizPLQ/maChXwYPxY3l9o=
 github.com/yohamta/donburi v1.3.4 h1:u/Wa+JA9/c/73J9eAvUZgomvbhpl0jZXagM4sjSNImw=

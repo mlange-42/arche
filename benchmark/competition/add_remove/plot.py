@@ -12,9 +12,9 @@ if __name__ == "__main__":
     models = [
         ("Arche", ("Arche\n(IDs)", "Arche\n")),
         ("ArcheGeneric", ("Arche\n(generic)", "Arche\n(batch)")),
+        ("Uot", ("unitoftime/\necs", "unitoftime/\necs")),
         ("GGEcs", ("go-\ngameengine-\necs", "go-\ngameengine-\necs")),
         ("Donburi", ("Donburi", "Donburi")),
-        ("Entitas", ("Entitas-Go", "Entitas-Go")),
         ("Ento", ("Ento", "Ento")),
     ]
 
