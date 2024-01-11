@@ -65,6 +65,8 @@ type entityHelper struct {
 }
 
 // UnmarshalJSON into an entity.
+//
+// Only for serialization purposes. Do not use this to create entities!
 func (e *Entity) UnmarshalJSON(data []byte) error {
 	helper := entityHelper{}
 	if err := json.Unmarshal(data, &helper); err != nil {

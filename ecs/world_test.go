@@ -1673,7 +1673,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[idMap[uint32]]("idMap")
 }
 
-func TestMarshalEntities(t *testing.T) {
+func TestWorldEntityData(t *testing.T) {
 	w := NewWorld()
 
 	e1 := w.NewEntity()
@@ -1685,18 +1685,11 @@ func TestMarshalEntities(t *testing.T) {
 	w.RemoveEntity(e3)
 	e5 := w.NewEntity()
 
-	jsonData, err := w.MarshalEntities()
-	if err != nil {
-		assert.Fail(t, err.Error())
-	}
-
-	fmt.Println(string(jsonData))
+	eData := w.GetEntityData()
+	fmt.Println(eData)
 
 	w2 := NewWorld()
-	err = w2.UnmarshalEntities(jsonData)
-	if err != nil {
-		assert.Fail(t, err.Error())
-	}
+	w2.SetEntityData(&eData)
 
 	assert.True(t, w2.Alive(e1))
 	assert.True(t, w2.Alive(e4))
@@ -1710,10 +1703,25 @@ func TestMarshalEntities(t *testing.T) {
 	query := w2.Query(All())
 	assert.Equal(t, query.Count(), 3)
 	query.Close()
+}
 
-	w2 = NewWorld()
-	err = w2.UnmarshalEntities([]byte("pft"))
-	assert.NotNil(t, err)
+func TestWorldEntityDataEmpty(t *testing.T) {
+	w := NewWorld()
+
+	eData := w.GetEntityData()
+
+	w2 := NewWorld()
+	w2.SetEntityData(&eData)
+
+	e1 := w2.NewEntity()
+	e2 := w2.NewEntity()
+
+	assert.True(t, w2.Alive(e1))
+	assert.True(t, w2.Alive(e2))
+
+	query := w2.Query(All())
+	assert.Equal(t, query.Count(), 2)
+	query.Close()
 }
 
 func printTypeSize[T any]() {

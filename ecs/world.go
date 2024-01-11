@@ -1,7 +1,6 @@
 package ecs
 
 import (
-	"encoding/json"
 	"fmt"
 	"reflect"
 	"unsafe"
@@ -1117,73 +1116,68 @@ func (w *World) Stats() *stats.WorldStats {
 	return &w.stats
 }
 
-type entityDump struct {
-	PoolIds           []uint32
-	PoolGens          []uint32
-	Next              uint32
-	Available         uint32
-	CapacityIncrement uint32
-	PoolCapacity      int
-	Capacity          int
-	Count             int
-	Alive             []uint32
+// EntityData is a dump of the entire entity data of the world.
+//
+// See [World.GetEntityData] and [World.SetEntityData].
+type EntityData struct {
+	Ids       []uint32 // Entity IDs in the World's entity pool.
+	Gens      []uint32 // Entity generations in the World's entity pool.
+	Alive     []uint32 // IDs of all alive entities in query iteration order.
+	Next      uint32   // The next free entity of the World's entity pool.
+	Available uint32   // The number of allocated and available entities in the World's entity pool.
 }
 
-// MarshalEntities writes entities so they can be re-established for deserialization.
-func (w *World) MarshalEntities() ([]byte, error) {
+// GetEntityData dumps entity information into an [EntityData] object.
+// This dump can be used with [World.SetEntityData] to set the World's entity state.
+func (w *World) GetEntityData() EntityData {
 	alive := []uint32{}
-	ids := []uint32{}
-	gens := []uint32{}
+	ids := make([]uint32, len(w.entityPool.entities))
+	gens := make([]uint32, len(w.entityPool.entities))
 
 	query := w.Query(All())
 	for query.Next() {
 		alive = append(alive, query.Entity().ID())
 	}
 
-	for _, entity := range w.entityPool.entities {
-		ids = append(ids, entity.ID())
-		gens = append(gens, entity.Gen())
+	for i, entity := range w.entityPool.entities {
+		ids[i] = entity.ID()
+		gens[i] = entity.Gen()
 	}
 
-	data := entityDump{
-		PoolIds:           ids,
-		PoolGens:          gens,
-		Next:              uint32(w.entityPool.next),
-		Available:         w.entityPool.available,
-		CapacityIncrement: w.entityPool.capacityIncrement,
-		PoolCapacity:      cap(w.entityPool.entities),
-		Capacity:          cap(w.entities),
-		Count:             len(w.entities),
-		Alive:             alive,
+	data := EntityData{
+		Ids:       ids,
+		Gens:      gens,
+		Alive:     alive,
+		Next:      uint32(w.entityPool.next),
+		Available: w.entityPool.available,
 	}
 
-	jsonData, _ := json.Marshal(&data)
-	return jsonData, nil
+	return data
 }
 
-// UnmarshalEntities resets entities to a given state.
-func (w *World) UnmarshalEntities(jsonData []byte) error {
+// SetEntityData resets all entities to the state saved with [World.GetEntityData].
+//
+// The resulting world will have the same entities (in terms of ID, generation and alive state)
+// as the original world. This is necessary for proper serialization of entity relations.
+// However, the entities will not have any components.
+//
+// Should be used only on a fresh world!
+func (w *World) SetEntityData(data *EntityData) {
 	// TODO: only allow on a fresh world!
+	capacity := capacity(len(data.Ids), w.config.CapacityIncrement)
 
-	data := entityDump{}
-	err := json.Unmarshal(jsonData, &data)
-	if err != nil {
-		return err
-	}
-
-	entities := make([]Entity, 0, data.PoolCapacity)
-	for i := range data.PoolIds {
-		entities = append(entities, newEntityGen(eid(data.PoolIds[i]), data.PoolGens[i]))
+	entities := make([]Entity, len(data.Ids), capacity)
+	for i := range data.Ids {
+		entities[i] = newEntityGen(eid(data.Ids[i]), data.Gens[i])
 	}
 
 	w.entityPool.entities = entities
 	w.entityPool.next = eid(data.Next)
 	w.entityPool.available = data.Available
-	w.entityPool.capacityIncrement = data.CapacityIncrement
 
-	w.entities = make([]entityIndex, data.Count, data.Capacity)
+	w.entities = make([]entityIndex, len(data.Ids), capacity)
 	w.targetEntities = bitSet{}
-	w.targetEntities.ExtendTo(data.Capacity)
+	w.targetEntities.ExtendTo(capacity)
 
 	arch := w.archetypes.Get(0)
 	for _, idx := range data.Alive {
@@ -1191,8 +1185,6 @@ func (w *World) UnmarshalEntities(jsonData []byte) error {
 		archIdx := arch.Alloc(entity)
 		w.entities[entity.id] = entityIndex{arch: arch, index: archIdx}
 	}
-
-	return nil
 }
 
 // lock the world and get the lock bit for later unlocking.
