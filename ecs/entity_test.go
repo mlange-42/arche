@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -18,6 +19,32 @@ func TestEntityAsIndex(t *testing.T) {
 func TestZeroEntity(t *testing.T) {
 	assert.True(t, Entity{}.IsZero())
 	assert.False(t, Entity{1, 0}.IsZero())
+}
+
+func TestEntityGetters(t *testing.T) {
+	e := newEntityGen(2, 3)
+	assert.Equal(t, e.ID(), uint32(2))
+	assert.Equal(t, e.Gen(), uint32(3))
+}
+
+func TestEntityMarshal(t *testing.T) {
+	e := newEntityGen(2, 3)
+
+	jsonData, err := json.Marshal(&e)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	e2 := Entity{}
+	err = json.Unmarshal(jsonData, &e2)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	assert.Equal(t, e2, e)
+
+	err = e2.UnmarshalJSON([]byte("pft"))
+	assert.NotNil(t, err)
 }
 
 func BenchmarkEntityIsZero(b *testing.B) {

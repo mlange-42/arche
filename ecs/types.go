@@ -33,3 +33,13 @@ type CompInfo struct {
 	Type       reflect.Type
 	IsRelation bool
 }
+
+// EntityData is a dump of the entire entity data of the world.
+//
+// See [World.GetEntityData] and [World.SetEntityData].
+type EntityData struct {
+	Entities  []Entity // Entities in the World's entity pool.
+	Alive     []uint32 // IDs of all alive entities in query iteration order.
+	Next      uint32   // The next free entity of the World's entity pool.
+	Available uint32   // The number of allocated and available entities in the World's entity pool.
+}

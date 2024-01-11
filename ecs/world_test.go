@@ -1673,6 +1673,72 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[idMap[uint32]]("idMap")
 }
 
+func TestWorldEntityData(t *testing.T) {
+	w := NewWorld()
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	e4 := w.NewEntity()
+
+	w.RemoveEntity(e2)
+	w.RemoveEntity(e3)
+	e5 := w.NewEntity()
+
+	eData := w.GetEntityData()
+	fmt.Println(eData)
+
+	w2 := NewWorld()
+	w2.SetEntityData(&eData)
+
+	assert.True(t, w2.Alive(e1))
+	assert.True(t, w2.Alive(e4))
+	assert.True(t, w2.Alive(e5))
+
+	assert.False(t, w2.Alive(e2))
+	assert.False(t, w2.Alive(e3))
+
+	assert.Equal(t, w.Ids(e1), []ID{})
+
+	query := w2.Query(All())
+	assert.Equal(t, query.Count(), 3)
+	query.Close()
+}
+
+func TestWorldEntityDataEmpty(t *testing.T) {
+	w := NewWorld()
+
+	eData := w.GetEntityData()
+
+	w2 := NewWorld()
+	w2.SetEntityData(&eData)
+
+	e1 := w2.NewEntity()
+	e2 := w2.NewEntity()
+
+	assert.True(t, w2.Alive(e1))
+	assert.True(t, w2.Alive(e2))
+
+	query := w2.Query(All())
+	assert.Equal(t, query.Count(), 2)
+	query.Close()
+}
+
+func TestWorldEntityDataFail(t *testing.T) {
+	w := NewWorld()
+	_ = w.NewEntity()
+
+	eData := w.GetEntityData()
+
+	w2 := NewWorld()
+	e1 := w2.NewEntity()
+	w2.RemoveEntity(e1)
+
+	assert.Panics(t, func() {
+		w2.SetEntityData(&eData)
+	})
+}
+
 func printTypeSize[T any]() {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	fmt.Printf("%18s: %5d B\n", tp.Name(), tp.Size())
