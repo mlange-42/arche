@@ -25,3 +25,11 @@ type componentType struct {
 	ID
 	Type reflect.Type
 }
+
+// CompInfo provides information about a registered component.
+// Returned by [ComponentInfo].
+type CompInfo struct {
+	ID         ID
+	Type       reflect.Type
+	IsRelation bool
+}
