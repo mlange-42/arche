@@ -1673,6 +1673,45 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[idMap[uint32]]("idMap")
 }
 
+func TestMarshalEntities(t *testing.T) {
+	w := NewWorld()
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	e4 := w.NewEntity()
+
+	w.RemoveEntity(e2)
+	w.RemoveEntity(e3)
+	e5 := w.NewEntity()
+
+	jsonData, err := w.MarshalEntities()
+	if err != nil {
+		assert.Fail(t, err.Error())
+	}
+
+	fmt.Println(string(jsonData))
+
+	w2 := NewWorld()
+	err = w2.UnmarshalEntities(jsonData)
+	if err != nil {
+		assert.Fail(t, err.Error())
+	}
+
+	assert.True(t, w2.Alive(e1))
+	assert.True(t, w2.Alive(e4))
+	assert.True(t, w2.Alive(e5))
+
+	assert.False(t, w2.Alive(e2))
+	assert.False(t, w2.Alive(e3))
+
+	assert.Equal(t, w.Ids(e1), []ID{})
+
+	query := w2.Query(All())
+	assert.Equal(t, query.Count(), 3)
+	query.Close()
+}
+
 func printTypeSize[T any]() {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	fmt.Printf("%18s: %5d B\n", tp.Name(), tp.Size())

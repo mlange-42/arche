@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"encoding/json"
 	"fmt"
 	"reflect"
 	"unsafe"
@@ -1114,6 +1115,87 @@ func (w *World) Stats() *stats.WorldStats {
 	w.stats.ActiveNodeCount = cntActive
 
 	return &w.stats
+}
+
+type entityDump struct {
+	PoolIds           []uint32
+	PoolGens          []uint32
+	Next              uint32
+	Available         uint32
+	CapacityIncrement uint32
+	PoolCapacity      int
+	Capacity          int
+	Count             int
+	Alive             []uint32
+}
+
+// MarshalEntities writes entities so they can be re-established for deserialization.
+func (w *World) MarshalEntities() ([]byte, error) {
+	alive := []uint32{}
+	ids := []uint32{}
+	gens := []uint32{}
+
+	query := w.Query(All())
+	for query.Next() {
+		alive = append(alive, query.Entity().ID())
+	}
+
+	for _, entity := range w.entityPool.entities {
+		ids = append(ids, entity.ID())
+		gens = append(gens, entity.Gen())
+	}
+
+	data := entityDump{
+		PoolIds:           ids,
+		PoolGens:          gens,
+		Next:              uint32(w.entityPool.next),
+		Available:         w.entityPool.available,
+		CapacityIncrement: w.entityPool.capacityIncrement,
+		PoolCapacity:      cap(w.entityPool.entities),
+		Capacity:          cap(w.entities),
+		Count:             len(w.entities),
+		Alive:             alive,
+	}
+
+	jsonData, err := json.Marshal(&data)
+	if err != nil {
+		return nil, err
+	}
+	return jsonData, nil
+}
+
+// UnmarshalEntities resets entities to a given state.
+func (w *World) UnmarshalEntities(jsonData []byte) error {
+	// TODO: only allow on a fresh world!
+
+	data := entityDump{}
+	err := json.Unmarshal(jsonData, &data)
+	if err != nil {
+		return err
+	}
+
+	entities := make([]Entity, 0, data.PoolCapacity)
+	for i := range data.PoolIds {
+		entities = append(entities, newEntityGen(eid(data.PoolIds[i]), data.PoolGens[i]))
+	}
+
+	w.entityPool.entities = entities
+	w.entityPool.next = eid(data.Next)
+	w.entityPool.available = data.Available
+	w.entityPool.capacityIncrement = data.CapacityIncrement
+
+	w.entities = make([]entityIndex, data.Count, data.Capacity)
+	w.targetEntities = bitSet{}
+	w.targetEntities.ExtendTo(data.Capacity)
+
+	arch := w.archetypes.Get(0)
+	for _, idx := range data.Alive {
+		entity := w.entityPool.entities[idx]
+		archIdx := arch.Alloc(entity)
+		w.entities[entity.id] = entityIndex{arch: arch, index: archIdx}
+	}
+
+	return nil
 }
 
 // lock the world and get the lock bit for later unlocking.
