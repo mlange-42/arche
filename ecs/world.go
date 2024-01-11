@@ -1118,6 +1118,8 @@ func (w *World) Stats() *stats.WorldStats {
 
 // GetEntityData dumps entity information into an [EntityData] object.
 // This dump can be used with [World.SetEntityData] to set the World's entity state.
+//
+// For world serialization with components and resources, see module [github.com/mlange-42/arche-serde].
 func (w *World) GetEntityData() EntityData {
 	alive := []uint32{}
 
@@ -1138,11 +1140,15 @@ func (w *World) GetEntityData() EntityData {
 
 // SetEntityData resets all entities to the state saved with [World.GetEntityData].
 //
+// Use this only on an empty world! Can be used after [World.Reset].
+//
 // The resulting world will have the same entities (in terms of ID, generation and alive state)
 // as the original world. This is necessary for proper serialization of entity relations.
 // However, the entities will not have any components.
 //
-// Panics if the world is not fresh or was reset.
+// Panics if the world has any dead or alive entities.
+//
+// For world serialization with components and resources, see module [github.com/mlange-42/arche-serde].
 func (w *World) SetEntityData(data *EntityData) {
 	w.checkLocked()
 
@@ -1150,7 +1156,6 @@ func (w *World) SetEntityData(data *EntityData) {
 		panic("can set entity data only on a fresh or reset world")
 	}
 
-	// TODO: only allow on a fresh world!
 	capacity := capacity(len(data.Entities), w.config.CapacityIncrement)
 
 	entities := make([]Entity, 0, capacity)

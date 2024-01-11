@@ -43,17 +43,23 @@ func (e Entity) IsZero() bool {
 	return e.id == 0
 }
 
-// ID of the entity. For serialization purposes.
+// ID of the entity. For serialization purposes only!
+//
+// Do not use this in normal model or game code!
 func (e Entity) ID() uint32 {
 	return uint32(e.id)
 }
 
-// Gen returns the generation of the entity. For serialization purposes.
+// Gen returns the generation of the entity. For serialization purposes only!
+//
+// Do not use this in normal model or game code!
 func (e Entity) Gen() uint32 {
 	return e.gen
 }
 
 // MarshalJSON returns a JSON representation of the entity, for serialization purposes.
+//
+// The JSON representation of an entity is a two-element array of entity ID and generation.
 func (e Entity) MarshalJSON() ([]byte, error) {
 	arr := [2]uint32{uint32(e.id), e.gen}
 	jsonValue, _ := json.Marshal(arr) // Ignore the error, as we can be sure this works.
@@ -62,7 +68,7 @@ func (e Entity) MarshalJSON() ([]byte, error) {
 
 // UnmarshalJSON into an entity.
 //
-// Only for serialization purposes. Do not use this to create entities!
+// For serialization purposes only. Do not use this to create entities!
 func (e *Entity) UnmarshalJSON(data []byte) error {
 	arr := [2]uint32{}
 	if err := json.Unmarshal(data, &arr); err != nil {
