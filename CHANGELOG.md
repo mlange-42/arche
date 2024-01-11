@@ -15,8 +15,8 @@ This change was necessary to get the same performance as before, despite the mor
 
 ### Features
 
-* Adds functions `ComponentType(*World, ID) reflect.Type` and `ResourceType(*World, ID) reflect.Type` (#315)
-* Adds methods `World.Ids(Entity) []ID` and `Query.Ids() []ID` (#315)
+* Adds functions `ComponentInfo(*World, ID)` and `ResourceType(*World, ResID)` (#315, #318)
+* Adds methods `World.Ids(Entity)` and `Query.Ids()` (#315)
 
 ### Other
 
