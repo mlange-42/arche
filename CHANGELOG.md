@@ -5,6 +5,7 @@
 ### Highlights
 
 * Arche now supports 256 instead of 128 component types as well as resource types and engine locks (#313)
+* Arche supports full world serialization and deserialization, in conjunction with [arche-serde](https://github.com/mlange-42/arche-serde) (#319)
 
 ### Breaking changes
 
@@ -17,6 +18,8 @@ This change was necessary to get the same performance as before, despite the mor
 
 * Adds functions `ComponentInfo(*World, ID)` and `ResourceType(*World, ResID)` (#315, #318)
 * Adds methods `World.Ids(Entity)` and `Query.Ids()` (#315)
+* Entities support JSON marshalling/unmarshalling (#319)
+* The world's entity state can be extracted and re-established via `World.GetEntityData()` and `World.SetEntityData()` (#319)
 
 ### Other
 
