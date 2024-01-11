@@ -1488,7 +1488,7 @@ func (w *World) cleanupArchetypes(target Entity) {
 	}
 }
 
-// Removes/da-activates a relation archetype.
+// Removes/de-activates a relation archetype.
 func (w *World) removeArchetype(arch *archetype) {
 	arch.node.RemoveArchetype(arch)
 	w.Cache().removeArchetype(arch)

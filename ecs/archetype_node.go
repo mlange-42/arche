@@ -21,7 +21,7 @@ type nodeData struct {
 	Types             []reflect.Type        // Component type per column
 	TransitionAdd     idMap[*archNode]      // Mapping from component ID to add to the resulting archetype
 	TransitionRemove  idMap[*archNode]      // Mapping from component ID to remove to the resulting archetype
-	archetype         *archetype            // The single archetype for nodes without entity
+	archetype         *archetype            // The single archetype for nodes without entity relation
 	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
 	archetypeData     pagedSlice[archetypeData]
 	archetypeMap      map[Entity]*archetype // Mapping from relation targets to archetypes
