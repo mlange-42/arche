@@ -1120,22 +1120,14 @@ func (w *World) Stats() *stats.WorldStats {
 // This dump can be used with [World.SetEntityData] to set the World's entity state.
 func (w *World) GetEntityData() EntityData {
 	alive := []uint32{}
-	ids := make([]uint32, len(w.entityPool.entities))
-	gens := make([]uint32, len(w.entityPool.entities))
 
 	query := w.Query(All())
 	for query.Next() {
 		alive = append(alive, query.Entity().ID())
 	}
 
-	for i, entity := range w.entityPool.entities {
-		ids[i] = entity.ID()
-		gens[i] = entity.Gen()
-	}
-
 	data := EntityData{
-		Ids:       ids,
-		Gens:      gens,
+		Entities:  append([]Entity{}, w.entityPool.entities...),
 		Alive:     alive,
 		Next:      uint32(w.entityPool.next),
 		Available: w.entityPool.available,
@@ -1159,18 +1151,16 @@ func (w *World) SetEntityData(data *EntityData) {
 	}
 
 	// TODO: only allow on a fresh world!
-	capacity := capacity(len(data.Ids), w.config.CapacityIncrement)
+	capacity := capacity(len(data.Entities), w.config.CapacityIncrement)
 
-	entities := make([]Entity, len(data.Ids), capacity)
-	for i := range data.Ids {
-		entities[i] = newEntityGen(eid(data.Ids[i]), data.Gens[i])
-	}
+	entities := make([]Entity, 0, capacity)
+	entities = append(entities, data.Entities...)
 
 	w.entityPool.entities = entities
 	w.entityPool.next = eid(data.Next)
 	w.entityPool.available = data.Available
 
-	w.entities = make([]entityIndex, len(data.Ids), capacity)
+	w.entities = make([]entityIndex, len(data.Entities), capacity)
 	w.targetEntities = bitSet{}
 	w.targetEntities.ExtendTo(capacity)
 

@@ -2,7 +2,6 @@ package ecs
 
 import (
 	"encoding/json"
-	"fmt"
 	"reflect"
 )
 
@@ -56,24 +55,22 @@ func (e Entity) Gen() uint32 {
 
 // MarshalJSON returns a JSON representation of the entity, for serialization purposes.
 func (e Entity) MarshalJSON() ([]byte, error) {
-	return []byte(fmt.Sprintf("{\"ID\": %d, \"Gen\": %d}", e.id, e.gen)), nil
-}
-
-type entityHelper struct {
-	ID  eid
-	Gen uint32
+	arr := [2]uint32{uint32(e.id), e.gen}
+	jsonValue, _ := json.Marshal(arr) // Ignore the error, as we can be sure this works.
+	return jsonValue, nil
 }
 
 // UnmarshalJSON into an entity.
 //
 // Only for serialization purposes. Do not use this to create entities!
 func (e *Entity) UnmarshalJSON(data []byte) error {
-	helper := entityHelper{}
-	if err := json.Unmarshal(data, &helper); err != nil {
+	arr := [2]uint32{}
+	if err := json.Unmarshal(data, &arr); err != nil {
 		return err
 	}
-	e.id = helper.ID
-	e.gen = helper.Gen
+	e.id = eid(arr[0])
+	e.gen = arr[1]
+
 	return nil
 }
 

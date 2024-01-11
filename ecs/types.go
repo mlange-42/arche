@@ -38,8 +38,7 @@ type CompInfo struct {
 //
 // See [World.GetEntityData] and [World.SetEntityData].
 type EntityData struct {
-	Ids       []uint32 // Entity IDs in the World's entity pool.
-	Gens      []uint32 // Entity generations in the World's entity pool.
+	Entities  []Entity // Entities in the World's entity pool.
 	Alive     []uint32 // IDs of all alive entities in query iteration order.
 	Next      uint32   // The next free entity of the World's entity pool.
 	Available uint32   // The number of allocated and available entities in the World's entity pool.
