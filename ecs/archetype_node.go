@@ -115,7 +115,7 @@ func (a *archNode) SetArchetype(arch *archetype) {
 }
 
 // CreateArchetype creates a new archetype in nodes with relation component.
-func (a *archNode) CreateArchetype(target Entity) *archetype {
+func (a *archNode) CreateArchetype(layouts uint8, target Entity) *archetype {
 	var arch *archetype
 	var archIndex int32
 	lenFree := len(a.freeIndices)
@@ -129,10 +129,24 @@ func (a *archNode) CreateArchetype(target Entity) *archetype {
 		a.archetypeData.Add(archetypeData{})
 		archIndex := a.archetypes.Len() - 1
 		arch = a.archetypes.Get(archIndex)
-		arch.Init(a, a.archetypeData.Get(archIndex), archIndex, true, target)
+		arch.Init(a, a.archetypeData.Get(archIndex), archIndex, true, layouts, target)
 	}
 	a.archetypeMap[target] = arch
 	return arch
+}
+
+func (a *archNode) ExtendArchetypeLayouts(count uint8) {
+	if !a.HasRelation {
+		a.archetype.ExtendLayouts(count)
+		return
+	}
+
+	lenArches := a.archetypes.Len()
+	var j int32
+	for j = 0; j < lenArches; j++ {
+		arch := a.archetypes.Get(j)
+		arch.ExtendLayouts(count)
+	}
 }
 
 // RemoveArchetype de-activates an archetype.

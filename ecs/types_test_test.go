@@ -35,3 +35,9 @@ type testStruct7 struct{ val int32 }
 type testStruct8 struct{ val int32 }
 type testStruct9 struct{ val int32 }
 type testStruct10 struct{ val int32 }
+type testStruct11 struct{ val int32 }
+type testStruct12 struct{ val int32 }
+type testStruct13 struct{ val int32 }
+type testStruct14 struct{ val int32 }
+type testStruct15 struct{ val int32 }
+type testStruct16 struct{ val int32 }
