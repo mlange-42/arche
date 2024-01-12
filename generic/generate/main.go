@@ -9,10 +9,10 @@ import (
 	"text/template"
 )
 
-var typeLetters = []string{"A", "B", "C", "D", "E", "F", "G", "H"}
-var variableLetters = []string{"a", "b", "c", "d", "e", "f", "g", "h"}
-var numbers = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8"}
-var numberStr = []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight"}
+var typeLetters = []string{"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L"}
+var variableLetters = []string{"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"}
+var numbers = []string{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"}
+var numberStr = []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"}
 
 type query struct {
 	Index         int

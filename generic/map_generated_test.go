@@ -708,3 +708,419 @@ func TestMap8Generated(t *testing.T) {
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
 }
+
+func TestMap9Generated(t *testing.T) {
+	w := ecs.NewWorld()
+	registerAll(&w)
+
+	mut := NewMap9[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8,
+	](&w)
+	map0 := NewMap[testStruct0](&w)
+	map1 := NewMap[testStruct1](&w)
+
+	e := mut.New()
+	s0, s1, _, _, _, _, _, _, _ := mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	mut.Remove(e)
+	assert.False(t, map0.Has(e))
+	assert.False(t, map1.Has(e))
+
+	mut.Add(e)
+	s0, s1, _, _, _, _, _, _, _ = mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	e = w.NewEntity()
+	mut.Assign(e,
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{},
+	)
+	assert.True(t, map0.Has(e))
+	assert.True(t, map1.Has(e))
+
+	e = mut.New()
+	assert.True(t, map0.Has(e))
+	assert.True(t, map1.Has(e))
+
+	e = mut.NewWith(
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{},
+	)
+
+	assert.Panics(t, func() {
+		mut.NewWith(
+			&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+			&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+			&testStruct8{},
+			e,
+		)
+	})
+
+	s0, s1, _, _, _, _, _, _, _ = mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	mut.NewBatch(2)
+
+	q := mut.NewBatchQ(2)
+	q.Close()
+
+	mut.GetUnchecked(e)
+
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap9[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
+
+	mut2 := NewMap9[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewBatchQ(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
+
+	e = mut2.NewWith(
+		&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{},
+		target,
+	)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+}
+
+func TestMap10Generated(t *testing.T) {
+	w := ecs.NewWorld()
+	registerAll(&w)
+
+	mut := NewMap10[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9,
+	](&w)
+	map0 := NewMap[testStruct0](&w)
+	map1 := NewMap[testStruct1](&w)
+
+	e := mut.New()
+	s0, s1, _, _, _, _, _, _, _, _ := mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	mut.Remove(e)
+	assert.False(t, map0.Has(e))
+	assert.False(t, map1.Has(e))
+
+	mut.Add(e)
+	s0, s1, _, _, _, _, _, _, _, _ = mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	e = w.NewEntity()
+	mut.Assign(e,
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{}, &testStruct9{},
+	)
+	assert.True(t, map0.Has(e))
+	assert.True(t, map1.Has(e))
+
+	e = mut.New()
+	assert.True(t, map0.Has(e))
+	assert.True(t, map1.Has(e))
+
+	e = mut.NewWith(
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{}, &testStruct9{},
+	)
+
+	assert.Panics(t, func() {
+		mut.NewWith(
+			&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+			&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+			&testStruct8{}, &testStruct9{},
+			e,
+		)
+	})
+
+	s0, s1, _, _, _, _, _, _, _, _ = mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	mut.NewBatch(2)
+
+	q := mut.NewBatchQ(2)
+	q.Close()
+
+	mut.GetUnchecked(e)
+
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap10[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
+
+	mut2 := NewMap10[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewBatchQ(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
+
+	e = mut2.NewWith(
+		&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{}, &testStruct9{},
+		target,
+	)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+}
+
+func TestMap11Generated(t *testing.T) {
+	w := ecs.NewWorld()
+	registerAll(&w)
+
+	mut := NewMap11[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10,
+	](&w)
+	map0 := NewMap[testStruct0](&w)
+	map1 := NewMap[testStruct1](&w)
+
+	e := mut.New()
+	s0, s1, _, _, _, _, _, _, _, _, _ := mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	mut.Remove(e)
+	assert.False(t, map0.Has(e))
+	assert.False(t, map1.Has(e))
+
+	mut.Add(e)
+	s0, s1, _, _, _, _, _, _, _, _, _ = mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	e = w.NewEntity()
+	mut.Assign(e,
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{}, &testStruct9{}, &testStruct10{},
+	)
+	assert.True(t, map0.Has(e))
+	assert.True(t, map1.Has(e))
+
+	e = mut.New()
+	assert.True(t, map0.Has(e))
+	assert.True(t, map1.Has(e))
+
+	e = mut.NewWith(
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{}, &testStruct9{}, &testStruct10{},
+	)
+
+	assert.Panics(t, func() {
+		mut.NewWith(
+			&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+			&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+			&testStruct8{}, &testStruct9{}, &testStruct10{},
+			e,
+		)
+	})
+
+	s0, s1, _, _, _, _, _, _, _, _, _ = mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	mut.NewBatch(2)
+
+	q := mut.NewBatchQ(2)
+	q.Close()
+
+	mut.GetUnchecked(e)
+
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap11[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
+
+	mut2 := NewMap11[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewBatchQ(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
+
+	e = mut2.NewWith(
+		&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{}, &testStruct9{}, &testStruct10{},
+		target,
+	)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+}
+
+func TestMap12Generated(t *testing.T) {
+	w := ecs.NewWorld()
+	registerAll(&w)
+
+	mut := NewMap12[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10, testStruct11,
+	](&w)
+	map0 := NewMap[testStruct0](&w)
+	map1 := NewMap[testStruct1](&w)
+
+	e := mut.New()
+	s0, s1, _, _, _, _, _, _, _, _, _, _ := mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	mut.Remove(e)
+	assert.False(t, map0.Has(e))
+	assert.False(t, map1.Has(e))
+
+	mut.Add(e)
+	s0, s1, _, _, _, _, _, _, _, _, _, _ = mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	e = w.NewEntity()
+	mut.Assign(e,
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{}, &testStruct9{}, &testStruct10{}, &testStruct11{},
+	)
+	assert.True(t, map0.Has(e))
+	assert.True(t, map1.Has(e))
+
+	e = mut.New()
+	assert.True(t, map0.Has(e))
+	assert.True(t, map1.Has(e))
+
+	e = mut.NewWith(
+		&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{}, &testStruct9{}, &testStruct10{}, &testStruct11{},
+	)
+
+	assert.Panics(t, func() {
+		mut.NewWith(
+			&testStruct0{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+			&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+			&testStruct8{}, &testStruct9{}, &testStruct10{}, &testStruct11{},
+			e,
+		)
+	})
+
+	s0, s1, _, _, _, _, _, _, _, _, _, _ = mut.Get(e)
+	assert.NotNil(t, s0)
+	assert.NotNil(t, s1)
+
+	mut.NewBatch(2)
+
+	q := mut.NewBatchQ(2)
+	q.Close()
+
+	mut.GetUnchecked(e)
+
+	mut.RemoveEntities(true)
+	mut.RemoveEntities(false)
+
+	assert.Panics(t, func() { mut.Get(e) })
+
+	target := w.NewEntity()
+	mut = NewMap12[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10, testStruct11,
+	](&w)
+
+	assert.Panics(t, func() { mut.New(target) })
+	assert.Panics(t, func() { mut.NewBatch(5, target) })
+	assert.Panics(t, func() { mut.NewBatchQ(5, target) })
+
+	mut2 := NewMap12[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10, testStruct11,
+	](&w, T[testRelationA]())
+
+	mut2.New(target)
+	mut2.NewBatch(5, target)
+	q2 := mut2.NewBatchQ(5, target)
+	assert.Equal(t, 5, q2.Count())
+	q2.Close()
+
+	e = mut2.NewWith(
+		&testRelationA{}, &testStruct1{}, &testStruct2{}, &testStruct3{},
+		&testStruct4{}, &testStruct5{}, &testStruct6{}, &testStruct7{},
+		&testStruct8{}, &testStruct9{}, &testStruct10{}, &testStruct11{},
+		target,
+	)
+	mapper := NewMap[testRelationA](&w)
+	assert.Equal(t, target, mapper.GetRelation(e))
+	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+}

@@ -65,3 +65,39 @@ func T8[A any, B any, C any, D any, E any, F any, G any, H any]() []Comp {
 		typeOf[E](), typeOf[F](), typeOf[G](), typeOf[H](),
 	}
 }
+
+// T9 creates a component type list for nine component types.
+func T9[A any, B any, C any, D any, E any, F any, G any, H any, I any]() []Comp {
+	return []Comp{
+		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+		typeOf[E](), typeOf[F](), typeOf[G](), typeOf[H](),
+		typeOf[I](),
+	}
+}
+
+// T10 creates a component type list for ten component types.
+func T10[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any]() []Comp {
+	return []Comp{
+		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+		typeOf[E](), typeOf[F](), typeOf[G](), typeOf[H](),
+		typeOf[I](), typeOf[J](),
+	}
+}
+
+// T11 creates a component type list for eleven component types.
+func T11[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any]() []Comp {
+	return []Comp{
+		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+		typeOf[E](), typeOf[F](), typeOf[G](), typeOf[H](),
+		typeOf[I](), typeOf[J](), typeOf[K](),
+	}
+}
+
+// T12 creates a component type list for twelve component types.
+func T12[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any, L any]() []Comp {
+	return []Comp{
+		typeOf[A](), typeOf[B](), typeOf[C](), typeOf[D](),
+		typeOf[E](), typeOf[F](), typeOf[G](), typeOf[H](),
+		typeOf[I](), typeOf[J](), typeOf[K](), typeOf[L](),
+	}
+}

@@ -1648,3 +1648,847 @@ func (q *Query8[A, B, C, D, E, F, G, H]) Relation() ecs.Entity {
 	}
 	return q.Query.Relation(ecs.ID(q.target))
 }
+
+//////////////////////////////////////////////////////////////////////////
+
+// Filter9 is a helper for building [Query9] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter9[A, B, C, D, E, F, G, H, I]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter9[A, B, C, D, E, F, G, H, I]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
+type Filter9[A any, B any, C any, D any, E any, F any, G any, H any, I any] filter
+
+// NewFilter9 creates a generic Filter9 for nine components.
+//
+// See also [ecs.World.Query].
+func NewFilter9[A any, B any, C any, D any, E any, F any, G any, H any, I any]() *Filter9[A, B, C, D, E, F, G, H, I] {
+	f := Filter9[A, B, C, D, E, F, G, H, I](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+		typeOf[D](),
+		typeOf[E](),
+		typeOf[F](),
+		typeOf[G](),
+		typeOf[H](),
+		typeOf[I](),
+	))
+	return &f
+}
+
+// Optional makes some of the query's components optional.
+//
+// Create the required mask items with [T].
+//
+// Only affects component types that were specified in the query.
+func (q *Filter9[A, B, C, D, E, F, G, H, I]) Optional(mask ...Comp) *Filter9[A, B, C, D, E, F, G, H, I] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// With adds components that are required, but not accessible via [Query9.Get].
+//
+// Create the required mask items with [T].
+func (q *Filter9[A, B, C, D, E, F, G, H, I]) With(mask ...Comp) *Filter9[A, B, C, D, E, F, G, H, I] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.include = append(q.include, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// Without excludes entities with any of the given components from the query.
+//
+// Create the required mask items with [T].
+func (q *Filter9[A, B, C, D, E, F, G, H, I]) Without(mask ...Comp) *Filter9[A, B, C, D, E, F, G, H, I] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter9.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
+//
+// Create the required component ID with [T].
+func (q *Filter9[A, B, C, D, E, F, G, H, I]) WithRelation(comp Comp, target ...ecs.Entity) *Filter9[A, B, C, D, E, F, G, H, I] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.targetType = comp
+	if len(target) > 0 {
+		q.target = target[0]
+		q.hasTarget = true
+	}
+	q.compiled.Reset()
+	return q
+}
+
+// Query builds a [Query9] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter9.WithRelation] was not called
+//   - if the target was already set via [Filter9.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter9[A, B, C, D, E, F, G, H, I]) Query(w *ecs.World, target ...ecs.Entity) Query9[A, B, C, D, E, F, G, H, I] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
+
+	filter := q.compiled.filter
+	if len(target) > 0 {
+		if q.compiled.locked {
+			panic("can't change relation target on a cached query")
+		}
+		if q.hasTarget {
+			panic("can't change relation target on a query with fixed target")
+		}
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
+	}
+
+	return Query9[A, B, C, D, E, F, G, H, I]{
+		Query:  w.Query(filter),
+		target: q.compiled.TargetComp,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
+		id3:    q.compiled.Ids[3],
+		id4:    q.compiled.Ids[4],
+		id5:    q.compiled.Ids[5],
+		id6:    q.compiled.Ids[6],
+		id7:    q.compiled.Ids[7],
+		id8:    q.compiled.Ids[8],
+	}
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter9[A, B, C, D, E, F, G, H, I]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
+	q.compiled.Register(w)
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter9[A, B, C, D, E, F, G, H, I]) Unregister(w *ecs.World) {
+	q.compiled.Unregister(w)
+}
+
+// Query9 is a generic query iterator for nine components.
+//
+// Create it with [NewFilter9] and [Filter9.Query].
+//
+// Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter9[A, B, C, D, E, F, G, H, I]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c, d, e, f, g, h, i := query.Get()
+//	}
+type Query9[A any, B any, C any, D any, E any, F any, G any, H any, I any] struct {
+	ecs.Query
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
+	id6    ecs.ID
+	id7    ecs.ID
+	id8    ecs.ID
+	target int8
+}
+
+// Get returns all queried components for the current query iterator position.
+//
+// Use [ecs.Query.Entity] to get the current Entity.
+func (q *Query9[A, B, C, D, E, F, G, H, I]) Get() (*A, *B, *C, *D, *E, *F, *G, *H, *I) {
+	return (*A)(q.Query.Get(q.id0)),
+		(*B)(q.Query.Get(q.id1)),
+		(*C)(q.Query.Get(q.id2)),
+		(*D)(q.Query.Get(q.id3)),
+		(*E)(q.Query.Get(q.id4)),
+		(*F)(q.Query.Get(q.id5)),
+		(*G)(q.Query.Get(q.id6)),
+		(*H)(q.Query.Get(q.id7)),
+		(*I)(q.Query.Get(q.id8))
+}
+
+// Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
+// Panics if the underlying [Filter9] was not prepared for relations
+// using [Filter9.WithRelation].
+func (q *Query9[A, B, C, D, E, F, G, H, I]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+// Filter10 is a helper for building [Query10] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter10[A, B, C, D, E, F, G, H, I, J]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter10[A, B, C, D, E, F, G, H, I, J]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
+type Filter10[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any] filter
+
+// NewFilter10 creates a generic Filter10 for ten components.
+//
+// See also [ecs.World.Query].
+func NewFilter10[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any]() *Filter10[A, B, C, D, E, F, G, H, I, J] {
+	f := Filter10[A, B, C, D, E, F, G, H, I, J](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+		typeOf[D](),
+		typeOf[E](),
+		typeOf[F](),
+		typeOf[G](),
+		typeOf[H](),
+		typeOf[I](),
+		typeOf[J](),
+	))
+	return &f
+}
+
+// Optional makes some of the query's components optional.
+//
+// Create the required mask items with [T].
+//
+// Only affects component types that were specified in the query.
+func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) Optional(mask ...Comp) *Filter10[A, B, C, D, E, F, G, H, I, J] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// With adds components that are required, but not accessible via [Query10.Get].
+//
+// Create the required mask items with [T].
+func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) With(mask ...Comp) *Filter10[A, B, C, D, E, F, G, H, I, J] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.include = append(q.include, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// Without excludes entities with any of the given components from the query.
+//
+// Create the required mask items with [T].
+func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) Without(mask ...Comp) *Filter10[A, B, C, D, E, F, G, H, I, J] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter10.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
+//
+// Create the required component ID with [T].
+func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) WithRelation(comp Comp, target ...ecs.Entity) *Filter10[A, B, C, D, E, F, G, H, I, J] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.targetType = comp
+	if len(target) > 0 {
+		q.target = target[0]
+		q.hasTarget = true
+	}
+	q.compiled.Reset()
+	return q
+}
+
+// Query builds a [Query10] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter10.WithRelation] was not called
+//   - if the target was already set via [Filter10.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) Query(w *ecs.World, target ...ecs.Entity) Query10[A, B, C, D, E, F, G, H, I, J] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
+
+	filter := q.compiled.filter
+	if len(target) > 0 {
+		if q.compiled.locked {
+			panic("can't change relation target on a cached query")
+		}
+		if q.hasTarget {
+			panic("can't change relation target on a query with fixed target")
+		}
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
+	}
+
+	return Query10[A, B, C, D, E, F, G, H, I, J]{
+		Query:  w.Query(filter),
+		target: q.compiled.TargetComp,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
+		id3:    q.compiled.Ids[3],
+		id4:    q.compiled.Ids[4],
+		id5:    q.compiled.Ids[5],
+		id6:    q.compiled.Ids[6],
+		id7:    q.compiled.Ids[7],
+		id8:    q.compiled.Ids[8],
+		id9:    q.compiled.Ids[9],
+	}
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
+	q.compiled.Register(w)
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) Unregister(w *ecs.World) {
+	q.compiled.Unregister(w)
+}
+
+// Query10 is a generic query iterator for ten components.
+//
+// Create it with [NewFilter10] and [Filter10.Query].
+//
+// Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter10[A, B, C, D, E, F, G, H, I, J]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c, d, e, f, g, h, i, j := query.Get()
+//	}
+type Query10[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any] struct {
+	ecs.Query
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
+	id6    ecs.ID
+	id7    ecs.ID
+	id8    ecs.ID
+	id9    ecs.ID
+	target int8
+}
+
+// Get returns all queried components for the current query iterator position.
+//
+// Use [ecs.Query.Entity] to get the current Entity.
+func (q *Query10[A, B, C, D, E, F, G, H, I, J]) Get() (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J) {
+	return (*A)(q.Query.Get(q.id0)),
+		(*B)(q.Query.Get(q.id1)),
+		(*C)(q.Query.Get(q.id2)),
+		(*D)(q.Query.Get(q.id3)),
+		(*E)(q.Query.Get(q.id4)),
+		(*F)(q.Query.Get(q.id5)),
+		(*G)(q.Query.Get(q.id6)),
+		(*H)(q.Query.Get(q.id7)),
+		(*I)(q.Query.Get(q.id8)),
+		(*J)(q.Query.Get(q.id9))
+}
+
+// Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
+// Panics if the underlying [Filter10] was not prepared for relations
+// using [Filter10.WithRelation].
+func (q *Query10[A, B, C, D, E, F, G, H, I, J]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+// Filter11 is a helper for building [Query11] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter11[A, B, C, D, E, F, G, H, I, J, K]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter11[A, B, C, D, E, F, G, H, I, J, K]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
+type Filter11[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any] filter
+
+// NewFilter11 creates a generic Filter11 for eleven components.
+//
+// See also [ecs.World.Query].
+func NewFilter11[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any]() *Filter11[A, B, C, D, E, F, G, H, I, J, K] {
+	f := Filter11[A, B, C, D, E, F, G, H, I, J, K](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+		typeOf[D](),
+		typeOf[E](),
+		typeOf[F](),
+		typeOf[G](),
+		typeOf[H](),
+		typeOf[I](),
+		typeOf[J](),
+		typeOf[K](),
+	))
+	return &f
+}
+
+// Optional makes some of the query's components optional.
+//
+// Create the required mask items with [T].
+//
+// Only affects component types that were specified in the query.
+func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Optional(mask ...Comp) *Filter11[A, B, C, D, E, F, G, H, I, J, K] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// With adds components that are required, but not accessible via [Query11.Get].
+//
+// Create the required mask items with [T].
+func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) With(mask ...Comp) *Filter11[A, B, C, D, E, F, G, H, I, J, K] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.include = append(q.include, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// Without excludes entities with any of the given components from the query.
+//
+// Create the required mask items with [T].
+func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Without(mask ...Comp) *Filter11[A, B, C, D, E, F, G, H, I, J, K] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter11.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
+//
+// Create the required component ID with [T].
+func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) WithRelation(comp Comp, target ...ecs.Entity) *Filter11[A, B, C, D, E, F, G, H, I, J, K] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.targetType = comp
+	if len(target) > 0 {
+		q.target = target[0]
+		q.hasTarget = true
+	}
+	q.compiled.Reset()
+	return q
+}
+
+// Query builds a [Query11] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter11.WithRelation] was not called
+//   - if the target was already set via [Filter11.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Query(w *ecs.World, target ...ecs.Entity) Query11[A, B, C, D, E, F, G, H, I, J, K] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
+
+	filter := q.compiled.filter
+	if len(target) > 0 {
+		if q.compiled.locked {
+			panic("can't change relation target on a cached query")
+		}
+		if q.hasTarget {
+			panic("can't change relation target on a query with fixed target")
+		}
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
+	}
+
+	return Query11[A, B, C, D, E, F, G, H, I, J, K]{
+		Query:  w.Query(filter),
+		target: q.compiled.TargetComp,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
+		id3:    q.compiled.Ids[3],
+		id4:    q.compiled.Ids[4],
+		id5:    q.compiled.Ids[5],
+		id6:    q.compiled.Ids[6],
+		id7:    q.compiled.Ids[7],
+		id8:    q.compiled.Ids[8],
+		id9:    q.compiled.Ids[9],
+		id10:   q.compiled.Ids[10],
+	}
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
+	q.compiled.Register(w)
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Unregister(w *ecs.World) {
+	q.compiled.Unregister(w)
+}
+
+// Query11 is a generic query iterator for eleven components.
+//
+// Create it with [NewFilter11] and [Filter11.Query].
+//
+// Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter11[A, B, C, D, E, F, G, H, I, J, K]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c, d, e, f, g, h, i, j, k := query.Get()
+//	}
+type Query11[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any] struct {
+	ecs.Query
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
+	id6    ecs.ID
+	id7    ecs.ID
+	id8    ecs.ID
+	id9    ecs.ID
+	id10   ecs.ID
+	target int8
+}
+
+// Get returns all queried components for the current query iterator position.
+//
+// Use [ecs.Query.Entity] to get the current Entity.
+func (q *Query11[A, B, C, D, E, F, G, H, I, J, K]) Get() (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K) {
+	return (*A)(q.Query.Get(q.id0)),
+		(*B)(q.Query.Get(q.id1)),
+		(*C)(q.Query.Get(q.id2)),
+		(*D)(q.Query.Get(q.id3)),
+		(*E)(q.Query.Get(q.id4)),
+		(*F)(q.Query.Get(q.id5)),
+		(*G)(q.Query.Get(q.id6)),
+		(*H)(q.Query.Get(q.id7)),
+		(*I)(q.Query.Get(q.id8)),
+		(*J)(q.Query.Get(q.id9)),
+		(*K)(q.Query.Get(q.id10))
+}
+
+// Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
+// Panics if the underlying [Filter11] was not prepared for relations
+// using [Filter11.WithRelation].
+func (q *Query11[A, B, C, D, E, F, G, H, I, J, K]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+// Filter12 is a helper for building [Query12] query iterators.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter12[A, B, C, D, E, F, G, H, I, J, K, L]()
+//	query := filter.Query(&world)
+//
+//	complexFilter :=
+//		NewFilter12[A, B, C, D, E, F, G, H, I, J, K, L]().
+//			Optional(T[A]()).
+//			With(T2[V, W]()...).
+//			Without(T3[X, Y, Z]()...).
+type Filter12[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any, L any] filter
+
+// NewFilter12 creates a generic Filter12 for twelve components.
+//
+// See also [ecs.World.Query].
+func NewFilter12[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any, L any]() *Filter12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	f := Filter12[A, B, C, D, E, F, G, H, I, J, K, L](newFilter(
+		typeOf[A](),
+		typeOf[B](),
+		typeOf[C](),
+		typeOf[D](),
+		typeOf[E](),
+		typeOf[F](),
+		typeOf[G](),
+		typeOf[H](),
+		typeOf[I](),
+		typeOf[J](),
+		typeOf[K](),
+		typeOf[L](),
+	))
+	return &f
+}
+
+// Optional makes some of the query's components optional.
+//
+// Create the required mask items with [T].
+//
+// Only affects component types that were specified in the query.
+func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Optional(mask ...Comp) *Filter12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.optional = append(q.optional, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// With adds components that are required, but not accessible via [Query12.Get].
+//
+// Create the required mask items with [T].
+func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) With(mask ...Comp) *Filter12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.include = append(q.include, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// Without excludes entities with any of the given components from the query.
+//
+// Create the required mask items with [T].
+func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Without(mask ...Comp) *Filter12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.exclude = append(q.exclude, mask...)
+	q.compiled.Reset()
+	return q
+}
+
+// WithRelation sets the filter's [ecs.Relation] component and optionally
+// restricts the query to entities that have the given relation target.
+//
+// Use without the optional argument to specify the relation target in [Filter12.Query].
+// If the optional argument is provided, the filter's relation target is set permanently.
+//
+// Create the required component ID with [T].
+func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) WithRelation(comp Comp, target ...ecs.Entity) *Filter12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	if q.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	q.targetType = comp
+	if len(target) > 0 {
+		q.target = target[0]
+		q.hasTarget = true
+	}
+	q.compiled.Reset()
+	return q
+}
+
+// Query builds a [Query12] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter12.WithRelation] was not called
+//   - if the target was already set via [Filter12.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Query(w *ecs.World, target ...ecs.Entity) Query12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
+
+	filter := q.compiled.filter
+	if len(target) > 0 {
+		if q.compiled.locked {
+			panic("can't change relation target on a cached query")
+		}
+		if q.hasTarget {
+			panic("can't change relation target on a query with fixed target")
+		}
+		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
+		q.compiled.relationFilter.Target = target[0]
+		filter = &q.compiled.relationFilter
+	}
+
+	return Query12[A, B, C, D, E, F, G, H, I, J, K, L]{
+		Query:  w.Query(filter),
+		target: q.compiled.TargetComp,
+		id0:    q.compiled.Ids[0],
+		id1:    q.compiled.Ids[1],
+		id2:    q.compiled.Ids[2],
+		id3:    q.compiled.Ids[3],
+		id4:    q.compiled.Ids[4],
+		id5:    q.compiled.Ids[5],
+		id6:    q.compiled.Ids[6],
+		id7:    q.compiled.Ids[7],
+		id8:    q.compiled.Ids[8],
+		id9:    q.compiled.Ids[9],
+		id10:   q.compiled.Ids[10],
+		id11:   q.compiled.Ids[11],
+	}
+}
+
+// Register the filter for caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Register(w *ecs.World) {
+	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
+	q.compiled.Register(w)
+}
+
+// Unregister the filter from caching.
+//
+// See [ecs.Cache] for details on filter caching.
+func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Unregister(w *ecs.World) {
+	q.compiled.Unregister(w)
+}
+
+// Query12 is a generic query iterator for twelve components.
+//
+// Create it with [NewFilter12] and [Filter12.Query].
+//
+// Also has all methods of [ecs.Query].
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	filter := NewFilter12[A, B, C, D, E, F, G, H, I, J, K, L]()
+//	query := filter.Query(&world)
+//	for query.Next() {
+//		entity = query.Entity()
+//		a, b, c, d, e, f, g, h, i, j, k, l := query.Get()
+//	}
+type Query12[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any, L any] struct {
+	ecs.Query
+	id0    ecs.ID
+	id1    ecs.ID
+	id2    ecs.ID
+	id3    ecs.ID
+	id4    ecs.ID
+	id5    ecs.ID
+	id6    ecs.ID
+	id7    ecs.ID
+	id8    ecs.ID
+	id9    ecs.ID
+	id10   ecs.ID
+	id11   ecs.ID
+	target int8
+}
+
+// Get returns all queried components for the current query iterator position.
+//
+// Use [ecs.Query.Entity] to get the current Entity.
+func (q *Query12[A, B, C, D, E, F, G, H, I, J, K, L]) Get() (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K, *L) {
+	return (*A)(q.Query.Get(q.id0)),
+		(*B)(q.Query.Get(q.id1)),
+		(*C)(q.Query.Get(q.id2)),
+		(*D)(q.Query.Get(q.id3)),
+		(*E)(q.Query.Get(q.id4)),
+		(*F)(q.Query.Get(q.id5)),
+		(*G)(q.Query.Get(q.id6)),
+		(*H)(q.Query.Get(q.id7)),
+		(*I)(q.Query.Get(q.id8)),
+		(*J)(q.Query.Get(q.id9)),
+		(*K)(q.Query.Get(q.id10)),
+		(*L)(q.Query.Get(q.id11))
+}
+
+// Relation returns the target entity for the query's relation.
+//
+// Panics if the entity does not have the given component, or if the component is not an [ecs.Relation].
+// Panics if the underlying [Filter12] was not prepared for relations
+// using [Filter12.WithRelation].
+func (q *Query12[A, B, C, D, E, F, G, H, I, J, K, L]) Relation() ecs.Entity {
+	if q.target < 0 {
+		panic("query has no relation")
+	}
+	return q.Query.Relation(ecs.ID(q.target))
+}
