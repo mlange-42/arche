@@ -1673,7 +1673,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[idMap[uint32]]("idMap")
 }
 
-func TestWorldEntityData(t *testing.T) {
+func TestWorldEntityDump(t *testing.T) {
 	w := NewWorld()
 
 	e1 := w.NewEntity()
@@ -1685,11 +1685,11 @@ func TestWorldEntityData(t *testing.T) {
 	w.RemoveEntity(e3)
 	e5 := w.NewEntity()
 
-	eData := w.GetEntityData()
+	eData := w.DumpEntities()
 	fmt.Println(eData)
 
 	w2 := NewWorld()
-	w2.SetEntityData(&eData)
+	w2.LoadEntities(&eData)
 
 	assert.True(t, w2.Alive(e1))
 	assert.True(t, w2.Alive(e4))
@@ -1705,13 +1705,13 @@ func TestWorldEntityData(t *testing.T) {
 	query.Close()
 }
 
-func TestWorldEntityDataEmpty(t *testing.T) {
+func TestWorldEntityDumpEmpty(t *testing.T) {
 	w := NewWorld()
 
-	eData := w.GetEntityData()
+	eData := w.DumpEntities()
 
 	w2 := NewWorld()
-	w2.SetEntityData(&eData)
+	w2.LoadEntities(&eData)
 
 	e1 := w2.NewEntity()
 	e2 := w2.NewEntity()
@@ -1724,18 +1724,18 @@ func TestWorldEntityDataEmpty(t *testing.T) {
 	query.Close()
 }
 
-func TestWorldEntityDataFail(t *testing.T) {
+func TestWorldEntityDumpFail(t *testing.T) {
 	w := NewWorld()
 	_ = w.NewEntity()
 
-	eData := w.GetEntityData()
+	eData := w.DumpEntities()
 
 	w2 := NewWorld()
 	e1 := w2.NewEntity()
 	w2.RemoveEntity(e1)
 
 	assert.Panics(t, func() {
-		w2.SetEntityData(&eData)
+		w2.LoadEntities(&eData)
 	})
 }
 
