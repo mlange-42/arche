@@ -4,8 +4,9 @@
 
 ### Highlights
 
-* Arche now supports 256 instead of 128 component types as well as resource types and engine locks (#313)
 * Arche supports full world serialization and deserialization, in conjunction with [arche-serde](https://github.com/mlange-42/arche-serde) (#319)
+* Supports 256 instead of 128 component types as well as resource types and engine locks (#313)
+* Generic API supports up to 12 instead of 8 component types (#324)
 
 ### Breaking changes
 
