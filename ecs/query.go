@@ -166,8 +166,12 @@ func (q *Query) Mask() Mask {
 }
 
 // Ids returns the component IDs for the archetype of the [Entity] at the iterator's current position.
+//
+// Returns a copy of the archetype's component IDs slice, for safety.
+// This means that the result can be manipulated safely,
+// but also that calling the method may incur some significant cost.
 func (q *Query) Ids() []ID {
-	return q.archetype.node.Ids
+	return append([]ID{}, q.archetype.node.Ids...)
 }
 
 // Close closes the Query and unlocks the world.

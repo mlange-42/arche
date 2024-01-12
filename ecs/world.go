@@ -1045,11 +1045,15 @@ func (w *World) Mask(entity Entity) Mask {
 }
 
 // Ids returns the component IDs for the archetype of the given [Entity].
+//
+// Returns a copy of the archetype's component IDs slice, for safety.
+// This means that the result can be manipulated safely,
+// but also that calling the method may incur some significant cost.
 func (w *World) Ids(entity Entity) []ID {
 	if !w.entityPool.Alive(entity) {
-		panic("can't get mask for a dead entity")
+		panic("can't get component IDs for a dead entity")
 	}
-	return w.entities[entity.id].arch.node.Ids
+	return append([]ID{}, w.entities[entity.id].arch.node.Ids...)
 }
 
 // ComponentType returns the reflect.Type for a given component ID, as well as whether the ID is in use.
