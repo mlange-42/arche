@@ -34,10 +34,10 @@ type CompInfo struct {
 	IsRelation bool
 }
 
-// EntityData is a dump of the entire entity data of the world.
+// EntityDump is a dump of the entire entity data of the world.
 //
 // See [World.DumpEntities] and [World.LoadEntities].
-type EntityData struct {
+type EntityDump struct {
 	Entities  []Entity // Entities in the World's entity pool.
 	Alive     []uint32 // IDs of all alive entities in query iteration order.
 	Next      uint32   // The next free entity of the World's entity pool.

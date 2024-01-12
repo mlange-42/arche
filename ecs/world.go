@@ -1120,11 +1120,11 @@ func (w *World) Stats() *stats.WorldStats {
 	return &w.stats
 }
 
-// DumpEntities dumps entity information into an [EntityData] object.
+// DumpEntities dumps entity information into an [EntityDump] object.
 // This dump can be used with [World.LoadEntities] to set the World's entity state.
 //
 // For world serialization with components and resources, see module [github.com/mlange-42/arche-serde].
-func (w *World) DumpEntities() EntityData {
+func (w *World) DumpEntities() EntityDump {
 	alive := []uint32{}
 
 	query := w.Query(All())
@@ -1132,7 +1132,7 @@ func (w *World) DumpEntities() EntityData {
 		alive = append(alive, query.Entity().ID())
 	}
 
-	data := EntityData{
+	data := EntityDump{
 		Entities:  append([]Entity{}, w.entityPool.entities...),
 		Alive:     alive,
 		Next:      uint32(w.entityPool.next),
@@ -1153,7 +1153,7 @@ func (w *World) DumpEntities() EntityData {
 // Panics if the world has any dead or alive entities.
 //
 // For world serialization with components and resources, see module [github.com/mlange-42/arche-serde].
-func (w *World) LoadEntities(data *EntityData) {
+func (w *World) LoadEntities(data *EntityDump) {
 	w.checkLocked()
 
 	if len(w.entityPool.entities) > 1 || w.entityPool.available > 0 {

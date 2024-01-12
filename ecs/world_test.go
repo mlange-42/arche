@@ -1673,7 +1673,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSizeName[idMap[uint32]]("idMap")
 }
 
-func TestWorldEntityData(t *testing.T) {
+func TestWorldEntityDump(t *testing.T) {
 	w := NewWorld()
 
 	e1 := w.NewEntity()
@@ -1705,7 +1705,7 @@ func TestWorldEntityData(t *testing.T) {
 	query.Close()
 }
 
-func TestWorldEntityDataEmpty(t *testing.T) {
+func TestWorldEntityDumpEmpty(t *testing.T) {
 	w := NewWorld()
 
 	eData := w.DumpEntities()
@@ -1724,7 +1724,7 @@ func TestWorldEntityDataEmpty(t *testing.T) {
 	query.Close()
 }
 
-func TestWorldEntityDataFail(t *testing.T) {
+func TestWorldEntityDumpFail(t *testing.T) {
 	w := NewWorld()
 	_ = w.NewEntity()
 
