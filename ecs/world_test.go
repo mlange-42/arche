@@ -1685,11 +1685,11 @@ func TestWorldEntityData(t *testing.T) {
 	w.RemoveEntity(e3)
 	e5 := w.NewEntity()
 
-	eData := w.GetEntityData()
+	eData := w.DumpEntities()
 	fmt.Println(eData)
 
 	w2 := NewWorld()
-	w2.SetEntityData(&eData)
+	w2.LoadEntities(&eData)
 
 	assert.True(t, w2.Alive(e1))
 	assert.True(t, w2.Alive(e4))
@@ -1708,10 +1708,10 @@ func TestWorldEntityData(t *testing.T) {
 func TestWorldEntityDataEmpty(t *testing.T) {
 	w := NewWorld()
 
-	eData := w.GetEntityData()
+	eData := w.DumpEntities()
 
 	w2 := NewWorld()
-	w2.SetEntityData(&eData)
+	w2.LoadEntities(&eData)
 
 	e1 := w2.NewEntity()
 	e2 := w2.NewEntity()
@@ -1728,14 +1728,14 @@ func TestWorldEntityDataFail(t *testing.T) {
 	w := NewWorld()
 	_ = w.NewEntity()
 
-	eData := w.GetEntityData()
+	eData := w.DumpEntities()
 
 	w2 := NewWorld()
 	e1 := w2.NewEntity()
 	w2.RemoveEntity(e1)
 
 	assert.Panics(t, func() {
-		w2.SetEntityData(&eData)
+		w2.LoadEntities(&eData)
 	})
 }
 

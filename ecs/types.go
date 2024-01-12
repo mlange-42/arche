@@ -36,7 +36,7 @@ type CompInfo struct {
 
 // EntityData is a dump of the entire entity data of the world.
 //
-// See [World.GetEntityData] and [World.SetEntityData].
+// See [World.DumpEntities] and [World.LoadEntities].
 type EntityData struct {
 	Entities  []Entity // Entities in the World's entity pool.
 	Alive     []uint32 // IDs of all alive entities in query iteration order.
