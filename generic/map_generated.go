@@ -1387,3 +1387,887 @@ func (m *Map8[A, B, C, D, E, F, G, H]) RemoveEntities(exclusive bool) int {
 	}
 	return m.world.Batch().RemoveEntities(m.mask)
 }
+
+//////////////////////////////////////////////////////////////////////////
+
+// Map9 is a helper for mapping nine components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap9[A, B, C, D, E, F, G, H, I](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c, d, e, f, g, h, i := mapper.Get(entity)
+type Map9[A any, B any, C any, D any, E any, F any, G any, H any, I any] struct {
+	world    *ecs.World
+	mask     ecs.Mask
+	relation int8
+	ids      []ecs.ID
+	id0      ecs.ID
+	id1      ecs.ID
+	id2      ecs.ID
+	id3      ecs.ID
+	id4      ecs.ID
+	id5      ecs.ID
+	id6      ecs.ID
+	id7      ecs.ID
+	id8      ecs.ID
+}
+
+// NewMap9 creates a new Map9 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap9[A any, B any, C any, D any, E any, F any, G any, H any, I any](w *ecs.World, relation ...Comp) Map9[A, B, C, D, E, F, G, H, I] {
+	m := Map9[A, B, C, D, E, F, G, H, I]{
+		world: w,
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
+		id3:   ecs.ComponentID[D](w),
+		id4:   ecs.ComponentID[E](w),
+		id5:   ecs.ComponentID[F](w),
+		id6:   ecs.ComponentID[G](w),
+		id7:   ecs.ComponentID[H](w),
+		id8:   ecs.ComponentID[I](w),
+	}
+	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7, m.id8}
+	m.mask = ecs.All(m.ids...)
+	m.relation = -1
+	if len(relation) > 0 {
+		m.relation = int8(ecs.TypeID(w, relation[0]))
+	}
+	return m
+}
+
+// Get all the Map9's components for the given entity.
+//
+// See [Map9.GetUnchecked] for an optimized version for static entities.
+// See also [ecs.World.Get].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I) {
+	return (*A)(m.world.Get(entity, m.id0)),
+		(*B)(m.world.GetUnchecked(entity, m.id1)),
+		(*C)(m.world.GetUnchecked(entity, m.id2)),
+		(*D)(m.world.GetUnchecked(entity, m.id3)),
+		(*E)(m.world.GetUnchecked(entity, m.id4)),
+		(*F)(m.world.GetUnchecked(entity, m.id5)),
+		(*G)(m.world.GetUnchecked(entity, m.id6)),
+		(*H)(m.world.GetUnchecked(entity, m.id7)),
+		(*I)(m.world.GetUnchecked(entity, m.id8))
+}
+
+// GetUnchecked all the Map9's components for the given entity.
+//
+// GetUnchecked is an optimized version of [Map9.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnchecked].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I) {
+	return (*A)(m.world.GetUnchecked(entity, m.id0)),
+		(*B)(m.world.GetUnchecked(entity, m.id1)),
+		(*C)(m.world.GetUnchecked(entity, m.id2)),
+		(*D)(m.world.GetUnchecked(entity, m.id3)),
+		(*E)(m.world.GetUnchecked(entity, m.id4)),
+		(*F)(m.world.GetUnchecked(entity, m.id5)),
+		(*G)(m.world.GetUnchecked(entity, m.id6)),
+		(*H)(m.world.GetUnchecked(entity, m.id7)),
+		(*I)(m.world.GetUnchecked(entity, m.id8))
+}
+
+// New creates a new [ecs.Entity] with the Map9's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
+//
+// See also [ecs.World.NewEntity].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) New(target ...ecs.Entity) ecs.Entity {
+	return newEntity(m.world, m.ids, m.relation, target...)
+}
+
+// NewBatch creates entities with the Map9's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
+//
+// See also [Map9.NewBatchQ] and [ecs.Batch.NewBatch].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) NewBatch(count int, target ...ecs.Entity) {
+	newBatch(m.world, count, m.ids, m.relation, target...)
+}
+
+// NewBatchQ creates entities with the Map9's components.
+// It returns a [Query9] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
+//
+// Listener notification is delayed until the query is closed of fully iterated.
+//
+// See also [Map9.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) NewBatchQ(count int, target ...ecs.Entity) Query9[A, B, C, D, E, F, G, H, I] {
+	query := newQuery(m.world, count, m.ids, m.relation, target...)
+	return Query9[A, B, C, D, E, F, G, H, I]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+		id3:   m.id3,
+		id4:   m.id4,
+		id5:   m.id5,
+		id6:   m.id6,
+		id7:   m.id7,
+		id8:   m.id8,
+	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map9's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+			ecs.Component{ID: m.id3, Comp: d},
+			ecs.Component{ID: m.id4, Comp: e},
+			ecs.Component{ID: m.id5, Comp: f},
+			ecs.Component{ID: m.id6, Comp: g},
+			ecs.Component{ID: m.id7, Comp: h},
+			ecs.Component{ID: m.id8, Comp: i},
+		)
+	}
+	if m.relation < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+		ecs.Component{ID: m.id8, Comp: i},
+	).WithRelation(uint8(m.relation)).New(target[0])
+}
+
+// Add the Map9's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) Add(entity ecs.Entity) {
+	m.world.Add(entity, m.ids...)
+}
+
+// Assign the Map9's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I) {
+	m.world.Assign(entity,
+		ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+		ecs.Component{ID: m.id8, Comp: i},
+	)
+}
+
+// Remove the Map9's components from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
+}
+
+// RemoveEntities removes all entities from the world that match the Map9's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
+//
+// Returns the number of removed entities.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveEntities(exclusive bool) int {
+	if exclusive {
+		filter := m.mask.Exclusive()
+		return m.world.Batch().RemoveEntities(&filter)
+	}
+	return m.world.Batch().RemoveEntities(m.mask)
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+// Map10 is a helper for mapping ten components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap10[A, B, C, D, E, F, G, H, I, J](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c, d, e, f, g, h, i, j := mapper.Get(entity)
+type Map10[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any] struct {
+	world    *ecs.World
+	mask     ecs.Mask
+	relation int8
+	ids      []ecs.ID
+	id0      ecs.ID
+	id1      ecs.ID
+	id2      ecs.ID
+	id3      ecs.ID
+	id4      ecs.ID
+	id5      ecs.ID
+	id6      ecs.ID
+	id7      ecs.ID
+	id8      ecs.ID
+	id9      ecs.ID
+}
+
+// NewMap10 creates a new Map10 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap10[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any](w *ecs.World, relation ...Comp) Map10[A, B, C, D, E, F, G, H, I, J] {
+	m := Map10[A, B, C, D, E, F, G, H, I, J]{
+		world: w,
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
+		id3:   ecs.ComponentID[D](w),
+		id4:   ecs.ComponentID[E](w),
+		id5:   ecs.ComponentID[F](w),
+		id6:   ecs.ComponentID[G](w),
+		id7:   ecs.ComponentID[H](w),
+		id8:   ecs.ComponentID[I](w),
+		id9:   ecs.ComponentID[J](w),
+	}
+	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7, m.id8, m.id9}
+	m.mask = ecs.All(m.ids...)
+	m.relation = -1
+	if len(relation) > 0 {
+		m.relation = int8(ecs.TypeID(w, relation[0]))
+	}
+	return m
+}
+
+// Get all the Map10's components for the given entity.
+//
+// See [Map10.GetUnchecked] for an optimized version for static entities.
+// See also [ecs.World.Get].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J) {
+	return (*A)(m.world.Get(entity, m.id0)),
+		(*B)(m.world.GetUnchecked(entity, m.id1)),
+		(*C)(m.world.GetUnchecked(entity, m.id2)),
+		(*D)(m.world.GetUnchecked(entity, m.id3)),
+		(*E)(m.world.GetUnchecked(entity, m.id4)),
+		(*F)(m.world.GetUnchecked(entity, m.id5)),
+		(*G)(m.world.GetUnchecked(entity, m.id6)),
+		(*H)(m.world.GetUnchecked(entity, m.id7)),
+		(*I)(m.world.GetUnchecked(entity, m.id8)),
+		(*J)(m.world.GetUnchecked(entity, m.id9))
+}
+
+// GetUnchecked all the Map10's components for the given entity.
+//
+// GetUnchecked is an optimized version of [Map10.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnchecked].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J) {
+	return (*A)(m.world.GetUnchecked(entity, m.id0)),
+		(*B)(m.world.GetUnchecked(entity, m.id1)),
+		(*C)(m.world.GetUnchecked(entity, m.id2)),
+		(*D)(m.world.GetUnchecked(entity, m.id3)),
+		(*E)(m.world.GetUnchecked(entity, m.id4)),
+		(*F)(m.world.GetUnchecked(entity, m.id5)),
+		(*G)(m.world.GetUnchecked(entity, m.id6)),
+		(*H)(m.world.GetUnchecked(entity, m.id7)),
+		(*I)(m.world.GetUnchecked(entity, m.id8)),
+		(*J)(m.world.GetUnchecked(entity, m.id9))
+}
+
+// New creates a new [ecs.Entity] with the Map10's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
+//
+// See also [ecs.World.NewEntity].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) New(target ...ecs.Entity) ecs.Entity {
+	return newEntity(m.world, m.ids, m.relation, target...)
+}
+
+// NewBatch creates entities with the Map10's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
+//
+// See also [Map10.NewBatchQ] and [ecs.Batch.NewBatch].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewBatch(count int, target ...ecs.Entity) {
+	newBatch(m.world, count, m.ids, m.relation, target...)
+}
+
+// NewBatchQ creates entities with the Map10's components.
+// It returns a [Query10] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
+//
+// Listener notification is delayed until the query is closed of fully iterated.
+//
+// See also [Map10.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewBatchQ(count int, target ...ecs.Entity) Query10[A, B, C, D, E, F, G, H, I, J] {
+	query := newQuery(m.world, count, m.ids, m.relation, target...)
+	return Query10[A, B, C, D, E, F, G, H, I, J]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+		id3:   m.id3,
+		id4:   m.id4,
+		id5:   m.id5,
+		id6:   m.id6,
+		id7:   m.id7,
+		id8:   m.id8,
+		id9:   m.id9,
+	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map10's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+			ecs.Component{ID: m.id3, Comp: d},
+			ecs.Component{ID: m.id4, Comp: e},
+			ecs.Component{ID: m.id5, Comp: f},
+			ecs.Component{ID: m.id6, Comp: g},
+			ecs.Component{ID: m.id7, Comp: h},
+			ecs.Component{ID: m.id8, Comp: i},
+			ecs.Component{ID: m.id9, Comp: j},
+		)
+	}
+	if m.relation < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+		ecs.Component{ID: m.id8, Comp: i},
+		ecs.Component{ID: m.id9, Comp: j},
+	).WithRelation(uint8(m.relation)).New(target[0])
+}
+
+// Add the Map10's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Add(entity ecs.Entity) {
+	m.world.Add(entity, m.ids...)
+}
+
+// Assign the Map10's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J) {
+	m.world.Assign(entity,
+		ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+		ecs.Component{ID: m.id8, Comp: i},
+		ecs.Component{ID: m.id9, Comp: j},
+	)
+}
+
+// Remove the Map10's components from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
+}
+
+// RemoveEntities removes all entities from the world that match the Map10's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
+//
+// Returns the number of removed entities.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveEntities(exclusive bool) int {
+	if exclusive {
+		filter := m.mask.Exclusive()
+		return m.world.Batch().RemoveEntities(&filter)
+	}
+	return m.world.Batch().RemoveEntities(m.mask)
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+// Map11 is a helper for mapping eleven components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap11[A, B, C, D, E, F, G, H, I, J, K](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c, d, e, f, g, h, i, j, k := mapper.Get(entity)
+type Map11[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any] struct {
+	world    *ecs.World
+	mask     ecs.Mask
+	relation int8
+	ids      []ecs.ID
+	id0      ecs.ID
+	id1      ecs.ID
+	id2      ecs.ID
+	id3      ecs.ID
+	id4      ecs.ID
+	id5      ecs.ID
+	id6      ecs.ID
+	id7      ecs.ID
+	id8      ecs.ID
+	id9      ecs.ID
+	id10     ecs.ID
+}
+
+// NewMap11 creates a new Map11 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap11[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any](w *ecs.World, relation ...Comp) Map11[A, B, C, D, E, F, G, H, I, J, K] {
+	m := Map11[A, B, C, D, E, F, G, H, I, J, K]{
+		world: w,
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
+		id3:   ecs.ComponentID[D](w),
+		id4:   ecs.ComponentID[E](w),
+		id5:   ecs.ComponentID[F](w),
+		id6:   ecs.ComponentID[G](w),
+		id7:   ecs.ComponentID[H](w),
+		id8:   ecs.ComponentID[I](w),
+		id9:   ecs.ComponentID[J](w),
+		id10:  ecs.ComponentID[K](w),
+	}
+	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7, m.id8, m.id9, m.id10}
+	m.mask = ecs.All(m.ids...)
+	m.relation = -1
+	if len(relation) > 0 {
+		m.relation = int8(ecs.TypeID(w, relation[0]))
+	}
+	return m
+}
+
+// Get all the Map11's components for the given entity.
+//
+// See [Map11.GetUnchecked] for an optimized version for static entities.
+// See also [ecs.World.Get].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K) {
+	return (*A)(m.world.Get(entity, m.id0)),
+		(*B)(m.world.GetUnchecked(entity, m.id1)),
+		(*C)(m.world.GetUnchecked(entity, m.id2)),
+		(*D)(m.world.GetUnchecked(entity, m.id3)),
+		(*E)(m.world.GetUnchecked(entity, m.id4)),
+		(*F)(m.world.GetUnchecked(entity, m.id5)),
+		(*G)(m.world.GetUnchecked(entity, m.id6)),
+		(*H)(m.world.GetUnchecked(entity, m.id7)),
+		(*I)(m.world.GetUnchecked(entity, m.id8)),
+		(*J)(m.world.GetUnchecked(entity, m.id9)),
+		(*K)(m.world.GetUnchecked(entity, m.id10))
+}
+
+// GetUnchecked all the Map11's components for the given entity.
+//
+// GetUnchecked is an optimized version of [Map11.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnchecked].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K) {
+	return (*A)(m.world.GetUnchecked(entity, m.id0)),
+		(*B)(m.world.GetUnchecked(entity, m.id1)),
+		(*C)(m.world.GetUnchecked(entity, m.id2)),
+		(*D)(m.world.GetUnchecked(entity, m.id3)),
+		(*E)(m.world.GetUnchecked(entity, m.id4)),
+		(*F)(m.world.GetUnchecked(entity, m.id5)),
+		(*G)(m.world.GetUnchecked(entity, m.id6)),
+		(*H)(m.world.GetUnchecked(entity, m.id7)),
+		(*I)(m.world.GetUnchecked(entity, m.id8)),
+		(*J)(m.world.GetUnchecked(entity, m.id9)),
+		(*K)(m.world.GetUnchecked(entity, m.id10))
+}
+
+// New creates a new [ecs.Entity] with the Map11's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
+//
+// See also [ecs.World.NewEntity].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) New(target ...ecs.Entity) ecs.Entity {
+	return newEntity(m.world, m.ids, m.relation, target...)
+}
+
+// NewBatch creates entities with the Map11's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
+//
+// See also [Map11.NewBatchQ] and [ecs.Batch.NewBatch].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewBatch(count int, target ...ecs.Entity) {
+	newBatch(m.world, count, m.ids, m.relation, target...)
+}
+
+// NewBatchQ creates entities with the Map11's components.
+// It returns a [Query11] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
+//
+// Listener notification is delayed until the query is closed of fully iterated.
+//
+// See also [Map11.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewBatchQ(count int, target ...ecs.Entity) Query11[A, B, C, D, E, F, G, H, I, J, K] {
+	query := newQuery(m.world, count, m.ids, m.relation, target...)
+	return Query11[A, B, C, D, E, F, G, H, I, J, K]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+		id3:   m.id3,
+		id4:   m.id4,
+		id5:   m.id5,
+		id6:   m.id6,
+		id7:   m.id7,
+		id8:   m.id8,
+		id9:   m.id9,
+		id10:  m.id10,
+	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map11's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+			ecs.Component{ID: m.id3, Comp: d},
+			ecs.Component{ID: m.id4, Comp: e},
+			ecs.Component{ID: m.id5, Comp: f},
+			ecs.Component{ID: m.id6, Comp: g},
+			ecs.Component{ID: m.id7, Comp: h},
+			ecs.Component{ID: m.id8, Comp: i},
+			ecs.Component{ID: m.id9, Comp: j},
+			ecs.Component{ID: m.id10, Comp: k},
+		)
+	}
+	if m.relation < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+		ecs.Component{ID: m.id8, Comp: i},
+		ecs.Component{ID: m.id9, Comp: j},
+		ecs.Component{ID: m.id10, Comp: k},
+	).WithRelation(uint8(m.relation)).New(target[0])
+}
+
+// Add the Map11's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Add(entity ecs.Entity) {
+	m.world.Add(entity, m.ids...)
+}
+
+// Assign the Map11's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K) {
+	m.world.Assign(entity,
+		ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+		ecs.Component{ID: m.id8, Comp: i},
+		ecs.Component{ID: m.id9, Comp: j},
+		ecs.Component{ID: m.id10, Comp: k},
+	)
+}
+
+// Remove the Map11's components from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
+}
+
+// RemoveEntities removes all entities from the world that match the Map11's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
+//
+// Returns the number of removed entities.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveEntities(exclusive bool) int {
+	if exclusive {
+		filter := m.mask.Exclusive()
+		return m.world.Batch().RemoveEntities(&filter)
+	}
+	return m.world.Batch().RemoveEntities(m.mask)
+}
+
+//////////////////////////////////////////////////////////////////////////
+
+// Map12 is a helper for mapping twelve components.
+//
+// # Example
+//
+//	world := ecs.NewWorld()
+//
+//	mapper := NewMap12[A, B, C, D, E, F, G, H, I, J, K, L](&world)
+//
+//	entity := mapper.NewEntity()
+//	a, b, c, d, e, f, g, h, i, j, k, l := mapper.Get(entity)
+type Map12[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any, L any] struct {
+	world    *ecs.World
+	mask     ecs.Mask
+	relation int8
+	ids      []ecs.ID
+	id0      ecs.ID
+	id1      ecs.ID
+	id2      ecs.ID
+	id3      ecs.ID
+	id4      ecs.ID
+	id5      ecs.ID
+	id6      ecs.ID
+	id7      ecs.ID
+	id8      ecs.ID
+	id9      ecs.ID
+	id10     ecs.ID
+	id11     ecs.ID
+}
+
+// NewMap12 creates a new Map12 object.
+//
+// The optional argument can be used to set an [ecs.Relation] component type.
+func NewMap12[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any, L any](w *ecs.World, relation ...Comp) Map12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	m := Map12[A, B, C, D, E, F, G, H, I, J, K, L]{
+		world: w,
+		id0:   ecs.ComponentID[A](w),
+		id1:   ecs.ComponentID[B](w),
+		id2:   ecs.ComponentID[C](w),
+		id3:   ecs.ComponentID[D](w),
+		id4:   ecs.ComponentID[E](w),
+		id5:   ecs.ComponentID[F](w),
+		id6:   ecs.ComponentID[G](w),
+		id7:   ecs.ComponentID[H](w),
+		id8:   ecs.ComponentID[I](w),
+		id9:   ecs.ComponentID[J](w),
+		id10:  ecs.ComponentID[K](w),
+		id11:  ecs.ComponentID[L](w),
+	}
+	m.ids = []ecs.ID{m.id0, m.id1, m.id2, m.id3, m.id4, m.id5, m.id6, m.id7, m.id8, m.id9, m.id10, m.id11}
+	m.mask = ecs.All(m.ids...)
+	m.relation = -1
+	if len(relation) > 0 {
+		m.relation = int8(ecs.TypeID(w, relation[0]))
+	}
+	return m
+}
+
+// Get all the Map12's components for the given entity.
+//
+// See [Map12.GetUnchecked] for an optimized version for static entities.
+// See also [ecs.World.Get].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K, *L) {
+	return (*A)(m.world.Get(entity, m.id0)),
+		(*B)(m.world.GetUnchecked(entity, m.id1)),
+		(*C)(m.world.GetUnchecked(entity, m.id2)),
+		(*D)(m.world.GetUnchecked(entity, m.id3)),
+		(*E)(m.world.GetUnchecked(entity, m.id4)),
+		(*F)(m.world.GetUnchecked(entity, m.id5)),
+		(*G)(m.world.GetUnchecked(entity, m.id6)),
+		(*H)(m.world.GetUnchecked(entity, m.id7)),
+		(*I)(m.world.GetUnchecked(entity, m.id8)),
+		(*J)(m.world.GetUnchecked(entity, m.id9)),
+		(*K)(m.world.GetUnchecked(entity, m.id10)),
+		(*L)(m.world.GetUnchecked(entity, m.id11))
+}
+
+// GetUnchecked all the Map12's components for the given entity.
+//
+// GetUnchecked is an optimized version of [Map12.Get],
+// for cases where entities are static or checked with [ecs.World.Alive] in user code.
+//
+// See also [ecs.World.GetUnchecked].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) GetUnchecked(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K, *L) {
+	return (*A)(m.world.GetUnchecked(entity, m.id0)),
+		(*B)(m.world.GetUnchecked(entity, m.id1)),
+		(*C)(m.world.GetUnchecked(entity, m.id2)),
+		(*D)(m.world.GetUnchecked(entity, m.id3)),
+		(*E)(m.world.GetUnchecked(entity, m.id4)),
+		(*F)(m.world.GetUnchecked(entity, m.id5)),
+		(*G)(m.world.GetUnchecked(entity, m.id6)),
+		(*H)(m.world.GetUnchecked(entity, m.id7)),
+		(*I)(m.world.GetUnchecked(entity, m.id8)),
+		(*J)(m.world.GetUnchecked(entity, m.id9)),
+		(*K)(m.world.GetUnchecked(entity, m.id10)),
+		(*L)(m.world.GetUnchecked(entity, m.id11))
+}
+
+// New creates a new [ecs.Entity] with the Map12's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
+//
+// See also [ecs.World.NewEntity].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) New(target ...ecs.Entity) ecs.Entity {
+	return newEntity(m.world, m.ids, m.relation, target...)
+}
+
+// NewBatch creates entities with the Map12's components.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
+//
+// See also [Map12.NewBatchQ] and [ecs.Batch.NewBatch].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewBatch(count int, target ...ecs.Entity) {
+	newBatch(m.world, count, m.ids, m.relation, target...)
+}
+
+// NewBatchQ creates entities with the Map12's components.
+// It returns a [Query12] over the new entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
+//
+// Listener notification is delayed until the query is closed of fully iterated.
+//
+// See also [Map12.NewBatch] and [ecs.Builder.NewBatchQ].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewBatchQ(count int, target ...ecs.Entity) Query12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	query := newQuery(m.world, count, m.ids, m.relation, target...)
+	return Query12[A, B, C, D, E, F, G, H, I, J, K, L]{
+		Query: query,
+		id0:   m.id0,
+		id1:   m.id1,
+		id2:   m.id2,
+		id3:   m.id3,
+		id4:   m.id4,
+		id5:   m.id5,
+		id6:   m.id6,
+		id7:   m.id7,
+		id8:   m.id8,
+		id9:   m.id9,
+		id10:  m.id10,
+		id11:  m.id11,
+	}
+}
+
+// NewWith creates a new [ecs.Entity] with the Map12's components, using the supplied values.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
+//
+// See also [ecs.NewBuilderWith].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, l *L, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
+			ecs.Component{ID: m.id1, Comp: b},
+			ecs.Component{ID: m.id2, Comp: c},
+			ecs.Component{ID: m.id3, Comp: d},
+			ecs.Component{ID: m.id4, Comp: e},
+			ecs.Component{ID: m.id5, Comp: f},
+			ecs.Component{ID: m.id6, Comp: g},
+			ecs.Component{ID: m.id7, Comp: h},
+			ecs.Component{ID: m.id8, Comp: i},
+			ecs.Component{ID: m.id9, Comp: j},
+			ecs.Component{ID: m.id10, Comp: k},
+			ecs.Component{ID: m.id11, Comp: l},
+		)
+	}
+	if m.relation < 0 {
+		panic("map has no relation defined")
+	}
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+		ecs.Component{ID: m.id8, Comp: i},
+		ecs.Component{ID: m.id9, Comp: j},
+		ecs.Component{ID: m.id10, Comp: k},
+		ecs.Component{ID: m.id11, Comp: l},
+	).WithRelation(uint8(m.relation)).New(target[0])
+}
+
+// Add the Map12's components to the given entity.
+//
+// See also [ecs.World.Add].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Add(entity ecs.Entity) {
+	m.world.Add(entity, m.ids...)
+}
+
+// Assign the Map12's components to the given entity, using the supplied values.
+//
+// See also [ecs.World.Assign].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, l *L) {
+	m.world.Assign(entity,
+		ecs.Component{ID: m.id0, Comp: a},
+		ecs.Component{ID: m.id1, Comp: b},
+		ecs.Component{ID: m.id2, Comp: c},
+		ecs.Component{ID: m.id3, Comp: d},
+		ecs.Component{ID: m.id4, Comp: e},
+		ecs.Component{ID: m.id5, Comp: f},
+		ecs.Component{ID: m.id6, Comp: g},
+		ecs.Component{ID: m.id7, Comp: h},
+		ecs.Component{ID: m.id8, Comp: i},
+		ecs.Component{ID: m.id9, Comp: j},
+		ecs.Component{ID: m.id10, Comp: k},
+		ecs.Component{ID: m.id11, Comp: l},
+	)
+}
+
+// Remove the Map12's components from the given entity.
+//
+// See also [ecs.World.Remove].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Remove(entity ecs.Entity) {
+	m.world.Remove(entity, m.ids...)
+}
+
+// RemoveEntities removes all entities from the world that match the Map12's components.
+//
+// The argument determines whether to match the components exactly (i.e. no other components are allowed),
+// or to use a simple filter that does not restrict further components.
+//
+// Returns the number of removed entities.
+//
+// See also [ecs.World.NewEntityWith].
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveEntities(exclusive bool) int {
+	if exclusive {
+		filter := m.mask.Exclusive()
+		return m.world.Batch().RemoveEntities(&filter)
+	}
+	return m.world.Batch().RemoveEntities(m.mask)
+}

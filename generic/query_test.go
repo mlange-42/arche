@@ -961,6 +961,518 @@ func TestQuery8(t *testing.T) {
 	filter2.Unregister(&w)
 }
 
+func TestQuery9(t *testing.T) {
+	w := ecs.NewWorld()
+
+	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+
+	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+
+	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 7, Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 7, Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 8, Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 9, Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e2, ecs.Component{ID: 10, Comp: &testStruct10{}})
+
+	cnt := 0
+	filter :=
+		NewFilter9[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8,
+		]().
+			Optional(T[testStruct1]()).
+			With(T[testStruct9]()).
+			Without(T[testStruct10]())
+
+	filter.Register(&w)
+
+	query := filter.Query(&w)
+	for query.Next() {
+		c1, c2, c3, c4, c5, c6, c7, c8, c9 := query.Get()
+		assert.Equal(t, cnt+1, int(c1.val))
+		assert.Equal(t, cnt+2, int(c2.val))
+		assert.Equal(t, cnt+3, int(c3.val))
+		assert.Equal(t, cnt+4, int(c4.val))
+		assert.Equal(t, cnt+5, int(c5.val))
+		assert.Equal(t, cnt+6, int(c6.val))
+		assert.Equal(t, cnt+7, int(c7.val))
+		assert.Equal(t, cnt+8, int(c8.val))
+		assert.Equal(t, cnt+9, int(c9.val))
+		assert.Panics(t, func() { query.Relation() })
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.Relations().Set(e0, relID, targ)
+
+	filter2 :=
+		NewFilter9[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testRelationA,
+		]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
+
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter9[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 2, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
+}
+
+func TestQuery10(t *testing.T) {
+	w := ecs.NewWorld()
+
+	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+
+	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+
+	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 7, Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 7, Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 8, Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 9, Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 9, Comp: &testStruct9{11, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 10, Comp: &testStruct10{11, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e2, ecs.Component{ID: 11, Comp: &testStruct11{}})
+
+	cnt := 0
+	filter :=
+		NewFilter10[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testStruct9,
+		]().
+			Optional(T[testStruct1]()).
+			With(T[testStruct10]()).
+			Without(T[testStruct11]())
+
+	filter.Register(&w)
+
+	query := filter.Query(&w)
+	for query.Next() {
+		c1, c2, c3, c4, c5, c6, c7, c8, c9, c10 := query.Get()
+		assert.Equal(t, cnt+1, int(c1.val))
+		assert.Equal(t, cnt+2, int(c2.val))
+		assert.Equal(t, cnt+3, int(c3.val))
+		assert.Equal(t, cnt+4, int(c4.val))
+		assert.Equal(t, cnt+5, int(c5.val))
+		assert.Equal(t, cnt+6, int(c6.val))
+		assert.Equal(t, cnt+7, int(c7.val))
+		assert.Equal(t, cnt+8, int(c8.val))
+		assert.Equal(t, cnt+9, int(c9.val))
+		assert.Equal(t, cnt+10, int(c10.val))
+		assert.Panics(t, func() { query.Relation() })
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.Relations().Set(e0, relID, targ)
+
+	filter2 :=
+		NewFilter10[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testRelationA,
+		]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
+
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter10[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 2, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
+}
+
+func TestQuery11(t *testing.T) {
+	w := ecs.NewWorld()
+
+	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+
+	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+
+	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 7, Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 7, Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 8, Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 9, Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 9, Comp: &testStruct9{11, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 10, Comp: &testStruct10{11, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 10, Comp: &testStruct10{12, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 11, Comp: &testStruct11{12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e2, ecs.Component{ID: 12, Comp: &testStruct12{}})
+
+	cnt := 0
+	filter :=
+		NewFilter11[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testStruct9, testStruct10,
+		]().
+			Optional(T[testStruct1]()).
+			With(T[testStruct11]()).
+			Without(T[testStruct12]())
+
+	filter.Register(&w)
+
+	query := filter.Query(&w)
+	for query.Next() {
+		c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11 := query.Get()
+		assert.Equal(t, cnt+1, int(c1.val))
+		assert.Equal(t, cnt+2, int(c2.val))
+		assert.Equal(t, cnt+3, int(c3.val))
+		assert.Equal(t, cnt+4, int(c4.val))
+		assert.Equal(t, cnt+5, int(c5.val))
+		assert.Equal(t, cnt+6, int(c6.val))
+		assert.Equal(t, cnt+7, int(c7.val))
+		assert.Equal(t, cnt+8, int(c8.val))
+		assert.Equal(t, cnt+9, int(c9.val))
+		assert.Equal(t, cnt+10, int(c10.val))
+		assert.Equal(t, cnt+11, int(c11.val))
+		assert.Panics(t, func() { query.Relation() })
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.Relations().Set(e0, relID, targ)
+
+	filter2 :=
+		NewFilter11[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testStruct9, testRelationA,
+		]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
+
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter11[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testStruct9, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 2, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
+}
+
+func TestQuery12(t *testing.T) {
+	w := ecs.NewWorld()
+
+	registerAll(&w)
+	relID := ecs.ComponentID[testRelationA](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+
+	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+
+	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 7, Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 7, Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 8, Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 9, Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 9, Comp: &testStruct9{11, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 10, Comp: &testStruct10{11, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 10, Comp: &testStruct10{12, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 11, Comp: &testStruct11{12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: 11, Comp: &testStruct11{13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e0, ecs.Component{ID: 12, Comp: &testStruct12{13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+
+	w.Assign(e2, ecs.Component{ID: 13, Comp: &testStruct13{}})
+
+	cnt := 0
+	filter :=
+		NewFilter12[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testStruct9, testStruct10, testStruct11,
+		]().
+			Optional(T[testStruct1]()).
+			With(T[testStruct12]()).
+			Without(T[testStruct13]())
+
+	filter.Register(&w)
+
+	query := filter.Query(&w)
+	for query.Next() {
+		c1, c2, c3, c4, c5, c6, c7, c8, c9, c10, c11, c12 := query.Get()
+		assert.Equal(t, cnt+1, int(c1.val))
+		assert.Equal(t, cnt+2, int(c2.val))
+		assert.Equal(t, cnt+3, int(c3.val))
+		assert.Equal(t, cnt+4, int(c4.val))
+		assert.Equal(t, cnt+5, int(c5.val))
+		assert.Equal(t, cnt+6, int(c6.val))
+		assert.Equal(t, cnt+7, int(c7.val))
+		assert.Equal(t, cnt+8, int(c8.val))
+		assert.Equal(t, cnt+9, int(c9.val))
+		assert.Equal(t, cnt+10, int(c10.val))
+		assert.Equal(t, cnt+11, int(c11.val))
+		assert.Equal(t, cnt+12, int(c12.val))
+		assert.Panics(t, func() { query.Relation() })
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
+
+	filter.Unregister(&w)
+	assert.Panics(t, func() { filter.Unregister(&w) })
+
+	targ := w.NewEntity(0)
+
+	w.Add(e0, relID)
+	w.Add(e1, relID)
+	w.Add(e2, relID)
+
+	w.Relations().Set(e0, relID, targ)
+
+	filter2 :=
+		NewFilter12[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testStruct9, testStruct10, testRelationA,
+		]().
+			WithRelation(T[testRelationA](), targ)
+
+	q := filter2.Query(&w)
+	assert.Equal(t, 1, q.Count())
+	for q.Next() {
+		trg := q.Relation()
+		assert.Equal(t, targ, trg)
+	}
+
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+
+	filter2 =
+		NewFilter12[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testStruct9, testStruct10, testRelationA,
+		]().
+			WithRelation(T[testRelationA]())
+	q = filter2.Query(&w)
+	assert.Equal(t, 2, q.Count())
+	q.Close()
+	q = filter2.Query(&w, targ)
+	assert.Equal(t, 1, q.Count())
+	q.Close()
+
+	filter2.Register(&w)
+	assert.Panics(t, func() { filter2.Query(&w, targ) })
+	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
+	filter2.Unregister(&w)
+}
+
 func TestQueryGeneric(t *testing.T) {
 	count := 1000
 	world := ecs.NewWorld()
@@ -1019,8 +1531,12 @@ func registerAll(w *ecs.World) []ecs.ID {
 	_ = testStruct7{}
 	_ = testStruct8{}
 	_ = testStruct9{}
+	_ = testStruct10{}
+	_ = testStruct11{}
+	_ = testStruct12{}
+	_ = testStruct13{}
 
-	ids := make([]ecs.ID, 10)
+	ids := make([]ecs.ID, 14)
 	ids[0] = ecs.ComponentID[testStruct0](w)
 	ids[1] = ecs.ComponentID[testStruct1](w)
 	ids[2] = ecs.ComponentID[testStruct2](w)
@@ -1031,6 +1547,10 @@ func registerAll(w *ecs.World) []ecs.ID {
 	ids[7] = ecs.ComponentID[testStruct7](w)
 	ids[8] = ecs.ComponentID[testStruct8](w)
 	ids[9] = ecs.ComponentID[testStruct9](w)
+	ids[10] = ecs.ComponentID[testStruct10](w)
+	ids[11] = ecs.ComponentID[testStruct11](w)
+	ids[12] = ecs.ComponentID[testStruct12](w)
+	ids[13] = ecs.ComponentID[testStruct13](w)
 
 	return ids
 }
@@ -1115,4 +1635,66 @@ type testStruct9 struct {
 	val7 int32
 	val8 int32
 	val9 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct10 struct {
+	val   int32
+	val2  int32
+	val3  int32
+	val4  int32
+	val5  int32
+	val6  int32
+	val7  int32
+	val8  int32
+	val9  int32
+	val10 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct11 struct {
+	val   int32
+	val2  int32
+	val3  int32
+	val4  int32
+	val5  int32
+	val6  int32
+	val7  int32
+	val8  int32
+	val9  int32
+	val10 int32
+	val11 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct12 struct {
+	val   int32
+	val2  int32
+	val3  int32
+	val4  int32
+	val5  int32
+	val6  int32
+	val7  int32
+	val8  int32
+	val9  int32
+	val10 int32
+	val11 int32
+	val12 int32
+}
+
+//lint:ignore U1000 test type
+type testStruct13 struct {
+	val   int32
+	val2  int32
+	val3  int32
+	val4  int32
+	val5  int32
+	val6  int32
+	val7  int32
+	val8  int32
+	val9  int32
+	val10 int32
+	val11 int32
+	val12 int32
+	val13 int32
 }
