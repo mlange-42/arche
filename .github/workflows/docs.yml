@@ -10,8 +10,8 @@ jobs:
   publish:
     name: Publish docs
     env:
-      MDBOOK_VERSION: 0.4.25
-      MDBOOK_TOC_VERSION: 0.11.0
+      MDBOOK_VERSION: 0.4.36
+      MDBOOK_TOC_VERSION: 0.14.2
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
