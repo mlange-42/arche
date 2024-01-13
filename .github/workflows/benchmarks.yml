@@ -71,8 +71,15 @@ jobs:
           go-version: '1.21.x'
       - name: Install dependencies
         run: go get .
-      - name: Benchmark vs. other ECS impl.
+      - name: Benchmark Pos/Vel
         run: |
           cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/pos_vel/... --count 25
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 25
+          go test -benchmem -run=^$ -bench ^.*$ ./competition/pos_vel/... --count 12
+      - name: Benchmark Access 10 Components
+        run: |
+          cd benchmark
+          go test -benchmem -run=^$ -bench ^.*$ ./competition/many_components/... --count 12
+      - name: Benchmark Add/Remove Components
+        run: |
+          cd benchmark
+          go test -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 12
