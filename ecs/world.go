@@ -11,9 +11,11 @@ import (
 // ComponentID returns the [ID] for a component type via generics.
 // Registers the type if it is not already registered.
 //
-// The number of unique component types per [World] is limited to [MaskTotalBits].
+// The number of unique component types per [World] is limited to 256 ([MaskTotalBits]).
 //
 // Panics if called on a locked world and the type is not registered yet.
+//
+// ⚠️ Warning: Using IDs that are outside of the range of registered IDs anywhere in [World] or other places will result in undefined behavior!
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.componentID(tp)
