@@ -26,6 +26,7 @@ This change was necessary to get the same performance as before, despite the mor
 
 * Entity generation data type changed from `uint16` to `uint32` (#317)
 * Adds [unitoftime/ecs](https://github.com/unitoftime/ecs) to competition benchmarks (#311)
+* Adds competition benchmarks for accessing 10 components (#328)
 
 ## [[v0.9.0]](https://github.com/mlange-42/arche/compare/v0.8.1...v0.9.0)
 
