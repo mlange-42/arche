@@ -30,7 +30,7 @@ func main() {
 func run(rounds, iters, entities int) {
 	for i := 0; i < rounds; i++ {
 		world := ecs.NewWorld()
-		c.RegisterAll(&world)
+		ids := c.RegisterAll(&world)
 
 		perArch := 2 * entities / 1000
 
@@ -38,7 +38,7 @@ func run(rounds, iters, entities int) {
 			mask := i
 			add := make([]ecs.ID, 0, 10)
 			for j := 0; j < 10; j++ {
-				id := ecs.ID(j)
+				id := ids[j]
 				m := 1 << j
 				if mask&m == m {
 					add = append(add, id)
@@ -50,11 +50,11 @@ func run(rounds, iters, entities int) {
 			}
 		}
 
-		var filter ecs.Filter = ecs.All(6)
+		var filter ecs.Filter = ecs.All(ids[6])
 		for j := 0; j < iters; j++ {
 			query := world.Query(filter)
 			for query.Next() {
-				pos := (*c.TestStruct6)(query.Get(6))
+				pos := (*c.TestStruct6)(query.Get(ids[6]))
 				pos.Val++
 			}
 		}

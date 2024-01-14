@@ -1,9 +1,10 @@
-package filter
+package filter_test
 
 import (
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
+	f "github.com/mlange-42/arche/filter"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,11 +17,54 @@ type rotation struct {
 	Angle int
 }
 
-func TestLogicFilters(t *testing.T) {
+type TestStruct0 struct{ Val int32 }
+type TestStruct1 struct{ Val int32 }
+type TestStruct2 struct{ Val int32 }
+type TestStruct3 struct{ Val int32 }
+type TestStruct4 struct{ Val int32 }
+type TestStruct5 struct{ Val int32 }
+type TestStruct6 struct{ Val int32 }
+type TestStruct7 struct{ Val int32 }
+type TestStruct8 struct{ Val int32 }
+type TestStruct9 struct{ Val int32 }
+type TestStruct10 struct{ Val int32 }
 
-	hasA := ecs.All(0)
-	hasB := ecs.All(1)
-	hasAll := ecs.All(0, 1)
+func RegisterAll(w *ecs.World) []ecs.ID {
+	_ = TestStruct0{1}
+	_ = TestStruct1{1}
+	_ = TestStruct2{1}
+	_ = TestStruct3{1}
+	_ = TestStruct4{1}
+	_ = TestStruct5{1}
+	_ = TestStruct6{1}
+	_ = TestStruct7{1}
+	_ = TestStruct8{1}
+	_ = TestStruct9{1}
+	_ = TestStruct10{1}
+
+	ids := make([]ecs.ID, 11)
+	ids[0] = ecs.ComponentID[TestStruct0](w)
+	ids[1] = ecs.ComponentID[TestStruct1](w)
+	ids[2] = ecs.ComponentID[TestStruct2](w)
+	ids[3] = ecs.ComponentID[TestStruct3](w)
+	ids[4] = ecs.ComponentID[TestStruct4](w)
+	ids[5] = ecs.ComponentID[TestStruct5](w)
+	ids[6] = ecs.ComponentID[TestStruct6](w)
+	ids[7] = ecs.ComponentID[TestStruct7](w)
+	ids[8] = ecs.ComponentID[TestStruct8](w)
+	ids[9] = ecs.ComponentID[TestStruct9](w)
+	ids[10] = ecs.ComponentID[TestStruct10](w)
+
+	return ids
+}
+
+func TestLogicFilters(t *testing.T) {
+	w := ecs.NewWorld()
+	ids := RegisterAll(&w)
+
+	hasA := ecs.All(ids[0])
+	hasB := ecs.All(ids[1])
+	hasAll := ecs.All(ids[0], ids[1])
 	hasNone := ecs.All()
 
 	var filter ecs.Filter
@@ -30,31 +74,31 @@ func TestLogicFilters(t *testing.T) {
 	assert.False(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = All(0, 1)
+	filter = f.All(ids[0], ids[1])
 	assert.True(t, match(filter, hasAll))
 	assert.False(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = Not(All(0, 1))
+	filter = f.Not(f.All(ids[0], ids[1]))
 	assert.False(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = Any(0, 1)
+	filter = f.Any(ids[0], ids[1])
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = Or(hasA, hasB)
+	filter = f.Or(hasA, hasB)
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = XOr(hasA, hasB)
+	filter = f.XOr(hasA, hasB)
 	assert.False(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
@@ -66,49 +110,49 @@ func TestLogicFilters(t *testing.T) {
 	assert.False(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = And(hasA, hasB)
+	filter = f.And(hasA, hasB)
 	assert.True(t, match(filter, hasAll))
 	assert.False(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = AnyNot(1)
+	filter = f.AnyNot(ids[1])
 	assert.False(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = AnyNot(0, 1)
+	filter = f.AnyNot(ids[0], ids[1])
 	assert.False(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = NoneOf(0)
+	filter = f.NoneOf(ids[0])
 	assert.False(t, match(filter, hasAll))
 	assert.False(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = NoneOf(0, 1)
+	filter = f.NoneOf(ids[0], ids[1])
 	assert.False(t, match(filter, hasAll))
 	assert.False(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = And(hasA, AnyNOT(hasB))
+	filter = f.And(hasA, f.AnyNOT(hasB))
 	assert.False(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
 	assert.False(t, match(filter, hasNone))
 
-	filter = Or(hasAll, AnyNot(1))
+	filter = f.Or(hasAll, f.AnyNot(ids[1]))
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.False(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
 
-	filter = Or(Any(0, 1), AnyNOT(hasB))
+	filter = f.Or(f.Any(ids[0], ids[1]), f.AnyNOT(hasB))
 	assert.True(t, match(filter, hasAll))
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
@@ -133,7 +177,7 @@ func TestFilter(t *testing.T) {
 	w.Add(e3, rotID)
 	w.Add(e4, rotID)
 
-	q := w.Query(All(posID, rotID))
+	q := w.Query(f.All(posID, rotID))
 	cnt := 0
 	for q.Next() {
 		ent := q.Entity()
@@ -146,7 +190,7 @@ func TestFilter(t *testing.T) {
 	}
 	assert.Equal(t, 2, cnt)
 
-	q = w.Query(All(posID))
+	q = w.Query(f.All(posID))
 	cnt = 0
 	for q.Next() {
 		ent := q.Entity()
@@ -157,7 +201,7 @@ func TestFilter(t *testing.T) {
 	}
 	assert.Equal(t, 3, cnt)
 
-	q = w.Query(All(rotID))
+	q = w.Query(f.All(rotID))
 	cnt = 0
 	for q.Next() {
 		ent := q.Entity()
@@ -172,7 +216,7 @@ func TestFilter(t *testing.T) {
 
 	assert.Panics(t, func() { q.Next() })
 
-	q = w.Query(&AND{L: All(rotID), R: AnyNOT(All(posID))})
+	q = w.Query(&f.AND{L: f.All(rotID), R: f.AnyNOT(f.All(posID))})
 
 	cnt = 0
 	for q.Next() {
@@ -191,16 +235,18 @@ func TestInterface(t *testing.T) {
 
 	posID := ecs.ComponentID[position](&w)
 
-	f := w.Query(All(posID))
+	f := w.Query(f.All(posID))
 	var f2 *ecs.Query = &f
 	_ = f2
 }
 
 func BenchmarkFilterStackOr(b *testing.B) {
 	b.StopTimer()
-	mask := All(1, 2, 3, 4, 5)
+	w := ecs.NewWorld()
+	ids := RegisterAll(&w)
+	mask := f.All(ids[1], ids[2], ids[3], ids[4], ids[5])
 
-	filter := OR{All(1), All(2)}
+	filter := f.OR{f.All(ids[1]), f.All(ids[2])}
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -210,9 +256,11 @@ func BenchmarkFilterStackOr(b *testing.B) {
 
 func BenchmarkFilterHeapOr(b *testing.B) {
 	b.StopTimer()
-	mask := All(1, 2, 3, 4, 5)
+	w := ecs.NewWorld()
+	ids := RegisterAll(&w)
+	mask := f.All(ids[1], ids[2], ids[3], ids[4], ids[5])
 
-	filter := Or(All(1), All(2))
+	filter := f.Or(f.All(ids[1]), f.All(ids[2]))
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -222,12 +270,14 @@ func BenchmarkFilterHeapOr(b *testing.B) {
 
 func BenchmarkFilterStack5And(b *testing.B) {
 	b.StopTimer()
-	mask := All(1, 2, 3, 4, 5)
+	w := ecs.NewWorld()
+	ids := RegisterAll(&w)
+	mask := f.All(ids[1], ids[2], ids[3], ids[4], ids[5])
 
-	a1 := AND{All(1), All(2)}
-	a2 := AND{&a1, All(3)}
-	a3 := AND{&a2, All(4)}
-	filter := AND{&a3, All(5)}
+	a1 := f.AND{f.All(ids[1]), f.All(ids[2])}
+	a2 := f.AND{&a1, f.All(ids[3])}
+	a3 := f.AND{&a2, f.All(ids[4])}
+	filter := f.AND{&a3, f.All(ids[5])}
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
@@ -237,9 +287,11 @@ func BenchmarkFilterStack5And(b *testing.B) {
 
 func BenchmarkFilterHeap5And(b *testing.B) {
 	b.StopTimer()
-	mask := All(1, 2, 3, 4, 5)
+	w := ecs.NewWorld()
+	ids := RegisterAll(&w)
+	mask := f.All(ids[1], ids[2], ids[3], ids[4], ids[5])
 
-	filter := And(All(1), And(All(2), And(All(3), And(All(4), All(5)))))
+	filter := f.And(f.All(ids[1]), f.And(f.All(ids[2]), f.And(f.All(ids[3]), f.And(f.All(ids[4]), f.All(ids[5])))))
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {

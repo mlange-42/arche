@@ -56,37 +56,37 @@ func toMaskOptional(w *ecs.World, include []ecs.ID, optional []Comp) ecs.Mask {
 	return mask
 }
 
-func newEntity(w *ecs.World, ids []ecs.ID, relation int8, target ...ecs.Entity) ecs.Entity {
+func newEntity(w *ecs.World, ids []ecs.ID, relation ecs.ID, hasRelation bool, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		return w.NewEntity(ids...)
 	}
-	if relation < 0 {
+	if !hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilder(w, ids...).WithRelation(uint8(relation)).New(target[0])
+	return ecs.NewBuilder(w, ids...).WithRelation(relation).New(target[0])
 }
 
-func newBatch(w *ecs.World, count int, ids []ecs.ID, relation int8, target ...ecs.Entity) {
+func newBatch(w *ecs.World, count int, ids []ecs.ID, relation ecs.ID, hasRelation bool, target ...ecs.Entity) {
 	if len(target) == 0 {
 		ecs.NewBuilder(w, ids...).NewBatch(count)
 		return
 	}
-	if relation < 0 {
+	if !hasRelation {
 		panic("map has no relation defined")
 	}
-	ecs.NewBuilder(w, ids...).WithRelation(uint8(relation)).NewBatch(count, target[0])
+	ecs.NewBuilder(w, ids...).WithRelation(relation).NewBatch(count, target[0])
 }
 
-func newQuery(w *ecs.World, count int, ids []ecs.ID, relation int8, target ...ecs.Entity) ecs.Query {
+func newQuery(w *ecs.World, count int, ids []ecs.ID, relation ecs.ID, hasRelation bool, target ...ecs.Entity) ecs.Query {
 	var query ecs.Query
 
 	if len(target) == 0 {
 		query = ecs.NewBuilder(w, ids...).NewBatchQ(count)
 	} else {
-		if relation < 0 {
+		if !hasRelation {
 			panic("map has no relation defined")
 		}
-		query = ecs.NewBuilder(w, ids...).WithRelation(uint8(relation)).NewBatchQ(count, target[0])
+		query = ecs.NewBuilder(w, ids...).WithRelation(relation).NewBatchQ(count, target[0])
 	}
 
 	return query
