@@ -298,7 +298,7 @@ func (a *archetype) Cap() uint32 {
 }
 
 // Stats generates statistics for an archetype
-func (a *archetype) Stats(reg *componentRegistry[uint8]) stats.ArchetypeStats {
+func (a *archetype) Stats(reg *componentRegistry) stats.ArchetypeStats {
 	ids := a.Components()
 	aCompCount := len(ids)
 	aTypes := make([]reflect.Type, aCompCount)
@@ -323,7 +323,7 @@ func (a *archetype) Stats(reg *componentRegistry[uint8]) stats.ArchetypeStats {
 }
 
 // UpdateStats updates statistics for an archetype
-func (a *archetype) UpdateStats(node *stats.NodeStats, stats *stats.ArchetypeStats, reg *componentRegistry[uint8]) {
+func (a *archetype) UpdateStats(node *stats.NodeStats, stats *stats.ArchetypeStats, reg *componentRegistry) {
 	cap := int(a.Cap())
 	memory := cap * (int(entitySize) + node.MemoryPerEntity)
 

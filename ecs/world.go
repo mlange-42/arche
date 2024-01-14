@@ -39,7 +39,7 @@ func ComponentInfo(w *World, id ID) (CompInfo, bool) {
 	return CompInfo{
 		ID:         id,
 		Type:       tp,
-		IsRelation: w.registry.IsRelation.Get(id.id),
+		IsRelation: w.registry.IsRelation.Get(id),
 	}, true
 }
 
@@ -101,14 +101,14 @@ type World struct {
 	entityPool     entityPool            // Pool for entities.
 	archetypes     pagedSlice[archetype] // Archetypes that have no relations components.
 	archetypeData  pagedSlice[archetypeData]
-	nodes          pagedSlice[archNode]     // The archetype graph.
-	nodeData       pagedSlice[nodeData]     // The archetype graph's data.
-	nodePointers   []*archNode              // Helper list of all node pointers for queries.
-	relationNodes  []*archNode              // Archetype nodes that have an entity relation.
-	locks          lockMask                 // World locks.
-	registry       componentRegistry[uint8] // Component registry.
-	filterCache    Cache                    // Cache for registered filters.
-	stats          stats.WorldStats         // Cached world statistics
+	nodes          pagedSlice[archNode] // The archetype graph.
+	nodeData       pagedSlice[nodeData] // The archetype graph's data.
+	nodePointers   []*archNode          // Helper list of all node pointers for queries.
+	relationNodes  []*archNode          // Archetype nodes that have an entity relation.
+	locks          lockMask             // World locks.
+	registry       componentRegistry    // Component registry.
+	filterCache    Cache                // Cache for registered filters.
+	stats          stats.WorldStats     // Cached world statistics
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -632,10 +632,10 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 	mask := w.getExchangeMask(oldMask, add, rem)
 
 	if hasRelation {
-		if !mask.Get(relation.id) {
+		if !mask.Get(relation) {
 			panic("can't add relation: resulting entity has no relation")
 		}
-		if !w.registry.IsRelation.Get(relation.id) {
+		if !w.registry.IsRelation.Get(relation) {
 			panic("can't add relation: this is not a relation component")
 		}
 	} else {
@@ -648,7 +648,7 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 	newIndex := arch.Alloc(entity)
 
 	for _, id := range oldIDs {
-		if mask.Get(id.id) {
+		if mask.Get(id) {
 			comp := oldArch.Get(index.index, id)
 			arch.SetPointer(newIndex, id, comp)
 		}
@@ -672,16 +672,16 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 // Modify a mask by adding and removing IDs.
 func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 	for _, comp := range add {
-		if mask.Get(comp.id) {
+		if mask.Get(comp) {
 			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp.id]))
 		}
-		mask.Set(comp.id, true)
+		mask.Set(comp, true)
 	}
 	for _, comp := range rem {
-		if !mask.Get(comp.id) {
+		if !mask.Get(comp) {
 			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp.id]))
 		}
-		mask.Set(comp.id, false)
+		mask.Set(comp, false)
 	}
 	return mask
 }
@@ -765,7 +765,7 @@ func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, re
 		index.index = idx
 
 		for _, id := range oldIDs {
-			if mask.Get(id.id) {
+			if mask.Get(id) {
 				comp := oldArch.Get(i, id)
 				arch.SetPointer(idx, id, comp)
 			}
@@ -1343,8 +1343,8 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 	relation := start.RelationComponent
 	hasRelation := start.HasRelationComponent
 	for _, id := range rem {
-		mask.Set(id.id, false)
-		if w.registry.IsRelation.Get(id.id) {
+		mask.Set(id, false)
+		if w.registry.IsRelation.Get(id) {
 			relation = ID{}
 			hasRelation = false
 		}
@@ -1358,8 +1358,8 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 		}
 	}
 	for _, id := range add {
-		mask.Set(id.id, true)
-		if w.registry.IsRelation.Get(id.id) {
+		mask.Set(id, true)
+		if w.registry.IsRelation.Get(id) {
 			if hasRelation {
 				panic("entity already has a relation component")
 			}

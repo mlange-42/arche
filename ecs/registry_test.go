@@ -69,8 +69,8 @@ func TestRegistryRelations(t *testing.T) {
 	id3, _ := registry.ComponentID(noRelCompTp2)
 	id4, _ := registry.ComponentID(noRelCompTp3)
 
-	assert.True(t, registry.IsRelation.Get(id1))
-	assert.False(t, registry.IsRelation.Get(id2))
-	assert.False(t, registry.IsRelation.Get(id3))
-	assert.False(t, registry.IsRelation.Get(id4))
+	assert.True(t, registry.IsRelation.Get(id(id1)))
+	assert.False(t, registry.IsRelation.Get(id(id2)))
+	assert.False(t, registry.IsRelation.Get(id(id3)))
+	assert.False(t, registry.IsRelation.Get(id(id4)))
 }

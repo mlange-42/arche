@@ -6,17 +6,17 @@ import (
 )
 
 // componentRegistry keeps track of component IDs.
-type componentRegistry[T uint8] struct {
-	Components map[reflect.Type]T
+type componentRegistry struct {
+	Components map[reflect.Type]uint8
 	Types      []reflect.Type
 	Used       Mask
 	IsRelation Mask
 }
 
 // newComponentRegistry creates a new ComponentRegistry.
-func newComponentRegistry[T uint8]() componentRegistry[T] {
-	return componentRegistry[T]{
-		Components: map[reflect.Type]T{},
+func newComponentRegistry() componentRegistry {
+	return componentRegistry{
+		Components: map[reflect.Type]uint8{},
 		Types:      make([]reflect.Type, MaskTotalBits),
 		Used:       Mask{},
 		IsRelation: Mask{},
@@ -25,7 +25,7 @@ func newComponentRegistry[T uint8]() componentRegistry[T] {
 
 // ComponentID returns the ID for a component type, and registers it if not already registered.
 // The second return value indicates if it is a newly created ID.
-func (r *componentRegistry[T]) ComponentID(tp reflect.Type) (T, bool) {
+func (r *componentRegistry) ComponentID(tp reflect.Type) (uint8, bool) {
 	if id, ok := r.Components[tp]; ok {
 		return id, false
 	}
@@ -33,40 +33,42 @@ func (r *componentRegistry[T]) ComponentID(tp reflect.Type) (T, bool) {
 }
 
 // ComponentType returns the type of a component by ID.
-func (r *componentRegistry[T]) ComponentType(id T) (reflect.Type, bool) {
-	return r.Types[id], r.Used.Get(uint8(id))
+func (r *componentRegistry) ComponentType(id uint8) (reflect.Type, bool) {
+	return r.Types[id], r.Used.Get(ID{id: uint8(id)})
 }
 
 // ComponentType returns the type of a component by ID.
-func (r *componentRegistry[T]) Count() int {
+func (r *componentRegistry) Count() int {
 	return len(r.Components)
 }
 
 // registerComponent registers a components and assigns an ID for it.
-func (r *componentRegistry[T]) registerComponent(tp reflect.Type, totalBits int) T {
+func (r *componentRegistry) registerComponent(tp reflect.Type, totalBits int) uint8 {
 	val := len(r.Components)
 	if val >= totalBits {
 		panic(fmt.Sprintf("maximum of %d component types exceeded", totalBits))
 	}
-	id := T(val)
-	r.Components[tp], r.Types[id] = id, tp
-	r.Used.Set(uint8(id), true)
+	newID := uint8(val)
+	id := id(uint8(newID))
+	r.Components[tp], r.Types[newID] = newID, tp
+	r.Used.Set(id, true)
 	if r.isRelation(tp) {
-		r.IsRelation.Set(uint8(id), true)
+		r.IsRelation.Set(id, true)
 	}
-	return id
+	return newID
 }
 
-func (r *componentRegistry[T]) unregisterLastComponent() {
-	id := T(len(r.Components) - 1)
-	tp, _ := r.ComponentType(id)
+func (r *componentRegistry) unregisterLastComponent() {
+	newID := uint8(len(r.Components) - 1)
+	id := id(uint8(newID))
+	tp, _ := r.ComponentType(newID)
 	delete(r.Components, tp)
-	r.Types[id] = nil
-	r.Used.Set(uint8(id), false)
-	r.IsRelation.Set(uint8(id), false)
+	r.Types[newID] = nil
+	r.Used.Set(id, false)
+	r.IsRelation.Set(id, false)
 }
 
-func (r *componentRegistry[T]) isRelation(tp reflect.Type) bool {
+func (r *componentRegistry) isRelation(tp reflect.Type) bool {
 	if tp.NumField() == 0 {
 		return false
 	}

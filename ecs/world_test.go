@@ -1638,7 +1638,7 @@ func Test1000Archetypes(t *testing.T) {
 		add := make([]ID, 0, 10)
 		for j := 0; j < 10; j++ {
 			id := id(uint8(j))
-			if mask.Get(id.id) {
+			if mask.Get(id) {
 				add = append(add, id)
 			}
 		}
@@ -1788,7 +1788,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[nodeData]()
 	printTypeSize[layout]()
 	printTypeSize[entityPool]()
-	printTypeSizeName[componentRegistry[uint8]]("componentRegistry")
+	printTypeSize[componentRegistry]()
 	printTypeSize[bitPool]()
 	printTypeSize[Query]()
 	printTypeSize[Resources]()

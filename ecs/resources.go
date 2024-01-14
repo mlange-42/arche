@@ -9,7 +9,7 @@ import (
 //
 // Access it using [World.Resources].
 type Resources struct {
-	registry  componentRegistry[uint8]
+	registry  componentRegistry
 	resources []any
 }
 

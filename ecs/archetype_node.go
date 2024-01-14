@@ -186,7 +186,7 @@ func (a *archNode) Reset(cache *Cache) {
 }
 
 // Stats generates statistics for an archetype node.
-func (a *archNode) Stats(reg *componentRegistry[uint8]) stats.NodeStats {
+func (a *archNode) Stats(reg *componentRegistry) stats.NodeStats {
 	ids := a.Ids
 	aCompCount := len(ids)
 	aTypes := make([]reflect.Type, aCompCount)
@@ -237,7 +237,7 @@ func (a *archNode) Stats(reg *componentRegistry[uint8]) stats.NodeStats {
 }
 
 // UpdateStats updates statistics for an archetype node.
-func (a *archNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry[uint8]) {
+func (a *archNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry) {
 	if !a.IsActive {
 		return
 	}
