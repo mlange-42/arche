@@ -36,7 +36,7 @@ func (r *componentRegistry) ComponentID(tp reflect.Type) (uint8, bool) {
 
 // ComponentType returns the type of a component by ID.
 func (r *componentRegistry) ComponentType(id uint8) (reflect.Type, bool) {
-	return r.Types[id], r.Used.Get(ID{id: uint8(id)})
+	return r.Types[id], r.Used.Get(ID{id: id})
 }
 
 // ComponentType returns the type of a component by ID.
@@ -51,7 +51,7 @@ func (r *componentRegistry) registerComponent(tp reflect.Type, totalBits int) ui
 		panic(fmt.Sprintf("maximum of %d component types exceeded", totalBits))
 	}
 	newID := uint8(val)
-	id := id(uint8(newID))
+	id := id(newID)
 	r.Components[tp], r.Types[newID] = newID, tp
 	r.Used.Set(id, true)
 	if r.isRelation(tp) {
@@ -63,7 +63,7 @@ func (r *componentRegistry) registerComponent(tp reflect.Type, totalBits int) ui
 
 func (r *componentRegistry) unregisterLastComponent() {
 	newID := uint8(len(r.Components) - 1)
-	id := id(uint8(newID))
+	id := id(newID)
 	tp, _ := r.ComponentType(newID)
 	delete(r.Components, tp)
 	r.Types[newID] = nil

@@ -12,8 +12,8 @@ type archNode struct {
 	*nodeData
 	Mask        Mask // Mask of the archetype
 	Relation    ID
-	IsActive    bool
 	HasRelation bool
+	IsActive    bool
 }
 
 type nodeData struct {
