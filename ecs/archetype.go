@@ -8,6 +8,8 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
+const layoutChunkSize uint8 = 16
+
 // layoutSize is the size of an archetype column layout in bytes.
 var layoutSize uint32 = uint32(unsafe.Sizeof(layout{}))
 
@@ -69,15 +71,15 @@ type archetype struct {
 }
 
 type archetypeData struct {
-	layouts      [MaskTotalBits]layout // Column layouts by ID.
-	indices      idMap[uint32]         // Mapping from IDs to buffer indices.
-	buffers      []reflect.Value       // Reflection arrays containing component data.
-	entityBuffer reflect.Value         // Reflection array containing entity data.
-	index        int32                 // Index of the archetype in the world.
+	layouts      []layout        // Column layouts by ID.
+	indices      idMap[uint32]   // Mapping from IDs to buffer indices.
+	buffers      []reflect.Value // Reflection arrays containing component data.
+	entityBuffer reflect.Value   // Reflection array containing entity data.
+	index        int32           // Index of the archetype in the world.
 }
 
 // Init initializes an archetype
-func (a *archetype) Init(node *archNode, data *archetypeData, index int32, forStorage bool, relation Entity) {
+func (a *archetype) Init(node *archNode, data *archetypeData, index int32, forStorage bool, layouts uint8, relation Entity) {
 	if !node.IsActive {
 		node.IsActive = true
 	}
@@ -86,6 +88,7 @@ func (a *archetype) Init(node *archNode, data *archetypeData, index int32, forSt
 	a.buffers = make([]reflect.Value, len(node.Ids))
 	a.indices = newIDMap[uint32]()
 	a.index = index
+	a.layouts = make([]layout, layouts)
 
 	cap := 1
 	if forStorage {
@@ -259,6 +262,16 @@ func (a *archetype) Deactivate() {
 func (a *archetype) Activate(target Entity, index int32) {
 	a.index = index
 	a.RelationTarget = target
+}
+
+func (a *archetype) ExtendLayouts(count uint8) {
+	if len(a.layouts) >= int(count) {
+		return
+	}
+	temp := a.layouts
+	a.layouts = make([]layout, count)
+	copy(a.layouts, temp)
+	a.archetypeAccess.basePointer = unsafe.Pointer(&a.layouts[0])
 }
 
 // IsActive returns whether the archetype is active.

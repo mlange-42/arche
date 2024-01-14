@@ -11,7 +11,7 @@
 ### Breaking changes
 
 * `MaskTotalBits` changed from 128 to 256 (#313)
-* Removed `Mask.Lo` and `Mask.Hi`, internal mask representation is now private (#313)
+* Removes `Mask.Lo` and `Mask.Hi`, internal mask representation is now private (#313)
 * `Filters.Matches(Mask)` became `Filters.Matches(*Mask)`; same for all `Filter` implementations (#313)  
 This change was necessary to get the same performance as before, despite the more heavyweight implementation of the now 256 bits `Mask`.
 
@@ -19,8 +19,13 @@ This change was necessary to get the same performance as before, despite the mor
 
 * Adds functions `ComponentInfo(*World, ID)` and `ResourceType(*World, ResID)` (#315, #318)
 * Adds methods `World.Ids(Entity)` and `Query.Ids()` to get component IDs for an entity (#315, #325)
-* Entities support JSON marshalling/unmarshalling (#319)
+* Entities support JSON marshalling and unmarshalling (#319)
+* Adds methods `Entity.ID()` and `Entity.Gen()` for serialization purposes (#319)
 * The world's entity state can be extracted and re-established via `World.DumpEntities()` and `World.LoadEntities()` (#319, #326)
+
+### Performance
+
+* Reduces archetype memory footprint by using a dynamically sized slice for storage lookup (#327)
 
 ### Other
 

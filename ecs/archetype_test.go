@@ -16,7 +16,7 @@ func TestArchetype(t *testing.T) {
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	data := archetypeData{}
-	arch.Init(&node, &data, 0, false, Entity{})
+	arch.Init(&node, &data, 0, false, 16, Entity{})
 
 	arch.Add(
 		newEntity(0),
@@ -75,12 +75,12 @@ func TestNewArchetype(t *testing.T) {
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	data := archetypeData{}
-	arch.Init(&node, &data, 0, true, Entity{})
+	arch.Init(&node, &data, 0, true, 16, Entity{})
 	assert.Equal(t, 32, int(arch.Cap()))
 
 	arch = archetype{}
 	data = archetypeData{}
-	arch.Init(&node, &data, 0, false, Entity{})
+	arch.Init(&node, &data, 0, false, 16, Entity{})
 	assert.Equal(t, 1, int(arch.Cap()))
 
 	comps = []componentType{
@@ -91,7 +91,7 @@ func TestNewArchetype(t *testing.T) {
 		node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 		arch := archetype{}
 		data := archetypeData{}
-		arch.Init(&node, &data, 0, true, Entity{})
+		arch.Init(&node, &data, 0, true, 16, Entity{})
 	})
 }
 
@@ -104,7 +104,7 @@ func TestArchetypeExtend(t *testing.T) {
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 8, comps)
 	arch := archetype{}
 	data := archetypeData{}
-	arch.Init(&node, &data, 0, true, Entity{})
+	arch.Init(&node, &data, 0, true, 16, Entity{})
 
 	assert.Equal(t, 8, int(arch.Cap()))
 	assert.Equal(t, 0, int(arch.Len()))
@@ -119,6 +119,37 @@ func TestArchetypeExtend(t *testing.T) {
 	assert.Equal(t, 24, int(arch.Cap()))
 }
 
+func TestArchetypeExtendLayouts(t *testing.T) {
+	comps := []componentType{
+		{ID: 0, Type: reflect.TypeOf(Position{})},
+		{ID: 1, Type: reflect.TypeOf(rotation{})},
+		{ID: 2, Type: reflect.TypeOf(relationComp{})},
+	}
+	entity := newEntity(1)
+
+	node := newArchNode(All(0, 1), &nodeData{}, -1, 8, comps[:2])
+	arch := archetype{}
+	data := archetypeData{}
+	arch.Init(&node, &data, 0, true, 16, Entity{})
+	node.SetArchetype(&arch)
+
+	assert.Equal(t, len(arch.layouts), 16)
+	node.ExtendArchetypeLayouts(16)
+	assert.Equal(t, len(arch.layouts), 16)
+	node.ExtendArchetypeLayouts(32)
+	assert.Equal(t, len(arch.layouts), 32)
+
+	node = newArchNode(All(0, 1), &nodeData{}, 2, 8, comps)
+	node.CreateArchetype(16, entity)
+	arch2 := node.GetArchetype(entity)
+
+	assert.Equal(t, len(arch2.layouts), 16)
+	node.ExtendArchetypeLayouts(16)
+	assert.Equal(t, len(arch2.layouts), 16)
+	node.ExtendArchetypeLayouts(32)
+	assert.Equal(t, len(arch2.layouts), 32)
+}
+
 func TestArchetypeAlloc(t *testing.T) {
 	comps := []componentType{
 		{ID: 0, Type: reflect.TypeOf(Position{})},
@@ -127,7 +158,7 @@ func TestArchetypeAlloc(t *testing.T) {
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 8, comps)
 	arch := archetype{}
 	data := archetypeData{}
-	arch.Init(&node, &data, 0, true, Entity{})
+	arch.Init(&node, &data, 0, true, 16, Entity{})
 
 	assert.Equal(t, 8, int(arch.Cap()))
 	assert.Equal(t, 0, int(arch.Len()))
@@ -153,7 +184,7 @@ func TestArchetypeAddGetSet(t *testing.T) {
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 1, comps)
 	a := archetype{}
 	data := archetypeData{}
-	a.Init(&node, &data, 0, true, Entity{})
+	a.Init(&node, &data, 0, true, 16, Entity{})
 
 	assert.Equal(t, 1, int(a.Cap()))
 	assert.Equal(t, 0, int(a.Len()))
@@ -189,7 +220,7 @@ func TestArchetypeReset(t *testing.T) {
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	data := archetypeData{}
-	arch.Init(&node, &data, 0, false, Entity{})
+	arch.Init(&node, &data, 0, false, 16, Entity{})
 
 	arch.Add(
 		newEntity(0),
@@ -236,7 +267,7 @@ func TestArchetypeZero(t *testing.T) {
 	node := newArchNode(All(0, 1), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	data := archetypeData{}
-	arch.Init(&node, &data, 0, false, Entity{})
+	arch.Init(&node, &data, 0, false, 16, Entity{})
 
 	arch.Alloc(newEntity(0))
 	arch.Alloc(newEntity(1))
@@ -269,7 +300,7 @@ func BenchmarkIterArchetype_1000(b *testing.B) {
 	node := newArchNode(All(0), &nodeData{}, -1, 32, comps)
 	arch := archetype{}
 	data := archetypeData{}
-	arch.Init(&node, &data, 0, true, Entity{})
+	arch.Init(&node, &data, 0, true, 16, Entity{})
 
 	for i := 0; i < 1000; i++ {
 		arch.Alloc(newEntity(eid(i)))

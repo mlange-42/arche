@@ -11,7 +11,11 @@ import (
 // ComponentID returns the [ID] for a component type via generics.
 // Registers the type if it is not already registered.
 //
-// The number of unique component types per [World] is limited to [MaskTotalBits].
+// The number of unique component types per [World] is limited to 256 ([MaskTotalBits]).
+//
+// Panics if called on a locked world and the type is not registered yet.
+//
+// ⚠️ Warning: Using IDs that are outside of the range of registered IDs anywhere in [World] or other places will result in undefined behavior!
 func ComponentID[T any](w *World) ID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.componentID(tp)
@@ -1420,14 +1424,16 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
 // and with a capacity of 1 otherwise.
 func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) *archetype {
 	var arch *archetype
+	layouts := capacityNonZero(w.registry.Count(), int(layoutChunkSize))
+
 	if node.HasRelation {
-		arch = node.CreateArchetype(target)
+		arch = node.CreateArchetype(uint8(layouts), target)
 	} else {
 		w.archetypes.Add(archetype{})
 		w.archetypeData.Add(archetypeData{})
 		archIndex := w.archetypes.Len() - 1
 		arch = w.archetypes.Get(archIndex)
-		arch.Init(node, w.archetypeData.Get(archIndex), archIndex, forStorage, target)
+		arch.Init(node, w.archetypeData.Get(archIndex), archIndex, forStorage, uint8(layouts), target)
 		node.SetArchetype(arch)
 	}
 	w.filterCache.addArchetype(arch)
@@ -1498,14 +1504,34 @@ func (w *World) removeArchetype(arch *archetype) {
 	w.Cache().removeArchetype(arch)
 }
 
+// Extend the number of access layouts in archetypes.
+func (w *World) extendArchetypeLayouts(count uint8) {
+	len := w.nodes.Len()
+	var i int32
+	for i = 0; i < len; i++ {
+		w.nodes.Get(i).ExtendArchetypeLayouts(count)
+	}
+}
+
 // componentID returns the ID for a component type, and registers it if not already registered.
 func (w *World) componentID(tp reflect.Type) ID {
-	return w.registry.ComponentID(tp)
+	id, newID := w.registry.ComponentID(tp)
+	if newID {
+		if w.IsLocked() {
+			w.registry.unregisterLastComponent()
+			panic("attempt to register a new component in a locked world")
+		}
+		if id > 0 && id%layoutChunkSize == 0 {
+			w.extendArchetypeLayouts(id + layoutChunkSize)
+		}
+	}
+	return id
 }
 
 // resourceID returns the ID for a resource type, and registers it if not already registered.
 func (w *World) resourceID(tp reflect.Type) ResID {
-	return w.resources.registry.ComponentID(tp)
+	id, _ := w.resources.registry.ComponentID(tp)
+	return id
 }
 
 // closeQuery closes a query and unlocks the world.

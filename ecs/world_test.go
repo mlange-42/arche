@@ -1612,6 +1612,12 @@ func Test1000Archetypes(t *testing.T) {
 	_ = testStruct8{1}
 	_ = testStruct9{1}
 	_ = testStruct10{1}
+	_ = testStruct11{1}
+	_ = testStruct12{1}
+	_ = testStruct13{1}
+	_ = testStruct14{1}
+	_ = testStruct15{1}
+	_ = testStruct16{1}
 
 	w := NewWorld()
 
@@ -1648,29 +1654,6 @@ func Test1000Archetypes(t *testing.T) {
 	}
 
 	assert.Equal(t, 256, cnt)
-}
-
-func TestTypeSizes(t *testing.T) {
-	printTypeSize[Entity]()
-	printTypeSize[entityIndex]()
-	printTypeSize[Mask]()
-	printTypeSize[World]()
-	printTypeSizeName[pagedSlice[archetype]]("pagedArr32")
-	printTypeSize[archetype]()
-	printTypeSize[archetypeAccess]()
-	printTypeSize[archetypeData]()
-	printTypeSize[archNode]()
-	printTypeSize[nodeData]()
-	printTypeSize[layout]()
-	printTypeSize[entityPool]()
-	printTypeSizeName[componentRegistry[ID]]("componentRegistry")
-	printTypeSize[bitPool]()
-	printTypeSize[Query]()
-	printTypeSize[Resources]()
-	printTypeSizeName[reflect.Value]("reflect.Value")
-	printTypeSize[EntityEvent]()
-	printTypeSize[Cache]()
-	printTypeSizeName[idMap[uint32]]("idMap")
 }
 
 func TestWorldEntityDump(t *testing.T) {
@@ -1737,6 +1720,82 @@ func TestWorldEntityDumpFail(t *testing.T) {
 	assert.Panics(t, func() {
 		w2.LoadEntities(&eData)
 	})
+}
+
+func TestWorldExtendLayouts(t *testing.T) {
+	w := NewWorld()
+
+	id0 := ComponentID[testStruct0](&w)
+	_ = ComponentID[testStruct1](&w)
+	_ = ComponentID[testStruct2](&w)
+	_ = ComponentID[testStruct3](&w)
+	_ = ComponentID[testStruct4](&w)
+	_ = ComponentID[testStruct5](&w)
+	_ = ComponentID[testStruct6](&w)
+	_ = ComponentID[testStruct7](&w)
+	_ = ComponentID[testStruct8](&w)
+	_ = ComponentID[testStruct9](&w)
+	_ = ComponentID[testStruct10](&w)
+	_ = ComponentID[testStruct11](&w)
+	_ = ComponentID[testStruct12](&w)
+	_ = ComponentID[testStruct13](&w)
+	_ = ComponentID[testStruct14](&w)
+	_ = ComponentID[testStruct15](&w)
+
+	e := w.NewEntity(id0)
+	t0 := (*testStruct0)(w.Get(e, id0))
+	t0.Val = 100
+
+	t0 = (*testStruct0)(w.Get(e, id0))
+	assert.Equal(t, t0.Val, int32(100))
+
+	assert.Equal(t, 16, len(w.archetypes.Get(0).layouts))
+	assert.Equal(t, 16, len(w.archetypes.Get(1).layouts))
+
+	lock := w.lock()
+	assert.Panics(t, func() {
+		ComponentID[testStruct16](&w)
+	})
+	w.unlock(lock)
+
+	id16 := ComponentID[testStruct16](&w)
+	_ = id16
+
+	assert.Equal(t, 32, len(w.archetypes.Get(0).layouts))
+	assert.Equal(t, 32, len(w.archetypes.Get(1).layouts))
+
+	t0 = (*testStruct0)(w.Get(e, id0))
+	assert.Equal(t, int32(100), t0.Val)
+
+	query := w.Query(All(id0))
+	assert.Equal(t, 1, query.Count())
+	for query.Next() {
+		t0 := (*testStruct0)(query.Get(id0))
+		assert.Equal(t, int32(100), t0.Val)
+	}
+}
+
+func TestTypeSizes(t *testing.T) {
+	printTypeSize[Entity]()
+	printTypeSize[entityIndex]()
+	printTypeSize[Mask]()
+	printTypeSize[World]()
+	printTypeSizeName[pagedSlice[archetype]]("pagedArr32")
+	printTypeSize[archetype]()
+	printTypeSize[archetypeAccess]()
+	printTypeSize[archetypeData]()
+	printTypeSize[archNode]()
+	printTypeSize[nodeData]()
+	printTypeSize[layout]()
+	printTypeSize[entityPool]()
+	printTypeSizeName[componentRegistry[ID]]("componentRegistry")
+	printTypeSize[bitPool]()
+	printTypeSize[Query]()
+	printTypeSize[Resources]()
+	printTypeSizeName[reflect.Value]("reflect.Value")
+	printTypeSize[EntityEvent]()
+	printTypeSize[Cache]()
+	printTypeSizeName[idMap[uint32]]("idMap")
 }
 
 func printTypeSize[T any]() {

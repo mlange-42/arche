@@ -14,6 +14,13 @@ func TestCapacity(t *testing.T) {
 	assert.Equal(t, 16, capacity(9, 8))
 }
 
+func TestCapacityNonZero(t *testing.T) {
+	assert.Equal(t, 8, capacityNonZero(0, 8))
+	assert.Equal(t, 8, capacityNonZero(1, 8))
+	assert.Equal(t, 8, capacityNonZero(8, 8))
+	assert.Equal(t, 16, capacityNonZero(9, 8))
+}
+
 func TestCapacityU32(t *testing.T) {
 	assert.Equal(t, 0, int(capacityU32(0, 8)))
 	assert.Equal(t, 8, int(capacityU32(1, 8)))

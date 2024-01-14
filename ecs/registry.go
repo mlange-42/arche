@@ -1,6 +1,9 @@
 package ecs
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+)
 
 // componentRegistry keeps track of component IDs.
 type componentRegistry[T uint8] struct {
@@ -21,11 +24,12 @@ func newComponentRegistry[T uint8]() componentRegistry[T] {
 }
 
 // ComponentID returns the ID for a component type, and registers it if not already registered.
-func (r *componentRegistry[T]) ComponentID(tp reflect.Type) T {
+// The second return value indicates if it is a newly created ID.
+func (r *componentRegistry[T]) ComponentID(tp reflect.Type) (T, bool) {
 	if id, ok := r.Components[tp]; ok {
-		return id
+		return id, false
 	}
-	return r.registerComponent(tp, MaskTotalBits)
+	return r.registerComponent(tp, MaskTotalBits), true
 }
 
 // ComponentType returns the type of a component by ID.
@@ -33,18 +37,33 @@ func (r *componentRegistry[T]) ComponentType(id T) (reflect.Type, bool) {
 	return r.Types[id], r.Used.Get(uint8(id))
 }
 
+// ComponentType returns the type of a component by ID.
+func (r *componentRegistry[T]) Count() int {
+	return len(r.Components)
+}
+
 // registerComponent registers a components and assigns an ID for it.
 func (r *componentRegistry[T]) registerComponent(tp reflect.Type, totalBits int) T {
-	id := T(len(r.Components))
-	if int(id) >= totalBits {
-		panic("maximum of 128 component types exceeded")
+	val := len(r.Components)
+	if val >= totalBits {
+		panic(fmt.Sprintf("maximum of %d component types exceeded", totalBits))
 	}
+	id := T(val)
 	r.Components[tp], r.Types[id] = id, tp
 	r.Used.Set(uint8(id), true)
 	if r.isRelation(tp) {
 		r.IsRelation.Set(uint8(id), true)
 	}
 	return id
+}
+
+func (r *componentRegistry[T]) unregisterLastComponent() {
+	id := T(len(r.Components) - 1)
+	tp, _ := r.ComponentType(id)
+	delete(r.Components, tp)
+	r.Types[id] = nil
+	r.Used.Set(uint8(id), false)
+	r.IsRelation.Set(uint8(id), false)
 }
 
 func (r *componentRegistry[T]) isRelation(tp reflect.Type) bool {

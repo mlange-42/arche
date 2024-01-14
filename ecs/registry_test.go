@@ -15,8 +15,10 @@ func TestComponentRegistry(t *testing.T) {
 
 	reg.registerComponent(posType, MaskTotalBits)
 
-	assert.Equal(t, ID(0), reg.ComponentID(posType))
-	assert.Equal(t, ID(1), reg.ComponentID(rotType))
+	id0, _ := reg.ComponentID(posType)
+	id1, _ := reg.ComponentID(rotType)
+	assert.Equal(t, ID(0), id0)
+	assert.Equal(t, ID(1), id1)
 
 	t1, _ := reg.ComponentType(ID(0))
 	t2, _ := reg.ComponentType(ID(1))
@@ -62,10 +64,10 @@ func TestRegistryRelations(t *testing.T) {
 	assert.False(t, registry.isRelation(noRelCompTp2))
 	assert.False(t, registry.isRelation(noRelCompTp3))
 
-	id1 := registry.ComponentID(relCompTp)
-	id2 := registry.ComponentID(noRelCompTp1)
-	id3 := registry.ComponentID(noRelCompTp2)
-	id4 := registry.ComponentID(noRelCompTp3)
+	id1, _ := registry.ComponentID(relCompTp)
+	id2, _ := registry.ComponentID(noRelCompTp1)
+	id3, _ := registry.ComponentID(noRelCompTp2)
+	id4, _ := registry.ComponentID(noRelCompTp3)
 
 	assert.True(t, registry.IsRelation.Get(id1))
 	assert.False(t, registry.IsRelation.Get(id2))
