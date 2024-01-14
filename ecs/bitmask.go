@@ -26,7 +26,7 @@ type Mask struct {
 func All(ids ...ID) Mask {
 	var mask Mask
 	for _, id := range ids {
-		mask.Set(id, true)
+		mask.Set(id.id, true)
 	}
 	return mask
 }
@@ -57,7 +57,7 @@ func (b Mask) Exclusive() MaskFilter {
 // Get reports whether the bit at the given index [ID] is set.
 //
 // Returns false for bit >= [MaskTotalBits].
-func (b *Mask) Get(bit ID) bool {
+func (b *Mask) Get(bit uint8) bool {
 	idx := bit / 64
 	offset := bit - (64 * idx)
 	mask := uint64(1 << offset)
@@ -67,7 +67,7 @@ func (b *Mask) Get(bit ID) bool {
 // Set sets the state of the bit at the given index.
 //
 // Has no effect for bit >= [MaskTotalBits].
-func (b *Mask) Set(bit ID, value bool) {
+func (b *Mask) Set(bit uint8, value bool) {
 	idx := bit / 64
 	offset := bit - (64 * idx)
 	if value {

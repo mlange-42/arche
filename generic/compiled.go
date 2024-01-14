@@ -16,7 +16,7 @@ type compiledQuery struct {
 	cachedFilter   ecs.CachedFilter
 	filter         ecs.Filter
 	Ids            []ecs.ID
-	TargetComp     int8
+	TargetComp     ecs.ID
 	Target         ecs.Entity
 	HasTarget      bool
 	compiled       bool
@@ -25,9 +25,7 @@ type compiledQuery struct {
 }
 
 func newCompiledQuery() compiledQuery {
-	return compiledQuery{
-		TargetComp: -1,
-	}
+	return compiledQuery{}
 }
 
 // Compile compiles a generic filter.

@@ -17,11 +17,11 @@ func TestComponentRegistry(t *testing.T) {
 
 	id0, _ := reg.ComponentID(posType)
 	id1, _ := reg.ComponentID(rotType)
-	assert.Equal(t, ID(0), id0)
-	assert.Equal(t, ID(1), id1)
+	assert.Equal(t, uint8(0), id0)
+	assert.Equal(t, uint8(1), id1)
 
-	t1, _ := reg.ComponentType(ID(0))
-	t2, _ := reg.ComponentType(ID(1))
+	t1, _ := reg.ComponentType(uint8(0))
+	t2, _ := reg.ComponentType(uint8(1))
 
 	assert.Equal(t, posType, t1)
 	assert.Equal(t, rotType, t2)

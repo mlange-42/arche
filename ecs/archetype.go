@@ -15,11 +15,12 @@ var layoutSize uint32 = uint32(unsafe.Sizeof(layout{}))
 
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
-	Mask              Mask           // Archetype's mask
-	basePointer       unsafe.Pointer // Pointer to the first component column layout.
-	entityPointer     unsafe.Pointer // Pointer to the entity storage
-	RelationTarget    Entity
-	RelationComponent int8
+	Mask                 Mask           // Archetype's mask
+	basePointer          unsafe.Pointer // Pointer to the first component column layout.
+	entityPointer        unsafe.Pointer // Pointer to the entity storage
+	RelationTarget       Entity
+	RelationComponent    ID
+	HasRelationComponent bool
 }
 
 // GetEntity returns the entity at the given index
@@ -39,12 +40,12 @@ func (a *archetypeAccess) HasComponent(id ID) bool {
 
 // HasRelation returns whether the archetype has a relation component.
 func (a *archetypeAccess) HasRelation() bool {
-	return a.RelationComponent >= 0
+	return a.HasRelationComponent
 }
 
 // GetLayout returns the column layout for a component.
 func (a *archetypeAccess) getLayout(id ID) *layout {
-	return (*layout)(unsafe.Add(a.basePointer, layoutSize*uint32(id)))
+	return (*layout)(unsafe.Add(a.basePointer, layoutSize*uint32(id.id)))
 }
 
 // layout specification of a component column.
@@ -101,20 +102,21 @@ func (a *archetype) Init(node *archNode, data *archetypeData, index int32, forSt
 		size = (size + (align - 1)) / align * align
 
 		a.buffers[i] = reflect.New(reflect.ArrayOf(cap, tp)).Elem()
-		a.layouts[id] = layout{
+		a.layouts[id.id] = layout{
 			a.buffers[i].Addr().UnsafePointer(),
 			uint32(size),
 		}
-		a.indices.Set(id, uint32(i))
+		a.indices.Set(id.id, uint32(i))
 	}
 	a.entityBuffer = reflect.New(reflect.ArrayOf(cap, entityType)).Elem()
 
 	a.archetypeAccess = archetypeAccess{
-		basePointer:       unsafe.Pointer(&a.layouts[0]),
-		entityPointer:     a.entityBuffer.Addr().UnsafePointer(),
-		Mask:              node.Mask,
-		RelationTarget:    relation,
-		RelationComponent: node.Relation,
+		basePointer:          unsafe.Pointer(&a.layouts[0]),
+		entityPointer:        a.entityBuffer.Addr().UnsafePointer(),
+		Mask:                 node.Mask,
+		RelationTarget:       relation,
+		RelationComponent:    node.Relation,
+		HasRelationComponent: node.HasRelation,
 	}
 
 	a.node = node
@@ -296,12 +298,12 @@ func (a *archetype) Cap() uint32 {
 }
 
 // Stats generates statistics for an archetype
-func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
+func (a *archetype) Stats(reg *componentRegistry[uint8]) stats.ArchetypeStats {
 	ids := a.Components()
 	aCompCount := len(ids)
 	aTypes := make([]reflect.Type, aCompCount)
 	for j, id := range ids {
-		aTypes[j], _ = reg.ComponentType(id)
+		aTypes[j], _ = reg.ComponentType(id.id)
 	}
 
 	cap := int(a.Cap())
@@ -321,7 +323,7 @@ func (a *archetype) Stats(reg *componentRegistry[ID]) stats.ArchetypeStats {
 }
 
 // UpdateStats updates statistics for an archetype
-func (a *archetype) UpdateStats(node *stats.NodeStats, stats *stats.ArchetypeStats, reg *componentRegistry[ID]) {
+func (a *archetype) UpdateStats(node *stats.NodeStats, stats *stats.ArchetypeStats, reg *componentRegistry[uint8]) {
 	cap := int(a.Cap())
 	memory := cap * (int(entitySize) + node.MemoryPerEntity)
 
@@ -356,7 +358,7 @@ func (a *archetype) extend(by uint32) {
 		if lay.itemSize == 0 {
 			continue
 		}
-		index, _ := a.indices.Get(id)
+		index, _ := a.indices.Get(id.id)
 		old := a.buffers[index]
 		a.buffers[index] = reflect.New(reflect.ArrayOf(int(a.cap), old.Type().Elem())).Elem()
 		lay.pointer = a.buffers[index].Addr().UnsafePointer()

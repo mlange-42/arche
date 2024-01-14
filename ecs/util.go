@@ -39,7 +39,7 @@ func capacityU32(size, increment uint32) uint32 {
 	return cap
 }
 
-func maskToTypes(mask Mask, reg *componentRegistry[ID]) []componentType {
+func maskToTypes(mask Mask, reg *componentRegistry[uint8]) []componentType {
 	count := int(mask.TotalBitsSet())
 	types := make([]componentType, count)
 
@@ -49,9 +49,9 @@ func maskToTypes(mask Mask, reg *componentRegistry[ID]) []componentType {
 			continue
 		}
 		for j := 0; j < wordSize; j++ {
-			id := ID(i*wordSize + j)
-			if mask.Get(id) {
-				types[idx] = componentType{ID: id, Type: reg.Types[id]}
+			id := ID{id: uint8(i*wordSize + j)}
+			if mask.Get(id.id) {
+				types[idx] = componentType{ID: id, Type: reg.Types[id.id]}
 				idx++
 			}
 		}
@@ -70,16 +70,16 @@ type lockMask struct {
 // Lock the world and get the Lock bit for later unlocking.
 func (m *lockMask) Lock() uint8 {
 	lock := m.bitPool.Get()
-	m.locks.Set(ID(lock), true)
+	m.locks.Set(lock, true)
 	return lock
 }
 
 // Unlock unlocks the given lock bit.
 func (m *lockMask) Unlock(l uint8) {
-	if !m.locks.Get(ID(l)) {
+	if !m.locks.Get(l) {
 		panic("unbalanced unlock")
 	}
-	m.locks.Set(ID(l), false)
+	m.locks.Set(l, false)
 	m.bitPool.Recycle(l)
 }
 

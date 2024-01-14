@@ -191,7 +191,7 @@ func TestWorldComponentInfo(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, info.Type, reflect.TypeOf(Position{}))
 
-	info, ok = ComponentInfo(&w, 3)
+	info, ok = ComponentInfo(&w, ID{id: 3})
 	assert.False(t, ok)
 	assert.Equal(t, info, CompInfo{})
 
@@ -201,7 +201,7 @@ func TestWorldComponentInfo(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, tp, reflect.TypeOf(Velocity{}))
 
-	tp, ok = ResourceType(&w, 3)
+	tp, ok = ResourceType(&w, ResID{id: 3})
 	assert.False(t, ok)
 	assert.Equal(t, tp, nil)
 }
@@ -215,9 +215,9 @@ func TestWorldIds(t *testing.T) {
 	e2 := w.NewEntity(posID, velID)
 	e3 := w.NewEntity(velID)
 
-	assert.Equal(t, w.Ids(e1), []ID{1})
-	assert.Equal(t, w.Ids(e2), []ID{0, 1})
-	assert.Equal(t, w.Ids(e3), []ID{0})
+	assert.Equal(t, w.Ids(e1), []ID{id(1)})
+	assert.Equal(t, w.Ids(e2), []ID{id(0), id(1)})
+	assert.Equal(t, w.Ids(e3), []ID{id(0)})
 
 	w.RemoveEntity(e1)
 
@@ -300,11 +300,11 @@ func TestWorldExchange(t *testing.T) {
 	target := w.NewEntity()
 	e0 = w.NewEntity(rel1ID)
 
-	assert.Panics(t, func() { w.exchange(e0, []ID{rel2ID}, nil, int8(rel2ID), target) })
-	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, int8(posID), target) })
+	assert.Panics(t, func() { w.exchange(e0, []ID{rel2ID}, nil, rel2ID, true, target) })
+	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, posID, true, target) })
 
 	w.Remove(e0, rel1ID)
-	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, int8(rel1ID), target) })
+	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, rel1ID, true, target) })
 }
 
 func TestWorldExchangeBatch(t *testing.T) {
@@ -558,9 +558,9 @@ func TestWorldNewEntities(t *testing.T) {
 	world.NewEntity(posID, rotID)
 	assert.Equal(t, 2, len(world.entities))
 
-	assert.Panics(t, func() { world.newEntitiesQuery(0, -1, Entity{}, posID, rotID) })
+	assert.Panics(t, func() { world.newEntitiesQuery(0, ID{}, false, Entity{}, posID, rotID) })
 
-	query := world.newEntitiesQuery(100, -1, Entity{}, posID, rotID)
+	query := world.newEntitiesQuery(100, ID{}, false, Entity{}, posID, rotID)
 	assert.Equal(t, 100, query.Count())
 	assert.Equal(t, 102, len(world.entities))
 	assert.Equal(t, 1, len(events))
@@ -588,7 +588,7 @@ func TestWorldNewEntities(t *testing.T) {
 	world.Reset()
 	assert.Equal(t, 1, len(world.entities))
 
-	query = world.newEntitiesQuery(100, -1, Entity{}, posID, rotID)
+	query = world.newEntitiesQuery(100, ID{}, false, Entity{}, posID, rotID)
 	assert.Equal(t, 100, query.Count())
 	assert.Equal(t, 101, len(events))
 
@@ -607,13 +607,13 @@ func TestWorldNewEntities(t *testing.T) {
 	assert.Equal(t, 301, len(events))
 	assert.Equal(t, 101, len(world.entities))
 
-	query = world.newEntitiesQuery(100, -1, Entity{}, posID, rotID)
+	query = world.newEntitiesQuery(100, ID{}, false, Entity{}, posID, rotID)
 	assert.Equal(t, 301, len(events))
 	query.Close()
 	assert.Equal(t, 401, len(events))
 	assert.Equal(t, 101, len(world.entities))
 
-	world.newEntities(100, -1, Entity{}, posID, rotID)
+	world.newEntities(100, ID{}, false, Entity{}, posID, rotID)
 	assert.Equal(t, 501, len(events))
 	assert.Equal(t, 201, len(world.entities))
 }
@@ -638,15 +638,15 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world.NewEntity(posID, rotID)
 	assert.Equal(t, 1, len(events))
 
-	assert.Panics(t, func() { world.newEntitiesWithQuery(0, -1, Entity{}, comps...) })
+	assert.Panics(t, func() { world.newEntitiesWithQuery(0, ID{}, false, Entity{}, comps...) })
 	assert.Equal(t, 1, len(events))
 
-	query := world.newEntitiesWithQuery(1, -1, Entity{})
+	query := world.newEntitiesWithQuery(1, ID{}, false, Entity{})
 	assert.Equal(t, 1, len(events))
 	query.Close()
 	assert.Equal(t, 2, len(events))
 
-	query = world.newEntitiesWithQuery(100, -1, Entity{}, comps...)
+	query = world.newEntitiesWithQuery(100, ID{}, false, Entity{}, comps...)
 	assert.Equal(t, 100, query.Count())
 	assert.Equal(t, 2, len(events))
 
@@ -674,7 +674,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 
 	world.Reset()
 
-	query = world.newEntitiesWithQuery(100, -1, Entity{},
+	query = world.newEntitiesWithQuery(100, ID{}, false, Entity{},
 		Component{ID: posID, Comp: &Position{100, 200}},
 		Component{ID: rotID, Comp: &rotation{300}},
 	)
@@ -688,7 +688,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	assert.Equal(t, 100, cnt)
 	assert.Equal(t, 202, len(events))
 
-	world.newEntitiesWith(100, -1, Entity{}, comps...)
+	world.newEntitiesWith(100, ID{}, false, Entity{}, comps...)
 	assert.Equal(t, 302, len(events))
 }
 
@@ -704,12 +704,12 @@ func TestWorldRemoveEntities(t *testing.T) {
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
 
-	query := world.newEntitiesQuery(100, -1, Entity{}, posID)
+	query := world.newEntitiesQuery(100, ID{}, false, Entity{}, posID)
 	assert.Equal(t, 100, query.Count())
 	query.Close()
 	assert.Equal(t, 100, len(events))
 
-	query = world.newEntitiesQuery(100, -1, Entity{}, posID, rotID)
+	query = world.newEntitiesQuery(100, ID{}, false, Entity{}, posID, rotID)
 	assert.Equal(t, 100, query.Count())
 	query.Close()
 	assert.Equal(t, 200, len(events))
@@ -1099,18 +1099,18 @@ func TestWorldRelationCreate(t *testing.T) {
 	dead := world.NewEntity()
 	world.RemoveEntity(dead)
 
-	world.newEntities(5, int8(relID), alive, posID, relID)
-	assert.Panics(t, func() { world.newEntitiesNoNotify(5, int8(relID), dead, posID, relID) })
+	world.newEntities(5, relID, true, alive, posID, relID)
+	assert.Panics(t, func() { world.newEntitiesNoNotify(5, relID, true, dead, posID, relID) })
 
 	world.newEntityTarget(relID, alive, posID, relID)
 	assert.Panics(t, func() { world.newEntityTarget(relID, dead, posID, relID) })
 
-	world.newEntitiesWith(5, int8(relID), alive,
+	world.newEntitiesWith(5, relID, true, alive,
 		Component{ID: posID, Comp: &Position{}},
 		Component{ID: relID, Comp: &testRelationA{}},
 	)
 	assert.Panics(t, func() {
-		world.newEntitiesWith(5, int8(relID), dead,
+		world.newEntitiesWith(5, relID, true, dead,
 			Component{ID: posID, Comp: &Position{}},
 			Component{ID: relID, Comp: &testRelationA{}},
 		)
@@ -1310,7 +1310,7 @@ func TestWorldComponentType(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, reflect.TypeOf(rotation{}), tp)
 
-	_, ok = w.ComponentType(2)
+	_, ok = w.ComponentType(id(2))
 	assert.False(t, ok)
 }
 
@@ -1319,8 +1319,8 @@ func TestRegisterComponents(t *testing.T) {
 
 	ComponentID[Position](&world)
 
-	assert.Equal(t, ID(0), ComponentID[Position](&world))
-	assert.Equal(t, ID(1), ComponentID[rotation](&world))
+	assert.Equal(t, id(0), ComponentID[Position](&world))
+	assert.Equal(t, id(1), ComponentID[rotation](&world))
 }
 
 func TestWorldBatchRemove(t *testing.T) {
@@ -1432,7 +1432,7 @@ func TestArchetypeGraph(t *testing.T) {
 	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{}, Entity{})
 	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{}, Entity{})
 
-	assert.Equal(t, []ID{0, 1, 2}, arch012.node.Ids)
+	assert.Equal(t, []ID{id(0), id(1), id(2)}, arch012.node.Ids)
 
 	archEmpty4 := world.findOrCreateArchetype(arch012, []ID{}, []ID{posID, rotID, velID}, Entity{})
 	assert.Equal(t, archEmpty, archEmpty4)
@@ -1637,8 +1637,8 @@ func Test1000Archetypes(t *testing.T) {
 		mask := Mask{[4]uint64{uint64(i), 0, 0, 0}}
 		add := make([]ID, 0, 10)
 		for j := 0; j < 10; j++ {
-			id := ID(j)
-			if mask.Get(id) {
+			id := id(uint8(j))
+			if mask.Get(id.id) {
 				add = append(add, id)
 			}
 		}
@@ -1648,7 +1648,7 @@ func Test1000Archetypes(t *testing.T) {
 	assert.Equal(t, int32(1024), w.archetypes.Len())
 
 	cnt := 0
-	query := w.Query(All(0, 7))
+	query := w.Query(All(id(0), id(7)))
 	for query.Next() {
 		cnt++
 	}
@@ -1788,7 +1788,7 @@ func TestTypeSizes(t *testing.T) {
 	printTypeSize[nodeData]()
 	printTypeSize[layout]()
 	printTypeSize[entityPool]()
-	printTypeSizeName[componentRegistry[ID]]("componentRegistry")
+	printTypeSizeName[componentRegistry[uint8]]("componentRegistry")
 	printTypeSize[bitPool]()
 	printTypeSize[Query]()
 	printTypeSize[Resources]()

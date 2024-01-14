@@ -1,20 +1,19 @@
-package ecs_test
+package ecs
 
 import (
 	"math/rand"
 	"testing"
 
-	"github.com/mlange-42/arche/ecs"
 	"github.com/stretchr/testify/assert"
 )
 
-func all(ids ...ecs.ID) *ecs.Mask {
-	mask := ecs.All(ids...)
+func all(ids ...ID) *Mask {
+	mask := All(ids...)
 	return &mask
 }
 
 func TestBitMask(t *testing.T) {
-	mask := ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27), ecs.ID(200))
+	mask := All(id(1), id(2), id(13), id(27), id(200))
 
 	assert.Equal(t, 5, mask.TotalBitsSet())
 
@@ -29,14 +28,14 @@ func TestBitMask(t *testing.T) {
 	assert.False(t, mask.Get(199))
 	assert.False(t, mask.Get(201))
 
-	mask.Set(ecs.ID(0), true)
-	mask.Set(ecs.ID(1), false)
+	mask.Set(0, true)
+	mask.Set(1, false)
 
 	assert.True(t, mask.Get(0))
 	assert.False(t, mask.Get(1))
 
-	other1 := ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(32))
-	other2 := ecs.All(ecs.ID(0), ecs.ID(2))
+	other1 := All(id(1), id(2), id(32))
+	other2 := All(id(0), id(2))
 
 	assert.False(t, mask.Contains(&other1))
 	assert.True(t, mask.Contains(&other2))
@@ -44,86 +43,86 @@ func TestBitMask(t *testing.T) {
 	mask.Reset()
 	assert.Equal(t, 0, mask.TotalBitsSet())
 
-	mask = ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27))
-	other1 = ecs.All(ecs.ID(1), ecs.ID(32))
-	other2 = ecs.All(ecs.ID(0), ecs.ID(32))
+	mask = All(id(1), id(2), id(13), id(27))
+	other1 = All(id(1), id(32))
+	other2 = All(id(0), id(32))
 
 	assert.True(t, mask.ContainsAny(&other1))
 	assert.False(t, mask.ContainsAny(&other2))
 }
 
 func TestBitMaskWithoutExclusive(t *testing.T) {
-	mask := ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13))
+	mask := All(id(1), id(2), id(13))
 
-	assert.True(t, mask.Matches(all(ecs.ID(1), ecs.ID(2), ecs.ID(13))))
-	assert.True(t, mask.Matches(all(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27))))
+	assert.True(t, mask.Matches(all(id(1), id(2), id(13))))
+	assert.True(t, mask.Matches(all(id(1), id(2), id(13), id(27))))
 
-	assert.False(t, mask.Matches(all(ecs.ID(1), ecs.ID(2))))
+	assert.False(t, mask.Matches(all(id(1), id(2))))
 
-	without := mask.Without(ecs.ID(3))
+	without := mask.Without(id(3))
 
-	assert.True(t, without.Matches(all(ecs.ID(1), ecs.ID(2), ecs.ID(13))))
-	assert.True(t, without.Matches(all(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27))))
+	assert.True(t, without.Matches(all(id(1), id(2), id(13))))
+	assert.True(t, without.Matches(all(id(1), id(2), id(13), id(27))))
 
-	assert.False(t, without.Matches(all(ecs.ID(1), ecs.ID(2), ecs.ID(3), ecs.ID(13))))
-	assert.False(t, without.Matches(all(ecs.ID(1), ecs.ID(2))))
+	assert.False(t, without.Matches(all(id(1), id(2), id(3), id(13))))
+	assert.False(t, without.Matches(all(id(1), id(2))))
 
 	excl := mask.Exclusive()
 
-	assert.True(t, excl.Matches(all(ecs.ID(1), ecs.ID(2), ecs.ID(13))))
-	assert.False(t, excl.Matches(all(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27))))
-	assert.False(t, excl.Matches(all(ecs.ID(1), ecs.ID(2), ecs.ID(3), ecs.ID(13))))
+	assert.True(t, excl.Matches(all(id(1), id(2), id(13))))
+	assert.False(t, excl.Matches(all(id(1), id(2), id(13), id(27))))
+	assert.False(t, excl.Matches(all(id(1), id(2), id(3), id(13))))
 }
 
 func TestBitMask256(t *testing.T) {
-	for i := 0; i < ecs.MaskTotalBits; i++ {
-		mask := ecs.All(ecs.ID(i))
+	for i := 0; i < MaskTotalBits; i++ {
+		mask := All(id(uint8(i)))
 		assert.Equal(t, 1, mask.TotalBitsSet())
-		assert.True(t, mask.Get(ecs.ID(i)))
+		assert.True(t, mask.Get(uint8(i)))
 	}
-	mask := ecs.Mask{}
+	mask := Mask{}
 	assert.Equal(t, 0, mask.TotalBitsSet())
 
-	for i := 0; i < ecs.MaskTotalBits; i++ {
-		mask.Set(ecs.ID(i), true)
+	for i := 0; i < MaskTotalBits; i++ {
+		mask.Set(uint8(i), true)
 		assert.Equal(t, i+1, mask.TotalBitsSet())
-		assert.True(t, mask.Get(ecs.ID(i)))
+		assert.True(t, mask.Get(uint8(i)))
 	}
 
-	mask = ecs.All(ecs.ID(1), ecs.ID(2), ecs.ID(13), ecs.ID(27), ecs.ID(63), ecs.ID(64), ecs.ID(65))
+	mask = All(id(1), id(2), id(13), id(27), id(63), id(64), id(65))
 
-	assert.True(t, mask.Contains(all(ecs.ID(1), ecs.ID(2), ecs.ID(63), ecs.ID(64))))
-	assert.False(t, mask.Contains(all(ecs.ID(1), ecs.ID(2), ecs.ID(63), ecs.ID(90))))
+	assert.True(t, mask.Contains(all(id(1), id(2), id(63), id(64))))
+	assert.False(t, mask.Contains(all(id(1), id(2), id(63), id(90))))
 
-	assert.True(t, mask.ContainsAny(all(ecs.ID(6), ecs.ID(65), ecs.ID(111))))
-	assert.False(t, mask.ContainsAny(all(ecs.ID(6), ecs.ID(66), ecs.ID(90))))
+	assert.True(t, mask.ContainsAny(all(id(6), id(65), id(111))))
+	assert.False(t, mask.ContainsAny(all(id(6), id(66), id(90))))
 }
 
 func TestBitMask64(t *testing.T) {
-	mask := newBitMask64(ecs.ID(1))
-	assert.True(t, mask.Get(ecs.ID(1)))
+	mask := newBitMask64(id(1))
+	assert.True(t, mask.Get(1))
 	for i := 0; i < 64; i++ {
-		mask.Set(ecs.ID(i), true)
-		assert.True(t, mask.Get(ecs.ID(i)))
-		mask.Set(ecs.ID(i), false)
-		assert.False(t, mask.Get(ecs.ID(i)))
+		mask.Set(uint8(i), true)
+		assert.True(t, mask.Get(uint8(i)))
+		mask.Set(uint8(i), false)
+		assert.False(t, mask.Get(uint8(i)))
 	}
 }
 
 func BenchmarkBitmask64Get(b *testing.B) {
 	b.StopTimer()
 	mask := newBitMask64()
-	for i := 0; i < ecs.MaskTotalBits; i++ {
+	for i := 0; i < MaskTotalBits; i++ {
 		if rand.Float64() < 0.5 {
-			mask.Set(ecs.ID(i), true)
+			mask.Set(uint8(i), true)
 		}
 	}
-	idx := ecs.ID(rand.Intn(ecs.MaskTotalBits / 2))
+	idx := id(uint8(rand.Intn(MaskTotalBits / 4)))
 	b.StartTimer()
 
 	var v bool
 	for i := 0; i < b.N; i++ {
-		v = mask.Get(idx)
+		v = mask.Get(idx.id)
 	}
 	b.StopTimer()
 	v = !v
@@ -132,18 +131,18 @@ func BenchmarkBitmask64Get(b *testing.B) {
 
 func BenchmarkBitmask256Get(b *testing.B) {
 	b.StopTimer()
-	mask := ecs.All()
-	for i := 0; i < ecs.MaskTotalBits; i++ {
+	mask := All()
+	for i := 0; i < MaskTotalBits; i++ {
 		if rand.Float64() < 0.5 {
-			mask.Set(ecs.ID(i), true)
+			mask.Set(uint8(i), true)
 		}
 	}
-	idx := ecs.ID(rand.Intn(ecs.MaskTotalBits))
+	idx := id(uint8(rand.Intn(MaskTotalBits)))
 	b.StartTimer()
 
 	var v bool
 	for i := 0; i < b.N; i++ {
-		v = mask.Get(idx)
+		v = mask.Get(idx.id)
 	}
 
 	b.StopTimer()
@@ -153,13 +152,13 @@ func BenchmarkBitmask256Get(b *testing.B) {
 
 func BenchmarkBitmaskContains(b *testing.B) {
 	b.StopTimer()
-	mask := ecs.All()
-	for i := 0; i < ecs.MaskTotalBits; i++ {
+	mask := All()
+	for i := 0; i < MaskTotalBits; i++ {
 		if rand.Float64() < 0.5 {
-			mask.Set(ecs.ID(i), true)
+			mask.Set(uint8(i), true)
 		}
 	}
-	filter := ecs.All(ecs.ID(rand.Intn(ecs.MaskTotalBits)))
+	filter := All(id(uint8(rand.Intn(MaskTotalBits))))
 	b.StartTimer()
 
 	var v bool
@@ -174,13 +173,13 @@ func BenchmarkBitmaskContains(b *testing.B) {
 
 func BenchmarkBitmaskContainsAny(b *testing.B) {
 	b.StopTimer()
-	mask := ecs.All()
-	for i := 0; i < ecs.MaskTotalBits; i++ {
+	mask := All()
+	for i := 0; i < MaskTotalBits; i++ {
 		if rand.Float64() < 0.5 {
-			mask.Set(ecs.ID(i), true)
+			mask.Set(uint8(i), true)
 		}
 	}
-	filter := ecs.All(ecs.ID(rand.Intn(ecs.MaskTotalBits)))
+	filter := All(id(uint8(rand.Intn(MaskTotalBits))))
 	b.StartTimer()
 
 	var v bool
@@ -195,8 +194,8 @@ func BenchmarkBitmaskContainsAny(b *testing.B) {
 
 func BenchmarkMaskFilter(b *testing.B) {
 	b.StopTimer()
-	mask := ecs.All(0, 1, 2).Without(3)
-	bits := ecs.All(0, 1, 2)
+	mask := All(id(0), id(1), id(2)).Without(id(3))
+	bits := All(id(0), id(1), id(2))
 	b.StartTimer()
 	var v bool
 	for i := 0; i < b.N; i++ {
@@ -209,8 +208,8 @@ func BenchmarkMaskFilter(b *testing.B) {
 
 func BenchmarkMaskFilterNoPointer(b *testing.B) {
 	b.StopTimer()
-	mask := maskFilterPointer{ecs.All(0, 1, 2), ecs.All(3)}
-	bits := ecs.All(0, 1, 2)
+	mask := maskFilterPointer{All(id(0), id(1), id(2)), All(id(3))}
+	bits := All(id(0), id(1), id(2))
 	b.StartTimer()
 	var v bool
 	for i := 0; i < b.N; i++ {
@@ -223,8 +222,8 @@ func BenchmarkMaskFilterNoPointer(b *testing.B) {
 
 func BenchmarkMaskPointer(b *testing.B) {
 	b.StopTimer()
-	mask := maskPointer(ecs.All(0, 1, 2))
-	bits := ecs.All(0, 1, 2)
+	mask := maskPointer(All(id(0), id(1), id(2)))
+	bits := All(id(0), id(1), id(2))
 	b.StartTimer()
 	var v bool
 	for i := 0; i < b.N; i++ {
@@ -237,8 +236,8 @@ func BenchmarkMaskPointer(b *testing.B) {
 
 func BenchmarkMask(b *testing.B) {
 	b.StopTimer()
-	mask := ecs.All(0, 1, 2)
-	bits := ecs.All(0, 1, 2)
+	mask := All(id(0), id(1), id(2))
+	bits := All(id(0), id(1), id(2))
 	b.StartTimer()
 	var v bool
 	for i := 0; i < b.N; i++ {
@@ -252,19 +251,19 @@ func BenchmarkMask(b *testing.B) {
 // bitMask64 is there just for performance comparison with the new 256 bit Mask.
 type bitMask64 uint64
 
-func newBitMask64(ids ...ecs.ID) bitMask64 {
+func newBitMask64(ids ...ID) bitMask64 {
 	var mask bitMask64
 	for _, id := range ids {
-		mask.Set(id, true)
+		mask.Set(id.id, true)
 	}
 	return mask
 }
-func (e bitMask64) Get(bit ecs.ID) bool {
+func (e bitMask64) Get(bit uint8) bool {
 	mask := bitMask64(1 << bit)
 	return e&mask == mask
 }
 
-func (e *bitMask64) Set(bit ecs.ID, value bool) {
+func (e *bitMask64) Set(bit uint8, value bool) {
 	if value {
 		*e |= bitMask64(1 << bit)
 	} else {
@@ -273,30 +272,30 @@ func (e *bitMask64) Set(bit ecs.ID, value bool) {
 }
 
 type maskFilterPointer struct {
-	Mask    ecs.Mask
-	Exclude ecs.Mask
+	Mask    Mask
+	Exclude Mask
 }
 
 // Matches a filter against a mask.
-func (f maskFilterPointer) Matches(bits ecs.Mask) bool {
+func (f maskFilterPointer) Matches(bits Mask) bool {
 	return bits.Contains(&f.Mask) &&
 		(f.Exclude.IsZero() || !bits.ContainsAny(&f.Exclude))
 }
 
-type maskPointer ecs.Mask
+type maskPointer Mask
 
 // Matches a filter against a mask.
-func (f *maskPointer) Matches(bits ecs.Mask) bool {
-	m := ecs.Mask(*f)
+func (f *maskPointer) Matches(bits Mask) bool {
+	m := Mask(*f)
 	return bits.Contains(&m)
 }
 
 func ExampleMask() {
-	world := ecs.NewWorld()
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
 
-	filter := ecs.All(posID, velID)
+	filter := All(posID, velID)
 	query := world.Query(filter)
 
 	for query.Next() {
@@ -306,11 +305,11 @@ func ExampleMask() {
 }
 
 func ExampleMask_Without() {
-	world := ecs.NewWorld()
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
 
-	filter := ecs.All(posID).Without(velID)
+	filter := All(posID).Without(velID)
 	query := world.Query(&filter)
 
 	for query.Next() {
@@ -320,11 +319,11 @@ func ExampleMask_Without() {
 }
 
 func ExampleMask_Exclusive() {
-	world := ecs.NewWorld()
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
 
-	filter := ecs.All(posID, velID).Exclusive()
+	filter := All(posID, velID).Exclusive()
 	query := world.Query(&filter)
 
 	for query.Next() {

@@ -68,16 +68,16 @@ func (b *Builder) NewBatch(count int, target ...Entity) {
 			panic("can't set target entity: builder has no relation")
 		}
 		if b.comps == nil {
-			b.world.newEntities(count, int8(b.targetID), target[0], b.ids...)
+			b.world.newEntities(count, b.targetID, true, target[0], b.ids...)
 			return
 		}
-		b.world.newEntitiesWith(count, int8(b.targetID), target[0], b.comps...)
+		b.world.newEntitiesWith(count, b.targetID, true, target[0], b.comps...)
 		return
 	}
 	if b.comps == nil {
-		b.world.newEntities(count, -1, Entity{}, b.ids...)
+		b.world.newEntities(count, ID{}, false, Entity{}, b.ids...)
 	} else {
-		b.world.newEntitiesWith(count, -1, Entity{}, b.comps...)
+		b.world.newEntitiesWith(count, ID{}, false, Entity{}, b.comps...)
 	}
 }
 
@@ -91,14 +91,14 @@ func (b *Builder) NewBatchQ(count int, target ...Entity) Query {
 			panic("can't set target entity: builder has no relation")
 		}
 		if b.comps == nil {
-			return b.world.newEntitiesQuery(count, int8(b.targetID), target[0], b.ids...)
+			return b.world.newEntitiesQuery(count, b.targetID, true, target[0], b.ids...)
 		}
-		return b.world.newEntitiesWithQuery(count, int8(b.targetID), target[0], b.comps...)
+		return b.world.newEntitiesWithQuery(count, b.targetID, true, target[0], b.comps...)
 	}
 	if b.comps == nil {
-		return b.world.newEntitiesQuery(count, -1, Entity{}, b.ids...)
+		return b.world.newEntitiesQuery(count, ID{}, false, Entity{}, b.ids...)
 	}
-	return b.world.newEntitiesWithQuery(count, -1, Entity{}, b.comps...)
+	return b.world.newEntitiesWithQuery(count, ID{}, false, Entity{}, b.comps...)
 }
 
 // Add the builder's components to an entity.
@@ -111,10 +111,10 @@ func (b *Builder) Add(entity Entity, target ...Entity) {
 			panic("can't set target entity: builder has no relation")
 		}
 		if b.comps == nil {
-			b.world.exchange(entity, b.ids, nil, int8(b.targetID), target[0])
+			b.world.exchange(entity, b.ids, nil, b.targetID, b.hasTarget, target[0])
 			return
 		}
-		b.world.assign(entity, int8(b.targetID), target[0], b.comps...)
+		b.world.assign(entity, b.targetID, b.hasTarget, target[0], b.comps...)
 		return
 	}
 	if b.comps == nil {

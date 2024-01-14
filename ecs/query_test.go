@@ -7,12 +7,12 @@ import (
 )
 
 func TestMask(t *testing.T) {
-	filter := All(0, 2, 4)
-	other := All(0, 1, 2)
+	filter := All(id(0), id(2), id(4))
+	other := All(id(0), id(1), id(2))
 
 	assert.False(t, filter.Matches(&other))
 
-	other = All(0, 1, 2, 3, 4)
+	other = All(id(0), id(1), id(2), id(3), id(4))
 	assert.True(t, filter.Matches(&other))
 }
 
@@ -455,7 +455,7 @@ func TestQueryIds(t *testing.T) {
 	query := world.Query(filter)
 
 	query.Next()
-	assert.Equal(t, query.Ids(), []ID{1})
+	assert.Equal(t, query.Ids(), []ID{id(1)})
 	query.Next()
-	assert.Equal(t, query.Ids(), []ID{0, 1})
+	assert.Equal(t, query.Ids(), []ID{id(0), id(1)})
 }

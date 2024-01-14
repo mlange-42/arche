@@ -11,8 +11,10 @@ import (
 func TestResources(t *testing.T) {
 	res := newResources()
 
-	posID, _ := res.registry.ComponentID(reflect.TypeOf(Position{}))
-	rotID, _ := res.registry.ComponentID(reflect.TypeOf(rotation{}))
+	posIDint, _ := res.registry.ComponentID(reflect.TypeOf(Position{}))
+	rotIDint, _ := res.registry.ComponentID(reflect.TypeOf(rotation{}))
+	posID := ResID{id: posIDint}
+	rotID := ResID{id: rotIDint}
 
 	assert.False(t, res.Has(posID))
 	assert.Nil(t, res.Get(posID))
@@ -40,8 +42,10 @@ func TestResources(t *testing.T) {
 func TestResourcesReset(t *testing.T) {
 	res := newResources()
 
-	posID, _ := res.registry.ComponentID(reflect.TypeOf(Position{}))
-	rotID, _ := res.registry.ComponentID(reflect.TypeOf(rotation{}))
+	posIDint, _ := res.registry.ComponentID(reflect.TypeOf(Position{}))
+	rotIDint, _ := res.registry.ComponentID(reflect.TypeOf(rotation{}))
+	posID := ResID{id: posIDint}
+	rotID := ResID{id: rotIDint}
 
 	res.Add(posID, &Position{1, 2})
 	res.Add(rotID, &rotation{5})
