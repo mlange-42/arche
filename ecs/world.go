@@ -1424,18 +1424,16 @@ func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
 // and with a capacity of 1 otherwise.
 func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) *archetype {
 	var arch *archetype
-	layouts := uint8(capacity(w.registry.Count(), int(layoutChunkSize)))
-	if layouts == 0 {
-		layouts = layoutChunkSize
-	}
+	layouts := capacityNonZero(w.registry.Count(), int(layoutChunkSize))
+
 	if node.HasRelation {
-		arch = node.CreateArchetype(layouts, target)
+		arch = node.CreateArchetype(uint8(layouts), target)
 	} else {
 		w.archetypes.Add(archetype{})
 		w.archetypeData.Add(archetypeData{})
 		archIndex := w.archetypes.Len() - 1
 		arch = w.archetypes.Get(archIndex)
-		arch.Init(node, w.archetypeData.Get(archIndex), archIndex, forStorage, layouts, target)
+		arch.Init(node, w.archetypeData.Get(archIndex), archIndex, forStorage, uint8(layouts), target)
 		node.SetArchetype(arch)
 	}
 	w.filterCache.addArchetype(arch)

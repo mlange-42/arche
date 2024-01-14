@@ -18,6 +18,19 @@ func capacity(size, increment int) int {
 }
 
 // Calculates the capacity required for size, given an increment.
+// Always returns a value greater than zero.
+func capacityNonZero(size, increment int) int {
+	if size == 0 {
+		return increment
+	}
+	cap := increment * (size / increment)
+	if size%increment != 0 {
+		cap += increment
+	}
+	return cap
+}
+
+// Calculates the capacity required for size, given an increment.
 func capacityU32(size, increment uint32) uint32 {
 	cap := increment * (size / increment)
 	if size%increment != 0 {
