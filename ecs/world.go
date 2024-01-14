@@ -21,6 +21,16 @@ func ComponentID[T any](w *World) ID {
 	return w.componentID(tp)
 }
 
+// ComponentIDs returns a list of all registered component IDs.
+func ComponentIDs(w *World) []ID {
+	intIds := w.registry.IDs
+	ids := make([]ID, len(intIds))
+	for i, iid := range intIds {
+		ids[i] = id(iid)
+	}
+	return ids
+}
+
 // TypeID returns the [ID] for a component type.
 // Registers the type if it is not already registered.
 //
@@ -50,6 +60,16 @@ func ComponentInfo(w *World, id ID) (CompInfo, bool) {
 func ResourceID[T any](w *World) ResID {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	return w.resourceID(tp)
+}
+
+// ResourceIDs returns a list of all registered resource IDs.
+func ResourceIDs(w *World) []ResID {
+	intIds := w.resources.registry.IDs
+	ids := make([]ResID, len(intIds))
+	for i, iid := range intIds {
+		ids[i] = ResID{id: iid}
+	}
+	return ids
 }
 
 // ResourceType returns the reflect.Type for a resource [ResID], and whether the ID is assigned.

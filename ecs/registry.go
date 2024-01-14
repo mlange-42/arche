@@ -11,6 +11,7 @@ type componentRegistry struct {
 	Types      []reflect.Type
 	Used       Mask
 	IsRelation Mask
+	IDs        []uint8
 }
 
 // newComponentRegistry creates a new ComponentRegistry.
@@ -20,6 +21,7 @@ func newComponentRegistry() componentRegistry {
 		Types:      make([]reflect.Type, MaskTotalBits),
 		Used:       Mask{},
 		IsRelation: Mask{},
+		IDs:        []uint8{},
 	}
 }
 
@@ -55,6 +57,7 @@ func (r *componentRegistry) registerComponent(tp reflect.Type, totalBits int) ui
 	if r.isRelation(tp) {
 		r.IsRelation.Set(id, true)
 	}
+	r.IDs = append(r.IDs, newID)
 	return newID
 }
 
@@ -66,6 +69,7 @@ func (r *componentRegistry) unregisterLastComponent() {
 	r.Types[newID] = nil
 	r.Used.Set(id, false)
 	r.IsRelation.Set(id, false)
+	r.IDs = r.IDs[:len(r.IDs)-1]
 }
 
 func (r *componentRegistry) isRelation(tp reflect.Type) bool {

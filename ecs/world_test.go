@@ -112,6 +112,25 @@ func TestWorldNewEntites(t *testing.T) {
 	}
 }
 
+func TestWorldIDs(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	rotID := ComponentID[rotation](&w)
+
+	res1ID := ResourceID[Position](&w)
+	res2ID := ResourceID[Velocity](&w)
+
+	assert.Equal(t, uint8(0), posID.id)
+	assert.Equal(t, uint8(1), rotID.id)
+
+	assert.Equal(t, uint8(0), res1ID.id)
+	assert.Equal(t, uint8(1), res2ID.id)
+
+	assert.Equal(t, []ID{id(0), id(1)}, ComponentIDs(&w))
+	assert.Equal(t, []ResID{{id: 0}, {id: 1}}, ResourceIDs(&w))
+}
+
 func TestWorldComponents(t *testing.T) {
 	w := NewWorld()
 
