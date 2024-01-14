@@ -13,7 +13,7 @@ func BenchmarkEntityAlive_1000(b *testing.B) {
 	posID := ComponentID[Position](&world)
 
 	entities := make([]Entity, 0, 1000)
-	q := world.newEntitiesQuery(1000, -1, Entity{}, posID)
+	q := world.newEntitiesQuery(1000, ID{}, false, Entity{}, posID)
 	for q.Next() {
 		entities = append(entities, q.Entity())
 	}
@@ -83,7 +83,7 @@ func BenchmarkNewEntitiesBatch_10_000_New(b *testing.B) {
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
 
-		world.newEntities(10000, -1, Entity{}, posID, velID)
+		world.newEntities(10000, ID{}, false, Entity{}, posID, velID)
 	}
 }
 
@@ -121,7 +121,7 @@ func BenchmarkNewEntitiesBatch_10_000_Reset(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		world.Reset()
-		world.newEntities(10000, -1, Entity{}, posID, velID)
+		world.newEntities(10000, ID{}, false, Entity{}, posID, velID)
 	}
 }
 
@@ -134,7 +134,7 @@ func BenchmarkRemoveEntities_10_000(b *testing.B) {
 		velID := ComponentID[Velocity](&world)
 
 		entities := make([]Entity, 10000)
-		q := world.newEntitiesQuery(10000, -1, Entity{}, posID, velID)
+		q := world.newEntitiesQuery(10000, ID{}, false, Entity{}, posID, velID)
 
 		cnt := 0
 		for q.Next() {
@@ -232,7 +232,7 @@ func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
 
-		q := world.newEntitiesQuery(10000, -1, Entity{}, posID, velID)
+		q := world.newEntitiesQuery(10000, ID{}, false, Entity{}, posID, velID)
 		q.Close()
 		b.StartTimer()
 		world.Batch().RemoveEntities(All(posID, velID))

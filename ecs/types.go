@@ -6,10 +6,18 @@ import "reflect"
 type eid uint32
 
 // ID is the component identifier type.
-type ID = uint8
+type ID struct {
+	id uint8
+}
+
+func id(id uint8) ID {
+	return ID{id: id}
+}
 
 // ResID is the resource identifier type.
-type ResID = uint8
+type ResID struct {
+	id uint8
+}
 
 // Component is a component ID/pointer pair.
 //

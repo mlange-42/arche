@@ -11,16 +11,16 @@ import (
 func runQuery1kArch(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
-	c.RegisterAll(&world)
+	ids := c.RegisterAll(&world)
 
 	perArch := count / 1000
 
 	for i := 0; i < 1024; i++ {
 		mask := i
 		add := make([]ecs.ID, 0, 11)
-		add = append(add, 10)
+		add = append(add, ids[10])
 		for j := 0; j < 10; j++ {
-			id := ecs.ID(j)
+			id := ids[j]
 			m := 1 << j
 			if mask&m == m {
 				add = append(add, id)
@@ -30,13 +30,13 @@ func runQuery1kArch(b *testing.B, count int) {
 			world.NewEntity(add...)
 		}
 	}
-	filter := ecs.All(10)
+	filter := ecs.All(ids[10])
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		query := world.Query(filter)
 		for query.Next() {
-			pos := (*c.TestStruct10)(query.Get(10))
+			pos := (*c.TestStruct10)(query.Get(ids[10]))
 			pos.Val = 1
 		}
 	}
@@ -45,16 +45,16 @@ func runQuery1kArch(b *testing.B, count int) {
 func runQuery1kArchCached(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
-	c.RegisterAll(&world)
+	ids := c.RegisterAll(&world)
 
 	perArch := count / 1000
 
 	for i := 0; i < 1024; i++ {
 		mask := i
 		add := make([]ecs.ID, 0, 11)
-		add = append(add, 10)
+		add = append(add, ids[10])
 		for j := 0; j < 10; j++ {
-			id := ecs.ID(j)
+			id := ids[j]
 			m := 1 << j
 			if mask&m == m {
 				add = append(add, id)
@@ -65,14 +65,14 @@ func runQuery1kArchCached(b *testing.B, count int) {
 		}
 	}
 
-	cf := world.Cache().Register(ecs.All(10))
+	cf := world.Cache().Register(ecs.All(ids[10]))
 	var filter ecs.Filter = &cf
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		query := world.Query(filter)
 		for query.Next() {
-			pos := (*c.TestStruct10)(query.Get(10))
+			pos := (*c.TestStruct10)(query.Get(ids[10]))
 			pos.Val = 1
 		}
 	}
@@ -81,16 +81,16 @@ func runQuery1kArchCached(b *testing.B, count int) {
 func runFilter1kArch(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
-	c.RegisterAll(&world)
+	ids := c.RegisterAll(&world)
 
 	perArch := count / 1000
 
 	for i := 0; i < 1024; i++ {
 		mask := i
 		add := make([]ecs.ID, 0, 11)
-		add = append(add, 10)
+		add = append(add, ids[10])
 		for j := 0; j < 10; j++ {
-			id := ecs.ID(j)
+			id := ids[j]
 			m := 1 << j
 			if mask&m == m {
 				add = append(add, id)
@@ -101,13 +101,13 @@ func runFilter1kArch(b *testing.B, count int) {
 			world.Add(entity, add...)
 		}
 	}
-	filter := filter.All(10)
+	filter := filter.All(ids[10])
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		query := world.Query(filter)
 		for query.Next() {
-			pos := (*c.TestStruct10)(query.Get(10))
+			pos := (*c.TestStruct10)(query.Get(ids[10]))
 			pos.Val = 1
 		}
 	}
@@ -116,7 +116,7 @@ func runFilter1kArch(b *testing.B, count int) {
 func runQuery1Of1kArch(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
-	c.RegisterAll(&world)
+	ids := c.RegisterAll(&world)
 
 	perArch := 2 * count / 1000
 
@@ -124,7 +124,7 @@ func runQuery1Of1kArch(b *testing.B, count int) {
 		mask := i
 		add := make([]ecs.ID, 0, 10)
 		for j := 0; j < 10; j++ {
-			id := ecs.ID(j)
+			id := ids[j]
 			m := 1 << j
 			if mask&m == m {
 				add = append(add, id)
@@ -136,14 +136,14 @@ func runQuery1Of1kArch(b *testing.B, count int) {
 		}
 	}
 
-	ecs.NewBuilder(&world, 10).NewBatch(count)
-	filter := ecs.All(10)
+	ecs.NewBuilder(&world, ids[10]).NewBatch(count)
+	filter := ecs.All(ids[10])
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		query := world.Query(filter)
 		for query.Next() {
-			pos := (*c.TestStruct6)(query.Get(10))
+			pos := (*c.TestStruct6)(query.Get(ids[10]))
 			pos.Val = 1
 		}
 	}
@@ -152,7 +152,7 @@ func runQuery1Of1kArch(b *testing.B, count int) {
 func runQuery1Of1kArchCached(b *testing.B, count int) {
 	b.StopTimer()
 	world := ecs.NewWorld()
-	c.RegisterAll(&world)
+	ids := c.RegisterAll(&world)
 
 	perArch := 2 * count / 1000
 
@@ -160,7 +160,7 @@ func runQuery1Of1kArchCached(b *testing.B, count int) {
 		mask := i
 		add := make([]ecs.ID, 0, 10)
 		for j := 0; j < 10; j++ {
-			id := ecs.ID(j)
+			id := ids[j]
 			m := 1 << j
 			if mask&m == m {
 				add = append(add, id)
@@ -172,16 +172,16 @@ func runQuery1Of1kArchCached(b *testing.B, count int) {
 		}
 	}
 
-	ecs.NewBuilder(&world, 10).NewBatch(count)
+	ecs.NewBuilder(&world, ids[10]).NewBatch(count)
 
-	cf := world.Cache().Register(ecs.All(10))
+	cf := world.Cache().Register(ecs.All(ids[10]))
 	var filter ecs.Filter = &cf
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
 		query := world.Query(filter)
 		for query.Next() {
-			pos := (*c.TestStruct10)(query.Get(10))
+			pos := (*c.TestStruct10)(query.Get(ids[10]))
 			pos.Val = 1
 		}
 	}

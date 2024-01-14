@@ -10,24 +10,24 @@ import (
 func TestQueryOptionalNot(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{1}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{1}})
 
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{1, 1}})
-	w.Assign(e1, ecs.Component{ID: 8, Comp: &testStruct8{}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{1, 1}})
+	w.Assign(e1, ecs.Component{ID: ids[8], Comp: &testStruct8{}})
 
-	w.Assign(e2, ecs.Component{ID: 0, Comp: &testStruct0{3}})
-	w.Assign(e2, ecs.Component{ID: 1, Comp: &testStruct1{3}})
-	w.Assign(e2, ecs.Component{ID: 2, Comp: &testStruct2{1, 1}})
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{3}})
+	w.Assign(e2, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
+	w.Assign(e2, ecs.Component{ID: ids[2], Comp: &testStruct2{1, 1}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	query2 := NewFilter2[testStruct0, testStruct1]().Query(&w)
 	cnt := 0
@@ -81,20 +81,20 @@ func TestQueryOptionalNot(t *testing.T) {
 func TestQuery0(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{}})
 
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e2, ecs.Component{ID: 0, Comp: &testStruct0{2}})
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	cnt := 0
 	filter :=
@@ -115,7 +115,7 @@ func TestQuery0(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -159,21 +159,21 @@ func TestQuery0(t *testing.T) {
 func TestQuery1(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
 
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 0, Comp: &testStruct0{0}})
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{0}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	cnt := 0
 	filter :=
@@ -196,7 +196,7 @@ func TestQuery1(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -239,24 +239,24 @@ func TestQuery1(t *testing.T) {
 func TestQuery2(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
-	w.Assign(e2, ecs.Component{ID: 0, Comp: &testStruct0{3}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
+	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{3}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
-	w.Assign(e2, ecs.Component{ID: 1, Comp: &testStruct1{4}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
+	w.Assign(e2, ecs.Component{ID: ids[1], Comp: &testStruct1{4}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	filter :=
 		NewFilter2[testStruct0, testStruct1]().
@@ -282,7 +282,7 @@ func TestQuery2(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -327,28 +327,28 @@ func TestQuery2(t *testing.T) {
 func TestQuery3(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
-	w.Assign(e2, ecs.Component{ID: 0, Comp: &testStruct0{3}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
+	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{3}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
-	w.Assign(e2, ecs.Component{ID: 1, Comp: &testStruct1{4}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
+	w.Assign(e2, ecs.Component{ID: ids[1], Comp: &testStruct1{4}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
-	w.Assign(e2, ecs.Component{ID: 2, Comp: &testStruct2{5, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[2], Comp: &testStruct2{5, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	cnt := 0
 	filter :=
@@ -373,7 +373,7 @@ func TestQuery3(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -418,32 +418,32 @@ func TestQuery3(t *testing.T) {
 func TestQuery4(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
-	w.Assign(e2, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
+	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
-	w.Assign(e2, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
+	w.Assign(e2, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
-	w.Assign(e2, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[3], Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	cnt := 0
 	filter :=
@@ -469,7 +469,7 @@ func TestQuery4(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -516,36 +516,36 @@ func TestQuery4(t *testing.T) {
 func TestQuery5(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
-	w.Assign(e2, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
+	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
-	w.Assign(e2, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
+	w.Assign(e2, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
-	w.Assign(e2, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[3], Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[4], Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	cnt := 0
 	filter :=
@@ -572,7 +572,7 @@ func TestQuery5(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -621,40 +621,40 @@ func TestQuery5(t *testing.T) {
 func TestQuery6(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
-	w.Assign(e2, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
+	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
-	w.Assign(e2, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
+	w.Assign(e2, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
-	w.Assign(e2, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[3], Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[4], Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[5], Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[5], Comp: &testStruct5{7, 0, 0, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[5], Comp: &testStruct5{7, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	cnt := 0
 	filter :=
@@ -682,7 +682,7 @@ func TestQuery6(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -731,44 +731,44 @@ func TestQuery6(t *testing.T) {
 func TestQuery7(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
-	w.Assign(e2, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
+	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
-	w.Assign(e2, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
+	w.Assign(e2, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
-	w.Assign(e2, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[3], Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[4], Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[5], Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[5], Comp: &testStruct5{7, 0, 0, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[5], Comp: &testStruct5{7, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
-	w.Assign(e2, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[6], Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[6], Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+	w.Assign(e2, ecs.Component{ID: ids[6], Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	cnt := 0
 	filter :=
@@ -800,7 +800,7 @@ func TestQuery7(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -849,40 +849,40 @@ func TestQuery7(t *testing.T) {
 func TestQuery8(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[3], Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[4], Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[5], Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[5], Comp: &testStruct5{7, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[6], Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[6], Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 7, Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 7, Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[7], Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[7], Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 9, Comp: &testStruct9{}})
+	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
 
 	cnt := 0
 	filter :=
@@ -915,7 +915,7 @@ func TestQuery8(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -964,43 +964,43 @@ func TestQuery8(t *testing.T) {
 func TestQuery9(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[3], Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[4], Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[5], Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[5], Comp: &testStruct5{7, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[6], Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[6], Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 7, Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 7, Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[7], Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[7], Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 8, Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[8], Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 9, Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[9], Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 10, Comp: &testStruct10{}})
+	w.Assign(e2, ecs.Component{ID: ids[10], Comp: &testStruct10{}})
 
 	cnt := 0
 	filter :=
@@ -1035,7 +1035,7 @@ func TestQuery9(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -1086,46 +1086,46 @@ func TestQuery9(t *testing.T) {
 func TestQuery10(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[3], Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[4], Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[5], Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[5], Comp: &testStruct5{7, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[6], Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[6], Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 7, Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 7, Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[7], Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[7], Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 8, Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[8], Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 9, Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 9, Comp: &testStruct9{11, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[9], Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[9], Comp: &testStruct9{11, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 10, Comp: &testStruct10{11, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[10], Comp: &testStruct10{11, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 11, Comp: &testStruct11{}})
+	w.Assign(e2, ecs.Component{ID: ids[11], Comp: &testStruct11{}})
 
 	cnt := 0
 	filter :=
@@ -1161,7 +1161,7 @@ func TestQuery10(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -1212,49 +1212,49 @@ func TestQuery10(t *testing.T) {
 func TestQuery11(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[3], Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[4], Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[5], Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[5], Comp: &testStruct5{7, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[6], Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[6], Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 7, Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 7, Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[7], Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[7], Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 8, Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[8], Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 9, Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 9, Comp: &testStruct9{11, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[9], Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[9], Comp: &testStruct9{11, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 10, Comp: &testStruct10{11, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 10, Comp: &testStruct10{12, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[10], Comp: &testStruct10{11, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[10], Comp: &testStruct10{12, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 11, Comp: &testStruct11{12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[11], Comp: &testStruct11{12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 12, Comp: &testStruct12{}})
+	w.Assign(e2, ecs.Component{ID: ids[12], Comp: &testStruct12{}})
 
 	cnt := 0
 	filter :=
@@ -1291,7 +1291,7 @@ func TestQuery11(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)
@@ -1342,52 +1342,52 @@ func TestQuery11(t *testing.T) {
 func TestQuery12(t *testing.T) {
 	w := ecs.NewWorld()
 
-	registerAll(&w)
+	ids := registerAll(&w)
 	relID := ecs.ComponentID[testRelationA](&w)
 
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: 0, Comp: &testStruct0{1}})
-	w.Assign(e1, ecs.Component{ID: 0, Comp: &testStruct0{2}})
+	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
+	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
 
-	w.Assign(e0, ecs.Component{ID: 1, Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: 1, Comp: &testStruct1{3}})
+	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
+	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
 
-	w.Assign(e0, ecs.Component{ID: 2, Comp: &testStruct2{3, 0}})
-	w.Assign(e1, ecs.Component{ID: 2, Comp: &testStruct2{4, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[2], Comp: &testStruct2{3, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{4, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 3, Comp: &testStruct3{4, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 3, Comp: &testStruct3{5, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[3], Comp: &testStruct3{4, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[3], Comp: &testStruct3{5, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 4, Comp: &testStruct4{5, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 4, Comp: &testStruct4{6, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[4], Comp: &testStruct4{5, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[4], Comp: &testStruct4{6, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 5, Comp: &testStruct5{6, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 5, Comp: &testStruct5{7, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[5], Comp: &testStruct5{6, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[5], Comp: &testStruct5{7, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 6, Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 6, Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[6], Comp: &testStruct6{7, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[6], Comp: &testStruct6{8, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 7, Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 7, Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[7], Comp: &testStruct7{8, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[7], Comp: &testStruct7{9, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 8, Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 8, Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{9, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[8], Comp: &testStruct8{10, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 9, Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 9, Comp: &testStruct9{11, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[9], Comp: &testStruct9{10, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[9], Comp: &testStruct9{11, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 10, Comp: &testStruct10{11, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 10, Comp: &testStruct10{12, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[10], Comp: &testStruct10{11, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[10], Comp: &testStruct10{12, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 11, Comp: &testStruct11{12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
-	w.Assign(e1, ecs.Component{ID: 11, Comp: &testStruct11{13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[11], Comp: &testStruct11{12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e1, ecs.Component{ID: ids[11], Comp: &testStruct11{13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e0, ecs.Component{ID: 12, Comp: &testStruct12{13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
+	w.Assign(e0, ecs.Component{ID: ids[12], Comp: &testStruct12{13, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}})
 
-	w.Assign(e2, ecs.Component{ID: 13, Comp: &testStruct13{}})
+	w.Assign(e2, ecs.Component{ID: ids[13], Comp: &testStruct13{}})
 
 	cnt := 0
 	filter :=
@@ -1425,7 +1425,7 @@ func TestQuery12(t *testing.T) {
 	filter.Unregister(&w)
 	assert.Panics(t, func() { filter.Unregister(&w) })
 
-	targ := w.NewEntity(0)
+	targ := w.NewEntity(ids[0])
 
 	w.Add(e0, relID)
 	w.Add(e1, relID)

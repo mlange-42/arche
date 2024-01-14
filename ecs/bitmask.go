@@ -58,8 +58,8 @@ func (b Mask) Exclusive() MaskFilter {
 //
 // Returns false for bit >= [MaskTotalBits].
 func (b *Mask) Get(bit ID) bool {
-	idx := bit / 64
-	offset := bit - (64 * idx)
+	idx := bit.id / 64
+	offset := bit.id - (64 * idx)
 	mask := uint64(1 << offset)
 	return b.bits[idx]&mask == mask
 }
@@ -68,8 +68,8 @@ func (b *Mask) Get(bit ID) bool {
 //
 // Has no effect for bit >= [MaskTotalBits].
 func (b *Mask) Set(bit ID, value bool) {
-	idx := bit / 64
-	offset := bit - (64 * idx)
+	idx := bit.id / 64
+	offset := bit.id - (64 * idx)
 	if value {
 		b.bits[idx] |= (1 << offset)
 	} else {

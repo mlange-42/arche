@@ -14,6 +14,7 @@
 * Removes `Mask.Lo` and `Mask.Hi`, internal mask representation is now private (#313)
 * `Filters.Matches(Mask)` became `Filters.Matches(*Mask)`; same for all `Filter` implementations (#313)  
 This change was necessary to get the same performance as before, despite the more heavyweight implementation of the now 256 bits `Mask`.
+* Component and resource IDs are now opaque types instead of type aliases for `uint8` (#329)
 
 ### Features
 
@@ -22,6 +23,7 @@ This change was necessary to get the same performance as before, despite the mor
 * Entities support JSON marshalling and unmarshalling (#319)
 * Adds methods `Entity.ID()` and `Entity.Gen()` for serialization purposes (#319)
 * The world's entity state can be extracted and re-established via `World.DumpEntities()` and `World.LoadEntities()` (#319, #326)
+* Adds functions `ComponentIDs(*World)` and `ResourceIDs(*World)` to get all registered IDs (#329)
 
 ### Performance
 

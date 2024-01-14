@@ -16,7 +16,7 @@ type compiledQuery struct {
 	cachedFilter   ecs.CachedFilter
 	filter         ecs.Filter
 	Ids            []ecs.ID
-	TargetComp     int8
+	TargetComp     ecs.ID
 	Target         ecs.Entity
 	HasTarget      bool
 	compiled       bool
@@ -25,9 +25,7 @@ type compiledQuery struct {
 }
 
 func newCompiledQuery() compiledQuery {
-	return compiledQuery{
-		TargetComp: -1,
-	}
+	return compiledQuery{}
 }
 
 // Compile compiles a generic filter.
@@ -44,12 +42,14 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 
 	if targetType == nil {
 		q.filter = &q.maskFilter
-		q.TargetComp = -1
+		q.TargetComp = ecs.ID{}
+		q.HasTarget = false
 	} else {
 
 		targetID := ecs.TypeID(w, targetType)
 
-		q.TargetComp = int8(targetID)
+		q.TargetComp = targetID
+		q.HasTarget = true
 
 		if !q.maskFilter.Include.Get(targetID) {
 			panic(fmt.Sprintf("relation component %v not in filter", targetType))

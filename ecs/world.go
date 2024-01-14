@@ -21,6 +21,16 @@ func ComponentID[T any](w *World) ID {
 	return w.componentID(tp)
 }
 
+// ComponentIDs returns a list of all registered component IDs.
+func ComponentIDs(w *World) []ID {
+	intIds := w.registry.IDs
+	ids := make([]ID, len(intIds))
+	for i, iid := range intIds {
+		ids[i] = id(iid)
+	}
+	return ids
+}
+
 // TypeID returns the [ID] for a component type.
 // Registers the type if it is not already registered.
 //
@@ -31,7 +41,7 @@ func TypeID(w *World, tp reflect.Type) ID {
 
 // ComponentInfo returns the [CompInfo] for a component [ID], and whether the ID is assigned.
 func ComponentInfo(w *World, id ID) (CompInfo, bool) {
-	tp, ok := w.registry.ComponentType(id)
+	tp, ok := w.registry.ComponentType(id.id)
 	if !ok {
 		return CompInfo{}, false
 	}
@@ -52,9 +62,19 @@ func ResourceID[T any](w *World) ResID {
 	return w.resourceID(tp)
 }
 
+// ResourceIDs returns a list of all registered resource IDs.
+func ResourceIDs(w *World) []ResID {
+	intIds := w.resources.registry.IDs
+	ids := make([]ResID, len(intIds))
+	for i, iid := range intIds {
+		ids[i] = ResID{id: iid}
+	}
+	return ids
+}
+
 // ResourceType returns the reflect.Type for a resource [ResID], and whether the ID is assigned.
 func ResourceType(w *World, id ResID) (reflect.Type, bool) {
-	return w.resources.registry.ComponentType(id)
+	return w.resources.registry.ComponentType(id.id)
 }
 
 // GetResource returns a pointer to the given resource type in the world.
@@ -101,14 +121,14 @@ type World struct {
 	entityPool     entityPool            // Pool for entities.
 	archetypes     pagedSlice[archetype] // Archetypes that have no relations components.
 	archetypeData  pagedSlice[archetypeData]
-	nodes          pagedSlice[archNode]  // The archetype graph.
-	nodeData       pagedSlice[nodeData]  // The archetype graph's data.
-	nodePointers   []*archNode           // Helper list of all node pointers for queries.
-	relationNodes  []*archNode           // Archetype nodes that have an entity relation.
-	locks          lockMask              // World locks.
-	registry       componentRegistry[ID] // Component registry.
-	filterCache    Cache                 // Cache for registered filters.
-	stats          stats.WorldStats      // Cached world statistics
+	nodes          pagedSlice[archNode] // The archetype graph.
+	nodeData       pagedSlice[nodeData] // The archetype graph's data.
+	nodePointers   []*archNode          // Helper list of all node pointers for queries.
+	relationNodes  []*archNode          // Archetype nodes that have an entity relation.
+	locks          lockMask             // World locks.
+	registry       componentRegistry    // Component registry.
+	filterCache    Cache                // Cache for registered filters.
+	stats          stats.WorldStats     // Cached world statistics
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -153,7 +173,7 @@ func fromConfig(conf Config) World {
 		resources:      newResources(),
 		filterCache:    newCache(),
 	}
-	node := w.createArchetypeNode(Mask{}, -1)
+	node := w.createArchetypeNode(Mask{}, ID{}, false)
 	w.createArchetype(node, Entity{}, false)
 	return w
 }
@@ -296,8 +316,8 @@ func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Compone
 
 // Creates new entities without returning a query over them.
 // Used via [World.Batch].
-func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID) (*archetype, uint32) {
-	arch, startIdx := w.newEntitiesNoNotify(count, targetID, target, comps...)
+func (w *World) newEntities(count int, targetID ID, hasTarget bool, target Entity, comps ...ID) (*archetype, uint32) {
+	arch, startIdx := w.newEntitiesNoNotify(count, targetID, hasTarget, target, comps...)
 
 	if w.listener != nil {
 		cnt := uint32(count)
@@ -314,8 +334,8 @@ func (w *World) newEntities(count int, targetID int8, target Entity, comps ...ID
 
 // Creates new entities and returns a query over them.
 // Used via [World.Batch].
-func (w *World) newEntitiesQuery(count int, targetID int8, target Entity, comps ...ID) Query {
-	arch, startIdx := w.newEntitiesNoNotify(count, targetID, target, comps...)
+func (w *World) newEntitiesQuery(count int, targetID ID, hasTarget bool, target Entity, comps ...ID) Query {
+	arch, startIdx := w.newEntitiesNoNotify(count, targetID, hasTarget, target, comps...)
 	lock := w.lock()
 
 	batches := batchArchetypes{
@@ -328,13 +348,13 @@ func (w *World) newEntitiesQuery(count int, targetID int8, target Entity, comps 
 
 // Creates new entities with component values without returning a query over them.
 // Used via [World.Batch].
-func (w *World) newEntitiesWith(count int, targetID int8, target Entity, comps ...Component) (*archetype, uint32) {
+func (w *World) newEntitiesWith(count int, targetID ID, hasTarget bool, target Entity, comps ...Component) (*archetype, uint32) {
 	ids := make([]ID, len(comps))
 	for i, c := range comps {
 		ids[i] = c.ID
 	}
 
-	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, target, ids, comps...)
+	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, hasTarget, target, ids, comps...)
 
 	if w.listener != nil {
 		var i uint32
@@ -351,13 +371,13 @@ func (w *World) newEntitiesWith(count int, targetID int8, target Entity, comps .
 
 // Creates new entities with component values and returns a query over them.
 // Used via [World.Batch].
-func (w *World) newEntitiesWithQuery(count int, targetID int8, target Entity, comps ...Component) Query {
+func (w *World) newEntitiesWithQuery(count int, targetID ID, hasTarget bool, target Entity, comps ...Component) Query {
 	ids := make([]ID, len(comps))
 	for i, c := range comps {
 		ids[i] = c.ID
 	}
 
-	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, target, ids, comps...)
+	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, hasTarget, target, ids, comps...)
 	lock := w.lock()
 	batches := batchArchetypes{
 		Added:   arch.Components(),
@@ -547,18 +567,18 @@ func (w *World) Add(entity Entity, comps ...ID) {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Assign(entity Entity, comps ...Component) {
-	w.assign(entity, -1, Entity{}, comps...)
+	w.assign(entity, ID{}, false, Entity{}, comps...)
 }
 
 // assign with relation target.
-func (w *World) assign(entity Entity, relation int8, target Entity, comps ...Component) {
+func (w *World) assign(entity Entity, relation ID, hasRelation bool, target Entity, comps ...Component) {
 	len := len(comps)
 	if len == 0 {
 		panic("no components given to assign")
 	}
 	if len == 1 {
 		c := comps[0]
-		w.exchange(entity, []ID{c.ID}, nil, relation, target)
+		w.exchange(entity, []ID{c.ID}, nil, relation, hasRelation, target)
 		w.copyTo(entity, c.ID, c.Comp)
 		return
 	}
@@ -566,7 +586,7 @@ func (w *World) assign(entity Entity, relation int8, target Entity, comps ...Com
 	for i, c := range comps {
 		ids[i] = c.ID
 	}
-	w.exchange(entity, ids, nil, relation, target)
+	w.exchange(entity, ids, nil, relation, hasRelation, target)
 	for _, c := range comps {
 		w.copyTo(entity, c.ID, c.Comp)
 	}
@@ -611,11 +631,11 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Exchange].
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
-	w.exchange(entity, add, rem, -1, Entity{})
+	w.exchange(entity, add, rem, ID{}, false, Entity{})
 }
 
 // exchange with relation target.
-func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, target Entity) {
+func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) {
 	w.checkLocked()
 
 	if !w.entityPool.Alive(entity) {
@@ -631,11 +651,11 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, targe
 	oldMask := oldArch.Mask
 	mask := w.getExchangeMask(oldMask, add, rem)
 
-	if relation >= 0 {
-		if !mask.Get(ID(relation)) {
+	if hasRelation {
+		if !mask.Get(relation) {
 			panic("can't add relation: resulting entity has no relation")
 		}
-		if !w.registry.IsRelation.Get(ID(relation)) {
+		if !w.registry.IsRelation.Get(relation) {
 			panic("can't add relation: this is not a relation component")
 		}
 	} else {
@@ -673,13 +693,13 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation int8, targe
 func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 	for _, comp := range add {
 		if mask.Get(comp) {
-			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp]))
+			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp.id]))
 		}
 		mask.Set(comp, true)
 	}
 	for _, comp := range rem {
 		if !mask.Get(comp) {
-			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp]))
+			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp.id]))
 		}
 		mask.Set(comp, false)
 	}
@@ -950,16 +970,16 @@ func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, 
 }
 
 func (w *World) checkRelation(arch *archetype, comp ID) {
-	if arch.node.Relation != int8(comp) {
+	if arch.node.Relation.id != comp.id {
 		w.relationError(arch, comp)
 	}
 }
 
 func (w *World) relationError(arch *archetype, comp ID) {
 	if !arch.HasComponent(comp) {
-		panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp]))
+		panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp.id]))
 	}
-	panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp]))
+	panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp.id]))
 }
 
 // Reset removes all entities and resources from the world.
@@ -1062,7 +1082,7 @@ func (w *World) Ids(entity Entity) []ID {
 
 // ComponentType returns the reflect.Type for a given component ID, as well as whether the ID is in use.
 func (w *World) ComponentType(id ID) (reflect.Type, bool) {
-	return w.registry.ComponentType(id)
+	return w.registry.ComponentType(id.id)
 }
 
 // SetListener sets a listener callback func(e *EntityEvent) for the world.
@@ -1203,7 +1223,7 @@ func (w *World) checkLocked() {
 }
 
 // Internal method to create new entities.
-func (w *World) newEntitiesNoNotify(count int, targetID int8, target Entity, comps ...ID) (*archetype, uint32) {
+func (w *World) newEntitiesNoNotify(count int, targetID ID, hasTarget bool, target Entity, comps ...ID) (*archetype, uint32) {
 	w.checkLocked()
 
 	if count < 1 {
@@ -1218,8 +1238,8 @@ func (w *World) newEntitiesNoNotify(count int, targetID int8, target Entity, com
 	if len(comps) > 0 {
 		arch = w.findOrCreateArchetype(arch, comps, nil, target)
 	}
-	if targetID >= 0 {
-		w.checkRelation(arch, uint8(targetID))
+	if hasTarget {
+		w.checkRelation(arch, targetID)
 		if !target.IsZero() {
 			w.targetEntities.Set(target.id, true)
 		}
@@ -1232,7 +1252,7 @@ func (w *World) newEntitiesNoNotify(count int, targetID int8, target Entity, com
 }
 
 // Internal method to create new entities with component values.
-func (w *World) newEntitiesWithNoNotify(count int, targetID int8, target Entity, ids []ID, comps ...Component) (*archetype, uint32) {
+func (w *World) newEntitiesWithNoNotify(count int, targetID ID, hasTarget bool, target Entity, ids []ID, comps ...Component) (*archetype, uint32) {
 	w.checkLocked()
 
 	if count < 1 {
@@ -1244,7 +1264,7 @@ func (w *World) newEntitiesWithNoNotify(count int, targetID int8, target Entity,
 	}
 
 	if len(comps) == 0 {
-		return w.newEntitiesNoNotify(count, targetID, target)
+		return w.newEntitiesNoNotify(count, targetID, hasTarget, target)
 	}
 
 	cnt := uint32(count)
@@ -1253,8 +1273,8 @@ func (w *World) newEntitiesWithNoNotify(count int, targetID int8, target Entity,
 	if len(comps) > 0 {
 		arch = w.findOrCreateArchetype(arch, ids, nil, target)
 	}
-	if targetID >= 0 {
-		w.checkRelation(arch, uint8(targetID))
+	if hasTarget {
+		w.checkRelation(arch, targetID)
 		if !target.IsZero() {
 			w.targetEntities.Set(target.id, true)
 		}
@@ -1341,34 +1361,37 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 	curr := start.node
 	mask := start.Mask
 	relation := start.RelationComponent
+	hasRelation := start.HasRelationComponent
 	for _, id := range rem {
 		mask.Set(id, false)
 		if w.registry.IsRelation.Get(id) {
-			relation = -1
+			relation = ID{}
+			hasRelation = false
 		}
-		if next, ok := curr.TransitionRemove.Get(id); ok {
+		if next, ok := curr.TransitionRemove.Get(id.id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask, relation)
-			next.TransitionAdd.Set(id, curr)
-			curr.TransitionRemove.Set(id, next)
+			next, _ := w.findOrCreateArchetypeSlow(mask, relation, hasRelation)
+			next.TransitionAdd.Set(id.id, curr)
+			curr.TransitionRemove.Set(id.id, next)
 			curr = next
 		}
 	}
 	for _, id := range add {
 		mask.Set(id, true)
 		if w.registry.IsRelation.Get(id) {
-			if relation >= 0 {
+			if hasRelation {
 				panic("entity already has a relation component")
 			}
-			relation = int8(id)
+			relation = id
+			hasRelation = true
 		}
-		if next, ok := curr.TransitionAdd.Get(id); ok {
+		if next, ok := curr.TransitionAdd.Get(id.id); ok {
 			curr = next
 		} else {
-			next, _ := w.findOrCreateArchetypeSlow(mask, relation)
-			next.TransitionRemove.Set(id, curr)
-			curr.TransitionAdd.Set(id, next)
+			next, _ := w.findOrCreateArchetypeSlow(mask, relation, hasRelation)
+			next.TransitionRemove.Set(id.id, curr)
+			curr.TransitionAdd.Set(id.id, next)
 			curr = next
 		}
 	}
@@ -1381,11 +1404,11 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 
 // Tries to find an archetype for a mask, when it can't be reached through the archetype graph.
 // Creates an archetype graph node.
-func (w *World) findOrCreateArchetypeSlow(mask Mask, relation int8) (*archNode, bool) {
+func (w *World) findOrCreateArchetypeSlow(mask Mask, relation ID, hasRelation bool) (*archNode, bool) {
 	if arch, ok := w.findArchetypeSlow(mask); ok {
 		return arch, false
 	}
-	return w.createArchetypeNode(mask, relation), true
+	return w.createArchetypeNode(mask, relation, hasRelation), true
 }
 
 // Searches for an archetype by a mask.
@@ -1402,16 +1425,16 @@ func (w *World) findArchetypeSlow(mask Mask) (*archNode, bool) {
 }
 
 // Creates a node in the archetype graph.
-func (w *World) createArchetypeNode(mask Mask, relation int8) *archNode {
+func (w *World) createArchetypeNode(mask Mask, relation ID, hasRelation bool) *archNode {
 	capInc := w.config.CapacityIncrement
-	if relation >= 0 {
+	if hasRelation {
 		capInc = w.config.RelationCapacityIncrement
 	}
 
 	types := maskToTypes(mask, &w.registry)
 
 	w.nodeData.Add(nodeData{})
-	w.nodes.Add(newArchNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, capInc, types))
+	w.nodes.Add(newArchNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, hasRelation, capInc, types))
 	nd := w.nodes.Get(w.nodes.Len() - 1)
 	w.relationNodes = append(w.relationNodes, nd)
 	w.nodePointers = append(w.nodePointers, nd)
@@ -1525,13 +1548,13 @@ func (w *World) componentID(tp reflect.Type) ID {
 			w.extendArchetypeLayouts(id + layoutChunkSize)
 		}
 	}
-	return id
+	return ID{id: id}
 }
 
 // resourceID returns the ID for a resource type, and registers it if not already registered.
 func (w *World) resourceID(tp reflect.Type) ResID {
 	id, _ := w.resources.registry.ComponentID(tp)
-	return id
+	return ResID{id: id}
 }
 
 // closeQuery closes a query and unlocks the world.

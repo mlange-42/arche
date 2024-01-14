@@ -11,9 +11,9 @@ import (
 type archNode struct {
 	*nodeData
 	Mask        Mask // Mask of the archetype
-	Relation    int8 // The node's relation component ID. Negative value stands for no relation
-	IsActive    bool
+	Relation    ID
 	HasRelation bool
+	IsActive    bool
 }
 
 type nodeData struct {
@@ -32,9 +32,9 @@ type nodeData struct {
 }
 
 // Creates a new archNode
-func newArchNode(mask Mask, data *nodeData, relation int8, capacityIncrement int, components []componentType) archNode {
+func newArchNode(mask Mask, data *nodeData, relation ID, hasRelation bool, capacityIncrement int, components []componentType) archNode {
 	var arch map[Entity]*archetype
-	if relation >= 0 {
+	if hasRelation {
 		arch = map[Entity]*archetype{}
 	}
 	ids := make([]ID, len(components))
@@ -43,10 +43,10 @@ func newArchNode(mask Mask, data *nodeData, relation int8, capacityIncrement int
 	var maxSize uintptr = 0
 	prev := -1
 	for i, c := range components {
-		if int(c.ID) <= prev {
+		if int(c.ID.id) <= prev {
 			panic("component arguments must be sorted by ID")
 		}
-		prev = int(c.ID)
+		prev = int(c.ID.id)
 
 		ids[i] = c.ID
 		types[i] = c.Type
@@ -77,7 +77,7 @@ func newArchNode(mask Mask, data *nodeData, relation int8, capacityIncrement int
 		nodeData:    data,
 		Mask:        mask,
 		Relation:    relation,
-		HasRelation: relation >= 0,
+		HasRelation: hasRelation,
 	}
 }
 
@@ -101,7 +101,7 @@ func (a *archNode) Archetypes() archetypes {
 //
 // The target is ignored if the node has no relation component.
 func (a *archNode) GetArchetype(target Entity) *archetype {
-	if a.Relation >= 0 {
+	if a.HasRelation {
 		return a.archetypeMap[target]
 	}
 	return a.archetype
@@ -186,12 +186,12 @@ func (a *archNode) Reset(cache *Cache) {
 }
 
 // Stats generates statistics for an archetype node.
-func (a *archNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
+func (a *archNode) Stats(reg *componentRegistry) stats.NodeStats {
 	ids := a.Ids
 	aCompCount := len(ids)
 	aTypes := make([]reflect.Type, aCompCount)
 	for j, id := range ids {
-		aTypes[j], _ = reg.ComponentType(id)
+		aTypes[j], _ = reg.ComponentType(id.id)
 	}
 
 	arches := a.Archetypes()
@@ -214,7 +214,9 @@ func (a *archNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 	}
 
 	memPerEntity := 0
-	for j := range ids {
+	intIDs := make([]uint8, len(ids))
+	for j, id := range ids {
+		intIDs[j] = id.id
 		memPerEntity += int(aTypes[j].Size())
 	}
 
@@ -224,7 +226,7 @@ func (a *archNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 		IsActive:             a.IsActive,
 		HasRelation:          a.HasRelation,
 		Components:           aCompCount,
-		ComponentIDs:         ids,
+		ComponentIDs:         intIDs,
 		ComponentTypes:       aTypes,
 		Memory:               memory,
 		MemoryPerEntity:      memPerEntity,
@@ -235,7 +237,7 @@ func (a *archNode) Stats(reg *componentRegistry[ID]) stats.NodeStats {
 }
 
 // UpdateStats updates statistics for an archetype node.
-func (a *archNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry[ID]) {
+func (a *archNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry) {
 	if !a.IsActive {
 		return
 	}

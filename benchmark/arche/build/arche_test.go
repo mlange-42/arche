@@ -11,14 +11,14 @@ func BenchmarkBuild1kArch(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
 		world := ecs.NewWorld()
-		c.RegisterAll(&world)
+		ids := c.RegisterAll(&world)
 		b.StartTimer()
 
 		for i := 0; i < 1024; i++ {
 			mask := i
 			add := make([]ecs.ID, 0, 10)
 			for j := 0; j < 10; j++ {
-				id := ecs.ID(j)
+				id := ids[j]
 				m := 1 << j
 				if mask&m == m {
 					add = append(add, id)

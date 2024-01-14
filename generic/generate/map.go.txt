@@ -14,7 +14,8 @@
 type Map{{ .Index }}{{ .TypesFull }} struct {
 	world *ecs.World
 	mask ecs.Mask
-	relation int8
+	relation ecs.ID
+	hasRelation bool
 	ids []ecs.ID
 	{{ .IDTypes }}
 }
@@ -29,9 +30,11 @@ func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World, relation ...Comp) Map{{ .I
 	}
 	m.ids = []ecs.ID{ {{ .IDList }} }
 	m.mask = ecs.All(m.ids...)
-	m.relation = -1
+	m.relation = ecs.ID{}
+	m.hasRelation = false
 	if len(relation) > 0 {
-		m.relation = int8(ecs.TypeID(w, relation[0]))
+		m.relation = ecs.TypeID(w, relation[0])
+		m.hasRelation = true
 	}
 	return m
 }
@@ -60,7 +63,7 @@ func (m *Map{{ .Index }}{{ .Types }}) GetUnchecked(entity ecs.Entity) ({{ .Types
 //
 // See also [ecs.World.NewEntity].
 func (m *Map{{ .Index }}{{ .Types }}) New(target ...ecs.Entity) ecs.Entity {
-	return newEntity(m.world, m.ids, m.relation, target...)
+	return newEntity(m.world, m.ids, m.relation, m.hasRelation, target...)
 }
 
 // NewBatch creates entities with the Map{{ .Index }}'s components.
@@ -69,7 +72,7 @@ func (m *Map{{ .Index }}{{ .Types }}) New(target ...ecs.Entity) ecs.Entity {
 //
 // See also [Map{{ .Index }}.NewBatchQ] and [ecs.Batch.NewBatch].
 func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int, target ...ecs.Entity) {
-	newBatch(m.world, count, m.ids, m.relation, target...)
+	newBatch(m.world, count, m.ids, m.relation, m.hasRelation, target...)
 }
 
 // NewBatchQ creates entities with the Map{{ .Index }}'s components.
@@ -81,7 +84,7 @@ func (m *Map{{ .Index }}{{ .Types }}) NewBatch(count int, target ...ecs.Entity) 
 //
 // See also [Map{{ .Index }}.NewBatch] and [ecs.Builder.NewBatchQ].
 func (m *Map{{ .Index }}{{ .Types }}) NewBatchQ(count int, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
-	query := newQuery(m.world, count, m.ids, m.relation, target...)
+	query := newQuery(m.world, count, m.ids, m.relation, m.hasRelation, target...)
 	return Query{{ .Index }}{{ .Types }}{
 		Query: query,
 		{{ .IDAssign2 }}
@@ -98,10 +101,10 @@ func (m *Map{{ .Index }}{{ .Types }}) NewWith({{ .Arguments }}, target ...ecs.En
 	if len(target) == 0 {
 		return m.world.NewEntityWith({{ .Components }})
 	}
-	if m.relation < 0 {
+	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, {{ .Components }}).WithRelation(uint8(m.relation)).New(target[0])
+	return ecs.NewBuilderWith(m.world, {{ .Components }}).WithRelation(m.relation).New(target[0])
 }
 
 // Add the Map{{ .Index }}'s components to the given entity.

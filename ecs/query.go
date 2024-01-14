@@ -105,8 +105,8 @@ func (q *Query) Entity() Entity {
 //
 // Panics if the entity does not have the given component, or if the component is not a [Relation].
 func (q *Query) Relation(comp ID) Entity {
-	if q.access.RelationComponent != int8(comp) {
-		panic(fmt.Sprintf("entity has no component %v, or it is not a relation component", q.world.registry.Types[comp]))
+	if q.access.RelationComponent.id != comp.id {
+		panic(fmt.Sprintf("entity has no component %v, or it is not a relation component", q.world.registry.Types[comp.id]))
 	}
 	return q.access.RelationTarget
 }
