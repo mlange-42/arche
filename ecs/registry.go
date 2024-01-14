@@ -1,6 +1,9 @@
 package ecs
 
-import "reflect"
+import (
+	"fmt"
+	"reflect"
+)
 
 // componentRegistry keeps track of component IDs.
 type componentRegistry[T uint8] struct {
@@ -41,10 +44,11 @@ func (r *componentRegistry[T]) Count() int {
 
 // registerComponent registers a components and assigns an ID for it.
 func (r *componentRegistry[T]) registerComponent(tp reflect.Type, totalBits int) T {
-	id := T(len(r.Components))
-	if int(id) >= totalBits {
-		panic("maximum of 256 component types exceeded")
+	val := len(r.Components)
+	if val >= totalBits {
+		panic(fmt.Sprintf("maximum of %d component types exceeded", totalBits))
 	}
+	id := T(val)
 	r.Components[tp], r.Types[id] = id, tp
 	r.Used.Set(uint8(id), true)
 	if r.isRelation(tp) {
