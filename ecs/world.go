@@ -651,6 +651,9 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 // Exchange adds and removes components in one pass.
 // This is more efficient than subsequent use of [World.Add] and [World.Remove].
 //
+// When a [Relation] component is removed and another one is added,
+// the target entity of the relation remains unchanged.
+//
 // Panics:
 //   - when called for a removed (and potentially recycled) entity.
 //   - when called with components that can't be added or removed because they are already present/not present, respectively.
