@@ -250,7 +250,7 @@ func BenchmarkMaskPointer(b *testing.B) {
 	_ = v
 }
 
-func BenchmarkMask(b *testing.B) {
+func BenchmarkMaskMatch(b *testing.B) {
 	b.StopTimer()
 	mask := All(id(0), id(1), id(2))
 	bits := All(id(0), id(1), id(2))
@@ -262,6 +262,18 @@ func BenchmarkMask(b *testing.B) {
 	b.StopTimer()
 	v = !v
 	_ = v
+}
+
+func BenchmarkMaskCopy(b *testing.B) {
+	b.StopTimer()
+	mask := All(id(0), id(1), id(2))
+	var tempMask Mask
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		tempMask = mask
+	}
+	b.StopTimer()
+	_ = tempMask
 }
 
 // bitMask64 is there just for performance comparison with the new 256 bit Mask.
