@@ -15,9 +15,6 @@ package ecs
 // Events for batch-creation of entities using a [Builder] are fired after all entities are created.
 // For batch methods that return a [Query], events are fired after the [Query] is closed (or fully iterated).
 // This allows the [World] to be in an unlocked state, and notifies after potential entity initialization.
-//
-// Note that the event pointer received by the listener function should not be stored,
-// as the instance behind the pointer might be reused for further notifications.
 type EntityEvent struct {
 	Entity                   Entity // The entity that was changed.
 	OldMask                  Mask   // The old component masks. Get the new mask with [World.Mask].

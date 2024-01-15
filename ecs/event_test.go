@@ -45,12 +45,29 @@ func BenchmarkEntityEventCreate(b *testing.B) {
 	mask := ecs.All(posID)
 	added := []ecs.ID{posID}
 
+	var event ecs.EntityEvent
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		event = ecs.EntityEvent{Entity: e, OldMask: mask, Added: added, Removed: nil, AddedRemoved: 0}
+	}
+	b.StopTimer()
+	_ = event
+}
+
+func BenchmarkEntityEventHeapPointer(b *testing.B) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+	posID := ecs.ComponentID[Position](&world)
+	e := world.NewEntity()
+	mask := ecs.All(posID)
+	added := []ecs.ID{posID}
+
 	var event *ecs.EntityEvent
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		temp := ecs.EntityEvent{Entity: e, OldMask: mask, Added: added, Removed: nil, AddedRemoved: 0}
-		event = &temp
+		event = &ecs.EntityEvent{Entity: e, OldMask: mask, Added: added, Removed: nil, AddedRemoved: 0}
 	}
 	b.StopTimer()
 	_ = event
@@ -93,11 +110,11 @@ func BenchmarkEntityEventPointerReuse(b *testing.B) {
 func ExampleEntityEvent() {
 	world := ecs.NewWorld()
 
-	listener := func(evt *ecs.EntityEvent) {
+	listener := func(evt ecs.EntityEvent) {
 		fmt.Println(evt)
 	}
 	world.SetListener(listener)
 
 	world.NewEntity()
-	// Output: &{{1 0} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1 false false}
+	// Output: {{1 0} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1 false false}
 }

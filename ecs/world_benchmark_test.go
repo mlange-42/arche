@@ -319,7 +319,8 @@ func BenchmarkWorldNewEntityEvent_1000(b *testing.B) {
 	builder.NewBatch(1000)
 	world.Batch().RemoveEntities(filterPos)
 
-	world.SetListener(func(e *EntityEvent) {})
+	var temp int8
+	world.SetListener(func(e EntityEvent) { temp = e.AddedRemoved })
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
@@ -329,6 +330,7 @@ func BenchmarkWorldNewEntityEvent_1000(b *testing.B) {
 		b.StopTimer()
 		world.Batch().RemoveEntities(filterPos)
 	}
+	_ = temp
 }
 
 func BenchmarkWorldExchangeNoEvent_1000(b *testing.B) {
@@ -395,7 +397,8 @@ func BenchmarkWorldExchangeEvent_1000(b *testing.B) {
 	world.Batch().Exchange(filterPos, vel, pos)
 	world.Batch().Exchange(filterVel, pos, vel)
 
-	world.SetListener(func(e *EntityEvent) {})
+	var temp int8
+	world.SetListener(func(e EntityEvent) { temp = e.AddedRemoved })
 
 	b.StartTimer()
 	hasPos := true
@@ -411,6 +414,7 @@ func BenchmarkWorldExchangeEvent_1000(b *testing.B) {
 		}
 		hasPos = !hasPos
 	}
+	_ = temp
 }
 
 func BenchmarkWorldExchangeBatchNoEvent_1000(b *testing.B) {
@@ -422,11 +426,7 @@ func BenchmarkWorldExchangeBatchNoEvent_1000(b *testing.B) {
 	velID := ComponentID[Velocity](&world)
 
 	builder := NewBuilder(&world, posID)
-	entities := make([]Entity, 0, 1000)
-	query := builder.NewBatchQ(1000)
-	for query.Next() {
-		entities = append(entities, query.Entity())
-	}
+	builder.NewBatch(1000)
 
 	filterPos := All(posID)
 	filterVel := All(velID)
@@ -453,17 +453,12 @@ func BenchmarkWorldExchangeBatchEvent_1000(b *testing.B) {
 	b.StopTimer()
 
 	world := NewWorld()
-	world.SetListener(func(e *EntityEvent) {})
 
 	posID := ComponentID[Position](&world)
 	velID := ComponentID[Velocity](&world)
 
 	builder := NewBuilder(&world, posID)
-	entities := make([]Entity, 0, 1000)
-	query := builder.NewBatchQ(1000)
-	for query.Next() {
-		entities = append(entities, query.Entity())
-	}
+	builder.NewBatch(1000)
 
 	filterPos := All(posID)
 	filterVel := All(velID)
@@ -473,6 +468,9 @@ func BenchmarkWorldExchangeBatchEvent_1000(b *testing.B) {
 
 	world.Batch().Exchange(filterPos, vel, pos)
 	world.Batch().Exchange(filterVel, pos, vel)
+
+	var temp int8
+	world.SetListener(func(e EntityEvent) { temp = e.AddedRemoved })
 
 	b.StartTimer()
 	hasPos := true
@@ -484,4 +482,5 @@ func BenchmarkWorldExchangeBatchEvent_1000(b *testing.B) {
 		}
 		hasPos = !hasPos
 	}
+	_ = temp
 }

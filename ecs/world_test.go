@@ -330,8 +330,8 @@ func TestWorldExchangeBatch(t *testing.T) {
 	w := NewWorld()
 
 	events := []EntityEvent{}
-	w.SetListener(func(e *EntityEvent) {
-		events = append(events, *e)
+	w.SetListener(func(e EntityEvent) {
+		events = append(events, e)
 	})
 
 	posID := ComponentID[Position](&w)
@@ -613,9 +613,9 @@ func TestWorldNewEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e *EntityEvent) {
+	world.SetListener(func(e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
-		events = append(events, *e)
+		events = append(events, e)
 	})
 
 	posID := ComponentID[Position](&world)
@@ -688,9 +688,9 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e *EntityEvent) {
+	world.SetListener(func(e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
-		events = append(events, *e)
+		events = append(events, e)
 	})
 
 	posID := ComponentID[Position](&world)
@@ -762,9 +762,9 @@ func TestWorldRemoveEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e *EntityEvent) {
+	world.SetListener(func(e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
-		events = append(events, *e)
+		events = append(events, e)
 	})
 
 	posID := ComponentID[Position](&world)
@@ -802,8 +802,8 @@ func TestWorldRelationSet(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	world.SetListener(func(e *EntityEvent) {
-		events = append(events, *e)
+	world.SetListener(func(e EntityEvent) {
+		events = append(events, e)
 	})
 
 	rotID := ComponentID[rotation](&world)
@@ -901,8 +901,8 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	world.SetListener(func(e *EntityEvent) {
-		events = append(events, *e)
+	world.SetListener(func(e EntityEvent) {
+		events = append(events, e)
 	})
 
 	posID := ComponentID[Position](&world)
@@ -972,7 +972,7 @@ func TestWorldRelationRemove(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	world.SetListener(func(e *EntityEvent) { events = append(events, *e) })
+	world.SetListener(func(e EntityEvent) { events = append(events, e) })
 
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1188,7 +1188,7 @@ func TestWorldRelation(t *testing.T) {
 
 func TestWorldRelationCreate(t *testing.T) {
 	world := NewWorld()
-	world.SetListener(func(e *EntityEvent) {})
+	world.SetListener(func(e EntityEvent) {})
 
 	posID := ComponentID[Position](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1228,7 +1228,7 @@ func TestWorldRelationCreate(t *testing.T) {
 
 func TestWorldRelationMove(t *testing.T) {
 	world := NewWorld()
-	world.SetListener(func(e *EntityEvent) {})
+	world.SetListener(func(e EntityEvent) {})
 
 	posID := ComponentID[Position](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1423,8 +1423,8 @@ func TestRegisterComponents(t *testing.T) {
 
 func TestWorldBatchRemove(t *testing.T) {
 	events := []EntityEvent{}
-	listen := func(e *EntityEvent) {
-		events = append(events, *e)
+	listen := func(e EntityEvent) {
+		events = append(events, e)
 	}
 
 	world := NewWorld()
@@ -1507,7 +1507,7 @@ func TestWorldBatchRemove(t *testing.T) {
 func TestWorldReset(t *testing.T) {
 	world := NewWorld()
 
-	world.SetListener(func(e *EntityEvent) {})
+	world.SetListener(func(e EntityEvent) {})
 	AddResource(&world, &rotation{100})
 
 	posID := ComponentID[Position](&world)
@@ -1583,8 +1583,8 @@ func TestArchetypeGraph(t *testing.T) {
 
 func TestWorldListener(t *testing.T) {
 	events := []EntityEvent{}
-	listen := func(e *EntityEvent) {
-		events = append(events, *e)
+	listen := func(e EntityEvent) {
+		events = append(events, e)
 	}
 
 	w := NewWorld()
@@ -1687,8 +1687,8 @@ func TestWorldListener(t *testing.T) {
 
 func TestWorldListenerBuilder(t *testing.T) {
 	events := []EntityEvent{}
-	listen := func(e *EntityEvent) {
-		events = append(events, *e)
+	listen := func(e EntityEvent) {
+		events = append(events, e)
 	}
 
 	w := NewWorld()
