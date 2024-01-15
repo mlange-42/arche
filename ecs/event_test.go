@@ -110,9 +110,9 @@ func BenchmarkEntityEventPointerReuse(b *testing.B) {
 func ExampleEntityEvent() {
 	world := ecs.NewWorld()
 
-	listener := func(evt ecs.EntityEvent) {
-		fmt.Println(evt)
-	}
+	listener := ecs.NewListener(
+		func(evt ecs.EntityEvent) { fmt.Println(evt) },
+	)
 	world.SetListener(listener)
 
 	world.NewEntity()

@@ -275,9 +275,9 @@ func ExampleWorld_Batch() {
 func ExampleWorld_SetListener() {
 	world := ecs.NewWorld()
 
-	listener := func(evt ecs.EntityEvent) {
+	listener := ecs.NewListener(func(evt ecs.EntityEvent) {
 		fmt.Println(evt)
-	}
+	})
 	world.SetListener(listener)
 
 	world.NewEntity()

@@ -35,3 +35,27 @@ func (e *EntityEvent) EntityAdded() bool {
 func (e *EntityEvent) EntityRemoved() bool {
 	return e.AddedRemoved < 0
 }
+
+// Listener for [EntityEvent]s.
+type Listener struct {
+	Callback         func(e EntityEvent)
+	EntityCreated    bool
+	EntityRemoved    bool
+	ComponentAdded   bool
+	ComponentRemoved bool
+	RelationChanged  bool
+	TargetChanged    bool
+}
+
+// NewListener creates a new [Listener] that subscribes to all event types.
+func NewListener(callback func(e EntityEvent)) Listener {
+	return Listener{
+		Callback:         callback,
+		EntityCreated:    true,
+		EntityRemoved:    true,
+		ComponentAdded:   true,
+		ComponentRemoved: true,
+		RelationChanged:  true,
+		TargetChanged:    true,
+	}
+}

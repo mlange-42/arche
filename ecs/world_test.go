@@ -330,9 +330,10 @@ func TestWorldExchangeBatch(t *testing.T) {
 	w := NewWorld()
 
 	events := []EntityEvent{}
-	w.SetListener(func(e EntityEvent) {
+	listener := NewListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
+	w.SetListener(listener)
 
 	posID := ComponentID[Position](&w)
 	velID := ComponentID[Velocity](&w)
@@ -613,10 +614,11 @@ func TestWorldNewEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) {
+	listener := NewListener(func(e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
 		events = append(events, e)
 	})
+	world.SetListener(listener)
 
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -688,10 +690,11 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) {
+	listener := NewListener(func(e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
 		events = append(events, e)
 	})
+	world.SetListener(listener)
 
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -762,10 +765,11 @@ func TestWorldRemoveEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) {
+	listener := NewListener(func(e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
 		events = append(events, e)
 	})
+	world.SetListener(listener)
 
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -802,9 +806,10 @@ func TestWorldRelationSet(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) {
+	listener := NewListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
+	world.SetListener(listener)
 
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -901,9 +906,10 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) {
+	listener := NewListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
+	world.SetListener(listener)
 
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -913,10 +919,14 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	targ2 := world.NewEntity(posID)
 	targ3 := world.NewEntity(posID)
 
+	assert.Equal(t, 3, len(events))
+
 	builder := NewBuilder(&world, rotID, relID).WithRelation(relID)
 	builder.NewBatch(100, targ1)
 	builder.NewBatch(100, targ2)
 	builder.NewBatch(100, targ3)
+
+	assert.Equal(t, 303, len(events))
 
 	relFilter := NewRelationFilter(All(relID), targ2)
 	q := world.Batch().SetRelationQ(&relFilter, relID, targ1)
@@ -928,14 +938,18 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	}
 	assert.Equal(t, 100, cnt)
 
+	assert.Equal(t, 403, len(events))
+
 	q = world.Batch().SetRelationQ(All(relID), relID, targ3)
-	assert.Equal(t, 300, q.Count())
+	assert.Equal(t, 200, q.Count())
 	cnt = 0
 	for q.Next() {
 		assert.Equal(t, targ3, q.Relation(relID))
 		cnt++
 	}
-	assert.Equal(t, 300, cnt)
+	assert.Equal(t, 200, cnt)
+
+	assert.Equal(t, 603, len(events))
 
 	relFilter = NewRelationFilter(All(relID), targ3)
 	q = world.Batch().SetRelationQ(&relFilter, relID, Entity{})
@@ -947,21 +961,30 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	}
 	assert.Equal(t, 300, cnt)
 
+	assert.Equal(t, 903, len(events))
+
 	relFilter = NewRelationFilter(All(relID), Entity{})
 	world.Batch().SetRelation(&relFilter, relID, targ1)
 
+	assert.Equal(t, 1203, len(events))
+
 	world.RemoveEntity(targ3)
+	assert.Equal(t, 1204, len(events))
+
 	assert.Panics(t, func() {
 		world.Batch().SetRelation(All(relID), relID, targ3)
 	})
 
-	assert.Equal(t, 1304, len(events))
+	assert.Equal(t, 1204, len(events))
 
 	world.Relations().SetBatch(All(relID), relID, targ1)
+	assert.Equal(t, 1204, len(events))
 
 	q = world.Relations().SetBatchQ(All(relID), relID, targ2)
 	assert.Equal(t, 300, q.Count())
 	q.Close()
+
+	assert.Equal(t, 1504, len(events))
 
 	fmt.Println(debugPrintWorld(&world))
 
@@ -972,7 +995,10 @@ func TestWorldRelationRemove(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	world.SetListener(func(e EntityEvent) { events = append(events, e) })
+	listener := NewListener(func(e EntityEvent) {
+		events = append(events, e)
+	})
+	world.SetListener(listener)
 
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1188,7 +1214,9 @@ func TestWorldRelation(t *testing.T) {
 
 func TestWorldRelationCreate(t *testing.T) {
 	world := NewWorld()
-	world.SetListener(func(e EntityEvent) {})
+
+	listener := NewListener(func(e EntityEvent) {})
+	world.SetListener(listener)
 
 	posID := ComponentID[Position](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1228,7 +1256,8 @@ func TestWorldRelationCreate(t *testing.T) {
 
 func TestWorldRelationMove(t *testing.T) {
 	world := NewWorld()
-	world.SetListener(func(e EntityEvent) {})
+	listener := NewListener(func(e EntityEvent) {})
+	world.SetListener(listener)
 
 	posID := ComponentID[Position](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1422,13 +1451,13 @@ func TestRegisterComponents(t *testing.T) {
 }
 
 func TestWorldBatchRemove(t *testing.T) {
-	events := []EntityEvent{}
-	listen := func(e EntityEvent) {
-		events = append(events, e)
-	}
-
 	world := NewWorld()
-	world.SetListener(listen)
+
+	events := []EntityEvent{}
+	listener := NewListener(func(e EntityEvent) {
+		events = append(events, e)
+	})
+	world.SetListener(listener)
 
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1506,8 +1535,9 @@ func TestWorldBatchRemove(t *testing.T) {
 
 func TestWorldReset(t *testing.T) {
 	world := NewWorld()
+	listener := NewListener(func(e EntityEvent) {})
+	world.SetListener(listener)
 
-	world.SetListener(func(e EntityEvent) {})
 	AddResource(&world, &rotation{100})
 
 	posID := ComponentID[Position](&world)
@@ -1582,14 +1612,13 @@ func TestArchetypeGraph(t *testing.T) {
 }
 
 func TestWorldListener(t *testing.T) {
-	events := []EntityEvent{}
-	listen := func(e EntityEvent) {
-		events = append(events, e)
-	}
-
 	w := NewWorld()
 
-	w.SetListener(listen)
+	events := []EntityEvent{}
+	listener := NewListener(func(e EntityEvent) {
+		events = append(events, e)
+	})
+	w.SetListener(listener)
 
 	posID := ComponentID[Position](&w)
 	velID := ComponentID[Velocity](&w)
@@ -1686,14 +1715,13 @@ func TestWorldListener(t *testing.T) {
 }
 
 func TestWorldListenerBuilder(t *testing.T) {
-	events := []EntityEvent{}
-	listen := func(e EntityEvent) {
-		events = append(events, e)
-	}
-
 	w := NewWorld()
 
-	w.SetListener(listen)
+	events := []EntityEvent{}
+	listener := NewListener(func(e EntityEvent) {
+		events = append(events, e)
+	})
+	w.SetListener(listener)
 
 	posID := ComponentID[Position](&w)
 	relID := ComponentID[relationComp](&w)
