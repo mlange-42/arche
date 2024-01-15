@@ -680,10 +680,12 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 
 	if hasRelation {
 		if !mask.Get(relation) {
-			panic("can't add relation: resulting entity has no relation")
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: resulting entity has no component %s", tp.Name()))
 		}
 		if !w.registry.IsRelation.Get(relation) {
-			panic("can't add relation: this is not a relation component")
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: %s is not a relation component", tp.Name()))
 		}
 	} else {
 		target = oldArch.RelationTarget
