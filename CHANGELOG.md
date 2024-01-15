@@ -21,7 +21,6 @@ This change was necessary to get the same performance as before, despite the mor
 * Adds functions `ComponentInfo(*World, ID)` and `ResourceType(*World, ResID)` (#315, #318)
 * Adds methods `World.Ids(Entity)` and `Query.Ids()` to get component IDs for an entity (#315, #325)
 * Entities support JSON marshalling and unmarshalling (#319)
-* Adds methods `Entity.ID()` and `Entity.Gen()` for serialization purposes (#319)
 * The world's entity state can be extracted and re-established via `World.DumpEntities()` and `World.LoadEntities()` (#319, #326)
 * Adds functions `ComponentIDs(*World)` and `ResourceIDs(*World)` to get all registered IDs (#329)
 
