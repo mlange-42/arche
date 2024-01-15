@@ -21,20 +21,17 @@ type EntityEvent struct {
 	Added, Removed           []ID         // Components added and removed. DO NOT MODIFY! Get the current components with [World.Ids].
 	OldRelation, NewRelation *ID          // Old and new relation component ID. No relation is indicated by nil.
 	OldTarget                Entity       // Old relation target entity. Get the new target with [World.Relations] and [Relations.Get].
-	EventTypes               Subscription // Bit mask of event types.
-	AddedRemoved             int8         // Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
-	RelationChanged          bool         // Whether the relation component has changed.
-	TargetChanged            bool         // Whether the relation target has changed. Will be false if the relation component changes, but the target does not.
+	EventTypes               Subscription // Bit mask of event types. See [Subscription].
 }
 
 // EntityAdded reports whether the entity was newly added.
 func (e *EntityEvent) EntityAdded() bool {
-	return e.AddedRemoved > 0
+	return e.EventTypes.Contains(EntityCreated)
 }
 
 // EntityRemoved reports whether the entity was removed.
 func (e *EntityEvent) EntityRemoved() bool {
-	return e.AddedRemoved < 0
+	return e.EventTypes.Contains(EntityRemoved)
 }
 
 // Subscription bits for a [Listener]
