@@ -19,12 +19,14 @@ package ecs
 // Note that the event pointer received by the listener function should not be stored,
 // as the instance behind the pointer might be reused for further notifications.
 type EntityEvent struct {
-	Entity                  Entity // The entity that was changed.
-	OldMask, NewMask        Mask   // The old and new component masks.
-	Added, Removed, Current []ID   // Components added, removed, and after the change. DO NOT MODIFY!
-	AddedRemoved            int    // Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
-	OldTarget, NewTarget    Entity // Old and new target entity
-	TargetChanged           bool   // Whether this is (only) a change of the relation target.
+	Entity                   Entity // The entity that was changed.
+	OldMask                  Mask   // The old and new component masks.
+	Added, Removed           []ID   // Components added and removed. DO NOT MODIFY!
+	OldRelation, NewRelation *ID    // Old and new relation component ID. No relation id indicated by nil.
+	OldTarget                Entity // Old and new target entity.
+	AddedRemoved             int8   // Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
+	RelationChanged          bool   // Whether the relation component has changed.
+	TargetChanged            bool   // Whether the relation target has changed. Will be false if the relation component changes, but the target does not.
 }
 
 // EntityAdded reports whether the entity was newly added.

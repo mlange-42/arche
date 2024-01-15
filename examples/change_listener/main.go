@@ -25,23 +25,29 @@ type Rotation struct {
 	A float64
 }
 
+// Listener type
+type Listener struct {
+	World *ecs.World
+}
+
 // Listen is called on entity changes.
-func Listen(evt *ecs.EntityEvent) {
+func (l *Listener) Listen(evt *ecs.EntityEvent) {
 	// Just prints out what the event is about.
 	// This could also be a method of a type that manages events.
 	// Could use e.g. filters to distribute events to interested/registered systems.
 	if evt.EntityAdded() {
-		fmt.Printf("Entity added, has components %v\n", evt.Current)
+		fmt.Printf("Entity added, has components %v\n", l.World.Ids(evt.Entity))
 	} else if evt.EntityRemoved() {
-		fmt.Printf("Entity removed, had components %v\n", evt.Current)
+		fmt.Printf("Entity removed, had components %v\n", l.World.Ids(evt.Entity))
 	} else {
-		fmt.Printf("Entity changed, has components %v\n", evt.Current)
+		fmt.Printf("Entity changed, has components %v\n", l.World.Ids(evt.Entity))
 	}
 }
 
 func main() {
 	// Create a World.
 	world := ecs.NewWorld()
+	listener := Listener{World: &world}
 
 	// Get component IDs
 	posID := ecs.ComponentID[Position](&world)
@@ -49,7 +55,7 @@ func main() {
 	rotID := ecs.ComponentID[Rotation](&world)
 
 	// Register a listener function.
-	world.SetListener(Listen)
+	world.SetListener(listener.Listen)
 
 	// Create/manipulate/delete entities and observe the listener's output
 	e0 := world.NewEntity(posID)

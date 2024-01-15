@@ -15,6 +15,7 @@
 * `Filters.Matches(Mask)` became `Filters.Matches(*Mask)`; same for all `Filter` implementations (#313)  
 This change was necessary to get the same performance as before, despite the more heavyweight implementation of the now 256 bits `Mask`.
 * Component and resource IDs are now opaque types instead of type aliases for `uint8` (#329)
+* Restructures `EntityEvent` to remove redundant information and better handle relation changes (#333)
 
 ### Features
 
