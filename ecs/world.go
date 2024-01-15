@@ -424,9 +424,13 @@ func (w *World) RemoveEntity(entity Entity) {
 		if oldArch.HasRelationComponent {
 			oldRel = &oldArch.RelationComponent
 		}
+		var oldIds []ID
+		if len(oldArch.node.Ids) > 0 {
+			oldIds = oldArch.node.Ids
+		}
 
 		lock := w.lock()
-		w.listener(&EntityEvent{entity, oldArch.Mask, nil, oldArch.node.Ids, oldRel, nil, oldArch.RelationTarget, -1, oldRel != nil, !oldArch.RelationTarget.IsZero()})
+		w.listener(&EntityEvent{entity, oldArch.Mask, nil, oldIds, oldRel, nil, oldArch.RelationTarget, -1, oldRel != nil, !oldArch.RelationTarget.IsZero()})
 		w.unlock(lock)
 	}
 
@@ -466,22 +470,26 @@ func (w *World) removeEntities(filter Filter) int {
 	var i int32
 	for i = 0; i < numArches; i++ {
 		arch := arches[i]
-		len := arch.Len()
-		if len == 0 {
+		ln := arch.Len()
+		if ln == 0 {
 			continue
 		}
 
-		count += len
+		count += ln
 
 		var j uint32
-		for j = 0; j < len; j++ {
+		for j = 0; j < ln; j++ {
 			entity := arch.GetEntity(j)
 			if w.listener != nil {
 				var oldRel *ID
 				if arch.HasRelationComponent {
 					oldRel = &arch.RelationComponent
 				}
-				w.listener(&EntityEvent{entity, arch.Mask, nil, arch.node.Ids, oldRel, nil, Entity{}, -1, oldRel != nil, !arch.RelationTarget.IsZero()})
+				var oldIds []ID
+				if len(arch.node.Ids) > 0 {
+					oldIds = arch.node.Ids
+				}
+				w.listener(&EntityEvent{entity, arch.Mask, nil, oldIds, oldRel, nil, Entity{}, -1, oldRel != nil, !arch.RelationTarget.IsZero()})
 			}
 			index := &w.entities[entity.id]
 			index.arch = nil

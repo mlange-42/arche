@@ -51,6 +51,22 @@ func TestBitMask(t *testing.T) {
 	assert.False(t, mask.ContainsAny(&other2))
 }
 
+func TestBitMaskCopy(t *testing.T) {
+	mask := All(id(1), id(2), id(13), id(27), id(200))
+	mask2 := mask
+	mask3 := &mask
+
+	mask2.Set(id(1), false)
+	mask3.Set(id(2), false)
+
+	assert.True(t, mask.Get(id(1)))
+	assert.False(t, mask2.Get(id(1)))
+
+	assert.True(t, mask2.Get(id(2)))
+	assert.False(t, mask.Get(id(2)))
+	assert.False(t, mask3.Get(id(2)))
+}
+
 func TestBitMaskWithoutExclusive(t *testing.T) {
 	mask := All(id(1), id(2), id(13))
 
