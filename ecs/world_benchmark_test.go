@@ -320,8 +320,8 @@ func BenchmarkWorldNewEntityEvent_1000(b *testing.B) {
 	world.Batch().RemoveEntities(filterPos)
 
 	var temp int8
-	listener := NewListener(func(e EntityEvent) { temp = e.AddedRemoved })
-	world.SetListener(listener)
+	listener := NewCallbackListener(func(e EntityEvent) { temp = e.AddedRemoved })
+	world.SetListener(&listener)
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
@@ -399,8 +399,8 @@ func BenchmarkWorldExchangeEvent_1000(b *testing.B) {
 	world.Batch().Exchange(filterVel, pos, vel)
 
 	var temp int8
-	listener := NewListener(func(e EntityEvent) { temp = e.AddedRemoved })
-	world.SetListener(listener)
+	listener := NewCallbackListener(func(e EntityEvent) { temp = e.AddedRemoved })
+	world.SetListener(&listener)
 
 	b.StartTimer()
 	hasPos := true
@@ -472,8 +472,8 @@ func BenchmarkWorldExchangeBatchEvent_1000(b *testing.B) {
 	world.Batch().Exchange(filterVel, pos, vel)
 
 	var temp int8
-	listener := NewListener(func(e EntityEvent) { temp = e.AddedRemoved })
-	world.SetListener(listener)
+	listener := NewCallbackListener(func(e EntityEvent) { temp = e.AddedRemoved })
+	world.SetListener(&listener)
 
 	b.StartTimer()
 	hasPos := true

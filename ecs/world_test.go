@@ -330,10 +330,10 @@ func TestWorldExchangeBatch(t *testing.T) {
 	w := NewWorld()
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
-	w.SetListener(listener)
+	w.SetListener(&listener)
 
 	posID := ComponentID[Position](&w)
 	velID := ComponentID[Velocity](&w)
@@ -351,6 +351,7 @@ func TestWorldExchangeBatch(t *testing.T) {
 		Entity:          Entity{202, 0},
 		Added:           []ID{posID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged | TargetChanged,
 		AddedRemoved:    1,
 		RelationChanged: true,
 		TargetChanged:   true,
@@ -388,6 +389,7 @@ func TestWorldExchangeBatch(t *testing.T) {
 		OldRelation:     &relID,
 		NewRelation:     &relID,
 		OldTarget:       target1,
+		EventTypes:      ComponentAdded | ComponentRemoved,
 		AddedRemoved:    0,
 		RelationChanged: false,
 		TargetChanged:   false,
@@ -411,6 +413,7 @@ func TestWorldExchangeBatch(t *testing.T) {
 		OldRelation:     &relID,
 		NewRelation:     nil,
 		OldTarget:       target1,
+		EventTypes:      ComponentRemoved | RelationChanged | TargetChanged,
 		AddedRemoved:    0,
 		RelationChanged: true,
 		TargetChanged:   true,
@@ -424,6 +427,7 @@ func TestWorldExchangeBatch(t *testing.T) {
 		Entity:          Entity{102, 0},
 		OldMask:         All(posID),
 		Removed:         []ID{posID},
+		EventTypes:      EntityRemoved | ComponentRemoved,
 		AddedRemoved:    -1,
 		RelationChanged: false,
 		TargetChanged:   false,
@@ -614,11 +618,11 @@ func TestWorldNewEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
 		events = append(events, e)
 	})
-	world.SetListener(listener)
+	world.SetListener(&listener)
 
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -690,11 +694,11 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
 		events = append(events, e)
 	})
-	world.SetListener(listener)
+	world.SetListener(&listener)
 
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -765,11 +769,11 @@ func TestWorldRemoveEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
 		events = append(events, e)
 	})
-	world.SetListener(listener)
+	world.SetListener(&listener)
 
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -806,10 +810,10 @@ func TestWorldRelationSet(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
-	world.SetListener(listener)
+	world.SetListener(&listener)
 
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -834,6 +838,7 @@ func TestWorldRelationSet(t *testing.T) {
 		OldRelation:   &relID,
 		NewRelation:   &relID,
 		OldTarget:     Entity{},
+		EventTypes:    TargetChanged,
 		TargetChanged: true,
 	}, events[len(events)-1])
 
@@ -852,6 +857,7 @@ func TestWorldRelationSet(t *testing.T) {
 		OldRelation:   &relID,
 		NewRelation:   &relID,
 		OldTarget:     targ,
+		EventTypes:    TargetChanged,
 		TargetChanged: true,
 	}, events[len(events)-1])
 
@@ -877,6 +883,7 @@ func TestWorldRelationSet(t *testing.T) {
 		Removed:         []ID{relID},
 		OldRelation:     &relID,
 		NewRelation:     nil,
+		EventTypes:      ComponentRemoved | RelationChanged,
 		RelationChanged: true,
 		TargetChanged:   false,
 	}, events[len(events)-1])
@@ -906,10 +913,10 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
-	world.SetListener(listener)
+	world.SetListener(&listener)
 
 	posID := ComponentID[Position](&world)
 	rotID := ComponentID[rotation](&world)
@@ -995,10 +1002,10 @@ func TestWorldRelationRemove(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
-	world.SetListener(listener)
+	world.SetListener(&listener)
 
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1215,8 +1222,8 @@ func TestWorldRelation(t *testing.T) {
 func TestWorldRelationCreate(t *testing.T) {
 	world := NewWorld()
 
-	listener := NewListener(func(e EntityEvent) {})
-	world.SetListener(listener)
+	listener := NewCallbackListener(func(e EntityEvent) {})
+	world.SetListener(&listener)
 
 	posID := ComponentID[Position](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1256,8 +1263,8 @@ func TestWorldRelationCreate(t *testing.T) {
 
 func TestWorldRelationMove(t *testing.T) {
 	world := NewWorld()
-	listener := NewListener(func(e EntityEvent) {})
-	world.SetListener(listener)
+	listener := NewCallbackListener(func(e EntityEvent) {})
+	world.SetListener(&listener)
 
 	posID := ComponentID[Position](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1454,10 +1461,10 @@ func TestWorldBatchRemove(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
-	world.SetListener(listener)
+	world.SetListener(&listener)
 
 	rotID := ComponentID[rotation](&world)
 	relID := ComponentID[testRelationA](&world)
@@ -1469,6 +1476,7 @@ func TestWorldBatchRemove(t *testing.T) {
 	assert.Equal(t, 3, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       target3,
+		EventTypes:   EntityCreated,
 		AddedRemoved: 1,
 	}, events[len(events)-1])
 
@@ -1483,6 +1491,7 @@ func TestWorldBatchRemove(t *testing.T) {
 		Entity:          Entity{33, 0},
 		Added:           []ID{rotID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged | TargetChanged,
 		AddedRemoved:    1,
 		RelationChanged: true,
 		TargetChanged:   true,
@@ -1504,6 +1513,7 @@ func TestWorldBatchRemove(t *testing.T) {
 		OldMask:         All(rotID, relID),
 		Removed:         []ID{rotID, relID},
 		OldRelation:     &relID,
+		EventTypes:      EntityRemoved | ComponentRemoved | RelationChanged | TargetChanged,
 		AddedRemoved:    -1,
 		RelationChanged: true,
 		TargetChanged:   true,
@@ -1520,6 +1530,7 @@ func TestWorldBatchRemove(t *testing.T) {
 	assert.Equal(t, 56, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:       Entity{3, 0},
+		EventTypes:   EntityRemoved,
 		AddedRemoved: -1,
 	}, events[len(events)-1])
 
@@ -1535,8 +1546,8 @@ func TestWorldBatchRemove(t *testing.T) {
 
 func TestWorldReset(t *testing.T) {
 	world := NewWorld()
-	listener := NewListener(func(e EntityEvent) {})
-	world.SetListener(listener)
+	listener := NewCallbackListener(func(e EntityEvent) {})
+	world.SetListener(&listener)
 
 	AddResource(&world, &rotation{100})
 
@@ -1615,10 +1626,10 @@ func TestWorldListener(t *testing.T) {
 	w := NewWorld()
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
-	w.SetListener(listener)
+	w.SetListener(&listener)
 
 	posID := ComponentID[Position](&w)
 	velID := ComponentID[Velocity](&w)
@@ -1628,13 +1639,17 @@ func TestWorldListener(t *testing.T) {
 	e0 := w.NewEntity()
 	assert.Equal(t, 1, len(events))
 	assert.Equal(t, EntityEvent{
-		Entity: e0, AddedRemoved: 1,
+		Entity:       e0,
+		EventTypes:   EntityCreated,
+		AddedRemoved: 1,
 	}, events[len(events)-1])
 
 	w.RemoveEntity(e0)
 	assert.Equal(t, 2, len(events))
 	assert.Equal(t, EntityEvent{
-		Entity: e0, AddedRemoved: -1,
+		Entity:       e0,
+		EventTypes:   EntityRemoved,
+		AddedRemoved: -1,
 	}, events[len(events)-1])
 
 	e0 = w.NewEntity(posID, velID)
@@ -1642,6 +1657,7 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, EntityEvent{
 		Entity:       e0,
 		Added:        []ID{posID, velID},
+		EventTypes:   EntityCreated | ComponentAdded,
 		AddedRemoved: 1,
 	}, events[len(events)-1])
 
@@ -1651,6 +1667,7 @@ func TestWorldListener(t *testing.T) {
 		Entity:       e0,
 		OldMask:      All(posID, velID),
 		Removed:      []ID{posID, velID},
+		EventTypes:   EntityRemoved | ComponentRemoved,
 		AddedRemoved: -1,
 	}, events[len(events)-1])
 
@@ -1660,6 +1677,7 @@ func TestWorldListener(t *testing.T) {
 		Entity:          e0,
 		Added:           []ID{posID, velID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged,
 		AddedRemoved:    1,
 		RelationChanged: true,
 	}, events[len(events)-1])
@@ -1672,6 +1690,7 @@ func TestWorldListener(t *testing.T) {
 		Added:        []ID{rotID},
 		OldRelation:  &relID,
 		NewRelation:  &relID,
+		EventTypes:   ComponentAdded,
 		AddedRemoved: 0,
 	}, events[len(events)-1])
 
@@ -1683,6 +1702,7 @@ func TestWorldListener(t *testing.T) {
 		Removed:      []ID{posID},
 		OldRelation:  &relID,
 		NewRelation:  &relID,
+		EventTypes:   ComponentRemoved,
 		AddedRemoved: 0,
 	}, events[len(events)-1])
 
@@ -1694,6 +1714,7 @@ func TestWorldListener(t *testing.T) {
 		OldMask:       All(velID, rotID, relID),
 		OldRelation:   &relID,
 		NewRelation:   &relID,
+		EventTypes:    TargetChanged,
 		TargetChanged: true,
 		AddedRemoved:  0,
 	}, events[len(events)-1])
@@ -1707,6 +1728,7 @@ func TestWorldListener(t *testing.T) {
 		OldRelation:     &relID,
 		NewRelation:     nil,
 		OldTarget:       e1,
+		EventTypes:      ComponentRemoved | RelationChanged | TargetChanged,
 		RelationChanged: true,
 		TargetChanged:   true,
 		AddedRemoved:    0,
@@ -1718,10 +1740,10 @@ func TestWorldListenerBuilder(t *testing.T) {
 	w := NewWorld()
 
 	events := []EntityEvent{}
-	listener := NewListener(func(e EntityEvent) {
+	listener := NewCallbackListener(func(e EntityEvent) {
 		events = append(events, e)
 	})
-	w.SetListener(listener)
+	w.SetListener(&listener)
 
 	posID := ComponentID[Position](&w)
 	relID := ComponentID[relationComp](&w)
@@ -1737,6 +1759,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		OldMask:         All(),
 		Added:           []ID{posID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged,
 		RelationChanged: true,
 		TargetChanged:   false,
 		AddedRemoved:    1,
@@ -1751,6 +1774,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		OldMask:         All(),
 		Added:           []ID{posID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged,
 		RelationChanged: true,
 		TargetChanged:   false,
 		AddedRemoved:    1,
@@ -1764,6 +1788,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		OldMask:         All(),
 		Added:           []ID{posID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged | TargetChanged,
 		RelationChanged: true,
 		TargetChanged:   true,
 		AddedRemoved:    1,
@@ -1778,6 +1803,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		OldMask:         All(),
 		Added:           []ID{posID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged | TargetChanged,
 		RelationChanged: true,
 		TargetChanged:   true,
 		AddedRemoved:    1,
@@ -1796,6 +1822,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		OldMask:         All(),
 		Added:           []ID{posID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged,
 		RelationChanged: true,
 		TargetChanged:   false,
 		AddedRemoved:    1,
@@ -1810,6 +1837,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		OldMask:         All(),
 		Added:           []ID{posID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged,
 		RelationChanged: true,
 		TargetChanged:   false,
 		AddedRemoved:    1,
@@ -1823,6 +1851,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		OldMask:         All(),
 		Added:           []ID{posID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged | TargetChanged,
 		RelationChanged: true,
 		TargetChanged:   true,
 		AddedRemoved:    1,
@@ -1837,6 +1866,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		OldMask:         All(),
 		Added:           []ID{posID, relID},
 		NewRelation:     &relID,
+		EventTypes:      EntityCreated | ComponentAdded | RelationChanged | TargetChanged,
 		RelationChanged: true,
 		TargetChanged:   true,
 		AddedRemoved:    1,
