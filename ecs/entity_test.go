@@ -21,12 +21,6 @@ func TestZeroEntity(t *testing.T) {
 	assert.False(t, Entity{1, 0}.IsZero())
 }
 
-func TestEntityGetters(t *testing.T) {
-	e := newEntityGen(2, 3)
-	assert.Equal(t, e.ID(), uint32(2))
-	assert.Equal(t, e.Gen(), uint32(3))
-}
-
 func TestEntityMarshal(t *testing.T) {
 	e := newEntityGen(2, 3)
 

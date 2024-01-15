@@ -1153,7 +1153,7 @@ func (w *World) DumpEntities() EntityDump {
 
 	query := w.Query(All())
 	for query.Next() {
-		alive = append(alive, query.Entity().ID())
+		alive = append(alive, uint32(query.Entity().id))
 	}
 
 	data := EntityDump{
