@@ -329,8 +329,8 @@ func (w *World) newEntities(count int, targetID ID, hasTarget bool, target Entit
 
 	if w.listener != nil {
 		var newRel *ID
-		if hasTarget {
-			newRel = &targetID
+		if arch.HasRelationComponent {
+			newRel = &arch.RelationComponent
 		}
 
 		cnt := uint32(count)
@@ -371,8 +371,8 @@ func (w *World) newEntitiesWith(count int, targetID ID, hasTarget bool, target E
 
 	if w.listener != nil {
 		var newRel *ID
-		if hasTarget {
-			newRel = &targetID
+		if arch.HasRelationComponent {
+			newRel = &arch.RelationComponent
 		}
 
 		var i uint32
@@ -380,7 +380,7 @@ func (w *World) newEntitiesWith(count int, targetID ID, hasTarget bool, target E
 		for i = 0; i < cnt; i++ {
 			idx := startIdx + i
 			entity := arch.GetEntity(idx)
-			w.listener(&EntityEvent{entity, Mask{}, ids, nil, nil, newRel, Entity{}, 1, hasTarget, !target.IsZero()})
+			w.listener(&EntityEvent{entity, Mask{}, ids, nil, nil, newRel, Entity{}, 1, newRel != nil, !target.IsZero()})
 		}
 	}
 

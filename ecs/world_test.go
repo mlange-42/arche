@@ -1609,6 +1609,136 @@ func TestWorldListener(t *testing.T) {
 
 }
 
+func TestWorldListenerBuilder(t *testing.T) {
+	events := []EntityEvent{}
+	listen := func(e *EntityEvent) {
+		events = append(events, *e)
+	}
+
+	w := NewWorld()
+
+	w.SetListener(listen)
+
+	posID := ComponentID[Position](&w)
+	relID := ComponentID[relationComp](&w)
+
+	parent := w.NewEntity(posID)
+
+	builder := NewBuilder(&w, posID, relID).WithRelation(relID)
+	builder.NewBatch(10)
+
+	assert.Equal(t, 11, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{11, 0},
+		OldMask:         All(),
+		Added:           []ID{posID, relID},
+		NewRelation:     &relID,
+		RelationChanged: true,
+		TargetChanged:   false,
+		AddedRemoved:    1,
+	}, events[len(events)-1])
+
+	query := builder.NewBatchQ(10)
+	query.Close()
+
+	assert.Equal(t, 21, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{21, 0},
+		OldMask:         All(),
+		Added:           []ID{posID, relID},
+		NewRelation:     &relID,
+		RelationChanged: true,
+		TargetChanged:   false,
+		AddedRemoved:    1,
+	}, events[len(events)-1])
+
+	builder.NewBatch(10, parent)
+
+	assert.Equal(t, 31, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{31, 0},
+		OldMask:         All(),
+		Added:           []ID{posID, relID},
+		NewRelation:     &relID,
+		RelationChanged: true,
+		TargetChanged:   true,
+		AddedRemoved:    1,
+	}, events[len(events)-1])
+
+	query = builder.NewBatchQ(10, parent)
+	query.Close()
+
+	assert.Equal(t, 41, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{41, 0},
+		OldMask:         All(),
+		Added:           []ID{posID, relID},
+		NewRelation:     &relID,
+		RelationChanged: true,
+		TargetChanged:   true,
+		AddedRemoved:    1,
+	}, events[len(events)-1])
+
+	builder = NewBuilderWith(&w,
+		Component{ID: posID, Comp: &Position{}},
+		Component{ID: relID, Comp: &relationComp{}},
+	).WithRelation(relID)
+
+	builder.NewBatch(10)
+
+	assert.Equal(t, 51, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{51, 0},
+		OldMask:         All(),
+		Added:           []ID{posID, relID},
+		NewRelation:     &relID,
+		RelationChanged: true,
+		TargetChanged:   false,
+		AddedRemoved:    1,
+	}, events[len(events)-1])
+
+	query = builder.NewBatchQ(10)
+	query.Close()
+
+	assert.Equal(t, 61, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{61, 0},
+		OldMask:         All(),
+		Added:           []ID{posID, relID},
+		NewRelation:     &relID,
+		RelationChanged: true,
+		TargetChanged:   false,
+		AddedRemoved:    1,
+	}, events[len(events)-1])
+
+	builder.NewBatch(10, parent)
+
+	assert.Equal(t, 71, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{71, 0},
+		OldMask:         All(),
+		Added:           []ID{posID, relID},
+		NewRelation:     &relID,
+		RelationChanged: true,
+		TargetChanged:   true,
+		AddedRemoved:    1,
+	}, events[len(events)-1])
+
+	query = builder.NewBatchQ(10, parent)
+	query.Close()
+
+	assert.Equal(t, 81, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{81, 0},
+		OldMask:         All(),
+		Added:           []ID{posID, relID},
+		NewRelation:     &relID,
+		RelationChanged: true,
+		TargetChanged:   true,
+		AddedRemoved:    1,
+	}, events[len(events)-1])
+}
+
 type withSlice struct {
 	Slice []int
 }
