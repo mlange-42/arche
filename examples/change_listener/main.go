@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/ecs/event"
+	"github.com/mlange-42/arche/listener"
 )
 
 // Position component
@@ -47,8 +49,8 @@ func (l *Listener) Listen(evt ecs.EntityEvent) {
 func main() {
 	// Create a World.
 	world := ecs.NewWorld()
-	listener := Listener{World: &world}
-	wrapper := ecs.NewCallbackListener(listener.Listen)
+	ls := Listener{World: &world}
+	wrapper := listener.NewCallback(event.Entities|event.Components, ls.Listen)
 
 	// Get component IDs
 	posID := ecs.ComponentID[Position](&world)

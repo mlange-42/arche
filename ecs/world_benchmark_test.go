@@ -3,6 +3,7 @@ package ecs
 import (
 	"testing"
 
+	"github.com/mlange-42/arche/ecs/event"
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
@@ -319,8 +320,8 @@ func BenchmarkWorldNewEntityEvent_1000(b *testing.B) {
 	builder.NewBatch(1000)
 	world.Batch().RemoveEntities(filterPos)
 
-	var temp Subscription
-	listener := NewCallbackListener(func(e EntityEvent) { temp = e.EventTypes })
+	var temp event.Subscription
+	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
 	world.SetListener(&listener)
 
 	for i := 0; i < b.N; i++ {
@@ -398,8 +399,8 @@ func BenchmarkWorldExchangeEvent_1000(b *testing.B) {
 	world.Batch().Exchange(filterPos, vel, pos)
 	world.Batch().Exchange(filterVel, pos, vel)
 
-	var temp Subscription
-	listener := NewCallbackListener(func(e EntityEvent) { temp = e.EventTypes })
+	var temp event.Subscription
+	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
 	world.SetListener(&listener)
 
 	b.StartTimer()
@@ -471,8 +472,8 @@ func BenchmarkWorldExchangeBatchEvent_1000(b *testing.B) {
 	world.Batch().Exchange(filterPos, vel, pos)
 	world.Batch().Exchange(filterVel, pos, vel)
 
-	var temp Subscription
-	listener := NewCallbackListener(func(e EntityEvent) { temp = e.EventTypes })
+	var temp event.Subscription
+	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
 	world.SetListener(&listener)
 
 	b.StartTimer()

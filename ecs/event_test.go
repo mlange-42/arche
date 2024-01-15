@@ -5,21 +5,22 @@ import (
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/ecs/event"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestEntityEvent(t *testing.T) {
-	e := ecs.EntityEvent{EventTypes: ecs.ComponentAdded}
+	e := ecs.EntityEvent{EventTypes: event.ComponentAdded}
 
 	assert.False(t, e.EntityAdded())
 	assert.False(t, e.EntityRemoved())
 
-	e = ecs.EntityEvent{EventTypes: ecs.EntityCreated | ecs.ComponentAdded}
+	e = ecs.EntityEvent{EventTypes: event.EntityCreated | event.ComponentAdded}
 
 	assert.True(t, e.EntityAdded())
 	assert.False(t, e.EntityRemoved())
 
-	e = ecs.EntityEvent{EventTypes: ecs.EntityRemoved | ecs.ComponentRemoved}
+	e = ecs.EntityEvent{EventTypes: event.EntityRemoved | event.ComponentRemoved}
 
 	assert.False(t, e.EntityAdded())
 	assert.True(t, e.EntityRemoved())
@@ -110,7 +111,7 @@ func BenchmarkEntityEventPointerReuse(b *testing.B) {
 func ExampleEntityEvent() {
 	world := ecs.NewWorld()
 
-	listener := ecs.NewCallbackListener(
+	listener := NewTestListener(
 		func(evt ecs.EntityEvent) { fmt.Println(evt) },
 	)
 	world.SetListener(&listener)

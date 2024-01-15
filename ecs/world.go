@@ -5,6 +5,7 @@ import (
 	"reflect"
 	"unsafe"
 
+	"github.com/mlange-42/arche/ecs/event"
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
@@ -482,7 +483,7 @@ func (w *World) removeEntities(filter Filter) int {
 
 	lock := w.lock()
 
-	var bits Subscription
+	var bits event.Subscription
 	var listen bool
 
 	var count uint32
@@ -968,8 +969,8 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 	oldTarget := oldArch.RelationTarget
 	w.cleanupArchetype(oldArch)
 
-	if w.listener != nil && w.listener.Subscriptions().Contains(TargetChanged) {
-		w.listener.Notify(EntityEvent{entity, arch.Mask, nil, nil, &comp, &comp, oldTarget, TargetChanged})
+	if w.listener != nil && w.listener.Subscriptions().Contains(event.TargetChanged) {
+		w.listener.Notify(EntityEvent{entity, arch.Mask, nil, nil, &comp, &comp, oldTarget, event.TargetChanged})
 	}
 }
 
@@ -977,7 +978,7 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 func (w *World) setRelationBatch(filter Filter, comp ID, target Entity) {
 	batches := batchArchetypes{}
 	w.setRelationBatchNoNotify(filter, comp, target, &batches)
-	if w.listener != nil && w.listener.Subscriptions().Contains(TargetChanged) {
+	if w.listener != nil && w.listener.Subscriptions().Contains(event.TargetChanged) {
 		w.notifyQuery(&batches)
 	}
 }
