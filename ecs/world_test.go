@@ -345,6 +345,16 @@ func TestWorldExchangeBatch(t *testing.T) {
 	builder.NewBatch(100, target1)
 	builder.NewBatch(100, target2)
 
+	assert.Equal(t, 202, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{202, 0},
+		Added:           []ID{posID, relID},
+		NewRelation:     &relID,
+		AddedRemoved:    1,
+		RelationChanged: true,
+		TargetChanged:   true,
+	}, events[201])
+
 	filter := All(posID, relID)
 	query := w.Batch().ExchangeQ(filter, []ID{velID}, []ID{posID})
 	assert.Equal(t, 200, query.Count())
@@ -368,6 +378,20 @@ func TestWorldExchangeBatch(t *testing.T) {
 		assert.Equal(t, target1, query.Relation(relID))
 	}
 
+	assert.Equal(t, 502, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{102, 0},
+		OldMask:         All(velID, relID),
+		Added:           []ID{posID},
+		Removed:         []ID{velID},
+		OldRelation:     &relID,
+		NewRelation:     &relID,
+		OldTarget:       target1,
+		AddedRemoved:    0,
+		RelationChanged: false,
+		TargetChanged:   false,
+	}, events[501])
+
 	query = w.Query(All(posID))
 	assert.Equal(t, 100, query.Count())
 	query.Close()
@@ -378,9 +402,32 @@ func TestWorldExchangeBatch(t *testing.T) {
 	w.Batch().Exchange(&relFilter, nil, []ID{relID})
 	w.Batch().Exchange(All(relID), nil, []ID{relID})
 
+	assert.Equal(t, 702, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{102, 0},
+		OldMask:         All(posID, relID),
+		Removed:         []ID{relID},
+		OldRelation:     &relID,
+		NewRelation:     nil,
+		OldTarget:       target1,
+		AddedRemoved:    0,
+		RelationChanged: true,
+		TargetChanged:   true,
+	}, events[701])
+
 	w.Batch().RemoveEntities(All(posID))
 
 	assert.Equal(t, 802, len(events))
+
+	assert.Equal(t, EntityEvent{
+		Entity:          Entity{102, 0},
+		OldMask:         All(posID),
+		Removed:         []ID{posID},
+		AddedRemoved:    -1,
+		RelationChanged: false,
+		TargetChanged:   false,
+	}, events[801])
+
 	assert.Equal(t, int8(1), events[0].AddedRemoved)
 	assert.Equal(t, int8(1), events[1].AddedRemoved)
 	assert.Equal(t, int8(1), events[2].AddedRemoved)
