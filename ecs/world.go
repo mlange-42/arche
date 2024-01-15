@@ -284,7 +284,7 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 	}
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, comps, nil, nil, &targetID, Entity{}, 1, !target.IsZero(), false})
+		w.listener(&EntityEvent{entity, Mask{}, comps, nil, nil, &targetID, Entity{}, 1, true, !target.IsZero()})
 	}
 	return entity
 }
@@ -317,7 +317,7 @@ func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Compone
 	}
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, ids, nil, nil, &targetID, Entity{}, 1, !target.IsZero(), false})
+		w.listener(&EntityEvent{entity, Mask{}, ids, nil, nil, &targetID, Entity{}, 1, true, !target.IsZero()})
 	}
 	return entity
 }
