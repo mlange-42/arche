@@ -1,10 +1,10 @@
 package ecs
 
-// EntityEvent contains information about component changes to an [Entity].
+// EntityEvent contains information about component and relation changes to an [Entity].
 //
 // To receive change events, register a function func(e *EntityEvent) with [World.SetListener].
 //
-// Events notified are entity creation, removal and changes to the component composition.
+// Events notified are entity creation, removal, changes to the component composition and change of relation targets.
 // Events are emitted immediately after the change is applied.
 //
 // Except for removed entities, events are always fired when the [World] is in an unlocked state.
@@ -20,10 +20,10 @@ package ecs
 // as the instance behind the pointer might be reused for further notifications.
 type EntityEvent struct {
 	Entity                   Entity // The entity that was changed.
-	OldMask                  Mask   // The old and new component masks.
-	Added, Removed           []ID   // Components added and removed. DO NOT MODIFY!
-	OldRelation, NewRelation *ID    // Old and new relation component ID. No relation id indicated by nil.
-	OldTarget                Entity // Old and new target entity.
+	OldMask                  Mask   // The old component masks. Get the new mask with [World.Mask].
+	Added, Removed           []ID   // Components added and removed. DO NOT MODIFY! Get the current components with [World.Ids].
+	OldRelation, NewRelation *ID    // Old and new relation component ID. No relation is indicated by nil.
+	OldTarget                Entity // Old relation target entity. Get the new target with [World.Relations] and [Relations.Get].
 	AddedRemoved             int8   // Whether the entity itself was added (> 0), removed (< 0), or only changed (= 0).
 	RelationChanged          bool   // Whether the relation component has changed.
 	TargetChanged            bool   // Whether the relation target has changed. Will be false if the relation component changes, but the target does not.
