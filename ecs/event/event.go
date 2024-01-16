@@ -6,17 +6,17 @@ package event
 // Subscription bits for individual events
 const (
 	// EntityCreated subscription bit
-	EntityCreated Subscription = 0b00000001
+	EntityCreated Subscription = 1
 	// EntityRemoved subscription bit
-	EntityRemoved Subscription = 0b00000010
+	EntityRemoved Subscription = 1 << 1
 	// ComponentAdded subscription bit
-	ComponentAdded Subscription = 0b00000100
+	ComponentAdded Subscription = 1 << 2
 	// ComponentRemoved subscription bit
-	ComponentRemoved Subscription = 0b000001000
+	ComponentRemoved Subscription = 1 << 3
 	// RelationChanged subscription bit
-	RelationChanged Subscription = 0b000010000
+	RelationChanged Subscription = 1 << 4
 	// TargetChanged subscription bit
-	TargetChanged Subscription = 0b000100000
+	TargetChanged Subscription = 1 << 5
 )
 
 // Subscription bits for groups of events

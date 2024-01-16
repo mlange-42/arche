@@ -27,31 +27,13 @@ type Rotation struct {
 	A float64
 }
 
-// EventHandler type
-type EventHandler struct {
-	World *ecs.World
-}
-
-// Notify is called on entity changes.
-func (l *EventHandler) Notify(evt ecs.EntityEvent) {
-	// Just prints out what the event is about.
-	// This could also be a method of a type that manages events.
-	// Could use e.g. filters to distribute events to interested/registered systems.
-	if evt.Contains(event.EntityCreated) {
-		fmt.Printf("Entity added, has components %v\n", l.World.Ids(evt.Entity))
-	} else if evt.Contains(event.EntityRemoved) {
-		fmt.Printf("Entity removed, had components %v\n", l.World.Ids(evt.Entity))
-	} else {
-		fmt.Printf("Entity changed, has components %v\n", l.World.Ids(evt.Entity))
-	}
-}
-
 func main() {
 	// Create a World.
 	world := ecs.NewWorld()
-	handler := EventHandler{World: &world}
 	listener := listener.NewCallback(
-		handler.Notify,
+		func(ee ecs.EntityEvent) {
+			fmt.Printf("Events: %08b Added: %v Removed: %v\n", ee.EventTypes, ee.Added, ee.Removed)
+		},
 		event.Entities|event.Components,
 	)
 

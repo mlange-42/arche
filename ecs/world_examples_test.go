@@ -276,11 +276,11 @@ func ExampleWorld_Batch() {
 func ExampleWorld_SetListener() {
 	world := ecs.NewWorld()
 
-	listener := NewTestListener(
-		func(evt ecs.EntityEvent) {
+	listener := TestListener{
+		Callback: func(evt ecs.EntityEvent) {
 			fmt.Println(evt)
 		},
-	)
+	}
 	world.SetListener(&listener)
 
 	world.NewEntity()
@@ -299,24 +299,20 @@ type TestListener struct {
 	Callback func(e ecs.EntityEvent)
 }
 
-// NewTestListener creates a new [TestListener] that subscribes to all event types.
-func NewTestListener(callback func(e ecs.EntityEvent)) TestListener {
-	return TestListener{
-		Callback: callback,
-	}
-}
-
-// Notify the listener
+// Notify the listener.
+// Calls the Callback.
 func (l *TestListener) Notify(e ecs.EntityEvent) {
 	l.Callback(e)
 }
 
-// Subscriptions of the listener
+// Subscriptions of the listener.
+// Subscribes to all events.
 func (l *TestListener) Subscriptions() event.Subscription {
 	return event.All
 }
 
 // Components the listener subscribes to.
+// Subscribes to all components.
 func (l *TestListener) Components() *ecs.Mask {
 	return nil
 }

@@ -16,5 +16,6 @@
 //     with [Cache.Register] and [Cache.Unregister].
 //   - [Resources] provide a storage for global resources, with functionality like
 //     [Resources.Get], [Resources.Add] and [Resources.Remove].
+//   - [Listener] provides [EntityEvent] notifications for ECS operations.
 //   - Useful functions: [All], [ComponentID], [ResourceID], [GetResource], [AddResource].
 package ecs

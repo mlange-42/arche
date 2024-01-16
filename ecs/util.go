@@ -65,6 +65,7 @@ func subscription(entityCreated, entityRemoved, componentAdded, componentRemoved
 	return bits
 }
 
+// Returns whether a listener that subscribes to an event is also interested in terms of component subscription.
 func subscribes(evtType event.Subscription, changed *Mask, subs *Mask, oldRel *ID, newRel *ID) bool {
 	if event.Relations.Contains(evtType) {
 		return subs == nil || (oldRel != nil && subs.Get(*oldRel)) || (newRel != nil && subs.Get(*newRel))
