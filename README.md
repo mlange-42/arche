@@ -5,6 +5,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/mlange-42/arche)](https://goreportcard.com/report/github.com/mlange-42/arche)
 [![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche.svg)](https://pkg.go.dev/github.com/mlange-42/arche)
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
+[![DOI:10.5281/zenodo.7656484](https://zenodo.org/badge/DOI/10.5281/zenodo.7656484.svg)](https://doi.org/10.5281/zenodo.7656484)
 [![MIT license](https://img.shields.io/github/license/mlange-42/arche)](https://github.com/mlange-42/arche/blob/main/LICENSE)
 
 *Arche* is an [archetype](https://github.com/mlange-42/arche/blob/main/ARCHITECTURE.md)-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
