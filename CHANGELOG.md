@@ -7,7 +7,7 @@
 * Arche supports full world serialization and deserialization, in conjunction with [arche-serde](https://github.com/mlange-42/arche-serde) (#319)
 * Supports 256 instead of 128 component types as well as resource types and engine locks (#313)
 * Generic API supports up to 12 instead of 8 component types (#324)
-* Reworked event system with independent subscription for different event types (#333, #334)
+* Reworked event system with granular subscription to different event types and components (#333, #334, #335)
 
 ### Breaking changes
 
@@ -26,10 +26,12 @@ This change was necessary to get the same performance as before, despite the mor
 * Entities support JSON marshalling and unmarshalling (#319)
 * The world's entity state can be extracted and re-established via `World.DumpEntities()` and `World.LoadEntities()` (#319, #326)
 * Adds functions `ComponentIDs(*World)` and `ResourceIDs(*World)` to get all registered IDs (#329)
+* Adds methods `Mask.And`, `Mask.Or` and `Mask.Xor` (#335)
 
 ### Performance
 
 * Reduces archetype memory footprint by using a dynamically sized slice for storage lookup (#327)
+* Reduces event listener overhead through granular subscriptions and elimination of a heap allocation (#333, #334, #335)
 
 ### Other
 

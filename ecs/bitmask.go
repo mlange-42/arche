@@ -1,6 +1,8 @@
 package ecs
 
-import "math/bits"
+import (
+	"math/bits"
+)
 
 // MaskTotalBits is the size of Mask in bits.
 //
@@ -108,6 +110,42 @@ func (b *Mask) ContainsAny(other *Mask) bool {
 		b.bits[1]&other.bits[1] != 0 ||
 		b.bits[2]&other.bits[2] != 0 ||
 		b.bits[3]&other.bits[3] != 0
+}
+
+// And returns the bitwise AND of two masks.
+func (b *Mask) And(other *Mask) Mask {
+	return Mask{
+		bits: [4]uint64{
+			b.bits[0] & other.bits[0],
+			b.bits[1] & other.bits[1],
+			b.bits[2] & other.bits[2],
+			b.bits[3] & other.bits[3],
+		},
+	}
+}
+
+// Or returns the bitwise OR of two masks.
+func (b *Mask) Or(other *Mask) Mask {
+	return Mask{
+		bits: [4]uint64{
+			b.bits[0] | other.bits[0],
+			b.bits[1] | other.bits[1],
+			b.bits[2] | other.bits[2],
+			b.bits[3] | other.bits[3],
+		},
+	}
+}
+
+// Xor returns the bitwise XOR of two masks.
+func (b *Mask) Xor(other *Mask) Mask {
+	return Mask{
+		bits: [4]uint64{
+			b.bits[0] ^ other.bits[0],
+			b.bits[1] ^ other.bits[1],
+			b.bits[2] ^ other.bits[2],
+			b.bits[3] ^ other.bits[3],
+		},
+	}
 }
 
 // TotalBitsSet returns how many bits are set in this mask.

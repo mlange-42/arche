@@ -25,11 +25,11 @@ import "github.com/mlange-42/arche/ecs/event"
 // This allows the [World] to be in an unlocked state, and notifies after potential entity initialization.
 type EntityEvent struct {
 	Entity                   Entity             // The entity that was changed.
-	OldMask                  Mask               // The old component masks. Get the new mask with [World.Mask].
+	Changed                  Mask               // Mask indicating changed components (additions and removals).
 	Added, Removed           []ID               // Components added and removed. DO NOT MODIFY! Get the current components with [World.Ids].
 	OldRelation, NewRelation *ID                // Old and new relation component ID. No relation is indicated by nil.
 	OldTarget                Entity             // Old relation target entity. Get the new target with [World.Relations] and [Relations.Get].
-	EventTypes               event.Subscription // Bit mask of event types. See [Subscription].
+	EventTypes               event.Subscription // Bit mask of event types. See [event.Subscription].
 }
 
 // Contains returns whether the event's types contain the given type/subscription bit.
@@ -37,35 +37,47 @@ func (e *EntityEvent) Contains(bit event.Subscription) bool {
 	return e.EventTypes.Contains(bit)
 }
 
-// Listener interface for listening to [EntityEvent]s.
+// Listener interface for listening to [EntityEvent] notifications.
+//
+// A listener can be added to a [World] with [World.SetListener].
+//
 // See [EntityEvent] for details.
+// See package [github.com/mlange-42/arche/listener] for Listener implementations.
 type Listener interface {
 	// Notify the listener about a subscribed event.
-	Notify(evt EntityEvent)
+	Notify(world *World, evt EntityEvent)
 	// Subscriptions to event types.
 	Subscriptions() event.Subscription
+	// Components the listener subscribes to.
+	Components() *Mask
 }
 
 // testListener for [EntityEvent]s.
 type testListener struct {
-	Callback  func(e EntityEvent)
+	Callback  func(world *World, e EntityEvent)
 	Subscribe event.Subscription
 }
 
 // newTestListener creates a new [CallbackListener] that subscribes to all event types.
-func newTestListener(callback func(e EntityEvent)) testListener {
+func newTestListener(callback func(world *World, e EntityEvent)) testListener {
 	return testListener{
 		Callback:  callback,
 		Subscribe: event.EntityCreated | event.EntityRemoved | event.ComponentAdded | event.ComponentRemoved | event.RelationChanged | event.TargetChanged,
 	}
 }
 
-// Notify the listener
-func (l *testListener) Notify(e EntityEvent) {
-	l.Callback(e)
+// Notify the listener.
+func (l *testListener) Notify(world *World, e EntityEvent) {
+	l.Callback(world, e)
 }
 
-// Subscriptions of the listener
+// Subscriptions of the listener in terms of event types.
 func (l *testListener) Subscriptions() event.Subscription {
 	return l.Subscribe
+}
+
+// Components the listener subscribes to.
+// Will be notified about changes on any (not all!) of the components in the mask.
+func (l *testListener) Components() *Mask {
+	return nil
 }

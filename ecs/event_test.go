@@ -50,7 +50,7 @@ func BenchmarkEntityEventCreate(b *testing.B) {
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		event = ecs.EntityEvent{Entity: e, OldMask: mask, Added: added, Removed: nil}
+		event = ecs.EntityEvent{Entity: e, Changed: mask, Added: added, Removed: nil}
 	}
 	b.StopTimer()
 	_ = event
@@ -68,7 +68,7 @@ func BenchmarkEntityEventHeapPointer(b *testing.B) {
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		event = &ecs.EntityEvent{Entity: e, OldMask: mask, Added: added, Removed: nil}
+		event = &ecs.EntityEvent{Entity: e, Changed: mask, Added: added, Removed: nil}
 	}
 	b.StopTimer()
 	_ = event
@@ -78,13 +78,13 @@ func BenchmarkEntityEventCopy(b *testing.B) {
 	handler := eventHandler{}
 
 	for i := 0; i < b.N; i++ {
-		handler.ListenCopy(ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, Added: nil, Removed: nil})
+		handler.ListenCopy(ecs.EntityEvent{Entity: ecs.Entity{}, Changed: ecs.Mask{}, Added: nil, Removed: nil})
 	}
 }
 
 func BenchmarkEntityEventCopyReuse(b *testing.B) {
 	handler := eventHandler{}
-	event := ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, Added: nil, Removed: nil}
+	event := ecs.EntityEvent{Entity: ecs.Entity{}, Changed: ecs.Mask{}, Added: nil, Removed: nil}
 
 	for i := 0; i < b.N; i++ {
 		handler.ListenCopy(event)
@@ -95,13 +95,13 @@ func BenchmarkEntityEventPointer(b *testing.B) {
 	handler := eventHandler{}
 
 	for i := 0; i < b.N; i++ {
-		handler.ListenPointer(&ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, Added: nil, Removed: nil})
+		handler.ListenPointer(&ecs.EntityEvent{Entity: ecs.Entity{}, Changed: ecs.Mask{}, Added: nil, Removed: nil})
 	}
 }
 
 func BenchmarkEntityEventPointerReuse(b *testing.B) {
 	handler := eventHandler{}
-	event := ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, Added: nil, Removed: nil}
+	event := ecs.EntityEvent{Entity: ecs.Entity{}, Changed: ecs.Mask{}, Added: nil, Removed: nil}
 
 	for i := 0; i < b.N; i++ {
 		handler.ListenPointer(&event)
@@ -111,9 +111,9 @@ func BenchmarkEntityEventPointerReuse(b *testing.B) {
 func ExampleEntityEvent() {
 	world := ecs.NewWorld()
 
-	listener := NewTestListener(
-		func(evt ecs.EntityEvent) { fmt.Println(evt) },
-	)
+	listener := TestListener{
+		Callback: func(world *ecs.World, evt ecs.EntityEvent) { fmt.Println(evt) },
+	}
 	world.SetListener(&listener)
 
 	world.NewEntity()
@@ -121,10 +121,10 @@ func ExampleEntityEvent() {
 }
 
 func ExampleEntityEvent_Contains() {
-	mask := event.EntityCreated | event.EntityRemoved
+	evt := ecs.EntityEvent{EventTypes: event.EntityCreated | event.EntityRemoved}
 
-	fmt.Println(mask.Contains(event.EntityRemoved))
-	fmt.Println(mask.Contains(event.RelationChanged))
+	fmt.Println(evt.Contains(event.EntityRemoved))
+	fmt.Println(evt.Contains(event.RelationChanged))
 	// Output: true
 	// false
 }

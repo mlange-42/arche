@@ -16,5 +16,10 @@
 //     with [Cache.Register] and [Cache.Unregister].
 //   - [Resources] provide a storage for global resources, with functionality like
 //     [Resources.Get], [Resources.Add] and [Resources.Remove].
+//   - [Listener] provides [EntityEvent] notifications for ECS operations.
 //   - Useful functions: [All], [ComponentID], [ResourceID], [GetResource], [AddResource].
+//
+// # Sub-packages
+//   - [github.com/mlange-42/arche/ecs/event] provides event subscription masks.
+//   - [github.com/mlange-42/arche/ecs/stats] provides world statistics for monitoring purposes.
 package ecs
