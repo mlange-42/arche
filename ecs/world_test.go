@@ -602,7 +602,7 @@ func TestWorldNewEntities(t *testing.T) {
 
 	events := []EntityEvent{}
 	listener := newTestListener(func(e EntityEvent) {
-		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
+		assert.Equal(t, world.IsLocked(), e.Contains(event.EntityRemoved))
 		events = append(events, e)
 	})
 	world.SetListener(&listener)
@@ -678,7 +678,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 
 	events := []EntityEvent{}
 	listener := newTestListener(func(e EntityEvent) {
-		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
+		assert.Equal(t, world.IsLocked(), e.Contains(event.EntityRemoved))
 		events = append(events, e)
 	})
 	world.SetListener(&listener)
@@ -753,7 +753,7 @@ func TestWorldRemoveEntities(t *testing.T) {
 
 	events := []EntityEvent{}
 	listener := newTestListener(func(e EntityEvent) {
-		assert.Equal(t, world.IsLocked(), e.EntityRemoved())
+		assert.Equal(t, world.IsLocked(), e.Contains(event.EntityRemoved))
 		events = append(events, e)
 	})
 	world.SetListener(&listener)

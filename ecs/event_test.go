@@ -12,18 +12,18 @@ import (
 func TestEntityEvent(t *testing.T) {
 	e := ecs.EntityEvent{EventTypes: event.ComponentAdded}
 
-	assert.False(t, e.EntityAdded())
-	assert.False(t, e.EntityRemoved())
+	assert.False(t, e.Contains(event.EntityCreated))
+	assert.False(t, e.Contains(event.EntityRemoved))
 
 	e = ecs.EntityEvent{EventTypes: event.EntityCreated | event.ComponentAdded}
 
-	assert.True(t, e.EntityAdded())
-	assert.False(t, e.EntityRemoved())
+	assert.True(t, e.Contains(event.EntityCreated))
+	assert.False(t, e.Contains(event.EntityRemoved))
 
 	e = ecs.EntityEvent{EventTypes: event.EntityRemoved | event.ComponentRemoved}
 
-	assert.False(t, e.EntityAdded())
-	assert.True(t, e.EntityRemoved())
+	assert.False(t, e.Contains(event.EntityCreated))
+	assert.True(t, e.Contains(event.EntityRemoved))
 }
 
 type eventHandler struct {
@@ -118,4 +118,13 @@ func ExampleEntityEvent() {
 
 	world.NewEntity()
 	// Output: {{1 0} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1}
+}
+
+func ExampleEntityEvent_Contains() {
+	mask := event.EntityCreated | event.EntityRemoved
+
+	fmt.Println(mask.Contains(event.EntityRemoved))
+	fmt.Println(mask.Contains(event.RelationChanged))
+	// Output: true
+	// false
 }

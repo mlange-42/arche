@@ -4,9 +4,15 @@ import "github.com/mlange-42/arche/ecs/event"
 
 // EntityEvent contains information about component and relation changes to an [Entity].
 //
-// To receive change events, register a function func(e *EntityEvent) with [World.SetListener].
+// To receive change events, register a [Listener] with [World.SetListener].
 //
-// Events notified are entity creation, removal, changes to the component composition and change of relation targets.
+// Events notified are entity creation and removal, component addition and removal,
+// and change of relations and their targets.
+//
+// Event types that are subscribed are determined by [Listener.Subscriptions].
+// Events that cover multiple types (e.g. entity creation and component addition) are only notified once.
+// Field EventTypes contains the [event.Subscription] bits of covered event types.
+//
 // Events are emitted immediately after the change is applied.
 //
 // Except for removed entities, events are always fired when the [World] is in an unlocked state.
@@ -26,42 +32,17 @@ type EntityEvent struct {
 	EventTypes               event.Subscription // Bit mask of event types. See [Subscription].
 }
 
-// EntityAdded reports whether the entity was newly added.
-func (e *EntityEvent) EntityAdded() bool {
-	return e.EventTypes.Contains(event.EntityCreated)
+// Contains returns whether the event's types contain the given type/subscription bit.
+func (e *EntityEvent) Contains(bit event.Subscription) bool {
+	return e.EventTypes.Contains(bit)
 }
 
-// EntityRemoved reports whether the entity was removed.
-func (e *EntityEvent) EntityRemoved() bool {
-	return e.EventTypes.Contains(event.EntityRemoved)
-}
-
-func subscription(entityCreated, entityRemoved, componentAdded, componentRemoved, relationChanged, targetChanged bool) event.Subscription {
-	var bits event.Subscription = 0
-	if entityCreated {
-		bits |= event.EntityCreated
-	}
-	if entityRemoved {
-		bits |= event.EntityRemoved
-	}
-	if componentAdded {
-		bits |= event.ComponentAdded
-	}
-	if componentRemoved {
-		bits |= event.ComponentRemoved
-	}
-	if relationChanged {
-		bits |= event.RelationChanged
-	}
-	if targetChanged {
-		bits |= event.TargetChanged
-	}
-	return bits
-}
-
-// Listener interface
+// Listener interface for listening to [EntityEvent]s.
+// See [EntityEvent] for details.
 type Listener interface {
+	// Notify the listener about a subscribed event.
 	Notify(e EntityEvent)
+	// Subscriptions to event types.
 	Subscriptions() event.Subscription
 }
 
