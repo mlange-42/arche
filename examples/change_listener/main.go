@@ -27,13 +27,13 @@ type Rotation struct {
 	A float64
 }
 
-// TestListener type
-type TestListener struct {
+// EventHandler type
+type EventHandler struct {
 	World *ecs.World
 }
 
 // Notify is called on entity changes.
-func (l *TestListener) Notify(evt ecs.EntityEvent) {
+func (l *EventHandler) Notify(evt ecs.EntityEvent) {
 	// Just prints out what the event is about.
 	// This could also be a method of a type that manages events.
 	// Could use e.g. filters to distribute events to interested/registered systems.
@@ -49,9 +49,9 @@ func (l *TestListener) Notify(evt ecs.EntityEvent) {
 func main() {
 	// Create a World.
 	world := ecs.NewWorld()
-	ls := TestListener{World: &world}
-	wrapper := listener.NewCallback(
-		ls.Notify,
+	handler := EventHandler{World: &world}
+	listener := listener.NewCallback(
+		handler.Notify,
 		event.Entities|event.Components,
 	)
 
@@ -61,7 +61,7 @@ func main() {
 	rotID := ecs.ComponentID[Rotation](&world)
 
 	// Register a listener function.
-	world.SetListener(&wrapper)
+	world.SetListener(&listener)
 
 	// Create/manipulate/delete entities and observe the listener's output
 	e0 := world.NewEntity(posID)

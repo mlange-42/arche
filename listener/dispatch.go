@@ -5,20 +5,20 @@ import (
 	"github.com/mlange-42/arche/ecs/event"
 )
 
-// Dispatched event listener.
+// Dispatch event listener.
 //
 // Dispatches events to sub-listeners and manages subscription automatically.
 //
 // Sub-listeners should not alter their subscriptions or components after adding them.
-type Dispatched struct {
+type Dispatch struct {
 	listeners     []ecs.Listener
 	events        event.Subscription
 	components    ecs.Mask
 	hasComponents bool
 }
 
-// NewDispatched returns a new [Dispatched] listener with the given sub-listeners.
-func NewDispatched(listeners ...ecs.Listener) Dispatched {
+// NewDispatch returns a new [Dispatched] listener with the given sub-listeners.
+func NewDispatch(listeners ...ecs.Listener) Dispatch {
 	var events event.Subscription = 0
 	var components ecs.Mask
 	hasComponents := true
@@ -31,7 +31,7 @@ func NewDispatched(listeners ...ecs.Listener) Dispatched {
 			components = components.Or(cmp)
 		}
 	}
-	return Dispatched{
+	return Dispatch{
 		listeners:     listeners,
 		events:        events,
 		components:    components,
@@ -40,7 +40,7 @@ func NewDispatched(listeners ...ecs.Listener) Dispatched {
 }
 
 // AddListener adds a sub-listener to this listener.
-func (l *Dispatched) AddListener(ls ecs.Listener) {
+func (l *Dispatch) AddListener(ls ecs.Listener) {
 	l.listeners = append(l.listeners, ls)
 	l.events |= ls.Subscriptions()
 
@@ -53,7 +53,7 @@ func (l *Dispatched) AddListener(ls ecs.Listener) {
 }
 
 // Notify the listener.
-func (l *Dispatched) Notify(evt ecs.EntityEvent) {
+func (l *Dispatch) Notify(evt ecs.EntityEvent) {
 	for _, ls := range l.listeners {
 		if ls.Subscriptions().ContainsAny(evt.EventTypes) &&
 			subscribes(evt.EventTypes, &evt.Changed, ls.Components(), evt.OldRelation, evt.NewRelation) {
@@ -63,12 +63,12 @@ func (l *Dispatched) Notify(evt ecs.EntityEvent) {
 }
 
 // Subscriptions of the listener.
-func (l *Dispatched) Subscriptions() event.Subscription {
+func (l *Dispatch) Subscriptions() event.Subscription {
 	return l.events
 }
 
 // Components the listener subscribes to.
-func (l *Dispatched) Components() *ecs.Mask {
+func (l *Dispatch) Components() *ecs.Mask {
 	if l.hasComponents {
 		return &l.components
 	}
