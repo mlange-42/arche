@@ -7,10 +7,10 @@ import (
 
 // Dispatch event listener.
 //
-// Dispatches events to sub-listeners and manages subscription automatically.
-// Sub-listeners should not alter their subscriptions or components after adding them.
+// Dispatches events to sub-listeners and manages subscription automatically, based on their settings.
+// Sub-listeners should not alter their subscriptions or components after being added.
 //
-// To make it possible for systems to add listeners, Dispatch should be added to the [ecs.World] as a resource.
+// To make it possible for systems to add listeners, Dispatch can be added to the [ecs.World] as a resource.
 type Dispatch struct {
 	listeners     []ecs.Listener
 	events        event.Subscription
