@@ -315,3 +315,8 @@ func (l *TestListener) Notify(e ecs.EntityEvent) {
 func (l *TestListener) Subscriptions() event.Subscription {
 	return event.All
 }
+
+// Components the listener subscribes to.
+func (l *TestListener) Components() *ecs.Mask {
+	return nil
+}

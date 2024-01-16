@@ -25,7 +25,7 @@ import "github.com/mlange-42/arche/ecs/event"
 // This allows the [World] to be in an unlocked state, and notifies after potential entity initialization.
 type EntityEvent struct {
 	Entity                   Entity             // The entity that was changed.
-	OldMask                  Mask               // The old component masks. Get the new mask with [World.Mask].
+	Changed                  Mask               // Mask indicating changed components.
 	Added, Removed           []ID               // Components added and removed. DO NOT MODIFY! Get the current components with [World.Ids].
 	OldRelation, NewRelation *ID                // Old and new relation component ID. No relation is indicated by nil.
 	OldTarget                Entity             // Old relation target entity. Get the new target with [World.Relations] and [Relations.Get].
@@ -44,6 +44,8 @@ type Listener interface {
 	Notify(evt EntityEvent)
 	// Subscriptions to event types.
 	Subscriptions() event.Subscription
+	// Components the listener subscribes to.
+	Components() *Mask
 }
 
 // testListener for [EntityEvent]s.
@@ -68,4 +70,9 @@ func (l *testListener) Notify(e EntityEvent) {
 // Subscriptions of the listener
 func (l *testListener) Subscriptions() event.Subscription {
 	return l.Subscribe
+}
+
+// Components the listener subscribes to.
+func (l *testListener) Components() *Mask {
+	return nil
 }

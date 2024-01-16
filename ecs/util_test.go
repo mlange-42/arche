@@ -4,6 +4,7 @@ import (
 	"testing"
 	"unsafe"
 
+	"github.com/mlange-42/arche/ecs/event"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -62,6 +63,39 @@ func TestPagedSlice(t *testing.T) {
 
 	a.Set(3, 100)
 	assert.Equal(t, int32(100), *a.Get(3))
+}
+
+func TestSubscribes(t *testing.T) {
+	id1 := id(1)
+	id2 := id(2)
+	id3 := id(3)
+
+	assert.True(t,
+		subscribes(event.ComponentAdded, all(id1), all(id1, id2), nil, nil),
+	)
+	assert.True(t,
+		subscribes(event.ComponentAdded, all(id1, id2), all(id2), nil, nil),
+	)
+	assert.False(t,
+		subscribes(event.ComponentAdded, all(id1, id2), all(id3), nil, nil),
+	)
+
+	assert.True(t,
+		subscribes(event.RelationChanged, &Mask{}, all(id1, id2), nil, &id1),
+	)
+	assert.True(t,
+		subscribes(event.RelationChanged, &Mask{}, all(id1, id2), &id1, &id3),
+	)
+	assert.False(t,
+		subscribes(event.RelationChanged, &Mask{}, all(id1), &id2, &id3),
+	)
+
+	assert.True(t,
+		subscribes(event.TargetChanged, &Mask{}, all(id1, id2), &id1, &id1),
+	)
+	assert.False(t,
+		subscribes(event.TargetChanged, &Mask{}, all(id1, id2), &id3, &id3),
+	)
 }
 
 func TestPagedSlicePointerPersistence(t *testing.T) {

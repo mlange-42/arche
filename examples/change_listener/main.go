@@ -50,7 +50,10 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 	ls := TestListener{World: &world}
-	wrapper := listener.NewCallback(event.Entities|event.Components, ls.Notify)
+	wrapper := listener.NewCallback(
+		ls.Notify,
+		event.Entities|event.Components,
+	)
 
 	// Get component IDs
 	posID := ecs.ComponentID[Position](&world)
