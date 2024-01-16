@@ -5,6 +5,7 @@ import (
 	"reflect"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/ecs/event"
 )
 
 func ExampleComponentID() {
@@ -275,13 +276,15 @@ func ExampleWorld_Batch() {
 func ExampleWorld_SetListener() {
 	world := ecs.NewWorld()
 
-	listener := func(evt ecs.EntityEvent) {
-		fmt.Println(evt)
-	}
-	world.SetListener(listener)
+	listener := NewTestListener(
+		func(evt ecs.EntityEvent) {
+			fmt.Println(evt)
+		},
+	)
+	world.SetListener(&listener)
 
 	world.NewEntity()
-	// Output: {{1 0} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1 false false}
+	// Output: {{1 0} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1}
 }
 
 func ExampleWorld_Stats() {
@@ -289,4 +292,26 @@ func ExampleWorld_Stats() {
 	stats := world.Stats()
 	fmt.Println(stats.Entities.String())
 	// Output: Entities -- Used: 0, Recycled: 0, Total: 0, Capacity: 128
+}
+
+// TestListener for all [EntityEvent]s.
+type TestListener struct {
+	Callback func(e ecs.EntityEvent)
+}
+
+// NewTestListener creates a new [TestListener] that subscribes to all event types.
+func NewTestListener(callback func(e ecs.EntityEvent)) TestListener {
+	return TestListener{
+		Callback: callback,
+	}
+}
+
+// Notify the listener
+func (l *TestListener) Notify(e ecs.EntityEvent) {
+	l.Callback(e)
+}
+
+// Subscriptions of the listener
+func (l *TestListener) Subscriptions() event.Subscription {
+	return event.All
 }

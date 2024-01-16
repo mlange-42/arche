@@ -55,6 +55,9 @@ func (b *Batch) RemoveQ(filter Filter, comps ...ID) Query {
 
 // SetRelation sets the [Relation] target for many entities, matching a filter.
 //
+// Entities that match the filter but already have the desired target entity are not processed,
+// and no events are emitted for them.
+//
 // Panics:
 //   - when called for a missing component.
 //   - when called for a component that is not a relation.
@@ -67,6 +70,9 @@ func (b *Batch) SetRelation(filter Filter, comp ID, target Entity) {
 
 // SetRelationQ sets the [Relation] target for many entities, matching a filter.
 // It returns a query over the affected entities.
+//
+// Entities that match the filter but already have the desired target entity are not processed,
+// not included in the query, and no events are emitted for them.
 //
 // Panics:
 //   - when called for a missing component.

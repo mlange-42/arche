@@ -3,6 +3,8 @@ package ecs
 import (
 	"fmt"
 	"strings"
+
+	"github.com/mlange-42/arche/ecs/event"
 )
 
 // Page size of pagedSlice type
@@ -37,6 +39,30 @@ func capacityU32(size, increment uint32) uint32 {
 		cap += increment
 	}
 	return cap
+}
+
+// Creates an [event.Subscription] mask from the given booleans.
+func subscription(entityCreated, entityRemoved, componentAdded, componentRemoved, relationChanged, targetChanged bool) event.Subscription {
+	var bits event.Subscription = 0
+	if entityCreated {
+		bits |= event.EntityCreated
+	}
+	if entityRemoved {
+		bits |= event.EntityRemoved
+	}
+	if componentAdded {
+		bits |= event.ComponentAdded
+	}
+	if componentRemoved {
+		bits |= event.ComponentRemoved
+	}
+	if relationChanged {
+		bits |= event.RelationChanged
+	}
+	if targetChanged {
+		bits |= event.TargetChanged
+	}
+	return bits
 }
 
 func maskToTypes(mask Mask, reg *componentRegistry) []componentType {

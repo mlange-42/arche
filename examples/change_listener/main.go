@@ -6,6 +6,8 @@ import (
 	"fmt"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/ecs/event"
+	"github.com/mlange-42/arche/listener"
 )
 
 // Position component
@@ -25,19 +27,19 @@ type Rotation struct {
 	A float64
 }
 
-// Listener type
-type Listener struct {
+// TestListener type
+type TestListener struct {
 	World *ecs.World
 }
 
-// Listen is called on entity changes.
-func (l *Listener) Listen(evt ecs.EntityEvent) {
+// Notify is called on entity changes.
+func (l *TestListener) Notify(evt ecs.EntityEvent) {
 	// Just prints out what the event is about.
 	// This could also be a method of a type that manages events.
 	// Could use e.g. filters to distribute events to interested/registered systems.
-	if evt.EntityAdded() {
+	if evt.Contains(event.EntityCreated) {
 		fmt.Printf("Entity added, has components %v\n", l.World.Ids(evt.Entity))
-	} else if evt.EntityRemoved() {
+	} else if evt.Contains(event.EntityRemoved) {
 		fmt.Printf("Entity removed, had components %v\n", l.World.Ids(evt.Entity))
 	} else {
 		fmt.Printf("Entity changed, has components %v\n", l.World.Ids(evt.Entity))
@@ -47,7 +49,8 @@ func (l *Listener) Listen(evt ecs.EntityEvent) {
 func main() {
 	// Create a World.
 	world := ecs.NewWorld()
-	listener := Listener{World: &world}
+	ls := TestListener{World: &world}
+	wrapper := listener.NewCallback(event.Entities|event.Components, ls.Notify)
 
 	// Get component IDs
 	posID := ecs.ComponentID[Position](&world)
@@ -55,7 +58,7 @@ func main() {
 	rotID := ecs.ComponentID[Rotation](&world)
 
 	// Register a listener function.
-	world.SetListener(listener.Listen)
+	world.SetListener(&wrapper)
 
 	// Create/manipulate/delete entities and observe the listener's output
 	e0 := world.NewEntity(posID)
