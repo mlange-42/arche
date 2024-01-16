@@ -108,7 +108,7 @@ jobs:
         run: |
           go run ./examples/base
           go run ./examples/batch_ops
-          go run ./examples/change_listener
+          go run ./examples/events
           go run ./examples/filter
           go run ./examples/generic
           go run ./examples/locked_world
