@@ -7,6 +7,7 @@
 * Arche supports full world serialization and deserialization, in conjunction with [arche-serde](https://github.com/mlange-42/arche-serde) (#319)
 * Supports 256 instead of 128 component types as well as resource types and engine locks (#313)
 * Generic API supports up to 12 instead of 8 component types (#324)
+* Reworked event system with independent subscription for different event types (#333, #334)
 
 ### Breaking changes
 
@@ -16,7 +17,7 @@
 This change was necessary to get the same performance as before, despite the more heavyweight implementation of the now 256 bits `Mask`.
 * Component and resource IDs are now opaque types instead of type aliases for `uint8` (#329)
 * Restructures `EntityEvent` to remove redundant information and better handle relation changes (#333)
-* World event listener function signature changed from `func(*EntityEvent)` to `func(EntityEvent)` (#333)
+* World event listener changed from a simple function to a `Listener` interface (#334)
 
 ### Features
 
