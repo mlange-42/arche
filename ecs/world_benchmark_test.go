@@ -286,7 +286,7 @@ func BenchmarkWorldStats_10Arch(b *testing.B) {
 	_ = st
 }
 
-func BenchmarkWorldNewEntityNoEvent_1000(b *testing.B) {
+func BenchmarkWorldNewEntityNoListener_1000(b *testing.B) {
 	b.StopTimer()
 
 	world := NewWorld()
@@ -306,6 +306,34 @@ func BenchmarkWorldNewEntityNoEvent_1000(b *testing.B) {
 		b.StopTimer()
 		world.Batch().RemoveEntities(filterPos)
 	}
+}
+
+func BenchmarkWorldNewEntityNoEvent_1000(b *testing.B) {
+	b.StopTimer()
+
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	filterPos := All(posID)
+
+	builder := NewBuilder(&world, posID)
+	builder.NewBatch(1000)
+	world.Batch().RemoveEntities(filterPos)
+
+	var temp event.Subscription
+	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
+	listener.Subscribe = 0
+
+	world.SetListener(&listener)
+	for i := 0; i < b.N; i++ {
+		b.StartTimer()
+		for j := 0; j < 1000; j++ {
+			world.NewEntity(posID)
+		}
+		b.StopTimer()
+		world.Batch().RemoveEntities(filterPos)
+	}
+	_ = temp
 }
 
 func BenchmarkWorldNewEntityEvent_1000(b *testing.B) {
@@ -335,7 +363,7 @@ func BenchmarkWorldNewEntityEvent_1000(b *testing.B) {
 	_ = temp
 }
 
-func BenchmarkWorldExchangeNoEvent_1000(b *testing.B) {
+func BenchmarkWorldExchangeNoListener_1000(b *testing.B) {
 	b.StopTimer()
 
 	world := NewWorld()
@@ -373,6 +401,52 @@ func BenchmarkWorldExchangeNoEvent_1000(b *testing.B) {
 		}
 		hasPos = !hasPos
 	}
+}
+
+func BenchmarkWorldExchangeNoEvent_1000(b *testing.B) {
+	b.StopTimer()
+
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	builder := NewBuilder(&world, posID)
+	entities := make([]Entity, 0, 1000)
+	query := builder.NewBatchQ(1000)
+	for query.Next() {
+		entities = append(entities, query.Entity())
+	}
+
+	filterPos := All(posID)
+	filterVel := All(velID)
+
+	pos := []ID{posID}
+	vel := []ID{velID}
+
+	world.Batch().Exchange(filterPos, vel, pos)
+	world.Batch().Exchange(filterVel, pos, vel)
+
+	var temp event.Subscription
+	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
+	listener.Subscribe = 0
+	world.SetListener(&listener)
+
+	b.StartTimer()
+	hasPos := true
+	for i := 0; i < b.N; i++ {
+		if hasPos {
+			for _, e := range entities {
+				world.Exchange(e, vel, pos)
+			}
+		} else {
+			for _, e := range entities {
+				world.Exchange(e, pos, vel)
+			}
+		}
+		hasPos = !hasPos
+	}
+	_ = temp
 }
 
 func BenchmarkWorldExchangeEvent_1000(b *testing.B) {
@@ -420,7 +494,7 @@ func BenchmarkWorldExchangeEvent_1000(b *testing.B) {
 	_ = temp
 }
 
-func BenchmarkWorldExchangeBatchNoEvent_1000(b *testing.B) {
+func BenchmarkWorldExchangeBatchNoListener_1000(b *testing.B) {
 	b.StopTimer()
 
 	world := NewWorld()
@@ -450,6 +524,44 @@ func BenchmarkWorldExchangeBatchNoEvent_1000(b *testing.B) {
 		}
 		hasPos = !hasPos
 	}
+}
+
+func BenchmarkWorldExchangeBatchNoEvent_1000(b *testing.B) {
+	b.StopTimer()
+
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	builder := NewBuilder(&world, posID)
+	builder.NewBatch(1000)
+
+	filterPos := All(posID)
+	filterVel := All(velID)
+
+	pos := []ID{posID}
+	vel := []ID{velID}
+
+	world.Batch().Exchange(filterPos, vel, pos)
+	world.Batch().Exchange(filterVel, pos, vel)
+
+	var temp event.Subscription
+	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
+	listener.Subscribe = 0
+	world.SetListener(&listener)
+
+	b.StartTimer()
+	hasPos := true
+	for i := 0; i < b.N; i++ {
+		if hasPos {
+			world.Batch().Exchange(filterPos, vel, pos)
+		} else {
+			world.Batch().Exchange(filterVel, pos, vel)
+		}
+		hasPos = !hasPos
+	}
+	_ = temp
 }
 
 func BenchmarkWorldExchangeBatchEvent_1000(b *testing.B) {
