@@ -321,7 +321,7 @@ func BenchmarkWorldNewEntityNoEvent_1000(b *testing.B) {
 	world.Batch().RemoveEntities(filterPos)
 
 	var temp event.Subscription
-	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
+	listener := newTestListener(func(world *World, e EntityEvent) { temp = e.EventTypes })
 	listener.Subscribe = 0
 
 	world.SetListener(&listener)
@@ -349,7 +349,7 @@ func BenchmarkWorldNewEntityEvent_1000(b *testing.B) {
 	world.Batch().RemoveEntities(filterPos)
 
 	var temp event.Subscription
-	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
+	listener := newTestListener(func(world *World, e EntityEvent) { temp = e.EventTypes })
 	world.SetListener(&listener)
 
 	for i := 0; i < b.N; i++ {
@@ -428,7 +428,7 @@ func BenchmarkWorldExchangeNoEvent_1000(b *testing.B) {
 	world.Batch().Exchange(filterVel, pos, vel)
 
 	var temp event.Subscription
-	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
+	listener := newTestListener(func(world *World, e EntityEvent) { temp = e.EventTypes })
 	listener.Subscribe = 0
 	world.SetListener(&listener)
 
@@ -474,7 +474,7 @@ func BenchmarkWorldExchangeEvent_1000(b *testing.B) {
 	world.Batch().Exchange(filterVel, pos, vel)
 
 	var temp event.Subscription
-	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
+	listener := newTestListener(func(world *World, e EntityEvent) { temp = e.EventTypes })
 	world.SetListener(&listener)
 
 	b.StartTimer()
@@ -547,7 +547,7 @@ func BenchmarkWorldExchangeBatchNoEvent_1000(b *testing.B) {
 	world.Batch().Exchange(filterVel, pos, vel)
 
 	var temp event.Subscription
-	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
+	listener := newTestListener(func(world *World, e EntityEvent) { temp = e.EventTypes })
 	listener.Subscribe = 0
 	world.SetListener(&listener)
 
@@ -585,7 +585,7 @@ func BenchmarkWorldExchangeBatchEvent_1000(b *testing.B) {
 	world.Batch().Exchange(filterVel, pos, vel)
 
 	var temp event.Subscription
-	listener := newTestListener(func(e EntityEvent) { temp = e.EventTypes })
+	listener := newTestListener(func(world *World, e EntityEvent) { temp = e.EventTypes })
 	world.SetListener(&listener)
 
 	b.StartTimer()

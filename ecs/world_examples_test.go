@@ -277,7 +277,7 @@ func ExampleWorld_SetListener() {
 	world := ecs.NewWorld()
 
 	listener := TestListener{
-		Callback: func(evt ecs.EntityEvent) {
+		Callback: func(world *ecs.World, evt ecs.EntityEvent) {
 			fmt.Println(evt)
 		},
 	}
@@ -296,13 +296,13 @@ func ExampleWorld_Stats() {
 
 // TestListener for all [EntityEvent]s.
 type TestListener struct {
-	Callback func(e ecs.EntityEvent)
+	Callback func(world *ecs.World, evt ecs.EntityEvent)
 }
 
 // Notify the listener.
 // Calls the Callback.
-func (l *TestListener) Notify(e ecs.EntityEvent) {
-	l.Callback(e)
+func (l *TestListener) Notify(world *ecs.World, evt ecs.EntityEvent) {
+	l.Callback(world, evt)
 }
 
 // Subscriptions of the listener.

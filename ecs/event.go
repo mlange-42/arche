@@ -45,7 +45,7 @@ func (e *EntityEvent) Contains(bit event.Subscription) bool {
 // See package [github.com/mlange-42/arche/listener] for Listener implementations.
 type Listener interface {
 	// Notify the listener about a subscribed event.
-	Notify(evt EntityEvent)
+	Notify(world *World, evt EntityEvent)
 	// Subscriptions to event types.
 	Subscriptions() event.Subscription
 	// Components the listener subscribes to.
@@ -54,12 +54,12 @@ type Listener interface {
 
 // testListener for [EntityEvent]s.
 type testListener struct {
-	Callback  func(e EntityEvent)
+	Callback  func(world *World, e EntityEvent)
 	Subscribe event.Subscription
 }
 
 // newTestListener creates a new [CallbackListener] that subscribes to all event types.
-func newTestListener(callback func(e EntityEvent)) testListener {
+func newTestListener(callback func(world *World, e EntityEvent)) testListener {
 	return testListener{
 		Callback:  callback,
 		Subscribe: event.EntityCreated | event.EntityRemoved | event.ComponentAdded | event.ComponentRemoved | event.RelationChanged | event.TargetChanged,
@@ -67,8 +67,8 @@ func newTestListener(callback func(e EntityEvent)) testListener {
 }
 
 // Notify the listener.
-func (l *testListener) Notify(e EntityEvent) {
-	l.Callback(e)
+func (l *testListener) Notify(world *World, e EntityEvent) {
+	l.Callback(world, e)
 }
 
 // Subscriptions of the listener in terms of event types.

@@ -54,11 +54,11 @@ func (l *Dispatch) AddListener(ls ecs.Listener) {
 }
 
 // Notify the listener.
-func (l *Dispatch) Notify(evt ecs.EntityEvent) {
+func (l *Dispatch) Notify(world *ecs.World, evt ecs.EntityEvent) {
 	for _, ls := range l.listeners {
 		if ls.Subscriptions().ContainsAny(evt.EventTypes) &&
 			subscribes(evt.EventTypes, &evt.Changed, ls.Components(), evt.OldRelation, evt.NewRelation) {
-			ls.Notify(evt)
+			ls.Notify(world, evt)
 		}
 	}
 }

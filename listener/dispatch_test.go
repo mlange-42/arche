@@ -10,26 +10,26 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type handler struct {
+type EventHandler struct {
 	events []ecs.EntityEvent
 }
 
-func (h *handler) Notify(e ecs.EntityEvent) {
+func (h *EventHandler) Notify(w *ecs.World, e ecs.EntityEvent) {
 	h.events = append(h.events, e)
 }
 
-func TestDispatched(t *testing.T) {
+func TestDispatch(t *testing.T) {
 	world := ecs.NewWorld()
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	h1 := handler{}
+	h1 := EventHandler{}
 	l1 := listener.NewCallback(
 		h1.Notify,
 		event.Entities,
 		posID,
 	)
-	h2 := handler{}
+	h2 := EventHandler{}
 	l2 := listener.NewCallback(
 		h2.Notify,
 		event.Components,
@@ -57,19 +57,19 @@ func TestDispatched(t *testing.T) {
 	assert.Equal(t, 2, len(h2.events))
 }
 
-func TestDispatchedRelations(t *testing.T) {
+func TestDispatchRelations(t *testing.T) {
 	world := ecs.NewWorld()
 	posID := ecs.ComponentID[Position](&world)
 	rel1ID := ecs.ComponentID[Relation1](&world)
 	rel2ID := ecs.ComponentID[Relation2](&world)
 
-	h1 := handler{}
+	h1 := EventHandler{}
 	l1 := listener.NewCallback(
 		h1.Notify,
 		event.RelationChanged,
 		rel1ID,
 	)
-	h2 := handler{}
+	h2 := EventHandler{}
 	l2 := listener.NewCallback(
 		h2.Notify,
 		event.TargetChanged,
@@ -112,18 +112,18 @@ func TestDispatchedRelations(t *testing.T) {
 	assert.Equal(t, 50, len(h2.events))
 }
 
-func TestDispatchedAllComps(t *testing.T) {
+func TestDispatchAllComps(t *testing.T) {
 	world := ecs.NewWorld()
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Position](&world)
 	relID := ecs.ComponentID[Relation1](&world)
 
-	h1 := handler{}
+	h1 := EventHandler{}
 	l1 := listener.NewCallback(
 		h1.Notify,
 		event.Components,
 	)
-	h2 := handler{}
+	h2 := EventHandler{}
 	l2 := listener.NewCallback(
 		h2.Notify,
 		event.Components,
@@ -169,11 +169,11 @@ func ExampleDispatch() {
 	velID := ecs.ComponentID[Velocity](&world)
 
 	entityListener := listener.NewCallback(
-		func(ee ecs.EntityEvent) { fmt.Println("Entity event") },
+		func(w *ecs.World, ee ecs.EntityEvent) { fmt.Println("Entity event") },
 		event.EntityCreated|event.EntityRemoved,
 	)
 	componentListener := listener.NewCallback(
-		func(ee ecs.EntityEvent) { fmt.Println("Component event") },
+		func(w *ecs.World, ee ecs.EntityEvent) { fmt.Println("Component event on Position") },
 		event.ComponentAdded|event.ComponentRemoved,
 		posID, // optional restriction of subscribed components
 	)
@@ -196,8 +196,8 @@ func ExampleDispatch() {
 	// Triggers entityListener but not componentListener, as it is restricted to posID
 	_ = world.NewEntity(velID)
 	// Output: Entity event
-	// Component event
+	// Component event on Position
 	// Entity event
-	// Component event
+	// Component event on Position
 	// Entity event
 }

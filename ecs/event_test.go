@@ -112,7 +112,7 @@ func ExampleEntityEvent() {
 	world := ecs.NewWorld()
 
 	listener := TestListener{
-		Callback: func(evt ecs.EntityEvent) { fmt.Println(evt) },
+		Callback: func(world *ecs.World, evt ecs.EntityEvent) { fmt.Println(evt) },
 	}
 	world.SetListener(&listener)
 
@@ -121,10 +121,10 @@ func ExampleEntityEvent() {
 }
 
 func ExampleEntityEvent_Contains() {
-	mask := event.EntityCreated | event.EntityRemoved
+	evt := ecs.EntityEvent{EventTypes: event.EntityCreated | event.EntityRemoved}
 
-	fmt.Println(mask.Contains(event.EntityRemoved))
-	fmt.Println(mask.Contains(event.RelationChanged))
+	fmt.Println(evt.Contains(event.EntityRemoved))
+	fmt.Println(evt.Contains(event.RelationChanged))
 	// Output: true
 	// false
 }

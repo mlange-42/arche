@@ -31,6 +31,7 @@ This change was necessary to get the same performance as before, despite the mor
 ### Performance
 
 * Reduces archetype memory footprint by using a dynamically sized slice for storage lookup (#327)
+* Reduces event listener overhead through granular subscriptions and elimination of a heap allocation (#333, #334, #335)
 
 ### Other
 

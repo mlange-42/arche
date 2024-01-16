@@ -9,7 +9,7 @@ import (
 //
 // Calls a function on events that are contained in the subscription mask.
 type Callback struct {
-	callback      func(e ecs.EntityEvent)
+	callback      func(w *ecs.World, e ecs.EntityEvent)
 	events        event.Subscription
 	components    ecs.Mask
 	hasComponents bool
@@ -19,7 +19,7 @@ type Callback struct {
 //
 // Subscribes to the specified events with changes on the specified components.
 // If no component IDs are given, is subscribes to all components.
-func NewCallback(callback func(ecs.EntityEvent), events event.Subscription, components ...ecs.ID) Callback {
+func NewCallback(callback func(*ecs.World, ecs.EntityEvent), events event.Subscription, components ...ecs.ID) Callback {
 	return Callback{
 		callback:      callback,
 		events:        events,
@@ -29,8 +29,8 @@ func NewCallback(callback func(ecs.EntityEvent), events event.Subscription, comp
 }
 
 // Notify the listener.
-func (l *Callback) Notify(e ecs.EntityEvent) {
-	l.callback(e)
+func (l *Callback) Notify(w *ecs.World, e ecs.EntityEvent) {
+	l.callback(w, e)
 }
 
 // Subscriptions of the listener.

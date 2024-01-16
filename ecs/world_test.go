@@ -331,7 +331,7 @@ func TestWorldExchangeBatch(t *testing.T) {
 	w := NewWorld()
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(world *World, e EntityEvent) {
 		events = append(events, e)
 	})
 	w.SetListener(&listener)
@@ -602,7 +602,7 @@ func TestWorldNewEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(w *World, e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.Contains(event.EntityRemoved))
 		events = append(events, e)
 	})
@@ -678,7 +678,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(world *World, e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.Contains(event.EntityRemoved))
 		events = append(events, e)
 	})
@@ -753,7 +753,7 @@ func TestWorldRemoveEntities(t *testing.T) {
 	world := NewWorld(NewConfig().WithCapacityIncrement(16))
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(world *World, e EntityEvent) {
 		assert.Equal(t, world.IsLocked(), e.Contains(event.EntityRemoved))
 		events = append(events, e)
 	})
@@ -794,7 +794,7 @@ func TestWorldRelationSet(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(world *World, e EntityEvent) {
 		events = append(events, e)
 	})
 	world.SetListener(&listener)
@@ -893,7 +893,7 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(world *World, e EntityEvent) {
 		events = append(events, e)
 	})
 	world.SetListener(&listener)
@@ -982,7 +982,7 @@ func TestWorldRelationRemove(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(world *World, e EntityEvent) {
 		events = append(events, e)
 	})
 	world.SetListener(&listener)
@@ -1202,7 +1202,7 @@ func TestWorldRelation(t *testing.T) {
 func TestWorldRelationCreate(t *testing.T) {
 	world := NewWorld()
 
-	listener := newTestListener(func(e EntityEvent) {})
+	listener := newTestListener(func(world *World, e EntityEvent) {})
 	world.SetListener(&listener)
 
 	posID := ComponentID[Position](&world)
@@ -1243,7 +1243,7 @@ func TestWorldRelationCreate(t *testing.T) {
 
 func TestWorldRelationMove(t *testing.T) {
 	world := NewWorld()
-	listener := newTestListener(func(e EntityEvent) {})
+	listener := newTestListener(func(world *World, e EntityEvent) {})
 	world.SetListener(&listener)
 
 	posID := ComponentID[Position](&world)
@@ -1441,7 +1441,7 @@ func TestWorldBatchRemove(t *testing.T) {
 	world := NewWorld()
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(world *World, e EntityEvent) {
 		events = append(events, e)
 	})
 	world.SetListener(&listener)
@@ -1519,7 +1519,7 @@ func TestWorldBatchRemove(t *testing.T) {
 
 func TestWorldReset(t *testing.T) {
 	world := NewWorld()
-	listener := newTestListener(func(e EntityEvent) {})
+	listener := newTestListener(func(world *World, e EntityEvent) {})
 	world.SetListener(&listener)
 
 	AddResource(&world, &rotation{100})
@@ -1599,7 +1599,7 @@ func TestWorldListener(t *testing.T) {
 	w := NewWorld()
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(world *World, e EntityEvent) {
 		events = append(events, e)
 	})
 	w.SetListener(&listener)
@@ -1702,7 +1702,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 	w := NewWorld()
 
 	events := []EntityEvent{}
-	listener := newTestListener(func(e EntityEvent) {
+	listener := newTestListener(func(world *World, e EntityEvent) {
 		events = append(events, e)
 	})
 	w.SetListener(&listener)

@@ -31,8 +31,8 @@ func main() {
 	// Create a World.
 	world := ecs.NewWorld()
 	listener := listener.NewCallback(
-		func(ee ecs.EntityEvent) {
-			fmt.Printf("Events: %08b Added: %v Removed: %v\n", ee.EventTypes, ee.Added, ee.Removed)
+		func(world *ecs.World, evt ecs.EntityEvent) {
+			fmt.Printf("Events: %08b Added: %v Removed: %v\n", evt.EventTypes, evt.Added, evt.Removed)
 		},
 		event.Entities|event.Components,
 	)
