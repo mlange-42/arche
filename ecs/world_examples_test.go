@@ -275,13 +275,13 @@ func ExampleWorld_Batch() {
 func ExampleWorld_SetListener() {
 	world := ecs.NewWorld()
 
-	listener := func(evt *ecs.EntityEvent) {
+	listener := func(evt ecs.EntityEvent) {
 		fmt.Println(evt)
 	}
 	world.SetListener(listener)
 
 	world.NewEntity()
-	// Output: &{{1 0} {[0 0 0 0]} {[0 0 0 0]} [] [] [] 1 {0 0} {0 0} false}
+	// Output: {{1 0} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1 false false}
 }
 
 func ExampleWorld_Stats() {

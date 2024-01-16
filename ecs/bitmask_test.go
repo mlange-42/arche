@@ -51,6 +51,22 @@ func TestBitMask(t *testing.T) {
 	assert.False(t, mask.ContainsAny(&other2))
 }
 
+func TestBitMaskCopy(t *testing.T) {
+	mask := All(id(1), id(2), id(13), id(27), id(200))
+	mask2 := mask
+	mask3 := &mask
+
+	mask2.Set(id(1), false)
+	mask3.Set(id(2), false)
+
+	assert.True(t, mask.Get(id(1)))
+	assert.False(t, mask2.Get(id(1)))
+
+	assert.True(t, mask2.Get(id(2)))
+	assert.False(t, mask.Get(id(2)))
+	assert.False(t, mask3.Get(id(2)))
+}
+
 func TestBitMaskWithoutExclusive(t *testing.T) {
 	mask := All(id(1), id(2), id(13))
 
@@ -234,7 +250,7 @@ func BenchmarkMaskPointer(b *testing.B) {
 	_ = v
 }
 
-func BenchmarkMask(b *testing.B) {
+func BenchmarkMaskMatch(b *testing.B) {
 	b.StopTimer()
 	mask := All(id(0), id(1), id(2))
 	bits := All(id(0), id(1), id(2))
@@ -246,6 +262,18 @@ func BenchmarkMask(b *testing.B) {
 	b.StopTimer()
 	v = !v
 	_ = v
+}
+
+func BenchmarkMaskCopy(b *testing.B) {
+	b.StopTimer()
+	mask := All(id(0), id(1), id(2))
+	var tempMask Mask
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		tempMask = mask
+	}
+	b.StopTimer()
+	_ = tempMask
 }
 
 // bitMask64 is there just for performance comparison with the new 256 bit Mask.

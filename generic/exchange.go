@@ -67,6 +67,9 @@ func (m *Exchange) Remove(entity ecs.Entity) {
 // Removes the components set via [Exchange.Removes].
 // Adds the components set via [Exchange.Adds].
 //
+// When a [Relation] component is removed and another one is added,
+// the target entity of the relation remains unchanged.
+//
 // See also [ecs.World.Exchange].
 func (m *Exchange) Exchange(entity ecs.Entity) {
 	m.world.Exchange(entity, m.add, m.remove)

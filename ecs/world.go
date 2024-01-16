@@ -114,7 +114,7 @@ func AddResource[T any](w *World, res *T) ResID {
 // [World.Batch], [World.Cache] and [Builder].
 type World struct {
 	config         Config                // World configuration.
-	listener       func(e *EntityEvent)  // Component change listener.
+	listener       func(e EntityEvent)   // Component change listener.
 	resources      Resources             // World resources.
 	entities       []entityIndex         // Mapping from entities to archetype and index.
 	targetEntities bitSet                // Whether entities are potential relation targets.
@@ -208,7 +208,11 @@ func (w *World) NewEntity(comps ...ID) Entity {
 	entity := w.createEntity(arch)
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.node.Ids, 1, Entity{}, arch.RelationTarget, false})
+		var newRel *ID
+		if arch.HasRelationComponent {
+			newRel = &arch.RelationComponent
+		}
+		w.listener(EntityEvent{entity, Mask{}, comps, nil, nil, newRel, Entity{}, 1, newRel != nil, false})
 	}
 	return entity
 }
@@ -249,7 +253,11 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 	}
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.node.Ids, 1, Entity{}, arch.RelationTarget, false})
+		var newRel *ID
+		if arch.HasRelationComponent {
+			newRel = &arch.RelationComponent
+		}
+		w.listener(EntityEvent{entity, Mask{}, ids, nil, nil, newRel, Entity{}, 1, newRel != nil, false})
 	}
 	return entity
 }
@@ -276,7 +284,7 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 	}
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.node.Ids, 1, Entity{}, arch.RelationTarget, false})
+		w.listener(EntityEvent{entity, Mask{}, comps, nil, nil, &targetID, Entity{}, 1, true, !target.IsZero()})
 	}
 	return entity
 }
@@ -309,7 +317,7 @@ func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Compone
 	}
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.node.Ids, 1, Entity{}, arch.RelationTarget, false})
+		w.listener(EntityEvent{entity, Mask{}, ids, nil, nil, &targetID, Entity{}, 1, true, !target.IsZero()})
 	}
 	return entity
 }
@@ -320,12 +328,17 @@ func (w *World) newEntities(count int, targetID ID, hasTarget bool, target Entit
 	arch, startIdx := w.newEntitiesNoNotify(count, targetID, hasTarget, target, comps...)
 
 	if w.listener != nil {
+		var newRel *ID
+		if arch.HasRelationComponent {
+			newRel = &arch.RelationComponent
+		}
+
 		cnt := uint32(count)
 		var i uint32
 		for i = 0; i < cnt; i++ {
 			idx := startIdx + i
 			entity := arch.GetEntity(idx)
-			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, comps, nil, arch.node.Ids, 1, Entity{}, arch.RelationTarget, false})
+			w.listener(EntityEvent{entity, Mask{}, comps, nil, nil, newRel, Entity{}, 1, newRel != nil, !target.IsZero()})
 		}
 	}
 
@@ -357,12 +370,17 @@ func (w *World) newEntitiesWith(count int, targetID ID, hasTarget bool, target E
 	arch, startIdx := w.newEntitiesWithNoNotify(count, targetID, hasTarget, target, ids, comps...)
 
 	if w.listener != nil {
+		var newRel *ID
+		if arch.HasRelationComponent {
+			newRel = &arch.RelationComponent
+		}
+
 		var i uint32
 		cnt := uint32(count)
 		for i = 0; i < cnt; i++ {
 			idx := startIdx + i
 			entity := arch.GetEntity(idx)
-			w.listener(&EntityEvent{entity, Mask{}, arch.Mask, ids, nil, arch.node.Ids, 1, Entity{}, arch.RelationTarget, false})
+			w.listener(EntityEvent{entity, Mask{}, ids, nil, nil, newRel, Entity{}, 1, newRel != nil, !target.IsZero()})
 		}
 	}
 
@@ -402,8 +420,17 @@ func (w *World) RemoveEntity(entity Entity) {
 	oldArch := index.arch
 
 	if w.listener != nil {
+		var oldRel *ID
+		if oldArch.HasRelationComponent {
+			oldRel = &oldArch.RelationComponent
+		}
+		var oldIds []ID
+		if len(oldArch.node.Ids) > 0 {
+			oldIds = oldArch.node.Ids
+		}
+
 		lock := w.lock()
-		w.listener(&EntityEvent{entity, oldArch.Mask, Mask{}, nil, oldArch.node.Ids, nil, -1, oldArch.RelationTarget, Entity{}, false})
+		w.listener(EntityEvent{entity, oldArch.Mask, nil, oldIds, oldRel, nil, oldArch.RelationTarget, -1, oldRel != nil, !oldArch.RelationTarget.IsZero()})
 		w.unlock(lock)
 	}
 
@@ -443,18 +470,26 @@ func (w *World) removeEntities(filter Filter) int {
 	var i int32
 	for i = 0; i < numArches; i++ {
 		arch := arches[i]
-		len := arch.Len()
-		if len == 0 {
+		ln := arch.Len()
+		if ln == 0 {
 			continue
 		}
 
-		count += len
+		count += ln
 
 		var j uint32
-		for j = 0; j < len; j++ {
+		for j = 0; j < ln; j++ {
 			entity := arch.GetEntity(j)
 			if w.listener != nil {
-				w.listener(&EntityEvent{entity, arch.Mask, Mask{}, nil, arch.node.Ids, nil, -1, arch.RelationTarget, Entity{}, false})
+				var oldRel *ID
+				if arch.HasRelationComponent {
+					oldRel = &arch.RelationComponent
+				}
+				var oldIds []ID
+				if len(arch.node.Ids) > 0 {
+					oldIds = arch.node.Ids
+				}
+				w.listener(EntityEvent{entity, arch.Mask, nil, oldIds, oldRel, nil, Entity{}, -1, oldRel != nil, !arch.RelationTarget.IsZero()})
 			}
 			index := &w.entities[entity.id]
 			index.arch = nil
@@ -624,6 +659,9 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 // Exchange adds and removes components in one pass.
 // This is more efficient than subsequent use of [World.Add] and [World.Remove].
 //
+// When a [Relation] component is removed and another one is added,
+// the target entity of the relation remains unchanged.
+//
 // Panics:
 //   - when called for a removed (and potentially recycled) entity.
 //   - when called with components that can't be added or removed because they are already present/not present, respectively.
@@ -653,10 +691,12 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 
 	if hasRelation {
 		if !mask.Get(relation) {
-			panic("can't add relation: resulting entity has no relation")
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: resulting entity has no component %s", tp.Name()))
 		}
 		if !w.registry.IsRelation.Get(relation) {
-			panic("can't add relation: this is not a relation component")
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: %s is not a relation component", tp.Name()))
 		}
 	} else {
 		target = oldArch.RelationTarget
@@ -682,10 +722,24 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 	}
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
 
+	var oldRel *ID
+	if oldArch.HasRelationComponent {
+		oldRel = &oldArch.RelationComponent
+	}
+	oldTarget := oldArch.RelationTarget
+
 	w.cleanupArchetype(oldArch)
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, oldMask, arch.Mask, add, rem, arch.node.Ids, 0, oldArch.RelationTarget, arch.RelationTarget, false})
+		var newRel *ID
+		if arch.HasRelationComponent {
+			newRel = &arch.RelationComponent
+		}
+		relChanged := false
+		if oldRel != nil || newRel != nil {
+			relChanged = (oldRel == nil) != (newRel == nil) || *oldRel != *newRel
+		}
+		w.listener(EntityEvent{entity, oldMask, add, rem, oldRel, newRel, oldTarget, 0, relChanged, oldTarget != arch.RelationTarget})
 	}
 }
 
@@ -855,7 +909,7 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 
 	oldArch := index.arch
 
-	if index.arch.RelationTarget == target {
+	if oldArch.RelationTarget == target {
 		return
 	}
 
@@ -879,10 +933,11 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
 	w.targetEntities.Set(target.id, true)
 
+	oldTarget := oldArch.RelationTarget
 	w.cleanupArchetype(oldArch)
 
 	if w.listener != nil {
-		w.listener(&EntityEvent{entity, arch.Mask, arch.Mask, nil, nil, arch.node.Ids, 0, oldArch.RelationTarget, arch.RelationTarget, true})
+		w.listener(EntityEvent{entity, arch.Mask, nil, nil, &comp, &comp, oldTarget, 0, false, true})
 	}
 }
 
@@ -1085,12 +1140,12 @@ func (w *World) ComponentType(id ID) (reflect.Type, bool) {
 	return w.registry.ComponentType(id.id)
 }
 
-// SetListener sets a listener callback func(e *EntityEvent) for the world.
+// SetListener sets a listener callback func(e EntityEvent) for the world.
 // The listener is immediately called on every [ecs.Entity] change.
 // Replaces the current listener. Call with nil to remove a listener.
 //
 // For details, see [EntityEvent].
-func (w *World) SetListener(listener func(e *EntityEvent)) {
+func (w *World) SetListener(listener func(e EntityEvent)) {
 	w.listener = listener
 }
 
@@ -1456,7 +1511,7 @@ func (w *World) createArchetype(node *archNode, target Entity, forStorage bool) 
 		w.archetypeData.Add(archetypeData{})
 		archIndex := w.archetypes.Len() - 1
 		arch = w.archetypes.Get(archIndex)
-		arch.Init(node, w.archetypeData.Get(archIndex), archIndex, forStorage, uint8(layouts), target)
+		arch.Init(node, w.archetypeData.Get(archIndex), archIndex, forStorage, uint8(layouts), Entity{})
 		node.SetArchetype(arch)
 	}
 	w.filterCache.addArchetype(arch)
@@ -1576,17 +1631,34 @@ func (w *World) notifyQuery(batchArch *batchArchetypes) {
 	var i int32
 	for i = 0; i < count; i++ {
 		arch := batchArch.Get(i)
+
+		var newRel *ID
+		if arch.HasRelationComponent {
+			newRel = &arch.RelationComponent
+		}
+
 		event := EntityEvent{
-			Entity{}, Mask{}, arch.Mask, batchArch.Added, batchArch.Removed, arch.node.Ids, 1,
-			Entity{}, arch.RelationTarget, false,
+			Entity{}, Mask{}, batchArch.Added, batchArch.Removed,
+			nil, newRel,
+			Entity{}, 1, newRel != nil, !arch.RelationTarget.IsZero(),
 		}
 
 		oldArch := batchArch.OldArchetype[i]
 		if oldArch != nil {
+			var oldRel *ID
+			if oldArch.HasRelationComponent {
+				oldRel = &oldArch.RelationComponent
+			}
+			relChanged := false
+			if oldRel != nil || newRel != nil {
+				relChanged = (oldRel == nil) != (newRel == nil) || *oldRel != *newRel
+			}
 			event.OldMask = oldArch.node.Mask
-			event.AddedRemoved = 0
 			event.OldTarget = oldArch.RelationTarget
-			event.TargetChanged = event.OldMask == event.NewMask
+			event.OldRelation = oldRel
+			event.AddedRemoved = 0
+			event.RelationChanged = relChanged
+			event.TargetChanged = oldArch.RelationTarget != arch.RelationTarget
 		}
 
 		start, end := batchArch.StartIndex[i], batchArch.EndIndex[i]
@@ -1594,7 +1666,7 @@ func (w *World) notifyQuery(batchArch *batchArchetypes) {
 		for e = start; e < end; e++ {
 			entity := arch.GetEntity(e)
 			event.Entity = entity
-			w.listener(&event)
+			w.listener(event)
 		}
 	}
 }

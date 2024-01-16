@@ -37,17 +37,53 @@ func (h *eventHandler) ListenPointer(e *ecs.EntityEvent) {
 	h.LastEntity = e.Entity
 }
 
+func BenchmarkEntityEventCreate(b *testing.B) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+	posID := ecs.ComponentID[Position](&world)
+	e := world.NewEntity()
+	mask := ecs.All(posID)
+	added := []ecs.ID{posID}
+
+	var event ecs.EntityEvent
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		event = ecs.EntityEvent{Entity: e, OldMask: mask, Added: added, Removed: nil, AddedRemoved: 0}
+	}
+	b.StopTimer()
+	_ = event
+}
+
+func BenchmarkEntityEventHeapPointer(b *testing.B) {
+	b.StopTimer()
+	world := ecs.NewWorld()
+	posID := ecs.ComponentID[Position](&world)
+	e := world.NewEntity()
+	mask := ecs.All(posID)
+	added := []ecs.ID{posID}
+
+	var event *ecs.EntityEvent
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		event = &ecs.EntityEvent{Entity: e, OldMask: mask, Added: added, Removed: nil, AddedRemoved: 0}
+	}
+	b.StopTimer()
+	_ = event
+}
+
 func BenchmarkEntityEventCopy(b *testing.B) {
 	handler := eventHandler{}
 
 	for i := 0; i < b.N; i++ {
-		handler.ListenCopy(ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, NewMask: ecs.Mask{}, Added: nil, Removed: nil, Current: nil, AddedRemoved: 0})
+		handler.ListenCopy(ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, Added: nil, Removed: nil, AddedRemoved: 0})
 	}
 }
 
 func BenchmarkEntityEventCopyReuse(b *testing.B) {
 	handler := eventHandler{}
-	event := ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, NewMask: ecs.Mask{}, Added: nil, Removed: nil, Current: nil, AddedRemoved: 0}
+	event := ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, Added: nil, Removed: nil, AddedRemoved: 0}
 
 	for i := 0; i < b.N; i++ {
 		handler.ListenCopy(event)
@@ -58,13 +94,13 @@ func BenchmarkEntityEventPointer(b *testing.B) {
 	handler := eventHandler{}
 
 	for i := 0; i < b.N; i++ {
-		handler.ListenPointer(&ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, NewMask: ecs.Mask{}, Added: nil, Removed: nil, Current: nil, AddedRemoved: 0})
+		handler.ListenPointer(&ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, Added: nil, Removed: nil, AddedRemoved: 0})
 	}
 }
 
 func BenchmarkEntityEventPointerReuse(b *testing.B) {
 	handler := eventHandler{}
-	event := ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, NewMask: ecs.Mask{}, Added: nil, Removed: nil, Current: nil, AddedRemoved: 0}
+	event := ecs.EntityEvent{Entity: ecs.Entity{}, OldMask: ecs.Mask{}, Added: nil, Removed: nil, AddedRemoved: 0}
 
 	for i := 0; i < b.N; i++ {
 		handler.ListenPointer(&event)
@@ -74,11 +110,11 @@ func BenchmarkEntityEventPointerReuse(b *testing.B) {
 func ExampleEntityEvent() {
 	world := ecs.NewWorld()
 
-	listener := func(evt *ecs.EntityEvent) {
+	listener := func(evt ecs.EntityEvent) {
 		fmt.Println(evt)
 	}
 	world.SetListener(listener)
 
 	world.NewEntity()
-	// Output: &{{1 0} {[0 0 0 0]} {[0 0 0 0]} [] [] [] 1 {0 0} {0 0} false}
+	// Output: {{1 0} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1 false false}
 }
