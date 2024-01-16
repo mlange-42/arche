@@ -168,7 +168,7 @@ To the best of the author's knowledge, there are only a handful of ECS implement
 * [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs)
 * [Donburi](https://github.com/yohamta/donburi)
 * [Ento](https://github.com/wwfranczyk/ento)
-* [unitoftime/ecs](github.com/unitoftime/ecs)
+* [unitoftime/ecs](https://github.com/unitoftime/ecs)
 
 Here, *Arche* is benchmarked against these implementations.
 Feel free to open an issue if you have suggestions for improvements on the benchmarking code or other engines to include.
