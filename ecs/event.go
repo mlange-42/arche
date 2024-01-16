@@ -41,7 +41,7 @@ func (e *EntityEvent) Contains(bit event.Subscription) bool {
 // See [EntityEvent] for details.
 type Listener interface {
 	// Notify the listener about a subscribed event.
-	Notify(e EntityEvent)
+	Notify(evt EntityEvent)
 	// Subscriptions to event types.
 	Subscriptions() event.Subscription
 }
