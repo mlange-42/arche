@@ -215,7 +215,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 		}
 		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, false)
 		trigger := w.listener.Subscriptions() & bits
-		if subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
+		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
 			w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, comps, nil, nil, newRel, Entity{}, bits})
 		}
 	}
@@ -264,7 +264,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 		}
 		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, false)
 		trigger := w.listener.Subscriptions() & bits
-		if subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
+		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
 			w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, ids, nil, nil, newRel, Entity{}, bits})
 		}
 	}
@@ -295,7 +295,7 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 	if w.listener != nil {
 		bits := subscription(true, false, len(comps) > 0, false, true, !target.IsZero())
 		trigger := w.listener.Subscriptions() & bits
-		if subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, &targetID) {
+		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, &targetID) {
 			w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, comps, nil, nil, &targetID, Entity{}, bits})
 		}
 	}
@@ -332,7 +332,7 @@ func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Compone
 	if w.listener != nil {
 		bits := subscription(true, false, len(comps) > 0, false, true, !target.IsZero())
 		trigger := w.listener.Subscriptions() & bits
-		if subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, &targetID) {
+		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, &targetID) {
 			w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, ids, nil, nil, &targetID, Entity{}, bits})
 		}
 	}
@@ -351,7 +351,7 @@ func (w *World) newEntities(count int, targetID ID, hasTarget bool, target Entit
 		}
 		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, !target.IsZero())
 		trigger := w.listener.Subscriptions() & bits
-		if subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
+		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
 			cnt := uint32(count)
 			var i uint32
 			for i = 0; i < cnt; i++ {
@@ -396,7 +396,7 @@ func (w *World) newEntitiesWith(count int, targetID ID, hasTarget bool, target E
 		}
 		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, !target.IsZero())
 		trigger := w.listener.Subscriptions() & bits
-		if subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
+		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
 			var i uint32
 			cnt := uint32(count)
 			for i = 0; i < cnt; i++ {
@@ -454,7 +454,7 @@ func (w *World) RemoveEntity(entity Entity) {
 
 		bits := subscription(false, true, false, len(oldIds) > 0, oldRel != nil, !oldArch.RelationTarget.IsZero())
 		trigger := w.listener.Subscriptions() & bits
-		if subscribes(trigger, nil, &oldArch.Mask, w.listener.Components(), oldRel, nil) {
+		if trigger != 0 && subscribes(trigger, nil, &oldArch.Mask, w.listener.Components(), oldRel, nil) {
 			lock := w.lock()
 			w.listener.Notify(w, EntityEvent{entity, Mask{}, oldArch.Mask, nil, oldIds, oldRel, nil, oldArch.RelationTarget, bits})
 			w.unlock(lock)
@@ -518,7 +518,7 @@ func (w *World) removeEntities(filter Filter) int {
 			}
 			bits = subscription(false, true, false, len(oldIds) > 0, oldRel != nil, !arch.RelationTarget.IsZero())
 			trigger := w.listener.Subscriptions() & bits
-			listen = subscribes(trigger, nil, &arch.Mask, w.listener.Components(), oldRel, nil)
+			listen = trigger != 0 && subscribes(trigger, nil, &arch.Mask, w.listener.Components(), oldRel, nil)
 		}
 
 		var j uint32
@@ -985,7 +985,7 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 
 	if w.listener != nil {
 		trigger := w.listener.Subscriptions() & event.TargetChanged
-		if subscribes(trigger, nil, nil, w.listener.Components(), &comp, &comp) {
+		if trigger != 0 && subscribes(trigger, nil, nil, w.listener.Components(), &comp, &comp) {
 			w.listener.Notify(w, EntityEvent{entity, Mask{}, Mask{}, nil, nil, &comp, &comp, oldTarget, event.TargetChanged})
 		}
 	}
@@ -1726,7 +1726,7 @@ func (w *World) notifyQuery(batchArch *batchArchetypes) {
 		event.EventTypes = bits
 
 		trigger := w.listener.Subscriptions() & bits
-		if subscribes(trigger, &event.Added, &event.Removed, w.listener.Components(), event.OldRelation, event.NewRelation) {
+		if trigger != 0 && subscribes(trigger, &event.Added, &event.Removed, w.listener.Components(), event.OldRelation, event.NewRelation) {
 			start, end := batchArch.StartIndex[i], batchArch.EndIndex[i]
 			var e uint32
 			for e = start; e < end; e++ {
