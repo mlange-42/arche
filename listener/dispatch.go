@@ -75,10 +75,3 @@ func (l *Dispatch) Components() *ecs.Mask {
 	}
 	return nil
 }
-
-func subscribes(evtType event.Subscription, changed *ecs.Mask, subs *ecs.Mask, oldRel *ecs.ID, newRel *ecs.ID) bool {
-	if event.Relations.Contains(evtType) {
-		return subs == nil || (oldRel != nil && subs.Get(*oldRel)) || (newRel != nil && subs.Get(*newRel))
-	}
-	return subs == nil || subs.ContainsAny(changed)
-}

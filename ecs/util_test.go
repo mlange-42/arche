@@ -96,6 +96,13 @@ func TestSubscribes(t *testing.T) {
 	assert.False(t,
 		subscribes(event.TargetChanged, &Mask{}, all(id1, id2), &id3, &id3),
 	)
+
+	assert.True(t,
+		subscribes(event.ComponentAdded|event.ComponentRemoved|event.TargetChanged, all(id1, id2), all(id3), &id3, &id3),
+	)
+	assert.False(t,
+		subscribes(event.ComponentAdded|event.ComponentRemoved|event.TargetChanged, all(id1), all(id3), &id2, &id2),
+	)
 }
 
 func TestPagedSlicePointerPersistence(t *testing.T) {
