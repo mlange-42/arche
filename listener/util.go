@@ -9,7 +9,7 @@ import (
 //
 // Argument trigger should only contain the subscription bits that triggered the event.
 // I.e. subscriptions & evenTypes.
-func subscribes(trigger event.Subscription, changed *ecs.Mask, subs *ecs.Mask, oldRel *ecs.ID, newRel *ecs.ID) bool {
+func subscribes(trigger event.Subscription, added *ecs.Mask, removed *ecs.Mask, subs *ecs.Mask, oldRel *ecs.ID, newRel *ecs.ID) bool {
 	if trigger == 0 {
 		return false
 	}
@@ -23,9 +23,17 @@ func subscribes(trigger event.Subscription, changed *ecs.Mask, subs *ecs.Mask, o
 			return true
 		}
 	}
-	if trigger.ContainsAny(event.Entities | event.Components) {
-		// Contains any other than event.RelationChanged and/or event.TargetChanged
-		return subs.ContainsAny(changed)
+	if trigger.ContainsAny(event.EntityCreated | event.ComponentAdded) {
+		// Contains additions-like types
+		if added != nil && subs.ContainsAny(added) {
+			return true
+		}
+	}
+	if trigger.ContainsAny(event.EntityRemoved | event.ComponentRemoved) {
+		// Contains additions-like types
+		if removed != nil && subs.ContainsAny(removed) {
+			return true
+		}
 	}
 	return false
 }

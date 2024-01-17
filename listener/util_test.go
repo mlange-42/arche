@@ -24,40 +24,56 @@ func TestSubscribes(t *testing.T) {
 	m3 := ecs.All(id3)
 
 	assert.False(t,
-		subscribes(0, &m1, &m12, nil, nil),
+		subscribes(0, &m1, nil, &m12, nil, nil),
 	)
 
 	assert.True(t,
-		subscribes(event.ComponentAdded, &m1, &m12, nil, nil),
-	)
-	assert.True(t,
-		subscribes(event.ComponentAdded, &m12, &m2, nil, nil),
+		subscribes(event.ComponentAdded, &m1, nil, &m12, nil, nil),
 	)
 	assert.False(t,
-		subscribes(event.ComponentAdded, &m12, &m3, nil, nil),
+		subscribes(event.ComponentAdded, nil, &m1, &m12, nil, nil),
+	)
+	assert.True(t,
+		subscribes(event.ComponentAdded, &m12, nil, &m2, nil, nil),
+	)
+	assert.False(t,
+		subscribes(event.ComponentAdded, &m12, nil, &m3, nil, nil),
 	)
 
 	assert.True(t,
-		subscribes(event.RelationChanged, &ecs.Mask{}, &m12, nil, &id1),
-	)
-	assert.True(t,
-		subscribes(event.RelationChanged, &ecs.Mask{}, &m12, &id1, &id3),
+		subscribes(event.ComponentRemoved, nil, &m1, &m12, nil, nil),
 	)
 	assert.False(t,
-		subscribes(event.RelationChanged, &ecs.Mask{}, &m1, &id2, &id3),
+		subscribes(event.ComponentRemoved, &m1, nil, &m12, nil, nil),
+	)
+	assert.True(t,
+		subscribes(event.ComponentRemoved, nil, &m12, &m2, nil, nil),
+	)
+	assert.False(t,
+		subscribes(event.ComponentRemoved, nil, &m12, &m3, nil, nil),
 	)
 
 	assert.True(t,
-		subscribes(event.TargetChanged, &ecs.Mask{}, &m12, &id1, &id1),
+		subscribes(event.RelationChanged, nil, nil, &m12, nil, &id1),
+	)
+	assert.True(t,
+		subscribes(event.RelationChanged, nil, nil, &m12, &id1, &id3),
 	)
 	assert.False(t,
-		subscribes(event.TargetChanged, &ecs.Mask{}, &m12, &id3, &id3),
+		subscribes(event.RelationChanged, nil, nil, &m1, &id2, &id3),
 	)
 
 	assert.True(t,
-		subscribes(event.ComponentAdded|event.ComponentRemoved|event.TargetChanged, &m12, &m3, &id3, &id3),
+		subscribes(event.TargetChanged, nil, nil, &m12, &id1, &id1),
 	)
 	assert.False(t,
-		subscribes(event.ComponentAdded|event.ComponentRemoved|event.TargetChanged, &m1, &m3, &id2, &id2),
+		subscribes(event.TargetChanged, nil, nil, &m12, &id3, &id3),
+	)
+
+	assert.True(t,
+		subscribes(event.ComponentAdded|event.ComponentRemoved|event.TargetChanged, &m12, &m12, &m3, &id3, &id3),
+	)
+	assert.False(t,
+		subscribes(event.ComponentAdded|event.ComponentRemoved|event.TargetChanged, &m1, &m1, &m3, &id2, &id2),
 	)
 }

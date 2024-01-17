@@ -33,7 +33,7 @@ type EventHandler struct{}
 func (h *EventHandler) Notify(world *ecs.World, evt ecs.EntityEvent) {
 	fmt.Printf("    Type mask:     %06b\n", evt.EventTypes)
 	fmt.Printf("    Entity:        %+v\n", evt.Entity)
-	fmt.Printf("    Added/Removed: %+v / %+v\n", evt.Added, evt.Removed)
+	fmt.Printf("    Added/Removed: %+v / %+v\n", evt.AddedIDs, evt.RemovedIDs)
 	fmt.Printf("    Relation:      %+v -> %+v\n", evt.OldRelation, evt.NewRelation)
 
 	var target ecs.Entity
