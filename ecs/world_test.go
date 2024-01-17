@@ -350,8 +350,8 @@ func TestWorldExchangeBatch(t *testing.T) {
 	assert.Equal(t, 202, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{202, 0},
-		Changed:     All(posID, relID),
-		Added:       []ID{posID, relID},
+		Added:       All(posID, relID),
+		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[201])
@@ -382,9 +382,10 @@ func TestWorldExchangeBatch(t *testing.T) {
 	assert.Equal(t, 502, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{102, 0},
-		Changed:     All(posID, velID),
-		Added:       []ID{posID},
-		Removed:     []ID{velID},
+		Added:       All(posID),
+		Removed:     All(velID),
+		AddedIDs:    []ID{posID},
+		RemovedIDs:  []ID{velID},
 		OldRelation: &relID,
 		NewRelation: &relID,
 		OldTarget:   target1,
@@ -404,8 +405,8 @@ func TestWorldExchangeBatch(t *testing.T) {
 	assert.Equal(t, 702, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{102, 0},
-		Changed:     All(relID),
-		Removed:     []ID{relID},
+		Removed:     All(relID),
+		RemovedIDs:  []ID{relID},
 		OldRelation: &relID,
 		NewRelation: nil,
 		OldTarget:   target1,
@@ -418,13 +419,13 @@ func TestWorldExchangeBatch(t *testing.T) {
 
 	assert.Equal(t, EntityEvent{
 		Entity:     Entity{102, 0},
-		Changed:    All(posID),
-		Removed:    []ID{posID},
+		Removed:    All(posID),
+		RemovedIDs: []ID{posID},
 		EventTypes: event.EntityRemoved | event.ComponentRemoved,
 	}, events[801])
 
-	assert.Equal(t, []ID{velID}, events[202].Added)
-	assert.Equal(t, []ID{posID}, events[202].Removed)
+	assert.Equal(t, []ID{velID}, events[202].AddedIDs)
+	assert.Equal(t, []ID{posID}, events[202].RemovedIDs)
 
 	filter = All(velID)
 	w.Batch().Remove(filter, velID)
@@ -818,7 +819,6 @@ func TestWorldRelationSet(t *testing.T) {
 	assert.Equal(t, 4, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      e1,
-		Changed:     All(),
 		OldRelation: &relID,
 		NewRelation: &relID,
 		OldTarget:   Entity{},
@@ -836,7 +836,6 @@ func TestWorldRelationSet(t *testing.T) {
 	assert.Equal(t, 5, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      e1,
-		Changed:     All(),
 		OldRelation: &relID,
 		NewRelation: &relID,
 		OldTarget:   targ,
@@ -861,8 +860,8 @@ func TestWorldRelationSet(t *testing.T) {
 	assert.Equal(t, 6, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      e2,
-		Changed:     All(relID),
-		Removed:     []ID{relID},
+		Removed:     All(relID),
+		RemovedIDs:  []ID{relID},
 		OldRelation: &relID,
 		NewRelation: nil,
 		EventTypes:  event.ComponentRemoved | event.RelationChanged,
@@ -1468,8 +1467,8 @@ func TestWorldBatchRemove(t *testing.T) {
 	assert.Equal(t, 33, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{33, 0},
-		Changed:     All(rotID, relID),
-		Added:       []ID{rotID, relID},
+		Added:       All(rotID, relID),
+		AddedIDs:    []ID{rotID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
@@ -1487,8 +1486,8 @@ func TestWorldBatchRemove(t *testing.T) {
 	assert.Equal(t, 43, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{13, 0},
-		Changed:     All(rotID, relID),
-		Removed:     []ID{rotID, relID},
+		Removed:     All(rotID, relID),
+		RemovedIDs:  []ID{rotID, relID},
 		OldRelation: &relID,
 		EventTypes:  event.EntityRemoved | event.ComponentRemoved | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
@@ -1627,8 +1626,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 3, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:     e0,
-		Changed:    All(posID, velID),
-		Added:      []ID{posID, velID},
+		Added:      All(posID, velID),
+		AddedIDs:   []ID{posID, velID},
 		EventTypes: event.EntityCreated | event.ComponentAdded,
 	}, events[len(events)-1])
 
@@ -1636,8 +1635,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 4, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:     e0,
-		Changed:    All(posID, velID),
-		Removed:    []ID{posID, velID},
+		Removed:    All(posID, velID),
+		RemovedIDs: []ID{posID, velID},
 		EventTypes: event.EntityRemoved | event.ComponentRemoved,
 	}, events[len(events)-1])
 
@@ -1645,8 +1644,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 5, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      e0,
-		Changed:     All(posID, velID, relID),
-		Added:       []ID{posID, velID, relID},
+		Added:       All(posID, velID, relID),
+		AddedIDs:    []ID{posID, velID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
 	}, events[len(events)-1])
@@ -1655,8 +1654,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 6, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      e0,
-		Changed:     All(rotID),
-		Added:       []ID{rotID},
+		Added:       All(rotID),
+		AddedIDs:    []ID{rotID},
 		OldRelation: &relID,
 		NewRelation: &relID,
 		EventTypes:  event.ComponentAdded,
@@ -1666,8 +1665,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 7, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      e0,
-		Changed:     All(posID),
-		Removed:     []ID{posID},
+		Removed:     All(posID),
+		RemovedIDs:  []ID{posID},
 		OldRelation: &relID,
 		NewRelation: &relID,
 		EventTypes:  event.ComponentRemoved,
@@ -1678,7 +1677,6 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 9, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      e0,
-		Changed:     All(),
 		OldRelation: &relID,
 		NewRelation: &relID,
 		EventTypes:  event.TargetChanged,
@@ -1688,8 +1686,8 @@ func TestWorldListener(t *testing.T) {
 	assert.Equal(t, 10, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      e0,
-		Changed:     All(relID),
-		Removed:     []ID{relID},
+		Removed:     All(relID),
+		RemovedIDs:  []ID{relID},
 		OldRelation: &relID,
 		NewRelation: nil,
 		OldTarget:   e1,
@@ -1718,8 +1716,8 @@ func TestWorldListenerBuilder(t *testing.T) {
 	assert.Equal(t, 11, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{11, 0},
-		Changed:     All(posID, relID),
-		Added:       []ID{posID, relID},
+		Added:       All(posID, relID),
+		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
 	}, events[len(events)-1])
@@ -1730,8 +1728,8 @@ func TestWorldListenerBuilder(t *testing.T) {
 	assert.Equal(t, 21, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{21, 0},
-		Changed:     All(posID, relID),
-		Added:       []ID{posID, relID},
+		Added:       All(posID, relID),
+		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
 	}, events[len(events)-1])
@@ -1741,8 +1739,8 @@ func TestWorldListenerBuilder(t *testing.T) {
 	assert.Equal(t, 31, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{31, 0},
-		Changed:     All(posID, relID),
-		Added:       []ID{posID, relID},
+		Added:       All(posID, relID),
+		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
@@ -1753,8 +1751,8 @@ func TestWorldListenerBuilder(t *testing.T) {
 	assert.Equal(t, 41, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{41, 0},
-		Changed:     All(posID, relID),
-		Added:       []ID{posID, relID},
+		Added:       All(posID, relID),
+		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
@@ -1769,8 +1767,8 @@ func TestWorldListenerBuilder(t *testing.T) {
 	assert.Equal(t, 51, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{51, 0},
-		Changed:     All(posID, relID),
-		Added:       []ID{posID, relID},
+		Added:       All(posID, relID),
+		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
 	}, events[len(events)-1])
@@ -1781,8 +1779,8 @@ func TestWorldListenerBuilder(t *testing.T) {
 	assert.Equal(t, 61, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{61, 0},
-		Changed:     All(posID, relID),
-		Added:       []ID{posID, relID},
+		Added:       All(posID, relID),
+		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
 	}, events[len(events)-1])
@@ -1792,8 +1790,8 @@ func TestWorldListenerBuilder(t *testing.T) {
 	assert.Equal(t, 71, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{71, 0},
-		Changed:     All(posID, relID),
-		Added:       []ID{posID, relID},
+		Added:       All(posID, relID),
+		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
@@ -1804,8 +1802,8 @@ func TestWorldListenerBuilder(t *testing.T) {
 	assert.Equal(t, 81, len(events))
 	assert.Equal(t, EntityEvent{
 		Entity:      Entity{81, 0},
-		Changed:     All(posID, relID),
-		Added:       []ID{posID, relID},
+		Added:       All(posID, relID),
+		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
 		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])

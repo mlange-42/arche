@@ -7,10 +7,10 @@ import (
 
 // Dispatch event listener.
 //
-// Dispatches events to sub-listeners and manages subscription automatically.
-// Sub-listeners should not alter their subscriptions or components after adding them.
+// Dispatches events to sub-listeners and manages subscription automatically, based on their settings.
+// Sub-listeners should not alter their subscriptions or components after being added.
 //
-// To make it possible for systems to add listeners, Dispatch should be added to the [ecs.World] as a resource.
+// To make it possible for systems to add listeners, Dispatch can be added to the [ecs.World] as a resource.
 type Dispatch struct {
 	listeners     []ecs.Listener
 	events        event.Subscription
@@ -56,8 +56,8 @@ func (l *Dispatch) AddListener(ls ecs.Listener) {
 // Notify the listener.
 func (l *Dispatch) Notify(world *ecs.World, evt ecs.EntityEvent) {
 	for _, ls := range l.listeners {
-		if ls.Subscriptions().ContainsAny(evt.EventTypes) &&
-			subscribes(evt.EventTypes, &evt.Changed, ls.Components(), evt.OldRelation, evt.NewRelation) {
+		trigger := ls.Subscriptions() & evt.EventTypes
+		if trigger != 0 && subscribes(trigger, &evt.Added, &evt.Removed, ls.Components(), evt.OldRelation, evt.NewRelation) {
 			ls.Notify(world, evt)
 		}
 	}
@@ -74,11 +74,4 @@ func (l *Dispatch) Components() *ecs.Mask {
 		return &l.components
 	}
 	return nil
-}
-
-func subscribes(evtType event.Subscription, changed *ecs.Mask, subs *ecs.Mask, oldRel *ecs.ID, newRel *ecs.ID) bool {
-	if event.Relations.Contains(evtType) {
-		return subs == nil || (oldRel != nil && subs.Get(*oldRel)) || (newRel != nil && subs.Get(*newRel))
-	}
-	return subs == nil || subs.ContainsAny(changed)
 }

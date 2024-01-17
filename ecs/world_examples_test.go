@@ -284,7 +284,7 @@ func ExampleWorld_SetListener() {
 	world.SetListener(&listener)
 
 	world.NewEntity()
-	// Output: {{1 0} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1}
+	// Output: {{1 0} {[0 0 0 0]} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1}
 }
 
 func ExampleWorld_Stats() {

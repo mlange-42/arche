@@ -50,7 +50,7 @@ func BenchmarkEntityEventCreate(b *testing.B) {
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		event = ecs.EntityEvent{Entity: e, Changed: mask, Added: added, Removed: nil}
+		event = ecs.EntityEvent{Entity: e, Added: mask, Removed: mask, AddedIDs: added, RemovedIDs: nil}
 	}
 	b.StopTimer()
 	_ = event
@@ -68,7 +68,7 @@ func BenchmarkEntityEventHeapPointer(b *testing.B) {
 
 	b.StartTimer()
 	for i := 0; i < b.N; i++ {
-		event = &ecs.EntityEvent{Entity: e, Changed: mask, Added: added, Removed: nil}
+		event = &ecs.EntityEvent{Entity: e, Added: mask, Removed: mask, AddedIDs: added, RemovedIDs: nil}
 	}
 	b.StopTimer()
 	_ = event
@@ -78,13 +78,13 @@ func BenchmarkEntityEventCopy(b *testing.B) {
 	handler := eventHandler{}
 
 	for i := 0; i < b.N; i++ {
-		handler.ListenCopy(ecs.EntityEvent{Entity: ecs.Entity{}, Changed: ecs.Mask{}, Added: nil, Removed: nil})
+		handler.ListenCopy(ecs.EntityEvent{Entity: ecs.Entity{}, Added: ecs.Mask{}, Removed: ecs.Mask{}, AddedIDs: nil, RemovedIDs: nil})
 	}
 }
 
 func BenchmarkEntityEventCopyReuse(b *testing.B) {
 	handler := eventHandler{}
-	event := ecs.EntityEvent{Entity: ecs.Entity{}, Changed: ecs.Mask{}, Added: nil, Removed: nil}
+	event := ecs.EntityEvent{Entity: ecs.Entity{}, Added: ecs.Mask{}, Removed: ecs.Mask{}, AddedIDs: nil, RemovedIDs: nil}
 
 	for i := 0; i < b.N; i++ {
 		handler.ListenCopy(event)
@@ -95,13 +95,13 @@ func BenchmarkEntityEventPointer(b *testing.B) {
 	handler := eventHandler{}
 
 	for i := 0; i < b.N; i++ {
-		handler.ListenPointer(&ecs.EntityEvent{Entity: ecs.Entity{}, Changed: ecs.Mask{}, Added: nil, Removed: nil})
+		handler.ListenPointer(&ecs.EntityEvent{Entity: ecs.Entity{}, Added: ecs.Mask{}, Removed: ecs.Mask{}, AddedIDs: nil, RemovedIDs: nil})
 	}
 }
 
 func BenchmarkEntityEventPointerReuse(b *testing.B) {
 	handler := eventHandler{}
-	event := ecs.EntityEvent{Entity: ecs.Entity{}, Changed: ecs.Mask{}, Added: nil, Removed: nil}
+	event := ecs.EntityEvent{Entity: ecs.Entity{}, Added: ecs.Mask{}, Removed: ecs.Mask{}, AddedIDs: nil, RemovedIDs: nil}
 
 	for i := 0; i < b.N; i++ {
 		handler.ListenPointer(&event)
@@ -117,7 +117,7 @@ func ExampleEntityEvent() {
 	world.SetListener(&listener)
 
 	world.NewEntity()
-	// Output: {{1 0} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1}
+	// Output: {{1 0} {[0 0 0 0]} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1}
 }
 
 func ExampleEntityEvent_Contains() {

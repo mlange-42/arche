@@ -65,12 +65,37 @@ func subscription(entityCreated, entityRemoved, componentAdded, componentRemoved
 	return bits
 }
 
-// Returns whether a listener that subscribes to an event is also interested in terms of component subscription.
-func subscribes(evtType event.Subscription, changed *Mask, subs *Mask, oldRel *ID, newRel *ID) bool {
-	if event.Relations.Contains(evtType) {
-		return subs == nil || (oldRel != nil && subs.Get(*oldRel)) || (newRel != nil && subs.Get(*newRel))
+// Returns whether a listener is interested in an event based on event type and component subscriptions.
+//
+// Argument trigger should only contain the subscription bits that triggered the event.
+// I.e. subscriptions & evenTypes.
+func subscribes(trigger event.Subscription, added *Mask, removed *Mask, subs *Mask, oldRel *ID, newRel *ID) bool {
+	if trigger == 0 {
+		return false
 	}
-	return subs == nil || subs.ContainsAny(changed)
+	if subs == nil {
+		// No component subscriptions
+		return true
+	}
+	if trigger.ContainsAny(event.Relations) {
+		// Contains event.RelationChanged and/or event.TargetChanged
+		if (oldRel != nil && subs.Get(*oldRel)) || (newRel != nil && subs.Get(*newRel)) {
+			return true
+		}
+	}
+	if trigger.ContainsAny(event.EntityCreated | event.ComponentAdded) {
+		// Contains additions-like types
+		if added != nil && subs.ContainsAny(added) {
+			return true
+		}
+	}
+	if trigger.ContainsAny(event.EntityRemoved | event.ComponentRemoved) {
+		// Contains additions-like types
+		if removed != nil && subs.ContainsAny(removed) {
+			return true
+		}
+	}
+	return false
 }
 
 func maskToTypes(mask Mask, reg *componentRegistry) []componentType {

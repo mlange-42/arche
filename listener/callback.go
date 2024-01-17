@@ -18,7 +18,7 @@ type Callback struct {
 // NewCallback creates a new Callback listener for the given events.
 //
 // Subscribes to the specified events with changes on the specified components.
-// If no component IDs are given, is subscribes to all components.
+// If no component IDs are given, it subscribes to all components.
 func NewCallback(callback func(*ecs.World, ecs.EntityEvent), events event.Subscription, components ...ecs.ID) Callback {
 	return Callback{
 		callback:      callback,
