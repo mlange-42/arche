@@ -10,7 +10,6 @@ import (
 //
 // It is the maximum number of component types that may exist in any [World].
 const MaskTotalBits = 64
-const wordSize = 64
 
 // Mask is a 64 bit bitmask.
 // It is also a [Filter] for including certain components.
@@ -19,43 +18,6 @@ const wordSize = 64
 // A mask can be further specified using [Mask.Without] or [Mask.Exclusive].
 type Mask struct {
 	bits uint64 // 64 bits of the mask
-}
-
-// All creates a new Mask from a list of IDs.
-// Matches all entities that have the respective components, and potentially further components.
-//
-// See also [Mask.Without] and [Mask.Exclusive]
-//
-// If any [ID] is greater than or equal to [MaskTotalBits], it will not be added to the mask.
-func All(ids ...ID) Mask {
-	var mask Mask
-	for _, id := range ids {
-		mask.Set(id, true)
-	}
-	return mask
-}
-
-// Matches the mask as filter against another mask.
-func (b Mask) Matches(bits *Mask) bool {
-	return bits.Contains(&b)
-}
-
-// Without creates a [MaskFilter] which filters for including the mask's components,
-// and excludes the components given as arguments.
-func (b Mask) Without(comps ...ID) MaskFilter {
-	return MaskFilter{
-		Include: b,
-		Exclude: All(comps...),
-	}
-}
-
-// Exclusive creates a [MaskFilter] which filters for exactly the mask's components.
-// Matches only entities that have exactly the given components, and no other.
-func (b Mask) Exclusive() MaskFilter {
-	return MaskFilter{
-		Include: b,
-		Exclude: b.Not(),
-	}
 }
 
 // Get reports whether the bit at the given index [ID] is set.
