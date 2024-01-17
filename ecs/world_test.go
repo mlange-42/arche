@@ -1489,6 +1489,7 @@ func TestWorldBatchRemove(t *testing.T) {
 		Removed:     All(rotID, relID),
 		RemovedIDs:  []ID{rotID, relID},
 		OldRelation: &relID,
+		OldTarget:   target1,
 		EventTypes:  event.EntityRemoved | event.ComponentRemoved | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
 
