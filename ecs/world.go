@@ -13,6 +13,7 @@ import (
 // Registers the type if it is not already registered.
 //
 // The number of unique component types per [World] is limited to 256 ([MaskTotalBits]).
+// (64 with build tag `tiny`).
 //
 // Panics if called on a locked world and the type is not registered yet.
 //

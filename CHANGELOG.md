@@ -27,6 +27,7 @@ This change was necessary to get the same performance as before, despite the mor
 * The world's entity state can be extracted and re-established via `World.DumpEntities()` and `World.LoadEntities()` (#319, #326)
 * Adds functions `ComponentIDs(*World)` and `ResourceIDs(*World)` to get all registered IDs (#329)
 * Adds methods `Mask.And`, `Mask.Or` and `Mask.Xor` (#335)
+* Adds build tag `tiny` to restrict to 64 components for an extra bit of performance (#338)
 
 ### Performance
 

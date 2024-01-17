@@ -12,13 +12,13 @@ import (
 const MaskTotalBits = 64
 const wordSize = 64
 
-// Mask is a 256 bit bitmask.
+// Mask is a 64 bit bitmask.
 // It is also a [Filter] for including certain components.
 //
 // Use [All] to create a mask for a list of component IDs.
 // A mask can be further specified using [Mask.Without] or [Mask.Exclusive].
 type Mask struct {
-	bits uint64 // 4x 64 bits of the mask
+	bits uint64 // 64 bits of the mask
 }
 
 // All creates a new Mask from a list of IDs.

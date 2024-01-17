@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"fmt"
 	"math"
 )
 
@@ -116,7 +117,7 @@ func (p *bitPool) Get() uint8 {
 // Allocates and returns a new bit. For internal use.
 func (p *bitPool) getNew() uint8 {
 	if p.length >= MaskTotalBits {
-		panic("run out of the maximum of 256 bits")
+		panic(fmt.Sprintf("run out of the maximum of %d bits", MaskTotalBits))
 	}
 	b := uint8(p.length)
 	p.bits[p.length] = b
