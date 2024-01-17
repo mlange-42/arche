@@ -142,4 +142,4 @@ jobs:
       - name: Benchmark Add/Remove Components (tiny)
         run: |
           cd benchmark
-          go test -tags tiny -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 10
+          go test -tags tiny -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 5
