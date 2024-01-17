@@ -112,12 +112,12 @@ func ExampleEntityEvent() {
 	world := ecs.NewWorld()
 
 	listener := TestListener{
-		Callback: func(world *ecs.World, evt ecs.EntityEvent) { fmt.Println(evt) },
+		Callback: func(world *ecs.World, evt ecs.EntityEvent) { fmt.Println(evt.Entity) },
 	}
 	world.SetListener(&listener)
 
 	world.NewEntity()
-	// Output: {{1 0} {[0 0 0 0]} {[0 0 0 0]} [] [] <nil> <nil> {0 0} 1}
+	// Output: {1 0}
 }
 
 func ExampleEntityEvent_Contains() {

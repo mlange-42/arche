@@ -1923,7 +1923,14 @@ func Test1000Archetypes(t *testing.T) {
 	ids[9] = ComponentID[testStruct9](&w)
 
 	for i := 0; i < 1024; i++ {
-		mask := Mask{[4]uint64{uint64(i), 0, 0, 0}}
+		mask := Mask{}
+		tempMask := uint64(i)
+		for bit := 0; bit < wordSize; bit++ {
+			m := uint64(1 << bit)
+			if tempMask&m == m {
+				mask.Set(id(uint8(bit)), true)
+			}
+		}
 		add := make([]ID, 0, 10)
 		for j := 0; j < 10; j++ {
 			id := id(uint8(j))

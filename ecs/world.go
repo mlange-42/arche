@@ -1548,7 +1548,7 @@ func (w *World) createArchetypeNode(mask Mask, relation ID, hasRelation bool) *a
 		capInc = w.config.RelationCapacityIncrement
 	}
 
-	types := maskToTypes(mask, &w.registry)
+	types := mask.toTypes(&w.registry)
 
 	w.nodeData.Add(nodeData{})
 	w.nodes.Add(newArchNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, hasRelation, capInc, types))

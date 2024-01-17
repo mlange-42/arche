@@ -13,7 +13,8 @@ func all(ids ...ID) *Mask {
 }
 
 func TestBitMask(t *testing.T) {
-	mask := All(id(1), id(2), id(13), id(27), id(200))
+	big := uint8(MaskTotalBits - 2)
+	mask := All(id(1), id(2), id(13), id(27), id(big))
 
 	assert.Equal(t, 5, mask.TotalBitsSet())
 
@@ -21,12 +22,12 @@ func TestBitMask(t *testing.T) {
 	assert.True(t, mask.Get(id(2)))
 	assert.True(t, mask.Get(id(13)))
 	assert.True(t, mask.Get(id(27)))
-	assert.True(t, mask.Get(id(200)))
+	assert.True(t, mask.Get(id(big)))
 
 	assert.False(t, mask.Get(id(0)))
 	assert.False(t, mask.Get(id(3)))
-	assert.False(t, mask.Get(id(199)))
-	assert.False(t, mask.Get(id(201)))
+	assert.False(t, mask.Get(id(big-1)))
+	assert.False(t, mask.Get(id(big+1)))
 
 	mask.Set(id(0), true)
 	mask.Set(id(1), false)
@@ -52,13 +53,17 @@ func TestBitMask(t *testing.T) {
 }
 
 func TestBitMaskLogic(t *testing.T) {
-	assert.Equal(t, All(id(5)), all(id(0), id(5)).And(all(id(5), id(200))))
-	assert.Equal(t, All(id(0), id(5), id(200)), all(id(0), id(5)).Or(all(id(5), id(200))))
-	assert.Equal(t, All(id(0), id(200)), all(id(0), id(5)).Xor(all(id(5), id(200))))
+	big := uint8(MaskTotalBits - 2)
+
+	assert.Equal(t, All(id(5)), all(id(0), id(5)).And(all(id(5), id(big))))
+	assert.Equal(t, All(id(0), id(5), id(big)), all(id(0), id(5)).Or(all(id(5), id(big))))
+	assert.Equal(t, All(id(0), id(big)), all(id(0), id(5)).Xor(all(id(5), id(big))))
 }
 
 func TestBitMaskCopy(t *testing.T) {
-	mask := All(id(1), id(2), id(13), id(27), id(200))
+	big := uint8(MaskTotalBits - 2)
+
+	mask := All(id(1), id(2), id(13), id(27), id(big))
 	mask2 := mask
 	mask3 := &mask
 
@@ -111,13 +116,15 @@ func TestBitMask256(t *testing.T) {
 		assert.True(t, mask.Get(id(uint8(i))))
 	}
 
-	mask = All(id(1), id(2), id(13), id(27), id(63), id(64), id(65))
+	big := uint8(MaskTotalBits - 10)
 
-	assert.True(t, mask.Contains(all(id(1), id(2), id(63), id(64))))
-	assert.False(t, mask.Contains(all(id(1), id(2), id(63), id(90))))
+	mask = All(id(1), id(2), id(13), id(27), id(big), id(big+1), id(big+2))
 
-	assert.True(t, mask.ContainsAny(all(id(6), id(65), id(111))))
-	assert.False(t, mask.ContainsAny(all(id(6), id(66), id(90))))
+	assert.True(t, mask.Contains(all(id(1), id(2), id(big), id(big+1))))
+	assert.False(t, mask.Contains(all(id(1), id(2), id(big), id(big+5))))
+
+	assert.True(t, mask.ContainsAny(all(id(6), id(big+2), id(big+6))))
+	assert.False(t, mask.ContainsAny(all(id(6), id(big+3), id(big+5))))
 }
 
 func TestBitMask64(t *testing.T) {
