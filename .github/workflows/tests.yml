@@ -21,10 +21,16 @@ jobs:
         run: go get .
       - name: Build Linux
         run: GOOS=linux GOARCH=amd64 go build ./...
+      - name: Build Linux (tiny)
+        run: GOOS=linux GOARCH=amd64 go build -tags tiny ./...
       - name: Build Windows
         run: GOOS=windows GOARCH=amd64 go build ./...
+      - name: Build Windows (tiny)
+        run: GOOS=windows GOARCH=amd64 go build -tags tiny ./...
       - name: Build MacOS
         run: GOOS=darwin GOARCH=amd64 go build ./...
+      - name: Build MacOS (tiny)
+        run: GOOS=darwin GOARCH=amd64 go build -tags tiny ./...
 
   test:
     name: Run tests
@@ -48,6 +54,24 @@ jobs:
       with:
         path-to-lcov: coverage.out
 
+  test_tiny:
+    name: Run tests (tiny)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.21.x'
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        go get .
+    - name: Run Unit tests (tiny)
+      run: |
+        go test -v -covermode atomic -coverprofile="coverage.out" ./...
+        go tool cover -func="coverage.out"
+
   lint:
     name: Run linters
     runs-on: ubuntu-latest
@@ -69,8 +93,12 @@ jobs:
           fi
       - name: Lint with vet
         run: go vet ./...
+      - name: Lint with vet (tiny)
+        run: go vet -tags tiny ./...
       - name: Lint with staticcheck
         run: staticcheck ./...
+      - name: Lint with staticcheck (tiny)
+        run: staticcheck -tags tiny ./...
       - name: Lint with ineffassign
         run: ineffassign ./...
 
@@ -94,7 +122,7 @@ jobs:
         run: gorelease -base=${{ steps.latest-tag.outputs.tag }}
 
   examples:
-    name: Run examples
+    name: Run Examples
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -120,3 +148,31 @@ jobs:
           go run ./examples/resources
           go run ./examples/systems
           go run ./examples/world_stats
+
+  examples_tiny:
+    name: Run Examples (tiny)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.21.x'
+      - name: Install dependencies
+        run: go get .
+      - name: Run examples
+        run: |
+          go run -tags tiny ./examples/base
+          go run -tags tiny ./examples/batch_ops
+          go run -tags tiny ./examples/events
+          go run -tags tiny ./examples/filter
+          go run -tags tiny ./examples/generic
+          go run -tags tiny ./examples/locked_world
+          go run -tags tiny ./examples/parallel
+          go run -tags tiny ./examples/random_access
+          go run -tags tiny ./examples/random_sampling
+          go run -tags tiny ./examples/readme
+          go run -tags tiny ./examples/relations
+          go run -tags tiny ./examples/resources
+          go run -tags tiny ./examples/systems
+          go run -tags tiny ./examples/world_stats

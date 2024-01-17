@@ -98,26 +98,6 @@ func subscribes(trigger event.Subscription, added *Mask, removed *Mask, subs *Ma
 	return false
 }
 
-func maskToTypes(mask Mask, reg *componentRegistry) []componentType {
-	count := int(mask.TotalBitsSet())
-	types := make([]componentType, count)
-
-	idx := 0
-	for i := range mask.bits {
-		if mask.bits[i] == 0 {
-			continue
-		}
-		for j := 0; j < wordSize; j++ {
-			id := ID{id: uint8(i*wordSize + j)}
-			if mask.Get(id) {
-				types[idx] = componentType{ID: id, Type: reg.Types[id.id]}
-				idx++
-			}
-		}
-	}
-	return types
-}
-
 // Manages locks by mask bits.
 //
 // The number of simultaneous locks at a given time is limited to [MaskTotalBits].

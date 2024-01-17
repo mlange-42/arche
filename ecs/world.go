@@ -13,6 +13,7 @@ import (
 // Registers the type if it is not already registered.
 //
 // The number of unique component types per [World] is limited to 256 ([MaskTotalBits]).
+// (64 with build tag `tiny`).
 //
 // Panics if called on a locked world and the type is not registered yet.
 //
@@ -216,7 +217,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, false)
 		trigger := w.listener.Subscriptions() & bits
 		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
-			w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, comps, nil, nil, newRel, Entity{}, bits})
+			w.listener.Notify(w, EntityEvent{Entity: entity, Added: arch.Mask, AddedIDs: comps, NewRelation: newRel, EventTypes: bits})
 		}
 	}
 	return entity
@@ -265,7 +266,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, false)
 		trigger := w.listener.Subscriptions() & bits
 		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
-			w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, ids, nil, nil, newRel, Entity{}, bits})
+			w.listener.Notify(w, EntityEvent{Entity: entity, Added: arch.Mask, AddedIDs: ids, NewRelation: newRel, EventTypes: bits})
 		}
 	}
 	return entity
@@ -296,7 +297,7 @@ func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity 
 		bits := subscription(true, false, len(comps) > 0, false, true, !target.IsZero())
 		trigger := w.listener.Subscriptions() & bits
 		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, &targetID) {
-			w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, comps, nil, nil, &targetID, Entity{}, bits})
+			w.listener.Notify(w, EntityEvent{Entity: entity, Added: arch.Mask, AddedIDs: comps, NewRelation: &targetID, EventTypes: bits})
 		}
 	}
 	return entity
@@ -333,7 +334,7 @@ func (w *World) newEntityTargetWith(targetID ID, target Entity, comps ...Compone
 		bits := subscription(true, false, len(comps) > 0, false, true, !target.IsZero())
 		trigger := w.listener.Subscriptions() & bits
 		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, &targetID) {
-			w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, ids, nil, nil, &targetID, Entity{}, bits})
+			w.listener.Notify(w, EntityEvent{Entity: entity, Added: arch.Mask, AddedIDs: ids, NewRelation: &targetID, EventTypes: bits})
 		}
 	}
 	return entity
@@ -357,7 +358,7 @@ func (w *World) newEntities(count int, targetID ID, hasTarget bool, target Entit
 			for i = 0; i < cnt; i++ {
 				idx := startIdx + i
 				entity := arch.GetEntity(idx)
-				w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, comps, nil, nil, newRel, Entity{}, bits})
+				w.listener.Notify(w, EntityEvent{Entity: entity, Added: arch.Mask, AddedIDs: comps, NewRelation: newRel, EventTypes: bits})
 			}
 		}
 	}
@@ -402,7 +403,7 @@ func (w *World) newEntitiesWith(count int, targetID ID, hasTarget bool, target E
 			for i = 0; i < cnt; i++ {
 				idx := startIdx + i
 				entity := arch.GetEntity(idx)
-				w.listener.Notify(w, EntityEvent{entity, arch.Mask, Mask{}, ids, nil, nil, newRel, Entity{}, bits})
+				w.listener.Notify(w, EntityEvent{Entity: entity, Added: arch.Mask, AddedIDs: ids, NewRelation: newRel, EventTypes: bits})
 			}
 		}
 	}
@@ -456,7 +457,7 @@ func (w *World) RemoveEntity(entity Entity) {
 		trigger := w.listener.Subscriptions() & bits
 		if trigger != 0 && subscribes(trigger, nil, &oldArch.Mask, w.listener.Components(), oldRel, nil) {
 			lock := w.lock()
-			w.listener.Notify(w, EntityEvent{entity, Mask{}, oldArch.Mask, nil, oldIds, oldRel, nil, oldArch.RelationTarget, bits})
+			w.listener.Notify(w, EntityEvent{Entity: entity, Removed: oldArch.Mask, RemovedIDs: oldIds, OldRelation: oldRel, OldTarget: oldArch.RelationTarget, EventTypes: bits})
 			w.unlock(lock)
 		}
 	}
@@ -525,7 +526,7 @@ func (w *World) removeEntities(filter Filter) int {
 		for j = 0; j < ln; j++ {
 			entity := arch.GetEntity(j)
 			if listen {
-				w.listener.Notify(w, EntityEvent{entity, Mask{}, arch.Mask, nil, oldIds, oldRel, nil, Entity{}, bits})
+				w.listener.Notify(w, EntityEvent{Entity: entity, Removed: arch.Mask, RemovedIDs: oldIds, OldRelation: oldRel, OldTarget: arch.RelationTarget, EventTypes: bits})
 			}
 			index := &w.entities[entity.id]
 			index.arch = nil
@@ -784,7 +785,11 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 			added := arch.Mask.And(&changed)
 			removed := oldMask.And(&changed)
 			if subscribes(trigger, &added, &removed, w.listener.Components(), oldRel, newRel) {
-				w.listener.Notify(w, EntityEvent{entity, added, removed, add, rem, oldRel, newRel, oldTarget, bits})
+				w.listener.Notify(w,
+					EntityEvent{Entity: entity, Added: added, Removed: removed,
+						AddedIDs: add, RemovedIDs: rem, OldRelation: oldRel, NewRelation: newRel,
+						OldTarget: oldTarget, EventTypes: bits},
+				)
 			}
 		}
 	}
@@ -986,7 +991,7 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 	if w.listener != nil {
 		trigger := w.listener.Subscriptions() & event.TargetChanged
 		if trigger != 0 && subscribes(trigger, nil, nil, w.listener.Components(), &comp, &comp) {
-			w.listener.Notify(w, EntityEvent{entity, Mask{}, Mask{}, nil, nil, &comp, &comp, oldTarget, event.TargetChanged})
+			w.listener.Notify(w, EntityEvent{Entity: entity, OldRelation: &comp, NewRelation: &comp, OldTarget: oldTarget, EventTypes: event.TargetChanged})
 		}
 	}
 }
@@ -1544,7 +1549,7 @@ func (w *World) createArchetypeNode(mask Mask, relation ID, hasRelation bool) *a
 		capInc = w.config.RelationCapacityIncrement
 	}
 
-	types := maskToTypes(mask, &w.registry)
+	types := mask.toTypes(&w.registry)
 
 	w.nodeData.Add(nodeData{})
 	w.nodes.Add(newArchNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, hasRelation, capInc, types))

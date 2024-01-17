@@ -19,6 +19,9 @@ type Callback struct {
 //
 // Subscribes to the specified events with changes on the specified components.
 // If no component IDs are given, it subscribes to all components.
+//
+// Note that this listener is slower than a custom [ecs.Listener] implementation that
+// does not use the indirection of a callback function.
 func NewCallback(callback func(*ecs.World, ecs.EntityEvent), events event.Subscription, components ...ecs.ID) Callback {
 	return Callback{
 		callback:      callback,

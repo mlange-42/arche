@@ -7,17 +7,20 @@ import (
 )
 
 func TestIDMap(t *testing.T) {
+	big1 := uint8(MaskTotalBits - 20)
+	big2 := uint8(MaskTotalBits - 3)
+
 	m := newIDMap[*Entity]()
 
 	e0 := Entity{0, 0}
 	e1 := Entity{1, 0}
-	e121 := Entity{121, 0}
-	e200 := Entity{200, 0}
+	e121 := Entity{eid(big1), 0}
+	e200 := Entity{eid(big2), 0}
 
 	m.Set(0, &e0)
 	m.Set(1, &e1)
-	m.Set(121, &e121)
-	m.Set(200, &e200)
+	m.Set(big1, &e121)
+	m.Set(big2, &e200)
 
 	e, ok := m.Get(0)
 	assert.True(t, ok)
@@ -27,11 +30,11 @@ func TestIDMap(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, e1, *e)
 
-	e, ok = m.Get(121)
+	e, ok = m.Get(big1)
 	assert.True(t, ok)
 	assert.Equal(t, e121, *e)
 
-	e, ok = m.Get(200)
+	e, ok = m.Get(big2)
 	assert.True(t, ok)
 	assert.Equal(t, e200, *e)
 
@@ -50,17 +53,20 @@ func TestIDMap(t *testing.T) {
 }
 
 func TestIDMapPointers(t *testing.T) {
+	big1 := uint8(MaskTotalBits - 20)
+	big2 := uint8(MaskTotalBits - 3)
+
 	m := newIDMap[Entity]()
 
 	e0 := Entity{0, 0}
 	e1 := Entity{1, 0}
-	e121 := Entity{121, 0}
-	e200 := Entity{200, 0}
+	e121 := Entity{eid(big1), 0}
+	e200 := Entity{eid(big2), 0}
 
 	m.Set(0, e0)
 	m.Set(1, e1)
-	m.Set(121, e121)
-	m.Set(200, e200)
+	m.Set(big1, e121)
+	m.Set(big2, e200)
 
 	e, ok := m.GetPointer(0)
 	assert.True(t, ok)
@@ -70,11 +76,11 @@ func TestIDMapPointers(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, e1, *e)
 
-	e, ok = m.GetPointer(121)
+	e, ok = m.GetPointer(big1)
 	assert.True(t, ok)
 	assert.Equal(t, e121, *e)
 
-	e, ok = m.GetPointer(200)
+	e, ok = m.GetPointer(big2)
 	assert.True(t, ok)
 	assert.Equal(t, e200, *e)
 
