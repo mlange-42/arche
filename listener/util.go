@@ -5,11 +5,14 @@ import (
 	"github.com/mlange-42/arche/ecs/event"
 )
 
-// Returns whether a listener that subscribes to an event is also interested in terms of component subscription.
+// Returns whether a listener is interested in an event based on event type and component subscriptions.
 //
 // Argument trigger should only contain the subscription bits that triggered the event.
 // I.e. subscriptions & evenTypes.
 func subscribes(trigger event.Subscription, changed *ecs.Mask, subs *ecs.Mask, oldRel *ecs.ID, newRel *ecs.ID) bool {
+	if trigger == 0 {
+		return false
+	}
 	if subs == nil {
 		// No component subscriptions
 		return true

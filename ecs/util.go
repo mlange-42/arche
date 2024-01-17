@@ -65,11 +65,14 @@ func subscription(entityCreated, entityRemoved, componentAdded, componentRemoved
 	return bits
 }
 
-// Returns whether a listener that subscribes to an event is also interested in terms of component subscription.
+// Returns whether a listener is interested in an event based on event type and component subscriptions.
 //
 // Argument trigger should only contain the subscription bits that triggered the event.
 // I.e. subscriptions & evenTypes.
 func subscribes(trigger event.Subscription, changed *Mask, subs *Mask, oldRel *ID, newRel *ID) bool {
+	if trigger == 0 {
+		return false
+	}
 	if subs == nil {
 		// No component subscriptions
 		return true

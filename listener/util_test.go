@@ -23,6 +23,10 @@ func TestSubscribes(t *testing.T) {
 	m2 := ecs.All(id2)
 	m3 := ecs.All(id3)
 
+	assert.False(t,
+		subscribes(0, &m1, &m12, nil, nil),
+	)
+
 	assert.True(t,
 		subscribes(event.ComponentAdded, &m1, &m12, nil, nil),
 	)

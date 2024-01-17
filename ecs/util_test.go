@@ -70,6 +70,10 @@ func TestSubscribes(t *testing.T) {
 	id2 := id(2)
 	id3 := id(3)
 
+	assert.False(t,
+		subscribes(0, all(id1), all(id1, id2), nil, nil),
+	)
+
 	assert.True(t,
 		subscribes(event.ComponentAdded, all(id1), all(id1, id2), nil, nil),
 	)
