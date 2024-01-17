@@ -66,18 +66,21 @@ func subscription(entityCreated, entityRemoved, componentAdded, componentRemoved
 }
 
 // Returns whether a listener that subscribes to an event is also interested in terms of component subscription.
-func subscribes(evtType event.Subscription, changed *Mask, subs *Mask, oldRel *ID, newRel *ID) bool {
+//
+// Argument trigger should only contain the subscription bits that triggered the event.
+// I.e. subscriptions & evenTypes.
+func subscribes(trigger event.Subscription, changed *Mask, subs *Mask, oldRel *ID, newRel *ID) bool {
 	if subs == nil {
 		// No component subscriptions
 		return true
 	}
-	if evtType.ContainsAny(event.Relations) {
+	if trigger.ContainsAny(event.Relations) {
 		// Contains event.RelationChanged and/or event.TargetChanged
 		if (oldRel != nil && subs.Get(*oldRel)) || (newRel != nil && subs.Get(*newRel)) {
 			return true
 		}
 	}
-	if evtType.ContainsAny(event.Entities | event.Components) {
+	if trigger.ContainsAny(event.Entities | event.Components) {
 		// Contains any other than event.RelationChanged and/or event.TargetChanged
 		return subs.ContainsAny(changed)
 	}
