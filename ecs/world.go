@@ -7,104 +7,6 @@ import (
 	"github.com/mlange-42/arche/ecs/stats"
 )
 
-// ComponentID returns the [ID] for a component type via generics.
-// Registers the type if it is not already registered.
-//
-// The number of unique component types per [World] is limited to 256 ([MaskTotalBits]).
-// (64 with build tag `tiny`).
-//
-// Panics if called on a locked world and the type is not registered yet.
-//
-// ⚠️ Warning: Using IDs that are outside of the range of registered IDs anywhere in [World] or other places will result in undefined behavior!
-func ComponentID[T any](w *World) ID {
-	tp := reflect.TypeOf((*T)(nil)).Elem()
-	return w.componentID(tp)
-}
-
-// ComponentIDs returns a list of all registered component IDs.
-func ComponentIDs(w *World) []ID {
-	intIds := w.registry.IDs
-	ids := make([]ID, len(intIds))
-	for i, iid := range intIds {
-		ids[i] = id(iid)
-	}
-	return ids
-}
-
-// TypeID returns the [ID] for a component type.
-// Registers the type if it is not already registered.
-//
-// The number of unique component types per [World] is limited to [MaskTotalBits].
-func TypeID(w *World, tp reflect.Type) ID {
-	return w.componentID(tp)
-}
-
-// ComponentInfo returns the [CompInfo] for a component [ID], and whether the ID is assigned.
-func ComponentInfo(w *World, id ID) (CompInfo, bool) {
-	tp, ok := w.registry.ComponentType(id.id)
-	if !ok {
-		return CompInfo{}, false
-	}
-
-	return CompInfo{
-		ID:         id,
-		Type:       tp,
-		IsRelation: w.registry.IsRelation.Get(id),
-	}, true
-}
-
-// ResourceID returns the [ResID] for a resource type via generics.
-// Registers the type if it is not already registered.
-//
-// The number of resources per [World] is limited to [MaskTotalBits].
-func ResourceID[T any](w *World) ResID {
-	tp := reflect.TypeOf((*T)(nil)).Elem()
-	return w.resourceID(tp)
-}
-
-// ResourceIDs returns a list of all registered resource IDs.
-func ResourceIDs(w *World) []ResID {
-	intIds := w.resources.registry.IDs
-	ids := make([]ResID, len(intIds))
-	for i, iid := range intIds {
-		ids[i] = ResID{id: iid}
-	}
-	return ids
-}
-
-// ResourceType returns the reflect.Type for a resource [ResID], and whether the ID is assigned.
-func ResourceType(w *World, id ResID) (reflect.Type, bool) {
-	return w.resources.registry.ComponentType(id.id)
-}
-
-// GetResource returns a pointer to the given resource type in the world.
-//
-// Returns nil if there is no such resource.
-//
-// Uses reflection. For more efficient access, see [World.Resources],
-// and [github.com/mlange-42/arche/generic.Resource.Get] for a generic variant.
-// These methods are more than 20 times faster than the GetResource function.
-//
-// See also [AddResource].
-func GetResource[T any](w *World) *T {
-	return w.resources.Get(ResourceID[T](w)).(*T)
-}
-
-// AddResource adds a resource to the world.
-// Returns the ID for the added resource.
-//
-// Panics if there is already such a resource.
-//
-// Uses reflection. For more efficient access, see [World.Resources],
-// and [github.com/mlange-42/arche/generic.Resource.Add] for a generic variant.
-//
-// The number of resources per [World] is limited to [MaskTotalBits].
-func AddResource[T any](w *World, res *T) ResID {
-	id := ResourceID[T](w)
-	w.resources.Add(id, res)
-	return id
-}
-
 // World is the central type holding entity and component data, as well as resources.
 //
 // The World provides all the basic ECS functionality of Arche,
@@ -113,22 +15,22 @@ func AddResource[T any](w *World, res *T) ResID {
 // For more advanced functionality, see [World.Relations], [World.Resources],
 // [World.Batch], [World.Cache] and [Builder].
 type World struct {
-	config         Config                // World configuration.
-	listener       Listener              // EntityEvent listener.
-	resources      Resources             // World resources.
-	entities       []entityIndex         // Mapping from entities to archetype and index.
-	targetEntities bitSet                // Whether entities are potential relation targets.
-	entityPool     entityPool            // Pool for entities.
-	archetypes     pagedSlice[archetype] // Archetypes that have no relations components.
-	archetypeData  pagedSlice[archetypeData]
-	nodes          pagedSlice[archNode] // The archetype graph.
-	nodeData       pagedSlice[nodeData] // The archetype graph's data.
-	nodePointers   []*archNode          // Helper list of all node pointers for queries.
-	relationNodes  []*archNode          // Archetype nodes that have an entity relation.
-	locks          lockMask             // World locks.
-	registry       componentRegistry    // Component registry.
-	filterCache    Cache                // Cache for registered filters.
-	stats          stats.WorldStats     // Cached world statistics
+	config         Config                    // World configuration.
+	listener       Listener                  // EntityEvent listener.
+	resources      Resources                 // World resources.
+	entities       []entityIndex             // Mapping from entities to archetype and index.
+	targetEntities bitSet                    // Whether entities are potential relation targets. Used for archetype cleanup.
+	entityPool     entityPool                // Pool for entities.
+	archetypes     pagedSlice[archetype]     // Archetypes that have no relations components.
+	archetypeData  pagedSlice[archetypeData] // Storage for the actual archetype data (components).
+	nodes          pagedSlice[archNode]      // The archetype graph.
+	nodeData       pagedSlice[nodeData]      // The archetype graph's data.
+	nodePointers   []*archNode               // Helper list of all node pointers for queries.
+	relationNodes  []*archNode               // Archetype nodes that have an entity relation.
+	locks          lockMask                  // World locks.
+	registry       componentRegistry         // Component registry.
+	filterCache    Cache                     // Cache for registered filters.
+	stats          stats.WorldStats          // Cached world statistics
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -143,39 +45,6 @@ func NewWorld(config ...Config) World {
 		return fromConfig(config[0])
 	}
 	return fromConfig(NewConfig())
-}
-
-// fromConfig creates a new [World] from a [Config].
-func fromConfig(conf Config) World {
-	if conf.CapacityIncrement < 1 {
-		panic("invalid CapacityIncrement in config, must be > 0")
-	}
-	if conf.RelationCapacityIncrement < 1 {
-		conf.RelationCapacityIncrement = conf.CapacityIncrement
-	}
-	entities := make([]entityIndex, 1, conf.CapacityIncrement)
-	entities[0] = entityIndex{arch: nil, index: 0}
-	targetEntities := bitSet{}
-	targetEntities.ExtendTo(1)
-
-	w := World{
-		config:         conf,
-		entities:       entities,
-		targetEntities: targetEntities,
-		entityPool:     newEntityPool(uint32(conf.CapacityIncrement)),
-		registry:       newComponentRegistry(),
-		archetypes:     pagedSlice[archetype]{},
-		archetypeData:  pagedSlice[archetypeData]{},
-		nodes:          pagedSlice[archNode]{},
-		relationNodes:  []*archNode{},
-		locks:          lockMask{},
-		listener:       nil,
-		resources:      newResources(),
-		filterCache:    newCache(),
-	}
-	node := w.createArchetypeNode(Mask{}, ID{}, false)
-	w.createArchetype(node, Entity{}, false)
-	return w
 }
 
 // NewEntity returns a new or recycled [Entity].
@@ -560,11 +429,11 @@ func (w *World) Ids(entity Entity) []ID {
 	return append([]ID{}, w.entities[entity.id].arch.node.Ids...)
 }
 
-// SetListener sets a listener callback func(e EntityEvent) for the world.
+// SetListener sets a [Listener] for the world.
 // The listener is immediately called on every [ecs.Entity] change.
 // Replaces the current listener. Call with nil to remove a listener.
 //
-// For details, see [EntityEvent].
+// For details, see [EntityEvent], [Listener] and sub-package [event].
 func (w *World) SetListener(listener Listener) {
 	w.listener = listener
 }

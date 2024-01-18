@@ -52,6 +52,10 @@ type testStruct14 struct{ val int32 }
 type testStruct15 struct{ val int32 }
 type testStruct16 struct{ val int32 }
 
+type withSlice struct {
+	Slice []int
+}
+
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[Entity]()
 	printTypeSize[entityIndex]()

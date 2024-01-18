@@ -8,6 +8,39 @@ import (
 	"github.com/mlange-42/arche/ecs/event"
 )
 
+// fromConfig creates a new [World] from a [Config].
+func fromConfig(conf Config) World {
+	if conf.CapacityIncrement < 1 {
+		panic("invalid CapacityIncrement in config, must be > 0")
+	}
+	if conf.RelationCapacityIncrement < 1 {
+		conf.RelationCapacityIncrement = conf.CapacityIncrement
+	}
+	entities := make([]entityIndex, 1, conf.CapacityIncrement)
+	entities[0] = entityIndex{arch: nil, index: 0}
+	targetEntities := bitSet{}
+	targetEntities.ExtendTo(1)
+
+	w := World{
+		config:         conf,
+		entities:       entities,
+		targetEntities: targetEntities,
+		entityPool:     newEntityPool(uint32(conf.CapacityIncrement)),
+		registry:       newComponentRegistry(),
+		archetypes:     pagedSlice[archetype]{},
+		archetypeData:  pagedSlice[archetypeData]{},
+		nodes:          pagedSlice[archNode]{},
+		relationNodes:  []*archNode{},
+		locks:          lockMask{},
+		listener:       nil,
+		resources:      newResources(),
+		filterCache:    newCache(),
+	}
+	node := w.createArchetypeNode(Mask{}, ID{}, false)
+	w.createArchetype(node, Entity{}, false)
+	return w
+}
+
 // Creates a new entity with a relation and a target entity.
 func (w *World) newEntityTarget(targetID ID, target Entity, comps ...ID) Entity {
 	w.checkLocked()
