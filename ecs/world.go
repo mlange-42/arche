@@ -212,7 +212,7 @@ func (w *World) NewEntity(comps ...ID) Entity {
 		if arch.HasRelationComponent {
 			newRel = &arch.RelationComponent
 		}
-		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, false)
+		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, newRel != nil)
 		trigger := w.listener.Subscriptions() & bits
 		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
 			w.listener.Notify(w, EntityEvent{Entity: entity, Added: arch.Mask, AddedIDs: comps, NewRelation: newRel, EventTypes: bits})
@@ -261,7 +261,7 @@ func (w *World) NewEntityWith(comps ...Component) Entity {
 		if arch.HasRelationComponent {
 			newRel = &arch.RelationComponent
 		}
-		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, false)
+		bits := subscription(true, false, len(comps) > 0, false, newRel != nil, newRel != nil)
 		trigger := w.listener.Subscriptions() & bits
 		if trigger != 0 && subscribes(trigger, &arch.Mask, nil, w.listener.Components(), nil, newRel) {
 			w.listener.Notify(w, EntityEvent{Entity: entity, Added: arch.Mask, AddedIDs: ids, NewRelation: newRel, EventTypes: bits})
@@ -294,7 +294,7 @@ func (w *World) RemoveEntity(entity Entity) {
 			oldIds = oldArch.node.Ids
 		}
 
-		bits := subscription(false, true, false, len(oldIds) > 0, oldRel != nil, !oldArch.RelationTarget.IsZero())
+		bits := subscription(false, true, false, len(oldIds) > 0, oldRel != nil, oldRel != nil)
 		trigger := w.listener.Subscriptions() & bits
 		if trigger != 0 && subscribes(trigger, nil, &oldArch.Mask, w.listener.Components(), oldRel, nil) {
 			lock := w.lock()
@@ -450,7 +450,7 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 // This is more efficient than subsequent use of [World.Add] and [World.Remove].
 //
 // When a [Relation] component is removed and another one is added,
-// the target entity of the relation remains unchanged.
+// the target entity of the relation is reset to zero.
 //
 // Panics:
 //   - when called for a removed (and potentially recycled) entity.

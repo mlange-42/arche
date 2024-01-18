@@ -6,12 +6,18 @@ import "github.com/mlange-42/arche/ecs/event"
 //
 // To receive change events, register a [Listener] with [World.SetListener].
 //
+// # Event types & subscriptions
+//
 // Events notified are entity creation and removal, component addition and removal,
 // and change of relations and their targets.
 //
-// Event types that are subscribed are determined by [Listener.Subscriptions].
+// Event types that are subscribed are determined by [Listener].Subscriptions.
 // Events that cover multiple types (e.g. entity creation and component addition) are only notified once.
 // Field EventTypes contains the [event.Subscription] bits of covered event types.
+//
+// See module [event] and the [event.Subscription] constants for subscription logic.
+//
+// # Event scheduling
 //
 // Events are emitted immediately after the change is applied.
 //
@@ -41,14 +47,23 @@ func (e *EntityEvent) Contains(bit event.Subscription) bool {
 //
 // A listener can be added to a [World] with [World.SetListener].
 //
-// See [EntityEvent] for details.
+// # Subscriptions
+//
+// Listeners can subscribe to one or more event types via method Subscriptions.
+// Further, subscriptions can be restricted to one or more components via method Components.
+//
+// See module [event] and the [event.Subscription] constants for subscription logic.
+//
+// # See also
+//
+// See [EntityEvent] for more details.
 // See package [github.com/mlange-42/arche/listener] for Listener implementations.
 type Listener interface {
 	// Notify the listener about a subscribed event.
 	Notify(world *World, evt EntityEvent)
 	// Subscriptions to event types.
 	Subscriptions() event.Subscription
-	// Components the listener subscribes to.
+	// Components the listener subscribes to. No component restrictions are indicated by nil.
 	Components() *Mask
 }
 

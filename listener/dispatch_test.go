@@ -93,23 +93,23 @@ func TestDispatchRelations(t *testing.T) {
 	builder1.NewBatch(10, parent1)
 
 	assert.Equal(t, 20, len(h1.events))
-	assert.Equal(t, 10, len(h2.events))
+	assert.Equal(t, 20, len(h2.events))
 
 	builder2.NewBatch(10)
 	builder2.NewBatch(10, parent2)
 
 	assert.Equal(t, 20, len(h1.events))
-	assert.Equal(t, 10, len(h2.events))
+	assert.Equal(t, 20, len(h2.events))
 
 	world.Batch().SetRelation(ecs.All(rel1ID), rel1ID, parent2)
 
 	assert.Equal(t, 20, len(h1.events))
-	assert.Equal(t, 30, len(h2.events))
+	assert.Equal(t, 40, len(h2.events))
 
 	world.Batch().RemoveEntities(ecs.All(rel1ID))
 
 	assert.Equal(t, 40, len(h1.events))
-	assert.Equal(t, 50, len(h2.events))
+	assert.Equal(t, 60, len(h2.events))
 }
 
 func TestDispatchAllComps(t *testing.T) {
