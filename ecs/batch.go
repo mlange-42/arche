@@ -86,6 +86,9 @@ func (b *Batch) SetRelationQ(filter Filter, comp ID, target Entity) Query {
 
 // Exchange exchanges components for many entities, matching a filter.
 //
+// When a [Relation] component is removed and another one is added,
+// the target entity of the relation is reset to zero.
+//
 // Panics:
 //   - when called with components that can't be added or removed because they are already present/not present, respectively.
 //   - when called on a locked world. Do not use during [Query] iteration!
@@ -97,6 +100,9 @@ func (b *Batch) Exchange(filter Filter, add []ID, rem []ID) {
 
 // ExchangeQ exchanges components for many entities, matching a filter.
 // It returns a query over the affected entities.
+//
+// When a [Relation] component is removed and another one is added,
+// the target entity of the relation is reset to zero.
 //
 // Panics:
 //   - when called with components that can't be added or removed because they are already present/not present, respectively.

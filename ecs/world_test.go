@@ -864,7 +864,7 @@ func TestWorldRelationSet(t *testing.T) {
 		RemovedIDs:  []ID{relID},
 		OldRelation: &relID,
 		NewRelation: nil,
-		EventTypes:  event.ComponentRemoved | event.RelationChanged,
+		EventTypes:  event.ComponentRemoved | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
 
 	assert.Panics(t, func() { world.Relations().Get(e2, relID) })
@@ -1246,7 +1246,9 @@ func TestWorldRelationMove(t *testing.T) {
 	world.SetListener(&listener)
 
 	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
 	relID := ComponentID[testRelationA](&world)
+	rel2ID := ComponentID[testRelationB](&world)
 
 	target1 := world.NewEntity()
 	target2 := world.NewEntity()
@@ -1277,6 +1279,9 @@ func TestWorldRelationMove(t *testing.T) {
 		world.Remove(e, posID)
 	}
 
+	world.Batch().Add(All(relID), posID)
+	world.Batch().Exchange(All(relID), []ID{velID}, []ID{posID})
+
 	for i, e := range entities {
 		trg := world.Relations().Get(e, relID)
 
@@ -1287,8 +1292,15 @@ func TestWorldRelationMove(t *testing.T) {
 		}
 	}
 
+	world.Batch().Exchange(All(relID), []ID{rel2ID}, []ID{relID})
+
 	for _, e := range entities {
-		world.Remove(e, relID)
+		trg := world.Relations().Get(e, rel2ID)
+		assert.Equal(t, Entity{}, trg)
+	}
+
+	for _, e := range entities {
+		world.Remove(e, rel2ID)
 	}
 }
 

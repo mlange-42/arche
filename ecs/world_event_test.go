@@ -60,7 +60,7 @@ func TestWorldListener(t *testing.T) {
 		Added:       All(posID, velID, relID),
 		AddedIDs:    []ID{posID, velID, relID},
 		NewRelation: &relID,
-		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
+		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
 
 	w.Add(e0, rotID)
@@ -132,7 +132,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		Added:       All(posID, relID),
 		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
-		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
+		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
 
 	query := builder.NewBatchQ(10)
@@ -144,7 +144,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		Added:       All(posID, relID),
 		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
-		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
+		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
 
 	builder.NewBatch(10, parent)
@@ -183,7 +183,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		Added:       All(posID, relID),
 		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
-		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
+		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
 
 	query = builder.NewBatchQ(10)
@@ -195,7 +195,7 @@ func TestWorldListenerBuilder(t *testing.T) {
 		Added:       All(posID, relID),
 		AddedIDs:    []ID{posID, relID},
 		NewRelation: &relID,
-		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged,
+		EventTypes:  event.EntityCreated | event.ComponentAdded | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
 
 	builder.NewBatch(10, parent)
