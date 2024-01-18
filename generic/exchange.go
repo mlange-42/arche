@@ -12,9 +12,11 @@ import "github.com/mlange-42/arche/ecs"
 //
 // For only adding or removing components, see also [Map1], [Map2] etc.
 type Exchange struct {
-	add    []ecs.ID
-	remove []ecs.ID
-	world  *ecs.World
+	add         []ecs.ID
+	remove      []ecs.ID
+	hasRelation bool
+	relationID  ecs.ID
+	world       *ecs.World
 }
 
 // NewExchange creates a new Exchange object.
@@ -22,6 +24,17 @@ func NewExchange(w *ecs.World) *Exchange {
 	return &Exchange{
 		world: w,
 	}
+}
+
+// WithRelation sets the [Relation] component for the Exchange.
+//
+// Use in conjunction with the optional target argument of [Exchange.NewEntity], [Exchange.Add], [Exchange.Remove] and [Exchange.Exchange].
+//
+// See [Relation] for details and examples.
+func (m *Exchange) WithRelation(comp Comp) *Exchange {
+	m.hasRelation = true
+	m.relationID = ecs.TypeID(m.world, comp)
+	return m
 }
 
 // Adds sets components to add in calls to [Exchange.Add] and [Exchange.Exchange].
@@ -42,24 +55,53 @@ func (m *Exchange) Removes(remove ...Comp) *Exchange {
 
 // NewEntity creates a new [ecs.Entity] with the components set via [Exchange.Adds].
 //
+// The optional argument can be used to set the target [Entity] for the Exchange's [Relation].
+// See [Exchange.WithRelation].
+//
 // See also [ecs.World.NewEntity].
-func (m *Exchange) NewEntity() ecs.Entity {
-	entity := m.world.NewEntity(m.add...)
-	return entity
+func (m *Exchange) NewEntity(target ...ecs.Entity) ecs.Entity {
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Exchange has no relation")
+		}
+		builder := ecs.NewBuilder(m.world, m.add...).WithRelation(m.relationID)
+		return builder.NewEntity(target[0])
+	}
+	return m.world.NewEntity(m.add...)
 }
 
 // Add the components set via [Exchange.Adds] to the given entity.
 //
+// The optional argument can be used to set the target [Entity] for the Exchange's [Relation].
+// See [Exchange.WithRelation].
+//
 // See also [ecs.World.Add].
-func (m *Exchange) Add(entity ecs.Entity) {
-	m.world.Add(entity, m.add...)
+func (m *Exchange) Add(entity ecs.Entity, target ...ecs.Entity) {
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Exchange has no relation")
+		}
+		m.world.Relations().Exchange(entity, m.add, nil, m.relationID, target[0])
+	} else {
+		m.world.Add(entity, m.add...)
+	}
 }
 
 // Remove the components set via [Exchange.Removes] from the given entity.
 //
+// The optional argument can be used to set the target [Entity] for the Exchange's [Relation].
+// See [Exchange.WithRelation].
+//
 // See also [ecs.World.Remove].
-func (m *Exchange) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.remove...)
+func (m *Exchange) Remove(entity ecs.Entity, target ...ecs.Entity) {
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Exchange has no relation")
+		}
+		m.world.Relations().Exchange(entity, nil, m.remove, m.relationID, target[0])
+	} else {
+		m.world.Remove(entity, m.remove...)
+	}
 }
 
 // Exchange components on an entity.
@@ -68,9 +110,19 @@ func (m *Exchange) Remove(entity ecs.Entity) {
 // Adds the components set via [Exchange.Adds].
 //
 // When a [Relation] component is removed and another one is added,
-// the target entity of the relation remains unchanged.
+// the target entity of the relation is set to zero.
+//
+// The optional argument can be used to set the target [Entity] for the Exchange's [Relation].
+// See [Exchange.WithRelation].
 //
 // See also [ecs.World.Exchange].
-func (m *Exchange) Exchange(entity ecs.Entity) {
-	m.world.Exchange(entity, m.add, m.remove)
+func (m *Exchange) Exchange(entity ecs.Entity, target ...ecs.Entity) {
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Exchange has no relation")
+		}
+		m.world.Relations().Exchange(entity, m.add, m.remove, m.relationID, target[0])
+	} else {
+		m.world.Exchange(entity, m.add, m.remove)
+	}
 }
