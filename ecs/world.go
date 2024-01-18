@@ -560,11 +560,6 @@ func (w *World) Ids(entity Entity) []ID {
 	return append([]ID{}, w.entities[entity.id].arch.node.Ids...)
 }
 
-// ComponentType returns the reflect.Type for a given component ID, as well as whether the ID is in use.
-func (w *World) ComponentType(id ID) (reflect.Type, bool) {
-	return w.registry.ComponentType(id.id)
-}
-
 // SetListener sets a listener callback func(e EntityEvent) for the world.
 // The listener is immediately called on every [ecs.Entity] change.
 // Replaces the current listener. Call with nil to remove a listener.
