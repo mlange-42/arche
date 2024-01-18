@@ -198,6 +198,127 @@ func (w *World) newEntitiesWithQuery(count int, targetID ID, hasTarget bool, tar
 	return newBatchQuery(w, lock, &batches)
 }
 
+// Internal method to create new entities.
+func (w *World) newEntitiesNoNotify(count int, targetID ID, hasTarget bool, target Entity, comps ...ID) (*archetype, uint32) {
+	w.checkLocked()
+
+	if count < 1 {
+		panic("can only create a positive number of entities")
+	}
+
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
+	}
+
+	arch := w.archetypes.Get(0)
+	if len(comps) > 0 {
+		arch = w.findOrCreateArchetype(arch, comps, nil, target)
+	}
+	if hasTarget {
+		w.checkRelation(arch, targetID)
+		if !target.IsZero() {
+			w.targetEntities.Set(target.id, true)
+		}
+	}
+
+	startIdx := arch.Len()
+	w.createEntities(arch, uint32(count))
+
+	return arch, startIdx
+}
+
+// Internal method to create new entities with component values.
+func (w *World) newEntitiesWithNoNotify(count int, targetID ID, hasTarget bool, target Entity, ids []ID, comps ...Component) (*archetype, uint32) {
+	w.checkLocked()
+
+	if count < 1 {
+		panic("can only create a positive number of entities")
+	}
+
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
+	}
+
+	if len(comps) == 0 {
+		return w.newEntitiesNoNotify(count, targetID, hasTarget, target)
+	}
+
+	cnt := uint32(count)
+
+	arch := w.archetypes.Get(0)
+	if len(comps) > 0 {
+		arch = w.findOrCreateArchetype(arch, ids, nil, target)
+	}
+	if hasTarget {
+		w.checkRelation(arch, targetID)
+		if !target.IsZero() {
+			w.targetEntities.Set(target.id, true)
+		}
+	}
+
+	startIdx := arch.Len()
+	w.createEntities(arch, uint32(count))
+
+	var i uint32
+	for i = 0; i < cnt; i++ {
+		idx := startIdx + i
+		entity := arch.GetEntity(idx)
+		for _, c := range comps {
+			w.copyTo(entity, c.ID, c.Comp)
+		}
+	}
+
+	return arch, startIdx
+}
+
+// createEntity creates an Entity and adds it to the given archetype.
+func (w *World) createEntity(arch *archetype) Entity {
+	entity := w.entityPool.Get()
+	idx := arch.Alloc(entity)
+	len := len(w.entities)
+	if int(entity.id) == len {
+		if len == cap(w.entities) {
+			old := w.entities
+			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
+			copy(w.entities, old)
+
+		}
+		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
+		w.targetEntities.ExtendTo(len + w.config.CapacityIncrement)
+	} else {
+		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
+		w.targetEntities.Set(entity.id, false)
+	}
+	return entity
+}
+
+// createEntity creates multiple Entities and adds them to the given archetype.
+func (w *World) createEntities(arch *archetype, count uint32) {
+	startIdx := arch.Len()
+	arch.AllocN(count)
+
+	len := len(w.entities)
+	required := len + int(count) - w.entityPool.Available()
+	capacity := capacity(required, w.config.CapacityIncrement)
+	if required > cap(w.entities) {
+		old := w.entities
+		w.entities = make([]entityIndex, required, capacity)
+		copy(w.entities, old)
+	} else if required > len {
+		w.entities = w.entities[:required]
+	}
+	w.targetEntities.ExtendTo(capacity)
+
+	var i uint32
+	for i = 0; i < count; i++ {
+		idx := startIdx + i
+		entity := w.entityPool.Get()
+		arch.SetEntity(idx, entity)
+		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
+		w.targetEntities.Set(entity.id, false)
+	}
+}
+
 // RemoveEntities removes and recycles all entities matching a filter.
 //
 // Returns the number of removed entities.
@@ -351,6 +472,10 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 	}
 	oldTarget := oldArch.RelationTarget
 
+	if !target.IsZero() {
+		w.targetEntities.Set(target.id, true)
+	}
+
 	w.cleanupArchetype(oldArch)
 
 	if w.listener != nil {
@@ -408,35 +533,38 @@ func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [World.Exchange].
-func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID) {
+func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) {
 	batches := batchArchetypes{
 		Added:   add,
 		Removed: rem,
 	}
 
-	w.exchangeBatchNoNotify(filter, add, rem, &batches)
+	w.exchangeBatchNoNotify(filter, add, rem, relation, hasRelation, target, &batches)
 
 	if w.listener != nil {
 		w.notifyQuery(&batches)
 	}
 }
 
-func (w *World) exchangeBatchQuery(filter Filter, add []ID, rem []ID) Query {
+func (w *World) exchangeBatchQuery(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) Query {
 	batches := batchArchetypes{
 		Added:   add,
 		Removed: rem,
 	}
 
-	w.exchangeBatchNoNotify(filter, add, rem, &batches)
+	w.exchangeBatchNoNotify(filter, add, rem, relation, hasRelation, target, &batches)
 
 	lock := w.lock()
 	return newBatchQuery(w, lock, &batches)
 }
 
-func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, batches *batchArchetypes) {
+func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity, batches *batchArchetypes) {
 	w.checkLocked()
 
 	if len(add) == 0 && len(rem) == 0 {
+		if hasRelation {
+			panic("exchange operation has no effect, but a relation is specified. Use Batch.SetRelation instead")
+		}
 		return
 	}
 
@@ -453,22 +581,33 @@ func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, batches
 			continue
 		}
 
-		newArch, start := w.exchangeArch(arch, archLen, add, rem)
+		newArch, start := w.exchangeArch(arch, archLen, add, rem, relation, hasRelation, target)
 		batches.Add(newArch, arch, start, newArch.Len())
 	}
 }
 
-func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID) (*archetype, uint32) {
+func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) (*archetype, uint32) {
 	mask := w.getExchangeMask(oldArch.Mask, add, rem)
 	oldIDs := oldArch.Components()
 
-	target := oldArch.RelationTarget
-	if !target.IsZero() && oldArch.Mask.ContainsAny(&w.registry.IsRelation) {
-		for _, id := range rem {
-			// Removing a relation
-			if w.registry.IsRelation.Get(id) {
-				target = Entity{}
-				break
+	if hasRelation {
+		if !mask.Get(relation) {
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: resulting entity has no component %s", tp.Name()))
+		}
+		if !w.registry.IsRelation.Get(relation) {
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: %s is not a relation component", tp.Name()))
+		}
+	} else {
+		target = oldArch.RelationTarget
+		if !target.IsZero() && oldArch.Mask.ContainsAny(&w.registry.IsRelation) {
+			for _, id := range rem {
+				// Removing a relation
+				if w.registry.IsRelation.Get(id) {
+					target = Entity{}
+					break
+				}
 			}
 		}
 	}
@@ -494,6 +633,10 @@ func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, re
 				arch.SetPointer(idx, id, comp)
 			}
 		}
+	}
+
+	if !target.IsZero() {
+		w.targetEntities.Set(target.id, true)
 	}
 
 	// Theoretically, it could be oldArchLen < oldArch.Len(),
@@ -581,7 +724,10 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 		w.entities[swapEntity.id].index = index.index
 	}
 	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
-	w.targetEntities.Set(target.id, true)
+
+	if !target.IsZero() {
+		w.targetEntities.Set(target.id, true)
+	}
 
 	oldTarget := oldArch.RelationTarget
 	w.cleanupArchetype(oldArch)
@@ -643,7 +789,7 @@ func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, 
 	w.checkRelation(oldArch, comp)
 
 	// Before, entities with unchanged target were included in the query,
-	// end events were emitted for them. Seems better to skip them completely,
+	// and events were emitted for them. Seems better to skip them completely,
 	// which is done in World.setRelationBatchNoNotify.
 	//if oldArch.RelationTarget == target {
 	//	return oldArch, 0, oldArchLen
@@ -673,6 +819,10 @@ func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, 
 			comp := oldArch.Get(i, id)
 			arch.SetPointer(idx, id, comp)
 		}
+	}
+
+	if !target.IsZero() {
+		w.targetEntities.Set(target.id, true)
 	}
 
 	// Theoretically, it could be oldArchLen < oldArch.Len(),
@@ -712,127 +862,6 @@ func (w *World) unlock(l uint8) {
 func (w *World) checkLocked() {
 	if w.IsLocked() {
 		panic("attempt to modify a locked world")
-	}
-}
-
-// Internal method to create new entities.
-func (w *World) newEntitiesNoNotify(count int, targetID ID, hasTarget bool, target Entity, comps ...ID) (*archetype, uint32) {
-	w.checkLocked()
-
-	if count < 1 {
-		panic("can only create a positive number of entities")
-	}
-
-	if !target.IsZero() && !w.entityPool.Alive(target) {
-		panic("can't make a dead entity a relation target")
-	}
-
-	arch := w.archetypes.Get(0)
-	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, comps, nil, target)
-	}
-	if hasTarget {
-		w.checkRelation(arch, targetID)
-		if !target.IsZero() {
-			w.targetEntities.Set(target.id, true)
-		}
-	}
-
-	startIdx := arch.Len()
-	w.createEntities(arch, uint32(count))
-
-	return arch, startIdx
-}
-
-// Internal method to create new entities with component values.
-func (w *World) newEntitiesWithNoNotify(count int, targetID ID, hasTarget bool, target Entity, ids []ID, comps ...Component) (*archetype, uint32) {
-	w.checkLocked()
-
-	if count < 1 {
-		panic("can only create a positive number of entities")
-	}
-
-	if !target.IsZero() && !w.entityPool.Alive(target) {
-		panic("can't make a dead entity a relation target")
-	}
-
-	if len(comps) == 0 {
-		return w.newEntitiesNoNotify(count, targetID, hasTarget, target)
-	}
-
-	cnt := uint32(count)
-
-	arch := w.archetypes.Get(0)
-	if len(comps) > 0 {
-		arch = w.findOrCreateArchetype(arch, ids, nil, target)
-	}
-	if hasTarget {
-		w.checkRelation(arch, targetID)
-		if !target.IsZero() {
-			w.targetEntities.Set(target.id, true)
-		}
-	}
-
-	startIdx := arch.Len()
-	w.createEntities(arch, uint32(count))
-
-	var i uint32
-	for i = 0; i < cnt; i++ {
-		idx := startIdx + i
-		entity := arch.GetEntity(idx)
-		for _, c := range comps {
-			w.copyTo(entity, c.ID, c.Comp)
-		}
-	}
-
-	return arch, startIdx
-}
-
-// createEntity creates an Entity and adds it to the given archetype.
-func (w *World) createEntity(arch *archetype) Entity {
-	entity := w.entityPool.Get()
-	idx := arch.Alloc(entity)
-	len := len(w.entities)
-	if int(entity.id) == len {
-		if len == cap(w.entities) {
-			old := w.entities
-			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
-			copy(w.entities, old)
-
-		}
-		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
-		w.targetEntities.ExtendTo(len + w.config.CapacityIncrement)
-	} else {
-		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
-		w.targetEntities.Set(entity.id, false)
-	}
-	return entity
-}
-
-// createEntity creates multiple Entities and adds them to the given archetype.
-func (w *World) createEntities(arch *archetype, count uint32) {
-	startIdx := arch.Len()
-	arch.AllocN(count)
-
-	len := len(w.entities)
-	required := len + int(count) - w.entityPool.Available()
-	capacity := capacity(required, w.config.CapacityIncrement)
-	if required > cap(w.entities) {
-		old := w.entities
-		w.entities = make([]entityIndex, required, capacity)
-		copy(w.entities, old)
-	} else if required > len {
-		w.entities = w.entities[:required]
-	}
-	w.targetEntities.ExtendTo(capacity)
-
-	var i uint32
-	for i = 0; i < count; i++ {
-		idx := startIdx + i
-		entity := w.entityPool.Get()
-		arch.SetEntity(idx, entity)
-		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
-		w.targetEntities.Set(entity.id, false)
 	}
 }
 
