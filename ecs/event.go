@@ -15,7 +15,7 @@ import "github.com/mlange-42/arche/ecs/event"
 // Events that cover multiple types (e.g. entity creation and component addition) are only notified once.
 // Field EventTypes contains the [event.Subscription] bits of covered event types.
 //
-// See module [event] and the [event.Subscription] constants for subscription logic.
+// See sub-package [event] and the [event.Subscription] constants for subscription logic.
 //
 // # Event scheduling
 //
@@ -52,7 +52,7 @@ func (e *EntityEvent) Contains(bit event.Subscription) bool {
 // Listeners can subscribe to one or more event types via method Subscriptions.
 // Further, subscriptions can be restricted to one or more components via method Components.
 //
-// See module [event] and the [event.Subscription] constants for subscription logic.
+// See sub-package [event] and the [event.Subscription] constants for subscription logic.
 //
 // # See also
 //
