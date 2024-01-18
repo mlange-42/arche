@@ -29,8 +29,11 @@ This change was necessary to get the same performance as before, despite the mor
 * Adds functions `ComponentIDs(*World)` and `ResourceIDs(*World)` to get all registered IDs (#329)
 * Adds methods `Mask.And`, `Mask.Or` and `Mask.Xor` (#335)
 * Adds build tag `tiny` to restrict to 64 components for an extra bit of performance (#338)
-* Adds methods `Relations.Exchange`, `Batch.ExchangeRelation`, `Batch.ExchangeRelationQ` for exchange with relation target (#342)
-* Generic API adds `Exchange.WithRelation`and optional target argument for operations with relation target (#342)
+* Adds methods `Relations.Exchange()`, `Batch.ExchangeRelation()`, `Batch.ExchangeRelationQ()` for exchange with relation target (#342)
+* Generic API adds `Exchange.WithRelation()` and optional target argument for operations with relation target (#342)
+* Generic API adds `MapX.AddBatch()`, `MapX.AddBatchQ()`, `MapX.RemoveBatch()`and `MapX.RemoveBatchQ()` (#342)
+* Generic API adds optional relation target argument to most `MapX` methods (#342)
+* Generic API adds `FilterX.Filter()` to get an `ecs.Filter` from a generic one (#342)
 
 ### Performance
 

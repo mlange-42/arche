@@ -134,3 +134,26 @@ func (m *Exchange) Exchange(entity ecs.Entity, target ...ecs.Entity) {
 		m.world.Exchange(entity, m.add, m.remove)
 	}
 }
+
+// ExchangeBatch exchanges components on many entities.
+//
+// Removes the components set via [Exchange.Removes].
+// Adds the components set via [Exchange.Adds].
+//
+// When a [Relation] component is removed and another one is added,
+// the target entity of the relation is set to zero.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Exchange's [ecs.Relation].
+// See [Exchange.WithRelation].
+//
+// See also [Batch.Exchange] and [Batch.ExchangeQ].
+func (m *Exchange) ExchangeBatch(filter ecs.Filter, target ...ecs.Entity) {
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Exchange has no relation")
+		}
+		m.world.Batch().ExchangeRelation(filter, m.add, m.remove, m.relationID, target[0])
+	} else {
+		m.world.Batch().Exchange(filter, m.add, m.remove)
+	}
+}

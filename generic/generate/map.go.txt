@@ -109,9 +109,55 @@ func (m *Map{{ .Index }}{{ .Types }}) NewWith({{ .Arguments }}, target ...ecs.En
 
 // Add the Map{{ .Index }}'s components to the given entity.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+//
 // See also [ecs.World.Add].
-func (m *Map{{ .Index }}{{ .Types }}) Add(entity ecs.Entity) {
-	m.world.Add(entity, m.ids...)
+func (m *Map{{ .Index }}{{ .Types }}) Add(entity ecs.Entity, target ...ecs.Entity) {
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Map{{ .Index }} has no relation")
+		}
+		m.world.Relations().Exchange(entity, m.ids, nil, m.relation, target[0])
+	} else {
+		m.world.Add(entity, m.ids...)
+	}
+}
+
+// AddBatch adds the Map{{ .Index }}'s components to multiple entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+//
+// See also [Batch.Add].
+func (m *Map{{ .Index }}{{ .Types }}) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Map{{ .Index }} has no relation")
+		}
+		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+	} else {
+		m.world.Batch().Exchange(filter, m.ids, nil)
+	}
+}
+
+// AddBatchQ adds the Map{{ .Index }}'s components to multiple entities and returns a query over them.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+//
+// See also [Batch.AddQ].
+func (m *Map{{ .Index }}{{ .Types }}) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
+	var query ecs.Query
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Map{{ .Index }} has no relation")
+		}
+		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+	} else {
+		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
+	}
+	return Query{{ .Index }}{{ .Types }}{
+		Query: query,
+		{{ .IDAssign2 }}
+	}
 }
 
 // Assign the Map{{ .Index }}'s components to the given entity, using the supplied values.
@@ -126,11 +172,56 @@ func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}
 
 // Remove the Map{{ .Index }}'s components from the given entity.
 //
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+//
 // See also [ecs.World.Remove].
-func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
-	m.world.Remove(entity, m.ids...)
+func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity, target ...ecs.Entity) {
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Map{{ .Index }} has no relation")
+		}
+		m.world.Relations().Exchange(entity, nil, m.ids, m.relation, target[0])
+	} else {
+		m.world.Remove(entity, m.ids...)
+	}
 }
 
+// RemoveBatch removes the Map{{ .Index }}'s components to multiple entities.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+//
+// See also [Batch.Remove].
+func (m *Map{{ .Index }}{{ .Types }}) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Map{{ .Index }} has no relation")
+		}
+		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+	} else {
+		m.world.Batch().Exchange(filter, nil, m.ids)
+	}
+}
+
+// RemoveBatchQ adds the Map{{ .Index }}'s components to multiple entities and returns a query over them.
+//
+// The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+//
+// See also [Batch.RemoveQ].
+func (m *Map{{ .Index }}{{ .Types }}) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
+	var query ecs.Query
+	if len(target) > 0 {
+		if !m.hasRelation {
+			panic("can't set target entity: Map{{ .Index }} has no relation")
+		}
+		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+	} else {
+		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
+	}
+	return Query{{ .Index }}{{ .Types }}{
+		Query: query,
+		{{ .IDAssign2 }}
+	}
+}
 
 // RemoveEntities removes all entities from the world that match the Map{{ .Index }}'s components.
 //
@@ -139,7 +230,7 @@ func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity) {
 //
 // Returns the number of removed entities.
 //
-// See also [ecs.World.NewEntityWith].
+// See also [Batch.RemoveEntities].
 func (m *Map{{ .Index }}{{ .Types }}) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
