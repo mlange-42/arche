@@ -416,6 +416,9 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 	}
 
 	if len(add) == 0 && len(rem) == 0 {
+		if hasRelation {
+			panic("exchange operation has no effect, but a relation is specified. Use World.Relation instead")
+		}
 		return
 	}
 	index := &w.entities[entity.id]
