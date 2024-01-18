@@ -322,7 +322,7 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 		}
 		targChanged := oldTarget != arch.RelationTarget
 
-		bits := subscription(false, false, len(add) > 0, len(rem) > 0, relChanged, targChanged)
+		bits := subscription(false, false, len(add) > 0, len(rem) > 0, relChanged, relChanged || targChanged)
 		trigger := w.listener.Subscriptions() & bits
 		if trigger != 0 {
 			changed := oldMask.Xor(&arch.Mask)
@@ -1048,7 +1048,7 @@ func (w *World) notifyQuery(batchArch *batchArchetypes) {
 			event.OldRelation = oldRel
 		}
 
-		bits := subscription(oldArch == nil, false, len(batchArch.Added) > 0, len(batchArch.Removed) > 0, relChanged, targChanged)
+		bits := subscription(oldArch == nil, false, len(batchArch.Added) > 0, len(batchArch.Removed) > 0, relChanged, relChanged || targChanged)
 		event.EventTypes = bits
 
 		trigger := w.listener.Subscriptions() & bits
