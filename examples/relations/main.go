@@ -34,7 +34,7 @@ func run() {
 	parent2 := world.NewEntity()
 
 	// Create an entity with a ChildOf relation to a parent entity.
-	child := childBuilder.New(parent1)
+	child := childBuilder.NewEntity(parent1)
 	// Change the child's relation target.
 	world.Relations().Set(child, childID, parent2)
 	// Get the child's relation target.

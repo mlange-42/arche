@@ -206,7 +206,7 @@ func TestQueryEmptyNode(t *testing.T) {
 	assert.False(t, w.nodes.Get(2).IsActive)
 
 	builder := NewBuilder(&w, relID).WithRelation(relID)
-	child := builder.New(target)
+	child := builder.NewEntity(target)
 
 	w.RemoveEntity(child)
 	w.RemoveEntity(target)

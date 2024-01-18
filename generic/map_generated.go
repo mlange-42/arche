@@ -110,7 +110,7 @@ func (m *Map1[A]) NewWith(a *A, target ...ecs.Entity) ecs.Entity {
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a}).WithRelation(m.relation).New(target[0])
+	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a}).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map1's components to the given entity.
@@ -265,7 +265,7 @@ func (m *Map2[A, B]) NewWith(a *A, b *B, target ...ecs.Entity) ecs.Entity {
 	}
 	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map2's components to the given entity.
@@ -428,7 +428,7 @@ func (m *Map3[A, B, C]) NewWith(a *A, b *B, c *C, target ...ecs.Entity) ecs.Enti
 	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map3's components to the given entity.
@@ -599,7 +599,7 @@ func (m *Map4[A, B, C, D]) NewWith(a *A, b *B, c *C, d *D, target ...ecs.Entity)
 		ecs.Component{ID: m.id1, Comp: b},
 		ecs.Component{ID: m.id2, Comp: c},
 		ecs.Component{ID: m.id3, Comp: d},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map4's components to the given entity.
@@ -778,7 +778,7 @@ func (m *Map5[A, B, C, D, E]) NewWith(a *A, b *B, c *C, d *D, e *E, target ...ec
 		ecs.Component{ID: m.id2, Comp: c},
 		ecs.Component{ID: m.id3, Comp: d},
 		ecs.Component{ID: m.id4, Comp: e},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map5's components to the given entity.
@@ -965,7 +965,7 @@ func (m *Map6[A, B, C, D, E, F]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, tar
 		ecs.Component{ID: m.id3, Comp: d},
 		ecs.Component{ID: m.id4, Comp: e},
 		ecs.Component{ID: m.id5, Comp: f},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map6's components to the given entity.
@@ -1160,7 +1160,7 @@ func (m *Map7[A, B, C, D, E, F, G]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, 
 		ecs.Component{ID: m.id4, Comp: e},
 		ecs.Component{ID: m.id5, Comp: f},
 		ecs.Component{ID: m.id6, Comp: g},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map7's components to the given entity.
@@ -1363,7 +1363,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewWith(a *A, b *B, c *C, d *D, e *E, f *
 		ecs.Component{ID: m.id5, Comp: f},
 		ecs.Component{ID: m.id6, Comp: g},
 		ecs.Component{ID: m.id7, Comp: h},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map8's components to the given entity.
@@ -1574,7 +1574,7 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) NewWith(a *A, b *B, c *C, d *D, e *E, 
 		ecs.Component{ID: m.id6, Comp: g},
 		ecs.Component{ID: m.id7, Comp: h},
 		ecs.Component{ID: m.id8, Comp: i},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map9's components to the given entity.
@@ -1793,7 +1793,7 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewWith(a *A, b *B, c *C, d *D, e 
 		ecs.Component{ID: m.id7, Comp: h},
 		ecs.Component{ID: m.id8, Comp: i},
 		ecs.Component{ID: m.id9, Comp: j},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map10's components to the given entity.
@@ -2020,7 +2020,7 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewWith(a *A, b *B, c *C, d *D,
 		ecs.Component{ID: m.id8, Comp: i},
 		ecs.Component{ID: m.id9, Comp: j},
 		ecs.Component{ID: m.id10, Comp: k},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map11's components to the given entity.
@@ -2255,7 +2255,7 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewWith(a *A, b *B, c *C, d 
 		ecs.Component{ID: m.id9, Comp: j},
 		ecs.Component{ID: m.id10, Comp: k},
 		ecs.Component{ID: m.id11, Comp: l},
-	).WithRelation(m.relation).New(target[0])
+	).WithRelation(m.relation).NewEntity(target[0])
 }
 
 // Add the Map12's components to the given entity.

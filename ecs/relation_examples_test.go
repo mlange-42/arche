@@ -19,7 +19,7 @@ func ExampleRelation() {
 
 	// Create a child entity with a relation to the parent.
 	childBuilder := ecs.NewBuilder(&world, childID).WithRelation(childID)
-	child := childBuilder.New(parent)
+	child := childBuilder.NewEntity(parent)
 
 	// Get the relation target of the child.
 	_ = world.Relations().Get(child, childID)
