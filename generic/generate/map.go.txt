@@ -123,7 +123,7 @@ func (m *Map{{ .Index }}{{ .Types }}) Add(entity ecs.Entity, target ...ecs.Entit
 	}
 }
 
-// AddBatch adds the Map{{ .Index }}'s components to multiple entities.
+// AddBatch adds the Map{{ .Index }}'s components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
@@ -187,7 +187,7 @@ func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity, target ...ecs.En
 	}
 }
 
-// RemoveBatch removes the Map{{ .Index }}'s components from multiple entities.
+// RemoveBatch removes the Map{{ .Index }}'s components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //

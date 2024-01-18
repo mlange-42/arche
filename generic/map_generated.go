@@ -129,7 +129,7 @@ func (m *Map1[A]) Add(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// AddBatch adds the Map1's components to multiple entities.
+// AddBatch adds the Map1's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
@@ -192,7 +192,7 @@ func (m *Map1[A]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map1's components from multiple entities.
+// RemoveBatch removes the Map1's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
@@ -377,7 +377,7 @@ func (m *Map2[A, B]) Add(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// AddBatch adds the Map2's components to multiple entities.
+// AddBatch adds the Map2's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
@@ -442,7 +442,7 @@ func (m *Map2[A, B]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map2's components from multiple entities.
+// RemoveBatch removes the Map2's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
@@ -634,7 +634,7 @@ func (m *Map3[A, B, C]) Add(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// AddBatch adds the Map3's components to multiple entities.
+// AddBatch adds the Map3's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
@@ -701,7 +701,7 @@ func (m *Map3[A, B, C]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map3's components from multiple entities.
+// RemoveBatch removes the Map3's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
@@ -900,7 +900,7 @@ func (m *Map4[A, B, C, D]) Add(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// AddBatch adds the Map4's components to multiple entities.
+// AddBatch adds the Map4's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
@@ -969,7 +969,7 @@ func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map4's components from multiple entities.
+// RemoveBatch removes the Map4's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
@@ -1175,7 +1175,7 @@ func (m *Map5[A, B, C, D, E]) Add(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// AddBatch adds the Map5's components to multiple entities.
+// AddBatch adds the Map5's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
@@ -1246,7 +1246,7 @@ func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map5's components from multiple entities.
+// RemoveBatch removes the Map5's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
@@ -1459,7 +1459,7 @@ func (m *Map6[A, B, C, D, E, F]) Add(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// AddBatch adds the Map6's components to multiple entities.
+// AddBatch adds the Map6's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
@@ -1532,7 +1532,7 @@ func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity, target ...ecs.Entity)
 	}
 }
 
-// RemoveBatch removes the Map6's components from multiple entities.
+// RemoveBatch removes the Map6's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
@@ -1752,7 +1752,7 @@ func (m *Map7[A, B, C, D, E, F, G]) Add(entity ecs.Entity, target ...ecs.Entity)
 	}
 }
 
-// AddBatch adds the Map7's components to multiple entities.
+// AddBatch adds the Map7's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
@@ -1827,7 +1827,7 @@ func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity, target ...ecs.Enti
 	}
 }
 
-// RemoveBatch removes the Map7's components from multiple entities.
+// RemoveBatch removes the Map7's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
@@ -2054,7 +2054,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Add(entity ecs.Entity, target ...ecs.Enti
 	}
 }
 
-// AddBatch adds the Map8's components to multiple entities.
+// AddBatch adds the Map8's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
@@ -2131,7 +2131,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity, target ...ecs.E
 	}
 }
 
-// RemoveBatch removes the Map8's components from multiple entities.
+// RemoveBatch removes the Map8's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
@@ -2365,7 +2365,7 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) Add(entity ecs.Entity, target ...ecs.E
 	}
 }
 
-// AddBatch adds the Map9's components to multiple entities.
+// AddBatch adds the Map9's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
 //
@@ -2444,7 +2444,7 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) Remove(entity ecs.Entity, target ...ec
 	}
 }
 
-// RemoveBatch removes the Map9's components from multiple entities.
+// RemoveBatch removes the Map9's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
 //
@@ -2685,7 +2685,7 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Add(entity ecs.Entity, target ...e
 	}
 }
 
-// AddBatch adds the Map10's components to multiple entities.
+// AddBatch adds the Map10's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
 //
@@ -2766,7 +2766,7 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Remove(entity ecs.Entity, target .
 	}
 }
 
-// RemoveBatch removes the Map10's components from multiple entities.
+// RemoveBatch removes the Map10's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
 //
@@ -3014,7 +3014,7 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Add(entity ecs.Entity, target .
 	}
 }
 
-// AddBatch adds the Map11's components to multiple entities.
+// AddBatch adds the Map11's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
 //
@@ -3097,7 +3097,7 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Remove(entity ecs.Entity, targe
 	}
 }
 
-// RemoveBatch removes the Map11's components from multiple entities.
+// RemoveBatch removes the Map11's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
 //
@@ -3352,7 +3352,7 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Add(entity ecs.Entity, targe
 	}
 }
 
-// AddBatch adds the Map12's components to multiple entities.
+// AddBatch adds the Map12's components to many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
 //
@@ -3437,7 +3437,7 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Remove(entity ecs.Entity, ta
 	}
 }
 
-// RemoveBatch removes the Map12's components from multiple entities.
+// RemoveBatch removes the Map12's components from many entities, matching a filter.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
 //

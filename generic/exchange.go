@@ -116,12 +116,10 @@ func (m *Exchange) Remove(entity ecs.Entity, target ...ecs.Entity) {
 //
 // Removes the components set via [Exchange.Removes].
 // Adds the components set via [Exchange.Adds].
-//
-// When a [ecs.Relation] component is removed and another one is added,
-// the target entity of the relation is set to zero.
-//
 // The optional argument can be used to set the target [ecs.Entity] for the Exchange's [ecs.Relation].
 // See [Exchange.WithRelation].
+// When a [ecs.Relation] component is removed and another one is added,
+// the target entity of the relation is set to zero if no target is given.
 //
 // See also [ecs.World.Exchange].
 func (m *Exchange) Exchange(entity ecs.Entity, target ...ecs.Entity) {
@@ -135,18 +133,16 @@ func (m *Exchange) Exchange(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// ExchangeBatch exchanges components on many entities.
+// ExchangeBatch exchanges components on many entities, matching a filter.
 //
 // Removes the components set via [Exchange.Removes].
 // Adds the components set via [Exchange.Adds].
-//
-// When a [Relation] component is removed and another one is added,
-// the target entity of the relation is set to zero.
-//
 // The optional argument can be used to set the target [ecs.Entity] for the Exchange's [ecs.Relation].
 // See [Exchange.WithRelation].
+// When a [ecs.Relation] component is removed and another one is added,
+// the target entity of the relation is set to zero if no target is given.
 //
-// See also [Batch.Exchange] and [Batch.ExchangeQ].
+// See also [ecs.Batch.Exchange] and [ecs.Batch.ExchangeQ].
 func (m *Exchange) ExchangeBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
