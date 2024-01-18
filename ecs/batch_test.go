@@ -1,174 +1,55 @@
 package ecs_test
 
-import "github.com/mlange-42/arche/ecs"
+import (
+	"testing"
 
-func ExampleBatch() {
-	world := ecs.NewWorld()
+	"github.com/mlange-42/arche/ecs"
+	"github.com/stretchr/testify/assert"
+)
 
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
+func TestBatchExchangeRelation(t *testing.T) {
+	w := ecs.NewWorld()
+	posID := ecs.ComponentID[Position](&w)
+	velID := ecs.ComponentID[Velocity](&w)
+	childID := ecs.ComponentID[ChildOf](&w)
 
-	builder := ecs.NewBuilder(&world, posID, velID)
-	builder.NewBatch(100)
+	parent1 := w.NewEntity(posID)
+	parent2 := w.NewEntity(posID)
 
-	world.Batch().Remove(ecs.All(posID, velID), velID)
-	world.Batch().RemoveEntities(ecs.All(posID))
-	// Output:
-}
+	builder := ecs.NewBuilder(&w, posID, childID).WithRelation(childID)
+	builder.NewBatch(10, parent1)
 
-func ExampleBatch_Add() {
-	world := ecs.NewWorld()
+	relFilter := ecs.NewRelationFilter(ecs.All(posID, childID), parent1)
+	query := w.Query(&relFilter)
+	assert.Equal(t, 10, query.Count())
+	query.Close()
 
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
+	filter := ecs.All(posID, childID)
+	assert.Panics(t, func() {
+		w.Batch().ExchangeRelation(filter, nil, []ecs.ID{posID}, velID, parent2)
+	})
+	assert.Panics(t, func() {
+		w.Batch().ExchangeRelation(filter, []ecs.ID{velID}, []ecs.ID{posID}, velID, parent2)
+	})
+	assert.Panics(t, func() {
+		w.Batch().ExchangeRelation(filter, nil, nil, childID, parent2)
+	})
+	assert.Panics(t, func() {
+		_ = w.Batch().ExchangeRelationQ(filter, nil, nil, childID, parent2)
+	})
 
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
+	w.Batch().ExchangeRelation(filter, []ecs.ID{velID}, nil, childID, parent2)
 
-	filter := ecs.All(posID)
-	world.Batch().Add(filter, velID)
-	// Output:
-}
+	relFilter = ecs.NewRelationFilter(ecs.All(posID, velID, childID), parent2)
+	query = w.Query(&relFilter)
+	assert.Equal(t, 10, query.Count())
+	query.Close()
 
-func ExampleBatch_AddQ() {
-	world := ecs.NewWorld()
+	w.Batch().ExchangeRelation(filter, nil, []ecs.ID{velID}, childID, parent1)
 
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
+	relFilter = ecs.NewRelationFilter(ecs.All(posID, childID), parent1)
+	query = w.Query(&relFilter)
+	assert.Equal(t, 10, query.Count())
+	query.Close()
 
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
-
-	filter := ecs.All(posID)
-	query := world.Batch().AddQ(filter, velID)
-
-	for query.Next() {
-		pos := (*Position)(query.Get(posID))
-		pos.X = 100
-	}
-	// Output:
-}
-
-func ExampleBatch_Remove() {
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
-
-	builder := ecs.NewBuilder(&world, posID, velID)
-	builder.NewBatch(100)
-
-	filter := ecs.All(posID, velID)
-	world.Batch().Remove(filter, velID)
-	// Output:
-}
-
-func ExampleBatch_RemoveQ() {
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
-
-	builder := ecs.NewBuilder(&world, posID, velID)
-	builder.NewBatch(100)
-
-	filter := ecs.All(posID, velID)
-	query := world.Batch().RemoveQ(filter, velID)
-
-	for query.Next() {
-		pos := (*Position)(query.Get(posID))
-		pos.X = 100
-	}
-	// Output:
-}
-
-func ExampleBatch_Exchange() {
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
-
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
-
-	filter := ecs.All(posID)
-	world.Batch().Exchange(
-		filter,          // Filter
-		[]ecs.ID{velID}, // Add components
-		[]ecs.ID{posID}, // Remove components
-	)
-	// Output:
-}
-
-func ExampleBatch_ExchangeQ() {
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-	velID := ecs.ComponentID[Velocity](&world)
-
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
-
-	filter := ecs.All(posID)
-	query := world.Batch().ExchangeQ(
-		filter,          // Filter
-		[]ecs.ID{velID}, // Add components
-		[]ecs.ID{posID}, // Remove components
-	)
-
-	for query.Next() {
-		vel := (*Velocity)(query.Get(velID))
-		vel.X = 100
-	}
-	// Output:
-}
-
-func ExampleBatch_RemoveEntities() {
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
-
-	filter := ecs.All(posID)
-	world.Batch().RemoveEntities(filter)
-	// Output:
-}
-
-func ExampleBatch_SetRelation() {
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-	childID := ecs.ComponentID[ChildOf](&world)
-
-	target := world.NewEntity()
-
-	builder := ecs.NewBuilder(&world, posID, childID)
-	builder.NewBatch(100)
-
-	filter := ecs.All(childID)
-	world.Batch().SetRelation(filter, childID, target)
-	// Output:
-}
-
-func ExampleBatch_SetRelationQ() {
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-	childID := ecs.ComponentID[ChildOf](&world)
-
-	target := world.NewEntity()
-
-	builder := ecs.NewBuilder(&world, posID, childID)
-	builder.NewBatch(100)
-
-	filter := ecs.All(childID)
-	query := world.Batch().SetRelationQ(filter, childID, target)
-
-	for query.Next() {
-		pos := (*Position)(query.Get(posID))
-		pos.X = 100
-	}
-	// Output:
 }
