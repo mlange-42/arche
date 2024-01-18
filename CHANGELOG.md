@@ -18,6 +18,7 @@ This change was necessary to get the same performance as before, despite the mor
 * Component and resource IDs are now opaque types instead of type aliases for `uint8` (#329)
 * Restructures `EntityEvent` to remove redundant information and better handle relation changes (#333)
 * World event listener changed from a simple function to a `Listener` interface (#334)
+* Removes `World.ComponentType(ID)`, use function `ComponentInfo(ID)` instead (#341)
 
 ### Features
 
