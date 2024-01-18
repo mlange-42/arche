@@ -16,6 +16,7 @@ type Exchange struct {
 	remove      []ecs.ID
 	hasRelation bool
 	relationID  ecs.ID
+	builder     ecs.Builder
 	world       *ecs.World
 }
 
@@ -34,6 +35,8 @@ func NewExchange(w *ecs.World) *Exchange {
 func (m *Exchange) WithRelation(comp Comp) *Exchange {
 	m.hasRelation = true
 	m.relationID = ecs.TypeID(m.world, comp)
+
+	m.builder = *ecs.NewBuilder(m.world, m.add...).WithRelation(m.relationID)
 	return m
 }
 
@@ -42,6 +45,12 @@ func (m *Exchange) WithRelation(comp Comp) *Exchange {
 // Create the required mask items with [T].
 func (m *Exchange) Adds(add ...Comp) *Exchange {
 	m.add = toIds(m.world, add)
+
+	b := ecs.NewBuilder(m.world, m.add...)
+	if m.hasRelation {
+		b = b.WithRelation(m.relationID)
+	}
+	m.builder = *b
 	return m
 }
 
@@ -64,8 +73,7 @@ func (m *Exchange) NewEntity(target ...ecs.Entity) ecs.Entity {
 		if !m.hasRelation {
 			panic("can't set target entity: Exchange has no relation")
 		}
-		builder := ecs.NewBuilder(m.world, m.add...).WithRelation(m.relationID)
-		return builder.NewEntity(target[0])
+		return m.builder.NewEntity(target[0])
 	}
 	return m.world.NewEntity(m.add...)
 }
