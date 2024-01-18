@@ -133,13 +133,13 @@ func (m *Map1[A]) Add(entity ecs.Entity, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map1[A]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map1 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -150,14 +150,14 @@ func (m *Map1[A]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map1[A]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query1[A] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map1 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -192,35 +192,35 @@ func (m *Map1[A]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map1's components to multiple entities.
+// RemoveBatch removes the Map1's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map1[A]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map1 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map1's components to multiple entities and returns a query over them,
-// without any queries components.
+// RemoveBatchQ adds the Map1's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map1[A]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map1 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -236,7 +236,7 @@ func (m *Map1[A]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map1[A]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -381,13 +381,13 @@ func (m *Map2[A, B]) Add(entity ecs.Entity, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map2[A, B]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map2 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -398,14 +398,14 @@ func (m *Map2[A, B]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map2[A, B]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query2[A, B] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map2 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -442,34 +442,35 @@ func (m *Map2[A, B]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map2's components to multiple entities.
+// RemoveBatch removes the Map2's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map2[A, B]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map2 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map2's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map2's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map2[A, B]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map2 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -485,7 +486,7 @@ func (m *Map2[A, B]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map2[A, B]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -637,13 +638,13 @@ func (m *Map3[A, B, C]) Add(entity ecs.Entity, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map3[A, B, C]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map3 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -654,14 +655,14 @@ func (m *Map3[A, B, C]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map3[A, B, C]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query3[A, B, C] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map3 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -700,34 +701,35 @@ func (m *Map3[A, B, C]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map3's components to multiple entities.
+// RemoveBatch removes the Map3's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map3[A, B, C]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map3 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map3's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map3's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map3[A, B, C]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map3 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -743,7 +745,7 @@ func (m *Map3[A, B, C]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Qu
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map3[A, B, C]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -902,13 +904,13 @@ func (m *Map4[A, B, C, D]) Add(entity ecs.Entity, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map4[A, B, C, D]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map4 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -919,14 +921,14 @@ func (m *Map4[A, B, C, D]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map4[A, B, C, D]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query4[A, B, C, D] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map4 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -967,34 +969,35 @@ func (m *Map4[A, B, C, D]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map4's components to multiple entities.
+// RemoveBatch removes the Map4's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map4[A, B, C, D]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map4 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map4's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map4's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map4[A, B, C, D]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map4 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -1010,7 +1013,7 @@ func (m *Map4[A, B, C, D]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity)
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map4[A, B, C, D]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -1176,13 +1179,13 @@ func (m *Map5[A, B, C, D, E]) Add(entity ecs.Entity, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map5[A, B, C, D, E]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map5 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -1193,14 +1196,14 @@ func (m *Map5[A, B, C, D, E]) AddBatch(filter ecs.Filter, target ...ecs.Entity) 
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map5[A, B, C, D, E]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query5[A, B, C, D, E] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map5 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -1243,34 +1246,35 @@ func (m *Map5[A, B, C, D, E]) Remove(entity ecs.Entity, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatch removes the Map5's components to multiple entities.
+// RemoveBatch removes the Map5's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map5[A, B, C, D, E]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map5 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map5's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map5's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map5[A, B, C, D, E]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map5 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -1286,7 +1290,7 @@ func (m *Map5[A, B, C, D, E]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Enti
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map5[A, B, C, D, E]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -1459,13 +1463,13 @@ func (m *Map6[A, B, C, D, E, F]) Add(entity ecs.Entity, target ...ecs.Entity) {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map6[A, B, C, D, E, F]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map6 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -1476,14 +1480,14 @@ func (m *Map6[A, B, C, D, E, F]) AddBatch(filter ecs.Filter, target ...ecs.Entit
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map6[A, B, C, D, E, F]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map6 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -1528,34 +1532,35 @@ func (m *Map6[A, B, C, D, E, F]) Remove(entity ecs.Entity, target ...ecs.Entity)
 	}
 }
 
-// RemoveBatch removes the Map6's components to multiple entities.
+// RemoveBatch removes the Map6's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map6[A, B, C, D, E, F]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map6 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map6's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map6's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map6[A, B, C, D, E, F]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map6 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -1571,7 +1576,7 @@ func (m *Map6[A, B, C, D, E, F]) RemoveBatchQ(filter ecs.Filter, target ...ecs.E
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map6[A, B, C, D, E, F]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -1751,13 +1756,13 @@ func (m *Map7[A, B, C, D, E, F, G]) Add(entity ecs.Entity, target ...ecs.Entity)
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map7[A, B, C, D, E, F, G]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map7 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -1768,14 +1773,14 @@ func (m *Map7[A, B, C, D, E, F, G]) AddBatch(filter ecs.Filter, target ...ecs.En
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map7[A, B, C, D, E, F, G]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map7 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -1822,34 +1827,35 @@ func (m *Map7[A, B, C, D, E, F, G]) Remove(entity ecs.Entity, target ...ecs.Enti
 	}
 }
 
-// RemoveBatch removes the Map7's components to multiple entities.
+// RemoveBatch removes the Map7's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map7[A, B, C, D, E, F, G]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map7 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map7's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map7's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map7[A, B, C, D, E, F, G]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map7 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -1865,7 +1871,7 @@ func (m *Map7[A, B, C, D, E, F, G]) RemoveBatchQ(filter ecs.Filter, target ...ec
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map7[A, B, C, D, E, F, G]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -2052,13 +2058,13 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Add(entity ecs.Entity, target ...ecs.Enti
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map8[A, B, C, D, E, F, G, H]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map8 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -2069,14 +2075,14 @@ func (m *Map8[A, B, C, D, E, F, G, H]) AddBatch(filter ecs.Filter, target ...ecs
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map8[A, B, C, D, E, F, G, H]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map8 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -2125,34 +2131,35 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Remove(entity ecs.Entity, target ...ecs.E
 	}
 }
 
-// RemoveBatch removes the Map8's components to multiple entities.
+// RemoveBatch removes the Map8's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map8[A, B, C, D, E, F, G, H]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map8 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map8's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map8's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map8[A, B, C, D, E, F, G, H]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map8 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -2168,7 +2175,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) RemoveBatchQ(filter ecs.Filter, target ..
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map8[A, B, C, D, E, F, G, H]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -2362,13 +2369,13 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) Add(entity ecs.Entity, target ...ecs.E
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map9 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -2379,14 +2386,14 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) AddBatch(filter ecs.Filter, target ...
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query9[A, B, C, D, E, F, G, H, I] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map9 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -2437,34 +2444,35 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) Remove(entity ecs.Entity, target ...ec
 	}
 }
 
-// RemoveBatch removes the Map9's components to multiple entities.
+// RemoveBatch removes the Map9's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map9 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map9's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map9's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map9 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -2480,7 +2488,7 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveBatchQ(filter ecs.Filter, target
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -2681,13 +2689,13 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Add(entity ecs.Entity, target ...e
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map10 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -2698,14 +2706,14 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) AddBatch(filter ecs.Filter, target
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query10[A, B, C, D, E, F, G, H, I, J] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map10 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -2758,34 +2766,35 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Remove(entity ecs.Entity, target .
 	}
 }
 
-// RemoveBatch removes the Map10's components to multiple entities.
+// RemoveBatch removes the Map10's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map10 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map10's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map10's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map10 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -2801,7 +2810,7 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveBatchQ(filter ecs.Filter, ta
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -3009,13 +3018,13 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Add(entity ecs.Entity, target .
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map11 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -3026,14 +3035,14 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) AddBatch(filter ecs.Filter, tar
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query11[A, B, C, D, E, F, G, H, I, J, K] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map11 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -3088,34 +3097,35 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Remove(entity ecs.Entity, targe
 	}
 }
 
-// RemoveBatch removes the Map11's components to multiple entities.
+// RemoveBatch removes the Map11's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map11 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map11's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map11's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map11 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -3131,7 +3141,7 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveBatchQ(filter ecs.Filter,
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()
@@ -3346,13 +3356,13 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Add(entity ecs.Entity, targe
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
 //
-// See also [Batch.Add].
+// See also [ecs.Batch.Add].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map12 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.ids, nil, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.ids, nil)
 	}
@@ -3363,14 +3373,14 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) AddBatch(filter ecs.Filter, 
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
 //
-// See also [Batch.AddQ].
+// See also [ecs.Batch.AddQ].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query12[A, B, C, D, E, F, G, H, I, J, K, L] {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map12 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, m.ids, nil, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, m.ids, nil, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, m.ids, nil)
 	}
@@ -3427,34 +3437,35 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Remove(entity ecs.Entity, ta
 	}
 }
 
-// RemoveBatch removes the Map12's components to multiple entities.
+// RemoveBatch removes the Map12's components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
 //
-// See also [Batch.Remove].
+// See also [ecs.Batch.Remove].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map12 has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, nil, m.ids, m.relation, target[0])
+		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 
-// RemoveBatchQ adds the Map12's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map12's components from multiple entities and returns a query over them,
+// with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
 //
-// See also [Batch.RemoveQ].
+// See also [ecs.Batch.RemoveQ].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map12 has no relation")
 		}
-		query = m.world.Batch().ExchangeRelationQ(filter, nil, m.ids, m.relation, target[0])
+		query = m.world.Relations().ExchangeBatchQ(filter, nil, m.ids, m.relation, target[0])
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
@@ -3470,7 +3481,7 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveBatchQ(filter ecs.Filt
 //
 // Returns the number of removed entities.
 //
-// See also [Batch.RemoveEntities].
+// See also [ecs.Batch.RemoveEntities].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveEntities(exclusive bool) int {
 	if exclusive {
 		filter := m.mask.Exclusive()

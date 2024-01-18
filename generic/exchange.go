@@ -64,7 +64,7 @@ func (m *Exchange) Removes(remove ...Comp) *Exchange {
 
 // NewEntity creates a new [ecs.Entity] with the components set via [Exchange.Adds].
 //
-// The optional argument can be used to set the target [Entity] for the Exchange's [Relation].
+// The optional argument can be used to set the target [ecs.Entity] for the Exchange's [ecs.Relation].
 // See [Exchange.WithRelation].
 //
 // See also [ecs.World.NewEntity].
@@ -80,7 +80,7 @@ func (m *Exchange) NewEntity(target ...ecs.Entity) ecs.Entity {
 
 // Add the components set via [Exchange.Adds] to the given entity.
 //
-// The optional argument can be used to set the target [Entity] for the Exchange's [Relation].
+// The optional argument can be used to set the target [ecs.Entity] for the Exchange's [ecs.Relation].
 // See [Exchange.WithRelation].
 //
 // See also [ecs.World.Add].
@@ -97,7 +97,7 @@ func (m *Exchange) Add(entity ecs.Entity, target ...ecs.Entity) {
 
 // Remove the components set via [Exchange.Removes] from the given entity.
 //
-// The optional argument can be used to set the target [Entity] for the Exchange's [Relation].
+// The optional argument can be used to set the target [ecs.Entity] for the Exchange's [ecs.Relation].
 // See [Exchange.WithRelation].
 //
 // See also [ecs.World.Remove].
@@ -117,10 +117,10 @@ func (m *Exchange) Remove(entity ecs.Entity, target ...ecs.Entity) {
 // Removes the components set via [Exchange.Removes].
 // Adds the components set via [Exchange.Adds].
 //
-// When a [Relation] component is removed and another one is added,
+// When a [ecs.Relation] component is removed and another one is added,
 // the target entity of the relation is set to zero.
 //
-// The optional argument can be used to set the target [Entity] for the Exchange's [Relation].
+// The optional argument can be used to set the target [ecs.Entity] for the Exchange's [ecs.Relation].
 // See [Exchange.WithRelation].
 //
 // See also [ecs.World.Exchange].
@@ -152,7 +152,7 @@ func (m *Exchange) ExchangeBatch(filter ecs.Filter, target ...ecs.Entity) {
 		if !m.hasRelation {
 			panic("can't set target entity: Exchange has no relation")
 		}
-		m.world.Batch().ExchangeRelation(filter, m.add, m.remove, m.relationID, target[0])
+		m.world.Relations().ExchangeBatch(filter, m.add, m.remove, m.relationID, target[0])
 	} else {
 		m.world.Batch().Exchange(filter, m.add, m.remove)
 	}
