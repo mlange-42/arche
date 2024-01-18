@@ -6,9 +6,11 @@ import (
 	"math/bits"
 )
 
-// MaskTotalBits is the size of Mask in bits.
+// MaskTotalBits is the size of a [Mask] in bits.
 //
 // It is the maximum number of component types that may exist in any [World].
+//
+// ⚠️ This build uses the build tag `tiny`. Remove the tag for 256 bit masks.
 const MaskTotalBits = 64
 
 // Mask is a 64 bit bitmask.
@@ -16,6 +18,8 @@ const MaskTotalBits = 64
 //
 // Use [All] to create a mask for a list of component IDs.
 // A mask can be further specified using [Mask.Without] or [Mask.Exclusive].
+//
+// ⚠️ This build uses the build tag `tiny`. Remove the tag for 256 bit masks.
 type Mask struct {
 	bits uint64 // 64 bits of the mask
 }
