@@ -284,6 +284,31 @@ func TestWorldExchange(t *testing.T) {
 	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, rel1ID, true, target) })
 }
 
+func TestWorldExchangeRelation(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	rel1ID := ComponentID[testRelationA](&w)
+	rel2ID := ComponentID[testRelationB](&w)
+
+	e0 := w.NewEntity()
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+
+	w.Relations().Exchange(e0, []ID{posID, rel1ID}, nil, rel1ID, e1)
+
+	assert.Equal(t, []ID{posID, rel1ID}, w.Ids(e0))
+	assert.Equal(t, e1, w.Relations().Get(e0, rel1ID))
+
+	assert.Panics(t, func() {
+		w.Relations().Exchange(e0, nil, nil, rel1ID, e2)
+	})
+
+	w.Relations().Exchange(e0, []ID{rel2ID}, []ID{rel1ID}, rel2ID, e2)
+	assert.Equal(t, []ID{posID, rel2ID}, w.Ids(e0))
+	assert.Equal(t, e2, w.Relations().Get(e0, rel2ID))
+}
+
 func TestWorldExchangeBatch(t *testing.T) {
 	w := NewWorld()
 
@@ -314,12 +339,19 @@ func TestWorldExchangeBatch(t *testing.T) {
 	}, events[201])
 
 	filter := All(posID, relID)
-	query := w.Batch().ExchangeQ(filter, []ID{velID}, []ID{posID})
+	query := w.Query(filter)
+	assert.Equal(t, 200, query.Count())
+	for query.Next() {
+		assert.False(t, query.Relation(relID).IsZero())
+	}
+
+	query = w.Batch().ExchangeQ(filter, []ID{velID}, []ID{posID})
 	assert.Equal(t, 200, query.Count())
 	for query.Next() {
 		assert.True(t, query.Has(velID))
 		assert.True(t, query.Has(relID))
 		assert.False(t, query.Has(posID))
+		assert.False(t, query.Relation(relID).IsZero())
 	}
 
 	query = w.Query(All(posID))

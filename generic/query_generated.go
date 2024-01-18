@@ -75,7 +75,7 @@ func (q *Filter0) WithRelation(comp Comp, target ...ecs.Entity) *Filter0 {
 	return q
 }
 
-// Query builds a [Query0] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter0.WithRelation] was not called
@@ -83,7 +83,7 @@ func (q *Filter0) WithRelation(comp Comp, target ...ecs.Entity) *Filter0 {
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter0) Query(w *ecs.World, target ...ecs.Entity) Query0 {
+func (q *Filter0) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -99,6 +99,19 @@ func (q *Filter0) Query(w *ecs.World, target ...ecs.Entity) Query0 {
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query0] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter0.WithRelation] was not called
+//   - if the target was already set via [Filter0.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter0) Query(w *ecs.World, target ...ecs.Entity) Query0 {
+	filter := q.Filter(w, target...)
 	return Query0{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -241,7 +254,7 @@ func (q *Filter1[A]) WithRelation(comp Comp, target ...ecs.Entity) *Filter1[A] {
 	return q
 }
 
-// Query builds a [Query1] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter1.WithRelation] was not called
@@ -249,7 +262,7 @@ func (q *Filter1[A]) WithRelation(comp Comp, target ...ecs.Entity) *Filter1[A] {
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter1[A]) Query(w *ecs.World, target ...ecs.Entity) Query1[A] {
+func (q *Filter1[A]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -265,6 +278,19 @@ func (q *Filter1[A]) Query(w *ecs.World, target ...ecs.Entity) Query1[A] {
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query1] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter1.WithRelation] was not called
+//   - if the target was already set via [Filter1.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter1[A]) Query(w *ecs.World, target ...ecs.Entity) Query1[A] {
+	filter := q.Filter(w, target...)
 	return Query1[A]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -417,7 +443,7 @@ func (q *Filter2[A, B]) WithRelation(comp Comp, target ...ecs.Entity) *Filter2[A
 	return q
 }
 
-// Query builds a [Query2] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter2.WithRelation] was not called
@@ -425,7 +451,7 @@ func (q *Filter2[A, B]) WithRelation(comp Comp, target ...ecs.Entity) *Filter2[A
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter2[A, B]) Query(w *ecs.World, target ...ecs.Entity) Query2[A, B] {
+func (q *Filter2[A, B]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -441,6 +467,19 @@ func (q *Filter2[A, B]) Query(w *ecs.World, target ...ecs.Entity) Query2[A, B] {
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query2] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter2.WithRelation] was not called
+//   - if the target was already set via [Filter2.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter2[A, B]) Query(w *ecs.World, target ...ecs.Entity) Query2[A, B] {
+	filter := q.Filter(w, target...)
 	return Query2[A, B]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -597,7 +636,7 @@ func (q *Filter3[A, B, C]) WithRelation(comp Comp, target ...ecs.Entity) *Filter
 	return q
 }
 
-// Query builds a [Query3] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter3.WithRelation] was not called
@@ -605,7 +644,7 @@ func (q *Filter3[A, B, C]) WithRelation(comp Comp, target ...ecs.Entity) *Filter
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter3[A, B, C]) Query(w *ecs.World, target ...ecs.Entity) Query3[A, B, C] {
+func (q *Filter3[A, B, C]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -621,6 +660,19 @@ func (q *Filter3[A, B, C]) Query(w *ecs.World, target ...ecs.Entity) Query3[A, B
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query3] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter3.WithRelation] was not called
+//   - if the target was already set via [Filter3.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter3[A, B, C]) Query(w *ecs.World, target ...ecs.Entity) Query3[A, B, C] {
+	filter := q.Filter(w, target...)
 	return Query3[A, B, C]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -781,7 +833,7 @@ func (q *Filter4[A, B, C, D]) WithRelation(comp Comp, target ...ecs.Entity) *Fil
 	return q
 }
 
-// Query builds a [Query4] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter4.WithRelation] was not called
@@ -789,7 +841,7 @@ func (q *Filter4[A, B, C, D]) WithRelation(comp Comp, target ...ecs.Entity) *Fil
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter4[A, B, C, D]) Query(w *ecs.World, target ...ecs.Entity) Query4[A, B, C, D] {
+func (q *Filter4[A, B, C, D]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -805,6 +857,19 @@ func (q *Filter4[A, B, C, D]) Query(w *ecs.World, target ...ecs.Entity) Query4[A
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query4] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter4.WithRelation] was not called
+//   - if the target was already set via [Filter4.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter4[A, B, C, D]) Query(w *ecs.World, target ...ecs.Entity) Query4[A, B, C, D] {
+	filter := q.Filter(w, target...)
 	return Query4[A, B, C, D]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -969,7 +1034,7 @@ func (q *Filter5[A, B, C, D, E]) WithRelation(comp Comp, target ...ecs.Entity) *
 	return q
 }
 
-// Query builds a [Query5] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter5.WithRelation] was not called
@@ -977,7 +1042,7 @@ func (q *Filter5[A, B, C, D, E]) WithRelation(comp Comp, target ...ecs.Entity) *
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World, target ...ecs.Entity) Query5[A, B, C, D, E] {
+func (q *Filter5[A, B, C, D, E]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -993,6 +1058,19 @@ func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World, target ...ecs.Entity) Query
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query5] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter5.WithRelation] was not called
+//   - if the target was already set via [Filter5.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter5[A, B, C, D, E]) Query(w *ecs.World, target ...ecs.Entity) Query5[A, B, C, D, E] {
+	filter := q.Filter(w, target...)
 	return Query5[A, B, C, D, E]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -1161,7 +1239,7 @@ func (q *Filter6[A, B, C, D, E, F]) WithRelation(comp Comp, target ...ecs.Entity
 	return q
 }
 
-// Query builds a [Query6] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter6.WithRelation] was not called
@@ -1169,7 +1247,7 @@ func (q *Filter6[A, B, C, D, E, F]) WithRelation(comp Comp, target ...ecs.Entity
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
+func (q *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -1185,6 +1263,19 @@ func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World, target ...ecs.Entity) Qu
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query6] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter6.WithRelation] was not called
+//   - if the target was already set via [Filter6.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter6[A, B, C, D, E, F]) Query(w *ecs.World, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
+	filter := q.Filter(w, target...)
 	return Query6[A, B, C, D, E, F]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -1357,7 +1448,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) WithRelation(comp Comp, target ...ecs.Ent
 	return q
 }
 
-// Query builds a [Query7] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter7.WithRelation] was not called
@@ -1365,7 +1456,7 @@ func (q *Filter7[A, B, C, D, E, F, G]) WithRelation(comp Comp, target ...ecs.Ent
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
+func (q *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -1381,6 +1472,19 @@ func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World, target ...ecs.Entity)
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query7] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter7.WithRelation] was not called
+//   - if the target was already set via [Filter7.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
+	filter := q.Filter(w, target...)
 	return Query7[A, B, C, D, E, F, G]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -1557,7 +1661,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) WithRelation(comp Comp, target ...ecs.
 	return q
 }
 
-// Query builds a [Query8] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter8.WithRelation] was not called
@@ -1565,7 +1669,7 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) WithRelation(comp Comp, target ...ecs.
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
+func (q *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -1581,6 +1685,19 @@ func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World, target ...ecs.Enti
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query8] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter8.WithRelation] was not called
+//   - if the target was already set via [Filter8.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
+	filter := q.Filter(w, target...)
 	return Query8[A, B, C, D, E, F, G, H]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -1761,7 +1878,7 @@ func (q *Filter9[A, B, C, D, E, F, G, H, I]) WithRelation(comp Comp, target ...e
 	return q
 }
 
-// Query builds a [Query9] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter9.WithRelation] was not called
@@ -1769,7 +1886,7 @@ func (q *Filter9[A, B, C, D, E, F, G, H, I]) WithRelation(comp Comp, target ...e
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter9[A, B, C, D, E, F, G, H, I]) Query(w *ecs.World, target ...ecs.Entity) Query9[A, B, C, D, E, F, G, H, I] {
+func (q *Filter9[A, B, C, D, E, F, G, H, I]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -1785,6 +1902,19 @@ func (q *Filter9[A, B, C, D, E, F, G, H, I]) Query(w *ecs.World, target ...ecs.E
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query9] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter9.WithRelation] was not called
+//   - if the target was already set via [Filter9.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter9[A, B, C, D, E, F, G, H, I]) Query(w *ecs.World, target ...ecs.Entity) Query9[A, B, C, D, E, F, G, H, I] {
+	filter := q.Filter(w, target...)
 	return Query9[A, B, C, D, E, F, G, H, I]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -1969,7 +2099,7 @@ func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) WithRelation(comp Comp, target 
 	return q
 }
 
-// Query builds a [Query10] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter10.WithRelation] was not called
@@ -1977,7 +2107,7 @@ func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) WithRelation(comp Comp, target 
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) Query(w *ecs.World, target ...ecs.Entity) Query10[A, B, C, D, E, F, G, H, I, J] {
+func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -1993,6 +2123,19 @@ func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) Query(w *ecs.World, target ...e
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query10] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter10.WithRelation] was not called
+//   - if the target was already set via [Filter10.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter10[A, B, C, D, E, F, G, H, I, J]) Query(w *ecs.World, target ...ecs.Entity) Query10[A, B, C, D, E, F, G, H, I, J] {
+	filter := q.Filter(w, target...)
 	return Query10[A, B, C, D, E, F, G, H, I, J]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -2181,7 +2324,7 @@ func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) WithRelation(comp Comp, targ
 	return q
 }
 
-// Query builds a [Query11] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter11.WithRelation] was not called
@@ -2189,7 +2332,7 @@ func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) WithRelation(comp Comp, targ
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Query(w *ecs.World, target ...ecs.Entity) Query11[A, B, C, D, E, F, G, H, I, J, K] {
+func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -2205,6 +2348,19 @@ func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Query(w *ecs.World, target .
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query11] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter11.WithRelation] was not called
+//   - if the target was already set via [Filter11.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Query(w *ecs.World, target ...ecs.Entity) Query11[A, B, C, D, E, F, G, H, I, J, K] {
+	filter := q.Filter(w, target...)
 	return Query11[A, B, C, D, E, F, G, H, I, J, K]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,
@@ -2397,7 +2553,7 @@ func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) WithRelation(comp Comp, t
 	return q
 }
 
-// Query builds a [Query12] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter12.WithRelation] was not called
@@ -2405,7 +2561,7 @@ func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) WithRelation(comp Comp, t
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Query(w *ecs.World, target ...ecs.Entity) Query12[A, B, C, D, E, F, G, H, I, J, K, L] {
+func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 
 	filter := q.compiled.filter
@@ -2421,6 +2577,19 @@ func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Query(w *ecs.World, targe
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query12] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter12.WithRelation] was not called
+//   - if the target was already set via [Filter12.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Query(w *ecs.World, target ...ecs.Entity) Query12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	filter := q.Filter(w, target...)
 	return Query12[A, B, C, D, E, F, G, H, I, J, K, L]{
 		Query:     w.Query(filter),
 		target:    q.compiled.TargetComp,

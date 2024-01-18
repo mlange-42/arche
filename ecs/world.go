@@ -326,7 +326,7 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 //   - when called with components that can't be added or removed because they are already present/not present, respectively.
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
-// See also the generic variants under [github.com/mlange-42/arche/generic.Exchange].
+// See also [Relations.Exchange] and the generic variants under [github.com/mlange-42/arche/generic.Exchange].
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.exchange(entity, add, rem, ID{}, false, Entity{})
 }

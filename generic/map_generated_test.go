@@ -74,6 +74,87 @@ func TestMap1Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap1[testRelationA](&w)
+	mut4 := NewMap1[testStruct0](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap2Generated(t *testing.T) {
@@ -152,6 +233,91 @@ func TestMap2Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap2[
+		testRelationA, testStruct1,
+	](&w)
+	mut4 := NewMap2[
+		testStruct0, testStruct1,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap3Generated(t *testing.T) {
@@ -234,6 +400,91 @@ func TestMap3Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap3[
+		testRelationA, testStruct1, testStruct2,
+	](&w)
+	mut4 := NewMap3[
+		testStruct0, testStruct1, testStruct2,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap4Generated(t *testing.T) {
@@ -319,6 +570,91 @@ func TestMap4Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap4[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+	](&w)
+	mut4 := NewMap4[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap5Generated(t *testing.T) {
@@ -416,6 +752,93 @@ func TestMap5Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap5[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4,
+	](&w)
+	mut4 := NewMap5[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap6Generated(t *testing.T) {
@@ -513,6 +936,93 @@ func TestMap6Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap6[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5,
+	](&w)
+	mut4 := NewMap6[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap7Generated(t *testing.T) {
@@ -610,6 +1120,93 @@ func TestMap7Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap7[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6,
+	](&w)
+	mut4 := NewMap7[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap8Generated(t *testing.T) {
@@ -707,6 +1304,93 @@ func TestMap8Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap8[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+	](&w)
+	mut4 := NewMap8[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap9Generated(t *testing.T) {
@@ -811,6 +1495,95 @@ func TestMap9Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap9[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8,
+	](&w)
+	mut4 := NewMap9[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap10Generated(t *testing.T) {
@@ -915,6 +1688,95 @@ func TestMap10Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap10[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9,
+	](&w)
+	mut4 := NewMap10[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap11Generated(t *testing.T) {
@@ -1019,6 +1881,95 @@ func TestMap11Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap11[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10,
+	](&w)
+	mut4 := NewMap11[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }
 
 func TestMap12Generated(t *testing.T) {
@@ -1123,4 +2074,93 @@ func TestMap12Generated(t *testing.T) {
 	mapper := NewMap[testRelationA](&w)
 	assert.Equal(t, target, mapper.GetRelation(e))
 	assert.Equal(t, target, mapper.GetRelationUnchecked(e))
+
+	// === Batch operations ====
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	mut3 := NewMap12[
+		testRelationA, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10, testStruct11,
+	](&w)
+	mut4 := NewMap12[
+		testStruct0, testStruct1, testStruct2, testStruct3,
+		testStruct4, testStruct5, testStruct6, testStruct7,
+		testStruct8, testStruct9, testStruct10, testStruct11,
+	](&w, T[testRelationB]())
+	rel2ID := ecs.ComponentID[testRelationB](&w)
+
+	e1 := w.NewEntity()
+	e2 := w.NewEntity()
+	e3 := w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.Add(e1, e2)
+	})
+	mut2.Add(e1, e2)
+
+	assert.Panics(t, func() {
+		mut3.Remove(e1, e2)
+	})
+
+	mut.Add(e3)
+	w.Add(e3, rel2ID)
+	mut4.Remove(e3, e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+
+	e1 = w.NewEntity()
+	e2 = w.NewEntity()
+	_ = w.NewEntity()
+	assert.Panics(t, func() {
+		mut3.AddBatch(ecs.All(), e2)
+	})
+	assert.Panics(t, func() {
+		_ = mut3.AddBatchQ(ecs.All(), e2)
+	})
+	mut2.AddBatch(ecs.All(), e2)
+	mut2.RemoveBatch(ecs.All())
+	query := mut2.AddBatchQ(ecs.All(), e2)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	assert.Panics(t, func() {
+		mut3.RemoveBatch(ecs.All(), e2)
+	})
+
+	assert.Panics(t, func() {
+		_ = mut3.RemoveBatchQ(ecs.All(), e2)
+	})
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	mut.AddBatch(ecs.All())
+	w.Batch().Add(ecs.All(), rel2ID)
+	mut4.RemoveBatch(ecs.All(), e1)
+
+	w.Batch().RemoveEntities(ecs.All())
+	e1 = w.NewEntity()
+	_ = w.NewEntity()
+	_ = w.NewEntity()
+
+	query2 := mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	w.Batch().Add(ecs.All(), rel2ID)
+
+	query3 := mut4.RemoveBatchQ(ecs.All(), e1)
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
+
+	query2 = mut.AddBatchQ(ecs.All())
+	assert.Equal(t, 3, query2.Count())
+	query2.Close()
+
+	query3 = mut4.RemoveBatchQ(ecs.All())
+	assert.Equal(t, 3, query3.Count())
+	query2.Close()
 }

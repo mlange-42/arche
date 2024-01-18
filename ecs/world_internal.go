@@ -198,523 +198,6 @@ func (w *World) newEntitiesWithQuery(count int, targetID ID, hasTarget bool, tar
 	return newBatchQuery(w, lock, &batches)
 }
 
-// RemoveEntities removes and recycles all entities matching a filter.
-//
-// Returns the number of removed entities.
-//
-// Panics when called on a locked world.
-// Do not use during [Query] iteration!
-func (w *World) removeEntities(filter Filter) int {
-	w.checkLocked()
-
-	lock := w.lock()
-
-	var bits event.Subscription
-	var listen bool
-
-	var count uint32
-
-	arches := w.getArchetypes(filter)
-	numArches := int32(len(arches))
-	var i int32
-	for i = 0; i < numArches; i++ {
-		arch := arches[i]
-		ln := arch.Len()
-		if ln == 0 {
-			continue
-		}
-
-		count += ln
-
-		var oldRel *ID
-		var oldIds []ID
-		if w.listener != nil {
-			if arch.HasRelationComponent {
-				oldRel = &arch.RelationComponent
-			}
-			if len(arch.node.Ids) > 0 {
-				oldIds = arch.node.Ids
-			}
-			bits = subscription(false, true, false, len(oldIds) > 0, oldRel != nil, oldRel != nil)
-			trigger := w.listener.Subscriptions() & bits
-			listen = trigger != 0 && subscribes(trigger, nil, &arch.Mask, w.listener.Components(), oldRel, nil)
-		}
-
-		var j uint32
-		for j = 0; j < ln; j++ {
-			entity := arch.GetEntity(j)
-			if listen {
-				w.listener.Notify(w, EntityEvent{Entity: entity, Removed: arch.Mask, RemovedIDs: oldIds, OldRelation: oldRel, OldTarget: arch.RelationTarget, EventTypes: bits})
-			}
-			index := &w.entities[entity.id]
-			index.arch = nil
-
-			if w.targetEntities.Get(entity.id) {
-				w.cleanupArchetypes(entity)
-				w.targetEntities.Set(entity.id, false)
-			}
-
-			w.entityPool.Recycle(entity)
-		}
-		arch.Reset()
-		w.cleanupArchetype(arch)
-	}
-	w.unlock(lock)
-
-	return int(count)
-}
-
-// assign with relation target.
-func (w *World) assign(entity Entity, relation ID, hasRelation bool, target Entity, comps ...Component) {
-	len := len(comps)
-	if len == 0 {
-		panic("no components given to assign")
-	}
-	if len == 1 {
-		c := comps[0]
-		w.exchange(entity, []ID{c.ID}, nil, relation, hasRelation, target)
-		w.copyTo(entity, c.ID, c.Comp)
-		return
-	}
-	ids := make([]ID, len)
-	for i, c := range comps {
-		ids[i] = c.ID
-	}
-	w.exchange(entity, ids, nil, relation, hasRelation, target)
-	for _, c := range comps {
-		w.copyTo(entity, c.ID, c.Comp)
-	}
-}
-
-// exchange with relation target.
-func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) {
-	w.checkLocked()
-
-	if !w.entityPool.Alive(entity) {
-		panic("can't exchange components on a dead entity")
-	}
-
-	if len(add) == 0 && len(rem) == 0 {
-		return
-	}
-	index := &w.entities[entity.id]
-	oldArch := index.arch
-
-	oldMask := oldArch.Mask
-	mask := w.getExchangeMask(oldMask, add, rem)
-
-	if hasRelation {
-		if !mask.Get(relation) {
-			tp, _ := w.registry.ComponentType(relation.id)
-			panic(fmt.Sprintf("can't add relation: resulting entity has no component %s", tp.Name()))
-		}
-		if !w.registry.IsRelation.Get(relation) {
-			tp, _ := w.registry.ComponentType(relation.id)
-			panic(fmt.Sprintf("can't add relation: %s is not a relation component", tp.Name()))
-		}
-	} else {
-		target = oldArch.RelationTarget
-		if !oldArch.RelationTarget.IsZero() && oldArch.Mask.ContainsAny(&w.registry.IsRelation) {
-			for _, id := range rem {
-				// Removing a relation
-				if w.registry.IsRelation.Get(id) {
-					target = Entity{}
-					break
-				}
-			}
-		}
-	}
-
-	oldIDs := oldArch.Components()
-
-	arch := w.findOrCreateArchetype(oldArch, add, rem, target)
-	newIndex := arch.Alloc(entity)
-
-	for _, id := range oldIDs {
-		if mask.Get(id) {
-			comp := oldArch.Get(index.index, id)
-			arch.SetPointer(newIndex, id, comp)
-		}
-	}
-
-	swapped := oldArch.Remove(index.index)
-
-	if swapped {
-		swapEntity := oldArch.GetEntity(index.index)
-		w.entities[swapEntity.id].index = index.index
-	}
-	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
-
-	var oldRel *ID
-	if oldArch.HasRelationComponent {
-		oldRel = &oldArch.RelationComponent
-	}
-	oldTarget := oldArch.RelationTarget
-
-	w.cleanupArchetype(oldArch)
-
-	if w.listener != nil {
-		var newRel *ID
-		if arch.HasRelationComponent {
-			newRel = &arch.RelationComponent
-		}
-		relChanged := false
-		if oldRel != nil || newRel != nil {
-			relChanged = (oldRel == nil) != (newRel == nil) || *oldRel != *newRel
-		}
-		targChanged := oldTarget != arch.RelationTarget
-
-		bits := subscription(false, false, len(add) > 0, len(rem) > 0, relChanged, relChanged || targChanged)
-		trigger := w.listener.Subscriptions() & bits
-		if trigger != 0 {
-			changed := oldMask.Xor(&arch.Mask)
-			added := arch.Mask.And(&changed)
-			removed := oldMask.And(&changed)
-			if subscribes(trigger, &added, &removed, w.listener.Components(), oldRel, newRel) {
-				w.listener.Notify(w,
-					EntityEvent{Entity: entity, Added: added, Removed: removed,
-						AddedIDs: add, RemovedIDs: rem, OldRelation: oldRel, NewRelation: newRel,
-						OldTarget: oldTarget, EventTypes: bits},
-				)
-			}
-		}
-	}
-}
-
-// Modify a mask by adding and removing IDs.
-func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
-	for _, comp := range add {
-		if mask.Get(comp) {
-			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp.id]))
-		}
-		mask.Set(comp, true)
-	}
-	for _, comp := range rem {
-		if !mask.Get(comp) {
-			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp.id]))
-		}
-		mask.Set(comp, false)
-	}
-	return mask
-}
-
-// ExchangeBatch exchanges components for many entities, matching a filter.
-//
-// If the callback argument is given, it is called with a [Query] over the affected entities,
-// one Query for each affected archetype.
-//
-// Panics:
-//   - when called with components that can't be added or removed because they are already present/not present, respectively.
-//   - when called on a locked world. Do not use during [Query] iteration!
-//
-// See also [World.Exchange].
-func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID) {
-	batches := batchArchetypes{
-		Added:   add,
-		Removed: rem,
-	}
-
-	w.exchangeBatchNoNotify(filter, add, rem, &batches)
-
-	if w.listener != nil {
-		w.notifyQuery(&batches)
-	}
-}
-
-func (w *World) exchangeBatchQuery(filter Filter, add []ID, rem []ID) Query {
-	batches := batchArchetypes{
-		Added:   add,
-		Removed: rem,
-	}
-
-	w.exchangeBatchNoNotify(filter, add, rem, &batches)
-
-	lock := w.lock()
-	return newBatchQuery(w, lock, &batches)
-}
-
-func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, batches *batchArchetypes) {
-	w.checkLocked()
-
-	if len(add) == 0 && len(rem) == 0 {
-		return
-	}
-
-	arches := w.getArchetypes(filter)
-	lengths := make([]uint32, len(arches))
-	for i, arch := range arches {
-		lengths[i] = arch.Len()
-	}
-
-	for i, arch := range arches {
-		archLen := lengths[i]
-
-		if archLen == 0 {
-			continue
-		}
-
-		newArch, start := w.exchangeArch(arch, archLen, add, rem)
-		batches.Add(newArch, arch, start, newArch.Len())
-	}
-}
-
-func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID) (*archetype, uint32) {
-	mask := w.getExchangeMask(oldArch.Mask, add, rem)
-	oldIDs := oldArch.Components()
-
-	target := oldArch.RelationTarget
-	if !target.IsZero() && oldArch.Mask.ContainsAny(&w.registry.IsRelation) {
-		for _, id := range rem {
-			// Removing a relation
-			if w.registry.IsRelation.Get(id) {
-				target = Entity{}
-				break
-			}
-		}
-	}
-
-	arch := w.findOrCreateArchetype(oldArch, add, rem, target)
-
-	startIdx := arch.Len()
-	count := oldArchLen
-	arch.AllocN(uint32(count))
-
-	var i uint32
-	for i = 0; i < count; i++ {
-		idx := startIdx + i
-		entity := oldArch.GetEntity(i)
-		index := &w.entities[entity.id]
-		arch.SetEntity(idx, entity)
-		index.arch = arch
-		index.index = idx
-
-		for _, id := range oldIDs {
-			if mask.Get(id) {
-				comp := oldArch.Get(i, id)
-				arch.SetPointer(idx, id, comp)
-			}
-		}
-	}
-
-	// Theoretically, it could be oldArchLen < oldArch.Len(),
-	// which means we can't reset the archetype.
-	// However, this should not be possible as processing an entity twice
-	// would mean an illegal component addition/removal.
-	oldArch.Reset()
-	w.cleanupArchetype(oldArch)
-
-	return arch, startIdx
-}
-
-// getRelation returns the target entity for an entity relation.
-//
-// Panics:
-//   - when called for a removed (and potentially recycled) entity.
-//   - when called for a missing component.
-//   - when called for a component that is not a relation.
-//
-// See [Relation] for details and examples.
-func (w *World) getRelation(entity Entity, comp ID) Entity {
-	if !w.entityPool.Alive(entity) {
-		panic("can't get relation of a dead entity")
-	}
-
-	index := &w.entities[entity.id]
-	w.checkRelation(index.arch, comp)
-
-	return index.arch.RelationTarget
-}
-
-// getRelationUnchecked returns the target entity for an entity relation.
-//
-// getRelationUnchecked is an optimized version of [World.getRelation].
-// Does not check if the entity is alive or that the component ID is applicable.
-func (w *World) getRelationUnchecked(entity Entity, comp ID) Entity {
-	index := &w.entities[entity.id]
-	return index.arch.RelationTarget
-}
-
-// setRelation sets the target entity for an entity relation.
-//
-// Panics:
-//   - when called for a removed (and potentially recycled) entity.
-//   - when called for a removed (and potentially recycled) target.
-//   - when called for a missing component.
-//   - when called for a component that is not a relation.
-//   - when called on a locked world. Do not use during [Query] iteration!
-//
-// See [Relation] for details and examples.
-func (w *World) setRelation(entity Entity, comp ID, target Entity) {
-	w.checkLocked()
-
-	if !w.entityPool.Alive(entity) {
-		panic("can't set relation for a dead entity")
-	}
-	if !target.IsZero() && !w.entityPool.Alive(target) {
-		panic("can't make a dead entity a relation target")
-	}
-
-	index := &w.entities[entity.id]
-	w.checkRelation(index.arch, comp)
-
-	oldArch := index.arch
-
-	if oldArch.RelationTarget == target {
-		return
-	}
-
-	arch := oldArch.node.GetArchetype(target)
-	if arch == nil {
-		arch = w.createArchetype(oldArch.node, target, true)
-	}
-
-	newIndex := arch.Alloc(entity)
-	for _, id := range oldArch.node.Ids {
-		comp := oldArch.Get(index.index, id)
-		arch.SetPointer(newIndex, id, comp)
-	}
-
-	swapped := oldArch.Remove(index.index)
-
-	if swapped {
-		swapEntity := oldArch.GetEntity(index.index)
-		w.entities[swapEntity.id].index = index.index
-	}
-	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
-	w.targetEntities.Set(target.id, true)
-
-	oldTarget := oldArch.RelationTarget
-	w.cleanupArchetype(oldArch)
-
-	if w.listener != nil {
-		trigger := w.listener.Subscriptions() & event.TargetChanged
-		if trigger != 0 && subscribes(trigger, nil, nil, w.listener.Components(), &comp, &comp) {
-			w.listener.Notify(w, EntityEvent{Entity: entity, OldRelation: &comp, NewRelation: &comp, OldTarget: oldTarget, EventTypes: event.TargetChanged})
-		}
-	}
-}
-
-// set relation target in batches.
-func (w *World) setRelationBatch(filter Filter, comp ID, target Entity) {
-	batches := batchArchetypes{}
-	w.setRelationBatchNoNotify(filter, comp, target, &batches)
-	if w.listener != nil && w.listener.Subscriptions().Contains(event.TargetChanged) {
-		w.notifyQuery(&batches)
-	}
-}
-
-func (w *World) setRelationBatchQuery(filter Filter, comp ID, target Entity) Query {
-	batches := batchArchetypes{}
-	w.setRelationBatchNoNotify(filter, comp, target, &batches)
-	lock := w.lock()
-	return newBatchQuery(w, lock, &batches)
-}
-
-func (w *World) setRelationBatchNoNotify(filter Filter, comp ID, target Entity, batches *batchArchetypes) {
-	w.checkLocked()
-
-	if !target.IsZero() && !w.entityPool.Alive(target) {
-		panic("can't make a dead entity a relation target")
-	}
-
-	arches := w.getArchetypes(filter)
-	lengths := make([]uint32, len(arches))
-	for i, arch := range arches {
-		lengths[i] = arch.Len()
-	}
-
-	for i, arch := range arches {
-		archLen := lengths[i]
-
-		if archLen == 0 {
-			continue
-		}
-
-		if arch.RelationTarget == target {
-			continue
-		}
-
-		newArch, start, end := w.setRelationArch(arch, archLen, comp, target)
-		batches.Add(newArch, arch, start, end)
-	}
-}
-
-func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, target Entity) (*archetype, uint32, uint32) {
-	w.checkRelation(oldArch, comp)
-
-	// Before, entities with unchanged target were included in the query,
-	// end events were emitted for them. Seems better to skip them completely,
-	// which is done in World.setRelationBatchNoNotify.
-	//if oldArch.RelationTarget == target {
-	//	return oldArch, 0, oldArchLen
-	//}
-
-	oldIDs := oldArch.Components()
-
-	arch := oldArch.node.GetArchetype(target)
-	if arch == nil {
-		arch = w.createArchetype(oldArch.node, target, true)
-	}
-
-	startIdx := arch.Len()
-	count := oldArchLen
-	arch.AllocN(count)
-
-	var i uint32
-	for i = 0; i < count; i++ {
-		idx := startIdx + i
-		entity := oldArch.GetEntity(i)
-		index := &w.entities[entity.id]
-		arch.SetEntity(idx, entity)
-		index.arch = arch
-		index.index = idx
-
-		for _, id := range oldIDs {
-			comp := oldArch.Get(i, id)
-			arch.SetPointer(idx, id, comp)
-		}
-	}
-
-	// Theoretically, it could be oldArchLen < oldArch.Len(),
-	// which means we can't reset the archetype.
-	// However, this should not be possible as processing an entity twice
-	// would mean an illegal component addition/removal.
-	oldArch.Reset()
-	w.cleanupArchetype(oldArch)
-
-	return arch, uint32(startIdx), arch.Len()
-}
-
-func (w *World) checkRelation(arch *archetype, comp ID) {
-	if arch.node.Relation.id != comp.id {
-		w.relationError(arch, comp)
-	}
-}
-
-func (w *World) relationError(arch *archetype, comp ID) {
-	if !arch.HasComponent(comp) {
-		panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp.id]))
-	}
-	panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp.id]))
-}
-
-// lock the world and get the lock bit for later unlocking.
-func (w *World) lock() uint8 {
-	return w.locks.Lock()
-}
-
-// unlock unlocks the given lock bit.
-func (w *World) unlock(l uint8) {
-	w.locks.Unlock(l)
-}
-
-// checkLocked checks if the world is locked, and panics if so.
-func (w *World) checkLocked() {
-	if w.IsLocked() {
-		panic("attempt to modify a locked world")
-	}
-}
-
 // Internal method to create new entities.
 func (w *World) newEntitiesNoNotify(count int, targetID ID, hasTarget bool, target Entity, comps ...ID) (*archetype, uint32) {
 	w.checkLocked()
@@ -833,6 +316,555 @@ func (w *World) createEntities(arch *archetype, count uint32) {
 		arch.SetEntity(idx, entity)
 		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
 		w.targetEntities.Set(entity.id, false)
+	}
+}
+
+// RemoveEntities removes and recycles all entities matching a filter.
+//
+// Returns the number of removed entities.
+//
+// Panics when called on a locked world.
+// Do not use during [Query] iteration!
+func (w *World) removeEntities(filter Filter) int {
+	w.checkLocked()
+
+	lock := w.lock()
+
+	var bits event.Subscription
+	var listen bool
+
+	var count uint32
+
+	arches := w.getArchetypes(filter)
+	numArches := int32(len(arches))
+	var i int32
+	for i = 0; i < numArches; i++ {
+		arch := arches[i]
+		ln := arch.Len()
+		if ln == 0 {
+			continue
+		}
+
+		count += ln
+
+		var oldRel *ID
+		var oldIds []ID
+		if w.listener != nil {
+			if arch.HasRelationComponent {
+				oldRel = &arch.RelationComponent
+			}
+			if len(arch.node.Ids) > 0 {
+				oldIds = arch.node.Ids
+			}
+			bits = subscription(false, true, false, len(oldIds) > 0, oldRel != nil, oldRel != nil)
+			trigger := w.listener.Subscriptions() & bits
+			listen = trigger != 0 && subscribes(trigger, nil, &arch.Mask, w.listener.Components(), oldRel, nil)
+		}
+
+		var j uint32
+		for j = 0; j < ln; j++ {
+			entity := arch.GetEntity(j)
+			if listen {
+				w.listener.Notify(w, EntityEvent{Entity: entity, Removed: arch.Mask, RemovedIDs: oldIds, OldRelation: oldRel, OldTarget: arch.RelationTarget, EventTypes: bits})
+			}
+			index := &w.entities[entity.id]
+			index.arch = nil
+
+			if w.targetEntities.Get(entity.id) {
+				w.cleanupArchetypes(entity)
+				w.targetEntities.Set(entity.id, false)
+			}
+
+			w.entityPool.Recycle(entity)
+		}
+		arch.Reset()
+		w.cleanupArchetype(arch)
+	}
+	w.unlock(lock)
+
+	return int(count)
+}
+
+// assign with relation target.
+func (w *World) assign(entity Entity, relation ID, hasRelation bool, target Entity, comps ...Component) {
+	len := len(comps)
+	if len == 0 {
+		panic("no components given to assign")
+	}
+	if len == 1 {
+		c := comps[0]
+		w.exchange(entity, []ID{c.ID}, nil, relation, hasRelation, target)
+		w.copyTo(entity, c.ID, c.Comp)
+		return
+	}
+	ids := make([]ID, len)
+	for i, c := range comps {
+		ids[i] = c.ID
+	}
+	w.exchange(entity, ids, nil, relation, hasRelation, target)
+	for _, c := range comps {
+		w.copyTo(entity, c.ID, c.Comp)
+	}
+}
+
+// exchange with relation target.
+func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) {
+	w.checkLocked()
+
+	if !w.entityPool.Alive(entity) {
+		panic("can't exchange components on a dead entity")
+	}
+
+	if len(add) == 0 && len(rem) == 0 {
+		if hasRelation {
+			panic("exchange operation has no effect, but a relation is specified. Use World.Relation instead")
+		}
+		return
+	}
+	index := &w.entities[entity.id]
+	oldArch := index.arch
+
+	oldMask := oldArch.Mask
+	mask := w.getExchangeMask(oldMask, add, rem)
+
+	if hasRelation {
+		if !mask.Get(relation) {
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: resulting entity has no component %s", tp.Name()))
+		}
+		if !w.registry.IsRelation.Get(relation) {
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: %s is not a relation component", tp.Name()))
+		}
+	} else {
+		target = oldArch.RelationTarget
+		if !oldArch.RelationTarget.IsZero() && oldArch.Mask.ContainsAny(&w.registry.IsRelation) {
+			for _, id := range rem {
+				// Removing a relation
+				if w.registry.IsRelation.Get(id) {
+					target = Entity{}
+					break
+				}
+			}
+		}
+	}
+
+	oldIDs := oldArch.Components()
+
+	arch := w.findOrCreateArchetype(oldArch, add, rem, target)
+	newIndex := arch.Alloc(entity)
+
+	for _, id := range oldIDs {
+		if mask.Get(id) {
+			comp := oldArch.Get(index.index, id)
+			arch.SetPointer(newIndex, id, comp)
+		}
+	}
+
+	swapped := oldArch.Remove(index.index)
+
+	if swapped {
+		swapEntity := oldArch.GetEntity(index.index)
+		w.entities[swapEntity.id].index = index.index
+	}
+	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
+
+	var oldRel *ID
+	if oldArch.HasRelationComponent {
+		oldRel = &oldArch.RelationComponent
+	}
+	oldTarget := oldArch.RelationTarget
+
+	if !target.IsZero() {
+		w.targetEntities.Set(target.id, true)
+	}
+
+	w.cleanupArchetype(oldArch)
+
+	if w.listener != nil {
+		var newRel *ID
+		if arch.HasRelationComponent {
+			newRel = &arch.RelationComponent
+		}
+		relChanged := false
+		if oldRel != nil || newRel != nil {
+			relChanged = (oldRel == nil) != (newRel == nil) || *oldRel != *newRel
+		}
+		targChanged := oldTarget != arch.RelationTarget
+
+		bits := subscription(false, false, len(add) > 0, len(rem) > 0, relChanged, relChanged || targChanged)
+		trigger := w.listener.Subscriptions() & bits
+		if trigger != 0 {
+			changed := oldMask.Xor(&arch.Mask)
+			added := arch.Mask.And(&changed)
+			removed := oldMask.And(&changed)
+			if subscribes(trigger, &added, &removed, w.listener.Components(), oldRel, newRel) {
+				w.listener.Notify(w,
+					EntityEvent{Entity: entity, Added: added, Removed: removed,
+						AddedIDs: add, RemovedIDs: rem, OldRelation: oldRel, NewRelation: newRel,
+						OldTarget: oldTarget, EventTypes: bits},
+				)
+			}
+		}
+	}
+}
+
+// Modify a mask by adding and removing IDs.
+func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
+	for _, comp := range add {
+		if mask.Get(comp) {
+			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp.id]))
+		}
+		mask.Set(comp, true)
+	}
+	for _, comp := range rem {
+		if !mask.Get(comp) {
+			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp.id]))
+		}
+		mask.Set(comp, false)
+	}
+	return mask
+}
+
+// ExchangeBatch exchanges components for many entities, matching a filter.
+//
+// If the callback argument is given, it is called with a [Query] over the affected entities,
+// one Query for each affected archetype.
+//
+// Panics:
+//   - when called with components that can't be added or removed because they are already present/not present, respectively.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See also [World.Exchange].
+func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) {
+	batches := batchArchetypes{
+		Added:   add,
+		Removed: rem,
+	}
+
+	w.exchangeBatchNoNotify(filter, add, rem, relation, hasRelation, target, &batches)
+
+	if w.listener != nil {
+		w.notifyQuery(&batches)
+	}
+}
+
+func (w *World) exchangeBatchQuery(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) Query {
+	batches := batchArchetypes{
+		Added:   add,
+		Removed: rem,
+	}
+
+	w.exchangeBatchNoNotify(filter, add, rem, relation, hasRelation, target, &batches)
+
+	lock := w.lock()
+	return newBatchQuery(w, lock, &batches)
+}
+
+func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity, batches *batchArchetypes) {
+	w.checkLocked()
+
+	if len(add) == 0 && len(rem) == 0 {
+		if hasRelation {
+			panic("exchange operation has no effect, but a relation is specified. Use Batch.SetRelation instead")
+		}
+		return
+	}
+
+	arches := w.getArchetypes(filter)
+	lengths := make([]uint32, len(arches))
+	for i, arch := range arches {
+		lengths[i] = arch.Len()
+	}
+
+	for i, arch := range arches {
+		archLen := lengths[i]
+
+		if archLen == 0 {
+			continue
+		}
+
+		newArch, start := w.exchangeArch(arch, archLen, add, rem, relation, hasRelation, target)
+		batches.Add(newArch, arch, start, newArch.Len())
+	}
+}
+
+func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) (*archetype, uint32) {
+	mask := w.getExchangeMask(oldArch.Mask, add, rem)
+	oldIDs := oldArch.Components()
+
+	if hasRelation {
+		if !mask.Get(relation) {
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: resulting entity has no component %s", tp.Name()))
+		}
+		if !w.registry.IsRelation.Get(relation) {
+			tp, _ := w.registry.ComponentType(relation.id)
+			panic(fmt.Sprintf("can't add relation: %s is not a relation component", tp.Name()))
+		}
+	} else {
+		target = oldArch.RelationTarget
+		if !target.IsZero() && oldArch.Mask.ContainsAny(&w.registry.IsRelation) {
+			for _, id := range rem {
+				// Removing a relation
+				if w.registry.IsRelation.Get(id) {
+					target = Entity{}
+					break
+				}
+			}
+		}
+	}
+
+	arch := w.findOrCreateArchetype(oldArch, add, rem, target)
+
+	startIdx := arch.Len()
+	count := oldArchLen
+	arch.AllocN(uint32(count))
+
+	var i uint32
+	for i = 0; i < count; i++ {
+		idx := startIdx + i
+		entity := oldArch.GetEntity(i)
+		index := &w.entities[entity.id]
+		arch.SetEntity(idx, entity)
+		index.arch = arch
+		index.index = idx
+
+		for _, id := range oldIDs {
+			if mask.Get(id) {
+				comp := oldArch.Get(i, id)
+				arch.SetPointer(idx, id, comp)
+			}
+		}
+	}
+
+	if !target.IsZero() {
+		w.targetEntities.Set(target.id, true)
+	}
+
+	// Theoretically, it could be oldArchLen < oldArch.Len(),
+	// which means we can't reset the archetype.
+	// However, this should not be possible as processing an entity twice
+	// would mean an illegal component addition/removal.
+	oldArch.Reset()
+	w.cleanupArchetype(oldArch)
+
+	return arch, startIdx
+}
+
+// getRelation returns the target entity for an entity relation.
+//
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called for a missing component.
+//   - when called for a component that is not a relation.
+//
+// See [Relation] for details and examples.
+func (w *World) getRelation(entity Entity, comp ID) Entity {
+	if !w.entityPool.Alive(entity) {
+		panic("can't get relation of a dead entity")
+	}
+
+	index := &w.entities[entity.id]
+	w.checkRelation(index.arch, comp)
+
+	return index.arch.RelationTarget
+}
+
+// getRelationUnchecked returns the target entity for an entity relation.
+//
+// getRelationUnchecked is an optimized version of [World.getRelation].
+// Does not check if the entity is alive or that the component ID is applicable.
+func (w *World) getRelationUnchecked(entity Entity, comp ID) Entity {
+	index := &w.entities[entity.id]
+	return index.arch.RelationTarget
+}
+
+// setRelation sets the target entity for an entity relation.
+//
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called for a removed (and potentially recycled) target.
+//   - when called for a missing component.
+//   - when called for a component that is not a relation.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See [Relation] for details and examples.
+func (w *World) setRelation(entity Entity, comp ID, target Entity) {
+	w.checkLocked()
+
+	if !w.entityPool.Alive(entity) {
+		panic("can't set relation for a dead entity")
+	}
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
+	}
+
+	index := &w.entities[entity.id]
+	w.checkRelation(index.arch, comp)
+
+	oldArch := index.arch
+
+	if oldArch.RelationTarget == target {
+		return
+	}
+
+	arch := oldArch.node.GetArchetype(target)
+	if arch == nil {
+		arch = w.createArchetype(oldArch.node, target, true)
+	}
+
+	newIndex := arch.Alloc(entity)
+	for _, id := range oldArch.node.Ids {
+		comp := oldArch.Get(index.index, id)
+		arch.SetPointer(newIndex, id, comp)
+	}
+
+	swapped := oldArch.Remove(index.index)
+
+	if swapped {
+		swapEntity := oldArch.GetEntity(index.index)
+		w.entities[swapEntity.id].index = index.index
+	}
+	w.entities[entity.id] = entityIndex{arch: arch, index: newIndex}
+
+	if !target.IsZero() {
+		w.targetEntities.Set(target.id, true)
+	}
+
+	oldTarget := oldArch.RelationTarget
+	w.cleanupArchetype(oldArch)
+
+	if w.listener != nil {
+		trigger := w.listener.Subscriptions() & event.TargetChanged
+		if trigger != 0 && subscribes(trigger, nil, nil, w.listener.Components(), &comp, &comp) {
+			w.listener.Notify(w, EntityEvent{Entity: entity, OldRelation: &comp, NewRelation: &comp, OldTarget: oldTarget, EventTypes: event.TargetChanged})
+		}
+	}
+}
+
+// set relation target in batches.
+func (w *World) setRelationBatch(filter Filter, comp ID, target Entity) {
+	batches := batchArchetypes{}
+	w.setRelationBatchNoNotify(filter, comp, target, &batches)
+	if w.listener != nil && w.listener.Subscriptions().Contains(event.TargetChanged) {
+		w.notifyQuery(&batches)
+	}
+}
+
+func (w *World) setRelationBatchQuery(filter Filter, comp ID, target Entity) Query {
+	batches := batchArchetypes{}
+	w.setRelationBatchNoNotify(filter, comp, target, &batches)
+	lock := w.lock()
+	return newBatchQuery(w, lock, &batches)
+}
+
+func (w *World) setRelationBatchNoNotify(filter Filter, comp ID, target Entity, batches *batchArchetypes) {
+	w.checkLocked()
+
+	if !target.IsZero() && !w.entityPool.Alive(target) {
+		panic("can't make a dead entity a relation target")
+	}
+
+	arches := w.getArchetypes(filter)
+	lengths := make([]uint32, len(arches))
+	for i, arch := range arches {
+		lengths[i] = arch.Len()
+	}
+
+	for i, arch := range arches {
+		archLen := lengths[i]
+
+		if archLen == 0 {
+			continue
+		}
+
+		if arch.RelationTarget == target {
+			continue
+		}
+
+		newArch, start, end := w.setRelationArch(arch, archLen, comp, target)
+		batches.Add(newArch, arch, start, end)
+	}
+}
+
+func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, target Entity) (*archetype, uint32, uint32) {
+	w.checkRelation(oldArch, comp)
+
+	// Before, entities with unchanged target were included in the query,
+	// and events were emitted for them. Seems better to skip them completely,
+	// which is done in World.setRelationBatchNoNotify.
+	//if oldArch.RelationTarget == target {
+	//	return oldArch, 0, oldArchLen
+	//}
+
+	oldIDs := oldArch.Components()
+
+	arch := oldArch.node.GetArchetype(target)
+	if arch == nil {
+		arch = w.createArchetype(oldArch.node, target, true)
+	}
+
+	startIdx := arch.Len()
+	count := oldArchLen
+	arch.AllocN(count)
+
+	var i uint32
+	for i = 0; i < count; i++ {
+		idx := startIdx + i
+		entity := oldArch.GetEntity(i)
+		index := &w.entities[entity.id]
+		arch.SetEntity(idx, entity)
+		index.arch = arch
+		index.index = idx
+
+		for _, id := range oldIDs {
+			comp := oldArch.Get(i, id)
+			arch.SetPointer(idx, id, comp)
+		}
+	}
+
+	if !target.IsZero() {
+		w.targetEntities.Set(target.id, true)
+	}
+
+	// Theoretically, it could be oldArchLen < oldArch.Len(),
+	// which means we can't reset the archetype.
+	// However, this should not be possible as processing an entity twice
+	// would mean an illegal component addition/removal.
+	oldArch.Reset()
+	w.cleanupArchetype(oldArch)
+
+	return arch, uint32(startIdx), arch.Len()
+}
+
+func (w *World) checkRelation(arch *archetype, comp ID) {
+	if arch.node.Relation.id != comp.id {
+		w.relationError(arch, comp)
+	}
+}
+
+func (w *World) relationError(arch *archetype, comp ID) {
+	if !arch.HasComponent(comp) {
+		panic(fmt.Sprintf("entity does not have relation component %v", w.registry.Types[comp.id]))
+	}
+	panic(fmt.Sprintf("not a relation component: %v", w.registry.Types[comp.id]))
+}
+
+// lock the world and get the lock bit for later unlocking.
+func (w *World) lock() uint8 {
+	return w.locks.Lock()
+}
+
+// unlock unlocks the given lock bit.
+func (w *World) unlock(l uint8) {
+	w.locks.Unlock(l)
+}
+
+// checkLocked checks if the world is locked, and panics if so.
+func (w *World) checkLocked() {
+	if w.IsLocked() {
+		panic("attempt to modify a locked world")
 	}
 }
 

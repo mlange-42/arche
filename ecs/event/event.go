@@ -1,7 +1,20 @@
 // Package event contains a mask type and bit switches for listener subscriptions.
 //
-// See also ecs.Listener and ecs.EntityEvent.
+// See also [github.com/mlange-42/arche/ecs.Listener] and [github.com/mlange-42/arche/ecs.EntityEvent].
 package event
+
+// Subscription bits for an [github.com/mlange-42/arche/ecs.Listener]
+type Subscription uint8
+
+// Contains checks whether all the argument's bits are contained in this Subscription.
+func (s Subscription) Contains(bits Subscription) bool {
+	return (bits & s) == bits
+}
+
+// ContainsAny checks whether any of the argument's bits are contained in this Subscription.
+func (s Subscription) ContainsAny(bits Subscription) bool {
+	return (bits & s) != 0
+}
 
 // Subscription bits for individual events.
 const (
@@ -75,16 +88,3 @@ const (
 	// All subscriptions
 	All Subscription = Entities | Components | Relations
 )
-
-// Subscription bits for an ecs.Listener
-type Subscription uint8
-
-// Contains checks whether all the argument's bits are contained in this Subscription.
-func (s Subscription) Contains(bits Subscription) bool {
-	return (bits & s) == bits
-}
-
-// ContainsAny checks whether any of the argument's bits are contained in this Subscription.
-func (s Subscription) ContainsAny(bits Subscription) bool {
-	return (bits & s) != 0
-}

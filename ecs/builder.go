@@ -2,11 +2,11 @@ package ecs
 
 // Builder for more flexible and batched entity creation.
 type Builder struct {
-	world     *World
-	ids       []ID
-	comps     []Component
-	hasTarget bool
-	targetID  ID
+	world       *World
+	ids         []ID
+	comps       []Component
+	hasRelation bool
+	relationID  ID
 }
 
 // NewBuilder creates a builder from component IDs.
@@ -33,8 +33,8 @@ func NewBuilderWith(w *World, comps ...Component) *Builder {
 //
 // See [Relation] for details and examples.
 func (b *Builder) WithRelation(comp ID) *Builder {
-	b.hasTarget = true
-	b.targetID = comp
+	b.hasRelation = true
+	b.relationID = comp
 	return b
 }
 
@@ -44,13 +44,13 @@ func (b *Builder) WithRelation(comp ID) *Builder {
 // See [Builder.WithRelation].
 func (b *Builder) New(target ...Entity) Entity {
 	if len(target) > 0 {
-		if !b.hasTarget {
+		if !b.hasRelation {
 			panic("can't set target entity: builder has no relation")
 		}
 		if b.comps == nil {
-			return b.world.newEntityTarget(b.targetID, target[0], b.ids...)
+			return b.world.newEntityTarget(b.relationID, target[0], b.ids...)
 		}
-		return b.world.newEntityTargetWith(b.targetID, target[0], b.comps...)
+		return b.world.newEntityTargetWith(b.relationID, target[0], b.comps...)
 	}
 	if b.comps == nil {
 		return b.world.NewEntity(b.ids...)
@@ -64,14 +64,14 @@ func (b *Builder) New(target ...Entity) Entity {
 // See [Builder.WithRelation].
 func (b *Builder) NewBatch(count int, target ...Entity) {
 	if len(target) > 0 {
-		if !b.hasTarget {
+		if !b.hasRelation {
 			panic("can't set target entity: builder has no relation")
 		}
 		if b.comps == nil {
-			b.world.newEntities(count, b.targetID, true, target[0], b.ids...)
+			b.world.newEntities(count, b.relationID, true, target[0], b.ids...)
 			return
 		}
-		b.world.newEntitiesWith(count, b.targetID, true, target[0], b.comps...)
+		b.world.newEntitiesWith(count, b.relationID, true, target[0], b.comps...)
 		return
 	}
 	if b.comps == nil {
@@ -87,13 +87,13 @@ func (b *Builder) NewBatch(count int, target ...Entity) {
 // See [Builder.WithRelation].
 func (b *Builder) NewBatchQ(count int, target ...Entity) Query {
 	if len(target) > 0 {
-		if !b.hasTarget {
+		if !b.hasRelation {
 			panic("can't set target entity: builder has no relation")
 		}
 		if b.comps == nil {
-			return b.world.newEntitiesQuery(count, b.targetID, true, target[0], b.ids...)
+			return b.world.newEntitiesQuery(count, b.relationID, true, target[0], b.ids...)
 		}
-		return b.world.newEntitiesWithQuery(count, b.targetID, true, target[0], b.comps...)
+		return b.world.newEntitiesWithQuery(count, b.relationID, true, target[0], b.comps...)
 	}
 	if b.comps == nil {
 		return b.world.newEntitiesQuery(count, ID{}, false, Entity{}, b.ids...)
@@ -107,14 +107,14 @@ func (b *Builder) NewBatchQ(count int, target ...Entity) Query {
 // See [Builder.WithRelation].
 func (b *Builder) Add(entity Entity, target ...Entity) {
 	if len(target) > 0 {
-		if !b.hasTarget {
+		if !b.hasRelation {
 			panic("can't set target entity: builder has no relation")
 		}
 		if b.comps == nil {
-			b.world.exchange(entity, b.ids, nil, b.targetID, b.hasTarget, target[0])
+			b.world.exchange(entity, b.ids, nil, b.relationID, b.hasRelation, target[0])
 			return
 		}
-		b.world.assign(entity, b.targetID, b.hasTarget, target[0], b.comps...)
+		b.world.assign(entity, b.relationID, b.hasRelation, target[0], b.comps...)
 		return
 	}
 	if b.comps == nil {

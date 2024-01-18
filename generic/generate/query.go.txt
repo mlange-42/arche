@@ -87,7 +87,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ...ecs.E
 	return q
 }
 
-// Query builds a [Query{{ .Index }}] query for iteration, with an optional relation target.
+// Filter builds an [ecs.Filter], with an optional relation target.
 //
 // A relation target can't be used:
 //   - if [Filter{{ .Index }}.WithRelation] was not called
@@ -95,7 +95,7 @@ func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ...ecs.E
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
+func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
 	
 	filter := q.compiled.filter
@@ -111,6 +111,19 @@ func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entit
 		filter = &q.compiled.relationFilter
 	}
 
+	return filter
+}
+
+// Query builds a [Query{{ .Index }}] query for iteration, with an optional relation target.
+//
+// A relation target can't be used:
+//   - if [Filter{{ .Index }}.WithRelation] was not called
+//   - if the target was already set via [Filter{{ .Index }}.WithRelation]
+//   - if the filter is registered for caching
+//
+// Panics in these cases.
+func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
+	filter := q.Filter(w, target...)
 	return Query{{ .Index }}{{ .Types }}{
 		Query: w.Query(filter),
 		target: q.compiled.TargetComp,
