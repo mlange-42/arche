@@ -73,7 +73,7 @@ func (m *Exchange) NewEntity(target ...ecs.Entity) ecs.Entity {
 		if !m.hasRelation {
 			panic("can't set target entity: Exchange has no relation")
 		}
-		return m.builder.NewEntity(target[0])
+		return m.builder.New(target[0])
 	}
 	return m.world.NewEntity(m.add...)
 }

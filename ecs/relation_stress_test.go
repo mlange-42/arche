@@ -49,7 +49,7 @@ func TestRelationStress(t *testing.T) {
 			assert.Equal(t, numParents, stats.Nodes[2].ArchetypeCount)
 			assert.Equal(t, numParents-1, stats.Nodes[2].ActiveArchetypeCount)
 
-			parent = parBuilder.NewEntity()
+			parent = parBuilder.New()
 			parents[parIdx] = parent
 			childBuilder.NewBatch(numChildren, parent)
 

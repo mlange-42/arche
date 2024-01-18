@@ -18,14 +18,14 @@ func TestBuilder(t *testing.T) {
 
 	b1 := ecs.NewBuilder(&w, posID, velID, relID)
 
-	e1 := b1.NewEntity()
+	e1 := b1.New()
 	assert.True(t, w.Has(e1, posID))
 	assert.True(t, w.Has(e1, velID))
 
 	e2 := w.NewEntity()
 	b1.Add(e2)
 
-	assert.Panics(t, func() { b1.NewEntity(target) })
+	assert.Panics(t, func() { b1.New(target) })
 	assert.Panics(t, func() { b1.NewBatch(10, target) })
 	assert.Panics(t, func() { b1.NewBatchQ(10, target) })
 	assert.Panics(t, func() { b1.Add(e1, target) })
@@ -37,14 +37,14 @@ func TestBuilder(t *testing.T) {
 
 	b1 = ecs.NewBuilderWith(&w, ecs.Component{ID: posID, Comp: &Position{}})
 
-	e1 = b1.NewEntity()
+	e1 = b1.New()
 	assert.True(t, w.Has(e1, posID))
 
 	e2 = w.NewEntity()
 	b1.Add(e2)
 	e2 = w.NewEntity()
 
-	assert.Panics(t, func() { b1.NewEntity(target) })
+	assert.Panics(t, func() { b1.New(target) })
 	assert.Panics(t, func() { b1.NewBatch(10, target) })
 	assert.Panics(t, func() { b1.NewBatchQ(10, target) })
 	assert.Panics(t, func() { b1.Add(e2, target) })
@@ -56,8 +56,8 @@ func TestBuilder(t *testing.T) {
 
 	b1 = ecs.NewBuilder(&w, posID, velID, relID).WithRelation(relID)
 
-	b1.NewEntity()
-	e2 = b1.NewEntity(target)
+	b1.New()
+	e2 = b1.New(target)
 	assert.Equal(t, target, w.Relations().Get(e2, relID))
 
 	e2 = w.NewEntity()
@@ -76,8 +76,8 @@ func TestBuilder(t *testing.T) {
 		ecs.Component{ID: relID, Comp: &ChildOf{}},
 	).WithRelation(relID)
 
-	b1.NewEntity()
-	e2 = b1.NewEntity(target)
+	b1.New()
+	e2 = b1.New(target)
 	assert.Equal(t, target, w.Relations().Get(e2, relID))
 
 	e2 = w.NewEntity()
@@ -99,7 +99,7 @@ func ExampleBuilder() {
 
 	builder := ecs.NewBuilder(&world, posID, velID)
 
-	_ = builder.NewEntity()
+	_ = builder.New()
 	// Output:
 }
 
@@ -110,7 +110,7 @@ func ExampleNewBuilder() {
 
 	builder := ecs.NewBuilder(&world, posID, velID)
 
-	_ = builder.NewEntity()
+	_ = builder.New()
 	// Output:
 }
 
@@ -126,7 +126,7 @@ func ExampleNewBuilderWith() {
 
 	builder := ecs.NewBuilderWith(&world, components...)
 
-	_ = builder.NewEntity()
+	_ = builder.New()
 	// Output:
 }
 
@@ -137,7 +137,7 @@ func ExampleBuilder_New() {
 
 	builder := ecs.NewBuilder(&world, posID, velID)
 
-	_ = builder.NewEntity()
+	_ = builder.New()
 	// Output:
 }
 
@@ -189,6 +189,6 @@ func ExampleBuilder_WithRelation() {
 	builder := ecs.NewBuilder(&world, posID, childID).
 		WithRelation(childID)
 
-	builder.NewEntity(target)
+	builder.New(target)
 	// Output:
 }

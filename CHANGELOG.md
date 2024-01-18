@@ -19,7 +19,6 @@ This change was necessary to get the same performance as before, despite the mor
 * Restructures `EntityEvent` to remove redundant information and better handle relation changes (#333)
 * World event listener changed from a simple function to a `Listener` interface (#334)
 * Removes `World.ComponentType(ID)`, use function `ComponentInfo(ID)` instead (#341)
-* Renames `Builder.New` to `Builder.NewEntity` (#342)
 
 ### Features
 

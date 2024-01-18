@@ -63,7 +63,7 @@ func newEntity(w *ecs.World, ids []ecs.ID, relation ecs.ID, hasRelation bool, ta
 	if !hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilder(w, ids...).WithRelation(relation).NewEntity(target[0])
+	return ecs.NewBuilder(w, ids...).WithRelation(relation).New(target[0])
 }
 
 func newBatch(w *ecs.World, count int, ids []ecs.ID, relation ecs.ID, hasRelation bool, target ...ecs.Entity) {

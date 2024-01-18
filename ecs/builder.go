@@ -29,7 +29,7 @@ func NewBuilderWith(w *World, comps ...Component) *Builder {
 
 // WithRelation sets the [Relation] component for the builder.
 //
-// Use in conjunction with the optional target argument of [Builder.NewEntity], [Builder.NewBatch] and [Builder.NewBatchQ].
+// Use in conjunction with the optional target argument of [Builder.New], [Builder.NewBatch] and [Builder.NewBatchQ].
 //
 // See [Relation] for details and examples.
 func (b *Builder) WithRelation(comp ID) *Builder {
@@ -38,11 +38,11 @@ func (b *Builder) WithRelation(comp ID) *Builder {
 	return b
 }
 
-// NewEntity creates an entity.
+// New creates an entity.
 //
 // The optional argument can be used to set the target [Entity] for the Builder's [Relation].
 // See [Builder.WithRelation].
-func (b *Builder) NewEntity(target ...Entity) Entity {
+func (b *Builder) New(target ...Entity) Entity {
 	if len(target) > 0 {
 		if !b.hasRelation {
 			panic("can't set target entity: builder has no relation")

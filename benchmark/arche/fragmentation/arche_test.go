@@ -267,7 +267,7 @@ func runQuery1Of1kTargets(b *testing.B, count int) {
 
 	childBuilder := ecs.NewBuilder(&world, posID, relID).WithRelation(relID)
 	for _, target := range targets {
-		childBuilder.NewEntity(target)
+		childBuilder.New(target)
 	}
 	target := targets[0]
 	childBuilder.NewBatch(count, target)
@@ -299,7 +299,7 @@ func runQuery1Of1kTargetsCached(b *testing.B, count int) {
 
 	childBuilder := ecs.NewBuilder(&world, posID, relID).WithRelation(relID)
 	for _, target := range targets {
-		childBuilder.NewEntity(target)
+		childBuilder.New(target)
 	}
 
 	target := targets[0]
