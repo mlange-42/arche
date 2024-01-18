@@ -130,4 +130,29 @@ func TestExchangeRelationPanics(t *testing.T) {
 	assert.Panics(t, func() {
 		ex1.Exchange(e0, e0)
 	})
+
+	assert.Panics(t, func() {
+		ex1.ExchangeBatch(ecs.All(), e0)
+	})
+}
+
+func TestExchangeBatch(t *testing.T) {
+	w := ecs.NewWorld()
+
+	posID := ecs.ComponentID[Position](&w)
+
+	ex1 := NewExchange(&w).
+		Adds(T3[Position, Velocity, testRelationA]()...).
+		WithRelation(T[testRelationA]())
+
+	parent1 := w.NewEntity(posID)
+
+	b := ecs.NewBuilder(&w)
+	b.NewBatch(10)
+
+	filter := ecs.All().Exclusive()
+	ex1.ExchangeBatch(&filter, parent1)
+
+	b.NewBatch(10)
+	ex1.ExchangeBatch(&filter)
 }

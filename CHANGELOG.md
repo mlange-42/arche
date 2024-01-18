@@ -34,6 +34,7 @@ This change was necessary to get the same performance as before, despite the mor
 * Generic API adds `MapX.AddBatch()`, `MapX.AddBatchQ()`, `MapX.RemoveBatch()`and `MapX.RemoveBatchQ()` (#342)
 * Generic API adds optional relation target argument to most `MapX` methods (#342)
 * Generic API adds `FilterX.Filter()` to get an `ecs.Filter` from a generic one (#342)
+* Generic API adds `MapX.AddBatch()`, `MapX.AddBatchQ()`, `MapX.RemoveBatch()` and `MapX.RemoveBatchQ()` (#342)
 
 ### Performance
 

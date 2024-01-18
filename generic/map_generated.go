@@ -145,7 +145,8 @@ func (m *Map1[A]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	}
 }
 
-// AddBatchQ adds the Map1's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map1's components to multiple entities and returns a query over them
+// and the newly added Map1's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
@@ -207,12 +208,13 @@ func (m *Map1[A]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 	}
 }
 
-// RemoveBatchQ adds the Map1's components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map1's components to multiple entities and returns a query over them,
+// without any queries components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map1[A]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query1[A] {
+func (m *Map1[A]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -222,9 +224,8 @@ func (m *Map1[A]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query1[A
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query1[A]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
 	}
 }
 
@@ -392,7 +393,8 @@ func (m *Map2[A, B]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	}
 }
 
-// AddBatchQ adds the Map2's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map2's components to multiple entities and returns a query over them
+// and the newly added Map2's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
@@ -461,7 +463,7 @@ func (m *Map2[A, B]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map2[A, B]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query2[A, B] {
+func (m *Map2[A, B]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -471,10 +473,8 @@ func (m *Map2[A, B]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query2[A, B]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
 	}
 }
 
@@ -649,7 +649,8 @@ func (m *Map3[A, B, C]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	}
 }
 
-// AddBatchQ adds the Map3's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map3's components to multiple entities and returns a query over them
+// and the newly added Map3's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
@@ -720,7 +721,7 @@ func (m *Map3[A, B, C]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map3[A, B, C]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query3[A, B, C] {
+func (m *Map3[A, B, C]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -730,11 +731,8 @@ func (m *Map3[A, B, C]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Qu
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query3[A, B, C]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
 	}
 }
 
@@ -916,7 +914,8 @@ func (m *Map4[A, B, C, D]) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
 	}
 }
 
-// AddBatchQ adds the Map4's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map4's components to multiple entities and returns a query over them
+// and the newly added Map4's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
@@ -989,7 +988,7 @@ func (m *Map4[A, B, C, D]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) 
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map4[A, B, C, D]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query4[A, B, C, D] {
+func (m *Map4[A, B, C, D]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -999,12 +998,8 @@ func (m *Map4[A, B, C, D]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity)
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query4[A, B, C, D]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
 	}
 }
 
@@ -1193,7 +1188,8 @@ func (m *Map5[A, B, C, D, E]) AddBatch(filter ecs.Filter, target ...ecs.Entity) 
 	}
 }
 
-// AddBatchQ adds the Map5's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map5's components to multiple entities and returns a query over them
+// and the newly added Map5's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
@@ -1268,7 +1264,7 @@ func (m *Map5[A, B, C, D, E]) RemoveBatch(filter ecs.Filter, target ...ecs.Entit
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map5[A, B, C, D, E]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query5[A, B, C, D, E] {
+func (m *Map5[A, B, C, D, E]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -1278,13 +1274,8 @@ func (m *Map5[A, B, C, D, E]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Enti
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query5[A, B, C, D, E]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
 	}
 }
 
@@ -1480,7 +1471,8 @@ func (m *Map6[A, B, C, D, E, F]) AddBatch(filter ecs.Filter, target ...ecs.Entit
 	}
 }
 
-// AddBatchQ adds the Map6's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map6's components to multiple entities and returns a query over them
+// and the newly added Map6's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
@@ -1557,7 +1549,7 @@ func (m *Map6[A, B, C, D, E, F]) RemoveBatch(filter ecs.Filter, target ...ecs.En
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map6[A, B, C, D, E, F]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
+func (m *Map6[A, B, C, D, E, F]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -1567,14 +1559,8 @@ func (m *Map6[A, B, C, D, E, F]) RemoveBatchQ(filter ecs.Filter, target ...ecs.E
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query6[A, B, C, D, E, F]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
 	}
 }
 
@@ -1777,7 +1763,8 @@ func (m *Map7[A, B, C, D, E, F, G]) AddBatch(filter ecs.Filter, target ...ecs.En
 	}
 }
 
-// AddBatchQ adds the Map7's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map7's components to multiple entities and returns a query over them
+// and the newly added Map7's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
@@ -1856,7 +1843,7 @@ func (m *Map7[A, B, C, D, E, F, G]) RemoveBatch(filter ecs.Filter, target ...ecs
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map7[A, B, C, D, E, F, G]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
+func (m *Map7[A, B, C, D, E, F, G]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -1866,15 +1853,8 @@ func (m *Map7[A, B, C, D, E, F, G]) RemoveBatchQ(filter ecs.Filter, target ...ec
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query7[A, B, C, D, E, F, G]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
 	}
 }
 
@@ -2084,7 +2064,8 @@ func (m *Map8[A, B, C, D, E, F, G, H]) AddBatch(filter ecs.Filter, target ...ecs
 	}
 }
 
-// AddBatchQ adds the Map8's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map8's components to multiple entities and returns a query over them
+// and the newly added Map8's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
@@ -2165,7 +2146,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) RemoveBatch(filter ecs.Filter, target ...
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map8[A, B, C, D, E, F, G, H]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
+func (m *Map8[A, B, C, D, E, F, G, H]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -2175,16 +2156,8 @@ func (m *Map8[A, B, C, D, E, F, G, H]) RemoveBatchQ(filter ecs.Filter, target ..
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query8[A, B, C, D, E, F, G, H]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
-		id7:   m.id7,
 	}
 }
 
@@ -2401,7 +2374,8 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) AddBatch(filter ecs.Filter, target ...
 	}
 }
 
-// AddBatchQ adds the Map9's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map9's components to multiple entities and returns a query over them
+// and the newly added Map9's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
 //
@@ -2484,7 +2458,7 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveBatch(filter ecs.Filter, target 
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query9[A, B, C, D, E, F, G, H, I] {
+func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -2494,17 +2468,8 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveBatchQ(filter ecs.Filter, target
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query9[A, B, C, D, E, F, G, H, I]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
-		id7:   m.id7,
-		id8:   m.id8,
 	}
 }
 
@@ -2728,7 +2693,8 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) AddBatch(filter ecs.Filter, target
 	}
 }
 
-// AddBatchQ adds the Map10's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map10's components to multiple entities and returns a query over them
+// and the newly added Map10's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
 //
@@ -2813,7 +2779,7 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveBatch(filter ecs.Filter, tar
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query10[A, B, C, D, E, F, G, H, I, J] {
+func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -2823,18 +2789,8 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveBatchQ(filter ecs.Filter, ta
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query10[A, B, C, D, E, F, G, H, I, J]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
-		id7:   m.id7,
-		id8:   m.id8,
-		id9:   m.id9,
 	}
 }
 
@@ -3065,7 +3021,8 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) AddBatch(filter ecs.Filter, tar
 	}
 }
 
-// AddBatchQ adds the Map11's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map11's components to multiple entities and returns a query over them
+// and the newly added Map11's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
 //
@@ -3152,7 +3109,7 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveBatch(filter ecs.Filter, 
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query11[A, B, C, D, E, F, G, H, I, J, K] {
+func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -3162,19 +3119,8 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveBatchQ(filter ecs.Filter,
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query11[A, B, C, D, E, F, G, H, I, J, K]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
-		id7:   m.id7,
-		id8:   m.id8,
-		id9:   m.id9,
-		id10:  m.id10,
 	}
 }
 
@@ -3412,7 +3358,8 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) AddBatch(filter ecs.Filter, 
 	}
 }
 
-// AddBatchQ adds the Map12's components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map12's components to multiple entities and returns a query over them
+// and the newly added Map12's components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
 //
@@ -3501,7 +3448,7 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveBatch(filter ecs.Filte
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query12[A, B, C, D, E, F, G, H, I, J, K, L] {
+func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -3511,20 +3458,8 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveBatchQ(filter ecs.Filt
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query12[A, B, C, D, E, F, G, H, I, J, K, L]{
+	return Query0{
 		Query: query,
-		id0:   m.id0,
-		id1:   m.id1,
-		id2:   m.id2,
-		id3:   m.id3,
-		id4:   m.id4,
-		id5:   m.id5,
-		id6:   m.id6,
-		id7:   m.id7,
-		id8:   m.id8,
-		id9:   m.id9,
-		id10:  m.id10,
-		id11:  m.id11,
 	}
 }
 

@@ -139,7 +139,8 @@ func (m *Map{{ .Index }}{{ .Types }}) AddBatch(filter ecs.Filter, target ...ecs.
 	}
 }
 
-// AddBatchQ adds the Map{{ .Index }}'s components to multiple entities and returns a query over them.
+// AddBatchQ adds the Map{{ .Index }}'s components to multiple entities and returns a query over them
+// and the newly added Map{{ .Index }}'s components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
@@ -186,7 +187,7 @@ func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity, target ...ecs.En
 	}
 }
 
-// RemoveBatch removes the Map{{ .Index }}'s components to multiple entities.
+// RemoveBatch removes the Map{{ .Index }}'s components from multiple entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
@@ -202,12 +203,12 @@ func (m *Map{{ .Index }}{{ .Types }}) RemoveBatch(filter ecs.Filter, target ...e
 	}
 }
 
-// RemoveBatchQ adds the Map{{ .Index }}'s components to multiple entities and returns a query over them.
+// RemoveBatchQ adds the Map{{ .Index }}'s components from multiple entities and returns a query over them.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
 // See also [Batch.RemoveQ].
-func (m *Map{{ .Index }}{{ .Types }}) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
+func (m *Map{{ .Index }}{{ .Types }}) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 	var query ecs.Query
 	if len(target) > 0 {
 		if !m.hasRelation {
@@ -217,9 +218,8 @@ func (m *Map{{ .Index }}{{ .Types }}) RemoveBatchQ(filter ecs.Filter, target ...
 	} else {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
-	return Query{{ .Index }}{{ .Types }}{
+	return Query0{
 		Query: query,
-		{{ .IDAssign2 }}
 	}
 }
 
