@@ -536,17 +536,18 @@ func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [World.Exchange].
-func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) {
+func (w *World) exchangeBatch(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) int {
 	batches := batchArchetypes{
 		Added:   add,
 		Removed: rem,
 	}
 
-	w.exchangeBatchNoNotify(filter, add, rem, relation, hasRelation, target, &batches)
+	count := w.exchangeBatchNoNotify(filter, add, rem, relation, hasRelation, target, &batches)
 
 	if w.listener != nil {
 		w.notifyQuery(&batches)
 	}
+	return count
 }
 
 func (w *World) exchangeBatchQuery(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) Query {
@@ -561,20 +562,22 @@ func (w *World) exchangeBatchQuery(filter Filter, add []ID, rem []ID, relation I
 	return newBatchQuery(w, lock, &batches)
 }
 
-func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity, batches *batchArchetypes) {
+func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, relation ID, hasRelation bool, target Entity, batches *batchArchetypes) int {
 	w.checkLocked()
 
 	if len(add) == 0 && len(rem) == 0 {
 		if hasRelation {
 			panic("exchange operation has no effect, but a relation is specified. Use Batch.SetRelation instead")
 		}
-		return
+		return 0
 	}
 
 	arches := w.getArchetypes(filter)
 	lengths := make([]uint32, len(arches))
+	var totalEntities uint32 = 0
 	for i, arch := range arches {
 		lengths[i] = arch.Len()
+		totalEntities += arch.Len()
 	}
 
 	for i, arch := range arches {
@@ -587,6 +590,8 @@ func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, relatio
 		newArch, start := w.exchangeArch(arch, archLen, add, rem, relation, hasRelation, target)
 		batches.Add(newArch, arch, start, newArch.Len())
 	}
+
+	return int(totalEntities)
 }
 
 func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) (*archetype, uint32) {
@@ -744,12 +749,13 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 }
 
 // set relation target in batches.
-func (w *World) setRelationBatch(filter Filter, comp ID, target Entity) {
+func (w *World) setRelationBatch(filter Filter, comp ID, target Entity) int {
 	batches := batchArchetypes{}
-	w.setRelationBatchNoNotify(filter, comp, target, &batches)
+	count := w.setRelationBatchNoNotify(filter, comp, target, &batches)
 	if w.listener != nil && w.listener.Subscriptions().Contains(event.TargetChanged) {
 		w.notifyQuery(&batches)
 	}
+	return count
 }
 
 func (w *World) setRelationBatchQuery(filter Filter, comp ID, target Entity) Query {
@@ -759,7 +765,7 @@ func (w *World) setRelationBatchQuery(filter Filter, comp ID, target Entity) Que
 	return newBatchQuery(w, lock, &batches)
 }
 
-func (w *World) setRelationBatchNoNotify(filter Filter, comp ID, target Entity, batches *batchArchetypes) {
+func (w *World) setRelationBatchNoNotify(filter Filter, comp ID, target Entity, batches *batchArchetypes) int {
 	w.checkLocked()
 
 	if !target.IsZero() && !w.entityPool.Alive(target) {
@@ -768,8 +774,10 @@ func (w *World) setRelationBatchNoNotify(filter Filter, comp ID, target Entity, 
 
 	arches := w.getArchetypes(filter)
 	lengths := make([]uint32, len(arches))
+	var totalEntities uint32 = 0
 	for i, arch := range arches {
 		lengths[i] = arch.Len()
+		totalEntities += arch.Len()
 	}
 
 	for i, arch := range arches {
@@ -786,6 +794,7 @@ func (w *World) setRelationBatchNoNotify(filter Filter, comp ID, target Entity, 
 		newArch, start, end := w.setRelationArch(arch, archLen, comp, target)
 		batches.Add(newArch, arch, start, end)
 	}
+	return int(totalEntities)
 }
 
 func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, target Entity) (*archetype, uint32, uint32) {

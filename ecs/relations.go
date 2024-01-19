@@ -44,6 +44,7 @@ func (r *Relations) Set(entity Entity, comp ID, target Entity) {
 }
 
 // SetBatch sets the [Relation] target for many entities, matching a filter.
+// Returns the number of affected entities.
 //
 // Panics:
 //   - when called for a missing component.
@@ -51,8 +52,8 @@ func (r *Relations) Set(entity Entity, comp ID, target Entity) {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [Relations.Set], [Relations.SetBatchQ] and [Batch.SetRelation].
-func (r *Relations) SetBatch(filter Filter, comp ID, target Entity) {
-	r.world.setRelationBatch(filter, comp, target)
+func (r *Relations) SetBatch(filter Filter, comp ID, target Entity) int {
+	return r.world.setRelationBatch(filter, comp, target)
 }
 
 // SetBatchQ sets the [Relation] target for many entities, matching a filter.
@@ -89,6 +90,7 @@ func (r *Relations) Exchange(entity Entity, add []ID, rem []ID, relation ID, tar
 }
 
 // ExchangeBatch exchanges components for many entities, matching a filter.
+// Returns the number of affected entities.
 // In contrast to [Batch.Exchange], it allows to also set a relation target.
 //
 // When a [Relation] component is removed and another one is added,
@@ -102,8 +104,8 @@ func (r *Relations) Exchange(entity Entity, add []ID, rem []ID, relation ID, tar
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [Batch.Exchange], [Batch.ExchangeQ], [Relations.ExchangeBatch] and [World.Exchange].
-func (r *Relations) ExchangeBatch(filter Filter, add []ID, rem []ID, relation ID, target Entity) {
-	r.world.exchangeBatch(filter, add, rem, relation, true, target)
+func (r *Relations) ExchangeBatch(filter Filter, add []ID, rem []ID, relation ID, target Entity) int {
+	return r.world.exchangeBatch(filter, add, rem, relation, true, target)
 }
 
 // ExchangeBatchQ exchanges components for many entities, matching a filter.

@@ -126,18 +126,19 @@ func (m *Map{{ .Index }}{{ .Types }}) Add(entity ecs.Entity, target ...ecs.Entit
 }
 
 // AddBatch adds the Map{{ .Index }}'s components to many entities, matching a filter.
+// Returns the number of affected entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
 // See also [ecs.Batch.Add].
-func (m *Map{{ .Index }}{{ .Types }}) AddBatch(filter ecs.Filter, target ...ecs.Entity) {
+func (m *Map{{ .Index }}{{ .Types }}) AddBatch(filter ecs.Filter, target ...ecs.Entity) int {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map{{ .Index }} has no relation")
 		}
-		m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
+		return m.world.Relations().ExchangeBatch(filter, m.ids, nil, m.relation, target[0])
 	} else {
-		m.world.Batch().Exchange(filter, m.ids, nil)
+		return m.world.Batch().Exchange(filter, m.ids, nil)
 	}
 }
 
@@ -192,18 +193,19 @@ func (m *Map{{ .Index }}{{ .Types }}) Remove(entity ecs.Entity, target ...ecs.En
 }
 
 // RemoveBatch removes the Map{{ .Index }}'s components from many entities, matching a filter.
+// Returns the number of affected entities.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 //
 // See also [ecs.Batch.Remove].
-func (m *Map{{ .Index }}{{ .Types }}) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) {
+func (m *Map{{ .Index }}{{ .Types }}) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) int {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Map{{ .Index }} has no relation")
 		}
-		m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
+		return m.world.Relations().ExchangeBatch(filter, nil, m.ids, m.relation, target[0])
 	} else {
-		m.world.Batch().Exchange(filter, nil, m.ids)
+		return m.world.Batch().Exchange(filter, nil, m.ids)
 	}
 }
 

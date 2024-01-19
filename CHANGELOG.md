@@ -13,9 +13,9 @@
 
 * `MaskTotalBits` changed from 128 to 256 (#313)
 * Removes `Mask.Lo` and `Mask.Hi`, internal mask representation is now private (#313)
-* `Filters.Matches(Mask)` became `Filters.Matches(*Mask)`; same for all `Filter` implementations (#313)  
+* `Filter.Matches(Mask)` became `Filter.Matches(*Mask)`; same for all `Filter` implementations (#313)  
 This change was necessary to get the same performance as before, despite the more heavyweight implementation of the now 256 bits `Mask`.
-* Component and resource IDs are now opaque types instead of type aliases for `uint8` (#329)
+* Component and resource IDs are now opaque types instead of type aliases for `uint8` (#330)
 * Restructures `EntityEvent` to remove redundant information and better handle relation changes (#333)
 * World event listener changed from a simple function to a `Listener` interface (#334)
 * Removes `World.ComponentType(ID)`, use function `ComponentInfo(ID)` instead (#341)
@@ -26,7 +26,7 @@ This change was necessary to get the same performance as before, despite the mor
 * Adds methods `World.Ids(Entity)` and `Query.Ids()` to get component IDs for an entity (#315, #325)
 * Entities support JSON marshalling and unmarshalling (#319)
 * The world's entity state can be extracted and re-established via `World.DumpEntities()` and `World.LoadEntities()` (#319, #326)
-* Adds functions `ComponentIDs(*World)` and `ResourceIDs(*World)` to get all registered IDs (#329)
+* Adds functions `ComponentIDs(*World)` and `ResourceIDs(*World)` to get all registered IDs (#330)
 * Adds methods `Mask.And`, `Mask.Or` and `Mask.Xor` (#335)
 * Adds build tag `tiny` to restrict to 64 components for an extra bit of performance (#338)
 * Adds methods `Relations.Exchange()`, `Relations.ExchangeBatch()`, `Relations.ExchangeBatchQ()` for exchange with relation target (#342)
@@ -35,6 +35,7 @@ This change was necessary to get the same performance as before, despite the mor
 * Generic API adds optional relation target argument to most `MapX` methods (#342)
 * Generic API adds `FilterX.Filter()` to get an `ecs.Filter` from a generic one (#342)
 * Generic API adds `Map.SetRelationBatch()` and `Map.SetRelationBatchQ()` (#344)
+* All batch operations (except entity creation) return the number of affected entities (#348)
 
 ### Performance
 

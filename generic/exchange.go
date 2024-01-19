@@ -134,6 +134,7 @@ func (m *Exchange) Exchange(entity ecs.Entity, target ...ecs.Entity) {
 }
 
 // ExchangeBatch exchanges components on many entities, matching a filter.
+// Returns the number of affected entities.
 //
 // Removes the components set via [Exchange.Removes].
 // Adds the components set via [Exchange.Adds].
@@ -143,13 +144,13 @@ func (m *Exchange) Exchange(entity ecs.Entity, target ...ecs.Entity) {
 // the target entity of the relation is set to zero if no target is given.
 //
 // See also [ecs.Batch.Exchange] and [ecs.Batch.ExchangeQ].
-func (m *Exchange) ExchangeBatch(filter ecs.Filter, target ...ecs.Entity) {
+func (m *Exchange) ExchangeBatch(filter ecs.Filter, target ...ecs.Entity) int {
 	if len(target) > 0 {
 		if !m.hasRelation {
 			panic("can't set target entity: Exchange has no relation")
 		}
-		m.world.Relations().ExchangeBatch(filter, m.add, m.remove, m.relationID, target[0])
+		return m.world.Relations().ExchangeBatch(filter, m.add, m.remove, m.relationID, target[0])
 	} else {
-		m.world.Batch().Exchange(filter, m.add, m.remove)
+		return m.world.Batch().Exchange(filter, m.add, m.remove)
 	}
 }
