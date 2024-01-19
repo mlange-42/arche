@@ -1,4 +1,4 @@
-![Arche (logo)](https://user-images.githubusercontent.com/44003176/236701164-28178d13-7e52-4449-baa4-41b764183cbd.png)
+[![Arche (logo)](https://user-images.githubusercontent.com/44003176/236701164-28178d13-7e52-4449-baa4-41b764183cbd.png)](https://github.com/mlange-42/arche)
 
 [![Test status](https://img.shields.io/github/actions/workflow/status/mlange-42/arche/tests.yml?branch=main&label=Tests&logo=github)](https://github.com/mlange-42/arche/actions/workflows/tests.yml)
 [![Coverage Status](https://badge.coveralls.io/repos/github/mlange-42/arche/badge.svg?branch=main)](https://badge.coveralls.io/github/mlange-42/arche?branch=main)
