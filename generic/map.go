@@ -108,13 +108,14 @@ func (m *Map[T]) SetRelation(entity, target ecs.Entity) {
 }
 
 // SetRelationBatch sets the target entity for many entities and the Map's component.
+// Returns the number of affected entities.
 //
 // Panics if the entity does not have a component of that type.
 // Panics if the component is not a relation.
 //
 // See also [ecs.Batch.SetRelation].
-func (m *Map[T]) SetRelationBatch(filter ecs.Filter, target ecs.Entity) {
-	m.world.Batch().SetRelation(filter, m.id, target)
+func (m *Map[T]) SetRelationBatch(filter ecs.Filter, target ecs.Entity) int {
+	return m.world.Batch().SetRelation(filter, m.id, target)
 }
 
 // SetRelationBatch sets the target entity for many entities and the Map's component,

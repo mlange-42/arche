@@ -39,14 +39,16 @@ func TestRelationsExchange(t *testing.T) {
 		_ = w.Relations().ExchangeBatchQ(filter, nil, nil, childID, parent2)
 	})
 
-	w.Relations().ExchangeBatch(filter, []ecs.ID{velID}, nil, childID, parent2)
+	cnt := w.Relations().ExchangeBatch(filter, []ecs.ID{velID}, nil, childID, parent2)
+	assert.Equal(t, 10, cnt)
 
 	relFilter = ecs.NewRelationFilter(ecs.All(posID, velID, childID), parent2)
 	query = w.Query(&relFilter)
 	assert.Equal(t, 10, query.Count())
 	query.Close()
 
-	w.Relations().ExchangeBatch(filter, nil, []ecs.ID{velID}, childID, parent1)
+	cnt = w.Relations().ExchangeBatch(filter, nil, []ecs.ID{velID}, childID, parent1)
+	assert.Equal(t, 10, cnt)
 
 	relFilter = ecs.NewRelationFilter(ecs.All(posID, childID), parent1)
 	query = w.Query(&relFilter)

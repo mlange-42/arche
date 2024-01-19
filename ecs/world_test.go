@@ -385,11 +385,14 @@ func TestWorldExchangeBatch(t *testing.T) {
 	assert.Equal(t, 100, query.Count())
 	query.Close()
 
-	w.Batch().Exchange(All(posID), nil, nil)
+	cnt := w.Batch().Exchange(All(posID), nil, nil)
+	assert.Equal(t, 0, cnt)
 
 	relFilter := NewRelationFilter(All(relID), target2)
-	w.Batch().Exchange(&relFilter, nil, []ID{relID})
-	w.Batch().Exchange(All(relID), nil, []ID{relID})
+	cnt = w.Batch().Exchange(&relFilter, nil, []ID{relID})
+	assert.Equal(t, 100, cnt)
+	cnt = w.Batch().Exchange(All(relID), nil, []ID{relID})
+	assert.Equal(t, 100, cnt)
 
 	assert.Equal(t, 702, len(events))
 	assert.Equal(t, EntityEvent{
@@ -402,7 +405,8 @@ func TestWorldExchangeBatch(t *testing.T) {
 		EventTypes:  event.ComponentRemoved | event.RelationChanged | event.TargetChanged,
 	}, events[701])
 
-	w.Batch().RemoveEntities(All(posID))
+	cnt = w.Batch().RemoveEntities(All(posID))
+	assert.Equal(t, 100, cnt)
 
 	assert.Equal(t, 802, len(events))
 
@@ -417,7 +421,8 @@ func TestWorldExchangeBatch(t *testing.T) {
 	assert.Equal(t, []ID{posID}, events[202].RemovedIDs)
 
 	filter = All(velID)
-	w.Batch().Remove(filter, velID)
+	cnt = w.Batch().Remove(filter, velID)
+	assert.Equal(t, 102, cnt)
 
 	filter = All(velID)
 	q := w.Query(filter)
@@ -425,7 +430,8 @@ func TestWorldExchangeBatch(t *testing.T) {
 	q.Close()
 
 	filter = All()
-	w.Batch().Add(filter, velID)
+	cnt = w.Batch().Add(filter, velID)
+	assert.Equal(t, 102, cnt)
 
 	w.Reset()
 
