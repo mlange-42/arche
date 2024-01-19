@@ -17,6 +17,10 @@ type rotation struct {
 	Angle int
 }
 
+type relation struct {
+	ecs.Relation
+}
+
 type TestStruct0 struct{ Val int32 }
 type TestStruct1 struct{ Val int32 }
 type TestStruct2 struct{ Val int32 }
@@ -157,6 +161,45 @@ func TestLogicFilters(t *testing.T) {
 	assert.True(t, match(filter, hasA))
 	assert.True(t, match(filter, hasB))
 	assert.True(t, match(filter, hasNone))
+}
+
+func TestLogicFiltersRelation(t *testing.T) {
+	w := ecs.NewWorld()
+
+	posID := ecs.ComponentID[position](&w)
+	relID := ecs.ComponentID[relation](&w)
+
+	parent := w.NewEntity()
+
+	w.NewEntity(posID)
+	w.NewEntity(posID, relID)
+	ecs.NewBuilder(&w, posID, relID).WithRelation(relID).New(parent)
+
+	relFilter := ecs.NewRelationFilter(ecs.All(relID), parent)
+	not := f.NOT{&relFilter}
+
+	query := w.Query(&not)
+	assert.Equal(t, 2, query.Count())
+	query.Close()
+
+	posFilter := ecs.All(posID)
+	and := f.AND{L: posFilter, R: &relFilter}
+
+	query = w.Query(&and)
+	assert.Equal(t, 2, query.Count())
+	query.Close()
+
+	or := f.OR{L: posFilter, R: &relFilter}
+
+	query = w.Query(&or)
+	assert.Equal(t, 3, query.Count())
+	query.Close()
+
+	xor := f.XOR{L: posFilter, R: &relFilter}
+
+	query = w.Query(&xor)
+	assert.Equal(t, 1, query.Count())
+	query.Close()
 }
 
 func TestFilter(t *testing.T) {

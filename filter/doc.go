@@ -10,4 +10,7 @@
 //   - [AnyNOT] matches missing components.
 //   - [AND], [OR], [XOR] logically combine two filters.
 //   - [NOT] inverts any other filter.
+//
+// All filters that wrap other filters ([AND], [OR], [XOR], [NOT]) ignore potential relation targets
+// of any wrapped ecs.RelationFilter (see [github.com/mlange-42/arche/ecs.RelationFilter]).
 package filter

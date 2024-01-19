@@ -73,7 +73,6 @@ func ResourceType(w *World, id ResID) (reflect.Type, bool) {
 }
 
 // GetResource returns a pointer to the given resource type in the world.
-//
 // Returns nil if there is no such resource.
 //
 // Uses reflection. For more efficient access, see [World.Resources],

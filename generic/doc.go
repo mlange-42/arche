@@ -22,7 +22,7 @@
 //   - Create an entity: [Map2.New], [Map2.NewWith]
 //   - Remove an entity: use ecs.World.RemoveEntity
 //   - Add components: [Map2.Add], [Exchange.Add]
-//   - Remove components: [Map2.Remove], [Exchange.Add]
+//   - Remove components: [Map2.Remove], [Exchange.Remove]
 //   - Exchange components: [Exchange.Exchange]
 //   - Change entity relation target: [Map.SetRelation]
 //

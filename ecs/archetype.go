@@ -18,9 +18,9 @@ type archetypeAccess struct {
 	Mask                 Mask           // Archetype's mask
 	basePointer          unsafe.Pointer // Pointer to the first component column layout.
 	entityPointer        unsafe.Pointer // Pointer to the entity storage
-	RelationTarget       Entity
-	RelationComponent    ID
-	HasRelationComponent bool
+	RelationTarget       Entity         // Target entity of the archetype (if it has a relation component)
+	RelationComponent    ID             // Relation component of the archetype
+	HasRelationComponent bool           // Whether the archetype has a relation
 }
 
 // GetEntity returns the entity at the given index

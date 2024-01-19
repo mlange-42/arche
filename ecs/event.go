@@ -2,7 +2,7 @@ package ecs
 
 import "github.com/mlange-42/arche/ecs/event"
 
-// EntityEvent contains information about component and relation changes to an [Entity].
+// EntityEvent contains information about ECS operations like component and relation changes to an [Entity].
 //
 // To receive change events, register a [Listener] with [World.SetListener].
 //
@@ -15,7 +15,7 @@ import "github.com/mlange-42/arche/ecs/event"
 // Events that cover multiple types (e.g. entity creation and component addition) are only notified once.
 // Field EventTypes contains the [event.Subscription] bits of covered event types.
 //
-// See sub-package [event] and the [event.Subscription] constants for subscription logic.
+// See sub-package [event] and the [event.Subscription] constants for event types and subscription logic.
 //
 // # Event scheduling
 //
@@ -43,7 +43,8 @@ func (e *EntityEvent) Contains(bit event.Subscription) bool {
 	return e.EventTypes.Contains(bit)
 }
 
-// Listener interface for listening to [EntityEvent] notifications.
+// Listener interface for listening to [EntityEvent] notifications
+// on ECS operations like entity creation and removal, component addition and removal, and relation changes.
 //
 // A listener can be added to a [World] with [World.SetListener].
 //
@@ -52,7 +53,7 @@ func (e *EntityEvent) Contains(bit event.Subscription) bool {
 // Listeners can subscribe to one or more event types via method Subscriptions.
 // Further, subscriptions can be restricted to one or more components via method Components.
 //
-// See sub-package [event] and the [event.Subscription] constants for subscription logic.
+// See sub-package [event] and the [event.Subscription] constants for event types and subscription logic.
 //
 // # See also
 //
@@ -61,9 +62,9 @@ func (e *EntityEvent) Contains(bit event.Subscription) bool {
 type Listener interface {
 	// Notify the listener about a subscribed event.
 	Notify(world *World, evt EntityEvent)
-	// Subscriptions to event types.
+	// Subscriptions to one or more event types.
 	Subscriptions() event.Subscription
-	// Components the listener subscribes to. No component restrictions are indicated by nil.
+	// Components the listener subscribes to. Listening to all components indicated by nil.
 	Components() *Mask
 }
 
