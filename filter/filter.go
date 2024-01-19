@@ -5,8 +5,9 @@ import (
 )
 
 // All matches entities that have all the given components.
+// Synonym for [ecs.All].
 //
-// Like [And] for combining individual components.
+// Like [AND] for combining individual components.
 //
 // See also [ecs.All], [ecs.Mask], [ecs.Mask.Without] and [ecs.Mask.Exclusive].
 func All(comps ...ecs.ID) ecs.Mask {
@@ -56,16 +57,15 @@ func (f AnyNOT) Matches(bits *ecs.Mask) bool {
 }
 
 // AND combines two filters using AND.
+// Matches if both filters match.
 //
-// Ignores potential relation targets.
+// Ignores relation target in wrapped ecs.RelationFilter.
 type AND struct {
 	L ecs.Filter
 	R ecs.Filter
 }
 
-// And combines two filters using AND.
-//
-// Ignores potential relation targets.
+// And creates an [AND] logic filter and returns a pointer to it.
 func And(l, r ecs.Filter) *AND {
 	return &AND{L: l, R: r}
 }
@@ -76,16 +76,15 @@ func (f *AND) Matches(bits *ecs.Mask) bool {
 }
 
 // OR combines two filters using OR.
+// Matches if any of the filters matches.
 //
-// Ignores potential relation targets.
+// Ignores relation target in wrapped ecs.RelationFilter.
 type OR struct {
 	L ecs.Filter
 	R ecs.Filter
 }
 
-// Or combines two filters using OR.
-//
-// Ignores potential relation targets.
+// Or creates an [OR] logic filter and returns a pointer to it.
 func Or(l, r ecs.Filter) *OR {
 	return &OR{L: l, R: r}
 }
@@ -96,16 +95,15 @@ func (f *OR) Matches(bits *ecs.Mask) bool {
 }
 
 // XOR combines two filters using XOR.
+// Matches if exactly one of the filters matches.
 //
-// Ignores potential relation targets.
+// Ignores relation target in wrapped ecs.RelationFilter.
 type XOR struct {
 	L ecs.Filter
 	R ecs.Filter
 }
 
-// XOr combines two filters using XOR.
-//
-// Ignores potential relation targets.
+// XOr creates an [XOR] logic filter and returns a pointer to it.
 func XOr(l, r ecs.Filter) *XOR {
 	return &XOR{L: l, R: r}
 }
@@ -117,12 +115,14 @@ func (f *XOR) Matches(bits *ecs.Mask) bool {
 
 // NOT inverts a filter. It matches if the inner filter does not.
 //
-// Does NOT ignore a potential relation target.
+// Ignores relation target in wrapped ecs.RelationFilter.
+//
+// To invert a simple [ecs.Mask] filter, it is more efficient to use [ecs.Mask.Not].
 type NOT struct {
 	F ecs.Filter
 }
 
-// Not inverts a filter. It matches if the inner filter does not.
+// Not creates an [NOT] logic filter and returns a pointer to it.
 func Not(f ecs.Filter) *NOT {
 	return &NOT{F: f}
 }
