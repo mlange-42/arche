@@ -116,7 +116,6 @@ func (b *Batch) ExchangeQ(filter Filter, add []ID, rem []ID) Query {
 }
 
 // RemoveEntities removes and recycles all entities matching a filter.
-//
 // Returns the number of removed entities.
 //
 // Panics when called on a locked world.

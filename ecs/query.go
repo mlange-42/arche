@@ -177,7 +177,7 @@ func (q *Query) Ids() []ID {
 // Close closes the Query and unlocks the world.
 //
 // Automatically called when iteration finishes.
-// Needs to be called only if breaking out of the query iteration.
+// Needs to be called only if breaking out of the query iteration or not iterating at all.
 func (q *Query) Close() {
 	q.world.closeQuery(q)
 }

@@ -7,7 +7,6 @@ import (
 )
 
 // MaskTotalBits is the size of a [Mask] in bits.
-//
 // It is the maximum number of component types that may exist in any [World].
 //
 // Use build tag `tiny` to reduce all masks to 64 bits.
@@ -24,9 +23,19 @@ type Mask struct {
 	bits [4]uint64 // 4x 64 bits of the mask
 }
 
-// Get reports whether the bit at the given index [ID] is set.
+// All creates a new Mask from a list of IDs.
+// Matches all entities that have the respective components, and potentially further components.
 //
-// Returns false for bit >= [MaskTotalBits].
+// See also [Mask.Without] and [Mask.Exclusive]
+func All(ids ...ID) Mask {
+	var mask Mask
+	for _, id := range ids {
+		mask.Set(id, true)
+	}
+	return mask
+}
+
+// Get reports whether the bit at the given index [ID] is set.
 func (b *Mask) Get(bit ID) bool {
 	idx := bit.id / 64
 	offset := bit.id - (64 * idx)
@@ -35,8 +44,6 @@ func (b *Mask) Get(bit ID) bool {
 }
 
 // Set sets the state of the bit at the given index.
-//
-// Has no effect for bit >= [MaskTotalBits].
 func (b *Mask) Set(bit ID, value bool) {
 	idx := bit.id / 64
 	offset := bit.id - (64 * idx)
