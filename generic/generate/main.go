@@ -164,7 +164,7 @@ func generateQueries() {
 			idTypes = "id" + strings.Join(numbers[:i], " ecs.ID\n\tid") + " ecs.ID"
 			for j := 0; j < i; j++ {
 				returnAll += fmt.Sprintf("(*%s)(q.Query.Get(q.id%d))", typeLetters[j], j)
-				idAssign += fmt.Sprintf("	id%d: q.compiled.Ids[%d],\n", j, j)
+				idAssign += fmt.Sprintf("	id%d: f.compiled.Ids[%d],\n", j, j)
 				if j < i-1 {
 					returnAll += ",\n"
 				}
