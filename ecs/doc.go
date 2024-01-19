@@ -23,9 +23,9 @@
 //   - [github.com/mlange-42/arche/ecs/event] provides event subscription masks.
 //   - [github.com/mlange-42/arche/ecs/stats] provides world statistics for monitoring purposes.
 //
-// # Manipulation
+// # ECS Manipulations
 //
-// This section gives an overview over how to achieve typical ECS manipulation operations with Arche.
+// This section gives an overview on how to achieve typical ECS manipulation operations with Arche.
 //
 // Simple manipulations of a single entity:
 //   - Create an entity: [World.NewEntity], [World.NewEntityWith]

@@ -13,9 +13,9 @@
 //   - [Exchange] allows to add, remove and exchange components, incl. as batch operations.
 //   - [Resource] provides generic access to a resource from [ecs.Resources].
 //
-// # Manipulation
+// # ECS Manipulations
 //
-// This section gives an overview over how to achieve typical ECS manipulation operations using Arche's generic API.
+// This section gives an overview on how to achieve typical ECS manipulation operations using Arche's generic API.
 // MapX and QueryX variants are shown as [Map2] and [Query2] here.
 //
 // Manipulations of a single entity, with or without a relation target:
