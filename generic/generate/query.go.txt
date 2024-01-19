@@ -126,8 +126,8 @@ func (f *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entit
 	filter := f.Filter(w, target...)
 	return Query{{ .Index }}{{ .Types }}{
 		Query: w.Query(filter),
-		target: f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
+		relation: f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
 		{{ .IDAssign }}
 	}
 }
@@ -166,8 +166,8 @@ func (f *Filter{{ .Index }}{{ .Types }}) Unregister(w *ecs.World) {
 type Query{{ .Index }}{{ .TypesFull }} struct {
 	ecs.Query
 	{{ .IDTypes }}
-	target ecs.ID
-	hasTarget bool
+	relation ecs.ID
+	hasRelation bool
 }
 
 {{if .ReturnAll}}
@@ -185,8 +185,8 @@ func (q *Query{{ .Index }}{{ .Types }}) Get() ({{ .TypesReturn }}) {
 // Panics if the underlying [Filter{{ .Index }}] was not prepared for relations
 // using [Filter{{ .Index }}.WithRelation].
 func (q *Query{{ .Index }}{{ .Types }}) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }

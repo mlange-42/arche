@@ -113,9 +113,9 @@ func (f *Filter0) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 func (f *Filter0) Query(w *ecs.World, target ...ecs.Entity) Query0 {
 	filter := f.Filter(w, target...)
 	return Query0{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
 	}
 }
 
@@ -152,8 +152,8 @@ func (f *Filter0) Unregister(w *ecs.World) {
 type Query0 struct {
 	ecs.Query
 
-	target    ecs.ID
-	hasTarget bool
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Relation returns the target entity for the query's relation.
@@ -162,10 +162,10 @@ type Query0 struct {
 // Panics if the underlying [Filter0] was not prepared for relations
 // using [Filter0.WithRelation].
 func (q *Query0) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -292,10 +292,10 @@ func (f *Filter1[A]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 func (f *Filter1[A]) Query(w *ecs.World, target ...ecs.Entity) Query1[A] {
 	filter := f.Filter(w, target...)
 	return Query1[A]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
 	}
 }
 
@@ -332,9 +332,9 @@ func (f *Filter1[A]) Unregister(w *ecs.World) {
 //	}
 type Query1[A any] struct {
 	ecs.Query
-	id0       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -350,10 +350,10 @@ func (q *Query1[A]) Get() *A {
 // Panics if the underlying [Filter1] was not prepared for relations
 // using [Filter1.WithRelation].
 func (q *Query1[A]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -481,11 +481,11 @@ func (f *Filter2[A, B]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
 func (f *Filter2[A, B]) Query(w *ecs.World, target ...ecs.Entity) Query2[A, B] {
 	filter := f.Filter(w, target...)
 	return Query2[A, B]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
 	}
 }
 
@@ -522,10 +522,10 @@ func (f *Filter2[A, B]) Unregister(w *ecs.World) {
 //	}
 type Query2[A any, B any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -542,10 +542,10 @@ func (q *Query2[A, B]) Get() (*A, *B) {
 // Panics if the underlying [Filter2] was not prepared for relations
 // using [Filter2.WithRelation].
 func (q *Query2[A, B]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -674,12 +674,12 @@ func (f *Filter3[A, B, C]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter
 func (f *Filter3[A, B, C]) Query(w *ecs.World, target ...ecs.Entity) Query3[A, B, C] {
 	filter := f.Filter(w, target...)
 	return Query3[A, B, C]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
 	}
 }
 
@@ -716,11 +716,11 @@ func (f *Filter3[A, B, C]) Unregister(w *ecs.World) {
 //	}
 type Query3[A any, B any, C any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -738,10 +738,10 @@ func (q *Query3[A, B, C]) Get() (*A, *B, *C) {
 // Panics if the underlying [Filter3] was not prepared for relations
 // using [Filter3.WithRelation].
 func (q *Query3[A, B, C]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -871,13 +871,13 @@ func (f *Filter4[A, B, C, D]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Fil
 func (f *Filter4[A, B, C, D]) Query(w *ecs.World, target ...ecs.Entity) Query4[A, B, C, D] {
 	filter := f.Filter(w, target...)
 	return Query4[A, B, C, D]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
-		id3:       f.compiled.Ids[3],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
+		id3:         f.compiled.Ids[3],
 	}
 }
 
@@ -914,12 +914,12 @@ func (f *Filter4[A, B, C, D]) Unregister(w *ecs.World) {
 //	}
 type Query4[A any, B any, C any, D any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	id3       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	id3         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -938,10 +938,10 @@ func (q *Query4[A, B, C, D]) Get() (*A, *B, *C, *D) {
 // Panics if the underlying [Filter4] was not prepared for relations
 // using [Filter4.WithRelation].
 func (q *Query4[A, B, C, D]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1072,14 +1072,14 @@ func (f *Filter5[A, B, C, D, E]) Filter(w *ecs.World, target ...ecs.Entity) ecs.
 func (f *Filter5[A, B, C, D, E]) Query(w *ecs.World, target ...ecs.Entity) Query5[A, B, C, D, E] {
 	filter := f.Filter(w, target...)
 	return Query5[A, B, C, D, E]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
-		id3:       f.compiled.Ids[3],
-		id4:       f.compiled.Ids[4],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
+		id3:         f.compiled.Ids[3],
+		id4:         f.compiled.Ids[4],
 	}
 }
 
@@ -1116,13 +1116,13 @@ func (f *Filter5[A, B, C, D, E]) Unregister(w *ecs.World) {
 //	}
 type Query5[A any, B any, C any, D any, E any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	id3       ecs.ID
-	id4       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	id3         ecs.ID
+	id4         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -1142,10 +1142,10 @@ func (q *Query5[A, B, C, D, E]) Get() (*A, *B, *C, *D, *E) {
 // Panics if the underlying [Filter5] was not prepared for relations
 // using [Filter5.WithRelation].
 func (q *Query5[A, B, C, D, E]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1277,15 +1277,15 @@ func (f *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World, target ...ecs.Entity) e
 func (f *Filter6[A, B, C, D, E, F]) Query(w *ecs.World, target ...ecs.Entity) Query6[A, B, C, D, E, F] {
 	filter := f.Filter(w, target...)
 	return Query6[A, B, C, D, E, F]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
-		id3:       f.compiled.Ids[3],
-		id4:       f.compiled.Ids[4],
-		id5:       f.compiled.Ids[5],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
+		id3:         f.compiled.Ids[3],
+		id4:         f.compiled.Ids[4],
+		id5:         f.compiled.Ids[5],
 	}
 }
 
@@ -1322,14 +1322,14 @@ func (f *Filter6[A, B, C, D, E, F]) Unregister(w *ecs.World) {
 //	}
 type Query6[A any, B any, C any, D any, E any, F any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	id3       ecs.ID
-	id4       ecs.ID
-	id5       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	id3         ecs.ID
+	id4         ecs.ID
+	id5         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -1350,10 +1350,10 @@ func (q *Query6[A, B, C, D, E, F]) Get() (*A, *B, *C, *D, *E, *F) {
 // Panics if the underlying [Filter6] was not prepared for relations
 // using [Filter6.WithRelation].
 func (q *Query6[A, B, C, D, E, F]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1486,16 +1486,16 @@ func (f *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World, target ...ecs.Entity
 func (f *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World, target ...ecs.Entity) Query7[A, B, C, D, E, F, G] {
 	filter := f.Filter(w, target...)
 	return Query7[A, B, C, D, E, F, G]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
-		id3:       f.compiled.Ids[3],
-		id4:       f.compiled.Ids[4],
-		id5:       f.compiled.Ids[5],
-		id6:       f.compiled.Ids[6],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
+		id3:         f.compiled.Ids[3],
+		id4:         f.compiled.Ids[4],
+		id5:         f.compiled.Ids[5],
+		id6:         f.compiled.Ids[6],
 	}
 }
 
@@ -1532,15 +1532,15 @@ func (f *Filter7[A, B, C, D, E, F, G]) Unregister(w *ecs.World) {
 //	}
 type Query7[A any, B any, C any, D any, E any, F any, G any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	id3       ecs.ID
-	id4       ecs.ID
-	id5       ecs.ID
-	id6       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	id3         ecs.ID
+	id4         ecs.ID
+	id5         ecs.ID
+	id6         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -1562,10 +1562,10 @@ func (q *Query7[A, B, C, D, E, F, G]) Get() (*A, *B, *C, *D, *E, *F, *G) {
 // Panics if the underlying [Filter7] was not prepared for relations
 // using [Filter7.WithRelation].
 func (q *Query7[A, B, C, D, E, F, G]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1699,17 +1699,17 @@ func (f *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World, target ...ecs.Ent
 func (f *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World, target ...ecs.Entity) Query8[A, B, C, D, E, F, G, H] {
 	filter := f.Filter(w, target...)
 	return Query8[A, B, C, D, E, F, G, H]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
-		id3:       f.compiled.Ids[3],
-		id4:       f.compiled.Ids[4],
-		id5:       f.compiled.Ids[5],
-		id6:       f.compiled.Ids[6],
-		id7:       f.compiled.Ids[7],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
+		id3:         f.compiled.Ids[3],
+		id4:         f.compiled.Ids[4],
+		id5:         f.compiled.Ids[5],
+		id6:         f.compiled.Ids[6],
+		id7:         f.compiled.Ids[7],
 	}
 }
 
@@ -1746,16 +1746,16 @@ func (f *Filter8[A, B, C, D, E, F, G, H]) Unregister(w *ecs.World) {
 //	}
 type Query8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	id3       ecs.ID
-	id4       ecs.ID
-	id5       ecs.ID
-	id6       ecs.ID
-	id7       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	id3         ecs.ID
+	id4         ecs.ID
+	id5         ecs.ID
+	id6         ecs.ID
+	id7         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -1778,10 +1778,10 @@ func (q *Query8[A, B, C, D, E, F, G, H]) Get() (*A, *B, *C, *D, *E, *F, *G, *H) 
 // Panics if the underlying [Filter8] was not prepared for relations
 // using [Filter8.WithRelation].
 func (q *Query8[A, B, C, D, E, F, G, H]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -1916,18 +1916,18 @@ func (f *Filter9[A, B, C, D, E, F, G, H, I]) Filter(w *ecs.World, target ...ecs.
 func (f *Filter9[A, B, C, D, E, F, G, H, I]) Query(w *ecs.World, target ...ecs.Entity) Query9[A, B, C, D, E, F, G, H, I] {
 	filter := f.Filter(w, target...)
 	return Query9[A, B, C, D, E, F, G, H, I]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
-		id3:       f.compiled.Ids[3],
-		id4:       f.compiled.Ids[4],
-		id5:       f.compiled.Ids[5],
-		id6:       f.compiled.Ids[6],
-		id7:       f.compiled.Ids[7],
-		id8:       f.compiled.Ids[8],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
+		id3:         f.compiled.Ids[3],
+		id4:         f.compiled.Ids[4],
+		id5:         f.compiled.Ids[5],
+		id6:         f.compiled.Ids[6],
+		id7:         f.compiled.Ids[7],
+		id8:         f.compiled.Ids[8],
 	}
 }
 
@@ -1964,17 +1964,17 @@ func (f *Filter9[A, B, C, D, E, F, G, H, I]) Unregister(w *ecs.World) {
 //	}
 type Query9[A any, B any, C any, D any, E any, F any, G any, H any, I any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	id3       ecs.ID
-	id4       ecs.ID
-	id5       ecs.ID
-	id6       ecs.ID
-	id7       ecs.ID
-	id8       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	id3         ecs.ID
+	id4         ecs.ID
+	id5         ecs.ID
+	id6         ecs.ID
+	id7         ecs.ID
+	id8         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -1998,10 +1998,10 @@ func (q *Query9[A, B, C, D, E, F, G, H, I]) Get() (*A, *B, *C, *D, *E, *F, *G, *
 // Panics if the underlying [Filter9] was not prepared for relations
 // using [Filter9.WithRelation].
 func (q *Query9[A, B, C, D, E, F, G, H, I]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2137,19 +2137,19 @@ func (f *Filter10[A, B, C, D, E, F, G, H, I, J]) Filter(w *ecs.World, target ...
 func (f *Filter10[A, B, C, D, E, F, G, H, I, J]) Query(w *ecs.World, target ...ecs.Entity) Query10[A, B, C, D, E, F, G, H, I, J] {
 	filter := f.Filter(w, target...)
 	return Query10[A, B, C, D, E, F, G, H, I, J]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
-		id3:       f.compiled.Ids[3],
-		id4:       f.compiled.Ids[4],
-		id5:       f.compiled.Ids[5],
-		id6:       f.compiled.Ids[6],
-		id7:       f.compiled.Ids[7],
-		id8:       f.compiled.Ids[8],
-		id9:       f.compiled.Ids[9],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
+		id3:         f.compiled.Ids[3],
+		id4:         f.compiled.Ids[4],
+		id5:         f.compiled.Ids[5],
+		id6:         f.compiled.Ids[6],
+		id7:         f.compiled.Ids[7],
+		id8:         f.compiled.Ids[8],
+		id9:         f.compiled.Ids[9],
 	}
 }
 
@@ -2186,18 +2186,18 @@ func (f *Filter10[A, B, C, D, E, F, G, H, I, J]) Unregister(w *ecs.World) {
 //	}
 type Query10[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	id3       ecs.ID
-	id4       ecs.ID
-	id5       ecs.ID
-	id6       ecs.ID
-	id7       ecs.ID
-	id8       ecs.ID
-	id9       ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	id3         ecs.ID
+	id4         ecs.ID
+	id5         ecs.ID
+	id6         ecs.ID
+	id7         ecs.ID
+	id8         ecs.ID
+	id9         ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -2222,10 +2222,10 @@ func (q *Query10[A, B, C, D, E, F, G, H, I, J]) Get() (*A, *B, *C, *D, *E, *F, *
 // Panics if the underlying [Filter10] was not prepared for relations
 // using [Filter10.WithRelation].
 func (q *Query10[A, B, C, D, E, F, G, H, I, J]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2362,20 +2362,20 @@ func (f *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Filter(w *ecs.World, target 
 func (f *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Query(w *ecs.World, target ...ecs.Entity) Query11[A, B, C, D, E, F, G, H, I, J, K] {
 	filter := f.Filter(w, target...)
 	return Query11[A, B, C, D, E, F, G, H, I, J, K]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
-		id3:       f.compiled.Ids[3],
-		id4:       f.compiled.Ids[4],
-		id5:       f.compiled.Ids[5],
-		id6:       f.compiled.Ids[6],
-		id7:       f.compiled.Ids[7],
-		id8:       f.compiled.Ids[8],
-		id9:       f.compiled.Ids[9],
-		id10:      f.compiled.Ids[10],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
+		id3:         f.compiled.Ids[3],
+		id4:         f.compiled.Ids[4],
+		id5:         f.compiled.Ids[5],
+		id6:         f.compiled.Ids[6],
+		id7:         f.compiled.Ids[7],
+		id8:         f.compiled.Ids[8],
+		id9:         f.compiled.Ids[9],
+		id10:        f.compiled.Ids[10],
 	}
 }
 
@@ -2412,19 +2412,19 @@ func (f *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Unregister(w *ecs.World) {
 //	}
 type Query11[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	id3       ecs.ID
-	id4       ecs.ID
-	id5       ecs.ID
-	id6       ecs.ID
-	id7       ecs.ID
-	id8       ecs.ID
-	id9       ecs.ID
-	id10      ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	id3         ecs.ID
+	id4         ecs.ID
+	id5         ecs.ID
+	id6         ecs.ID
+	id7         ecs.ID
+	id8         ecs.ID
+	id9         ecs.ID
+	id10        ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -2450,10 +2450,10 @@ func (q *Query11[A, B, C, D, E, F, G, H, I, J, K]) Get() (*A, *B, *C, *D, *E, *F
 // Panics if the underlying [Filter11] was not prepared for relations
 // using [Filter11.WithRelation].
 func (q *Query11[A, B, C, D, E, F, G, H, I, J, K]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -2591,21 +2591,21 @@ func (f *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Filter(w *ecs.World, targ
 func (f *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Query(w *ecs.World, target ...ecs.Entity) Query12[A, B, C, D, E, F, G, H, I, J, K, L] {
 	filter := f.Filter(w, target...)
 	return Query12[A, B, C, D, E, F, G, H, I, J, K, L]{
-		Query:     w.Query(filter),
-		target:    f.compiled.TargetComp,
-		hasTarget: f.compiled.HasTarget,
-		id0:       f.compiled.Ids[0],
-		id1:       f.compiled.Ids[1],
-		id2:       f.compiled.Ids[2],
-		id3:       f.compiled.Ids[3],
-		id4:       f.compiled.Ids[4],
-		id5:       f.compiled.Ids[5],
-		id6:       f.compiled.Ids[6],
-		id7:       f.compiled.Ids[7],
-		id8:       f.compiled.Ids[8],
-		id9:       f.compiled.Ids[9],
-		id10:      f.compiled.Ids[10],
-		id11:      f.compiled.Ids[11],
+		Query:       w.Query(filter),
+		relation:    f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
+		id0:         f.compiled.Ids[0],
+		id1:         f.compiled.Ids[1],
+		id2:         f.compiled.Ids[2],
+		id3:         f.compiled.Ids[3],
+		id4:         f.compiled.Ids[4],
+		id5:         f.compiled.Ids[5],
+		id6:         f.compiled.Ids[6],
+		id7:         f.compiled.Ids[7],
+		id8:         f.compiled.Ids[8],
+		id9:         f.compiled.Ids[9],
+		id10:        f.compiled.Ids[10],
+		id11:        f.compiled.Ids[11],
 	}
 }
 
@@ -2642,20 +2642,20 @@ func (f *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Unregister(w *ecs.World) 
 //	}
 type Query12[A any, B any, C any, D any, E any, F any, G any, H any, I any, J any, K any, L any] struct {
 	ecs.Query
-	id0       ecs.ID
-	id1       ecs.ID
-	id2       ecs.ID
-	id3       ecs.ID
-	id4       ecs.ID
-	id5       ecs.ID
-	id6       ecs.ID
-	id7       ecs.ID
-	id8       ecs.ID
-	id9       ecs.ID
-	id10      ecs.ID
-	id11      ecs.ID
-	target    ecs.ID
-	hasTarget bool
+	id0         ecs.ID
+	id1         ecs.ID
+	id2         ecs.ID
+	id3         ecs.ID
+	id4         ecs.ID
+	id5         ecs.ID
+	id6         ecs.ID
+	id7         ecs.ID
+	id8         ecs.ID
+	id9         ecs.ID
+	id10        ecs.ID
+	id11        ecs.ID
+	relation    ecs.ID
+	hasRelation bool
 }
 
 // Get returns all queried components for the current query iterator position.
@@ -2682,8 +2682,8 @@ func (q *Query12[A, B, C, D, E, F, G, H, I, J, K, L]) Get() (*A, *B, *C, *D, *E,
 // Panics if the underlying [Filter12] was not prepared for relations
 // using [Filter12.WithRelation].
 func (q *Query12[A, B, C, D, E, F, G, H, I, J, K, L]) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }

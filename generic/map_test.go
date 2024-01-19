@@ -77,7 +77,10 @@ func TestGenericMapBatchRelations(t *testing.T) {
 	filter = NewFilter2[testRelationA, Position]().Filter(&w, targ1)
 	query := get.SetRelationBatchQ(filter, targ2)
 	assert.Equal(t, 10, query.Count())
-	query.Close()
+
+	for query.Next() {
+		assert.Equal(t, targ2, query.Relation())
+	}
 }
 
 func ExampleMap() {

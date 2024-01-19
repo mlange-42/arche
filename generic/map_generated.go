@@ -95,6 +95,9 @@ func (m *Map1[A]) NewBatchQ(count int, target ...ecs.Entity) Query1[A] {
 	return Query1[A]{
 		Query: query,
 		id0:   m.id0,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -164,6 +167,9 @@ func (m *Map1[A]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query1[A] {
 	return Query1[A]{
 		Query: query,
 		id0:   m.id0,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -225,7 +231,9 @@ func (m *Map1[A]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query0 {
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -339,6 +347,9 @@ func (m *Map2[A, B]) NewBatchQ(count int, target ...ecs.Entity) Query2[A, B] {
 		Query: query,
 		id0:   m.id0,
 		id1:   m.id1,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -413,6 +424,9 @@ func (m *Map2[A, B]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query2[A
 		Query: query,
 		id0:   m.id0,
 		id1:   m.id1,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -475,7 +489,9 @@ func (m *Map2[A, B]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Query
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -594,6 +610,9 @@ func (m *Map3[A, B, C]) NewBatchQ(count int, target ...ecs.Entity) Query3[A, B, 
 		id0:   m.id0,
 		id1:   m.id1,
 		id2:   m.id2,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -671,6 +690,9 @@ func (m *Map3[A, B, C]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query
 		id0:   m.id0,
 		id1:   m.id1,
 		id2:   m.id2,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -734,7 +756,9 @@ func (m *Map3[A, B, C]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity) Qu
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -858,6 +882,9 @@ func (m *Map4[A, B, C, D]) NewBatchQ(count int, target ...ecs.Entity) Query4[A, 
 		id1:   m.id1,
 		id2:   m.id2,
 		id3:   m.id3,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -938,6 +965,9 @@ func (m *Map4[A, B, C, D]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Qu
 		id1:   m.id1,
 		id2:   m.id2,
 		id3:   m.id3,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1002,7 +1032,9 @@ func (m *Map4[A, B, C, D]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Entity)
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1131,6 +1163,9 @@ func (m *Map5[A, B, C, D, E]) NewBatchQ(count int, target ...ecs.Entity) Query5[
 		id2:   m.id2,
 		id3:   m.id3,
 		id4:   m.id4,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1214,6 +1249,9 @@ func (m *Map5[A, B, C, D, E]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity)
 		id2:   m.id2,
 		id3:   m.id3,
 		id4:   m.id4,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1279,7 +1317,9 @@ func (m *Map5[A, B, C, D, E]) RemoveBatchQ(filter ecs.Filter, target ...ecs.Enti
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1413,6 +1453,9 @@ func (m *Map6[A, B, C, D, E, F]) NewBatchQ(count int, target ...ecs.Entity) Quer
 		id3:   m.id3,
 		id4:   m.id4,
 		id5:   m.id5,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1499,6 +1542,9 @@ func (m *Map6[A, B, C, D, E, F]) AddBatchQ(filter ecs.Filter, target ...ecs.Enti
 		id3:   m.id3,
 		id4:   m.id4,
 		id5:   m.id5,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1565,7 +1611,9 @@ func (m *Map6[A, B, C, D, E, F]) RemoveBatchQ(filter ecs.Filter, target ...ecs.E
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1704,6 +1752,9 @@ func (m *Map7[A, B, C, D, E, F, G]) NewBatchQ(count int, target ...ecs.Entity) Q
 		id4:   m.id4,
 		id5:   m.id5,
 		id6:   m.id6,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1793,6 +1844,9 @@ func (m *Map7[A, B, C, D, E, F, G]) AddBatchQ(filter ecs.Filter, target ...ecs.E
 		id4:   m.id4,
 		id5:   m.id5,
 		id6:   m.id6,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -1860,7 +1914,9 @@ func (m *Map7[A, B, C, D, E, F, G]) RemoveBatchQ(filter ecs.Filter, target ...ec
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2004,6 +2060,9 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewBatchQ(count int, target ...ecs.Entity
 		id5:   m.id5,
 		id6:   m.id6,
 		id7:   m.id7,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2096,6 +2155,9 @@ func (m *Map8[A, B, C, D, E, F, G, H]) AddBatchQ(filter ecs.Filter, target ...ec
 		id5:   m.id5,
 		id6:   m.id6,
 		id7:   m.id7,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2164,7 +2226,9 @@ func (m *Map8[A, B, C, D, E, F, G, H]) RemoveBatchQ(filter ecs.Filter, target ..
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2313,6 +2377,9 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) NewBatchQ(count int, target ...ecs.Ent
 		id6:   m.id6,
 		id7:   m.id7,
 		id8:   m.id8,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2408,6 +2475,9 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) AddBatchQ(filter ecs.Filter, target ..
 		id6:   m.id6,
 		id7:   m.id7,
 		id8:   m.id8,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2477,7 +2547,9 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveBatchQ(filter ecs.Filter, target
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2631,6 +2703,9 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewBatchQ(count int, target ...ecs
 		id7:   m.id7,
 		id8:   m.id8,
 		id9:   m.id9,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2729,6 +2804,9 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) AddBatchQ(filter ecs.Filter, targe
 		id7:   m.id7,
 		id8:   m.id8,
 		id9:   m.id9,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2799,7 +2877,9 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveBatchQ(filter ecs.Filter, ta
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -2958,6 +3038,9 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewBatchQ(count int, target ...
 		id8:   m.id8,
 		id9:   m.id9,
 		id10:  m.id10,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -3059,6 +3142,9 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) AddBatchQ(filter ecs.Filter, ta
 		id8:   m.id8,
 		id9:   m.id9,
 		id10:  m.id10,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -3130,7 +3216,9 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveBatchQ(filter ecs.Filter,
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -3294,6 +3382,9 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewBatchQ(count int, target 
 		id9:   m.id9,
 		id10:  m.id10,
 		id11:  m.id11,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -3398,6 +3489,9 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) AddBatchQ(filter ecs.Filter,
 		id9:   m.id9,
 		id10:  m.id10,
 		id11:  m.id11,
+
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 
@@ -3470,7 +3564,9 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveBatchQ(filter ecs.Filt
 		query = m.world.Batch().ExchangeQ(filter, nil, m.ids)
 	}
 	return Query0{
-		Query: query,
+		Query:       query,
+		hasRelation: m.hasRelation,
+		relation:    m.relation,
 	}
 }
 

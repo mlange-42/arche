@@ -127,7 +127,9 @@ func (m *Map[T]) SetRelationBatch(filter ecs.Filter, target ecs.Entity) {
 func (m *Map[T]) SetRelationBatchQ(filter ecs.Filter, target ecs.Entity) Query1[T] {
 	query := m.world.Batch().SetRelationQ(filter, m.id, target)
 	return Query1[T]{
-		Query: query,
-		id0:   m.id,
+		Query:       query,
+		id0:         m.id,
+		hasRelation: true,
+		relation:    m.id,
 	}
 }
