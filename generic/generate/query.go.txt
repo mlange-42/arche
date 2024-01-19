@@ -33,38 +33,38 @@ func NewFilter{{ .Index }}{{ .TypesFull }}() *Filter{{ .Index }}{{ .Types }} {
 // Create the required mask items with [T].
 //
 // Only affects component types that were specified in the query.
-func (q *Filter{{ .Index }}{{ .Types }}) Optional(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
-	if q.compiled.locked {
+func (f *Filter{{ .Index }}{{ .Types }}) Optional(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
+	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
-	q.optional = append(q.optional, mask...)
-	q.compiled.Reset()
-	return q
+	f.optional = append(f.optional, mask...)
+	f.compiled.Reset()
+	return f
 }
 {{ end }}
 
 // With adds components that are required, but not accessible via [Query{{ .Index }}.Get].
 //
 // Create the required mask items with [T].
-func (q *Filter{{ .Index }}{{ .Types }}) With(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
-	if q.compiled.locked {
+func (f *Filter{{ .Index }}{{ .Types }}) With(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
+	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
-	q.include = append(q.include, mask...)
-	q.compiled.Reset()
-	return q
+	f.include = append(f.include, mask...)
+	f.compiled.Reset()
+	return f
 }
 
 // Without excludes entities with any of the given components from the query.
 //
 // Create the required mask items with [T].
-func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
-	if q.compiled.locked {
+func (f *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index }}{{ .Types }} {
+	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
-	q.exclude = append(q.exclude, mask...)
-	q.compiled.Reset()
-	return q
+	f.exclude = append(f.exclude, mask...)
+	f.compiled.Reset()
+	return f
 }
 
 // WithRelation sets the filter's [ecs.Relation] component and optionally
@@ -74,17 +74,17 @@ func (q *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 // If the optional argument is provided, the filter's relation target is set permanently.
 //
 // Create the required component ID with [T].
-func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ...ecs.Entity) *Filter{{ .Index }}{{ .Types }} {
-	if q.compiled.locked {
+func (f *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ...ecs.Entity) *Filter{{ .Index }}{{ .Types }} {
+	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
-	q.targetType = comp
+	f.targetType = comp
 	if len(target) > 0 {
-		q.target = target[0]
-		q.hasTarget = true
+		f.target = target[0]
+		f.hasTarget = true
 	}
-	q.compiled.Reset()
-	return q
+	f.compiled.Reset()
+	return f
 }
 
 // Filter builds an [ecs.Filter], with an optional relation target.
@@ -95,20 +95,20 @@ func (q *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ...ecs.E
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
+func (f *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
 	
-	filter := q.compiled.filter
+	filter := f.compiled.filter
 	if len(target) > 0 {
-		if q.compiled.locked {
+		if f.compiled.locked {
 			panic("can't change relation target on a cached query")
 		}
-		if q.hasTarget {
+		if f.hasTarget {
 			panic("can't change relation target on a query with fixed target")
 		}
-		q.compiled.relationFilter.Filter = &q.compiled.maskFilter
-		q.compiled.relationFilter.Target = target[0]
-		filter = &q.compiled.relationFilter
+		f.compiled.relationFilter.Filter = &f.compiled.maskFilter
+		f.compiled.relationFilter.Target = target[0]
+		filter = &f.compiled.relationFilter
 	}
 
 	return filter
@@ -122,12 +122,12 @@ func (q *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World, target ...ecs.Enti
 //   - if the filter is registered for caching
 //
 // Panics in these cases.
-func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
-	filter := q.Filter(w, target...)
+func (f *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entity) Query{{ .Index }}{{ .Types }} {
+	filter := f.Filter(w, target...)
 	return Query{{ .Index }}{{ .Types }}{
 		Query: w.Query(filter),
-		target: q.compiled.TargetComp,
-		hasTarget: q.compiled.HasTarget,
+		relation: f.compiled.Relation,
+		hasRelation: f.compiled.HasRelation,
 		{{ .IDAssign }}
 	}
 }
@@ -135,16 +135,16 @@ func (q *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entit
 // Register the filter for caching.
 //
 // See [ecs.Cache] for details on filter caching.
-func (q *Filter{{ .Index }}{{ .Types }}) Register(w *ecs.World) {
-	q.compiled.Compile(w, q.include, q.optional, q.exclude, q.targetType, q.target, q.hasTarget)
-	q.compiled.Register(w)
+func (f *Filter{{ .Index }}{{ .Types }}) Register(w *ecs.World) {
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Register(w)
 }
 
 // Unregister the filter from caching.
 //
 // See [ecs.Cache] for details on filter caching.
-func (q *Filter{{ .Index }}{{ .Types }}) Unregister(w *ecs.World) {
-	q.compiled.Unregister(w)
+func (f *Filter{{ .Index }}{{ .Types }}) Unregister(w *ecs.World) {
+	f.compiled.Unregister(w)
 }
 
 // Query{{ .Index }} is a generic query iterator for {{ .NumberStr }} components.
@@ -166,8 +166,8 @@ func (q *Filter{{ .Index }}{{ .Types }}) Unregister(w *ecs.World) {
 type Query{{ .Index }}{{ .TypesFull }} struct {
 	ecs.Query
 	{{ .IDTypes }}
-	target ecs.ID
-	hasTarget bool
+	relation ecs.ID
+	hasRelation bool
 }
 
 {{if .ReturnAll}}
@@ -185,8 +185,8 @@ func (q *Query{{ .Index }}{{ .Types }}) Get() ({{ .TypesReturn }}) {
 // Panics if the underlying [Filter{{ .Index }}] was not prepared for relations
 // using [Filter{{ .Index }}.WithRelation].
 func (q *Query{{ .Index }}{{ .Types }}) Relation() ecs.Entity {
-	if !q.hasTarget {
+	if !q.hasRelation {
 		panic("query has no relation")
 	}
-	return q.Query.Relation(q.target)
+	return q.Query.Relation(q.relation)
 }

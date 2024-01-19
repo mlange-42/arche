@@ -61,6 +61,28 @@ func TestGenericMapRelations(t *testing.T) {
 	assert.Equal(t, targ, get.GetRelationUnchecked(e0))
 }
 
+func TestGenericMapBatchRelations(t *testing.T) {
+	w := ecs.NewWorld()
+	get := NewMap[testRelationA](&w)
+	genTarg := NewMap1[Position](&w)
+	gen := NewMap2[testRelationA, Position](&w)
+
+	targ1 := genTarg.New()
+	targ2 := genTarg.New()
+	gen.NewBatch(10)
+
+	filter := NewFilter2[testRelationA, Position]().Filter(&w)
+	get.SetRelationBatch(filter, targ1)
+
+	filter = NewFilter2[testRelationA, Position]().Filter(&w, targ1)
+	query := get.SetRelationBatchQ(filter, targ2)
+	assert.Equal(t, 10, query.Count())
+
+	for query.Next() {
+		assert.Equal(t, targ2, query.Relation())
+	}
+}
+
 func ExampleMap() {
 	// Create a world.
 	world := ecs.NewWorld()
