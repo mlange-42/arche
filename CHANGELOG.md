@@ -41,6 +41,10 @@ This change was necessary to get the same performance as before, despite the mor
 * Reduces archetype memory footprint by using a dynamically sized slice for storage lookup (#327)
 * Reduces event listener overhead through granular subscriptions and elimination of a heap allocation (#333, #334, #335, #337, #340)
 
+### Documentation
+
+* Adds an overview to packages `ecs` and `generic` on how to achieve ECS manipulation operations (#345)
+
 ### Other
 
 * Entity generation data type changed from `uint16` to `uint32` (#317)
