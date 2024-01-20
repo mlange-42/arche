@@ -150,7 +150,7 @@ func (m *Exchange) ExchangeBatch(filter ecs.Filter, target ...ecs.Entity) int {
 			panic("can't set target entity: Exchange has no relation")
 		}
 		return m.world.Relations().ExchangeBatch(filter, m.add, m.remove, m.relationID, target[0])
-	} else {
-		return m.world.Batch().Exchange(filter, m.add, m.remove)
 	}
+	return m.world.Batch().Exchange(filter, m.add, m.remove)
+
 }
