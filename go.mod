@@ -2,7 +2,7 @@ module github.com/mlange-42/arche
 
 go 1.21
 
-toolchain go1.21.3
+toolchain go1.21.6
 
 require github.com/stretchr/testify v1.8.2
 
