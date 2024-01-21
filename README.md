@@ -26,7 +26,7 @@
 * Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 * Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
 * Entity relations as first-class feature. See [Architecture](https://github.com/mlange-42/arche/blob/main/ARCHITECTURE.md#entity-relations).
-* World serialization and deserialization via [arche-serde](https://github.com/mlange-42/arche-serde).
+* World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
 * No systems. Just queries. Use your own structure (or the [Tools](#tools)).
 * No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
 * Probably the fastest Go ECS out there. See the [Benchmarks](#benchmarks).
@@ -129,13 +129,16 @@ Nevertheless, *Arche* can also be used for game development.
 
 The `ecs.World` object is a pure and simple ECS implementation in the sense of a data store
 for entities and components, with query and iteration capabilities.
-The core package `ecs` consists of only 2500 lines of easy-to-read, clean and well-documented Go code.
+More advanced features like batch operations or entity relations are provided through separate objects.
 
 There is neither an update loop nor systems.
 These should be implemented by the user.
 For a batteries-included implementation, see module [arche-model](https://github.com/mlange-42/arche-model).
 
-The packages [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) provide a layer around the core for richer and/or safer queries and manipulation. They are built on top of the `ecs` package, so they could also be implemented by a user.
+The packages [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter)
+and [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic)
+provide a layer around the core for richer resp. generic queries and manipulation.
+They are built on top of the `ecs` package, so they could also be implemented by a user.
 
 ### Determinism
 
@@ -148,7 +151,7 @@ However, given the same operations on the `ecs.World`, iteration order will alwa
 *Arche* puts an emphasis on safety and on avoiding undefined behavior.
 It panics on unexpected operations, like removing a dead entity,
 adding a component that is already present, or attempting to change a locked world.
-This may seem not idiomatic for Go.
+This may not seem idiomatic for Go.
 However, explicit error handling in performance hotspots is not an option.
 Neither is silent failure, given the scientific background.
 
@@ -231,4 +234,4 @@ Lange, M. (2023): Arche &ndash; An archetype-based Entity Component System for G
 
 ## License
 
-This project is distributed under the [MIT licence](./LICENSE).
+This project is distributed under the [MIT license](./LICENSE).
