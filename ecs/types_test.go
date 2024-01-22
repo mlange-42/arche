@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 type label struct{}
@@ -56,6 +58,10 @@ type withSlice struct {
 	Slice []int
 }
 
+type genericComp[T any] struct {
+	Value T
+}
+
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[Entity]()
 	printTypeSize[entityIndex]()
@@ -87,4 +93,26 @@ func printTypeSize[T any]() {
 func printTypeSizeName[T any](name string) {
 	tp := reflect.TypeOf((*T)(nil)).Elem()
 	fmt.Printf("%18s: %5d B\n", name, tp.Size())
+}
+
+func TestGenericComponents(t *testing.T) {
+	world := NewWorld()
+
+	id1 := ComponentID[genericComp[int]](&world)
+	id2 := ComponentID[genericComp[float32]](&world)
+
+	assert.NotEqual(t, id1, id2)
+
+	e1 := world.NewEntity(id1)
+	e2 := world.NewEntity(id2)
+	e3 := world.NewEntity(id1, id2)
+
+	assert.True(t, world.Has(e1, id1))
+	assert.False(t, world.Has(e1, id2))
+
+	assert.False(t, world.Has(e2, id1))
+	assert.True(t, world.Has(e2, id2))
+
+	assert.True(t, world.Has(e3, id1))
+	assert.True(t, world.Has(e3, id2))
 }
