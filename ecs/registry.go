@@ -73,7 +73,7 @@ func (r *componentRegistry) unregisterLastComponent() {
 }
 
 func (r *componentRegistry) isRelation(tp reflect.Type) bool {
-	if tp.NumField() == 0 {
+	if tp.Kind() != reflect.Struct || tp.NumField() == 0 {
 		return false
 	}
 	field := tp.Field(0)
