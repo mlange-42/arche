@@ -55,7 +55,7 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 			panic(fmt.Sprintf("relation component %v not in filter", targetType))
 		}
 		isRelation := false
-		if targetType.NumField() > 0 {
+		if targetType.Kind() == reflect.Struct && targetType.NumField() > 0 {
 			field := targetType.Field(0)
 			isRelation = field.Type == relationType && field.Name == relationType.Name()
 		}

@@ -1,5 +1,16 @@
 # Changelog
 
+## [[v0.10.1]](https://github.com/mlange-42/arche/compare/v0.10.0...v0.10.1)
+
+### Bugfixes
+
+* Fix IsRelation check to allow for non-struct components, like type aliases (#354)
+
+### Other
+
+* Repository [arche-demo](https://github.com/mlange-42/arche-demo) provides a [live demo](https://mlange-42.github.io/arche-demo/)
+of several models built with Arche.
+
 ## [[v0.10.0]](https://github.com/mlange-42/arche/compare/v0.9.0...v0.10.0)
 
 ### Highlights
