@@ -66,7 +66,10 @@ type callbackComp1 struct {
 	Callback func(a, b float64) float64
 }
 
-type callbackComp2 = func(a, b float64) float64
+type callbackComp2 func(a, b float64) float64
+
+type compTypeAlias = int
+type compTypeDef int
 
 func TestTypeSizes(t *testing.T) {
 	printTypeSize[Entity]()
@@ -155,4 +158,16 @@ func TestCallbackComponents(t *testing.T) {
 	assert.Equal(t, 3.0, c1.Callback(2, 1))
 	assert.Equal(t, 1.0, c2.Callback(2, 1))
 	assert.Equal(t, 6.0, (*c3)(2, 3))
+}
+
+func TestAliasComponents(t *testing.T) {
+	world := NewWorld()
+
+	idInt := ComponentID[int](&world)
+	idAlias := ComponentID[compTypeAlias](&world)
+	idDef := ComponentID[compTypeDef](&world)
+
+	assert.Equal(t, idInt, idAlias)
+	assert.NotEqual(t, idInt, idDef)
+	assert.NotEqual(t, idAlias, idDef)
 }
