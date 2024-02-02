@@ -111,11 +111,14 @@ func (q *Query) Entity() Entity {
 // It is recommended to use a filter which is registered via the [World.Cache],
 // This increases performance at least by factor 4.
 //
-// Some numbers for comparison:
+// Some numbers for comparison, with given number of archetypes in the query:
 //   - 1 archetype, filter not registered: ≈ 11ns
 //   - 1 archetype, filter registered: ≈ 3ns
 //   - 10 archetypes, filter not registered: ≈ 50ns
 //   - 10 archetypes, filter registered: ≈ 10ns
+//
+// The total number of archetypes in the world has no performance impact for registered filters,
+// while for filters that are not registered, it has.
 //
 // Panics if the index is out of range, as indicated by [Query.Count].
 func (q *Query) EntityAt(index int) Entity {
