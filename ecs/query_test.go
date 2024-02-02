@@ -1,6 +1,7 @@
 package ecs
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -465,7 +466,7 @@ func TestQueryEntityAt(t *testing.T) {
 
 	rotID := ComponentID[rotation](&world)
 	posID := ComponentID[Position](&world)
-	velID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
 	relID := ComponentID[relationComp](&world)
 
 	bPos := NewBuilder(&world, rotID, posID)
@@ -479,8 +480,8 @@ func TestQueryEntityAt(t *testing.T) {
 
 	bPos.NewBatch(10)
 	bPosVelRel.NewBatch(10, parent2)
-	bVelRel.NewBatch(10, parent1)
 	bPosRel.NewBatch(10, parent1)
+	bVelRel.NewBatch(10, parent1)
 	bRel.NewBatch(10)
 
 	query := world.Query(All())
@@ -508,13 +509,139 @@ func TestQueryEntityAt(t *testing.T) {
 	query.Close()
 
 	query = world.Batch().ExchangeQ(All(posID), nil, []ID{posID})
-	assert.Equal(t, 20, query.Count())
-	/*
-		for i := 0; i < 20; i++ {
-			fmt.Println(query.EntityAt(i))
-			assert.Equal(t, Entity{eid(i + 3), 0}, query.EntityAt(i))
-		}
-		assert.Panics(t, func() { query.EntityAt(20) })
-	*/
+	assert.Equal(t, 30, query.Count())
+
+	for i := 0; i < 30; i++ {
+		assert.Equal(t, Entity{eid(i + 3), 0}, query.EntityAt(i))
+	}
+	assert.Panics(t, func() { query.EntityAt(30) })
 	query.Close()
+
+	f := All(relID)
+	filter := world.Cache().Register(f)
+	query = world.Query(&filter)
+	assert.Equal(t, 40, query.Count())
+	for i := 0; i < 40; i++ {
+		assert.Equal(t, (i+3)%10, int(query.EntityAt(i).id)%10)
+	}
+	assert.Panics(t, func() { query.EntityAt(40) })
+	query.Close()
+}
+
+func BenchmarkQueryEntityAt_1Arch_1000(b *testing.B) {
+	b.StopTimer()
+	w := NewWorld()
+	posID := ComponentID[Position](&w)
+	builder := NewBuilder(&w, posID)
+	builder.NewBatch(1000)
+
+	indices := make([]int, 1000)
+	for i := range indices {
+		indices[i] = rand.Intn(1000)
+	}
+
+	query := w.Query(All(posID))
+	b.StartTimer()
+	var e Entity
+	for i := 0; i < b.N; i++ {
+		for _, idx := range indices {
+			e = query.EntityAt(idx)
+		}
+	}
+	_ = e
+}
+
+func BenchmarkQueryEntityAt_1Arch_1000_Registered(b *testing.B) {
+	b.StopTimer()
+	w := NewWorld()
+	posID := ComponentID[Position](&w)
+	builder := NewBuilder(&w, posID)
+	builder.NewBatch(1000)
+
+	indices := make([]int, 1000)
+	for i := range indices {
+		indices[i] = rand.Intn(1000)
+	}
+
+	f := All(posID)
+	filter := w.Cache().Register(f)
+	query := w.Query(&filter)
+	b.StartTimer()
+	var e Entity
+	for i := 0; i < b.N; i++ {
+		for _, idx := range indices {
+			e = query.EntityAt(idx)
+		}
+	}
+	_ = e
+}
+
+func BenchmarkQueryEntityAt_10Arch_1000(b *testing.B) {
+	b.StopTimer()
+	w := NewWorld()
+	id1 := ComponentID[testStruct0](&w)
+	id2 := ComponentID[testStruct1](&w)
+	id3 := ComponentID[testStruct2](&w)
+	id4 := ComponentID[testStruct3](&w)
+
+	comps := [][]ID{
+		{id1}, {id2}, {id3}, {id4},
+		{id1, id2}, {id1, id3}, {id1, id4},
+		{id2, id3}, {id2, id4}, {id3, id4},
+	}
+	for _, c := range comps {
+		b := NewBuilder(&w, c...)
+		b.NewBatch(100)
+	}
+
+	indices := make([]int, 1000)
+	for i := range indices {
+		indices[i] = rand.Intn(1000)
+	}
+
+	query := w.Query(All())
+	b.StartTimer()
+	var e Entity
+	for i := 0; i < b.N; i++ {
+		for _, idx := range indices {
+			e = query.EntityAt(idx)
+		}
+	}
+	_ = e
+}
+
+func BenchmarkQueryEntityAt_10Arch_1000_Registered(b *testing.B) {
+	b.StopTimer()
+	w := NewWorld()
+	id1 := ComponentID[testStruct0](&w)
+	id2 := ComponentID[testStruct1](&w)
+	id3 := ComponentID[testStruct2](&w)
+	id4 := ComponentID[testStruct3](&w)
+
+	comps := [][]ID{
+		{id1}, {id2}, {id3}, {id4},
+		{id1, id2}, {id1, id3}, {id1, id4},
+		{id2, id3}, {id2, id4}, {id3, id4},
+	}
+	for _, c := range comps {
+		b := NewBuilder(&w, c...)
+		b.NewBatch(100)
+	}
+
+	indices := make([]int, 1000)
+	for i := range indices {
+		indices[i] = rand.Intn(1000)
+	}
+
+	f := All()
+	filter := w.Cache().Register(f)
+	query := w.Query(&filter)
+	b.StartTimer()
+	var e Entity
+	for i := 0; i < b.N; i++ {
+		for _, idx := range indices {
+			e = query.EntityAt(idx)
+		}
+	}
+	_ = e
 }

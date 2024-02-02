@@ -2,6 +2,7 @@ package ecs_test
 
 import (
 	"fmt"
+	"math/rand"
 
 	"github.com/mlange-42/arche/ecs"
 )
@@ -46,4 +47,39 @@ func ExampleQuery_Close() {
 
 	query.Close()
 	// Output: 1
+}
+
+func ExampleQuery_EntityAt() {
+	// Set up the world.
+	world := ecs.NewWorld()
+	posID := ecs.ComponentID[Position](&world)
+
+	// Create entities.
+	builder := ecs.NewBuilder(&world, posID)
+	builder.NewBatch(100)
+
+	// Create a random generator.
+	rng := rand.New(rand.NewSource(42))
+
+	// Register a filter (optional, but recommended).
+	filter := world.Cache().Register(ecs.All(posID))
+
+	// Query some entities.
+	query := world.Query(&filter)
+	// Get the number of entities in the query
+	cnt := query.Count()
+
+	// Sample some random entities.
+	for i := 0; i < 5; i++ {
+		randomEntity := query.EntityAt(rng.Intn(cnt))
+		fmt.Println(randomEntity)
+	}
+
+	// Close the query.
+	query.Close()
+	// Output: {6 0}
+	// {88 0}
+	// {69 0}
+	// {51 0}
+	// {24 0}
 }

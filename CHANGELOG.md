@@ -2,6 +2,10 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.10.1...main)
 
+### Features
+
+* Adds method `Query.EntityAt()`, useful for things like random sampling of entities (#358)
+
 ### Bugfixes
 
 * Prevents using the same component multiple times in any operations, through panic (#357)
