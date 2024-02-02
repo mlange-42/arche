@@ -1,5 +1,11 @@
 # Changelog
 
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.10.1...main)
+
+### Bugfixes
+
+* Prevents using the same component multiple times in any operations, through panic (#357)
+
 ## [[v0.10.1]](https://github.com/mlange-42/arche/compare/v0.10.0...v0.10.1)
 
 ### Bugfixes
