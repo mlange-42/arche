@@ -511,17 +511,17 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 
 // Modify a mask by adding and removing IDs.
 func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
-	for _, comp := range add {
-		if mask.Get(comp) {
-			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp.id]))
-		}
-		mask.Set(comp, true)
-	}
 	for _, comp := range rem {
 		if !mask.Get(comp) {
 			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp.id]))
 		}
 		mask.Set(comp, false)
+	}
+	for _, comp := range add {
+		if mask.Get(comp) {
+			panic(fmt.Sprintf("entity already has component of type %v, can't add", w.registry.Types[comp.id]))
+		}
+		mask.Set(comp, true)
 	}
 	return mask
 }
@@ -897,9 +897,11 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 	relation := start.RelationComponent
 	hasRelation := start.HasRelationComponent
 	for _, id := range rem {
-		if !mask.Get(id) {
-			panic(fmt.Sprintf("entity does not have a component of type %v, or it was removed twice", w.registry.Types[id.id]))
-		}
+		// Not required, as removing happens only via exchange,
+		// which calls getExchangeMask, which does the same check.
+		//if !mask.Get(id) {
+		//	panic(fmt.Sprintf("entity does not have a component of type %v, or it was removed twice", w.registry.Types[id.id]))
+		//}
 		mask.Set(id, false)
 		if w.registry.IsRelation.Get(id) {
 			relation = ID{}
