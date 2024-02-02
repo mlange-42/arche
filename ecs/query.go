@@ -147,10 +147,11 @@ func (q *Query) relationUnchecked(comp ID) Entity {
 }
 
 // Step advances the query iterator by the given number of entities.
+// Returns whether the query is still at a valid position.
+// Returning false indicates that the step exceeded the Query's entities.
+// The query is closed in this case.
 //
-// Query.Step(1) is equivalent to [Query.Next]().
-//
-// This method, used together with [Query.Count], can be useful for the selection of random entities.
+// Query.Step(1) is equivalent to [Query.Next](), although probably slower.
 func (q *Query) Step(step int) bool {
 	if step <= 0 {
 		panic("step size must be positive")

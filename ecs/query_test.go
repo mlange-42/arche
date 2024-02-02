@@ -317,6 +317,7 @@ func TestQueryStep(t *testing.T) {
 	q := w.Query(All(posID))
 	cnt := 0
 	for q.Next() {
+		assert.Equal(t, cnt+1, int(q.Entity().id))
 		cnt++
 	}
 	assert.Equal(t, 10, cnt)
