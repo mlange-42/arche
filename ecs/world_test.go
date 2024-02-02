@@ -553,6 +553,19 @@ func TestWorldGetComponents(t *testing.T) {
 	assert.True(t, pos2 == nil)
 }
 
+func TestWorldDuplicateComponents(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	//rotID := ComponentID[rotation](&w)
+
+	assert.Panics(t, func() { w.NewEntity(posID, posID) })
+
+	e := w.NewEntity(posID)
+	assert.Panics(t, func() { w.Remove(e, posID, posID) })
+	assert.Panics(t, func() { w.Exchange(e, []ID{posID}, []ID{posID}) })
+}
+
 func TestWorldIter(t *testing.T) {
 	world := NewWorld()
 
@@ -1566,8 +1579,7 @@ func TestArchetypeGraph(t *testing.T) {
 	assert.Equal(t, int32(2), world.archetypes.Len())
 	assert.Equal(t, int32(4), world.nodes.Len())
 
-	arch01 := world.findOrCreateArchetype(arch0, []ID{velID}, []ID{}, Entity{})
-	arch012 := world.findOrCreateArchetype(arch01, []ID{rotID}, []ID{}, Entity{})
+	arch012 := world.findOrCreateArchetype(arch0, []ID{rotID}, []ID{}, Entity{})
 
 	assert.Equal(t, []ID{id(0), id(1), id(2)}, arch012.node.Ids)
 
