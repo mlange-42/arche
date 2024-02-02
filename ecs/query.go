@@ -336,6 +336,7 @@ func (q *Query) countEntities() int {
 		for j = 0; j < nArch; j++ {
 			count += batch.EndIndex[j] - batch.StartIndex[j]
 		}
+		return int(count)
 	}
 
 	if q.isFiltered {
