@@ -101,6 +101,11 @@ func (q *Query) Entity() Entity {
 	return q.access.GetEntity(q.entityIndex)
 }
 
+// EntityAt returns the entity at a given index.
+func (q *Query) EntityAt(index int) Entity {
+	return q.entityAt(index)
+}
+
 // Relation returns the target entity for an entity relation.
 //
 // Panics if the entity does not have the given component, or if the component is not a [Relation].
@@ -379,4 +384,88 @@ func (q *Query) countEntities() int {
 		}
 	}
 	return int(count)
+}
+
+func (q *Query) entityAt(index int) Entity {
+	if index < 0 {
+		panic("can't get entity at negative index")
+	}
+	var count uint32 = 0
+	idx := uint32(index)
+
+	if q.isBatch {
+		batch := q.nodeArchetypes.(*batchArchetypes)
+		nArch := batch.Len()
+		var j int32
+		fmt.Println(batch.StartIndex, batch.EndIndex)
+		for j = 0; j < nArch; j++ {
+			ln := batch.EndIndex[j] - batch.StartIndex[j]
+			if idx < count+ln {
+				fmt.Println(batch.StartIndex[j], batch.EndIndex[j], batch.StartIndex[j]+idx-count)
+				return batch.Archetype[j].GetEntity(batch.StartIndex[j] + idx - count)
+			}
+			count += ln
+		}
+		panic(fmt.Sprintf("query index out of range: index %d, length %d", index, count))
+	}
+
+	if q.isFiltered {
+		ln := int32(len(q.archetypes))
+		var i int32
+		for i = 0; i < ln; i++ {
+			ln := q.archetypes[i].Len()
+			if idx < count+ln {
+				return q.archetypes[i].GetEntity(idx - count)
+			}
+			count += ln
+		}
+		panic(fmt.Sprintf("query index out of range: index %d, length %d", index, count))
+	}
+
+	for _, nd := range q.nodes {
+		if !nd.IsActive || !nd.Matches(q.filter) {
+			continue
+		}
+
+		if !nd.HasRelation {
+			// There should be at least one archetype.
+			// Otherwise, the node would be inactive.
+			arches := nd.Archetypes()
+			arch := arches.Get(0)
+
+			ln := arch.Len()
+			if idx < count+ln {
+				return arch.GetEntity(idx - count)
+			}
+			count += ln
+			continue
+		}
+
+		if rf, ok := q.filter.(*RelationFilter); ok {
+			target := rf.Target
+			if arch, ok := nd.archetypeMap[target]; ok {
+
+				ln := arch.Len()
+				if idx < count+ln {
+					return arch.GetEntity(idx - count)
+				}
+				count += ln
+			}
+			continue
+		}
+
+		arches := nd.Archetypes()
+		nArch := arches.Len()
+		var j int32
+		for j = 0; j < nArch; j++ {
+			arch := arches.Get(j)
+
+			ln := arch.Len()
+			if idx < count+ln {
+				return arch.GetEntity(idx - count)
+			}
+			count += ln
+		}
+	}
+	panic(fmt.Sprintf("query index out of range: index %d, length %d", index, count))
 }

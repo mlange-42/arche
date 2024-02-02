@@ -459,3 +459,62 @@ func TestQueryIds(t *testing.T) {
 	query.Next()
 	assert.Equal(t, query.Ids(), []ID{id(0), id(1)})
 }
+
+func TestQueryEntityAt(t *testing.T) {
+	world := NewWorld()
+
+	rotID := ComponentID[rotation](&world)
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Position](&world)
+	relID := ComponentID[relationComp](&world)
+
+	bPos := NewBuilder(&world, rotID, posID)
+	bPosVelRel := NewBuilder(&world, rotID, posID, velID, relID).WithRelation(relID)
+	bPosRel := NewBuilder(&world, rotID, posID, relID).WithRelation(relID)
+	bVelRel := NewBuilder(&world, rotID, velID, relID).WithRelation(relID)
+	bRel := NewBuilder(&world, rotID, relID).WithRelation(relID)
+
+	parent1 := world.NewEntity()
+	parent2 := world.NewEntity()
+
+	bPos.NewBatch(10)
+	bPosVelRel.NewBatch(10, parent2)
+	bVelRel.NewBatch(10, parent1)
+	bPosRel.NewBatch(10, parent1)
+	bRel.NewBatch(10)
+
+	query := world.Query(All())
+
+	assert.Panics(t, func() { query.EntityAt(-1) })
+	for i := 0; i < 52; i++ {
+		assert.Equal(t, Entity{eid(i + 1), 0}, query.EntityAt(i))
+	}
+	assert.Panics(t, func() { query.EntityAt(52) })
+	query.Close()
+
+	relFilter := NewRelationFilter(All(relID), parent2)
+	query = world.Query(&relFilter)
+	for i := 0; i < 10; i++ {
+		assert.Equal(t, Entity{eid(i + 13), 0}, query.EntityAt(i))
+	}
+	assert.Panics(t, func() { query.EntityAt(10) })
+	query.Close()
+
+	query = world.Query(All(relID))
+	for i := 0; i < 40; i++ {
+		assert.Equal(t, Entity{eid(i + 13), 0}, query.EntityAt(i))
+	}
+	assert.Panics(t, func() { query.EntityAt(40) })
+	query.Close()
+
+	query = world.Batch().ExchangeQ(All(posID), nil, []ID{posID})
+	assert.Equal(t, 20, query.Count())
+	/*
+		for i := 0; i < 20; i++ {
+			fmt.Println(query.EntityAt(i))
+			assert.Equal(t, Entity{eid(i + 3), 0}, query.EntityAt(i))
+		}
+		assert.Panics(t, func() { query.EntityAt(20) })
+	*/
+	query.Close()
+}
