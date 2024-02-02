@@ -897,6 +897,9 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 	relation := start.RelationComponent
 	hasRelation := start.HasRelationComponent
 	for _, id := range rem {
+		if !mask.Get(id) {
+			panic(fmt.Sprintf("entity does not have a component of type %v, or it was removed twice", w.registry.Types[id.id]))
+		}
 		mask.Set(id, false)
 		if w.registry.IsRelation.Get(id) {
 			relation = ID{}
@@ -912,6 +915,12 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 		}
 	}
 	for _, id := range add {
+		if mask.Get(id) {
+			panic(fmt.Sprintf("entity already has component of type %v, or it was added twice", w.registry.Types[id.id]))
+		}
+		if start.Mask.Get(id) {
+			panic(fmt.Sprintf("component of type %v added and removed in the same exchange operation", w.registry.Types[id.id]))
+		}
 		mask.Set(id, true)
 		if w.registry.IsRelation.Get(id) {
 			if hasRelation {
