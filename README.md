@@ -231,7 +231,7 @@ Note that the maximum shown here corresponds to only 25 MB of entity data!
 
 ## Cite as
 
-Lange, M. (2023): Arche &ndash; An archetype-based Entity Component System for Go. DOI [10.5281/zenodo.7656484](https://doi.org/10.5281/zenodo.10078135),  GitHub repository: https://github.com/mlange-42/arche
+Lange, M. (2023): Arche &ndash; An archetype-based Entity Component System for Go. DOI [10.5281/zenodo.7656484](https://doi.org/10.5281/zenodo.7656484),  GitHub repository: https://github.com/mlange-42/arche
 
 ## License
 
