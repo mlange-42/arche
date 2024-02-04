@@ -1,10 +1,9 @@
-// Demonstrates random sampling of a fixed number of entities from a query using Query.Step().
+// Demonstrates random sampling of a fixed number of entities from a query using Query.EntityAt().
 package main
 
 import (
 	"fmt"
 	"math/rand"
-	"sort"
 
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/generic"
@@ -21,31 +20,28 @@ func main() {
 
 	// Create a generic filter.
 	filter := generic.NewFilter0()
+	// Register the filter. Optional, but recommended for query random access.
+	filter.Register(&world)
 
 	// Get a fresh query iterator.
 	query := filter.Query(&world)
 	// Get the number of entities in the query
 	count := query.Count()
-	// Get sorted random indices
-	sample := sortedSample(25, count)
+	// Get random indices without replacement
+	sample := sample(25, count)
 	fmt.Println(sample)
 
-	// Iterate, only visiting the entities at the given indices.
-	last := -1
+	// Iterate over sampled indices.
 	for _, idx := range sample {
-		// Calculate the step size (can be 0)
-		step := idx - last
-		// Advance the query iterator
-		query.Step(step)
+		// Get the entity at the random index.
+		entity := query.EntityAt(idx)
 		// Do something with the entity and/or components at the current iterator position.
-		fmt.Println(query.Entity())
-		// Required for calculating the step size.
-		last = idx
+		fmt.Println(entity)
 	}
 }
 
-// Returns a sorted random sample of indices of size k, for a "thing" of length n.
-func sortedSample(k, n int) []int {
+// Returns a random sample of indices without replacement.Take k of n sample.
+func sample(k, n int) []int {
 	m := make([]int, n)
 	for i := 0; i < n; i++ {
 		j := rand.Intn(i + 1)
@@ -53,6 +49,5 @@ func sortedSample(k, n int) []int {
 		m[j] = i
 	}
 	m = m[:k]
-	sort.Ints(m)
 	return m
 }

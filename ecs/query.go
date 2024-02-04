@@ -101,6 +101,30 @@ func (q *Query) Entity() Entity {
 	return q.access.GetEntity(q.entityIndex)
 }
 
+// EntityAt returns the entity at a given index.
+//
+// Do not use this to iterate a query! Use [Query.Next] instead.
+//
+// The method is particularly useful for random sampling of entities
+// from a query (see the example).
+// However, performance heavily depends on the number of archetypes in the world and in the query.
+// It is recommended to use a filter which is registered via the [World.Cache],
+// This increases performance at least by factor 4.
+//
+// Some numbers for comparison, with given number of archetypes in the query:
+//   - 1 archetype, filter not registered: ≈ 11ns
+//   - 1 archetype, filter registered: ≈ 3ns
+//   - 10 archetypes, filter not registered: ≈ 50ns
+//   - 10 archetypes, filter registered: ≈ 10ns
+//
+// The total number of archetypes in the world has no performance impact for registered filters,
+// while for filters that are not registered, it has.
+//
+// Panics if the index is out of range, as indicated by [Query.Count].
+func (q *Query) EntityAt(index int) Entity {
+	return q.entityAt(index)
+}
+
 // Relation returns the target entity for an entity relation.
 //
 // Panics if the entity does not have the given component, or if the component is not a [Relation].
@@ -123,10 +147,11 @@ func (q *Query) relationUnchecked(comp ID) Entity {
 }
 
 // Step advances the query iterator by the given number of entities.
+// Returns whether the query is still at a valid position.
+// Returning false indicates that the step exceeded the Query's entities.
+// The query is closed in this case.
 //
-// Query.Step(1) is equivalent to [Query.Next]().
-//
-// This method, used together with [Query.Count], can be useful for the selection of random entities.
+// Query.Step(1) is equivalent to [Query.Next](), although probably slower.
 func (q *Query) Step(step int) bool {
 	if step <= 0 {
 		panic("step size must be positive")
@@ -329,21 +354,21 @@ func (q *Query) stepArchetype(step uint32) (int, bool) {
 func (q *Query) countEntities() int {
 	var count uint32 = 0
 
+	if q.isFiltered {
+		ln := int32(len(q.archetypes))
+		var i int32
+		for i = 0; i < ln; i++ {
+			count += q.archetypes[i].Len()
+		}
+		return int(count)
+	}
+
 	if q.isBatch {
 		batch := q.nodeArchetypes.(*batchArchetypes)
 		nArch := batch.Len()
 		var j int32
 		for j = 0; j < nArch; j++ {
 			count += batch.EndIndex[j] - batch.StartIndex[j]
-		}
-		return int(count)
-	}
-
-	if q.isFiltered {
-		ln := int32(len(q.archetypes))
-		var i int32
-		for i = 0; i < ln; i++ {
-			count += q.archetypes[i].Len()
 		}
 		return int(count)
 	}
@@ -356,8 +381,7 @@ func (q *Query) countEntities() int {
 		if !nd.HasRelation {
 			// There should be at least one archetype.
 			// Otherwise, the node would be inactive.
-			arches := nd.Archetypes()
-			arch := arches.Get(0)
+			arch := nd.Archetypes().Get(0)
 			count += arch.Len()
 			continue
 		}
@@ -379,4 +403,85 @@ func (q *Query) countEntities() int {
 		}
 	}
 	return int(count)
+}
+
+func (q *Query) entityAt(index int) Entity {
+	if index < 0 {
+		panic("can't get entity at negative index")
+	}
+	var count uint32 = 0
+	idx := uint32(index)
+
+	if q.isFiltered {
+		ln := int32(len(q.archetypes))
+		var i int32
+		for i = 0; i < ln; i++ {
+			ln := q.archetypes[i].Len()
+			if idx < count+ln {
+				return q.archetypes[i].GetEntity(idx - count)
+			}
+			count += ln
+		}
+		panic(fmt.Sprintf("query index out of range: index %d, length %d", index, count))
+	}
+
+	if q.isBatch {
+		batch := q.nodeArchetypes.(*batchArchetypes)
+		nArch := batch.Len()
+		var j int32
+		for j = 0; j < nArch; j++ {
+			ln := batch.EndIndex[j] - batch.StartIndex[j]
+			if idx < count+ln {
+				return batch.Archetype[j].GetEntity(batch.StartIndex[j] + idx - count)
+			}
+			count += ln
+		}
+		panic(fmt.Sprintf("query index out of range: index %d, length %d", index, count))
+	}
+
+	for _, nd := range q.nodes {
+		if !nd.IsActive || !nd.Matches(q.filter) {
+			continue
+		}
+
+		if !nd.HasRelation {
+			// There should be at least one archetype.
+			// Otherwise, the node would be inactive.
+			arch := nd.Archetypes().Get(0)
+
+			ln := arch.Len()
+			if idx < count+ln {
+				return arch.GetEntity(idx - count)
+			}
+			count += ln
+			continue
+		}
+
+		if rf, ok := q.filter.(*RelationFilter); ok {
+			target := rf.Target
+			if arch, ok := nd.archetypeMap[target]; ok {
+
+				ln := arch.Len()
+				if idx < count+ln {
+					return arch.GetEntity(idx - count)
+				}
+				count += ln
+			}
+			continue
+		}
+
+		arches := nd.Archetypes()
+		nArch := arches.Len()
+		var j int32
+		for j = 0; j < nArch; j++ {
+			arch := arches.Get(j)
+
+			ln := arch.Len()
+			if idx < count+ln {
+				return arch.GetEntity(idx - count)
+			}
+			count += ln
+		}
+	}
+	panic(fmt.Sprintf("query index out of range: index %d, length %d", index, count))
 }
