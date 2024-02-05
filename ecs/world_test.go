@@ -1858,13 +1858,13 @@ func TestWorldPointerStressTest(t *testing.T) {
 		for n := 0; n < add; n++ {
 			e := w.NewEntity(id)
 			ptr := (*PointerComp)(w.Get(e, id))
-			ptr.Ptr = &Position{X: int(e.id), Y: 2}
+			ptr.Ptr = &PointerType{&Position{X: int(e.id), Y: 2}}
 		}
 
 		query := w.Query(All())
 		for query.Next() {
 			ptr := (*PointerComp)(query.Get(id))
-			assert.Equal(t, ptr.Ptr.X, int(query.Entity().id))
+			assert.Equal(t, ptr.Ptr.Pos.X, int(query.Entity().id))
 			entities = append(entities, query.Entity())
 		}
 		rand.Shuffle(len(entities), func(i, j int) { entities[i], entities[j] = entities[j], entities[i] })
