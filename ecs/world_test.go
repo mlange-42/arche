@@ -1843,3 +1843,39 @@ func TestWorldExtendLayouts(t *testing.T) {
 		assert.Equal(t, int32(100), t0.Val)
 	}
 }
+
+func TestWorldPointerStressTest(t *testing.T) {
+	w := NewWorld()
+
+	id := ComponentID[PointerComp](&w)
+
+	count := 0
+	var entities []Entity
+
+	for i := 0; i < 1000; i++ {
+		add := rand.Intn(1000)
+		count += add
+		for n := 0; n < add; n++ {
+			e := w.NewEntity(id)
+			ptr := (*PointerComp)(w.Get(e, id))
+			ptr.Ptr = &Position{X: int(e.id), Y: 2}
+		}
+
+		query := w.Query(All())
+		for query.Next() {
+			ptr := (*PointerComp)(query.Get(id))
+			assert.Equal(t, ptr.Ptr.X, int(query.Entity().id))
+			entities = append(entities, query.Entity())
+		}
+		rand.Shuffle(len(entities), func(i, j int) { entities[i], entities[j] = entities[j], entities[i] })
+
+		rem := rand.Intn(count)
+		count -= rem
+		for n := 0; n < rem; n++ {
+			w.RemoveEntity(entities[n])
+		}
+
+		entities = entities[:0]
+		runtime.GC()
+	}
+}
