@@ -35,6 +35,13 @@ type testRelationB struct {
 type ChildOf struct {
 	Relation
 }
+type PointerComp struct {
+	Ptr *PointerType
+}
+
+type PointerType struct {
+	Pos *Position
+}
 
 type testStruct0 struct{ Val int32 }
 type testStruct1 struct{ val int32 }
