@@ -396,6 +396,11 @@ func TestQueryClosed(t *testing.T) {
 	assert.Panics(t, func() { q.Entity() })
 	assert.Panics(t, func() { q.Get(posID) })
 	assert.Panics(t, func() { q.Next() })
+
+	q = w.Query(All(posID, rotID))
+	for q.Next() {
+	}
+	assert.Panics(t, func() { q.Next() })
 }
 
 func TestQueryNextArchetype(t *testing.T) {
