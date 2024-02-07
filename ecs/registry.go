@@ -48,7 +48,7 @@ func (r *componentRegistry) Count() int {
 func (r *componentRegistry) registerComponent(tp reflect.Type, totalBits int) uint8 {
 	val := len(r.Components)
 	if val >= totalBits {
-		panic(fmt.Sprintf("maximum of %d component types exceeded", totalBits))
+		panic(fmt.Sprintf("exceeded the maximum of %d component types or resource types", totalBits))
 	}
 	newID := uint8(val)
 	id := id(newID)

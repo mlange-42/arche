@@ -10,6 +10,10 @@
 
 * Prevents using the same component multiple times in any operations, through panic (#357)
 
+### Other
+
+* Improved error messages for running out of world locks, components or resources, and on unbalanced unlock (#363)
+
 ## [[v0.10.1]](https://github.com/mlange-42/arche/compare/v0.10.0...v0.10.1)
 
 ### Bugfixes

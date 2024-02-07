@@ -61,7 +61,7 @@ func newEntity(w *ecs.World, ids []ecs.ID, relation ecs.ID, hasRelation bool, ta
 		return w.NewEntity(ids...)
 	}
 	if !hasRelation {
-		panic("map has no relation defined")
+		panic("map has no relation defined, can't set a target")
 	}
 	return ecs.NewBuilder(w, ids...).WithRelation(relation).New(target[0])
 }
@@ -72,7 +72,7 @@ func newBatch(w *ecs.World, count int, ids []ecs.ID, relation ecs.ID, hasRelatio
 		return
 	}
 	if !hasRelation {
-		panic("map has no relation defined")
+		panic("map has no relation defined, can't set a target")
 	}
 	ecs.NewBuilder(w, ids...).WithRelation(relation).NewBatch(count, target[0])
 }
@@ -84,7 +84,7 @@ func newQuery(w *ecs.World, count int, ids []ecs.ID, relation ecs.ID, hasRelatio
 		query = ecs.NewBuilder(w, ids...).NewBatchQ(count)
 	} else {
 		if !hasRelation {
-			panic("map has no relation defined")
+			panic("map has no relation defined, can't set a target")
 		}
 		query = ecs.NewBuilder(w, ids...).WithRelation(relation).NewBatchQ(count, target[0])
 	}

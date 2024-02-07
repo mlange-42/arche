@@ -116,7 +116,7 @@ func (m *lockMask) Lock() uint8 {
 // Unlock unlocks the given lock bit.
 func (m *lockMask) Unlock(l uint8) {
 	if !m.locks.Get(id(l)) {
-		panic("unbalanced unlock")
+		panic("unbalanced unlock. Did you close a query that was already iterated?")
 	}
 	m.locks.Set(id(l), false)
 	m.bitPool.Recycle(l)
