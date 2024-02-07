@@ -117,7 +117,9 @@ func (p *bitPool) Get() uint8 {
 // Allocates and returns a new bit. For internal use.
 func (p *bitPool) getNew() uint8 {
 	if p.length >= MaskTotalBits {
-		panic(fmt.Sprintf("run out of the maximum of %d bits", MaskTotalBits))
+		panic(fmt.Sprintf("run out of the maximum of %d bits. "+
+			"This is likely caused by unclosed queries that lock the world. "+
+			"Make sure that all queries finish their iteration or are closed manually", MaskTotalBits))
 	}
 	b := uint8(p.length)
 	p.bits[p.length] = b
