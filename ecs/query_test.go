@@ -397,9 +397,38 @@ func TestQueryClosed(t *testing.T) {
 	assert.Panics(t, func() { q.Get(posID) })
 	assert.Panics(t, func() { q.Next() })
 
+	assert.True(t, w.locks.locks.IsZero())
+
+	cnt := 0
 	q = w.Query(All(posID, rotID))
+	assert.False(t, w.locks.locks.IsZero())
 	for q.Next() {
+		cnt++
 	}
+	assert.True(t, w.locks.locks.IsZero())
+	assert.Equal(t, 2, cnt)
+	assert.Panics(t, func() { q.Next() })
+
+	cnt = 0
+	excl := All(rotID).Exclusive()
+	q = w.Query(&excl)
+	assert.False(t, w.locks.locks.IsZero())
+	for q.Next() {
+		cnt++
+	}
+	assert.True(t, w.locks.locks.IsZero())
+	assert.Equal(t, 0, cnt)
+	assert.Panics(t, func() { q.Next() })
+
+	cnt = 0
+	excl = All(posID).Exclusive()
+	q = w.Query(&excl)
+	assert.False(t, w.locks.locks.IsZero())
+	for q.Next() {
+		cnt++
+	}
+	assert.True(t, w.locks.locks.IsZero())
+	assert.Equal(t, 1, cnt)
 	assert.Panics(t, func() { q.Next() })
 }
 
