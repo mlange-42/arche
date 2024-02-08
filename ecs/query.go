@@ -7,7 +7,7 @@ import (
 
 // Query is an iterator to iterate entities, filtered by a [Filter].
 //
-// Create queries through the [World] using [World.Query].
+// Create queries through the [World] using [World.Query]. See there for more details.
 //
 // See also the generic alternatives [github.com/mlange-42/arche/generic.Query1],
 // [github.com/mlange-42/arche/generic.Query2], etc.
