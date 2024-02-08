@@ -7,6 +7,23 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
+func benchesQuery() []bench {
+	return []bench{
+		{Name: "Query.Next", Desc: "", F: queryIter_100_000, N: 100_000},
+		{Name: "Query.Next + 1x Get", Desc: "", F: queryIterGet_1_100_000, N: 100_000},
+		{Name: "Query.Next + 2x Get", Desc: "", F: queryIterGet_2_100_000, N: 100_000},
+		{Name: "Query.Next + 5x Get", Desc: "", F: queryIterGet_5_100_000, N: 100_000},
+
+		{Name: "Query.EntityAt, 1 arch", Desc: "", F: querEntityAt_1Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 1 arch", Desc: "registered filter", F: querEntityAtRegistered_1Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 5 arch", Desc: "", F: querEntityAt_5Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 5 arch", Desc: "registered filter", F: querEntityAtRegistered_5Arch_1000, N: 1000},
+
+		{Name: "World.Query", Desc: "", F: queryCreate, N: 1},
+		{Name: "World.Query", Desc: "registered filter", F: queryCreateCached, N: 1},
+	}
+}
+
 func queryIter_100_000(b *testing.B) {
 	w := ecs.NewWorld()
 	builder := ecs.NewBuilder(&w)

@@ -15,22 +15,7 @@ type bench struct {
 }
 
 func main() {
-	query := []bench{
-		{Name: "Query.Next", Desc: "", F: queryIter_100_000, N: 100_000},
-		{Name: "Query.Next + 1x Get", Desc: "", F: queryIterGet_1_100_000, N: 100_000},
-		{Name: "Query.Next + 2x Get", Desc: "", F: queryIterGet_2_100_000, N: 100_000},
-		{Name: "Query.Next + 5x Get", Desc: "", F: queryIterGet_5_100_000, N: 100_000},
-
-		{Name: "Query.EntityAt, 1 arch", Desc: "", F: querEntityAt_1Arch_1000, N: 1000},
-		{Name: "Query.EntityAt, 1 arch", Desc: "registered filter", F: querEntityAtRegistered_1Arch_1000, N: 1000},
-		{Name: "Query.EntityAt, 5 arch", Desc: "", F: querEntityAt_5Arch_1000, N: 1000},
-		{Name: "Query.EntityAt, 5 arch", Desc: "registered filter", F: querEntityAtRegistered_5Arch_1000, N: 1000},
-
-		{Name: "World.Query", Desc: "", F: queryCreate, N: 1},
-		{Name: "World.Query", Desc: "registered filter", F: queryCreateCached, N: 1},
-	}
-
-	runBenches("Query", query, toMarkdown)
+	runBenches("Query", benchesQuery(), toMarkdown)
 }
 
 func runBenches(title string, benches []bench, format func([]bench) string) {
@@ -45,12 +30,13 @@ func runBenches(title string, benches []bench, format func([]bench) string) {
 func toMarkdown(benches []bench) string {
 	b := strings.Builder{}
 
-	b.WriteString("| Operation | Time | Remark |\n")
-	b.WriteString("|-----------|------|--------|\n")
+	b.WriteString(fmt.Sprintf("| %-28s | %-12s | %-28s |\n", "Operation", "Time", "Remark"))
+	b.WriteString(fmt.Sprintf("|%s|%s|%s|\n", strings.Repeat("-", 30), strings.Repeat("-", 14), strings.Repeat("-", 30)))
 
 	for i := range benches {
 		bench := &benches[i]
-		b.WriteString(fmt.Sprintf("| %s | %.1f ns | %s |\n", bench.Name, bench.T, bench.Desc))
+		t := fmt.Sprintf("%.1f ns", bench.T)
+		b.WriteString(fmt.Sprintf("| %-28s | %12s | %-28s |\n", bench.Name, t, bench.Desc))
 	}
 
 	return b.String()
