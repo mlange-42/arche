@@ -143,3 +143,18 @@ jobs:
         run: |
           cd benchmark
           go test -tags tiny -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 5
+
+  tables:
+    name: Benchmark Tables
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: '1.21.x'
+      - name: Install dependencies
+        run: go get .
+      - name: Benchmark tables
+        run: |
+          go run ./benchmark/table
