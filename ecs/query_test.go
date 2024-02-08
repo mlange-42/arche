@@ -563,6 +563,41 @@ func TestQueryEntityAt(t *testing.T) {
 	query.Close()
 }
 
+func BenchmarkQueryCreate(b *testing.B) {
+	b.StopTimer()
+
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	bPos := NewBuilder(&world, posID)
+	bPos.NewBatch(100)
+
+	filter := All(posID)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		query := world.Query(filter)
+		query.Close()
+	}
+}
+
+func BenchmarkQueryCreateCached(b *testing.B) {
+	b.StopTimer()
+
+	world := NewWorld()
+	posID := ComponentID[Position](&world)
+	bPos := NewBuilder(&world, posID)
+	bPos.NewBatch(100)
+
+	f := All(posID)
+	filter := world.Cache().Register(f)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		query := world.Query(&filter)
+		query.Close()
+	}
+}
+
 func BenchmarkQueryEntityAt_1Arch_1000(b *testing.B) {
 	b.StopTimer()
 	w := NewWorld()
