@@ -1,6 +1,7 @@
 package main
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
@@ -107,4 +108,145 @@ func queryIterGet_5_100_000(b *testing.B) {
 	b.StopTimer()
 	sum := c1.V + c2.V + c3.V + c4.V + c5.V
 	_ = sum
+}
+
+func querEntityAt_1Arch_1000(b *testing.B) {
+	b.StopTimer()
+	w := ecs.NewWorld()
+	id1 := ecs.ComponentID[comp1](&w)
+	builder := ecs.NewBuilder(&w, id1)
+	builder.NewBatch(1000)
+
+	indices := make([]int, 1000)
+	for i := range indices {
+		indices[i] = rand.Intn(1000)
+	}
+
+	query := w.Query(ecs.All(id1))
+	b.StartTimer()
+	var e ecs.Entity
+	for i := 0; i < b.N; i++ {
+		for _, idx := range indices {
+			e = query.EntityAt(idx)
+		}
+	}
+	_ = e
+}
+
+func querEntityAtRegistered_1Arch_1000(b *testing.B) {
+	b.StopTimer()
+	w := ecs.NewWorld()
+	id1 := ecs.ComponentID[comp1](&w)
+	builder := ecs.NewBuilder(&w, id1)
+	builder.NewBatch(1000)
+
+	indices := make([]int, 1000)
+	for i := range indices {
+		indices[i] = rand.Intn(1000)
+	}
+
+	f := ecs.All(id1)
+	filter := w.Cache().Register(f)
+
+	query := w.Query(&filter)
+	b.StartTimer()
+	var e ecs.Entity
+	for i := 0; i < b.N; i++ {
+		for _, idx := range indices {
+			e = query.EntityAt(idx)
+		}
+	}
+	_ = e
+}
+
+func querEntityAt_5Arch_1000(b *testing.B) {
+	b.StopTimer()
+	w := ecs.NewWorld()
+	id1 := ecs.ComponentID[comp1](&w)
+	id2 := ecs.ComponentID[comp2](&w)
+	id3 := ecs.ComponentID[comp3](&w)
+	id4 := ecs.ComponentID[comp4](&w)
+	id5 := ecs.ComponentID[comp5](&w)
+	builder := ecs.NewBuilder(&w, id1, id2, id3, id4, id5)
+	builder.NewBatch(1000)
+
+	indices := make([]int, 1000)
+	for i := range indices {
+		indices[i] = rand.Intn(1000)
+	}
+
+	query := w.Query(ecs.All(id1))
+	b.StartTimer()
+	var e ecs.Entity
+	for i := 0; i < b.N; i++ {
+		for _, idx := range indices {
+			e = query.EntityAt(idx)
+		}
+	}
+	_ = e
+}
+
+func querEntityAtRegistered_5Arch_1000(b *testing.B) {
+	b.StopTimer()
+	w := ecs.NewWorld()
+	id1 := ecs.ComponentID[comp1](&w)
+	id2 := ecs.ComponentID[comp2](&w)
+	id3 := ecs.ComponentID[comp3](&w)
+	id4 := ecs.ComponentID[comp4](&w)
+	id5 := ecs.ComponentID[comp5](&w)
+	builder := ecs.NewBuilder(&w, id1, id2, id3, id4, id5)
+	builder.NewBatch(1000)
+
+	indices := make([]int, 1000)
+	for i := range indices {
+		indices[i] = rand.Intn(1000)
+	}
+
+	f := ecs.All(id1)
+	filter := w.Cache().Register(f)
+
+	query := w.Query(&filter)
+	b.StartTimer()
+	var e ecs.Entity
+	for i := 0; i < b.N; i++ {
+		for _, idx := range indices {
+			e = query.EntityAt(idx)
+		}
+	}
+	_ = e
+}
+
+func queryCreate(b *testing.B) {
+	b.StopTimer()
+
+	world := ecs.NewWorld()
+	id1 := ecs.ComponentID[comp1](&world)
+	builder := ecs.NewBuilder(&world, id1)
+	builder.NewBatch(100)
+
+	filter := ecs.All(id1)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		query := world.Query(filter)
+		query.Close()
+	}
+}
+
+func queryCreateCached(b *testing.B) {
+	b.StopTimer()
+
+	world := ecs.NewWorld()
+	id1 := ecs.ComponentID[comp1](&world)
+	builder := ecs.NewBuilder(&world, id1)
+	builder.NewBatch(100)
+
+	f := ecs.All(id1)
+	filter := world.Cache().Register(f)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		query := world.Query(&filter)
+		query.Close()
+	}
 }

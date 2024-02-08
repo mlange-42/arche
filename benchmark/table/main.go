@@ -15,21 +15,31 @@ type bench struct {
 }
 
 func main() {
-	benches := []bench{
-		{Name: "Iter", Desc: "", F: queryIter_100_000, N: 100_000},
-		{Name: "Iter + Get 1", Desc: "", F: queryIterGet_1_100_000, N: 100_000},
-		{Name: "Iter + Get 2", Desc: "", F: queryIterGet_2_100_000, N: 100_000},
-		{Name: "Iter + Get 5", Desc: "", F: queryIterGet_5_100_000, N: 100_000},
+	query := []bench{
+		{Name: "Query.Next", Desc: "", F: queryIter_100_000, N: 100_000},
+		{Name: "Query.Next + 1x Get", Desc: "", F: queryIterGet_1_100_000, N: 100_000},
+		{Name: "Query.Next + 2x Get", Desc: "", F: queryIterGet_2_100_000, N: 100_000},
+		{Name: "Query.Next + 5x Get", Desc: "", F: queryIterGet_5_100_000, N: 100_000},
+
+		{Name: "Query.EntityAt, 1 arch", Desc: "", F: querEntityAt_1Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 1 arch", Desc: "registered filter", F: querEntityAtRegistered_1Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 5 arch", Desc: "", F: querEntityAt_5Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 5 arch", Desc: "registered filter", F: querEntityAtRegistered_5Arch_1000, N: 1000},
+
+		{Name: "World.Query", Desc: "", F: queryCreate, N: 1},
+		{Name: "World.Query", Desc: "registered filter", F: queryCreateCached, N: 1},
 	}
 
+	runBenches("Query", query, toMarkdown)
+}
+
+func runBenches(title string, benches []bench, format func([]bench) string) {
 	for i := range benches {
 		b := &benches[i]
 		res := testing.Benchmark(b.F)
 		b.T = float64(res.T.Nanoseconds()) / float64(res.N*b.N)
 	}
-
-	md := toMarkdown(benches)
-	fmt.Println(md)
+	fmt.Printf("## %s\n\n%s", title, format(benches))
 }
 
 func toMarkdown(benches []bench) string {
