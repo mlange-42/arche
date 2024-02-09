@@ -8,13 +8,13 @@ import (
 
 func benchesEntitiesBatch() []bench {
 	return []bench{
-		{Name: "Builder.NewBatch", Desc: "1/1000, memory already allocated", F: entitiesBatchCreate_1000, N: 1000},
-		{Name: "Builder.NewBatch w/ 1 Comp", Desc: "1/1000, memory already allocated", F: entitiesBatchCreate_1Comp_1000, N: 1000},
-		{Name: "Builder.NewBatch w/ 5 Comps", Desc: "1/1000, memory already allocated", F: entitiesBatchCreate_5Comp_1000, N: 1000},
+		{Name: "Builder.NewBatch", Desc: "1000, memory already allocated", F: entitiesBatchCreate_1000, N: 1000},
+		{Name: "Builder.NewBatch w/ 1 Comp", Desc: "1000, memory already allocated", F: entitiesBatchCreate_1Comp_1000, N: 1000},
+		{Name: "Builder.NewBatch w/ 5 Comps", Desc: "1000, memory already allocated", F: entitiesBatchCreate_5Comp_1000, N: 1000},
 
-		{Name: "Batch.RemoveEntities", Desc: "1/1000", F: entitiesBatchRemove_1000, N: 1000},
-		{Name: "Batch.RemoveEntities w/ 1 Comp", Desc: "1/1000", F: entitiesBatchRemove_1Comp_1000, N: 1000},
-		{Name: "Batch.RemoveEntities w/ 5 Comps", Desc: "1/1000", F: entitiesBatchRemove_5Comp_1000, N: 1000},
+		{Name: "Batch.RemoveEntities", Desc: "1000", F: entitiesBatchRemove_1000, N: 1000},
+		{Name: "Batch.RemoveEntities w/ 1 Comp", Desc: "1000", F: entitiesBatchRemove_1Comp_1000, N: 1000},
+		{Name: "Batch.RemoveEntities w/ 5 Comps", Desc: "1000", F: entitiesBatchRemove_5Comp_1000, N: 1000},
 	}
 }
 
