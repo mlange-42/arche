@@ -58,11 +58,12 @@ func entitiesCreate_5Comp_1000(b *testing.B) {
 	id3 := ecs.ComponentID[comp3](&w)
 	id4 := ecs.ComponentID[comp4](&w)
 	id5 := ecs.ComponentID[comp5](&w)
+	ids := []ecs.ID{id1, id2, id3, id4, id5}
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
 		for j := 0; j < 1000; j++ {
-			_ = w.NewEntity(id1, id2, id3, id4, id5)
+			_ = w.NewEntity(ids...)
 		}
 		b.StopTimer()
 		w.Batch().RemoveEntities(ecs.All())
@@ -123,7 +124,8 @@ func entitiesRemove_5Comp_1000(b *testing.B) {
 	id3 := ecs.ComponentID[comp3](&w)
 	id4 := ecs.ComponentID[comp4](&w)
 	id5 := ecs.ComponentID[comp5](&w)
-	builder := ecs.NewBuilder(&w, id1, id2, id3, id4, id5)
+	ids := []ecs.ID{id1, id2, id3, id4, id5}
+	builder := ecs.NewBuilder(&w, ids...)
 
 	entities := make([]ecs.Entity, 0, 1000)
 
