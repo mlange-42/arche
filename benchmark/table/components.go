@@ -52,7 +52,9 @@ func componentsAdd5_1000(b *testing.B) {
 	id3 := ecs.ComponentID[comp3](&w)
 	id4 := ecs.ComponentID[comp4](&w)
 	id5 := ecs.ComponentID[comp5](&w)
-	filter := ecs.All(id1, id2, id3, id4, id5)
+
+	ids := []ecs.ID{id1, id2, id3, id4, id5}
+	filter := ecs.All(ids...)
 
 	builder := ecs.NewBuilder(&w)
 	query := builder.NewBatchQ(1000)
@@ -65,10 +67,10 @@ func componentsAdd5_1000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
 		for _, e := range entities {
-			w.Add(e, id1, id2, id3, id4, id5)
+			w.Add(e, ids...)
 		}
 		b.StopTimer()
-		w.Batch().Remove(filter, id1, id2, id3, id4, id5)
+		w.Batch().Remove(filter, ids...)
 	}
 }
 
@@ -106,9 +108,10 @@ func componentsRemove5_1000(b *testing.B) {
 	id3 := ecs.ComponentID[comp3](&w)
 	id4 := ecs.ComponentID[comp4](&w)
 	id5 := ecs.ComponentID[comp5](&w)
+	ids := []ecs.ID{id1, id2, id3, id4, id5}
 	filter := ecs.All()
 
-	builder := ecs.NewBuilder(&w, id1, id2, id3, id4, id5)
+	builder := ecs.NewBuilder(&w, ids...)
 	query := builder.NewBatchQ(1000)
 
 	entities := make([]ecs.Entity, 0, 1000)
@@ -119,10 +122,10 @@ func componentsRemove5_1000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
 		for _, e := range entities {
-			w.Remove(e, id1, id2, id3, id4, id5)
+			w.Remove(e, ids...)
 		}
 		b.StopTimer()
-		w.Batch().Add(filter, id1, id2, id3, id4, id5)
+		w.Batch().Add(filter, ids...)
 	}
 }
 

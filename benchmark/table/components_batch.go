@@ -45,16 +45,17 @@ func componentsBatchAdd5_1000(b *testing.B) {
 	id3 := ecs.ComponentID[comp3](&w)
 	id4 := ecs.ComponentID[comp4](&w)
 	id5 := ecs.ComponentID[comp5](&w)
-	filter := ecs.All(id1, id2, id3, id4, id5)
+	ids := []ecs.ID{id1, id2, id3, id4, id5}
+	filter := ecs.All(ids...)
 
 	builder := ecs.NewBuilder(&w)
 	builder.NewBatch(1000)
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
-		w.Batch().Add(ecs.All(), id1, id2, id3, id4, id5)
+		w.Batch().Add(ecs.All(), ids...)
 		b.StopTimer()
-		w.Batch().Remove(filter, id1, id2, id3, id4, id5)
+		w.Batch().Remove(filter, ids...)
 	}
 }
 
@@ -85,16 +86,17 @@ func componentsBatchRemove5_1000(b *testing.B) {
 	id3 := ecs.ComponentID[comp3](&w)
 	id4 := ecs.ComponentID[comp4](&w)
 	id5 := ecs.ComponentID[comp5](&w)
-	filter := ecs.All(id1, id2, id3, id4, id5)
+	ids := []ecs.ID{id1, id2, id3, id4, id5}
+	filter := ecs.All(ids...)
 
-	builder := ecs.NewBuilder(&w, id1, id2, id3, id4, id5)
+	builder := ecs.NewBuilder(&w, ids...)
 	builder.NewBatch(1000)
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
-		w.Batch().Remove(filter, id1, id2, id3, id4, id5)
+		w.Batch().Remove(filter, ids...)
 		b.StopTimer()
-		w.Batch().Add(ecs.All(), id1, id2, id3, id4, id5)
+		w.Batch().Add(ecs.All(), ids...)
 	}
 }
 
