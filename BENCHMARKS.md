@@ -1,41 +1,65 @@
 # Benchmarks
 
-This document gives an overview over the runtime cost of typical Arche operations.
-If not stated differently, time is per entity or per single operation.
+This document gives an overview of the runtime cost of typical Arche operations.
+All time information is per entity.
+Batch oerations are performed in batches of 1000 entities.
+
+Absolute numbers are not  really meaningful, as they heavily depend on the hardware.
+However, all benchmarks run in the CI in the same job and hence on the same machine, and can be compared.
 
 ## Query
 
 | Operation                        | Time         | Remark                       |
 |----------------------------------|-------------:|------------------------------|
-| Query.Next                       |       1.6 ns |                              |
-| Query.Next + 1x Get              |       1.9 ns |                              |
-| Query.Next + 2x Get              |       2.6 ns |                              |
-| Query.Next + 5x Get              |       4.8 ns |                              |
-| Query.EntityAt, 1 arch           |      11.3 ns |                              |
-| Query.EntityAt, 1 arch           |       3.0 ns | registered filter            |
-| Query.EntityAt, 5 arch           |      15.9 ns |                              |
+| Query.Next                       |       1.0 ns |                              |
+| Query.Next + 1x Get              |       1.6 ns |                              |
+| Query.Next + 2x Get              |       2.3 ns |                              |
+| Query.Next + 5x Get              |       4.4 ns |                              |
+| Query.EntityAt, 1 arch           |      11.7 ns |                              |
+| Query.EntityAt, 1 arch           |       2.8 ns | registered filter            |
+| Query.EntityAt, 5 arch           |      14.9 ns |                              |
 | Query.EntityAt, 5 arch           |       3.1 ns | registered filter            |
-| World.Query                      |      50.7 ns |                              |
-| World.Query                      |      30.6 ns | registered filter            |
+| World.Query                      |      46.3 ns |                              |
+| World.Query                      |      34.1 ns | registered filter            |
 
 ## Entities
 
 | Operation                        | Time         | Remark                       |
 |----------------------------------|-------------:|------------------------------|
-| World.NewEntity                  |      16.5 ns | memory already allocated     |
-| World.NewEntity w/ 1 Comp        |      33.1 ns | memory already allocated     |
-| World.NewEntity w/ 5 Comps       |      58.5 ns | memory already allocated     |
-| World.RemoveEntity               |      13.2 ns |                              |
-| World.RemoveEntity w/ 1 Comp     |      20.0 ns |                              |
-| World.RemoveEntity w/ 5 Comps    |      44.0 ns |                              |
+| World.NewEntity                  |      16.1 ns | memory already allocated     |
+| World.NewEntity w/ 1 Comp        |      34.2 ns | memory already allocated     |
+| World.NewEntity w/ 5 Comps       |      59.4 ns | memory already allocated     |
+| World.RemoveEntity               |      15.6 ns |                              |
+| World.RemoveEntity w/ 1 Comp     |      26.1 ns |                              |
+| World.RemoveEntity w/ 5 Comps    |      54.8 ns |                              |
 
 ## Entities, batched
 
 | Operation                        | Time         | Remark                       |
 |----------------------------------|-------------:|------------------------------|
-| Builder.NewBatch                 |       8.7 ns | 1/1000, memory already allocated |
-| Builder.NewBatch w/ 1 Comp       |       9.3 ns | 1000, memory already allocated |
-| Builder.NewBatch w/ 5 Comps      |      10.4 ns | 1000, memory already allocated |
-| Batch.RemoveEntities             |       6.6 ns | 1/1000                       |
-| Batch.RemoveEntities w/ 1 Comp   |       5.8 ns | 1000                         |
-| Batch.RemoveEntities w/ 5 Comps  |       6.6 ns | 1000                         |
+| Builder.NewBatch                 |       9.9 ns | 1000, memory already allocated |
+| Builder.NewBatch w/ 1 Comp       |      10.0 ns | 1000, memory already allocated |
+| Builder.NewBatch w/ 5 Comps      |      10.0 ns | 1000, memory already allocated |
+| Batch.RemoveEntities             |       7.5 ns | 1000                         |
+| Batch.RemoveEntities w/ 1 Comp   |       7.2 ns | 1000                         |
+| Batch.RemoveEntities w/ 5 Comps  |       8.5 ns | 1000                         |
+
+## Components
+
+| Operation                        | Time         | Remark                       |
+|----------------------------------|-------------:|------------------------------|
+| World.Add 1 Comp                 |      49.4 ns | memory already allocated     |
+| World.Add 5 Comps                |      79.0 ns | memory already allocated     |
+| World.Remove 1 Comp              |      59.8 ns |                              |
+| World.Remove 5 Comps             |     121.8 ns |                              |
+| World.Exchange 1 Comp            |      56.4 ns | memory already allocated     |
+
+## Components, batched
+
+| Operation                        | Time         | Remark                       |
+|----------------------------------|-------------:|------------------------------|
+| Batch.Add 1 Comp                 |       8.8 ns | 1000, memory already allocated |
+| Batch.Add 5 Comps                |       8.9 ns | 1000, memory already allocated |
+| Batch.Remove 1 Comp              |      10.3 ns | 1000                         |
+| Batch.Remove 5 Comps             |      16.1 ns | 1000                         |
+| Batch.Exchange 1 Comp            |      10.3 ns | 1000, memory already allocated |

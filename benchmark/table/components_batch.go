@@ -8,13 +8,13 @@ import (
 
 func benchesComponentsBatch() []bench {
 	return []bench{
-		{Name: "Batch.Add 1 Comp", Desc: "memory already allocated", F: componentsBatchAdd1_1000, N: 1000},
-		{Name: "Batch.Add 5 Comps", Desc: "memory already allocated", F: componentsBatchAdd5_1000, N: 1000},
+		{Name: "Batch.Add 1 Comp", Desc: "1000, memory already allocated", F: componentsBatchAdd1_1000, N: 1000},
+		{Name: "Batch.Add 5 Comps", Desc: "1000, memory already allocated", F: componentsBatchAdd5_1000, N: 1000},
 
-		{Name: "Batch.Remove 1 Comp", Desc: "", F: componentsBatchRemove1_1000, N: 1000},
-		{Name: "Batch.Remove 5 Comps", Desc: "", F: componentsBatchRemove5_1000, N: 1000},
+		{Name: "Batch.Remove 1 Comp", Desc: "1000", F: componentsBatchRemove1_1000, N: 1000},
+		{Name: "Batch.Remove 5 Comps", Desc: "1000", F: componentsBatchRemove5_1000, N: 1000},
 
-		{Name: "Batch.Exchange 1 Comp", Desc: "memory already allocated", F: componentsBatchExchange1_1000, N: 1000},
+		{Name: "Batch.Exchange 1 Comp", Desc: "1000, memory already allocated", F: componentsBatchExchange1_1000, N: 1000},
 	}
 }
 
