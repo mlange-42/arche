@@ -157,4 +157,9 @@ jobs:
         run: go get .
       - name: Benchmark tables
         run: |
-          go run ./benchmark/table
+          go run ./benchmark/table | tee BENCHMARKS.md
+      - name: Archive benchmark results
+        uses: actions/upload-artifact@v4
+        with:
+          name: BENCHMARKS.md
+          path: BENCHMARKS.md
