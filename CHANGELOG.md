@@ -6,6 +6,10 @@
 
 * Adds method `Query.EntityAt()`, useful for things like random sampling of entities (#358)
 
+### Documentation
+
+* Adds [BENCHMARKS.md](https://github.com/mlange-42/arche/blob/main/BENCHMARKS.md) for a tabular overview of the runtime cost of typical *Arche* ECS operations (#367)
+
 ### Bugfixes
 
 * Prevents using the same component multiple times in any operations, through panic (#357)
