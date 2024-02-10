@@ -186,8 +186,9 @@ func querEntityAtRegistered_1Arch_1000(b *testing.B) {
 
 	indices := make([]int, 1000)
 	for i := range indices {
-		indices[i] = rand.Intn(1000)
+		indices[i] = i
 	}
+	rand.Shuffle(len(indices), func(i, j int) { indices[i], indices[j] = indices[j], indices[i] })
 
 	f := ecs.All(id1)
 	filter := w.Cache().Register(f)
@@ -211,13 +212,23 @@ func querEntityAt_5Arch_1000(b *testing.B) {
 	id3 := ecs.ComponentID[comp3](&w)
 	id4 := ecs.ComponentID[comp4](&w)
 	id5 := ecs.ComponentID[comp5](&w)
-	builder := ecs.NewBuilder(&w, id1, id2, id3, id4, id5)
-	builder.NewBatch(1000)
+
+	b1 := ecs.NewBuilder(&w, id1)
+	b2 := ecs.NewBuilder(&w, id1, id2)
+	b3 := ecs.NewBuilder(&w, id1, id3)
+	b4 := ecs.NewBuilder(&w, id1, id4)
+	b5 := ecs.NewBuilder(&w, id1, id5)
+	b1.NewBatch(200)
+	b2.NewBatch(200)
+	b3.NewBatch(200)
+	b4.NewBatch(200)
+	b5.NewBatch(200)
 
 	indices := make([]int, 1000)
 	for i := range indices {
-		indices[i] = rand.Intn(1000)
+		indices[i] = i
 	}
+	rand.Shuffle(len(indices), func(i, j int) { indices[i], indices[j] = indices[j], indices[i] })
 
 	query := w.Query(ecs.All(id1))
 	b.StartTimer()
@@ -238,8 +249,17 @@ func querEntityAtRegistered_5Arch_1000(b *testing.B) {
 	id3 := ecs.ComponentID[comp3](&w)
 	id4 := ecs.ComponentID[comp4](&w)
 	id5 := ecs.ComponentID[comp5](&w)
-	builder := ecs.NewBuilder(&w, id1, id2, id3, id4, id5)
-	builder.NewBatch(1000)
+
+	b1 := ecs.NewBuilder(&w, id1)
+	b2 := ecs.NewBuilder(&w, id1, id2)
+	b3 := ecs.NewBuilder(&w, id1, id3)
+	b4 := ecs.NewBuilder(&w, id1, id4)
+	b5 := ecs.NewBuilder(&w, id1, id5)
+	b1.NewBatch(200)
+	b2.NewBatch(200)
+	b3.NewBatch(200)
+	b4.NewBatch(200)
+	b5.NewBatch(200)
 
 	indices := make([]int, 1000)
 	for i := range indices {
