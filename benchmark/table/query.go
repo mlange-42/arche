@@ -10,9 +10,11 @@ import (
 func benchesQuery() []bench {
 	return []bench{
 		{Name: "Query.Next", Desc: "", F: queryIter_100_000, N: 100_000},
-		{Name: "Query.Next + 1x Get", Desc: "", F: queryIterGet_1_100_000, N: 100_000},
-		{Name: "Query.Next + 2x Get", Desc: "", F: queryIterGet_2_100_000, N: 100_000},
-		{Name: "Query.Next + 5x Get", Desc: "", F: queryIterGet_5_100_000, N: 100_000},
+		{Name: "Query.Next + 1x Query.Get", Desc: "", F: queryIterGet_1_100_000, N: 100_000},
+		{Name: "Query.Next + 2x Query.Get", Desc: "", F: queryIterGet_2_100_000, N: 100_000},
+		{Name: "Query.Next + 5x Query.Get", Desc: "", F: queryIterGet_5_100_000, N: 100_000},
+
+		{Name: "Query.Next + Query.Relation", Desc: "", F: queryRelation_100_000, N: 100_000},
 
 		{Name: "Query.EntityAt, 1 arch", Desc: "", F: querEntityAt_1Arch_1000, N: 1000},
 		{Name: "Query.EntityAt, 1 arch", Desc: "registered filter", F: querEntityAtRegistered_1Arch_1000, N: 1000},
@@ -124,6 +126,31 @@ func queryIterGet_5_100_000(b *testing.B) {
 	}
 	b.StopTimer()
 	sum := c1.V + c2.V + c3.V + c4.V + c5.V
+	_ = sum
+}
+
+func queryRelation_100_000(b *testing.B) {
+	w := ecs.NewWorld()
+	id1 := ecs.ComponentID[relComp1](&w)
+	parent := w.NewEntity()
+
+	builder := ecs.NewBuilder(&w, id1).WithRelation(id1)
+	builder.NewBatch(100_000, parent)
+	filter := ecs.All(id1)
+
+	var par ecs.Entity
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		query := w.Query(filter)
+		b.StartTimer()
+		for query.Next() {
+			par = query.Relation(id1)
+		}
+	}
+	b.StopTimer()
+	sum := par.IsZero()
 	_ = sum
 }
 

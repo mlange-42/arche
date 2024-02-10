@@ -18,4 +18,5 @@ func main() {
 	runBenches("Entities, batched", benchesEntitiesBatch(), toMarkdown)
 	runBenches("Components", benchesComponents(), toMarkdown)
 	runBenches("Components, batched", benchesComponentsBatch(), toMarkdown)
+	runBenches("World access", benchesWorld(), toMarkdown)
 }
