@@ -18,7 +18,7 @@ type Dispatch struct {
 	hasComponents bool
 }
 
-// NewDispatch returns a new [Dispatched] listener with the given sub-listeners.
+// NewDispatch returns a new [Dispatch] listener with the given sub-listeners.
 func NewDispatch(listeners ...ecs.Listener) Dispatch {
 	var events event.Subscription = 0
 	var components ecs.Mask
