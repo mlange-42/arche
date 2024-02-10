@@ -23,6 +23,16 @@ However, all benchmarks run in the CI in the same job and hence on the same mach
 | World.Query                      |      46.0 ns |                              |
 | World.Query                      |      33.6 ns | registered filter            |
 
+## World access
+
+| Operation                        | Time         | Remark                       |
+|----------------------------------|-------------:|------------------------------|
+| World.Get                        |       2.0 ns | random, 1000 entities        |
+| World.Has                        |       1.2 ns | random, 1000 entities        |
+| World.Alive                      |       0.6 ns | random, 1000 entities        |
+| World.Relations.Get              |       3.5 ns | random, 1000 entities        |
+| World.Relations.GetUnchecked     |       0.8 ns | random, 1000 entities        |
+
 ## Entities
 
 | Operation                        | Time         | Remark                       |
@@ -64,13 +74,3 @@ However, all benchmarks run in the CI in the same job and hence on the same mach
 | Batch.Remove 1 Comp              |       9.8 ns | 1000                         |
 | Batch.Remove 5 Comps             |      14.9 ns | 1000                         |
 | Batch.Exchange 1 Comp            |      10.0 ns | 1000, memory already allocated |
-
-## World access
-
-| Operation                        | Time         | Remark                       |
-|----------------------------------|-------------:|------------------------------|
-| World.Get                        |       2.0 ns | random, 1000 entities        |
-| World.Has                        |       1.2 ns | random, 1000 entities        |
-| World.Alive                      |       0.6 ns | random, 1000 entities        |
-| World.Relations.Get              |       3.5 ns | random, 1000 entities        |
-| World.Relations.GetUnchecked     |       0.8 ns | random, 1000 entities        |
