@@ -14,6 +14,7 @@ type bench struct {
 
 func main() {
 	runBenches("Query", benchesQuery(), toMarkdown)
+	runBenches("World access", benchesWorld(), toMarkdown)
 	runBenches("Entities", benchesEntities(), toMarkdown)
 	runBenches("Entities, batched", benchesEntitiesBatch(), toMarkdown)
 	runBenches("Components", benchesComponents(), toMarkdown)
