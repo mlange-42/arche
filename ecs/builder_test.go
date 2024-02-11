@@ -25,10 +25,10 @@ func TestBuilder(t *testing.T) {
 	e2 := w.NewEntity()
 	b1.Add(e2)
 
-	assert.Panics(t, func() { b1.New(target) })
-	assert.Panics(t, func() { b1.NewBatch(10, target) })
-	assert.Panics(t, func() { b1.NewBatchQ(10, target) })
-	assert.Panics(t, func() { b1.Add(e1, target) })
+	assert.PanicsWithValue(t, "can't set target entity: builder has no relation", func() { b1.New(target) })
+	assert.PanicsWithValue(t, "can't set target entity: builder has no relation", func() { b1.NewBatch(10, target) })
+	assert.PanicsWithValue(t, "can't set target entity: builder has no relation", func() { b1.NewBatchQ(10, target) })
+	assert.PanicsWithValue(t, "can't set target entity: builder has no relation", func() { b1.Add(e1, target) })
 
 	b1.NewBatch(10)
 	q := b1.NewBatchQ(10)
@@ -44,10 +44,10 @@ func TestBuilder(t *testing.T) {
 	b1.Add(e2)
 	e2 = w.NewEntity()
 
-	assert.Panics(t, func() { b1.New(target) })
-	assert.Panics(t, func() { b1.NewBatch(10, target) })
-	assert.Panics(t, func() { b1.NewBatchQ(10, target) })
-	assert.Panics(t, func() { b1.Add(e2, target) })
+	assert.PanicsWithValue(t, "can't set target entity: builder has no relation", func() { b1.New(target) })
+	assert.PanicsWithValue(t, "can't set target entity: builder has no relation", func() { b1.NewBatch(10, target) })
+	assert.PanicsWithValue(t, "can't set target entity: builder has no relation", func() { b1.NewBatchQ(10, target) })
+	assert.PanicsWithValue(t, "can't set target entity: builder has no relation", func() { b1.Add(e2, target) })
 
 	b1.NewBatch(10)
 	q = b1.NewBatchQ(10)

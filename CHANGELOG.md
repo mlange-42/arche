@@ -5,11 +5,13 @@
 ### Features
 
 * Adds method `Query.EntityAt()`, useful for things like random sampling of entities (#358)
+* Adds build tag `debug` to improve error messages in a few places where we rely on standard library panics for performance (#377)
 
 ### Documentation
 
 * Adds [BENCHMARKS.md](https://github.com/mlange-42/arche/blob/main/BENCHMARKS.md) for a tabular overview of the runtime cost of typical *Arche* ECS operations (#367, #372)
 * Link benchmarking code in `README.md` and benchmarking tables (#375)
+* Documents build tags `tiny` and `debug` in package docs of `ecs` (#377)
 
 ### Bugfixes
 
@@ -21,6 +23,7 @@
 * Adds benchmarks for query creation (#366)
 * Upgrade to Go 1.22 in CI (#376)
 * Renames directory `examples` to `_examples` to accommodate changed test coverage behaviour of Go 1.22 (#376)
+* In unit tests, error messages of all panics are asserted (#377)
 
 ## [[v0.10.1]](https://github.com/mlange-42/arche/compare/v0.10.0...v0.10.1)
 

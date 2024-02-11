@@ -45,7 +45,7 @@ func newCache() Cache {
 //	query := world.Query(&cached)
 func (c *Cache) Register(f Filter) CachedFilter {
 	if _, ok := f.(*CachedFilter); ok {
-		panic("filter is already cached")
+		panic("filter is already registered")
 	}
 	id := c.intPool.Get()
 	c.filters = append(c.filters,

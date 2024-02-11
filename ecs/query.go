@@ -9,6 +9,9 @@ import (
 //
 // Create queries through the [World] using [World.Query]. See there for more details.
 //
+// In case you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference",
+// try running with build tag `debug`.
+//
 // See also the generic alternatives [github.com/mlange-42/arche/generic.Query1],
 // [github.com/mlange-42/arche/generic.Query2], etc.
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
@@ -78,6 +81,7 @@ func newBatchQuery(world *World, lockBit uint8, archetype *batchArchetypes) Quer
 //
 // Returns false if no next entity could be found.
 func (q *Query) Next() bool {
+	q.checkNext()
 	if q.entityIndex < q.entityIndexMax {
 		q.entityIndex++
 		return true
@@ -88,16 +92,19 @@ func (q *Query) Next() bool {
 
 // Has returns whether the current entity has the given component.
 func (q *Query) Has(comp ID) bool {
+	q.checkGet()
 	return q.access.HasComponent(comp)
 }
 
 // Get returns the pointer to the given component at the iterator's position.
 func (q *Query) Get(comp ID) unsafe.Pointer {
+	q.checkGet()
 	return q.access.Get(q.entityIndex, comp)
 }
 
 // Entity returns the entity at the iterator's position.
 func (q *Query) Entity() Entity {
+	q.checkGet()
 	return q.access.GetEntity(q.entityIndex)
 }
 
@@ -129,6 +136,7 @@ func (q *Query) EntityAt(index int) Entity {
 //
 // Panics if the entity does not have the given component, or if the component is not a [Relation].
 func (q *Query) Relation(comp ID) Entity {
+	q.checkGet()
 	if q.access.RelationComponent.id != comp.id {
 		panic(fmt.Sprintf("entity has no component %v, or it is not a relation component", q.world.registry.Types[comp.id]))
 	}

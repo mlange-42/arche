@@ -39,7 +39,7 @@ func TestComponentRegistryOverflow(t *testing.T) {
 
 	reg.registerComponent(reflect.TypeOf((*Position)(nil)).Elem(), 1)
 
-	assert.Panics(t, func() {
+	assert.PanicsWithValue(t, "exceeded the maximum of 1 component types or resource types", func() {
 		reg.registerComponent(reflect.TypeOf((*rotation)(nil)).Elem(), 1)
 	})
 }

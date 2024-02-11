@@ -32,13 +32,13 @@ func TestGenericMap(t *testing.T) {
 
 	get2 := NewMap[testStruct1](&w)
 	assert.Equal(t, ecs.ComponentID[testStruct1](&w), get2.ID())
-	assert.Panics(t, func() { get2.Set(e0, &testStruct1{}) })
+	assert.PanicsWithValue(t, "can't copy component into entity that has no such component type", func() { get2.Set(e0, &testStruct1{}) })
 
 	w.RemoveEntity(e0)
 	_ = w.NewEntity()
 
-	assert.Panics(t, func() { get.Has(e0) })
-	assert.Panics(t, func() { get.Get(e0) })
+	assert.PanicsWithValue(t, "can't check for component of a dead entity", func() { get.Has(e0) })
+	assert.PanicsWithValue(t, "can't get component of a dead entity", func() { get.Get(e0) })
 }
 
 func TestGenericMapRelations(t *testing.T) {

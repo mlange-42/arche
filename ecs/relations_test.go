@@ -26,16 +26,16 @@ func TestRelationsExchange(t *testing.T) {
 	query.Close()
 
 	filter := ecs.All(posID, childID)
-	assert.Panics(t, func() {
+	assert.PanicsWithValue(t, "can't add relation: resulting entity has no component Velocity", func() {
 		w.Relations().ExchangeBatch(filter, nil, []ecs.ID{posID}, velID, parent2)
 	})
-	assert.Panics(t, func() {
+	assert.PanicsWithValue(t, "can't add relation: Velocity is not a relation component", func() {
 		w.Relations().ExchangeBatch(filter, []ecs.ID{velID}, []ecs.ID{posID}, velID, parent2)
 	})
-	assert.Panics(t, func() {
+	assert.PanicsWithValue(t, "exchange operation has no effect, but a relation is specified. Use Batch.SetRelation instead", func() {
 		w.Relations().ExchangeBatch(filter, nil, nil, childID, parent2)
 	})
-	assert.Panics(t, func() {
+	assert.PanicsWithValue(t, "exchange operation has no effect, but a relation is specified. Use Batch.SetRelation instead", func() {
 		_ = w.Relations().ExchangeBatchQ(filter, nil, nil, childID, parent2)
 	})
 
