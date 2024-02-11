@@ -16,7 +16,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Build Linux
@@ -39,7 +39,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: '1.21.x'
+        go-version: '1.22.x'
     - name: Check out code
       uses: actions/checkout@v2
     - name: Install dependencies
@@ -61,7 +61,7 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
-        go-version: '1.21.x'
+        go-version: '1.22.x'
     - name: Check out code
       uses: actions/checkout@v2
     - name: Install dependencies
@@ -80,7 +80,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: |
           go get .
@@ -110,7 +110,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: |
           go get .
@@ -129,25 +129,25 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Run examples
         run: |
-          go run ./examples/base
-          go run ./examples/batch_ops
-          go run ./examples/events
-          go run ./examples/filter
-          go run ./examples/generic
-          go run ./examples/locked_world
-          go run ./examples/parallel
-          go run ./examples/random_access
-          go run ./examples/random_sampling
-          go run ./examples/readme
-          go run ./examples/relations
-          go run ./examples/resources
-          go run ./examples/systems
-          go run ./examples/world_stats
+          go run ./_examples/base
+          go run ./_examples/batch_ops
+          go run ./_examples/events
+          go run ./_examples/filter
+          go run ./_examples/generic
+          go run ./_examples/locked_world
+          go run ./_examples/parallel
+          go run ./_examples/random_access
+          go run ./_examples/random_sampling
+          go run ./_examples/readme
+          go run ./_examples/relations
+          go run ./_examples/resources
+          go run ./_examples/systems
+          go run ./_examples/world_stats
 
   examples_tiny:
     name: Run Examples (tiny)
@@ -157,22 +157,22 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Run examples
         run: |
-          go run -tags tiny ./examples/base
-          go run -tags tiny ./examples/batch_ops
-          go run -tags tiny ./examples/events
-          go run -tags tiny ./examples/filter
-          go run -tags tiny ./examples/generic
-          go run -tags tiny ./examples/locked_world
-          go run -tags tiny ./examples/parallel
-          go run -tags tiny ./examples/random_access
-          go run -tags tiny ./examples/random_sampling
-          go run -tags tiny ./examples/readme
-          go run -tags tiny ./examples/relations
-          go run -tags tiny ./examples/resources
-          go run -tags tiny ./examples/systems
-          go run -tags tiny ./examples/world_stats
+          go run -tags tiny ./_examples/base
+          go run -tags tiny ./_examples/batch_ops
+          go run -tags tiny ./_examples/events
+          go run -tags tiny ./_examples/filter
+          go run -tags tiny ./_examples/generic
+          go run -tags tiny ./_examples/locked_world
+          go run -tags tiny ./_examples/parallel
+          go run -tags tiny ./_examples/random_access
+          go run -tags tiny ./_examples/random_sampling
+          go run -tags tiny ./_examples/readme
+          go run -tags tiny ./_examples/relations
+          go run -tags tiny ./_examples/resources
+          go run -tags tiny ./_examples/systems
+          go run -tags tiny ./_examples/world_stats

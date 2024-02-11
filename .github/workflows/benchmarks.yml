@@ -17,7 +17,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Run internal benchmarks
@@ -36,7 +36,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Run internal benchmarks (tiny)
@@ -55,7 +55,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Benchmark entity relations
@@ -72,7 +72,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Benchmark entity relations (tiny)
@@ -88,7 +88,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Benchmark vs. Array of Structs
@@ -104,7 +104,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Benchmark Pos/Vel
@@ -128,7 +128,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Benchmark Pos/Vel (tiny)
@@ -152,7 +152,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.21.x'
+          go-version: '1.22.x'
       - name: Install dependencies
         run: go get .
       - name: Benchmark tables
