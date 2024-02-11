@@ -6,5 +6,5 @@
 //   - Generic queries -- [github.com/mlange-42/arche/generic]
 //   - Advanced filters -- [github.com/mlange-42/arche/filter]
 //   - Event listeners -- [github.com/mlange-42/arche/listener]
-//   - Usage examples -- [github.com/mlange-42/arche/examples]
+//   - Usage examples -- [github.com/mlange-42/arche/_examples]
 package arche

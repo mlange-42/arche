@@ -14,5 +14,5 @@ cd arche
 2. Run examples from the project's root directory like this:
 
 ```
-go run ./examples/<example>
+go run ./_examples/<example>
 ```

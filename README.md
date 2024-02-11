@@ -45,7 +45,7 @@ It uses the type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/ge
 For a full-featured wrapper with systems, scheduling and more, see [arche-model](https://github.com/mlange-42/arche-model).
 
 See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
-[examples](https://github.com/mlange-42/arche/tree/main/examples) for details.
+[examples](https://github.com/mlange-42/arche/tree/main/_examples) for details.
 For more complex examples, see [arche-demo](https://github.com/mlange-42/arche-demo).
 
 ```go
