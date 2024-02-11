@@ -14,8 +14,10 @@ import (
 func TestWorldConfig(t *testing.T) {
 	_ = NewWorld(NewConfig())
 
-	assert.Panics(t, func() { _ = NewWorld(Config{}) })
-	assert.Panics(t, func() { _ = NewWorld(Config{}, Config{}) })
+	assert.PanicsWithValue(t, "invalid CapacityIncrement in config, must be > 0",
+		func() { _ = NewWorld(Config{}) })
+	assert.PanicsWithValue(t, "can't use more than one Config",
+		func() { _ = NewWorld(Config{}, Config{}) })
 
 	world := NewWorld(
 		NewConfig().WithCapacityIncrement(32).WithRelationCapacityIncrement(8),
@@ -57,9 +59,9 @@ func TestWorldEntites(t *testing.T) {
 	w.RemoveEntity(newEntityGen(2, 1))
 	w.RemoveEntity(newEntityGen(1, 0))
 
-	assert.Panics(t, func() { w.RemoveEntity(newEntityGen(3, 0)) })
-	assert.Panics(t, func() { w.RemoveEntity(newEntityGen(2, 1)) })
-	assert.Panics(t, func() { w.RemoveEntity(newEntityGen(1, 0)) })
+	assert.PanicsWithValue(t, "can't remove a dead entity", func() { w.RemoveEntity(newEntityGen(3, 0)) })
+	assert.PanicsWithValue(t, "can't remove a dead entity", func() { w.RemoveEntity(newEntityGen(2, 1)) })
+	assert.PanicsWithValue(t, "can't remove a dead entity", func() { w.RemoveEntity(newEntityGen(1, 0)) })
 }
 
 func TestWorldNewEntites(t *testing.T) {
@@ -179,8 +181,8 @@ func TestWorldComponents(t *testing.T) {
 	w.Remove(e0)
 
 	w.RemoveEntity(e0)
-	assert.Panics(t, func() { w.Has(newEntityGen(1, 0), posID) })
-	assert.Panics(t, func() { w.Get(newEntityGen(1, 0), posID) })
+	assert.PanicsWithValue(t, "can't check for component of a dead entity", func() { w.Has(newEntityGen(1, 0), posID) })
+	assert.PanicsWithValue(t, "can't get component of a dead entity", func() { w.Get(newEntityGen(1, 0), posID) })
 }
 
 func TestWorldIds(t *testing.T) {
@@ -198,7 +200,7 @@ func TestWorldIds(t *testing.T) {
 
 	w.RemoveEntity(e1)
 
-	assert.Panics(t, func() { _ = w.Ids(e1) })
+	assert.PanicsWithValue(t, "can't get component IDs for a dead entity", func() { _ = w.Ids(e1) })
 }
 
 func TestWorldLabels(t *testing.T) {
@@ -267,21 +269,27 @@ func TestWorldExchange(t *testing.T) {
 	assert.True(t, w.Has(e1, rotID))
 	assert.True(t, w.Has(e1, velID))
 
-	assert.Panics(t, func() { w.Exchange(e1, []ID{velID}, []ID{}) })
-	assert.Panics(t, func() { w.Exchange(e1, []ID{}, []ID{posID}) })
+	assert.PanicsWithValue(t, "entity already has component of type ecs.Velocity, can't add",
+		func() { w.Exchange(e1, []ID{velID}, []ID{}) })
+	assert.PanicsWithValue(t, "entity does not have a component of type ecs.Position, can't remove",
+		func() { w.Exchange(e1, []ID{}, []ID{posID}) })
 
 	w.RemoveEntity(e0)
 	_ = w.NewEntity()
-	assert.Panics(t, func() { w.Exchange(e0, []ID{posID}, []ID{}) })
+	assert.PanicsWithValue(t, "can't exchange components on a dead entity",
+		func() { w.Exchange(e0, []ID{posID}, []ID{}) })
 
 	target := w.NewEntity()
 	e0 = w.NewEntity(rel1ID)
 
-	assert.Panics(t, func() { w.exchange(e0, []ID{rel2ID}, nil, rel2ID, true, target) })
-	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, posID, true, target) })
+	assert.PanicsWithValue(t, "entity already has a relation component",
+		func() { w.exchange(e0, []ID{rel2ID}, nil, rel2ID, true, target) })
+	assert.PanicsWithValue(t, "can't add relation: Position is not a relation component",
+		func() { w.exchange(e0, []ID{posID}, nil, posID, true, target) })
 
 	w.Remove(e0, rel1ID)
-	assert.Panics(t, func() { w.exchange(e0, []ID{posID}, nil, rel1ID, true, target) })
+	assert.PanicsWithValue(t, "can't add relation: resulting entity has no component testRelationA",
+		func() { w.exchange(e0, []ID{posID}, nil, rel1ID, true, target) })
 }
 
 func TestWorldExchangeRelation(t *testing.T) {
@@ -300,9 +308,10 @@ func TestWorldExchangeRelation(t *testing.T) {
 	assert.Equal(t, []ID{posID, rel1ID}, w.Ids(e0))
 	assert.Equal(t, e1, w.Relations().Get(e0, rel1ID))
 
-	assert.Panics(t, func() {
-		w.Relations().Exchange(e0, nil, nil, rel1ID, e2)
-	})
+	assert.PanicsWithValue(t, "exchange operation has no effect, but a relation is specified. Use World.Relation instead",
+		func() {
+			w.Relations().Exchange(e0, nil, nil, rel1ID, e2)
+		})
 
 	w.Relations().Exchange(e0, []ID{rel2ID}, []ID{rel1ID}, rel2ID, e2)
 	assert.Equal(t, []ID{posID, rel2ID}, w.Ids(e0))
@@ -460,7 +469,7 @@ func TestWorldAssignSet(t *testing.T) {
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 
-	assert.Panics(t, func() { w.Assign(e0) })
+	assert.PanicsWithValue(t, "", func() { w.Assign(e0) })
 
 	w.Assign(e0, Component{posID, &Position{2, 3}})
 	pos := (*Position)(w.Get(e0, posID))
@@ -470,8 +479,8 @@ func TestWorldAssignSet(t *testing.T) {
 	pos = (*Position)(w.Get(e0, posID))
 	assert.Equal(t, 5, pos.X)
 
-	assert.Panics(t, func() { w.Assign(e0, Component{posID, &Position{2, 3}}) })
-	assert.Panics(t, func() { _ = (*Position)(w.copyTo(e1, posID, &Position{2, 3})) })
+	assert.PanicsWithValue(t, "entity already has component of type ecs.Position, can't add", func() { w.Assign(e0, Component{posID, &Position{2, 3}}) })
+	assert.PanicsWithValue(t, "can't copy component into entity that has no such component type", func() { _ = (*Position)(w.copyTo(e1, posID, &Position{2, 3})) })
 
 	e2 := w.NewEntity()
 	w.Assign(e2,
@@ -500,7 +509,7 @@ func TestWorldAssignSet(t *testing.T) {
 
 	w.RemoveEntity(e0)
 	_ = w.NewEntity()
-	assert.Panics(t, func() { w.Assign(e0, Component{posID, &Position{2, 3}}) })
+	assert.PanicsWithValue(t, "can't exchange components on a dead entity", func() { w.Assign(e0, Component{posID, &Position{2, 3}}) })
 }
 
 func TestWorldGetComponents(t *testing.T) {
@@ -539,12 +548,12 @@ func TestWorldGetComponents(t *testing.T) {
 	assert.Equal(t, &Position{100, 101}, pos1)
 
 	w.RemoveEntity(e0)
-	assert.Panics(t, func() { w.Get(e0, posID) })
-	assert.Panics(t, func() { w.Mask(e0) })
+	assert.PanicsWithValue(t, "can't get component of a dead entity", func() { w.Get(e0, posID) })
+	assert.PanicsWithValue(t, "can't get mask for a dead entity", func() { w.Mask(e0) })
 
 	_ = w.NewEntity(posID)
-	assert.Panics(t, func() { w.Get(e0, posID) })
-	assert.Panics(t, func() { w.Mask(e0) })
+	assert.PanicsWithValue(t, "can't get component of a dead entity", func() { w.Get(e0, posID) })
+	assert.PanicsWithValue(t, "can't get mask for a dead entity", func() { w.Mask(e0) })
 
 	pos1 = (*Position)(w.Get(e1, posID))
 	assert.Equal(t, &Position{100, 101}, pos1)
@@ -559,11 +568,13 @@ func TestWorldDuplicateComponents(t *testing.T) {
 	posID := ComponentID[Position](&w)
 	//rotID := ComponentID[rotation](&w)
 
-	assert.Panics(t, func() { w.NewEntity(posID, posID) })
-
+	assert.PanicsWithValue(t, "entity already has component of type ecs.Position, or it was added twice",
+		func() { w.NewEntity(posID, posID) })
 	e := w.NewEntity(posID)
-	assert.Panics(t, func() { w.Remove(e, posID, posID) })
-	assert.Panics(t, func() { w.Exchange(e, []ID{posID}, []ID{posID}) })
+	assert.PanicsWithValue(t, "entity does not have a component of type ecs.Position, can't remove",
+		func() { w.Remove(e, posID, posID) })
+	assert.PanicsWithValue(t, "component of type ecs.Position added and removed in the same exchange operation",
+		func() { w.Exchange(e, []ID{posID}, []ID{posID}) })
 }
 
 func TestWorldIter(t *testing.T) {
@@ -588,7 +599,12 @@ func TestWorldIter(t *testing.T) {
 			cnt++
 		}
 		assert.Equal(t, 1000, cnt)
-		assert.Panics(t, func() { query.Next() })
+
+		if isDebug {
+			assert.PanicsWithValue(t, "query iteration already finished", func() { query.Next() })
+		} else {
+			assert.PanicsWithError(t, "runtime error: index out of range [-1]", func() { query.Next() })
+		}
 	}
 
 	for i := 0; i < MaskTotalBits-1; i++ {
@@ -604,7 +620,7 @@ func TestWorldIter(t *testing.T) {
 	assert.Panics(t, func() { world.Query(All(posID, rotID)) })
 
 	query.Close()
-	assert.Panics(t, func() { query.Close() })
+	assert.PanicsWithValue(t, "unbalanced unlock. Did you close a query that was already iterated?", func() { query.Close() })
 }
 
 func TestWorldNewEntities(t *testing.T) {
@@ -623,7 +639,7 @@ func TestWorldNewEntities(t *testing.T) {
 	world.NewEntity(posID, rotID)
 	assert.Equal(t, 2, len(world.entities))
 
-	assert.Panics(t, func() { world.newEntitiesQuery(0, ID{}, false, Entity{}, posID, rotID) })
+	assert.PanicsWithValue(t, "can only create a positive number of entities", func() { world.newEntitiesQuery(0, ID{}, false, Entity{}, posID, rotID) })
 
 	query := world.newEntitiesQuery(100, ID{}, false, Entity{}, posID, rotID)
 	assert.Equal(t, 100, query.Count())
@@ -704,7 +720,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 	world.NewEntity(posID, rotID)
 	assert.Equal(t, 1, len(events))
 
-	assert.Panics(t, func() { world.newEntitiesWithQuery(0, ID{}, false, Entity{}, comps...) })
+	assert.PanicsWithValue(t, "can only create a positive number of entities", func() { world.newEntitiesWithQuery(0, ID{}, false, Entity{}, comps...) })
 	assert.Equal(t, 1, len(events))
 
 	query := world.newEntitiesWithQuery(1, ID{}, false, Entity{})
@@ -850,10 +866,14 @@ func TestWorldRelationSet(t *testing.T) {
 		EventTypes:  event.TargetChanged,
 	}, events[len(events)-1])
 
-	assert.Panics(t, func() { world.Relations().Get(e1, rotID) })
-	assert.Panics(t, func() { world.Relations().Get(e1, rel2ID) })
-	assert.Panics(t, func() { world.Relations().Set(e1, rotID, Entity{}) })
-	assert.Panics(t, func() { world.Relations().Set(e1, rel2ID, Entity{}) })
+	assert.PanicsWithValue(t, "not a relation component: ecs.rotation",
+		func() { world.Relations().Get(e1, rotID) })
+	assert.PanicsWithValue(t, "entity does not have relation component ecs.testRelationB",
+		func() { world.Relations().Get(e1, rel2ID) })
+	assert.PanicsWithValue(t, "not a relation component: ecs.rotation",
+		func() { world.Relations().Set(e1, rotID, Entity{}) })
+	assert.PanicsWithValue(t, "entity does not have relation component ecs.testRelationB",
+		func() { world.Relations().Set(e1, rel2ID, Entity{}) })
 
 	// Should do nothing
 	world.Relations().Set(e1, relID, Entity{})
@@ -875,19 +895,26 @@ func TestWorldRelationSet(t *testing.T) {
 		EventTypes:  event.ComponentRemoved | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
 
-	assert.Panics(t, func() { world.Relations().Get(e2, relID) })
-	assert.Panics(t, func() { world.Relations().Set(e2, relID, Entity{}) })
+	assert.PanicsWithValue(t, "entity does not have relation component ecs.testRelationA",
+		func() { world.Relations().Get(e2, relID) })
+	assert.PanicsWithValue(t, "entity does not have relation component ecs.testRelationA",
+		func() { world.Relations().Set(e2, relID, Entity{}) })
 
-	assert.Panics(t, func() { world.NewEntity(relID, rel2ID) })
-	assert.Panics(t, func() { world.Add(e1, rel2ID) })
+	assert.PanicsWithValue(t, "entity already has a relation component",
+		func() { world.NewEntity(relID, rel2ID) })
+	assert.PanicsWithValue(t, "entity already has a relation component",
+		func() { world.Add(e1, rel2ID) })
 
 	world.RemoveEntity(e1)
-	assert.Panics(t, func() { world.Relations().Get(e1, relID) })
-	assert.Panics(t, func() { world.Relations().Set(e1, relID, targ) })
+	assert.PanicsWithValue(t, "can't get relation of a dead entity",
+		func() { world.Relations().Get(e1, relID) })
+	assert.PanicsWithValue(t, "can't set relation for a dead entity",
+		func() { world.Relations().Set(e1, relID, targ) })
 
 	e3 := world.NewEntity(relID, rotID)
 	world.RemoveEntity(targ)
-	assert.Panics(t, func() { world.Relations().Set(e3, relID, targ) })
+	assert.PanicsWithValue(t, "can't make a dead entity a relation target",
+		func() { world.Relations().Set(e3, relID, targ) })
 
 	assert.Equal(t, int32(2), world.nodes.Get(2).archetypes.Len())
 	assert.True(t, world.nodes.Get(2).archetypes.Get(0).IsActive())
@@ -965,7 +992,7 @@ func TestWorldRelationSetBatch(t *testing.T) {
 	world.RemoveEntity(targ3)
 	assert.Equal(t, 1204, len(events))
 
-	assert.Panics(t, func() {
+	assert.PanicsWithValue(t, "can't make a dead entity a relation target", func() {
 		world.Batch().SetRelation(All(relID), relID, targ3)
 	})
 
@@ -1220,32 +1247,36 @@ func TestWorldRelationCreate(t *testing.T) {
 	world.RemoveEntity(dead)
 
 	world.newEntities(5, relID, true, alive, posID, relID)
-	assert.Panics(t, func() { world.newEntitiesNoNotify(5, relID, true, dead, posID, relID) })
+	assert.PanicsWithValue(t, "can't make a dead entity a relation target",
+		func() { world.newEntitiesNoNotify(5, relID, true, dead, posID, relID) })
 
 	world.newEntityTarget(relID, alive, posID, relID)
-	assert.Panics(t, func() { world.newEntityTarget(relID, dead, posID, relID) })
+	assert.PanicsWithValue(t, "can't make a dead entity a relation target",
+		func() { world.newEntityTarget(relID, dead, posID, relID) })
 
 	world.newEntitiesWith(5, relID, true, alive,
 		Component{ID: posID, Comp: &Position{}},
 		Component{ID: relID, Comp: &testRelationA{}},
 	)
-	assert.Panics(t, func() {
-		world.newEntitiesWith(5, relID, true, dead,
-			Component{ID: posID, Comp: &Position{}},
-			Component{ID: relID, Comp: &testRelationA{}},
-		)
-	})
+	assert.PanicsWithValue(t, "can't make a dead entity a relation target",
+		func() {
+			world.newEntitiesWith(5, relID, true, dead,
+				Component{ID: posID, Comp: &Position{}},
+				Component{ID: relID, Comp: &testRelationA{}},
+			)
+		})
 
 	world.newEntityTargetWith(relID, alive,
 		Component{ID: posID, Comp: &Position{}},
 		Component{ID: relID, Comp: &testRelationA{}},
 	)
-	assert.Panics(t, func() {
-		world.newEntityTargetWith(relID, dead,
-			Component{ID: posID, Comp: &Position{}},
-			Component{ID: relID, Comp: &testRelationA{}},
-		)
-	})
+	assert.PanicsWithValue(t, "can't make a dead entity a relation target",
+		func() {
+			world.newEntityTargetWith(relID, dead,
+				Component{ID: posID, Comp: &Position{}},
+				Component{ID: relID, Comp: &testRelationA{}},
+			)
+		})
 }
 
 func TestWorldRelationMove(t *testing.T) {
@@ -1334,10 +1365,10 @@ func TestWorldLock(t *testing.T) {
 
 	query1 = world.Query(All(posID))
 
-	assert.Panics(t, func() { world.NewEntity() })
-	assert.Panics(t, func() { world.RemoveEntity(entity) })
-	assert.Panics(t, func() { world.Add(entity, rotID) })
-	assert.Panics(t, func() { world.Remove(entity, posID) })
+	assert.PanicsWithValue(t, "attempt to modify a locked world", func() { world.NewEntity() })
+	assert.PanicsWithValue(t, "attempt to modify a locked world", func() { world.RemoveEntity(entity) })
+	assert.PanicsWithValue(t, "attempt to modify a locked world", func() { world.Add(entity, rotID) })
+	assert.PanicsWithValue(t, "attempt to modify a locked world", func() { world.Remove(entity, posID) })
 }
 
 func TestWorldStats(t *testing.T) {
@@ -1417,7 +1448,8 @@ func TestWorldResources(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, Position{1, 2}, *pos)
 
-	assert.Panics(t, func() { w.Resources().Add(posID, &Position{1, 2}) })
+	assert.PanicsWithValue(t, "Resource of ID 0 was already added (type *ecs.Position)",
+		func() { w.Resources().Add(posID, &Position{1, 2}) })
 
 	pos = GetResource[Position](&w)
 	assert.Equal(t, Position{1, 2}, *pos)
@@ -1426,7 +1458,7 @@ func TestWorldResources(t *testing.T) {
 	assert.True(t, w.Resources().Has(rotID))
 	w.Resources().Remove(rotID)
 	assert.False(t, w.Resources().Has(rotID))
-	assert.Panics(t, func() { w.Resources().Remove(rotID) })
+	assert.PanicsWithValue(t, "Resource of ID 1 is not present", func() { w.Resources().Remove(rotID) })
 }
 
 func TestWorldBatchRemove(t *testing.T) {
@@ -1786,9 +1818,10 @@ func TestWorldEntityDumpFail(t *testing.T) {
 	e1 := w2.NewEntity()
 	w2.RemoveEntity(e1)
 
-	assert.Panics(t, func() {
-		w2.LoadEntities(&eData)
-	})
+	assert.PanicsWithValue(t, "can set entity data only on a fresh or reset world",
+		func() {
+			w2.LoadEntities(&eData)
+		})
 }
 
 func TestWorldExtendLayouts(t *testing.T) {
@@ -1822,9 +1855,10 @@ func TestWorldExtendLayouts(t *testing.T) {
 	assert.Equal(t, 16, len(w.archetypes.Get(1).layouts))
 
 	lock := w.lock()
-	assert.Panics(t, func() {
-		ComponentID[testStruct16](&w)
-	})
+	assert.PanicsWithValue(t, "attempt to register a new component in a locked world",
+		func() {
+			ComponentID[testStruct16](&w)
+		})
 	w.unlock(lock)
 
 	id16 := ComponentID[testStruct16](&w)
