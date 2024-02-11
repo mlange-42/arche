@@ -78,7 +78,11 @@ func TestQuery(t *testing.T) {
 	}
 	assert.Equal(t, 4, cnt)
 
-	assert.Panics(t, func() { q.Next() })
+	if isDebug {
+		assert.PanicsWithValue(t, "query iteration already finished", func() { q.Next() })
+	} else {
+		assert.PanicsWithError(t, "runtime error: index out of range [-1]", func() { q.Next() })
+	}
 
 	filter := All(rotID).Without(posID)
 	q = w.Query(&filter)
@@ -361,9 +365,9 @@ func TestQueryStep(t *testing.T) {
 	assert.Equal(t, Entity{10, 0}, q.Entity())
 
 	q = w.Query(All(posID))
-	assert.Panics(t, func() { q.Step(0) })
+	assert.PanicsWithValue(t, "step size must be positive", func() { q.Step(0) })
 	q.Step(2)
-	assert.Panics(t, func() { q.Step(0) })
+	assert.PanicsWithValue(t, "step size must be positive", func() { q.Step(0) })
 
 	q = w.Query(All(posID))
 	cnt = 0
@@ -389,13 +393,23 @@ func TestQueryClosed(t *testing.T) {
 	w.Add(e2, posID, rotID)
 
 	q := w.Query(All(posID, rotID))
-	assert.Panics(t, func() { q.Entity() })
-	assert.Panics(t, func() { q.Get(posID) })
-
+	if isDebug {
+		assert.PanicsWithValue(t, "query already iterated or iteration not started yet", func() { q.Entity() })
+		assert.PanicsWithValue(t, "query already iterated or iteration not started yet", func() { q.Get(posID) })
+	} else {
+		assert.PanicsWithError(t, "runtime error: invalid memory address or nil pointer dereference", func() { q.Entity() })
+		assert.PanicsWithError(t, "runtime error: invalid memory address or nil pointer dereference", func() { q.Get(posID) })
+	}
 	q.Close()
-	assert.Panics(t, func() { q.Entity() })
-	assert.Panics(t, func() { q.Get(posID) })
-	assert.Panics(t, func() { q.Next() })
+	if isDebug {
+		assert.PanicsWithValue(t, "query already iterated or iteration not started yet", func() { q.Entity() })
+		assert.PanicsWithValue(t, "query already iterated or iteration not started yet", func() { q.Get(posID) })
+		assert.PanicsWithValue(t, "query iteration already finished", func() { q.Next() })
+	} else {
+		assert.PanicsWithError(t, "runtime error: invalid memory address or nil pointer dereference", func() { q.Entity() })
+		assert.PanicsWithError(t, "runtime error: invalid memory address or nil pointer dereference", func() { q.Get(posID) })
+		assert.PanicsWithError(t, "runtime error: index out of range [-1]", func() { q.Next() })
+	}
 
 	assert.True(t, w.locks.locks.IsZero())
 
@@ -407,7 +421,12 @@ func TestQueryClosed(t *testing.T) {
 	}
 	assert.True(t, w.locks.locks.IsZero())
 	assert.Equal(t, 2, cnt)
-	assert.Panics(t, func() { q.Next() })
+
+	if isDebug {
+		assert.PanicsWithValue(t, "query iteration already finished", func() { q.Next() })
+	} else {
+		assert.PanicsWithError(t, "runtime error: index out of range [-1]", func() { q.Next() })
+	}
 
 	cnt = 0
 	excl := All(rotID).Exclusive()
@@ -418,7 +437,12 @@ func TestQueryClosed(t *testing.T) {
 	}
 	assert.True(t, w.locks.locks.IsZero())
 	assert.Equal(t, 0, cnt)
-	assert.Panics(t, func() { q.Next() })
+
+	if isDebug {
+		assert.PanicsWithValue(t, "query iteration already finished", func() { q.Next() })
+	} else {
+		assert.PanicsWithError(t, "runtime error: index out of range [-1]", func() { q.Next() })
+	}
 
 	cnt = 0
 	excl = All(posID).Exclusive()
@@ -429,7 +453,12 @@ func TestQueryClosed(t *testing.T) {
 	}
 	assert.True(t, w.locks.locks.IsZero())
 	assert.Equal(t, 1, cnt)
-	assert.Panics(t, func() { q.Next() })
+
+	if isDebug {
+		assert.PanicsWithValue(t, "query iteration already finished", func() { q.Next() })
+	} else {
+		assert.PanicsWithError(t, "runtime error: index out of range [-1]", func() { q.Next() })
+	}
 }
 
 func TestQueryNextArchetype(t *testing.T) {
@@ -447,7 +476,9 @@ func TestQueryNextArchetype(t *testing.T) {
 
 	assert.True(t, query.nextArchetype())
 	assert.False(t, query.nextArchetype())
-	assert.Panics(t, func() { query.nextArchetype() })
+
+	assert.PanicsWithError(t, "runtime error: index out of range [-1]", func() { query.nextArchetype() })
+
 }
 
 func TestQueryRelations(t *testing.T) {
@@ -472,9 +503,12 @@ func TestQueryRelations(t *testing.T) {
 		assert.Equal(t, targ, targ2)
 		assert.Equal(t, targ, query.relationUnchecked(relID))
 
-		assert.Panics(t, func() { query.Relation(rel2ID) })
-		assert.Panics(t, func() { query.Relation(posID) })
-		assert.Panics(t, func() { query.Relation(velID) })
+		assert.PanicsWithValue(t, "entity has no component ecs.testRelationB, or it is not a relation component",
+			func() { query.Relation(rel2ID) })
+		assert.PanicsWithValue(t, "entity has no component ecs.Position, or it is not a relation component",
+			func() { query.Relation(posID) })
+		assert.PanicsWithValue(t, "entity has no component ecs.Velocity, or it is not a relation component",
+			func() { query.Relation(velID) })
 	}
 }
 
@@ -521,11 +555,11 @@ func TestQueryEntityAt(t *testing.T) {
 
 	query := world.Query(All())
 
-	assert.Panics(t, func() { query.EntityAt(-1) })
+	assert.PanicsWithValue(t, "can't get entity at negative index", func() { query.EntityAt(-1) })
 	for i := 0; i < 52; i++ {
 		assert.Equal(t, Entity{eid(i + 1), 0}, query.EntityAt(i))
 	}
-	assert.Panics(t, func() { query.EntityAt(52) })
+	assert.PanicsWithValue(t, "query index out of range: index 52, length 52", func() { query.EntityAt(52) })
 	query.Close()
 
 	relFilter := NewRelationFilter(All(relID), parent2)
@@ -533,14 +567,14 @@ func TestQueryEntityAt(t *testing.T) {
 	for i := 0; i < 10; i++ {
 		assert.Equal(t, Entity{eid(i + 13), 0}, query.EntityAt(i))
 	}
-	assert.Panics(t, func() { query.EntityAt(10) })
+	assert.PanicsWithValue(t, "query index out of range: index 10, length 10", func() { query.EntityAt(10) })
 	query.Close()
 
 	query = world.Query(All(relID))
 	for i := 0; i < 40; i++ {
 		assert.Equal(t, Entity{eid(i + 13), 0}, query.EntityAt(i))
 	}
-	assert.Panics(t, func() { query.EntityAt(40) })
+	assert.PanicsWithValue(t, "query index out of range: index 40, length 40", func() { query.EntityAt(40) })
 	query.Close()
 
 	query = world.Batch().ExchangeQ(All(posID), nil, []ID{posID})
@@ -549,7 +583,7 @@ func TestQueryEntityAt(t *testing.T) {
 	for i := 0; i < 30; i++ {
 		assert.Equal(t, Entity{eid(i + 3), 0}, query.EntityAt(i))
 	}
-	assert.Panics(t, func() { query.EntityAt(30) })
+	assert.PanicsWithValue(t, "query index out of range: index 30, length 30", func() { query.EntityAt(30) })
 	query.Close()
 
 	f := All(relID)
@@ -559,7 +593,7 @@ func TestQueryEntityAt(t *testing.T) {
 	for i := 0; i < 40; i++ {
 		assert.Equal(t, (i+3)%10, int(query.EntityAt(i).id)%10)
 	}
-	assert.Panics(t, func() { query.EntityAt(40) })
+	assert.PanicsWithValue(t, "query index out of range: index 40, length 40", func() { query.EntityAt(40) })
 	query.Close()
 }
 
