@@ -469,7 +469,7 @@ func TestWorldAssignSet(t *testing.T) {
 	e0 := w.NewEntity()
 	e1 := w.NewEntity()
 
-	assert.PanicsWithValue(t, "", func() { w.Assign(e0) })
+	assert.PanicsWithValue(t, "no components given to assign", func() { w.Assign(e0) })
 
 	w.Assign(e0, Component{posID, &Position{2, 3}})
 	pos := (*Position)(w.Get(e0, posID))

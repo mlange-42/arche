@@ -69,7 +69,25 @@ jobs:
         go get .
     - name: Run Unit tests (tiny)
       run: |
-        go test -v -covermode atomic -coverprofile="coverage.out" ./...
+        go test -tags tiny -v -covermode atomic -coverprofile="coverage.out" ./...
+        go tool cover -func="coverage.out"
+
+  test_tiny:
+    name: Run tests (debug)
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.22.x'
+    - name: Check out code
+      uses: actions/checkout@v2
+    - name: Install dependencies
+      run: |
+        go get .
+    - name: Run Unit tests (debug)
+      run: |
+        go test -tags debug -v -covermode atomic -coverprofile="coverage.out" ./...
         go tool cover -func="coverage.out"
 
   lint:
