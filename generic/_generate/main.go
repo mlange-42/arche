@@ -43,7 +43,7 @@ func generateMaps() {
 	maxIndex := len(typeLetters)
 	text := bytes.Buffer{}
 
-	header, err := template.ParseFiles("./generate/map_header.go.txt")
+	header, err := template.ParseFiles("./_generate/map_header.go.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -52,7 +52,7 @@ func generateMaps() {
 		panic(err)
 	}
 
-	maps, err := template.ParseFiles("./generate/map.go.txt")
+	maps, err := template.ParseFiles("./_generate/map.go.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -132,7 +132,7 @@ func generateQueries() {
 
 	text := bytes.Buffer{}
 
-	header, err := template.ParseFiles("./generate/query_header.go.txt")
+	header, err := template.ParseFiles("./_generate/query_header.go.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -141,7 +141,7 @@ func generateQueries() {
 		panic(err)
 	}
 
-	filters, err := template.ParseFiles("./generate/query.go.txt")
+	filters, err := template.ParseFiles("./_generate/query.go.txt")
 	if err != nil {
 		panic(err)
 	}
