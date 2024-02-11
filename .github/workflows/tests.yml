@@ -158,6 +158,8 @@ jobs:
           go run ./_examples/filter
           go run ./_examples/generic
           go run ./_examples/locked_world
+          go run ./_examples/no_ecs
+          go run ./_examples/no_ecs_generic
           go run ./_examples/parallel
           go run ./_examples/random_access
           go run ./_examples/random_sampling
@@ -186,6 +188,8 @@ jobs:
           go run -tags tiny ./_examples/filter
           go run -tags tiny ./_examples/generic
           go run -tags tiny ./_examples/locked_world
+          go run -tags tiny ./_examples/no_ecs
+          go run -tags tiny ./_examples/no_ecs_generic
           go run -tags tiny ./_examples/parallel
           go run -tags tiny ./_examples/random_access
           go run -tags tiny ./_examples/random_sampling
