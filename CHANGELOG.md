@@ -19,6 +19,8 @@
 
 * Improves error messages for running out of world locks, components or resources, and on unbalanced unlock (#363)
 * Adds benchmarks for query creation (#366)
+* Upgrade to Go 1.22 in CI (#376)
+* Renames directory `examples` to `_examples` to accommodate changed test coverage behaviour of Go 1.22 (#376)
 
 ## [[v0.10.1]](https://github.com/mlange-42/arche/compare/v0.10.0...v0.10.1)
 
