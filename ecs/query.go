@@ -9,6 +9,9 @@ import (
 //
 // Create queries through the [World] using [World.Query]. See there for more details.
 //
+// In case you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference",
+// try running with build tag `debug`.
+//
 // See also the generic alternatives [github.com/mlange-42/arche/generic.Query1],
 // [github.com/mlange-42/arche/generic.Query2], etc.
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].

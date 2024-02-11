@@ -54,4 +54,14 @@
 //   - Add components: [Relations.ExchangeBatch], [Relations.ExchangeBatchQ]
 //   - Remove components: [Relations.ExchangeBatch], [Relations.ExchangeBatchQ]
 //   - Exchange components: [Relations.ExchangeBatch], [Relations.ExchangeBatchQ]
+//
+// # Build tags
+//
+// Arche provides 2 build tags:
+//   - tiny -- Reduces the maximum number of components to 64, giving a performance boost for mask-related operations.
+//   - debug -- Improves error messages on [Query] misuse, at the cost of performance.
+//
+// Usage:
+//
+//	go build -tags tiny .
 package ecs
