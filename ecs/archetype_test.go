@@ -58,7 +58,7 @@ func TestArchetype(t *testing.T) {
 	assert.Equal(t, 5, pos0.Y)
 	assert.Equal(t, 6, rot0.Angle)
 
-	assert.Panics(t, func() {
+	assert.PanicsWithValue(t, "Invalid number of components", func() {
 		arch.Add(
 			newEntity(1),
 			Component{ID: id(0), Comp: &Position{4, 5}},
@@ -87,7 +87,7 @@ func TestNewArchetype(t *testing.T) {
 		{ID: id(1), Type: reflect.TypeOf(rotation{})},
 		{ID: id(0), Type: reflect.TypeOf(Position{})},
 	}
-	assert.Panics(t, func() {
+	assert.PanicsWithValue(t, "component arguments must be sorted by ID", func() {
 		node := newArchNode(All(id(0), id(1)), &nodeData{}, ID{}, false, 32, comps)
 		arch := archetype{}
 		data := archetypeData{}

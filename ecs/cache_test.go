@@ -29,7 +29,7 @@ func TestFilterCache(t *testing.T) {
 	assert.Equal(t, 2, len(world.getArchetypes(&f1)))
 	assert.Equal(t, 1, len(world.getArchetypes(&f2)))
 
-	assert.Panics(t, func() { cache.Register(&f2) })
+	assert.PanicsWithValue(t, "filter is already registered", func() { cache.Register(&f2) })
 
 	e1 := cache.get(&f1)
 	e2 := cache.get(&f2)
@@ -43,8 +43,8 @@ func TestFilterCache(t *testing.T) {
 	assert.Equal(t, all1, ff1)
 	assert.Equal(t, all2, ff2)
 
-	assert.Panics(t, func() { cache.Unregister(&f1) })
-	assert.Panics(t, func() { cache.get(&f1) })
+	assert.PanicsWithValue(t, "no filter for id found to unregister", func() { cache.Unregister(&f1) })
+	assert.PanicsWithValue(t, "no filter for id found", func() { cache.get(&f1) })
 }
 
 func TestFilterCacheRelation(t *testing.T) {

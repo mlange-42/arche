@@ -23,7 +23,7 @@ func TestEntityPool(t *testing.T) {
 	}
 	assert.Equal(t, expectedAll, p.entities, "Wrong initial entities")
 
-	assert.Panics(t, func() { p.Recycle(p.entities[0]) })
+	assert.PanicsWithValue(t, "can't recycle reserved zero entity", func() { p.Recycle(p.entities[0]) })
 
 	e0 := p.entities[1]
 	p.Recycle(e0)

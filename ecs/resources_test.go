@@ -26,7 +26,7 @@ func TestResources(t *testing.T) {
 	assert.True(t, ok)
 	assert.Equal(t, Position{1, 2}, *pos)
 
-	assert.Panics(t, func() { res.Add(posID, &Position{1, 2}) })
+	assert.PanicsWithValue(t, "Resource of ID 0 was already added (type *ecs.Position)", func() { res.Add(posID, &Position{1, 2}) })
 
 	pos, ok = res.Get(posID).(*Position)
 	assert.True(t, ok)
@@ -36,7 +36,7 @@ func TestResources(t *testing.T) {
 	assert.True(t, res.Has(rotID))
 	res.Remove(rotID)
 	assert.False(t, res.Has(rotID))
-	assert.Panics(t, func() { res.Remove(rotID) })
+	assert.PanicsWithValue(t, "Resource of ID 1 is not present", func() { res.Remove(rotID) })
 }
 
 func TestResourcesReset(t *testing.T) {

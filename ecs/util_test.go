@@ -45,7 +45,8 @@ func TestLockMask(t *testing.T) {
 	locks.Unlock(l1)
 	assert.True(t, locks.IsLocked())
 
-	assert.Panics(t, func() { locks.Unlock(l1) })
+	assert.PanicsWithValue(t, "unbalanced unlock. Did you close a query that was already iterated?",
+		func() { locks.Unlock(l1) })
 
 	locks.Unlock(l2)
 	assert.False(t, locks.IsLocked())
