@@ -7,6 +7,8 @@ Batch operations are performed in batches of 1000 entities.
 Absolute numbers are not  really meaningful, as they heavily depend on the hardware.
 However, all benchmarks run in the CI in the same job and hence on the same machine, and can be compared.
 
+Benchmark code: [`benchmark/table`](https://github.com/mlange-42/arche/tree/main/benchmark/table).
+
 ## Query
 
 | Operation                        | Time         | Remark                       |
