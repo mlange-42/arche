@@ -188,6 +188,8 @@ Build:
 Iterate:
 * Iterate all entities with `Pos` and `Vel`, and add `Vel` to `Pos`.
 
+Benchmark code: [`benchmark/competition/pos_vel`](https://github.com/mlange-42/arche/tree/main/benchmark/competition/pos_vel).
+
 <div align="center" width="100%">
 
 ![Benchmark vs. Go ECSs - Pos/Vel](https://github.com/mlange-42/arche/assets/44003176/7b73f9d8-238c-4d7a-98a1-267ad0b5e4a8)  
@@ -207,6 +209,8 @@ Iterate:
 > Note: The iteration is performed once before benchmarking,
 > to avoid biasing slower implementations through one-time allocations.
 
+Benchmark code: [`benchmark/competition/add_remove`](https://github.com/mlange-42/arche/tree/main/benchmark/competition/add_remove).
+
 <div align="center" width="100%">
 
 ![Benchmark vs. Go ECSs - Add/remove](https://github.com/mlange-42/arche/assets/44003176/7a127568-e71a-441f-91b0-6e626b3fcf19)  
@@ -224,6 +228,8 @@ For AoS and AoP, time per access increases with memory per entity as well as num
 In the given example with components of 16 bytes each, from 64 bytes per entity onwards (i.e. 4 components or 8 `float64` values),
 Arche outperforms AoS and AoP, particularly with a large number of entities.
 Note that the maximum shown here corresponds to only 25 MB of entity data!
+
+Benchmark code: [`benchmark/competition/array_of_structs`](https://github.com/mlange-42/arche/tree/main/benchmark/competition/array_of_structs).
 
 <div align="center" width="100%">
 
