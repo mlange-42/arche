@@ -12,6 +12,7 @@
 * Adds [BENCHMARKS.md](https://github.com/mlange-42/arche/blob/main/BENCHMARKS.md) for a tabular overview of the runtime cost of typical *Arche* ECS operations (#367, #372)
 * Link benchmarking code in `README.md` and benchmarking tables (#375)
 * Documents build tags `tiny` and `debug` in package docs of `ecs` (#377)
+* Adds examples to demonstrate the use of non-ECS data structures together with ECS (#379)
 
 ### Bugfixes
 
