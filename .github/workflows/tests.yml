@@ -72,7 +72,7 @@ jobs:
         go test -tags tiny -v -covermode atomic -coverprofile="coverage.out" ./...
         go tool cover -func="coverage.out"
 
-  test_tiny:
+  test_debug:
     name: Run tests (debug)
     runs-on: ubuntu-latest
     steps:
