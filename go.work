@@ -5,4 +5,5 @@ toolchain go1.21.3
 use (
 	.
 	./benchmark
+	./docs/content
 )
