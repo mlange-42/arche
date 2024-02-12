@@ -5,3 +5,7 @@
     --MENU-HOME-LINK-color: var(--MENU-SECTIONS-LINK-color);
     --MENU-HOME-LINK-HOVER-color: var(--MENU-SECTIONS-LINK-HOVER-color);
 }
+
+.dark {
+    display: none !important;
+}

@@ -1,6 +1,6 @@
 baseURL = 'https://mlange-42.github.io/arche/'
 languageCode = 'en-us'
-title = 'Arche Manual'
+title = 'Arche'
 
 [module]
 [[module.imports]]
@@ -26,3 +26,15 @@ themeVariant = [
 disableLandingPageButton = true
 showVisitedLinks = true
 collapsibleMenu = true
+
+[[menu.shortcuts]]
+name = "<i class='fab fa-fw fa-github'></i> GitHub repo"
+identifier = "ds"
+url = "https://github.com/mlange-42/arche"
+weight = 10
+
+[[menu.shortcuts]]
+name = "<i class='fas fa-fw fa-bookmark'></i> API reference"
+identifier = "hugodoc"
+url = "https://pkg.go.dev/github.com/mlange-42/arche"
+weight = 20
