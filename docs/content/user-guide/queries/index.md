@@ -1,6 +1,6 @@
 +++
-title = 'First Content'
-date = 2024-02-12T15:30:47+01:00
+title = 'Queries'
+weight = 10
 +++
 ## Code tests
 
@@ -17,3 +17,5 @@ Code inclusion of lines 1-6: `{{</* code-lines code_test.go 1 6 */>}}`
 {{< code-lines code_test.go 1 6 >}}
 
 A [Link](https://example.com)
+
+An API docs link: {{< api ecs Entity.IsZero >}}, {{< api ecs Entity.IsZero "Entity.IsZero()" >}}

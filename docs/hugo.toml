@@ -16,6 +16,7 @@ images = [ "images/social.svg" ]
 description = "Documentation for Arche, the Go Entity Component System (ECS)"
 
 editURL = "https://github.com/mlange-42/arche/edit/main/docs/content/${FilePath}"
+apiURL = "https://pkg.go.dev/github.com/mlange-42/arche/"
 
 themeVariant = [
 	{ identifier = "auto",  name = "Auto", auto = [] },
@@ -26,6 +27,7 @@ themeVariant = [
 disableLandingPageButton = true
 showVisitedLinks = true
 collapsibleMenu = true
+disableInlineCopyToClipBoard = true
 
 [[menu.shortcuts]]
 name = "<i class='fab fa-fw fa-github'></i> GitHub repo"

@@ -1,0 +1,9 @@
+{{ $pkg := .Get 0 }}
+{{ $mem := .Get 1 }}
+{{ $text := printf "%s.%s" $pkg $mem }}
+{{ if .Get 2 }}
+ {{ $text = .Get 2 }}
+{{ end }}
+<span class="copy-to-clipboard">
+    <a href="{{ .Site.Params.apiURL }}{{ $pkg }}#{{ $mem }}"><code class="copy-to-clipboard-code" data-code="{{ $text }}">{{ $text }}</code></a>
+</span>
