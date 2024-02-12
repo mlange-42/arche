@@ -42,4 +42,5 @@ weight = 20
 [markup]
   [markup.highlight]
     lineNumbersInTable = false
+    lineNos = true
     noClasses = false
