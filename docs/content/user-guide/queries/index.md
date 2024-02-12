@@ -1,6 +1,6 @@
 +++
 title = 'Queries'
-weight = 10
+weight = 20
 +++
 ## Code tests
 

@@ -5,5 +5,7 @@
  {{ $text = .Get 2 }}
 {{ end }}
 <span class="copy-to-clipboard">
-    <a href="{{ .Site.Params.apiURL }}{{ $pkg }}#{{ $mem }}"><code class="copy-to-clipboard-code" data-code="{{ $text }}">{{ $text }}</code></a>
+    <a href="{{ .Site.Params.apiURL }}{{ $pkg }}#{{ $mem }}">
+        <code class="copy-to-clipboard-code" data-code="{{ $text }}">{{ $text }}</code>
+    </a>
 </span>
