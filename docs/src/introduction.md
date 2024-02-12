@@ -33,4 +33,4 @@ For questions, feature requests and issues, please use the [issue tracker](https
 
 ## License
 
-*Track* and all its sources are released under the [MIT License](https://github.com/mlange-42/track/blob/main/LICENSE).
+*Arche* and all its sources are released under the [MIT License](https://github.com/mlange-42/track/blob/main/LICENSE).
