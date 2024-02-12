@@ -38,3 +38,8 @@ name = "<i class='fas fa-fw fa-bookmark'></i> API reference"
 identifier = "hugodoc"
 url = "https://pkg.go.dev/github.com/mlange-42/arche"
 weight = 20
+
+[markup]
+  [markup.highlight]
+    lineNumbersInTable = false
+    noClasses = false

@@ -1,0 +1,5 @@
+
+{{ $file := .Get 0 }}
+{{ with .Page.Resources.Get $file }}
+  {{ highlight .Content "go" }}
+{{ end }}
