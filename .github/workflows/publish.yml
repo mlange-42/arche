@@ -26,7 +26,7 @@ jobs:
         run: go get ./...
       - name: Run doc tests
         run: |
-          go test ./docs/content/...
+          go test -v ./docs/content/...
       - name: Run benchmark tables
         run: |
           go run ./benchmark/table | tee docs/content/background/_benchmarks.md
@@ -42,7 +42,7 @@ jobs:
           name: public
           path: docs/public
       - name: Deploy to GitHub Pages
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: crazy-max/ghaction-github-pages@v4
         with:
           target_branch: gh-pages
