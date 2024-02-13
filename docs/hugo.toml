@@ -4,6 +4,8 @@ relativeURLs = true
 languageCode = 'en-us'
 title = 'Arche'
 
+enableEmoji = true
+
 [module]
 [[module.imports]]
     path = 'github.com/McShelby/hugo-theme-relearn'
