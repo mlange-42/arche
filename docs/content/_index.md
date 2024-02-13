@@ -4,7 +4,7 @@ no_heading = true
 +++
 {{< html >}}
 <img src="images/logo-light.svg" alt="Arche" class="light" style="width: 100%; max-width: 680px; margin:24px auto 24px auto;"/>
-<img src="images/logo.svg" alt="Arche" class="dark" style="width: 100%; max-width: 680px; margin:24px auto 24px auto;"/>
+<img src="images/logo-dark.svg" alt="Arche" class="dark" style="width: 100%; max-width: 680px; margin:24px auto 24px auto;"/>
 
 <div style="width 100%; text-align: center;">
 <a href="https://github.com/mlange-42/arche/actions/workflows/tests.yml" style="display:inline-block">
