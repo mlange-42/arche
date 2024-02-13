@@ -12,7 +12,7 @@ The following sections present the filtering options available in Arche.
 
 ## Core filters
 
-## Mask
+### Mask
 
 The most common filter is a simple {{< api ecs Mask >}}, which is usually generated with the function {{< api ecs All >}}:
 
@@ -26,7 +26,7 @@ The generic equivalent is a simple *FilterX*, e.g. {{< api generic Filter2 >}}:
 In both examples, we filter for all entities that have `Position` and `Heading`,
 and anything else we are not interested in.
 
-## Mask.Without
+### Without
 
 Particular components can be excluded with {{< api ecs Mask.Without >}} and {{< api generic Filter2.Without >}}:
 
@@ -41,7 +41,7 @@ Particular components can be excluded with {{< api ecs Mask.Without >}} and {{< 
 
 Here, we filter for all entities that have a `Position`, but no `Heading`. Other components are allowed on the entities.
 
-## Mask.Exclusive
+### Exclusive
 
 With {{< api ecs Mask.Exclusive >}} and {{< api generic Filter2.Exclusive >}},
 we can exclude all other components:
@@ -54,6 +54,17 @@ we can exclude all other components:
 {{< code-func filters_test.go TestMaskExclusive >}}
 {{< /tab >}}
 {{< /tabs >}}
+
+### Optional
+
+With the ID-based API, queries allow access to any component, irrespective of whether it was included in the query.
+Generic queries, however, can access only the queried components.
+Therefore, generic filters can have optional components through {{< api generic Filter2.Optional >}}, which takes an arbitrary number of arguments:
+
+{{< code-func filters_test.go TestGenericOptional >}}
+
+Note that the now optional `Heading` must be specified also in the original filter.
+In case an optional component is not present, `Get` returns `nil` for it.
 
 ## Relation filters
 

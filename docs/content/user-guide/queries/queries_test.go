@@ -109,7 +109,7 @@ func TestQueryEntityAt(t *testing.T) {
 	cnt := query.Count()
 
 	// Draw random entities.
-	for i := 0; i < 100; i++ {
+	for i := 0; i < 10; i++ {
 		entity := query.EntityAt(rand.Intn(cnt))
 		fmt.Println(entity)
 	}

@@ -1,6 +1,7 @@
 package filters
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
@@ -70,4 +71,20 @@ func TestMaskExclusiveGeneric(t *testing.T) {
 	//filter := generic.NewFilter2[Position, Heading]().
 	//	Exclusive()
 	//_ = filter
+}
+
+func TestGenericOptional(t *testing.T) {
+	world := ecs.NewWorld()
+
+	filter := generic.NewFilter2[Position, Heading]().
+		Optional(generic.T[Heading]())
+
+	query := filter.Query(&world)
+	for query.Next() {
+		_, head := query.Get()
+		if head == nil {
+			// Optional component Heading not present
+			fmt.Println("Heading not present in entity ", query.Entity())
+		}
+	}
 }
