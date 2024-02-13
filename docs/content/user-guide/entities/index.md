@@ -33,7 +33,8 @@ type Heading struct {
 }
 ```
 
-Components are stored in the [World](./world) and accessed through [Queries](./queries) or the world (see [World Entity Access](./world-access)).
+Components are stored in the [World](./world) and accessed through [Queries](./queries) or
+through the world itself (see [World Entity Access](./world-access)).
 
 ### Component IDs
 
@@ -47,18 +48,22 @@ Thus, it is not necessary to register all required components during initializat
 
 ## Creating entities
 
-Entities are created through the world, using {{< api ecs World.NewEntity >}}:
+The most basic way to create an entity is {{< api ecs World.NewEntity >}}:
 
 {{< code-func entities_test.go TestEntitiesCreate >}}
 
-{{< api ecs World.NewEntity NewEntity >}} takes an arbitrary number of components IDs for the components that should be associated with the entity:
+Here, we get an entity without any components.
+However, {{< api ecs World.NewEntity NewEntity >}} takes an arbitrary number of components IDs for the components that should be associated with the entity:
 
 {{< code-func entities_test.go TestEntitiesCreateComponents >}}
 
+We get an entity with `Position`, and another one with `Position` and `Heading`.
 In this case, the components are initialized with their zero value.
 Alternatively, entities can be created with initialized components through {{< api ecs World.NewEntityWith >}}:
 
 {{< code-func entities_test.go TestEntitiesCreateWithComponents >}}
+
+We get an entity with `Position` and `Heading`, initialized according to the passed pointers.
 
 ### Generic API
 
@@ -66,9 +71,17 @@ Creating entities using the [generic API](./apis) requires a generic *MapX*, lik
 
 {{< code-func entities_test.go TestEntitiesCreateGeneric >}}
 
-The generic MapX also have {{< api generic Map2.NewWith NewWith >}}:
+We get an entity with `Position` and `Heading`, initialized to their zero values.
+
+Equivalent to {{< api ecs World.NewEntityWith >}}, generic MapX's have {{< api generic Map2.NewWith NewWith >}}:
 
 {{< code-func entities_test.go TestEntitiesCreateWithComponentsGeneric >}}
+
+{{% notice style="blue" icon="lightbulb" title="Note" %}}
+The `2` in `Map2` stands for the number of components.
+In the generic API, there are also `FilterX` and `QueryX`.
+All these types are available for `X` in range 1 to 12.
+{{% /notice %}}
 
 ### Batch Creation
 
@@ -76,7 +89,7 @@ For faster batch creation of many entities, see chapter [Batch Operations](./bat
 
 ## Adding and removing components
 
-Components are added to and removed components through with world,
+Components are added to and removed from entities through with world,
 with {{< api ecs World.Add >}} and {{< api ecs World.Remove >}}.
 With generics, we use a {{< api generic Map2 >}} again:
 
@@ -89,7 +102,9 @@ With generics, we use a {{< api generic Map2 >}} again:
 {{< /tab >}}
 {{< /tabs >}}
 
-It is also possible to assign initialized components with {{< api ecs World.Assign >}},
+First, we add `Position` and `Heading` to the entity, then we remove both.
+
+It is also possible to assign initialized components with {{< api ecs World.Assign >}}/{{< api generic Map2.Assign >}},
 similar to {{< api ecs World.NewWith >}}:
 
 {{< tabs >}}
