@@ -1,5 +1,5 @@
 +++
-title = 'Generic vs. ID-based API'
+title = 'Generic & ID-based API'
 weight = 20
 description = "Overview of Arche's generic and ID-based APIs."
 +++
@@ -13,9 +13,6 @@ An **ID-based API** that is slightly faster than the generic one in some places.
 Further, it is more flexible and may be more appropriate for tasks like automated serialization.
 
 Both APIs can be mixed as needed.
-
-
-
 
 {{< notice style="blue" icon="lightbulb" title="Tip" >}}
 In the this user guide, most code examples will be presented with two tabs, one for each API:
