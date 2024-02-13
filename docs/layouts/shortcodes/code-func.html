@@ -14,7 +14,7 @@
     {{ end }}
     {{ if $started }}
     {{ $trim := strings.TrimPrefix "\t" . }}
-    {{ $code = printf "%s%s" $code $trim }}
+    {{ $code = printf "%s%s\n" $code $trim }}
     {{end}}
     {{ if and (not $started) (strings.HasPrefix . $startPrefix) }}
       {{ $started = true }}

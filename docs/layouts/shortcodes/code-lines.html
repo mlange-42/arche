@@ -14,7 +14,7 @@
   {{ $code := "" }}
   {{ range seq $start $end }}
     {{ $trim := strings.TrimPrefix $unindentStr (index $t .) }}
-    {{ $code = printf "%s%s" $code $trim }}
+    {{ $code = printf "%s%s\n" $code $trim }}
   {{ end }}
   {{ highlight $code "go" }}
 {{ end }}
