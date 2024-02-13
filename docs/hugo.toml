@@ -12,7 +12,7 @@ theme = "hugo-theme-relearn"
 home = [ "html", "rss", "search"]
 
 [params]
-images = [ "images/social.svg" ]
+images = [ "images/social.png" ]
 description = "Documentation for Arche, the Go Entity Component System (ECS)"
 
 editURL = "https://github.com/mlange-42/arche/edit/main/docs/content/${FilePath}"
