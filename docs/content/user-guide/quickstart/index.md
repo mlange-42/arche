@@ -1,7 +1,10 @@
 +++
 title = 'Quickstart'
 weight = 10
+description = 'Quickstart guide to install and use Arche.'
 +++
+This page shows how to install Arche, and gives a minimal usage example.
+
 ## Installation
 
 To use *Arche* in a Go project, run:

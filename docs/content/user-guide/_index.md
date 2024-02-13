@@ -2,6 +2,7 @@
 archetype = "chapter"
 title = "User guide"
 weight = 1
+description = 'Comprehensive Arche user guide.'
 +++
 
-Lorem Ipsum.
+Arche user guide.

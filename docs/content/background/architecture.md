@@ -1,4 +1,5 @@
 +++
 title = 'Architecture'
-weight = 10
+weight = 20
+description = "Arche's internal ECS architecture."
 +++

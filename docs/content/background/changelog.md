@@ -1,6 +1,7 @@
 +++
 title = 'Changelog'
 weight = 90
+description = 'Arche changelog.'
 +++
 
 ## [[v0.10.1]](https://github.com/mlange-42/arche/compare/v0.10.0...v0.10.1)

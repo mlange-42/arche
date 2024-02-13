@@ -1,6 +1,7 @@
 +++
 title = 'Generic vs. ID-based API'
 weight = 20
+description = "Overview of Arche's generic and ID-based APIs."
 +++
 
 Arche provides two different APIs:

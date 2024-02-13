@@ -1,6 +1,7 @@
 +++
 title = 'Benchmarks'
 weight = 50
+description = 'An overview of the runtime cost of typical Arche operations.'
 +++
 
 This document gives an overview of the runtime cost of typical Arche operations.
