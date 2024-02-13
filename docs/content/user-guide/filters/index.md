@@ -1,6 +1,6 @@
 +++
 title = 'Filters'
-weight = 50
+weight = 60
 description = "Arche's filter API."
 +++
 

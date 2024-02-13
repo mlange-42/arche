@@ -1,8 +1,10 @@
 +++
 title = 'Entities'
-weight = 30
-description = 'Entity creationan and removal in Arche.'
+weight = 40
+description = 'Entity creation and removal in Arche.'
 +++
+
+{{< api ecs Entity >}}
 
 ## Creating entities
 

@@ -1,6 +1,6 @@
 +++
 title = 'Queries'
-weight = 40
+weight = 50
 description = "Usage of Arche's queries."
 +++
 

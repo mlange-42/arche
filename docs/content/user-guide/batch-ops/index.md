@@ -1,6 +1,6 @@
 +++
 title = 'Batch operations'
-weight = 80
+weight = 90
 description = 'Batch operations in Arche.'
 +++
 

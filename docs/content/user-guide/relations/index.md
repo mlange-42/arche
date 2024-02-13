@@ -1,5 +1,5 @@
 +++
 title = 'Relations'
-weight = 70
+weight = 80
 description = "Arche's entity relationships feature."
 +++

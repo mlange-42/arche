@@ -14,6 +14,10 @@ Further, it is more flexible and may be more appropriate for tasks like automate
 
 Both APIs can be mixed as needed.
 
+
+
+
+{{< notice style="blue" icon="lightbulb" title="Tip" >}}
 In the this user guide, most code examples will be presented with two tabs, one for each API:
 
 {{< tabs >}}
@@ -24,3 +28,6 @@ In the this user guide, most code examples will be presented with two tabs, one 
 {{< code-func api_test.go TestIDs >}}
 {{< /tab >}}
 {{< /tabs >}}
+
+{{< /notice >}}
+
