@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"testing"
+	"time"
 )
 
 type bench struct {
@@ -13,6 +15,8 @@ type bench struct {
 }
 
 func main() {
+	fmt.Printf("Last run: %s\n\n", time.Now().Format(time.RFC1123))
+
 	runBenches("Query", benchesQuery(), toMarkdown)
 	runBenches("World access", benchesWorld(), toMarkdown)
 	runBenches("Entities", benchesEntities(), toMarkdown)
