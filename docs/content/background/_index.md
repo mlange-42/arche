@@ -1,6 +1,6 @@
 +++
 archetype = "chapter"
-title = "Background information"
+title = "Background"
 weight = 2
 +++
 

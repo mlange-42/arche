@@ -40,7 +40,7 @@ go get github.com/mlange-42/arche
 
 ## Usage
 
-Here is a minimal usage example.
+Here is the classical Position/Velocity example that every ECS shows in the docs.
 It uses the type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
 For a full-featured wrapper with systems, scheduling and more, see [arche-model](https://github.com/mlange-42/arche-model).
 
