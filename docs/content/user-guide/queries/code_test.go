@@ -6,7 +6,7 @@ import (
 	"github.com/mlange-42/arche/ecs"
 )
 
-func TestCode(t *testing.T) {
+func TestMain(t *testing.T) {
 	world := ecs.NewWorld()
 	_ = world
 }

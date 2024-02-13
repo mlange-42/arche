@@ -8,7 +8,7 @@ Code inclusion test for a complete file: `{{</* code code_test.go */>}}`
 
 {{< code code_test.go >}}
 
-Code inclusion test for a function `TestCode`: `{{</* code-func code_test.go TestCode */>}}`
+Code inclusion test for a function `TestCode`: `{{</* code-func code_test.go TestMain */>}}`
 
 {{< code-func code_test.go TestCode >}}
 
