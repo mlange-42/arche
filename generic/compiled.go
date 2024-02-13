@@ -47,9 +47,14 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 		Include: incl,
 		Exclude: excl,
 	}
+	noExclude := !exclusive && len(exclude) == 0
 
 	if targetType == nil {
-		q.filter = &q.maskFilter
+		if noExclude {
+			q.filter = q.maskFilter.Include
+		} else {
+			q.filter = &q.maskFilter
+		}
 		q.Relation = ecs.ID{}
 		q.HasRelation = false
 	} else {
@@ -76,7 +81,11 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 			q.relationFilter = ecs.NewRelationFilter(&q.maskFilter, target)
 			q.filter = &q.relationFilter
 		} else {
-			q.filter = &q.maskFilter
+			if noExclude {
+				q.filter = q.maskFilter.Include
+			} else {
+				q.filter = &q.maskFilter
+			}
 		}
 	}
 	q.targetCompiled = true
