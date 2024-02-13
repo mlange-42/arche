@@ -6,6 +6,7 @@
 
 * Adds method `Query.EntityAt()`, useful for things like random sampling of entities (#358)
 * Adds build tag `debug` to improve error messages in a few places where we rely on standard library panics for performance (#377)
+* Adds method `FilterX.Exclusive()` to all generic filters (#381)
 
 ### Documentation
 
@@ -17,6 +18,10 @@
 ### Bugfixes
 
 * Prevents using the same component multiple times in any operations, through panic (#357)
+
+### Performance
+
+* Generic filters use `Mask` instead of slower `MaskFilter` if no components are excluded (#381)
 
 ### Other
 
