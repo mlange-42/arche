@@ -9,7 +9,7 @@ It manages and stores entities ({{< api ecs Entity >}}), their components, as we
 For the internal structure of the world, see chapter [Architecture](/background/architecture).
 
 Here, we only deal with world creation.
-Most world functionality is covered in chapters [Entities & Components](./entities) and [World entity access](./world-access).
+Most world functionality is covered in chapters [Entities & Components](./entities) and [World Entity Access](./world-access).
 
 ## World creation
 
