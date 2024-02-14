@@ -5,7 +5,7 @@
             <header class="headline">
               {{- partial "content-header.html" . }}
             </header>
-{{ partial "heading-pre.html" . }}<div class="article-subheading">Part {{ .Params.Weight }}</div>
+{{ partial "heading-pre.html" . }}<div class="article-subheading">Part {{ .Params.part }}</div>
 {{ partial "heading.html" . }}{{ partial "heading-post.html" . }}
 
 {{ $content | safeHTML }}
