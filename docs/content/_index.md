@@ -48,6 +48,10 @@ no_heading = true
 
 For more information, see the GitHub [repository](https://github.com/mlange-42/arche) and [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 
+## Cite as
+
+Lange, M. (2023): Arche &ndash; An archetype-based Entity Component System for Go. DOI [10.5281/zenodo.7656484](https://doi.org/10.5281/zenodo.7656484),  GitHub repository: https://github.com/mlange-42/arche
+
 ## Contributing
 
 [Open an issue](https://github.com/mlange-42/arche/issues/new) in the {{< repo "" "GitHub repository" >}} if you have questions, feedback, feature ideas or want to report a bug.
