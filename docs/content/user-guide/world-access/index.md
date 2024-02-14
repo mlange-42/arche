@@ -41,9 +41,9 @@ Note that we have to use {{< api generic Map >}} here, which is similar to
 
 The `Get` and `Has` methods shown above all have a companion `GetUnchecked` and `HasUnchecked`,
 which is faster, but should be used with care.
-Particularly, they do not check whether the entity is still alike.
+Particularly, they do not check whether the entity is still alive.
 Like `Get`, they panic when called on a removed entity.
-However, for a removed and recycled entity, they lead to undefined behavior.
+However, for a removed and subsequently recycled entity, they lead to undefined behavior.
 
 It is safe to use methods like {{< api ecs World.GetUnchecked >}} after a usual `Get` was used on the same entity:
 
