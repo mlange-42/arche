@@ -112,7 +112,7 @@ Similarly, relation targets can be obtained with {{< api ecs Relations.Get >}} o
 
 And now for the best: querying for entities that have a certain relation and target.
 
-in the ID-based API, relation targets can be queries with {{< api ecs RelationFilter >}}.
+In the ID-based API, relation targets can be queries with {{< api ecs RelationFilter >}}.
 In the generic API, it is supported by all *FilterX* via e.g. {{< api generic Filter2.WithRelation >}}.
 
 {{< tabs >}}

@@ -10,6 +10,7 @@
 
 ### Documentation
 
+* Adds a dedicated Arche [User Guide](https://mlange-42.github.io/arche/) web site (#380, #382, #383, #384)
 * Adds [BENCHMARKS.md](https://github.com/mlange-42/arche/blob/main/BENCHMARKS.md) for a tabular overview of the runtime cost of typical *Arche* ECS operations (#367, #372)
 * Link benchmarking code in `README.md` and benchmarking tables (#375)
 * Documents build tags `tiny` and `debug` in package docs of `ecs` (#377)

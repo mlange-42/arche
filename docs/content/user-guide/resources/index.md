@@ -14,7 +14,7 @@ in an {{< api ecs World >}}.
 
 ## Resource types
 
-Just like for components, any Go struct (or other Go type) can be a resource.
+Just like with components, any Go struct (or other Go type) can be a resource.
 An example:
 
 ```go
@@ -59,3 +59,10 @@ and via {{< api generic Resource >}} in the generic API:
 {{< code-func resources_test.go TestResourceGet >}}
 {{< /tab >}}
 {{< /tabs >}}
+
+Note that in the ID-based example, we need to cast the pointer retrieved from
+{{< api ecs Resources.Get >}} to `*Grid`, similar to the cast in ID-based component access.
+However, the syntax is a bit different here as we cast an `interface{}`,
+rather than an `unsafe.Pointer` for components.
+
+As with components, the generic API is the recommended way for normal usage.

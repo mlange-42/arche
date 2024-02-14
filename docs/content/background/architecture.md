@@ -5,6 +5,8 @@ description = "Arche's internal ECS architecture."
 +++
 Arche uses an archetype-based architecture. Therefore the name :wink:.
 
+This chapter explains the concept and Arche's take on it.
+
 ## Archetypes
 
 The ASCII graph below illustrates the approach.

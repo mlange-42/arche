@@ -9,9 +9,9 @@ Arche features an event system that can be used to get notifications about world
  - Component addition, removal and exchange
  - Changes of entity relation targets
 
-Listeners are particularly useful for automating the management
+The event system is particularly useful for automating the management
 of supplementary data structures that store entities.
-They can be used to automatically insert entities into these structures on creation
+It can be used to automatically insert entities into these structures on creation
 or component addition, and to remove them on entity or component removal.
 
 The types of interest here are {{< api ecs Listener >}} and {{< api ecs EntityEvent >}}.
@@ -55,13 +55,13 @@ The second one listens to events where a `Position` or a `Heading` is added to a
 
 ## Custom listeners
 
-Custom listeners can by created by implementing the interface {{< api ecs Listener >}}.
-Here is an example of a listener that listens to addition of a `Position` component:
+Custom listeners can be created by implementing the interface {{< api ecs Listener >}}.
+Here is an example of a listener that listens to additions of a `Position` component:
 
 {{< code events_listener_test.go >}}
 
 ## EntityEvent
 
 In `Listener.Notify`, as well as in the callback for {{< api listener Callback >}}, we get an {{< api ecs EntityEvent >}} as argument.
-It provides all sort of information about the even, like the affected {{< api ecs Entity >}},
-event types covered, components added and removed, and more. See the API docs for {{< api ecs EntityEvent >}} for details.
+It provides all sorts of information about the event, like the affected {{< api ecs Entity >}},
+event types covered, components added and removed, and more. See the API docs of {{< api ecs EntityEvent >}} for details.
