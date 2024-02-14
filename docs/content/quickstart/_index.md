@@ -24,14 +24,13 @@ It uses the type-safe  {{< api generic >}} API.
 
 ## What's next?
 
-If you ask **"What is ECS?"**, read chapter [What is ECS?](/background/ecs)
-or the [Wikipedia article](https://en.wikipedia.org/wiki/Entity_component_system).
+If you ask **"What is ECS?"**, take a look at the great [**ECS FAQ**](https://github.com/SanderMertens/ecs-faq) by Sander Mertens, the author of the [Flecs](http://flecs.dev) ECS.
 
 To learn how to use Arche, read the [User Guide](/user-guide),
 browse the [API documentation](https://pkg.go.dev/github.com/mlange-42/arche),
 or take a look at the {{< repo "tree/main/_examples" examples >}} in the {{< repo "" "GitHub repository" >}}.
 
-You can read about Arche's [Design Philosophy](/background/design)
+You can also read about Arche's [Design Philosophy](/background/design)
 and [Architecture](/background/architecture) for more background information.
 
 See the [Benchmarks](/background/benchmarks) if you are interested in some numbers on Arche's performance.
