@@ -145,7 +145,7 @@ func TestBatchRelationsGeneric(t *testing.T) {
 	builder.NewBatch(100)
 
 	// Create a generic map to perform the batch operation
-	mapper := generic.NewMap[Heading](&world)
+	mapper := generic.NewMap[ChildOf](&world)
 	// Filter for entities with ChildOf.
 	filter := ecs.All(childID)
 	// Batch-set their relation target to parent.
