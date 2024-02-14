@@ -1,0 +1,12 @@
+{{ $file := .Get 0 }}
+{{ with .Page.Resources.Get $file }}
+  {{ $s := .Content }}
+  {{ $s = replace $s "(\r\n\t\"testing\"\r\n\r\n" "(\r\n" }}
+  {{ $s = replace $s "\t\"testing\"\r\n" "" }}
+  
+  {{ $s = replace $s "(\n\t\"testing\"\n\n" "(\n" }}
+  {{ $s = replace $s "\t\"testing\"\n" "" }}
+
+  {{ $s = replace $s "func TestMain(t *testing.T) {" "func main() {" }}
+  {{ highlight $s "go" }}
+{{ end }}
