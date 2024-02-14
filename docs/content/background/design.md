@@ -1,5 +1,5 @@
 +++
-title = 'Design philosophy'
+title = 'Design Philosophy'
 weight = 20
 description = 'Specific design considerations behind Arche.'
 +++
