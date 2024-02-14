@@ -43,7 +43,7 @@ Component IDs can be registered as well as obtained through {{< api ecs Componen
 
 {{< code-func entities_test.go TestComponentID >}}
 
-When a type gets first used as a component, it is automatically registered.
+When a type is used as a component the first time, it is automatically registered.
 Thus, it is not necessary to register all required components during initialization.
 
 ## Creating entities
@@ -80,7 +80,7 @@ Equivalent to {{< api ecs World.NewEntityWith >}}, generic MapX's have {{< api g
 {{% notice style="blue" icon="lightbulb" title="Note" %}}
 The `2` in `Map2` stands for the number of components.
 In the generic API, there are also `FilterX` and `QueryX`.
-All these types are available for `X` in range 1 to 12.
+All these types are available for `X` in range 0 (or 1) to 12.
 {{% /notice %}}
 
 ### Batch Creation
