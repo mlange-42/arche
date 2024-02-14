@@ -43,7 +43,7 @@ Component IDs can be registered as well as obtained through {{< api ecs Componen
 
 {{< code-func entities_test.go TestComponentID >}}
 
-When a type gets first used as a component, it is automatically registered.
+When a type is used as a component the first time, it is automatically registered.
 Thus, it is not necessary to register all required components during initialization.
 
 ## Creating entities
@@ -80,7 +80,7 @@ Equivalent to {{< api ecs World.NewEntityWith >}}, generic MapX's have {{< api g
 {{% notice style="blue" icon="lightbulb" title="Note" %}}
 The `2` in `Map2` stands for the number of components.
 In the generic API, there are also `FilterX` and `QueryX`.
-All these types are available for `X` in range 1 to 12.
+All these types are available for `X` in range 0 (or 1) to 12.
 {{% /notice %}}
 
 ### Batch Creation
@@ -104,6 +104,10 @@ With generics, we use a {{< api generic Map2 >}} again:
 
 First, we add `Position` and `Heading` to the entity, then we remove both.
 
+{{% notice style="blue" icon="exclamation" title="Important" %}}
+Note that generic types like *MapX* should be stored and re-used where possible, particularly over time steps.
+{{% /notice %}}
+
 It is also possible to assign initialized components with {{< api ecs World.Assign >}}/{{< api generic Map2.Assign >}},
 similar to {{< api ecs World.NewWith >}}:
 
@@ -113,6 +117,21 @@ similar to {{< api ecs World.NewWith >}}:
 {{< /tab >}}
 {{< tab title="ID-based" >}}
 {{< code-func entities_test.go TestEntitiesAssign >}}
+{{< /tab >}}
+{{< /tabs >}}
+
+## Exchanging components
+
+Sometimes one or more components should be added to an entity, and others should be removed.
+This can be bundled into a single exchange operation for efficiency.
+This is done with {{< api ecs World.Exchange >}}, or using a {{< api generic Exchange >}}:
+
+{{< tabs >}}
+{{< tab title="generic" >}}
+{{< code-func entities_test.go TestEntitiesExchangeGeneric >}}
+{{< /tab >}}
+{{< tab title="ID-based" >}}
+{{< code-func entities_test.go TestEntitiesExchange >}}
 {{< /tab >}}
 {{< /tabs >}}
 

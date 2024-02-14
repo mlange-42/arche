@@ -107,6 +107,33 @@ func TestEntitiesAddRemoveGeneric(t *testing.T) {
 	mapper.Remove(entity)
 }
 
+func TestEntitiesExchange(t *testing.T) {
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[Position](&world)
+	headID := ecs.ComponentID[Heading](&world)
+
+	entity := world.NewEntity(posID)
+
+	world.Exchange(entity,
+		[]ecs.ID{headID}, // Component(s) to add.
+		[]ecs.ID{posID},  // Component(s) to remove.
+	)
+}
+
+func TestEntitiesExchangeGeneric(t *testing.T) {
+	world := ecs.NewWorld()
+
+	builder := generic.NewMap1[Position](&world)
+	entity := builder.New()
+
+	exchange := generic.NewExchange(&world).
+		Adds(generic.T[Heading]()).    // Component(s) to add.
+		Removes(generic.T[Position]()) // Component(s) to remove.
+
+	exchange.Exchange(entity)
+}
+
 func TestEntitiesAssign(t *testing.T) {
 	world := ecs.NewWorld()
 

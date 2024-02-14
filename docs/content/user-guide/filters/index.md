@@ -3,9 +3,9 @@ title = 'Filters'
 weight = 60
 description = "Arche's filter APIs."
 +++
-*Filters* provide the logic for filtering entities for [Queries](./queries).
+*Filters* provide the logic for filtering entities in [Queries](./queries).
 
-Due to the [archetype](/background/architecture/archetypes)-based architecture of Arche :wink:, filters are very efficient.
+Due to the [archetype](/background/architecture#archetypes)-based architecture of Arche :wink:, filters are very efficient.
 Instead of against every single entity, they are only matched against archetypes.
 
 The following sections present the filtering options available in Arche.
@@ -30,7 +30,7 @@ The generic equivalent is a simple *FilterX*, e.g. {{< api generic Filter2 >}}:
 {{< code-func filters_test.go TestMaskGeneric >}}
 
 In both examples, we filter for all entities that have `Position` and `Heading`,
-and anything else we are not interested in.
+and anything else that we are not interested in.
 
 ### Without
 
@@ -50,7 +50,7 @@ Here, we filter for all entities that have a `Position`, but no `Heading`. Other
 ### Exclusive
 
 With {{< api ecs Mask.Exclusive >}} and {{< api generic Filter2.Exclusive >}},
-we can exclude all other components:
+we can exclude all components that are not in the filter:
 
 {{< tabs >}}
 {{< tab title="generic" >}}
@@ -61,16 +61,23 @@ we can exclude all other components:
 {{< /tab >}}
 {{< /tabs >}}
 
-### Optional
+I.e., we get only entities with exactly the given components, and no more.
+
+### With & Optional
 
 With the ID-based API, queries allow access to any component, irrespective of whether it was included in the query.
 Generic queries, however, can access only the queried components.
-Therefore, generic filters can have optional components through {{< api generic Filter2.Optional >}}, which takes an arbitrary number of arguments:
+Therefore, generic filters can have optional components through {{< api generic Filter2.Optional >}}:
 
 {{< code-func filters_test.go TestGenericOptional >}}
 
 Note that the now optional `Heading` must be specified also in the original filter.
 In case an optional component is not present, `Get` returns `nil` for it.
+
+Further, generic filters have {{< api generic Filter2.With >}}.
+This requires the respective component(s) to be present, but they are not obtained through `Get`:
+
+{{< code-func filters_test.go TestGenericWith >}}
 
 ### Relation filters
 
@@ -86,7 +93,7 @@ Here are some examples:
 
 ## Filter caching
 
-Normally, when iterating a [Query](./queries), the underlying filter is evaluated on each [archetype](/background/architecture/archetypes).
+Normally, when iterating a [Query](./queries), the underlying filter is evaluated on each [archetype](/background/architecture#archetypes).
 With a high number of archetypes in the world, this can slow down query iteration and other query functions.
 
 To prevent this slowdown, filters can be registered to the {{< api ecs World.Cache >}} via
