@@ -42,7 +42,7 @@ jobs:
           name: public
           path: docs/public
       - name: Deploy to GitHub Pages
-        # if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         uses: crazy-max/ghaction-github-pages@v4
         with:
           target_branch: gh-pages
