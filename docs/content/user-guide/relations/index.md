@@ -127,19 +127,22 @@ In the generic API, it is supported by all *FilterX* via e.g. {{< api generic Fi
 ## Limitations
 
 Entity relations in Arche are inspired by [Flecs](https://github.com/SanderMertens/flecs).
-However, the implementation in *Arche* is currently limited in that it only supports a single relation per entity, and no nested relation queries.
+However, the implementation in *Arche* is currently limited in that it only supports a single relation per entity, and no chained (or nested) relation queries.
 
 ## When to use, and when not
 
-As an archetype is created for each target entity of a relation, Arche's entity relations
-are not efficient if the number of target entities is high (tens of thousands),
+When using Arche's entity relations, an archetype is created for each target entity of a relation.
+Thus, entity relations are not efficient if the number of target entities is high (tens of thousands),
 while only a low number of entities has a relation to each particular target (less than a few dozens).
 Particularly in the extreme case of 1:1 relations, storing entities in components
 as explained in the introduction of this chapter is more efficient.
 
+However, with a moderate number of relation targets, particularly with many entities per target,
+entity relations are very efficient.
+
 Beyond use cases where the relation target is a "physical" entity that appears
 in a simulation or game, targets can also be more abstract, like categories.
-E.g.:
+Examples:
 
  - The opposing factions in a strategy game
  - Different tree species in an forest model

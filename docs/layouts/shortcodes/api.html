@@ -1,10 +1,10 @@
 {{- $pkg := .Get 0 -}}
-{{- $text := $pkg -}}
+{{- $text := (replace $pkg "/" ".") -}}
 {{- $link := $pkg -}}
 {{- if .Get 1 -}}
     {{- $mem := .Get 1 -}}
-    {{- $text = printf "%s.%s" $pkg $mem -}}
-    {{- $link = printf "%s#%s" $pkg $mem -}}
+    {{- $text = printf "%s.%s" $text $mem -}}
+    {{- $link = printf "%s#%s" $link $mem -}}
     {{- if .Get 2 -}}
         {{- $text = .Get 2 -}}
     {{- end -}}
