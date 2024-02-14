@@ -149,3 +149,9 @@ This concept is particularly useful for things that would best be expressed by c
 but the possible components (or categories) are only known at runtime.
 Thus, it is not possible to create ordinary components for them.
 However, these categories can be represented by entities, which are used as relation targets.
+
+To conclude this chapter, here is a longer example that uses entity relations
+to represent tree species in a forest model.
+Of course, the same result could be achieved in many other ways.
+
+{{< code relations_example_test.go >}}

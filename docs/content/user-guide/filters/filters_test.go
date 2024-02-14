@@ -95,6 +95,19 @@ func TestGenericOptional(t *testing.T) {
 	}
 }
 
+func TestGenericWith(t *testing.T) {
+	world := ecs.NewWorld()
+
+	filter := generic.NewFilter1[Position]().
+		With(generic.T[Heading]())
+
+	query := filter.Query(&world)
+	for query.Next() {
+		pos := query.Get()
+		_ = pos
+	}
+}
+
 func TestLogicFilters(t *testing.T) {
 	world := ecs.NewWorld()
 

@@ -63,7 +63,7 @@ we can exclude all components that are not in the filter:
 
 I.e., we get only entities with exactly the given components, and no more.
 
-### Optional
+### With & Optional
 
 With the ID-based API, queries allow access to any component, irrespective of whether it was included in the query.
 Generic queries, however, can access only the queried components.
@@ -73,6 +73,11 @@ Therefore, generic filters can have optional components through {{< api generic 
 
 Note that the now optional `Heading` must be specified also in the original filter.
 In case an optional component is not present, `Get` returns `nil` for it.
+
+Further, generic filters have {{< api generic Filter2.With >}}.
+This requires the respective component(s) to be present, but they are not obtained through `Get`:
+
+{{< code-func filters_test.go TestGenericWith >}}
 
 ### Relation filters
 
