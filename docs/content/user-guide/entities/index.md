@@ -104,6 +104,10 @@ With generics, we use a {{< api generic Map2 >}} again:
 
 First, we add `Position` and `Heading` to the entity, then we remove both.
 
+{{% notice style="blue" icon="exclamation" title="Important" %}}
+Note that generic types like *MapX* should be stored and re-used where possible, particularly over time steps.
+{{% /notice %}}
+
 It is also possible to assign initialized components with {{< api ecs World.Assign >}}/{{< api generic Map2.Assign >}},
 similar to {{< api ecs World.NewWith >}}:
 
@@ -113,6 +117,21 @@ similar to {{< api ecs World.NewWith >}}:
 {{< /tab >}}
 {{< tab title="ID-based" >}}
 {{< code-func entities_test.go TestEntitiesAssign >}}
+{{< /tab >}}
+{{< /tabs >}}
+
+## Exchanging components
+
+Sometimes one or more components should be added to an entity, and others should be removed.
+This can be bundled into a single exchange operation for efficiency.
+This is done with {{< api ecs World.Exchange >}}, or using a {{< api generic Exchange >}}:
+
+{{< tabs >}}
+{{< tab title="generic" >}}
+{{< code-func entities_test.go TestEntitiesExchangeGeneric >}}
+{{< /tab >}}
+{{< tab title="ID-based" >}}
+{{< code-func entities_test.go TestEntitiesExchange >}}
 {{< /tab >}}
 {{< /tabs >}}
 
