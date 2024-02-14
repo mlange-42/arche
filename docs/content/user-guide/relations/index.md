@@ -27,6 +27,8 @@ However, we are not able to leverage the power of queries to e.g. get all childr
 To make entity relations even more useful and efficient, Arche supports them as first class feature.
 Relations are added to and removed from entities just like components,
 and hence can be queried like components, with the usual efficiency.
+This is achieved by creating separate [archetypes](/background/architecture#archetypes)
+for relations with different target entities.
 
 ## Relation components
 
@@ -128,3 +130,22 @@ Entity relations in Arche are inspired by [Flecs](https://github.com/SanderMerte
 However, the implementation in *Arche* is currently limited in that it only supports a single relation per entity, and no nested relation queries.
 
 ## When to use, and when not
+
+As an archetype is created for each target entity of a relation, Arche's entity relations
+are not efficient if the number of target entities is high (tens of thousands),
+while only a low number of entities has a relation to each particular target (less than a few dozens).
+Particularly in the extreme case of 1:1 relations, storing entities in components
+as explained in the introduction of this chapter is more efficient.
+
+Beyond use cases where the relation target is a "physical" entity that appears
+in a simulation or game, targets can also be more abstract, like categories.
+E.g.:
+
+ - The opposing factions in a strategy game
+ - Different tree species in an forest model
+ - Behavioral states in a finite state machine
+
+This concept is particularly useful for things that would best be expressed by components,
+but the possible components (or categories) are only known at runtime.
+Thus, it is not possible to create ordinary components for them.
+However, these categories can be represented by entities, which are used as relation targets.
