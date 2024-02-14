@@ -209,7 +209,7 @@ func (m *Map{{ .Index }}{{ .Types }}) RemoveBatch(filter ecs.Filter, target ...e
 	}
 }
 
-// RemoveBatchQ adds the Map{{ .Index }}'s components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map{{ .Index }}'s components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].

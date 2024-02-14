@@ -216,7 +216,7 @@ func (m *Map1[A]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) int {
 	}
 }
 
-// RemoveBatchQ adds the Map1's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map1's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
@@ -476,7 +476,7 @@ func (m *Map2[A, B]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) int {
 	}
 }
 
-// RemoveBatchQ adds the Map2's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map2's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
@@ -745,7 +745,7 @@ func (m *Map3[A, B, C]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) int
 	}
 }
 
-// RemoveBatchQ adds the Map3's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map3's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
@@ -1023,7 +1023,7 @@ func (m *Map4[A, B, C, D]) RemoveBatch(filter ecs.Filter, target ...ecs.Entity) 
 	}
 }
 
-// RemoveBatchQ adds the Map4's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map4's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
@@ -1310,7 +1310,7 @@ func (m *Map5[A, B, C, D, E]) RemoveBatch(filter ecs.Filter, target ...ecs.Entit
 	}
 }
 
-// RemoveBatchQ adds the Map5's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map5's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
@@ -1606,7 +1606,7 @@ func (m *Map6[A, B, C, D, E, F]) RemoveBatch(filter ecs.Filter, target ...ecs.En
 	}
 }
 
-// RemoveBatchQ adds the Map6's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map6's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
@@ -1911,7 +1911,7 @@ func (m *Map7[A, B, C, D, E, F, G]) RemoveBatch(filter ecs.Filter, target ...ecs
 	}
 }
 
-// RemoveBatchQ adds the Map7's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map7's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
@@ -2225,7 +2225,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) RemoveBatch(filter ecs.Filter, target ...
 	}
 }
 
-// RemoveBatchQ adds the Map8's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map8's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
@@ -2548,7 +2548,7 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) RemoveBatch(filter ecs.Filter, target 
 	}
 }
 
-// RemoveBatchQ adds the Map9's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map9's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
@@ -2880,7 +2880,7 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) RemoveBatch(filter ecs.Filter, tar
 	}
 }
 
-// RemoveBatchQ adds the Map10's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map10's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
@@ -3221,7 +3221,7 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) RemoveBatch(filter ecs.Filter, 
 	}
 }
 
-// RemoveBatchQ adds the Map11's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map11's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
@@ -3571,7 +3571,7 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) RemoveBatch(filter ecs.Filte
 	}
 }
 
-// RemoveBatchQ adds the Map12's components from multiple entities and returns a query over them,
+// RemoveBatchQ removes the Map12's components from multiple entities and returns a query over them,
 // with no components.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
