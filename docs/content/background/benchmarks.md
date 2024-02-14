@@ -1,6 +1,6 @@
 +++
 title = 'Benchmarks'
-weight = 50
+weight = 60
 description = 'An overview of the runtime cost of typical Arche operations.'
 +++
 
