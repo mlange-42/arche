@@ -138,7 +138,7 @@ Particularly in the extreme case of 1:1 relations, storing entities in component
 as explained in the introduction of this chapter is more efficient.
 
 However, with a moderate number of relation targets, particularly with many entities per target,
-entity relations are very efficient.
+entity relations are very efficient. See section [Benchmarks](#benchmarks) below, for a comparison of different ways to represent entity relations.
 
 Beyond use cases where the relation target is a "physical" entity that appears
 in a simulation or game, targets can also be more abstract, like categories.
@@ -153,8 +153,42 @@ but the possible components (or categories) are only known at runtime.
 Thus, it is not possible to create ordinary components for them.
 However, these categories can be represented by entities, which are used as relation targets.
 
-To conclude this chapter, here is a longer example that uses entity relations
+See the last section of this chapter ([Longer example](#longer-example))
+for an implementation of the tree species example above.
+
+## Benchmarks
+
+The figure below compares the iteration time per entity for different ways of representing entity relations.
+The task is to sum up a value over the children of each parent.
+
+The following ways to represent entity relations are shown in the figure:
+
+* *ParentList* (purple): Children form an implicit linked list. The parent references the first child.
+  * Query over parents, inner loop implicit linked list of children, using world access for next child and value component.
+* *ParentSlice* (red): The parent holds a slice of all it's children.
+  * Query over parents, inner loop over slice of children using world access for value component.
+* *Child* (green): Each child references it's parent.
+  * Query over all child entities and retrieval of the parent sum component using world access.
+* *Default* (blue): Using Arche's relations feature without filter caching.
+  * Outer query over parents, inner loop over children using relation queries.
+* *Cached* (black): Using Arche's relations feature with filter caching.
+  * Same as above, using an additional component per parent to store cached filters.
+
+The first three representations are possible in any ECS, while the last two use Arche's entity relations feature.
+
+![Benchmarks Entity relations](https://user-images.githubusercontent.com/44003176/238461931-7824bfeb-4a03-49e8-9de8-0650032259c0.svg)  
+*Iteration time per entity for different ways of representing entity relations. Color: ways to represent entity relations; Line style: total number of child entities; Markers: number of children per parent entity*
+
+The benchmarks show that Arche's relations feature outperforms the other representations, except when there are very few children per parent.
+Only when there is a huge number of parents and significantly fewer than 100 children per parent,
+the *Child* representation should perform better.
+
+The {{< repo "tree/main/benchmark/competition" "benchmark code" >}}
+can be found in the {{< repo "" "GitHub repository" >}}.
+
+## Longer example
+
+To conclude this chapter, here is a longer example that uses Arche' entity relations feature
 to represent tree species in a forest model.
-Of course, the same result could be achieved in many other ways.
 
 {{< code relations_example_test.go >}}
