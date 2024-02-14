@@ -53,6 +53,14 @@ func TestQueryOptionalNot(t *testing.T) {
 	}
 	assert.Equal(t, 1, cnt)
 
+	query2 = NewFilter2[testStruct0, testStruct1]().Exclusive().Query(&w)
+	cnt = 0
+	for query2.Next() {
+		_, _ = query2.Get()
+		cnt++
+	}
+	assert.Equal(t, 1, cnt)
+
 	query2 = NewFilter2[testStruct0, testStruct1]().With(T[testStruct2]()).Without(T[testStruct9]()).Query(&w)
 	cnt = 0
 	for query2.Next() {
@@ -78,6 +86,21 @@ func TestQueryOptionalNot(t *testing.T) {
 	assert.Equal(t, 3, cnt)
 }
 
+func TestQueryRelation(t *testing.T) {
+	w := ecs.NewWorld()
+	mapper1 := NewMap2[testStruct0, testRelationA](&w, T[testRelationA]())
+	mapper2 := NewMap3[testStruct0, testStruct1, testRelationA](&w, T[testRelationA]())
+
+	parent := w.NewEntity()
+
+	mapper1.NewBatch(10, parent)
+	mapper2.NewBatch(10, parent)
+
+	query := NewFilter2[testStruct0, testRelationA]().Exclusive().WithRelation(T[testRelationA]()).Query(&w, parent)
+	assert.Equal(t, 10, query.Count())
+	query.Close()
+}
+
 func TestQuery0(t *testing.T) {
 	w := ecs.NewWorld()
 
@@ -101,6 +124,8 @@ func TestQuery0(t *testing.T) {
 		NewFilter0().
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -152,8 +177,12 @@ func TestQuery0(t *testing.T) {
 	assert.Panics(t, func() { filter2.Query(&w, targ) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 = NewFilter0().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery1(t *testing.T) {
@@ -181,6 +210,8 @@ func TestQuery1(t *testing.T) {
 			Optional(T[testStruct9]()).
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -232,8 +263,12 @@ func TestQuery1(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 = NewFilter1[testRelationA]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery2(t *testing.T) {
@@ -263,6 +298,8 @@ func TestQuery2(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -320,8 +357,15 @@ func TestQuery2(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter2[
+			testStruct0, testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery3(t *testing.T) {
@@ -356,6 +400,8 @@ func TestQuery3(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -411,8 +457,15 @@ func TestQuery3(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter3[
+			testStruct0, testStruct1, testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery4(t *testing.T) {
@@ -451,6 +504,8 @@ func TestQuery4(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -509,8 +564,15 @@ func TestQuery4(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter4[
+			testStruct0, testStruct1, testStruct2, testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery5(t *testing.T) {
@@ -553,6 +615,8 @@ func TestQuery5(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -614,8 +678,16 @@ func TestQuery5(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter5[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery6(t *testing.T) {
@@ -662,6 +734,8 @@ func TestQuery6(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -724,8 +798,16 @@ func TestQuery6(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter6[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery7(t *testing.T) {
@@ -779,6 +861,8 @@ func TestQuery7(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -842,8 +926,16 @@ func TestQuery7(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter7[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery8(t *testing.T) {
@@ -893,6 +985,8 @@ func TestQuery8(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct8]()).
 			Without(T[testStruct9]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -957,8 +1051,16 @@ func TestQuery8(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter8[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery9(t *testing.T) {
@@ -1012,6 +1114,8 @@ func TestQuery9(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct9]()).
 			Without(T[testStruct10]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -1079,8 +1183,17 @@ func TestQuery9(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter9[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery10(t *testing.T) {
@@ -1137,6 +1250,8 @@ func TestQuery10(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct10]()).
 			Without(T[testStruct11]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -1205,8 +1320,17 @@ func TestQuery10(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter10[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery11(t *testing.T) {
@@ -1266,6 +1390,8 @@ func TestQuery11(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct11]()).
 			Without(T[testStruct12]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -1335,8 +1461,17 @@ func TestQuery11(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter11[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testStruct9, testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQuery12(t *testing.T) {
@@ -1399,6 +1534,8 @@ func TestQuery12(t *testing.T) {
 			Optional(T[testStruct1]()).
 			With(T[testStruct12]()).
 			Without(T[testStruct13]())
+
+	assert.Panics(t, func() { filter.Exclusive() })
 
 	filter.Register(&w)
 
@@ -1469,8 +1606,17 @@ func TestQuery12(t *testing.T) {
 	assert.Panics(t, func() { filter2.Optional(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.With(T[testStruct0]()) })
 	assert.Panics(t, func() { filter2.Without(T[testStruct0]()) })
+	assert.Panics(t, func() { filter2.Exclusive() })
 	assert.Panics(t, func() { filter2.WithRelation(T[testRelationA](), targ) })
 	filter2.Unregister(&w)
+
+	filter2 =
+		NewFilter12[
+			testStruct0, testStruct1, testStruct2, testStruct3,
+			testStruct4, testStruct5, testStruct6, testStruct7,
+			testStruct8, testStruct9, testStruct10, testRelationA,
+		]().Exclusive()
+	assert.PanicsWithValue(t, "filter is already exclusive", func() { filter2.Without(T[testStruct13]()) })
 }
 
 func TestQueryGeneric(t *testing.T) {

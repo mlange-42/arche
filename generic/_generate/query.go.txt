@@ -62,8 +62,24 @@ func (f *Filter{{ .Index }}{{ .Types }}) Without(mask ...Comp) *Filter{{ .Index 
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter{{ .Index }}{{ .Types }}) Exclusive() *Filter{{ .Index }}{{ .Types }} {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -96,7 +112,7 @@ func (f *Filter{{ .Index }}{{ .Types }}) WithRelation(comp Comp, target ...ecs.E
 //
 // Panics in these cases.
 func (f *Filter{{ .Index }}{{ .Types }}) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -136,7 +152,7 @@ func (f *Filter{{ .Index }}{{ .Types }}) Query(w *ecs.World, target ...ecs.Entit
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter{{ .Index }}{{ .Types }}) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 

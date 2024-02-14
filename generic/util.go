@@ -11,6 +11,7 @@ type filter struct {
 	include    []Comp
 	optional   []Comp
 	exclude    []Comp
+	exclusive  bool
 	targetType Comp
 	target     ecs.Entity
 	hasTarget  bool

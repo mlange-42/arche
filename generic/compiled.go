@@ -29,19 +29,32 @@ func newCompiledQuery() compiledQuery {
 }
 
 // Compile compiles a generic filter.
-func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp, targetType Comp, target ecs.Entity, hasTarget bool) {
+func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp, exclusive bool, targetType Comp, target ecs.Entity, hasTarget bool) {
 	if q.compiled {
 		return
 	}
 
 	q.Ids = toIds(w, include)
-	q.maskFilter = ecs.MaskFilter{
-		Include: toMaskOptional(w, q.Ids, optional),
-		Exclude: toMask(w, exclude),
+
+	incl := toMaskOptional(w, q.Ids, optional)
+	var excl ecs.Mask
+	if exclusive {
+		excl = incl.Not()
+	} else {
+		excl = toMask(w, exclude)
 	}
+	q.maskFilter = ecs.MaskFilter{
+		Include: incl,
+		Exclude: excl,
+	}
+	noExclude := !exclusive && len(exclude) == 0
 
 	if targetType == nil {
-		q.filter = &q.maskFilter
+		if noExclude {
+			q.filter = q.maskFilter.Include
+		} else {
+			q.filter = &q.maskFilter
+		}
 		q.Relation = ecs.ID{}
 		q.HasRelation = false
 	} else {
@@ -68,7 +81,11 @@ func (q *compiledQuery) Compile(w *ecs.World, include, optional, exclude []Comp,
 			q.relationFilter = ecs.NewRelationFilter(&q.maskFilter, target)
 			q.filter = &q.relationFilter
 		} else {
-			q.filter = &q.maskFilter
+			if noExclude {
+				q.filter = q.maskFilter.Include
+			} else {
+				q.filter = &q.maskFilter
+			}
 		}
 	}
 	q.targetCompiled = true

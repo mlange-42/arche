@@ -50,8 +50,24 @@ func (f *Filter0) Without(mask ...Comp) *Filter0 {
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter0) Exclusive() *Filter0 {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -84,7 +100,7 @@ func (f *Filter0) WithRelation(comp Comp, target ...ecs.Entity) *Filter0 {
 //
 // Panics in these cases.
 func (f *Filter0) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -123,7 +139,7 @@ func (f *Filter0) Query(w *ecs.World, target ...ecs.Entity) Query0 {
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter0) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -229,8 +245,24 @@ func (f *Filter1[A]) Without(mask ...Comp) *Filter1[A] {
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter1[A]) Exclusive() *Filter1[A] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -263,7 +295,7 @@ func (f *Filter1[A]) WithRelation(comp Comp, target ...ecs.Entity) *Filter1[A] {
 //
 // Panics in these cases.
 func (f *Filter1[A]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -303,7 +335,7 @@ func (f *Filter1[A]) Query(w *ecs.World, target ...ecs.Entity) Query1[A] {
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter1[A]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -418,8 +450,24 @@ func (f *Filter2[A, B]) Without(mask ...Comp) *Filter2[A, B] {
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter2[A, B]) Exclusive() *Filter2[A, B] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -452,7 +500,7 @@ func (f *Filter2[A, B]) WithRelation(comp Comp, target ...ecs.Entity) *Filter2[A
 //
 // Panics in these cases.
 func (f *Filter2[A, B]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -493,7 +541,7 @@ func (f *Filter2[A, B]) Query(w *ecs.World, target ...ecs.Entity) Query2[A, B] {
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter2[A, B]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -611,8 +659,24 @@ func (f *Filter3[A, B, C]) Without(mask ...Comp) *Filter3[A, B, C] {
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter3[A, B, C]) Exclusive() *Filter3[A, B, C] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -645,7 +709,7 @@ func (f *Filter3[A, B, C]) WithRelation(comp Comp, target ...ecs.Entity) *Filter
 //
 // Panics in these cases.
 func (f *Filter3[A, B, C]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -687,7 +751,7 @@ func (f *Filter3[A, B, C]) Query(w *ecs.World, target ...ecs.Entity) Query3[A, B
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter3[A, B, C]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -808,8 +872,24 @@ func (f *Filter4[A, B, C, D]) Without(mask ...Comp) *Filter4[A, B, C, D] {
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter4[A, B, C, D]) Exclusive() *Filter4[A, B, C, D] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -842,7 +922,7 @@ func (f *Filter4[A, B, C, D]) WithRelation(comp Comp, target ...ecs.Entity) *Fil
 //
 // Panics in these cases.
 func (f *Filter4[A, B, C, D]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -885,7 +965,7 @@ func (f *Filter4[A, B, C, D]) Query(w *ecs.World, target ...ecs.Entity) Query4[A
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter4[A, B, C, D]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -1009,8 +1089,24 @@ func (f *Filter5[A, B, C, D, E]) Without(mask ...Comp) *Filter5[A, B, C, D, E] {
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter5[A, B, C, D, E]) Exclusive() *Filter5[A, B, C, D, E] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -1043,7 +1139,7 @@ func (f *Filter5[A, B, C, D, E]) WithRelation(comp Comp, target ...ecs.Entity) *
 //
 // Panics in these cases.
 func (f *Filter5[A, B, C, D, E]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -1087,7 +1183,7 @@ func (f *Filter5[A, B, C, D, E]) Query(w *ecs.World, target ...ecs.Entity) Query
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter5[A, B, C, D, E]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -1214,8 +1310,24 @@ func (f *Filter6[A, B, C, D, E, F]) Without(mask ...Comp) *Filter6[A, B, C, D, E
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter6[A, B, C, D, E, F]) Exclusive() *Filter6[A, B, C, D, E, F] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -1248,7 +1360,7 @@ func (f *Filter6[A, B, C, D, E, F]) WithRelation(comp Comp, target ...ecs.Entity
 //
 // Panics in these cases.
 func (f *Filter6[A, B, C, D, E, F]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -1293,7 +1405,7 @@ func (f *Filter6[A, B, C, D, E, F]) Query(w *ecs.World, target ...ecs.Entity) Qu
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter6[A, B, C, D, E, F]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -1423,8 +1535,24 @@ func (f *Filter7[A, B, C, D, E, F, G]) Without(mask ...Comp) *Filter7[A, B, C, D
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter7[A, B, C, D, E, F, G]) Exclusive() *Filter7[A, B, C, D, E, F, G] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -1457,7 +1585,7 @@ func (f *Filter7[A, B, C, D, E, F, G]) WithRelation(comp Comp, target ...ecs.Ent
 //
 // Panics in these cases.
 func (f *Filter7[A, B, C, D, E, F, G]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -1503,7 +1631,7 @@ func (f *Filter7[A, B, C, D, E, F, G]) Query(w *ecs.World, target ...ecs.Entity)
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter7[A, B, C, D, E, F, G]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -1636,8 +1764,24 @@ func (f *Filter8[A, B, C, D, E, F, G, H]) Without(mask ...Comp) *Filter8[A, B, C
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter8[A, B, C, D, E, F, G, H]) Exclusive() *Filter8[A, B, C, D, E, F, G, H] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -1670,7 +1814,7 @@ func (f *Filter8[A, B, C, D, E, F, G, H]) WithRelation(comp Comp, target ...ecs.
 //
 // Panics in these cases.
 func (f *Filter8[A, B, C, D, E, F, G, H]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -1717,7 +1861,7 @@ func (f *Filter8[A, B, C, D, E, F, G, H]) Query(w *ecs.World, target ...ecs.Enti
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter8[A, B, C, D, E, F, G, H]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -1853,8 +1997,24 @@ func (f *Filter9[A, B, C, D, E, F, G, H, I]) Without(mask ...Comp) *Filter9[A, B
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter9[A, B, C, D, E, F, G, H, I]) Exclusive() *Filter9[A, B, C, D, E, F, G, H, I] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -1887,7 +2047,7 @@ func (f *Filter9[A, B, C, D, E, F, G, H, I]) WithRelation(comp Comp, target ...e
 //
 // Panics in these cases.
 func (f *Filter9[A, B, C, D, E, F, G, H, I]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -1935,7 +2095,7 @@ func (f *Filter9[A, B, C, D, E, F, G, H, I]) Query(w *ecs.World, target ...ecs.E
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter9[A, B, C, D, E, F, G, H, I]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -2074,8 +2234,24 @@ func (f *Filter10[A, B, C, D, E, F, G, H, I, J]) Without(mask ...Comp) *Filter10
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter10[A, B, C, D, E, F, G, H, I, J]) Exclusive() *Filter10[A, B, C, D, E, F, G, H, I, J] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -2108,7 +2284,7 @@ func (f *Filter10[A, B, C, D, E, F, G, H, I, J]) WithRelation(comp Comp, target 
 //
 // Panics in these cases.
 func (f *Filter10[A, B, C, D, E, F, G, H, I, J]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -2157,7 +2333,7 @@ func (f *Filter10[A, B, C, D, E, F, G, H, I, J]) Query(w *ecs.World, target ...e
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter10[A, B, C, D, E, F, G, H, I, J]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -2299,8 +2475,24 @@ func (f *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Without(mask ...Comp) *Filte
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Exclusive() *Filter11[A, B, C, D, E, F, G, H, I, J, K] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -2333,7 +2525,7 @@ func (f *Filter11[A, B, C, D, E, F, G, H, I, J, K]) WithRelation(comp Comp, targ
 //
 // Panics in these cases.
 func (f *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -2383,7 +2575,7 @@ func (f *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Query(w *ecs.World, target .
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter11[A, B, C, D, E, F, G, H, I, J, K]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
@@ -2528,8 +2720,24 @@ func (f *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Without(mask ...Comp) *Fi
 	if f.compiled.locked {
 		panic("can't modify a registered filter")
 	}
+	if f.exclusive {
+		panic("filter is already exclusive")
+	}
 	f.exclude = append(f.exclude, mask...)
 	f.compiled.Reset()
+	return f
+}
+
+// Exclusive makes the filter exclusive in the sense that the component composition is matched exactly,
+// and no other components are allowed.
+func (f *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Exclusive() *Filter12[A, B, C, D, E, F, G, H, I, J, K, L] {
+	if f.compiled.locked {
+		panic("can't modify a registered filter")
+	}
+	if len(f.exclude) > 0 {
+		panic("filter already excludes some components")
+	}
+	f.exclusive = true
 	return f
 }
 
@@ -2562,7 +2770,7 @@ func (f *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) WithRelation(comp Comp, t
 //
 // Panics in these cases.
 func (f *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Filter(w *ecs.World, target ...ecs.Entity) ecs.Filter {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 
 	filter := f.compiled.filter
 	if len(target) > 0 {
@@ -2613,7 +2821,7 @@ func (f *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Query(w *ecs.World, targe
 //
 // See [ecs.Cache] for details on filter caching.
 func (f *Filter12[A, B, C, D, E, F, G, H, I, J, K, L]) Register(w *ecs.World) {
-	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.targetType, f.target, f.hasTarget)
+	f.compiled.Compile(w, f.include, f.optional, f.exclude, f.exclusive, f.targetType, f.target, f.hasTarget)
 	f.compiled.Register(w)
 }
 
