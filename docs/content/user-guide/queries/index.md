@@ -7,6 +7,12 @@ description = "Usage of Arche's queries."
 Queries ({{< api ecs Query >}}) are the heart of Arche's query engine.
 They allow for very fast retrieval and iteration of entities with certain components.
 
+{{% notice style="blue" icon="exclamation" title="Important" %}}
+Queries are for one-time utilization.
+A query can be iterated through only once, and a new one must be created before every loop.
+Contrary, the underlying [Filters](./filters) should be stored and re-used.
+{{% /notice %}}
+
 ## Query creation & iteration
 
 Queries are created through the ({{< api ecs World >}}) using a *Filter* (interface {{< api ecs Filter >}}).

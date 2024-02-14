@@ -5,11 +5,18 @@ import (
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/filter"
 	"github.com/mlange-42/arche/generic"
 )
 
 // Position component
 type Position struct {
+	X float64
+	Y float64
+}
+
+// Velocity component
+type Velocity struct {
 	X float64
 	Y float64
 }
@@ -67,10 +74,9 @@ func TestMaskExclusive(t *testing.T) {
 }
 
 func TestMaskExclusiveGeneric(t *testing.T) {
-	// TODO
-	//filter := generic.NewFilter2[Position, Heading]().
-	//	Exclusive()
-	//_ = filter
+	filter := generic.NewFilter2[Position, Heading]().
+		Exclusive()
+	_ = filter
 }
 
 func TestGenericOptional(t *testing.T) {
@@ -87,4 +93,44 @@ func TestGenericOptional(t *testing.T) {
 			fmt.Println("Heading not present in entity ", query.Entity())
 		}
 	}
+}
+
+func TestLogicFilters(t *testing.T) {
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[Position](&world)
+	velID := ecs.ComponentID[Velocity](&world)
+	headID := ecs.ComponentID[Heading](&world)
+
+	// Either Position and Velocity, or Position and Heading
+	_ = filter.OR{
+		L: ecs.All(posID, velID),
+		R: ecs.All(posID, headID),
+	}
+
+	// Missing any of Position or Velocity
+	_ = filter.AnyNOT(ecs.All(posID, velID))
+}
+
+func TestRegister(t *testing.T) {
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[Position](&world)
+
+	mask := ecs.All(posID)
+	filter := world.Cache().Register(mask)
+
+	// Use the registered filter in queries!
+	query := world.Query(&filter)
+	query.Close()
+}
+
+func TestRegisterGeneric(t *testing.T) {
+	world := ecs.NewWorld()
+
+	filter := generic.NewFilter1[Position]()
+	filter.Register(&world)
+
+	query := filter.Query(&world)
+	query.Close()
 }
