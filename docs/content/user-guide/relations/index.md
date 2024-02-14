@@ -144,9 +144,10 @@ Beyond use cases where the relation target is a "physical" entity that appears
 in a simulation or game, targets can also be more abstract, like categories.
 Examples:
 
- - The opposing factions in a strategy game
- - Different tree species in an forest model
+ - Different tree species in a forest model
  - Behavioral states in a finite state machine
+ - The opposing factions in a strategy game
+ - Render layers in a game or other graphical application
 
 This concept is particularly useful for things that would best be expressed by components,
 but the possible components (or categories) are only known at runtime.
