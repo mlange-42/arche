@@ -1,13 +1,14 @@
 [![Arche (logo)](https://user-images.githubusercontent.com/44003176/236701164-28178d13-7e52-4449-baa4-41b764183cbd.png)](https://github.com/mlange-42/arche)
 [![Test status](https://img.shields.io/github/actions/workflow/status/mlange-42/arche/tests.yml?branch=main&label=Tests&logo=github)](https://github.com/mlange-42/arche/actions/workflows/tests.yml)
-[![Coverage Status](https://badge.coveralls.io/repos/github/mlange-42/arche/badge.svg?branch=main)](https://badge.coveralls.io/github/mlange-42/arche?branch=main)
+[![Coverage Status](https://img.shields.io/coverallsCoverage/github/mlange-42/arche?logo=coveralls)](https://badge.coveralls.io/github/mlange-42/arche?branch=main)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mlange-42/arche)](https://goreportcard.com/report/github.com/mlange-42/arche)
-[![Go Reference](https://pkg.go.dev/badge/github.com/mlange-42/arche.svg)](https://pkg.go.dev/github.com/mlange-42/arche)
+[![User Guide](https://img.shields.io/badge/user_guide-%23007D9C?logo=go&logoColor=white&labelColor=gray)](https://mlange-42.github.io/arche/)
+[![Go Reference](https://img.shields.io/badge/reference-%23007D9C?logo=go&logoColor=white&labelColor=gray)](https://pkg.go.dev/github.com/mlange-42/arche)
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
 [![DOI:10.5281/zenodo.7656484](https://zenodo.org/badge/DOI/10.5281/zenodo.7656484.svg)](https://doi.org/10.5281/zenodo.7656484)
 [![MIT license](https://img.shields.io/github/license/mlange-42/arche)](https://github.com/mlange-42/arche/blob/main/LICENSE)
 
-*Arche* is an [archetype](https://github.com/mlange-42/arche/blob/main/ARCHITECTURE.md)-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
+*Arche* is an [archetype](https://mlange-42.github.io/arche/background/architecture/)-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
 
 *Arche* is designed for the use in simulation models of the
 [Department of Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
@@ -24,7 +25,7 @@
 
 * Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 * Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
-* Entity relations as first-class feature. See [Architecture](https://github.com/mlange-42/arche/blob/main/ARCHITECTURE.md#entity-relations).
+* Entity relations as first-class feature. See the [User Guide](https://mlange-42.github.io/arche/user-guide/relations/).
 * World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
 * No systems. Just queries. Use your own structure (or the [Tools](#tools)).
 * No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
@@ -42,9 +43,8 @@ go get github.com/mlange-42/arche
 
 Here is the classical Position/Velocity example that every ECS shows in the docs.
 It uses the type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
-For a full-featured wrapper with systems, scheduling and more, see [arche-model](https://github.com/mlange-42/arche-model).
 
-See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
+See the [User Guide](https://mlange-42.github.io/arche/), [API docs](https://pkg.go.dev/github.com/mlange-42/arche) and
 [examples](https://github.com/mlange-42/arche/tree/main/_examples) for details.
 For more complex examples, see [arche-demo](https://github.com/mlange-42/arche-demo).
 
@@ -163,7 +163,7 @@ Neither is silent failure, given the scientific background.
 
 ## Benchmarks
 
-A tabular overview of the runtime cost of typical *Arche* ECS operations is provided in [BENCHMARKS.md](https://github.com/mlange-42/arche/blob/main/BENCHMARKS.md).
+A tabular overview of the runtime cost of typical *Arche* ECS operations is provided under [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the Arche's [User Guide](https://mlange-42.github.io/arche/).
 
 See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
 

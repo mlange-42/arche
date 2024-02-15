@@ -2,6 +2,8 @@
 //
 // See the top-level module [github.com/mlange-42/arche] for an overview.
 //
+// 🕮 Also read the Arche's [User Guide]!
+//
 // # Outline
 //
 //   - [World] provides most of the basic functionality,
@@ -64,4 +66,6 @@
 // Usage:
 //
 //	go build -tags tiny .
+//
+// [User Guide]: https://mlange-42.github.io/arche/
 package ecs

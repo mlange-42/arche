@@ -2,6 +2,8 @@
 //
 // See the top level module [github.com/mlange-42/arche] for an overview.
 //
+// 🕮 Also read the Arche's [User Guide]!
+//
 // # Outline
 //
 //   - [All] creates a basic filter for components.
@@ -13,4 +15,6 @@
 //
 // All filters that wrap other filters ([AND], [OR], [XOR], [NOT]) ignore potential relation targets
 // of any wrapped ecs.RelationFilter (see [github.com/mlange-42/arche/ecs.RelationFilter]).
+//
+// [User Guide]: https://mlange-42.github.io/arche/
 package filter
