@@ -15,5 +15,6 @@ Benchmark code: {{< repo "/tree/main/benchmark/table" "benchmark/table" >}} in t
 
 Benchmarks are run automatically in the GitHub CI, and are updated on this page on every merge into the `main` branch.
 They always reflect the latest development state of Arche, but may change depending on the hardware the CI runs on.
+For a benchmark comparison with other ECS implementations, see the benchmarks on the {{< repo "#benchmarks" "repo README" >}}.
 
 {{% include file="/background/_benchmarks.md" %}}
