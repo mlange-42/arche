@@ -57,7 +57,7 @@ But they also come with a downside. Adding or removing components to/from an ent
 This takes roughly 10-20ns per involved component.
 It is therefore recommended to add/remove/exchange multiple components at the same time rather than one after the other.
 
-However, as the benchmarks on the {{< repo "#benchmarks" "repo README" >}} illustrate,
+However, as the benchmarks on the [repo README](https://github.com/mlange-42/arche#benchmarks) illustrate,
 Arche seems to be the fastest Go ECS available.
 Not only in terms of iteration speed, which is particularly tailored for.
 Even when it comes to entity manipulation (adding, removing components etc.),
