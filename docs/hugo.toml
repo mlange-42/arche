@@ -36,7 +36,7 @@ disableInlineCopyToClipBoard = true
 
 [[menu.shortcuts]]
 name = "<i class='fab fa-fw fa-github'></i> GitHub repo"
-identifier = "ds"
+identifier = "repo"
 url = "https://github.com/mlange-42/arche"
 weight = 10
 
@@ -45,6 +45,12 @@ name = "<i class='fas fa-fw fa-bookmark'></i> API reference"
 identifier = "hugodoc"
 url = "https://pkg.go.dev/github.com/mlange-42/arche"
 weight = 20
+
+[[menu.shortcuts]]
+name = "<i class='fas fa-fw fa-eye'></i> Web demo"
+identifier = "demo"
+url = "https://mlange-42.github.io/arche-demo/"
+weight = 30
 
 [markup]
   [markup.highlight]

@@ -7,4 +7,8 @@
 //   - Advanced filters -- [github.com/mlange-42/arche/filter]
 //   - Event listeners -- [github.com/mlange-42/arche/listener]
 //   - Usage examples -- [github.com/mlange-42/arche/_examples]
+//
+// 🕮 Also read the Arche's [User Guide]!
+//
+// [User Guide]: https://mlange-42.github.io/arche/
 package arche

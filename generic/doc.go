@@ -2,6 +2,8 @@
 //
 // See the top level module [github.com/mlange-42/arche] for an overview.
 //
+// 🕮 Also read the Arche's [User Guide]!
+//
 // # Outline
 //
 //   - [Filter0], [Filter1], etc. provide generic filters and query generation using [Filter0.Query] and friends.
@@ -33,4 +35,6 @@
 //   - Remove components: [Map2.RemoveBatch], [Map2.RemoveBatchQ]
 //   - Exchange components: [Exchange.ExchangeBatch]
 //   - Change entity relation target: [Map.SetRelationBatch], [Map.SetRelationBatchQ]
+//
+// [User Guide]: https://mlange-42.github.io/arche/
 package generic

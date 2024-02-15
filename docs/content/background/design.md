@@ -37,7 +37,7 @@ This may not seem idiomatic for Go.
 However, explicit error handling in performance hotspots is not an option.
 Neither is silent failure, given the scientific background.
 
-### Other limitations
+### Limitations
 
 * The number of component types per `World` is limited to 256. This is mainly a performance decision.
 * The number of entities alive at any one time is limited to just under 5 billion (`uint32` ID).

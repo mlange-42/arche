@@ -115,14 +115,20 @@ func TestLogicFilters(t *testing.T) {
 	velID := ecs.ComponentID[Velocity](&world)
 	headID := ecs.ComponentID[Heading](&world)
 
-	// Either Position and Velocity, or Position and Heading
+	// Either Position and Velocity, or Position and Heading.
 	_ = filter.OR{
 		L: ecs.All(posID, velID),
 		R: ecs.All(posID, headID),
 	}
 
-	// Missing any of Position or Velocity
-	_ = filter.AnyNOT(ecs.All(posID, velID))
+	// Same as above, expressed with a different logic.
+	_ = filter.AND{
+		L: ecs.All(posID),
+		R: filter.Any(velID, headID),
+	}
+
+	// Missing any of Position or Velocity.
+	_ = filter.AnyNot(posID, velID)
 }
 
 func TestRegister(t *testing.T) {
