@@ -66,11 +66,6 @@ where sparse-set ECS implementations should shine, Arche leads the field.
 
 For more numbers on performance, see chapter [Benchmarks](./benchmarks). 
 
-## ToDos
-
- - Archetype graph
- - Relation archetypes
-
 ## Details
 
 Actually, the explanation above is quite simplified.
@@ -80,14 +75,11 @@ Particularly it leaves out [Entity Relations](/user-guide/relations) and the *ar
 
 When components are added to or removed from an entity, it is necessary to find its new archetype.
 To accelerate the search, a graph of *archetype nodes* (or just *nodes*) is used.
-
-A graph data structure is used to accelerate the search. The figure below illustrates the concept.
+The figure below illustrates the concept.
 Each arrow represents the transition between two archetypes when a single component is added (solid arrow head)
 or removed (empty arrow head).
 Following these transitions, the archetype resulting from addition and/or removal of an arbitrary number
 of components can be found easily.
-
-
 
 {{< html >}}
 <img alt="Archetype graph light" width="600" class="light" src="/images/background/archetype-graph.svg"></img>
@@ -96,10 +88,57 @@ of components can be found easily.
 *Illustration of the archetype graph. Letters represent components. Boxes represent archetype nodes.
 Arrows represent transitions when a single component is added or removed.*
 
-Nodes and connections are created as needed. When searching for an archetype, established transitions are tried first.
+Nodes and connections are created as needed. When searching for an archetype, the algorithm proceeds transition by transition.
+When looking for the next archetype, established transitions are checked first.
 If this is not successful, the resulting component mask is used to search through all nodes.
 On success, a new connection is established.
 If the required node was still not found, a new node is created.
+Then, the next transition it processed and so on, until the final node is found.
+Only then, an archetype is created for the node.
 
-As a result, the graph will in most cases not be fully connected,
-and there will also not be all possible nodes (combinations of components) present.
+As a result, the graph will in most cases not be fully connected.
+There will also not be all possible nodes (combinations of components) present.
+Nodes that are only traversed by the search but never receive entities contain no archetype.
+
+The graph stabilizes quickly.
+Then, only the fast following of transitions is required to find an archetype when components are added or removed.
+Transitions are stored in the nodes with lookup approx. 10 times faster then Go's `map`.
+
+### Entity relations
+
+The *archetype nodes* explained above are utilized to implement Arche's [Entity Relations](/user-guide/relations) feature.
+When an archetype contains a relation components, the respective node contains an archetype "table"
+for each entity that is a target of that relation.
+As an example, we have components `A`, `B` and `R`, where `R` is a relation.
+Further, we have two parent entities `E1` and `E2`.
+When you create some entities with components `A B R(E1)` and `A B R(E2)`, i.e. with relation targets `E1` and `E2`,
+the following node is created:
+
+```text
+
+  Node [ A B R ]
+    |
+    |--- E1   E Comps
+    |        |3|A|B|R|
+    |        |6|A|B|R|
+    |        |7|A|B|R|
+    |
+    '--- E2   E Comps
+             |4|A|B|R|
+             |5|A|B|R|
+```
+
+When querying without specifying a target, the "inner" archetypes are simply iterated if the node matches the filter.
+When querying with a relation target (and the node matches), the archetype for the target entity is looked up in a standard Go `map`.
+
+### Archetype removal
+
+Normal archetypes without a relation are never removed, as they are not a temporary thing.
+For relation archetypes, however, things are different.
+Once a target entity dies, it will never appear again (actually it could, after dying another 4294967294 times).
+
+In Arche, empty archetypes with a dead target are recycled.
+They are deactivated, but their allocated memory for entities and components is retained.
+When an archetype in the same node, but for another target entity it required, it is reused.
+To be able to efficiently detect whether an archetype can be removed,
+a bitset is used to keep track of entities that are the target of a relation.
