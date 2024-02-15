@@ -15,7 +15,9 @@ For that sake, Arche provides statistics about it's internals, prepared in a com
 ## Accessing statistics
 
 All internal statistics can be accessed via {{< api ecs World.Stats >}},
-which returns a {{< api "ecs/stats" World "*stats.World" >}} object.
+which returns a {{< api "ecs/stats" World stats.World >}} object.
+This, in turn, contains the other stats types described below.
+All these types have a method `String()` to bring them into a compact, human-readable form. 
 
 ## World stats
 

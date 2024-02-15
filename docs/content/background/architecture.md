@@ -17,19 +17,19 @@ as well as their components.
 Similarly, the second archetype contains all entities with A and C, and their components.
 
 ```text
- Entities   Archetypes   Bitmasks   Queries
+ Entities   Archetypes   Bitmasks     Queries
 
    E         E Comps
-  |0|       |2|A|B|C|    111...<-.<--match-.
-  |1|---.   |8|A|B|C|            |         |
-  |2|   '-->|1|A|B|C|            |         |
-  |3|       |3|A|B|C|            |--(A, C) |
-  |4|                            |  101... |
-  |6|   .-->|7|A|C|      101...<-'         |--(B)
-  |7|---'   |6|A|C|                        |  010...
-  |8|       |4|A|C|                        |
-  |9|---.                                  |
-  |.|   |   |5|B|C|      011...   <--------'
+  |0|       |2|A|B|C|    111...   <-.      <---.
+  |1|---.   |8|A|B|C|               |          |
+  |2|   '-->|1|A|B|C|               |          |
+  |3|       |3|A|B|C|               |--Q(A,C)  |
+  |4|                               |  101...  |
+  |6|   .-->|7|A|C|      101...   <-'          |--Q(B)
+  |7|---'   |6|A|C|                            |  010...
+  |8|       |4|A|C|                            |
+  |9|---.                                      |
+  |.|   |   |5|B|C|      011...            <---'
   |.|   '-->|9|B|C|
   |.|
   |.| <===> [Entity pool]
@@ -37,7 +37,8 @@ Similarly, the second archetype contains all entities with A and C, and their co
 *Illustration of Arche's archetype-based architecture.*
 
 The exact component composition of each archetype is encoded in a bitmask for fast comparison.
-Thus, queries can easily identify their relevant archetypes, and then simply iterate entities linearly, which is very fast. Components can be accessed through a query in a very efficient way (&approx;1ns).
+Thus, queries can easily identify their relevant archetypes, and then simply iterate entities linearly, which is very fast
+and cache-friendly. Components can be accessed through a query in a very efficiently (&approx;1ns).
 
 ## World entity access
 
@@ -69,3 +70,15 @@ For more numbers on performance, see chapter [Benchmarks](./benchmarks).
 
  - Archetype graph
  - Relation archetypes
+
+## Details
+
+Actually, the explanation above is quite simplified.
+Particularly it leaves out [Entity Relations](/user-guide/relations) and the *archetypes graph* and *nodes*.
+
+### Archetype graph
+
+{{< html >}}
+<img alt="Archetype graph light" width="600" class="light" src="/images/background/archetype-graph.svg"></img>
+<img alt="Archetype graph dark" width="600" class="dark" src="/images/background/archetype-graph-dark.svg"></img>
+{{< /html >}}
