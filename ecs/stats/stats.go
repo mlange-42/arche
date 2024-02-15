@@ -7,40 +7,40 @@ import (
 	"strings"
 )
 
-// WorldStats provide statistics for an [ecs.World].
-type WorldStats struct {
-	// Entity statistics
-	Entities EntityStats
-	// Total number of components
+// World provide statistics for an [ecs.World].
+type World struct {
+	// Entity statistics.
+	Entities Entities
+	// Total number of components.
 	ComponentCount int
-	// Component types, indexed by component ID
+	// Component types, indexed by component ID.
 	ComponentTypes []reflect.Type
-	// Locked state of the world
+	// Locked state of the world.
 	Locked bool
-	// Node statistics
-	Nodes []NodeStats
-	// Number of active nodes
+	// Node statistics.
+	Nodes []Node
+	// Number of active nodes.
 	ActiveNodeCount int
-	// Memory used by entities and components
+	// Memory used by entities and components.
 	Memory int
-	// Number of cached filters
+	// Number of cached filters.
 	CachedFilters int
 }
 
-// EntityStats provide statistics about [ecs.World] entities.
-type EntityStats struct {
-	// Currently used/alive entities
+// Entities provide statistics about [ecs.World] entities.
+type Entities struct {
+	// Currently used/alive entities.
 	Used int
-	// Current capacity of the entity pool
+	// Current capacity of the entity pool.
 	Total int
-	// Recycled/available entities
+	// Recycled/available entities.
 	Recycled int
-	// Current capacity of the entities list
+	// Current capacity of the entities list.
 	Capacity int
 }
 
-// NodeStats provide statistics for an archetype graph node.
-type NodeStats struct {
+// Node provide statistics for an archetype graph node.
+type Node struct {
 	// Total number of archetypes, incl. inactive.
 	ArchetypeCount int
 	// Number of active archetypes.
@@ -49,37 +49,37 @@ type NodeStats struct {
 	IsActive bool
 	// Whether the node contains relation archetypes.
 	HasRelation bool
-	// Number of components
+	// Number of components.
 	Components int
-	// Component IDs
+	// Component IDs.
 	ComponentIDs []uint8
-	// Component types for ComponentIDs
+	// Component types for ComponentIDs.
 	ComponentTypes []reflect.Type
-	// Memory for components per entity
+	// Memory for components per entity, in bytes.
 	MemoryPerEntity int
-	// Total reserved memory for entities and components, in bytes
+	// Total reserved memory for entities and components, in bytes.
 	Memory int
-	// Number of entities in the archetype
+	// Number of entities in the archetypes of this node.
 	Size int
-	// Capacity of the archetype
+	// Sum of capacity of the archetypes in this node.
 	Capacity int
-	// Archetype statistics
-	Archetypes []ArchetypeStats
+	// Archetype statistics.
+	Archetypes []Archetype
 }
 
-// ArchetypeStats provide statistics for an archetype.
-type ArchetypeStats struct {
-	// Whether the archetype is currently active
+// Archetype provide statistics for an archetype.
+type Archetype struct {
+	// Whether the archetype is currently active.
 	IsActive bool
-	// Number of entities in the archetype
+	// Number of entities in the archetype.
 	Size int
-	// Capacity of the archetype
+	// Capacity of the archetype.
 	Capacity int
-	// Total reserved memory for entities and components, in bytes
+	// Total reserved memory for entities and components, in bytes.
 	Memory int
 }
 
-func (s *WorldStats) String() string {
+func (s *World) String() string {
 	b := strings.Builder{}
 
 	fmt.Fprintf(
@@ -101,11 +101,11 @@ func (s *WorldStats) String() string {
 	return b.String()
 }
 
-func (s *EntityStats) String() string {
+func (s *Entities) String() string {
 	return fmt.Sprintf("Entities -- Used: %d, Recycled: %d, Total: %d, Capacity: %d\n", s.Used, s.Recycled, s.Total, s.Capacity)
 }
 
-func (s *NodeStats) String() string {
+func (s *Node) String() string {
 	if !s.IsActive {
 		return ""
 	}

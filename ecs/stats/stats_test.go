@@ -7,12 +7,12 @@ import (
 )
 
 func TestStats(t *testing.T) {
-	stats := WorldStats{
-		Entities:       EntityStats{},
+	stats := World{
+		Entities:       Entities{},
 		ComponentCount: 1,
 		ComponentTypes: []reflect.Type{reflect.TypeOf(1)},
 		Locked:         false,
-		Nodes: []NodeStats{
+		Nodes: []Node{
 			{
 				Size:           1,
 				Capacity:       128,
