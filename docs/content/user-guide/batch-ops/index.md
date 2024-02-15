@@ -9,7 +9,6 @@ See the [Benchmarks](/background/benchmarks) for some numbers.
 
 For these operations, Arche provides batched versions.
 This allows to create or manipulate a large number of entities much faster than one by one.
-
 Most batch methods come in two flavors. A "normal" one, and one suffixed with `Q` that returns a query over the affected entities.
 
 ## Creating entities
