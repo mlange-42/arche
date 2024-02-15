@@ -98,7 +98,7 @@ Only then, an archetype is created for the node.
 
 As a result, the graph will in most cases not be fully connected.
 There will also not be all possible nodes (combinations of components) present.
-Nodes that are only traversed by the search but never receive entities contain no archetype.
+Nodes that are only traversed by the search but never receive entities contain no archetype and are called inactive.
 
 The graph stabilizes quickly.
 Then, only the fast following of transitions is required to find an archetype when components are added or removed.
