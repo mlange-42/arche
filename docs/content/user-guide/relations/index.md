@@ -166,9 +166,9 @@ The following ways to represent entity relations are shown in the figure:
 
 * *ParentList* (purple): Children form an implicit linked list. The parent references the first child.
   * Query over parents, inner loop implicit linked list of children, using world access for next child and value component.
-* *ParentSlice* (red): The parent holds a slice of all it's children.
+* *ParentSlice* (red): The parent holds a slice of all its children.
   * Query over parents, inner loop over slice of children using world access for value component.
-* *Child* (green): Each child references it's parent.
+* *Child* (green): Each child references its parent.
   * Query over all child entities and retrieval of the parent sum component using world access.
 * *Default* (blue): Using Arche's relations feature without filter caching.
   * Outer query over parents, inner loop over children using relation queries.

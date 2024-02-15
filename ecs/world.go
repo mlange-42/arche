@@ -360,7 +360,7 @@ func (w *World) Reset() {
 // The lock is released automatically when the query finishes iteration, or when [Query.Close] is called.
 // The number of simultaneous locks (and thus open queries) at a given time is limited to [MaskTotalBits] (256).
 //
-// A query can iterate through it's entities only once, and can't be used anymore afterwards.
+// A query can iterate through its entities only once, and can't be used anymore afterwards.
 //
 // To create a [Filter] for querying, see [All], [Mask.Without], [Mask.Exclusive] and [RelationFilter].
 //

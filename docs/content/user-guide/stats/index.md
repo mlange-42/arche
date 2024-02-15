@@ -10,7 +10,7 @@ However, it might sometimes be useful to have access to such metrics,
 for example in order to judge effects of different ways of implementing something.
 Otherwise, users would have to rely on logic reasoning and sufficient understanding of Arche to derive these numbers.
 
-For that sake, Arche provides statistics about it's internals, prepared in a compact and digestible way.
+For that sake, Arche provides statistics about its internals, prepared in a compact and digestible way.
 
 ## Accessing statistics
 

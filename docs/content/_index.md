@@ -62,4 +62,4 @@ Pull requests are welcome.
 
 ## License
 
-*Arche* and all it's sources are released under the [MIT License](https://github.com/mlange-42/arche/blob/main/LICENSE).
+*Arche* and all its sources are released under the [MIT License](https://github.com/mlange-42/arche/blob/main/LICENSE).

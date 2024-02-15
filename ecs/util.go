@@ -134,7 +134,7 @@ func (m *lockMask) Reset() {
 }
 
 // pagedSlice is a paged collection working with pages of length 32 slices.
-// It's primary purpose is pointer persistence, which is not given using simple slices.
+// its primary purpose is pointer persistence, which is not given using simple slices.
 //
 // Implements [archetypes].
 type pagedSlice[T any] struct {
