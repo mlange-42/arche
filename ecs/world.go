@@ -30,7 +30,7 @@ type World struct {
 	locks          lockMask                  // World locks.
 	registry       componentRegistry         // Component registry.
 	filterCache    Cache                     // Cache for registered filters.
-	stats          stats.WorldStats          // Cached world statistics
+	stats          stats.World               // Cached world statistics
 }
 
 // NewWorld creates a new [World] from an optional [Config].
@@ -442,11 +442,11 @@ func (w *World) SetListener(listener Listener) {
 
 // Stats reports statistics for inspecting the World.
 //
-// The underlying [stats.WorldStats] object is re-used and updated between calls.
+// The underlying [stats.World] object is re-used and updated between calls.
 // The returned pointer should thus not be stored for later analysis.
 // Rather, the required data should be extracted immediately.
-func (w *World) Stats() *stats.WorldStats {
-	w.stats.Entities = stats.EntityStats{
+func (w *World) Stats() *stats.World {
+	w.stats.Entities = stats.Entities{
 		Used:     w.entityPool.Len(),
 		Total:    w.entityPool.Cap(),
 		Recycled: w.entityPool.Available(),

@@ -248,7 +248,7 @@ func BenchmarkWorldStats_1Arch(b *testing.B) {
 
 	b.StartTimer()
 
-	var st *stats.WorldStats
+	var st *stats.World
 	for i := 0; i < b.N; i++ {
 		st = w.Stats()
 	}
@@ -279,7 +279,7 @@ func BenchmarkWorldStats_10Arch(b *testing.B) {
 
 	b.StartTimer()
 
-	var st *stats.WorldStats
+	var st *stats.World
 	for i := 0; i < b.N; i++ {
 		st = w.Stats()
 	}

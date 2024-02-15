@@ -1,5 +1,10 @@
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.10.1...main)
 
+### Breaking changes
+
+* Renames types in `ecs.stats` to follow Go standards.
+`stats.WorldStats` -> `stats.World`, `stats.NodeStats` -> `stats.Node`, ... (#388)
+
 ### Features
 
 * Adds method `Query.EntityAt()`, useful for things like random sampling of entities (#358)

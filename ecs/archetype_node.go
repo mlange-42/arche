@@ -186,7 +186,7 @@ func (a *archNode) Reset(cache *Cache) {
 }
 
 // Stats generates statistics for an archetype node.
-func (a *archNode) Stats(reg *componentRegistry) stats.NodeStats {
+func (a *archNode) Stats(reg *componentRegistry) stats.Node {
 	ids := a.Ids
 	aCompCount := len(ids)
 	aTypes := make([]reflect.Type, aCompCount)
@@ -199,10 +199,10 @@ func (a *archNode) Stats(reg *componentRegistry) stats.NodeStats {
 	cap := 0
 	count := 0
 	memory := 0
-	var archStats []stats.ArchetypeStats
+	var archStats []stats.Archetype
 	if arches != nil {
 		numArches = arches.Len()
-		archStats = make([]stats.ArchetypeStats, numArches)
+		archStats = make([]stats.Archetype, numArches)
 		var i int32
 		for i = 0; i < numArches; i++ {
 			archStats[i] = arches.Get(i).Stats(reg)
@@ -220,7 +220,7 @@ func (a *archNode) Stats(reg *componentRegistry) stats.NodeStats {
 		memPerEntity += int(aTypes[j].Size())
 	}
 
-	return stats.NodeStats{
+	return stats.Node{
 		ArchetypeCount:       int(numArches),
 		ActiveArchetypeCount: int(numArches) - len(a.freeIndices),
 		IsActive:             a.IsActive,
@@ -237,7 +237,7 @@ func (a *archNode) Stats(reg *componentRegistry) stats.NodeStats {
 }
 
 // UpdateStats updates statistics for an archetype node.
-func (a *archNode) UpdateStats(stats *stats.NodeStats, reg *componentRegistry) {
+func (a *archNode) UpdateStats(stats *stats.Node, reg *componentRegistry) {
 	if !a.IsActive {
 		return
 	}
