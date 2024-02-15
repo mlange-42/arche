@@ -102,7 +102,7 @@ Nodes that are only traversed by the search but never receive entities contain n
 
 The graph stabilizes quickly.
 Then, only the fast following of transitions is required to find an archetype when components are added or removed.
-Transitions are stored in the nodes with lookup approx. 10 times faster then Go's `map`.
+Transitions are stored in the nodes with lookup approx. 10 times faster than Go's `map`.
 
 ### Entity relations
 
@@ -133,12 +133,12 @@ When querying with a relation target (and the node matches), the archetype for t
 
 ### Archetype removal
 
-Normal archetypes without a relation are never removed, as they are not a temporary thing.
+Normal archetypes without a relation are never removed, because they are not a temporary thing.
 For relation archetypes, however, things are different.
 Once a target entity dies, it will never appear again (actually it could, after dying another 4294967294 times).
 
 In Arche, empty archetypes with a dead target are recycled.
 They are deactivated, but their allocated memory for entities and components is retained.
-When an archetype in the same node, but for another target entity it required, it is reused.
+When an archetype in the same node, but for another target entity is requested, it is reused.
 To be able to efficiently detect whether an archetype can be removed,
 a bitset is used to keep track of entities that are the target of a relation.
