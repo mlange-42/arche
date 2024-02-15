@@ -12,6 +12,8 @@ github.com/google/pprof v0.0.0-20230406165453-00490a63f317/go.mod h1:79YE0hCXdHa
 github.com/ianlancetaylor/demangle v0.0.0-20210905161508-09a460cdf81d/go.mod h1:aYm2/VgdVmcIU8iMfdMvDMsRAQjcfZSKFby6HOFvi/w=
 github.com/marioolofo/go-gameengine-ecs v0.9.0 h1:J0awhWBm7CVmtDa62ouA3X7uuUTS+zcENIeBwSRumvE=
 github.com/marioolofo/go-gameengine-ecs v0.9.0/go.mod h1:oigfVORaCpMEaktM5fmk/jScla/M7dEMCnJlyZmYiLo=
+github.com/mlange-42/arche v0.10.1 h1:zJMg7UA9mMrAMskmHD28yAo3YlP1Jrkvdx91/3bpidI=
+github.com/mlange-42/arche v0.10.1/go.mod h1:gJ5J8vBreqrf4TcBomBFPGnWdE5P3qa4LtxYHn1gDcg=
 github.com/pkg/profile v1.7.0 h1:hnbDkaNWPCLMO9wGLdBFTIZvzDrDfBM2072E1S9gJkA=
 github.com/pkg/profile v1.7.0/go.mod h1:8Uer0jas47ZQMJ7VD+OHknK4YDY07LPUC6dEvqDjvNo=
 github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=

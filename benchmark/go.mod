@@ -13,8 +13,6 @@ require (
 	github.com/yohamta/donburi v1.3.4
 )
 
-replace github.com/mlange-42/arche v0.10.1 => ../
-
 require (
 	github.com/felixge/fgprof v0.9.3 // indirect
 	github.com/google/pprof v0.0.0-20230406165453-00490a63f317 // indirect
