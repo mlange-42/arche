@@ -26,11 +26,10 @@ no_heading = true
 <img alt="GitHub" src="https://img.shields.io/badge/github-repo-blue?logo=github"></img></a>
 
 <a href="https://doi.org/10.5281/zenodo.7656484" style="display:inline-block">
-<img alt="DOI:10.5281/zenodo.7656484" src="https://img.shields.io/badge/10.5281%2Fzenodo.7656484-blue?label=doi&labelColor=grey
-"></img></a>
+<img alt="DOI:10.5281/zenodo.7656484" src="https://img.shields.io/badge/10.5281%2Fzenodo.7656484-blue?label=doi"></img></a>
 
 <a href="https://github.com/mlange-42/arche/blob/main/LICENSE" style="display:inline-block">
-<img alt="MIT license" src="https://img.shields.io/github/license/mlange-42/arche"></img></a>
+<img alt="MIT license" src="https://img.shields.io/badge/MIT-brightgreen?label=license"></img></a>
 </div>
 {{< /html >}}
 
