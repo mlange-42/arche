@@ -1,5 +1,5 @@
 +++
-title = 'Statistics'
+title = 'World Statistics'
 weight = 120
 description = "Arche's world statistics feature for engine insights."
 +++

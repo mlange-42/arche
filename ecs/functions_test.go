@@ -64,3 +64,29 @@ func TestComponentInfo(t *testing.T) {
 	assert.False(t, ok)
 	assert.Equal(t, tp, nil)
 }
+
+func BenchmarkComponentID(b *testing.B) {
+	b.StopTimer()
+	world := NewWorld()
+	id := ComponentID[Position](&world)
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		id = ComponentID[Position](&world)
+	}
+	_ = id
+}
+
+func BenchmarkTypeID(b *testing.B) {
+	b.StopTimer()
+	world := NewWorld()
+	id := ComponentID[Position](&world)
+	info, _ := ComponentInfo(&world, id)
+	tp := info.Type
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		id = TypeID(&world, tp)
+	}
+	_ = id
+}
