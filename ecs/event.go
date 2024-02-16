@@ -23,7 +23,7 @@ import "github.com/mlange-42/arche/ecs/event"
 //
 // Except for removed entities, events are always fired when the [World] is in an unlocked state.
 // Events for removed entities are fired right before removal of the entity,
-// to allow for inspection of it's components.
+// to allow for inspection of its components.
 // Therefore, the [World] is in a locked state during entity removal events.
 //
 // Events for batch-creation of entities using a [Builder] are fired after all entities are created.

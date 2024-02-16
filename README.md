@@ -25,7 +25,7 @@
 
 * Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 * Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
-* Entity relations as first-class feature. See the [User Guide](https://mlange-42.github.io/arche/user-guide/relations/).
+* Entity relations as first-class feature. See the [User Guide](https://mlange-42.github.io/arche/guide/relations/).
 * World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
 * No systems. Just queries. Use your own structure (or the [Tools](#tools)).
 * No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
@@ -115,7 +115,7 @@ Several tools for *Arche* are provided in separate modules:
 
 * [arche-serde](https://github.com/mlange-42/arche-serde) provides JSON serialization and deserialization for *Arche*'s World.
 * [arche-model](https://github.com/mlange-42/arche-model) provides a wrapper around *Arche*, and some common systems and resources.
-It's purpose is to get started with prototyping and developing simulation models immediately, focussing on the model logic.
+its purpose is to get started with prototyping and developing simulation models immediately, focussing on the model logic.
 * [arche-pixel](https://github.com/mlange-42/arche-pixel) provides OpenGL graphics and live plots for *Arche* using the [Pixel](https://github.com/gopxl/pixel) game engine.
 * [arche-demo](https://github.com/mlange-42/arche-demo) provides examples of *Arche* models, which can be viewed in a [live demo](https://mlange-42.github.io/arche-demo/).
 

@@ -19,7 +19,7 @@ type World struct {
 	Locked bool
 	// Node statistics.
 	Nodes []Node
-	// Number of active nodes.
+	// Number of active nodes, i.e. nodes with actual archetype(s).
 	ActiveNodeCount int
 	// Memory used by entities and components.
 	Memory int

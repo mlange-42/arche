@@ -64,7 +64,7 @@ func runParallel() {
 }
 
 // Worker for running simulations on a reused world.
-// Each worker needs it's own world.
+// Each worker needs its own world.
 func worker(jobs <-chan int, results chan<- int) {
 	// Create the worker's world. Will be reused for all jobs of the worker.
 	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))

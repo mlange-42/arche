@@ -21,7 +21,7 @@ A world can also be configured with a capacity increment, using an {{< api ecs C
 
 {{< code-func world_test.go TestWorldConfig >}}
 
-The capacity increment determines by how many entities an archetype grows when it reaches it's capacity.
+The capacity increment determines by how many entities an archetype grows when it reaches its capacity.
 
 For archetypes with an [Entity Relation](./relations), a separate capacity increment can be specified:
 

@@ -43,7 +43,7 @@ no_heading = true
 
 - Simple core API. See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 - Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
-- Entity relations as first-class feature. See the [User Guide](https://mlange-42.github.io/arche/user-guide/relations/).
+- Entity relations as first-class feature. See the [User Guide](https://mlange-42.github.io/arche/guide/relations/).
 - World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
 - No systems. Just queries. Use your own structure (or the [Tools](https://github.com/mlange-42/arche#tools)).
 - No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
@@ -62,4 +62,4 @@ Pull requests are welcome.
 
 ## License
 
-*Arche* and all it's sources are released under the [MIT License](https://github.com/mlange-42/arche/blob/main/LICENSE).
+*Arche* and all its sources are released under the [MIT License](https://github.com/mlange-42/arche/blob/main/LICENSE).

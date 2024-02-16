@@ -15,7 +15,7 @@ var entitySize uint32 = uint32(entityType.Size())
 var entityIndexSize uint32 = uint32(reflect.TypeOf(entityIndex{}).Size())
 
 // Entity identifier.
-// Holds an entity ID and it's generation for recycling.
+// Holds an entity ID and its generation for recycling.
 //
 // Entities are only created via the [World], using [World.NewEntity] or [World.NewEntityWith].
 // Batch creation of entities is possible via [Builder].
