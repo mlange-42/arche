@@ -8,6 +8,8 @@ import (
 
 func benchesEntities() []bench {
 	return []bench{
+		{Name: "Entity.IsZero", Desc: "", F: entitiesIsZero_2, N: 2},
+
 		{Name: "World.NewEntity", Desc: "memory already allocated", F: entitiesCreate_1000, N: 1000},
 		{Name: "World.NewEntity w/ 1 Comp", Desc: "memory already allocated", F: entitiesCreate_1Comp_1000, N: 1000},
 		{Name: "World.NewEntity w/ 5 Comps", Desc: "memory already allocated", F: entitiesCreate_5Comp_1000, N: 1000},
@@ -16,6 +18,25 @@ func benchesEntities() []bench {
 		{Name: "World.RemoveEntity w/ 1 Comp", Desc: "", F: entitiesRemove_1Comp_1000, N: 1000},
 		{Name: "World.RemoveEntity w/ 5 Comps", Desc: "", F: entitiesRemove_5Comp_1000, N: 1000},
 	}
+}
+
+func entitiesIsZero_2(b *testing.B) {
+	b.StopTimer()
+
+	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	e := w.NewEntity()
+	z := ecs.Entity{}
+	var zero1 bool
+	var zero2 bool
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		zero1 = e.IsZero()
+		zero2 = z.IsZero()
+	}
+	b.StopTimer()
+	s := zero1 || zero2
+	_ = s
 }
 
 func entitiesCreate_1000(b *testing.B) {
