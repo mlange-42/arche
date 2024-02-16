@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math/rand"
 	"testing"
 
@@ -140,6 +141,7 @@ func queryIterEntity_100_000(b *testing.B) {
 	filter := ecs.All(id1)
 
 	var e ecs.Entity
+	var s string
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -149,9 +151,10 @@ func queryIterEntity_100_000(b *testing.B) {
 		for query.Next() {
 			e = query.Entity()
 		}
+		b.StopTimer()
+		s = fmt.Sprint(e)
 	}
-	b.StopTimer()
-	_ = e
+	_ = s
 }
 
 func queryRelation_100_000(b *testing.B) {
