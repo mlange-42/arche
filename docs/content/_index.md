@@ -57,7 +57,10 @@ Lange, M. (2023): Arche &ndash; An archetype-based Entity Component System for G
 
 ## Contributing
 
-[Open an issue](https://github.com/mlange-42/arche/issues/new) in the {{< repo "" "GitHub repository" >}} if you have questions, feedback, feature ideas or want to report a bug.
+Open an [issue](https://github.com/mlange-42/arche/issues)
+or start a [discussion](https://github.com/mlange-42/arche/discussions)
+in the {{< repo "" "GitHub repository" >}}
+if you have questions, feedback, feature ideas or want to report a bug.
 Pull requests are welcome.
 
 ## License
