@@ -12,6 +12,7 @@ func benchesWorld() []bench {
 		{Name: "World.Get", Desc: "random, 1000 entities", F: worldGet_1000, N: 1000},
 		{Name: "World.GetUnchecked", Desc: "random, 1000 entities", F: worldGetUnchecked_1000, N: 1000},
 		{Name: "World.Has", Desc: "random, 1000 entities", F: worldHas_1000, N: 1000},
+		{Name: "World.HasUnchecked", Desc: "random, 1000 entities", F: worldHasUnchecked_1000, N: 1000},
 		{Name: "World.Alive", Desc: "random, 1000 entities", F: worldAlive_1000, N: 1000},
 		{Name: "World.Relations.Get", Desc: "random, 1000 entities", F: worldRelation_1000, N: 1000},
 		{Name: "World.Relations.GetUnchecked", Desc: "random, 1000 entities", F: worldRelationUnchecked_1000, N: 1000},
@@ -89,6 +90,32 @@ func worldHas_1000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		for _, e := range entities {
 			has = w.Has(e, id1)
+		}
+	}
+	b.StopTimer()
+	v := !has
+	_ = v
+}
+
+func worldHasUnchecked_1000(b *testing.B) {
+	b.StopTimer()
+
+	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	id1 := ecs.ComponentID[comp1](&w)
+
+	entities := make([]ecs.Entity, 0, 1000)
+	builder := ecs.NewBuilder(&w, id1)
+	query := builder.NewBatchQ(1000)
+	for query.Next() {
+		entities = append(entities, query.Entity())
+	}
+	rand.Shuffle(len(entities), func(i, j int) { entities[i], entities[j] = entities[j], entities[i] })
+
+	var has bool
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		for _, e := range entities {
+			has = w.HasUnchecked(e, id1)
 		}
 	}
 	b.StopTimer()
