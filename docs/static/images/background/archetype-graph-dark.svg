@@ -498,7 +498,7 @@
        id="g16600"
        transform="translate(25.365474,31.24481)">
       <path
-         style="fill:#333333;fill-opacity:1;stroke:#ffffff;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#EmptyTriangleIn-6);marker-end:url(#TriangleStart-66)"
+         style="fill:#333333;fill-opacity:1;stroke:#ffffff;stroke-width:6;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1;marker-start:url(#EmptyTriangleIn);marker-end:url(#TriangleStart)"
          d="m 1413.9201,881.75519 h 258.0001"
          id="path1565-0"
          sodipodi:nodetypes="cc" />
