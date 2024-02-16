@@ -14,6 +14,8 @@ func benchesQuery() []bench {
 		{Name: "Query.Next + 2x Query.Get", Desc: "", F: queryIterGet_2_100_000, N: 100_000},
 		{Name: "Query.Next + 5x Query.Get", Desc: "", F: queryIterGet_5_100_000, N: 100_000},
 
+		{Name: "Query.Next + Query.Entity", Desc: "", F: queryIterEntity_100_000, N: 100_000},
+
 		{Name: "Query.Next + Query.Relation", Desc: "", F: queryRelation_100_000, N: 100_000},
 
 		{Name: "Query.EntityAt, 1 arch", Desc: "", F: querEntityAt_1Arch_1000, N: 1000},
@@ -127,6 +129,29 @@ func queryIterGet_5_100_000(b *testing.B) {
 	b.StopTimer()
 	sum := c1.V + c2.V + c3.V + c4.V + c5.V
 	_ = sum
+}
+
+func queryIterEntity_100_000(b *testing.B) {
+	w := ecs.NewWorld()
+	id1 := ecs.ComponentID[comp1](&w)
+
+	builder := ecs.NewBuilder(&w, id1)
+	builder.NewBatch(100_000)
+	filter := ecs.All(id1)
+
+	var e ecs.Entity
+
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		b.StopTimer()
+		query := w.Query(filter)
+		b.StartTimer()
+		for query.Next() {
+			e = query.Entity()
+		}
+	}
+	b.StopTimer()
+	_ = e
 }
 
 func queryRelation_100_000(b *testing.B) {
