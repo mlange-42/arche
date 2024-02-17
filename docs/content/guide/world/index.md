@@ -11,6 +11,8 @@ For the internal structure of the world, see chapter [Architecture](/background/
 Here, we only deal with world creation.
 Most world functionality is covered in chapters [Entities & Components](./entities) and [World Entity Access](./world-access).
 
+{{< toc >}}
+
 ## World creation
 
 To create a world with default settings, use {{< api ecs NewWorld >}}:

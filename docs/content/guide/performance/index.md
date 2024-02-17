@@ -13,6 +13,8 @@ Due to its cache-friendliness, [archetype-based ECS](/background/architecture) c
 Nevertheless, each ECS has its strengths and weaknesses.
 This chapter provides tips on what you should pay attention to in order to get the most out of Arche.
 
+{{< toc >}}
+
 ## Optimized for Iteration
 
 Being an [archetype-based ECS](/background/architecture), Arche is optimized for queries and iteration.
@@ -44,7 +46,7 @@ This way, the filter is not checked against archetypes during query iteration.
 Instead, the archetypes relevant for the filter are cached,
 and checks are only required when new archetypes are created.
 
-For details, see the section on caching in chapter [Filters](./filters#filter-caching)
+For details, see the section on caching in chapter [Filters](./filters#filter-caching).
 
 ## World access
 

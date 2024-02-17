@@ -17,4 +17,6 @@ Benchmarks are run automatically in the GitHub CI, and are updated on this page 
 They always reflect the latest development state of Arche, but may change depending on the hardware the CI runs on.
 For a benchmark comparison with other ECS implementations, see the benchmarks on the [repo README](https://github.com/mlange-42/arche#benchmarks).
 
+{{< toc >}}
+
 {{% include file="/background/_benchmarks.md" %}}

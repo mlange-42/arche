@@ -30,6 +30,8 @@ and hence can be queried like components, with the usual efficiency.
 This is achieved by creating separate [archetypes](/background/architecture#archetypes)
 for relations with different target entities.
 
+{{< toc >}}
+
 ## Relation components
 
 To use entity relations, create components that have *embedded* an {{< api ecs Relation >}} as their first member:
