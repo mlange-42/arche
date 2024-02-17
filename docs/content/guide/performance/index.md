@@ -25,7 +25,7 @@ For some numbers for comparison, see the [Benchmarks](/background/benchmarks).
 
 The largest potential for optimizing queries is the clever design of components.
 The aim should be that queries access only data that is actually required,
-while at the ame time reducing the amount of accessed components.
+while at the same time reducing the amount of accessed components.
 Accessing fewer data means fewer cache misses, while accessing fewer components avoids lookups.
 To access only data that it actually required primarily means that the accessed components should contain only data that is used by the query.
 
@@ -66,7 +66,7 @@ See also the [benchmarks](./relations/#benchmarks) for [Entity Relations](./rela
 
 ## World operations
 
-As stated above, operations like adding and removing components or creating entities are relatively
+As explained above, operations like adding and removing components or creating entities are relatively
 costly in an archetype-based ECS.
 However, Arche provides some optimizations here,
 and following a few principles can help keeping the performance cost at a minimum.
@@ -75,7 +75,7 @@ and following a few principles can help keeping the performance cost at a minimu
 
 Different components are a great way to represent different states of otherwise similar entities.
 For example, it is completely valid to build a [finite state machine](https://en.wikipedia.org/wiki/Finite-state_machine)
-to model behavior, using components to represent state.
+to model behavior, using components to represent states.
 However, each state transition results in moving an entity and its components between archetypes.
 Thus, when transitions occur frequently (say faster than every 20 ticks),
 different components are not the most efficient way to represent states.
@@ -85,7 +85,7 @@ at the cost of overhead in the queries.
 
 It is a matter of weighting, and potentially benchmarking,
 to decide on what is represented by components in a query-able way,
-and what is left to be managed inside queries loops.
+and what is left to be managed inside query loops.
 
 ### Multiple at once, Exchange
 
