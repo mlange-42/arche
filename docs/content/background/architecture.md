@@ -17,7 +17,7 @@ as well as their components.
 Similarly, the second archetype contains all entities with A and C, and their components.
 
 ```text
- Entities   Archetypes   Bitmasks     Queries
+ Entities   Archetypes   Bit masks    Queries
 
    E         E Comps
   |0|       |2|A|B|C|    111...   <-.      <---.

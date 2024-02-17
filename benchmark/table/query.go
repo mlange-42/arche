@@ -19,10 +19,10 @@ func benchesQuery() []bench {
 
 		{Name: "Query.Next + Query.Relation", Desc: "", F: queryRelation_100_000, N: 100_000},
 
-		{Name: "Query.EntityAt, 1 arch", Desc: "", F: querEntityAt_1Arch_1000, N: 1000},
-		{Name: "Query.EntityAt, 1 arch", Desc: "registered filter", F: querEntityAtRegistered_1Arch_1000, N: 1000},
-		{Name: "Query.EntityAt, 5 arch", Desc: "", F: querEntityAt_5Arch_1000, N: 1000},
-		{Name: "Query.EntityAt, 5 arch", Desc: "registered filter", F: querEntityAtRegistered_5Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 1 arch", Desc: "", F: queryEntityAt_1Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 1 arch", Desc: "registered filter", F: queryEntityAtRegistered_1Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 5 arch", Desc: "", F: queryEntityAt_5Arch_1000, N: 1000},
+		{Name: "Query.EntityAt, 5 arch", Desc: "registered filter", F: queryEntityAtRegistered_5Arch_1000, N: 1000},
 
 		{Name: "World.Query", Desc: "", F: queryCreate, N: 1},
 		{Name: "World.Query", Desc: "registered filter", F: queryCreateCached, N: 1},
@@ -182,7 +182,7 @@ func queryRelation_100_000(b *testing.B) {
 	_ = sum
 }
 
-func querEntityAt_1Arch_1000(b *testing.B) {
+func queryEntityAt_1Arch_1000(b *testing.B) {
 	b.StopTimer()
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
@@ -205,7 +205,7 @@ func querEntityAt_1Arch_1000(b *testing.B) {
 	_ = e
 }
 
-func querEntityAtRegistered_1Arch_1000(b *testing.B) {
+func queryEntityAtRegistered_1Arch_1000(b *testing.B) {
 	b.StopTimer()
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
@@ -232,7 +232,7 @@ func querEntityAtRegistered_1Arch_1000(b *testing.B) {
 	_ = e
 }
 
-func querEntityAt_5Arch_1000(b *testing.B) {
+func queryEntityAt_5Arch_1000(b *testing.B) {
 	b.StopTimer()
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
@@ -269,7 +269,7 @@ func querEntityAt_5Arch_1000(b *testing.B) {
 	_ = e
 }
 
-func querEntityAtRegistered_5Arch_1000(b *testing.B) {
+func queryEntityAtRegistered_5Arch_1000(b *testing.B) {
 	b.StopTimer()
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
