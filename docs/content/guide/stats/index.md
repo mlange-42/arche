@@ -12,6 +12,8 @@ Otherwise, users would have to rely on logic reasoning and sufficient understand
 
 For that sake, Arche provides statistics about its internals, prepared in a compact and digestible form.
 
+{{< toc >}}
+
 ## Accessing statistics
 
 All internal statistics can be accessed via {{< api ecs World.Stats >}},

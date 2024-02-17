@@ -7,6 +7,8 @@ Arche uses an archetype-based architecture. Therefore the name :wink:.
 
 This chapter explains the concept and Arche's take on it.
 
+{{< toc >}}
+
 ## Archetypes
 
 The ASCII graph below illustrates the approach.

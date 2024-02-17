@@ -8,6 +8,8 @@ Component access in queries is highly efficient, but it does not provide
 access to the components of a specific entity.
 This is possible through {{< api ecs World >}} methods, or using a generic *MapX* (like {{< api generic Map2 >}}) or {{< api generic Map >}}.
 
+{{< toc >}}
+
 ## Getting components
 
 For a given entity, components can be accessed using {{< api ecs World.Get >}}

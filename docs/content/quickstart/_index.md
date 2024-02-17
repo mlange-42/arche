@@ -7,6 +7,8 @@ This page shows how to install Arche, and gives a minimal usage example.
 
 Finally, it points into possible directions to continue.
 
+{{< toc >}}
+
 ## Installation
 
 To use Arche in a Go project, run:

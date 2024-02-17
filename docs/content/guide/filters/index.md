@@ -16,6 +16,8 @@ Contrary, [Queries](./queries) are for one-time utilization and must be created
 from a filter before every iteration loop.
 {{% /notice %}}
 
+{{< toc >}}
+
 ## Core filters
 
 ### Mask

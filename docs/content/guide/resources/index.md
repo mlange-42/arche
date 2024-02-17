@@ -12,6 +12,8 @@ For these cases, Arche provides so-called {{< api ecs Resources >}}.
 A resource can be thought of as a component that only appears once, globally,
 in an {{< api ecs World >}}.
 
+{{< toc >}}
+
 ## Resource types
 
 Just like with components, any Go struct (or other Go type) can be a resource.

@@ -13,6 +13,8 @@ A query can be iterated through only once, and a new one must be created before 
 Contrary, the underlying [Filters](./filters) should be stored and re-used.
 {{% /notice %}}
 
+{{< toc >}}
+
 ## Query creation & iteration
 
 Queries are created through the {{< api ecs World >}} using a *Filter* (interface {{< api ecs Filter >}}).

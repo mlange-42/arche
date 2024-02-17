@@ -16,6 +16,8 @@ or component addition, and to remove them on entity or component removal.
 
 The types of interest here are {{< api ecs Listener >}} and {{< api ecs EntityEvent >}}.
 
+{{< toc >}}
+
 ## Subscriptions
 
 A listener must subscribe to certain event types.

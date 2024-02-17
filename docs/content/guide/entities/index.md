@@ -6,6 +6,8 @@ description = 'Entities, components, creation and removal in Arche.'
 Entities and components are the primary building blocks of the ECS concept.
 This chapter explains their representation and manipulation in Arche.
 
+{{< toc >}}
+
 ## Entities
 
 An *Entity* ({{< api ecs Entity >}}) in Arche is merely an ID and contains no data itself.
@@ -48,7 +50,7 @@ Component IDs can be registered as well as obtained through {{< api ecs Componen
 When a type is used as a component the first time, it is automatically registered.
 Thus, it is not necessary to register all required components during initialization.
 
-## Creating entities
+## Create entities
 
 The most basic way to create an entity is {{< api ecs World.NewEntity >}}:
 
@@ -89,7 +91,7 @@ All these types are available for `X` in range 0 (or 1) to 12.
 
 For faster batch creation of many entities, see chapter [Batch Operations](./batch-ops).
 
-## Adding and removing components
+## Add and remove components
 
 Components are added to and removed from entities through with world,
 with {{< api ecs World.Add >}} and {{< api ecs World.Remove >}}.
@@ -122,7 +124,7 @@ similar to {{< api ecs World.NewWith >}}:
 {{< /tab >}}
 {{< /tabs >}}
 
-## Exchanging components
+## Exchange components
 
 Sometimes one or more components should be added to an entity, and others should be removed.
 This can be bundled into a single exchange operation for efficiency.
@@ -137,7 +139,7 @@ This is done with {{< api ecs World.Exchange >}}, or using a {{< api generic Exc
 {{< /tab >}}
 {{< /tabs >}}
 
-## Removing entities
+## Remove entities
 
 Entities can be removed from the world with {{< api ecs World.RemoveEntity >}}:
 
