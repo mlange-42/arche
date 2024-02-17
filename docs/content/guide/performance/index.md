@@ -44,7 +44,7 @@ This way, the filter is not checked against archetypes during query iteration.
 Instead, the archetypes relevant for the filter are cached,
 and checks are only required when new archetypes are created.
 
-For details, see the section on caching in chapter [Filters](./filters#filter-caching)
+For details, see the section on caching in chapter [Filters](./filters#filter-caching).
 
 ## World access
 

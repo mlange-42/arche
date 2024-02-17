@@ -1,3 +1,12 @@
 body {
+    font-size: 1.15rem;
     tab-size: 2em;
+}
+
+pre:not(.mermaid) code {
+    font-size: 0.96rem;
+}
+
+#R-sidebar {
+    font-size: 1.0rem;
 }
