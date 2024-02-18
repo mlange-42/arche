@@ -8,7 +8,7 @@
     {{- if .Get 2 -}}
         {{- $text = .Get 2 -}}
     {{- end -}}
-{{ end }}<span class="copy-to-clipboard">
+{{- end -}}<span class="copy-to-clipboard">
     <a href="{{ .Site.Params.apiURL }}{{ $link }}" target="_blank">
         <code class="copy-to-clipboard-code" data-code="{{ $text }}">{{ $text }}</code>
     </a>
