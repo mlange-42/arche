@@ -34,21 +34,19 @@ Here, we create a filter that gives us all entities with all the given component
 Where {{< api ecs Query.Get >}} (resp. {{< api generic Query2.Get >}}) return components of the entity at the
 current query iterator position.
 
-{{% notice style="blue" icon="lightbulb" title="Note" %}}
-In case you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference" from queries, try running with build tag `debug`:
-
-```
-go run -tags debug .
-```
-{{% /notice %}}
-
-{{% notice style="blue" icon="lightbulb" title="Note" %}}
 Comparing the two versions of the code above, one can clearly observe the advantages of the generic API
 over the ID-based API (see chapter on [APIs](./apis)).
 Firstly, the generic code is shorter and more readible.
 But even more importantly, it much safer.
 A little mistake in line 9 or 10 of the ID-based version could result in silently casting a component
 to the wrong type, which would lead to bugs that are hard to track down.
+
+{{% notice style="blue" icon="bug" title="Tip" %}}
+In case you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference" from queries, try running with build tag `debug`:
+
+```
+go run -tags debug .
+```
 {{% /notice %}}
 
 ## World lock

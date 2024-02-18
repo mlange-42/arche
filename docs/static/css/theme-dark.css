@@ -12,6 +12,8 @@
     
     --CODE-theme: github-dark;
     --CODE-INLINE-color: var(--INTERNAL-MAIN-LINK-color);
+
+    --BOX-BG-color: rgba( 30, 30, 30, 1 );
 }
 
 .light {
