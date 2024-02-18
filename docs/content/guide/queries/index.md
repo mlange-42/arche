@@ -35,6 +35,14 @@ Where {{< api ecs Query.Get >}} (resp. {{< api generic Query2.Get >}}) return co
 current query iterator position.
 
 {{% notice style="blue" icon="lightbulb" title="Note" %}}
+In case you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference" from queries, try running with build tag `debug`:
+
+```
+go run -tags debug .
+```
+{{% /notice %}}
+
+{{% notice style="blue" icon="lightbulb" title="Note" %}}
 Comparing the two versions of the code above, one can clearly observe the advantages of the generic API
 over the ID-based API (see chapter on [APIs](./apis)).
 Firstly, the generic code is shorter and more readible.
