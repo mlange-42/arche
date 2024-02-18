@@ -59,13 +59,15 @@
 //
 // # Build tags
 //
-// Arche provides 2 build tags:
+// Arche provides two build tags:
 //   - tiny -- Reduces the maximum number of components to 64, giving a performance boost for mask-related operations.
-//   - debug -- Improves error messages on [Query] misuse, at the cost of performance.
+//   - debug -- Improves error messages on [Query] misuse, at the cost of performance. Use this if you get panics from queries.
 //
-// Usage:
+// When building your application, use them like this:
 //
 //	go build -tags tiny .
+//	go build -tags debug .
+//	go build -tags tiny,debug .
 //
 // [User Guide]: https://mlange-42.github.io/arche/
 package ecs
