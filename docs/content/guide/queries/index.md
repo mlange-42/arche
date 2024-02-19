@@ -80,8 +80,6 @@ After {{< api ecs Query.Count >}}, the query could also be iterated as usual.
 
 ### Query.EntityAt
 
-{{% dev "v0.11" %}}
-
 With {{< api ecs Query.EntityAt >}}, queries also support access by index.
 This is particularly useful to select random entities from a query,
 like in this example:
