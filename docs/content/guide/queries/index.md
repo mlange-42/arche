@@ -42,7 +42,7 @@ A little mistake in line 9 or 10 of the ID-based version could result in silentl
 to the wrong type, which would lead to bugs that are hard to track down.
 
 {{% notice style="blue" icon="bug" title="Tip" %}}
-In case you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference" from queries, try running with build tag `debug`:
+If you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference" from queries, you are probably using them in the wrong way. Try running with build tag `debug` for more helpful error messages:
 
 ```
 go run -tags debug .
