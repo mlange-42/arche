@@ -36,13 +36,13 @@ current query iterator position.
 
 Comparing the two versions of the code above, one can clearly observe the advantages of the generic API
 over the ID-based API (see chapter on [APIs](./apis)).
-Firstly, the generic code is shorter and more readible.
+Firstly, the generic code is shorter and more readable.
 But even more importantly, it much safer.
 A little mistake in line 9 or 10 of the ID-based version could result in silently casting a component
 to the wrong type, which would lead to bugs that are hard to track down.
 
 {{% notice style="blue" icon="bug" title="Tip" %}}
-In case you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference" from queries, try running with build tag `debug`:
+If you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference" from queries, you are probably using them in the wrong way. Try running with build tag `debug` for more helpful error messages:
 
 ```
 go run -tags debug .
@@ -79,8 +79,6 @@ Note that we need to call {{< api ecs Query.Close >}} here, as the query was not
 After {{< api ecs Query.Count >}}, the query could also be iterated as usual.
 
 ### Query.EntityAt
-
-{{% dev "v0.11" %}}
 
 With {{< api ecs Query.EntityAt >}}, queries also support access by index.
 This is particularly useful to select random entities from a query,

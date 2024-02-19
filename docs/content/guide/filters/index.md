@@ -51,7 +51,7 @@ Here, we filter for all entities that have a `Position`, but no `Heading`. Other
 
 ### Exclusive
 
-With {{< api ecs Mask.Exclusive >}} and {{< api generic Filter2.Exclusive >}} {{% dev "v0.11" %}},
+With {{< api ecs Mask.Exclusive >}} and {{< api generic Filter2.Exclusive >}},
 we can exclude all components that are not in the filter:
 
 {{< tabs >}}
