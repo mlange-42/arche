@@ -93,9 +93,9 @@ For faster batch creation of many entities, see chapter [Batch Operations](./bat
 
 ## Add and remove components
 
-Components are added to and removed from entities through with world,
+Components are added to and removed from entities through the world,
 with {{< api ecs World.Add >}} and {{< api ecs World.Remove >}}.
-With generics, we use a {{< api generic Map2 >}} again:
+With generics, use a {{< api generic Map2 >}} again:
 
 {{< tabs >}}
 {{< tab title="generic" >}}
