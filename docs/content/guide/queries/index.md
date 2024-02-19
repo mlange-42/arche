@@ -36,7 +36,7 @@ current query iterator position.
 
 Comparing the two versions of the code above, one can clearly observe the advantages of the generic API
 over the ID-based API (see chapter on [APIs](./apis)).
-Firstly, the generic code is shorter and more readible.
+Firstly, the generic code is shorter and more readable.
 But even more importantly, it much safer.
 A little mistake in line 9 or 10 of the ID-based version could result in silently casting a component
 to the wrong type, which would lead to bugs that are hard to track down.
