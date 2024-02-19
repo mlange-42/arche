@@ -1,4 +1,15 @@
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.10.1...main)
+## [[v0.11.0]](https://github.com/mlange-42/arche/compare/v0.10.1...v0.11.0)
+
+### Highlights
+
+Arche now has a dedicated [documentation site](https://mlange-42.github.io/arche/)
+with a structured user guide and background information.
+We hope that this will lower the barrier to entrance significantly.
+
+Further, Arche got a few new features:
+* `Query.EntityAt` was added for random access to query entities.
+* Generic filters now support `Exclusive`, like ID-based filters.
+* Build tag `debug` improves error messages in a few places where we rely on standard library panics for performance.
 
 ### Breaking changes
 
@@ -14,7 +25,7 @@
 ### Documentation
 
 * Adds a dedicated Arche [User Guide](https://mlange-42.github.io/arche/) web site (#380, #382, #383, #384, #385)
-* Adds [BENCHMARKS.md](https://github.com/mlange-42/arche/blob/main/BENCHMARKS.md) for a tabular overview of the runtime cost of typical *Arche* ECS operations (#367, #372)
+* Adds ~~[BENCHMARKS.md](https://github.com/mlange-42/arche/blob/main/BENCHMARKS.md)~~ [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) for a tabular overview of the runtime cost of typical *Arche* ECS operations (#367, #372)
 * Link benchmarking code in `README.md` and benchmarking tables (#375)
 * Documents build tags `tiny` and `debug` in package docs of `ecs` (#377)
 * Adds examples to demonstrate the use of non-ECS data structures together with ECS (#379)
