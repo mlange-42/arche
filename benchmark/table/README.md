@@ -1,3 +1,3 @@
 # Benchmark tables
 
-Code for the benchmarking tables in [BENCHMARKS.md](https://github.com/mlange-42/arche/tree/main/BENCHMARKS.md).
+Code for the benchmarking tables in [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/).

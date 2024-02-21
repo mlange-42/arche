@@ -2,7 +2,7 @@
 //
 // See the top-level module [github.com/mlange-42/arche] for an overview.
 //
-// 🕮 Also read the Arche's [User Guide]!
+// 🕮 Also read Arche's [User Guide]!
 //
 // # Outline
 //
