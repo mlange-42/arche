@@ -43,6 +43,21 @@ func (e Entity) IsZero() bool {
 	return e.id == 0
 }
 
+// ID returns the entity's ID.
+func (e Entity) ID() uint32 {
+	return uint32(e.id)
+}
+
+// Generation returns the entity's generation.
+func (e Entity) Generation() uint32 {
+	return e.gen
+}
+
+// Equals returns whether this entity is equal to another.
+func (e Entity) Equals(other Entity) bool {
+	return e.id == other.id && e.gen == other.gen
+}
+
 // MarshalJSON returns a JSON representation of the entity, for serialization purposes.
 //
 // The JSON representation of an entity is a two-element array of entity ID and generation.
