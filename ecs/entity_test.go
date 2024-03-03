@@ -22,7 +22,7 @@ func TestZeroEntity(t *testing.T) {
 }
 
 func TestEntityMarshal(t *testing.T) {
-	e := newEntityGen(2, 3)
+	e := NewEntityGen(2, 3)
 
 	jsonData, err := json.Marshal(&e)
 	if err != nil {
