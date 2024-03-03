@@ -16,6 +16,18 @@ func TestEntityAsIndex(t *testing.T) {
 	_ = val
 }
 
+func TestEntityID(t *testing.T) {
+	e := newEntityGen(1, 2)
+
+	assert.Equal(t, e.ID(), uint32(1))
+}
+
+func TestEntityGeneration(t *testing.T) {
+	e := newEntityGen(1, 2)
+
+	assert.Equal(t, e.Generation(), uint32(2))
+}
+
 func TestZeroEntity(t *testing.T) {
 	assert.True(t, Entity{}.IsZero())
 	assert.False(t, Entity{1, 0}.IsZero())
