@@ -1,3 +1,13 @@
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.11.0...main)
+
+### Features
+
+* Adds `Entity.ID()` and `Entity.Generation()` (#408, [delaneyj](https://github.com/delaneyj))
+
+### First-time contributors
+
+* [delaneyj](https://github.com/delaneyj)
+
 ## [[v0.11.0]](https://github.com/mlange-42/arche/compare/v0.10.1...v0.11.0)
 
 ### Highlights
