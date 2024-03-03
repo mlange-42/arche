@@ -28,15 +28,6 @@ func TestEntityGeneration(t *testing.T) {
 	assert.Equal(t, e.Generation(), uint32(2))
 }
 
-func TestEntityEquals(t *testing.T) {
-	e1 := newEntityGen(1, 2)
-	e2 := newEntityGen(1, 2)
-	e3 := newEntityGen(1, 3)
-
-	assert.True(t, e1.Equals(e2))
-	assert.False(t, e1.Equals(e3))
-}
-
 func TestZeroEntity(t *testing.T) {
 	assert.True(t, Entity{}.IsZero())
 	assert.False(t, Entity{1, 0}.IsZero())

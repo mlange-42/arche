@@ -53,11 +53,6 @@ func (e Entity) Generation() uint32 {
 	return e.gen
 }
 
-// Equals returns whether this entity is equal to another.
-func (e Entity) Equals(other Entity) bool {
-	return e.id == other.id && e.gen == other.gen
-}
-
 // MarshalJSON returns a JSON representation of the entity, for serialization purposes.
 //
 // The JSON representation of an entity is a two-element array of entity ID and generation.
