@@ -681,6 +681,7 @@ func (w *World) getRelation(entity Entity, comp ID) Entity {
 // getRelationUnchecked is an optimized version of [World.getRelation].
 // Does not check if the entity is alive or that the component ID is applicable.
 func (w *World) getRelationUnchecked(entity Entity, comp ID) Entity {
+	_ = comp
 	index := &w.entities[entity.id]
 	return index.arch.RelationTarget
 }
