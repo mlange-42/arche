@@ -1,0 +1,18 @@
+<div class="column">
+<div class="card">
+{{- $image := .Get "image" -}}
+{{- $link := .Get "link" -}}
+{{- $title := .Get "title" -}}
+<a href="{{ $link }}" target="_blank">
+{{- if $image -}}
+    <img src="{{ $image }}" />
+{{- end -}}
+{{- if $title -}}
+    <b>{{ $title }}</b>
+{{- end -}}
+</a>
+<div class="small">
+{{.Inner | markdownify}}
+</div>
+</div>
+</div>

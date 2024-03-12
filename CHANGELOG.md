@@ -4,6 +4,10 @@
 
 * Adds `Entity.ID()` and `Entity.Generation()` (#408, [delaneyj](https://github.com/delaneyj))
 
+### Documentation
+
+* Adds a showcase chapter "Made with Arche" to the documentation page (#411)
+
 ### First-time contributors
 
 * [delaneyj](https://github.com/delaneyj)
