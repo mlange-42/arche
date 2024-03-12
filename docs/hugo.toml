@@ -46,12 +46,6 @@ identifier = "api"
 url = "https://pkg.go.dev/github.com/mlange-42/arche"
 weight = 20
 
-[[menu.shortcuts]]
-name = "<i class='fas fa-fw fa-eye'></i> Web demo"
-identifier = "demo"
-url = "https://mlange-42.github.io/arche-demo/"
-weight = 30
-
 [markup]
   [markup.highlight]
     lineNumbersInTable = false

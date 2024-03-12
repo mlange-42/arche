@@ -3,6 +3,10 @@ body {
     tab-size: 2em;
 }
 
+.small {
+    font-size: 1.1rem;
+}
+
 pre:not(.mermaid) code {
     font-size: 0.96rem;
 }
