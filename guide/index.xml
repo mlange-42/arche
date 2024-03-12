@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>User Guide on Arche</title>
+    <link>https://mlange-42.github.io/arche/guide/index.html</link>
+    <description>Recent content in User Guide on Arche</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="https://mlange-42.github.io/arche/guide/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Generic &amp; ID-based API</title>
+      <link>https://mlange-42.github.io/arche/guide/apis/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/apis/index.html</guid>
+      <description>Arche provides two different APIs:
+A generic API that is often the most convenient. But perhaps more importantly, it is type safe. It is the recommended way of usage for most users.
+An ID-based API that is slightly faster than the generic one in some places. Further, it is more flexible and may be more appropriate for tasks like automated serialization.
+Both APIs can be mixed as needed.
+Tip In this user guide, most code examples will be presented with two tabs, one for each API: &amp;#8203; generic ID-based 1world := ecs.</description>
+    </item>
+    <item>
+      <title>The World</title>
+      <link>https://mlange-42.github.io/arche/guide/world/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/world/index.html</guid>
+      <description>The World ( ecs.World ) is the central data storage in Arche. It manages and stores entities ( ecs.Entity ), their components, as well as Resources. For the internal structure of the world, see chapter Architecture.
+Here, we only deal with world creation. Most world functionality is covered in chapters Entities &amp;amp; Components and World Entity Access.
+World creation Reset the world World creation To create a world with default settings, use ecs.</description>
+    </item>
+    <item>
+      <title>Entities &amp; Components</title>
+      <link>https://mlange-42.github.io/arche/guide/entities/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/entities/index.html</guid>
+      <description>Entities and components are the primary building blocks of the ECS concept. This chapter explains their representation and manipulation in Arche.
+Entities Components Component IDs Create entities Generic API Batch Creation Add and remove components Exchange components Remove entities Entities An Entity ( ecs.Entity ) in Arche is merely an ID and contains no data itself.
+The only method of an entity is ecs.Entity.IsZero . The only entity that can be directly created by the user is the zero entity, in two possible ways:</description>
+    </item>
+    <item>
+      <title>Queries</title>
+      <link>https://mlange-42.github.io/arche/guide/queries/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/queries/index.html</guid>
+      <description>Queries ( ecs.Query ) are the heart of Arche&amp;rsquo;s query engine. They allow for very fast retrieval and iteration of entities with certain components.
+Important Queries are for one-time utilization. A query can be iterated through only once, and a new one must be created before every loop. Contrary, the underlying Filters should be stored and re-used.
+Query creation &amp;amp; iteration World lock Other functionality Query.Count Query.EntityAt Query creation &amp;amp; iteration Queries are created through the ecs.</description>
+    </item>
+    <item>
+      <title>Filters</title>
+      <link>https://mlange-42.github.io/arche/guide/filters/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/filters/index.html</guid>
+      <description>Filters provide the logic for filtering entities in Queries.
+Due to the archetype-based architecture of Arche &amp;#x1f609;, filters are very efficient. Instead of against every single entity, they are only matched against archetypes.
+The following sections present the filtering options available in Arche.
+Important Filters should be stored and re-used where possible, particularly over time steps. Contrary, Queries are for one-time utilization and must be created from a filter before every iteration loop.</description>
+    </item>
+    <item>
+      <title>World Entity Access</title>
+      <link>https://mlange-42.github.io/arche/guide/world-access/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/world-access/index.html</guid>
+      <description>So far, we only used ecs.Query to access components. Component access in queries is highly efficient, but it does not provide access to the components of a specific entity. This is possible through ecs.World methods, or using a generic MapX (like generic.Map2 ) or generic.Map .
+Getting components Unchecked access Getting components For a given entity, components can be accessed using ecs.World.Get or generic.Map2.Get , respectively:
+&amp;#8203; generic ID-based 1world := ecs.</description>
+    </item>
+    <item>
+      <title>Entity Relations</title>
+      <link>https://mlange-42.github.io/arche/guide/relations/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/relations/index.html</guid>
+      <description>In a basic ECS, relations between entities, like hierarchies, can be represented by storing entities in components. E.g., we could have a child component like this:
+1type ChildOf struct { 2 Parent ecs.Entity 3}Or, alternatively, a parent component with many children:
+1type Parent struct { 2 Children []ecs.Entity 3}In conjunction with World Entity Access, this is often sufficient. However, we are not able to leverage the power of queries to e.</description>
+    </item>
+    <item>
+      <title>Batch Operations</title>
+      <link>https://mlange-42.github.io/arche/guide/batch-ops/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/batch-ops/index.html</guid>
+      <description>Compared to Queries and World Entity Access, creation and removal of entities or components are relatively costly operations. See the Benchmarks for some numbers.
+For these operations, Arche provides batched versions. This allows to create or manipulate a large number of entities much faster than one by one. Most batch methods come in two flavors. A &amp;ldquo;normal&amp;rdquo; one, and one suffixed with Q that returns a query over the affected entities.</description>
+    </item>
+    <item>
+      <title>ECS Resources</title>
+      <link>https://mlange-42.github.io/arche/guide/resources/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/resources/index.html</guid>
+      <description>So far, we stored all data in components, associated to entities. However, sometimes this is not optimal. This particularly applies to non-ECS data structures, and &amp;ldquo;things&amp;rdquo; that appear only once in a model or game.
+For these cases, Arche provides so-called ecs.Resources . A resource can be thought of as a component that only appears once, globally, in an ecs.World .
+Resource types Resource IDs Adding resources Accessing resources Resource types Just like with components, any Go struct (or other Go type) can be a resource.</description>
+    </item>
+    <item>
+      <title>Event System</title>
+      <link>https://mlange-42.github.io/arche/guide/events/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/events/index.html</guid>
+      <description>Arche features an event system that can be used to get notifications about world modifications, namely:
+Entity creation and removal Component addition, removal and exchange Changes of entity relation targets The event system is particularly useful for automating the management of supplementary data structures that store entities. It can be used to automatically insert entities into these structures on creation or component addition, and to remove them on entity or component removal.</description>
+    </item>
+    <item>
+      <title>World Statistics</title>
+      <link>https://mlange-42.github.io/arche/guide/stats/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/stats/index.html</guid>
+      <description>Arche only exposes the API required for actual use. Therefore, internals like the number of archetypes, memory used to store components etc. are not directly accessible.
+However, it might sometimes be useful to have access to such metrics, for example in order to judge effects of different ways of implementing something. Otherwise, users would have to rely on logic reasoning and sufficient understanding of Arche to derive these numbers.
+For that sake, Arche provides statistics about its internals, prepared in a compact and digestible form.</description>
+    </item>
+    <item>
+      <title>Performance Tips</title>
+      <link>https://mlange-42.github.io/arche/guide/performance/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/performance/index.html</guid>
+      <description>Arche is highly optimized and can compete with mature ECS implementations in terms of performance. It will probably not get into your way in this regard. Experience shows that in simulation built with Arche, ECS code like queries, entity creation etc. takes between 5% and 15% of the total CPU time. Keep in mind that this is not &amp;ldquo;on top&amp;rdquo; of the simulation, but replaces the overhead any other implementation for storing and iterating entities would have.</description>
+    </item>
+    <item>
+      <title>Tools</title>
+      <link>https://mlange-42.github.io/arche/guide/tools/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/tools/index.html</guid>
+      <description>A number of tools has been created for Arche.
+If you wrote a tool and want it to be included here, please open an issue on GitHub.
+arche-serde provides JSON serialization and deserialization for Arche&amp;rsquo;s World.
+arche-model provides a wrapper around Arche, and some common systems and resources. its purpose is to get started with prototyping and developing simulation models immediately, focussing on the model logic.
+arche-pixel provides OpenGL graphics and live plots for Arche using the Pixel game engine.</description>
+    </item>
+  </channel>
+</rss>
