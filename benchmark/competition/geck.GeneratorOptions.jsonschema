@@ -1,0 +1,252 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "$ref": "#/definitions/GeneratorOptions",
+    "definitions": {
+        "GeneratorOptions": {
+            "properties": {
+                "packageName": {
+                    "type": "string"
+                },
+                "folderPath": {
+                    "type": "string"
+                },
+                "bundles": {
+                    "items": {
+                        "$ref": "#/definitions/geck.v1.BundleDefinition"
+                    },
+                    "additionalProperties": false,
+                    "type": "array"
+                },
+                "componentSets": {
+                    "items": {
+                        "$ref": "#/definitions/geck.v1.ComponentSetDefinition"
+                    },
+                    "additionalProperties": false,
+                    "type": "array"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Generator Options"
+        },
+        "geck.v1.BundleDefinition": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "components": {
+                    "items": {
+                        "$ref": "#/definitions/geck.v1.ComponentDefinition"
+                    },
+                    "additionalProperties": false,
+                    "type": "array"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Bundle Definition"
+        },
+        "geck.v1.ComponentDefinition": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "isDeprecated": {
+                    "type": "boolean"
+                },
+                "shouldNotInflect": {
+                    "type": "boolean"
+                },
+                "shouldGenerateAddedEvent": {
+                    "type": "boolean"
+                },
+                "shouldGenerateRemovedEvent": {
+                    "type": "boolean"
+                },
+                "shouldGenerateChangedEvent": {
+                    "type": "boolean"
+                },
+                "fields": {
+                    "items": {
+                        "$ref": "#/definitions/geck.v1.FieldDefinition"
+                    },
+                    "additionalProperties": false,
+                    "type": "array"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Component Definition"
+        },
+        "geck.v1.ComponentSetDefinition": {
+            "properties": {
+                "owned": {
+                    "items": {
+                        "$ref": "#/definitions/geck.v1.ComponentSetDefinition.Component"
+                    },
+                    "additionalProperties": false,
+                    "type": "array"
+                },
+                "borrowed": {
+                    "items": {
+                        "$ref": "#/definitions/geck.v1.ComponentSetDefinition.Component"
+                    },
+                    "additionalProperties": false,
+                    "type": "array"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Component Set Definition"
+        },
+        "geck.v1.ComponentSetDefinition.Component": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "isWriteable": {
+                    "type": "boolean"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "title": "Component"
+        },
+        "geck.v1.FieldDefinition": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "isDeprecated": {
+                    "type": "boolean"
+                },
+                "hasMultiple": {
+                    "type": "boolean"
+                },
+                "order": {
+                    "type": "integer"
+                },
+                "u8": {
+                    "type": "integer"
+                },
+                "u16": {
+                    "type": "integer"
+                },
+                "u32": {
+                    "type": "integer"
+                },
+                "u64": {
+                    "type": "string"
+                },
+                "i8": {
+                    "type": "integer"
+                },
+                "i16": {
+                    "type": "integer"
+                },
+                "i32": {
+                    "type": "integer"
+                },
+                "i64": {
+                    "type": "string"
+                },
+                "f32": {
+                    "type": "number"
+                },
+                "f64": {
+                    "type": "number"
+                },
+                "txt": {
+                    "type": "string"
+                },
+                "bin": {
+                    "type": "string",
+                    "format": "binary",
+                    "binaryEncoding": "base64"
+                },
+                "entity": {
+                    "type": "integer"
+                }
+            },
+            "additionalProperties": false,
+            "type": "object",
+            "oneOf": [
+                {
+                    "required": [
+                        "u8"
+                    ]
+                },
+                {
+                    "required": [
+                        "u16"
+                    ]
+                },
+                {
+                    "required": [
+                        "u32"
+                    ]
+                },
+                {
+                    "required": [
+                        "u64"
+                    ]
+                },
+                {
+                    "required": [
+                        "i8"
+                    ]
+                },
+                {
+                    "required": [
+                        "i16"
+                    ]
+                },
+                {
+                    "required": [
+                        "i32"
+                    ]
+                },
+                {
+                    "required": [
+                        "i64"
+                    ]
+                },
+                {
+                    "required": [
+                        "f32"
+                    ]
+                },
+                {
+                    "required": [
+                        "f64"
+                    ]
+                },
+                {
+                    "required": [
+                        "txt"
+                    ]
+                },
+                {
+                    "required": [
+                        "bin"
+                    ]
+                },
+                {
+                    "required": [
+                        "entity"
+                    ]
+                }
+            ],
+            "title": "Field Definition"
+        }
+    }
+}

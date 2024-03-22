@@ -1,0 +1,96 @@
+{
+  "folderPath": "geckecs",
+  "bundles": [
+    {
+      "name": "doc",
+      "components": [
+        {
+          "name": "Position",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Comp1",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Comp2",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Comp3",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Comp4",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Comp5",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Comp6",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Comp7",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Comp8",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Comp9",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        }
+      ]
+    }
+  ],
+  "componentSets": [
+    {
+      "borrowed": [
+        { "name": "Position" },
+        { "name": "Comp1" },
+        { "name": "Comp2" },
+        { "name": "Comp3" },
+        { "name": "Comp4" },
+        { "name": "Comp5" },
+        { "name": "Comp6" },
+        { "name": "Comp7" },
+        { "name": "Comp8" },
+        { "name": "Comp9" }
+      ]
+    }
+  ]
+}

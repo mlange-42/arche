@@ -1,0 +1,37 @@
+{
+  "folderPath": "geckecs",
+  "bundles": [
+    {
+      "name": "doc",
+      "components": [
+        {
+          "name": "Position",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        },
+        {
+          "name": "Velocity",
+          "fields": [
+            { "name": "X", "f64": 0 },
+            { "name": "Y", "f64": 0 }
+          ]
+        }
+      ]
+    }
+  ],
+  "componentSets": [
+    {
+      "owned": [
+        {
+          "name": "Velocity"
+        },
+        {
+          "name": "Position",
+          "isWriteable": true
+        }
+      ]
+    }
+  ]
+}
