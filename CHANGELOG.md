@@ -8,6 +8,10 @@
 
 * Adds a showcase chapter "Made with Arche" to the documentation page (#411)
 
+### Performance
+
+* Re-arrange struct fields to save memory in a few places (#413)
+
 ### First-time contributors
 
 * [delaneyj](https://github.com/delaneyj)

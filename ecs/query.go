@@ -16,13 +16,13 @@ import (
 // [github.com/mlange-42/arche/generic.Query2], etc.
 // For advanced filtering, see package [github.com/mlange-42/arche/filter].
 type Query struct {
-	filter         Filter           // The filter used by the query.
-	archetypes     []*archetype     // The query's filtered archetypes.
 	nodeArchetypes archetypes       // The query's archetypes of the current node.
-	nodes          []*archNode      // The query's nodes.
-	world          *World           // The [World].
+	filter         Filter           // The filter used by the query.
 	access         *archetypeAccess // Access helper for the archetype currently being iterated.
 	archetype      *archetype       // The archetype currently being iterated.
+	world          *World           // The [World].
+	nodes          []*archNode      // The query's nodes.
+	archetypes     []*archetype     // The query's filtered archetypes.
 	entityIndex    uint32           // Iteration index of the current [Entity] current archetype.
 	entityIndexMax uint32           // Maximum entity index in the current archetype.
 	archIndex      int32            // Iteration index of the current archetype.

@@ -15,22 +15,22 @@ import (
 // For more advanced functionality, see [World.Relations], [World.Resources],
 // [World.Batch], [World.Cache] and [Builder].
 type World struct {
-	config         Config                    // World configuration.
 	listener       Listener                  // EntityEvent listener.
-	resources      Resources                 // World resources.
+	nodePointers   []*archNode               // Helper list of all node pointers for queries.
 	entities       []entityIndex             // Mapping from entities to archetype and index.
 	targetEntities bitSet                    // Whether entities are potential relation targets. Used for archetype cleanup.
-	entityPool     entityPool                // Pool for entities.
-	archetypes     pagedSlice[archetype]     // Archetypes that have no relations components.
-	archetypeData  pagedSlice[archetypeData] // Storage for the actual archetype data (components).
-	nodes          pagedSlice[archNode]      // The archetype graph.
-	nodeData       pagedSlice[nodeData]      // The archetype graph's data.
-	nodePointers   []*archNode               // Helper list of all node pointers for queries.
 	relationNodes  []*archNode               // Archetype nodes that have an entity relation.
-	locks          lockMask                  // World locks.
-	registry       componentRegistry         // Component registry.
 	filterCache    Cache                     // Cache for registered filters.
-	stats          stats.World               // Cached world statistics
+	nodes          pagedSlice[archNode]      // The archetype graph.
+	archetypeData  pagedSlice[archetypeData] // Storage for the actual archetype data (components).
+	nodeData       pagedSlice[nodeData]      // The archetype graph's data.
+	archetypes     pagedSlice[archetype]     // Archetypes that have no relations components.
+	entityPool     entityPool                // Pool for entities.
+	stats          stats.World               // Cached world statistics.
+	resources      Resources                 // World resources.
+	registry       componentRegistry         // Component registry.
+	locks          lockMask                  // World locks.
+	config         Config                    // World configuration.
 }
 
 // NewWorld creates a new [World] from an optional [Config].

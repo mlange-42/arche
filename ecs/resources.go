@@ -9,8 +9,8 @@ import (
 //
 // Access it using [World.Resources].
 type Resources struct {
-	registry  componentRegistry
 	resources []any
+	registry  componentRegistry
 }
 
 // newResources creates a new Resources manager.

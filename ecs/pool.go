@@ -97,9 +97,9 @@ func (p *entityPool) Available() int {
 
 // bitPool is an entityPool implementation using implicit linked lists.
 type bitPool struct {
+	length    uint16
 	bits      [MaskTotalBits]uint8
 	next      uint8
-	length    uint16
 	available uint8
 }
 
@@ -143,8 +143,8 @@ func (p *bitPool) Reset() {
 // entityPool is an implementation using implicit linked lists.
 // Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
 type intPool[T number] struct {
-	pool              []T
 	next              T
+	pool              []T
 	available         uint32
 	capacityIncrement uint32
 }

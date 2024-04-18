@@ -30,10 +30,10 @@ import "github.com/mlange-42/arche/ecs/event"
 // For batch methods that return a [Query], events are fired after the [Query] is closed (or fully iterated).
 // This allows the [World] to be in an unlocked state, and notifies after potential entity initialization.
 type EntityEvent struct {
-	Entity                   Entity             // The entity that was changed.
-	Added, Removed           Mask               // Masks indicating changed components (additions and removals).
-	AddedIDs, RemovedIDs     []ID               // Components added and removed. DO NOT MODIFY! Get the current components with [World.Ids].
 	OldRelation, NewRelation *ID                // Old and new relation component ID. No relation is indicated by nil.
+	AddedIDs, RemovedIDs     []ID               // Components added and removed. DO NOT MODIFY! Get the current components with [World.Ids].
+	Added, Removed           Mask               // Masks indicating changed components (additions and removals).
+	Entity                   Entity             // The entity that was changed.
 	OldTarget                Entity             // Old relation target entity. Get the new target with [World.Relations] and [Relations.Get].
 	EventTypes               event.Subscription // Bit mask of event types. See [event.Subscription].
 }
