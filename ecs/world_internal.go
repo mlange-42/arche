@@ -1129,9 +1129,9 @@ func (w *World) notifyQuery(batchArch *batchArchetypes) {
 		}
 
 		event := EntityEvent{
-			Entity{}, arch.Mask, Mask{}, batchArch.Added, batchArch.Removed,
-			nil, newRel,
-			Entity{}, 0,
+			Entity: Entity{}, Added: arch.Mask, Removed: Mask{}, AddedIDs: batchArch.Added, RemovedIDs: batchArch.Removed,
+			OldRelation: nil, NewRelation: newRel,
+			OldTarget: Entity{}, EventTypes: 0,
 		}
 
 		oldArch := batchArch.OldArchetype[i]

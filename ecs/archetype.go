@@ -15,9 +15,9 @@ var layoutSize uint32 = uint32(unsafe.Sizeof(layout{}))
 
 // Helper for accessing data from an archetype
 type archetypeAccess struct {
-	Mask                 Mask           // Archetype's mask
 	basePointer          unsafe.Pointer // Pointer to the first component column layout.
 	entityPointer        unsafe.Pointer // Pointer to the entity storage
+	Mask                 Mask           // Archetype's mask
 	RelationTarget       Entity         // Target entity of the archetype (if it has a relation component)
 	RelationComponent    ID             // Relation component of the archetype
 	HasRelationComponent bool           // Whether the archetype has a relation
@@ -64,18 +64,18 @@ func (l *layout) Get(index uint32) unsafe.Pointer {
 
 // archetype represents an ECS archetype
 type archetype struct {
-	archetypeAccess // Access helper, passed to queries.
 	*archetypeData
-	node *archNode // Node in the archetype graph.
-	len  uint32    // Current number of entities
-	cap  uint32    // Current capacity
+	node            *archNode // Node in the archetype graph.
+	archetypeAccess           // Access helper, passed to queries.
+	len             uint32    // Current number of entities.
+	cap             uint32    // Current capacity.
 }
 
 type archetypeData struct {
-	layouts      []layout        // Column layouts by ID.
-	indices      idMap[uint32]   // Mapping from IDs to buffer indices.
-	buffers      []reflect.Value // Reflection arrays containing component data.
 	entityBuffer reflect.Value   // Reflection array containing entity data.
+	layouts      []layout        // Column layouts by ID.
+	buffers      []reflect.Value // Reflection arrays containing component data.
+	indices      idMap[uint32]   // Mapping from IDs to buffer indices.
 	index        int32           // Index of the archetype in the world.
 }
 

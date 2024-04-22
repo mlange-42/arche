@@ -17,18 +17,18 @@ type archNode struct {
 }
 
 type nodeData struct {
-	Ids               []ID                  // List of component IDs
-	Types             []reflect.Type        // Component type per column
-	TransitionAdd     idMap[*archNode]      // Mapping from component ID to add to the resulting archetype
-	TransitionRemove  idMap[*archNode]      // Mapping from component ID to remove to the resulting archetype
 	archetype         *archetype            // The single archetype for nodes without entity relation
-	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
-	archetypeData     pagedSlice[archetypeData]
 	archetypeMap      map[Entity]*archetype // Mapping from relation targets to archetypes
+	zeroPointer       unsafe.Pointer        // Points to zeroValue for fast access
+	Types             []reflect.Type        // Component type per column
+	Ids               []ID                  // List of component IDs
 	freeIndices       []int32               // Indices of free/inactive archetypes
 	zeroValue         []byte                // Used as source for setting storage to zero
-	zeroPointer       unsafe.Pointer        // Points to zeroValue for fast access
-	capacityIncrement uint32                // Capacity increment
+	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
+	archetypeData     pagedSlice[archetypeData]
+	TransitionAdd     idMap[*archNode] // Mapping from component ID to add to the resulting archetype
+	TransitionRemove  idMap[*archNode] // Mapping from component ID to remove to the resulting archetype
+	capacityIncrement uint32           // Capacity increment
 }
 
 // Creates a new archNode

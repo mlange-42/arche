@@ -2,10 +2,10 @@ package ecs
 
 // Cache entry for a [Filter].
 type cacheEntry struct {
-	ID         uint32              // Filter ID.
 	Filter     Filter              // The underlying filter.
-	Archetypes pointers[archetype] // Nodes matching the filter.
 	Indices    map[*archetype]int  // Map of archetype indices for removal.
+	Archetypes pointers[archetype] // Nodes matching the filter.
+	ID         uint32              // Filter ID.
 }
 
 // Cache provides [Filter] caching to speed up queries.

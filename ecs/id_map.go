@@ -14,10 +14,10 @@ const (
 //
 // The range of keys is limited from 0 to [MaskTotalBits]-1.
 type idMap[T any] struct {
-	chunks    [][]T
-	used      Mask
-	chunkUsed []uint8
 	zeroValue T
+	chunks    [][]T
+	chunkUsed []uint8
+	used      Mask
 }
 
 // newIDMap creates a new idMap

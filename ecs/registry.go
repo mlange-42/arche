@@ -9,9 +9,9 @@ import (
 type componentRegistry struct {
 	Components map[reflect.Type]uint8
 	Types      []reflect.Type
+	IDs        []uint8
 	Used       Mask
 	IsRelation Mask
-	IDs        []uint8
 }
 
 // newComponentRegistry creates a new ComponentRegistry.
