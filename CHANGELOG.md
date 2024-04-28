@@ -1,4 +1,4 @@
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.11.0...main)
+## [[v0.12.0]](https://github.com/mlange-42/arche/compare/v0.11.0...v0.12.0)
 
 ### Features
 
@@ -11,6 +11,10 @@
 ### Performance
 
 * Re-arrange struct fields to save memory in a few places (#413)
+
+### Bugfixes
+
+* Fix crash caused by extending layouts of an inactive archetype (#416, reported in #415)
 
 ### First-time contributors
 

@@ -1712,6 +1712,7 @@ func Test1000Archetypes(t *testing.T) {
 	_ = testStruct14{1}
 	_ = testStruct15{1}
 	_ = testStruct16{1}
+	_ = testStruct17{1}
 
 	w := NewWorld()
 
@@ -1876,6 +1877,34 @@ func TestWorldExtendLayouts(t *testing.T) {
 		t0 := (*testStruct0)(query.Get(id0))
 		assert.Equal(t, int32(100), t0.Val)
 	}
+}
+
+func TestWorldExtendLayouts2(t *testing.T) {
+	w := NewWorld()
+
+	id1 := ComponentID[testStruct0](&w)
+	id2 := ComponentID[testStruct1](&w)
+	_ = ComponentID[testStruct2](&w)
+	_ = ComponentID[testStruct3](&w)
+	_ = ComponentID[testStruct4](&w)
+	_ = ComponentID[testStruct5](&w)
+	_ = ComponentID[testStruct6](&w)
+	_ = ComponentID[testStruct7](&w)
+	_ = ComponentID[testStruct8](&w)
+	_ = ComponentID[testStruct9](&w)
+	_ = ComponentID[testStruct10](&w)
+	_ = ComponentID[testStruct11](&w)
+	_ = ComponentID[testStruct12](&w)
+	_ = ComponentID[testStruct13](&w)
+	_ = ComponentID[testStruct14](&w)
+
+	_ = w.NewEntity(id1, id2)
+
+	_ = ComponentID[testStruct15](&w)
+	_ = ComponentID[testStruct16](&w)
+	id17 := ComponentID[testStruct17](&w)
+
+	_ = w.NewEntity(id17)
 }
 
 func TestWorldPointerStressTest(t *testing.T) {

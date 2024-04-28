@@ -136,7 +136,7 @@ func (a *archNode) CreateArchetype(layouts uint8, target Entity) *archetype {
 }
 
 func (a *archNode) ExtendArchetypeLayouts(count uint8) {
-	if !a.HasRelation {
+	if a.IsActive && !a.HasRelation {
 		a.archetype.ExtendLayouts(count)
 		return
 	}
