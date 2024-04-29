@@ -60,6 +60,7 @@ type testStruct13 struct{ val int32 }
 type testStruct14 struct{ val int32 }
 type testStruct15 struct{ val int32 }
 type testStruct16 struct{ val int32 }
+type testStruct17 struct{ val int32 }
 
 type withSlice struct {
 	Slice []int
