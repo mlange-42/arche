@@ -38,7 +38,7 @@ func main() {
 		entity := world.NewEntity(posID, velID)
 		// Get the components.
 		pos := (*Position)(world.Get(entity, posID))
-		vel := (*Position)(world.Get(entity, velID))
+		vel := (*Velocity)(world.Get(entity, velID))
 
 		// Initialize component fields.
 		pos.X = rand.Float64() * 100
