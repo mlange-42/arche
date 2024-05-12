@@ -1,3 +1,9 @@
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.12.0...main)
+
+### Other
+
+* Fix component type in examples/base (#419)
+
 ## [[v0.12.0]](https://github.com/mlange-42/arche/compare/v0.11.0...v0.12.0)
 
 ### Features
