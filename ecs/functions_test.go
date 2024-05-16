@@ -13,14 +13,19 @@ func TestCompResIDs(t *testing.T) {
 	posID := ComponentID[Position](&w)
 	rotID := ComponentID[rotation](&w)
 
-	res1ID := ResourceID[Position](&w)
-	res2ID := ResourceID[Velocity](&w)
-
 	tPosID := TypeID(&w, reflect.TypeOf(Position{}))
 	tRotID := TypeID(&w, reflect.TypeOf(rotation{}))
 
+	res1ID := ResourceID[Position](&w)
+	res2ID := ResourceID[Velocity](&w)
+
+	tRes1ID := ResourceTypeID(&w, reflect.TypeOf(Position{}))
+	tRes2ID := ResourceTypeID(&w, reflect.TypeOf(Velocity{}))
+
 	assert.Equal(t, posID, tPosID)
 	assert.Equal(t, rotID, tRotID)
+	assert.Equal(t, res1ID, tRes1ID)
+	assert.Equal(t, res2ID, tRes2ID)
 
 	assert.Equal(t, uint8(0), posID.id)
 	assert.Equal(t, uint8(1), rotID.id)

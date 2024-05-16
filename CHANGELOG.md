@@ -1,5 +1,9 @@
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.12.0...main)
 
+### Features
+
+* Adds function `ResourceTypeID` to register/get a resource ID from a `reflect.Type` (#420)
+
 ### Other
 
 * Fix component type in examples/base (#419)
