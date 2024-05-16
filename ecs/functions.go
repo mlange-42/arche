@@ -60,6 +60,16 @@ func ResourceID[T any](w *World) ResID {
 	return w.resourceID(tp)
 }
 
+// ResourceTypeID returns the [ResID] for a resource type.
+// Registers the type if it is not already registered.
+//
+// See [ResourceID] for a more commonly used generic variant.
+//
+// The number of resources per [World] is limited to [MaskTotalBits].
+func ResourceTypeID(w *World, tp reflect.Type) ResID {
+	return w.resourceID(tp)
+}
+
 // ResourceIDs returns a list of all registered resource IDs.
 func ResourceIDs(w *World) []ResID {
 	intIds := w.resources.registry.IDs
