@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.121.0">
+    <meta name="generator" content="Relearn 5.23.2+tip">
+    <meta name="description" content="Usage of Arche&#39;s queries.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta name="twitter:title" content="Queries :: Arche">
+    <meta name="twitter:description" content="Usage of Arche&#39;s queries.">
+    <meta property="og:title" content="Queries :: Arche">
+    <meta property="og:description" content="Usage of Arche&#39;s queries.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://mlange-42.github.io/arche/guide/queries/index.html">
+    <meta property="og:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta property="article:section" content="User Guide :: Arche">
+    <meta property="og:site_name" content="Arche">
+    <title>Queries :: Arche</title>
+    <link href="../../images/favicon.svg?1716311092" rel="icon" type="image/svg+xml">
+    <!-- https://github.com/filamentgroup/loadCSS/blob/master/README.md#how-to-use -->
+    <link href="../../css/fontawesome-all.min.css?1716311092" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fontawesome-all.min.css?1716311092" rel="stylesheet"></noscript>
+    <link href="../../css/nucleus.css?1716311092" rel="stylesheet">
+    <link href="../../css/auto-complete.css?1716311092" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/auto-complete.css?1716311092" rel="stylesheet"></noscript>
+    <link href="../../css/perfect-scrollbar.min.css?1716311092" rel="stylesheet">
+    <link href="../../css/fonts.css?1716311092" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fonts.css?1716311092" rel="stylesheet"></noscript>
+    <link href="../../css/theme.css?1716311092" rel="stylesheet">
+    <link href="../../css/theme-auto.css?1716311092" rel="stylesheet" id="R-variant-style">
+    <link href="../../css/chroma-auto.css?1716311092" rel="stylesheet" id="R-variant-chroma-style">
+    <link href="../../css/variant.css?1716311092" rel="stylesheet">
+    <link href="../../css/print.css?1716311092" rel="stylesheet" media="print">
+    <link href="../../css/ie.css?1716311092" rel="stylesheet">
+    <script src="../../js/url.js?1716311092"></script>
+    <script src="../../js/variant.js?1716311092"></script>
+    <script>
+      // hack to let hugo tell us how to get to the root when using relativeURLs, it needs to be called *url= for it to do its magic:
+      // https://github.com/gohugoio/hugo/blob/145b3fcce35fbac25c7033c91c1b7ae6d1179da8/transform/urlreplacers/absurlreplacer.go#L72
+      window.index_js_url="../../index.search.js";
+      var root_url="../../";
+      var baseUri=root_url.replace(/\/$/, '');
+      window.relearn = window.relearn || {};
+      window.relearn.baseUriFull='https:\/\/mlange-42.github.io\/arche/';
+      // variant stuff
+      window.relearn.themeVariantModifier='';
+      window.variants && variants.init( [ 'auto', 'light', 'dark' ] );
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script><link href="../../css/style.css" rel="stylesheet">
+<link href="../../css/cards.css" rel="stylesheet">
+
+  </head>
+  <body class="mobile-support html disableInlineCopyToClipboard" data-url="../../guide/queries/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper"><nav class="TableOfContents">
+  <ul>
+    <li><a href="#query-creation--iteration">Query creation &amp; iteration</a></li>
+    <li><a href="#world-lock">World lock</a></li>
+    <li><a href="#other-functionality">Other functionality</a>
+      <ul>
+        <li><a href="#querycount">Query.Count</a></li>
+        <li><a href="#queryentityat">Query.EntityAt</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../index.html"><span itemprop="name">Arche</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../guide/index.html"><span itemprop="name">User Guide</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Queries</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-edit" data-content-empty="disable" data-width-s="area-more" data-width-m="show" data-width-l="show"><a class="topbar-control" href="https://github.com/mlange-42/arche/edit/main/docs/content/guide/queries/index.md" target="_blank" title="Edit (CTRL&#43;ALT&#43;w)"><i class="fa-fw fas fa-pen"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../guide/entities/index.html" title="Entities &amp; Components (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../guide/filters/index.html" title="Filters (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable default" tabindex="-1">
+        <div class="flex-block-wrapper">
+          <article class="default">
+            <header class="headline">
+            </header>
+<h1 id="queries">Queries</h1>
+
+<p>Queries (<span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query">ecs.Query</code>
+    </a>
+</span>) are the heart of Arche&rsquo;s query engine.
+They allow for very fast retrieval and iteration of entities with certain components.</p>
+
+<div class="box notices cstyle blue">
+  <div class="box-label"><i class="fa-fw fas fa-exclamation"></i> Important</div>
+  <div class="box-content">
+
+<p>Queries are for one-time utilization.
+A query can be iterated through only once, and a new one must be created before every loop.
+Contrary, the underlying <a href="../../guide/filters/index.html">Filters</a> should be stored and re-used.</p>
+</div>
+</div>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#query-creation--iteration">Query creation &amp; iteration</a></li>
+    <li><a href="#world-lock">World lock</a></li>
+    <li><a href="#other-functionality">Other functionality</a>
+      <ul>
+        <li><a href="#querycount">Query.Count</a></li>
+        <li><a href="#queryentityat">Query.EntityAt</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+<h2 id="query-creation--iteration">Query creation &amp; iteration</h2>
+<p>Queries are created through the <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#World" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.World">ecs.World</code>
+    </a>
+</span> using a <em>Filter</em> (interface <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Filter" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Filter">ecs.Filter</code>
+    </a>
+</span>).
+The most basic type of filter is <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Mask" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Mask">ecs.Mask</code>
+    </a>
+</span>. For more advanced filters, see chapter <a href="../../guide/filters/index.html">Filters</a>.</p>
+<p>Here, we create a filter that gives us all entities with all the given components, and potentially further components. Then, we create an <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query">ecs.Query</code>
+    </a>
+</span> (or generic <em>QueryX</em>, e.g. <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic#Query2" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic.Query2">generic.Query2</code>
+    </a>
+</span>) and iterate it.</p>
+
+<div class="tab-panel" data-tab-group="b4e8a824fe8c268337f13abb8f8a0616">
+  <div class="tab-nav">
+    <div class="tab-nav-title">&#8203;</div>
+    <button
+      data-tab-item="generic"
+      class="tab-nav-button tab-panel-style cstyle initial active" tabindex="-1"
+      onclick="switchTab('b4e8a824fe8c268337f13abb8f8a0616','generic')"
+    >
+      <span class="tab-nav-text">generic</span>
+    </button>
+    <button
+      data-tab-item="id-based"
+      class="tab-nav-button tab-panel-style cstyle initial"
+      onclick="switchTab('b4e8a824fe8c268337f13abb8f8a0616','id-based')"
+    >
+      <span class="tab-nav-text">ID-based</span>
+    </button>
+  </div>
+  <div class="tab-content-container">
+    <div
+      data-tab-item="generic"
+      class="tab-content tab-panel-style cstyle initial active">
+      <div class="tab-content-text">
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nx">filter</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewFilter2</span><span class="p">[</span><span class="nx">Position</span><span class="p">,</span> <span class="nx">Velocity</span><span class="p">]()</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nx">query</span> <span class="o">:=</span> <span class="nx">filter</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="k">for</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl">	<span class="nx">pos</span><span class="p">,</span> <span class="nx">vel</span> <span class="o">:=</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">	<span class="nx">pos</span><span class="p">.</span><span class="nx">X</span> <span class="o">+=</span> <span class="nx">vel</span><span class="p">.</span><span class="nx">X</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">	<span class="nx">pos</span><span class="p">.</span><span class="nx">Y</span> <span class="o">+=</span> <span class="nx">vel</span><span class="p">.</span><span class="nx">Y</span>
+</span></span><span class="line"><span class="ln">9</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+
+
+</div>
+    </div>
+    <div
+      data-tab-item="id-based"
+      class="tab-content tab-panel-style cstyle initial">
+      <div class="tab-content-text">
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="nx">posID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">Position</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="nx">velID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">Velocity</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="nx">filter</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">All</span><span class="p">(</span><span class="nx">posID</span><span class="p">,</span> <span class="nx">velID</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="nx">query</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="nx">filter</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="k">for</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">	<span class="nx">pos</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">Position</span><span class="p">)(</span><span class="nx">query</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">posID</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="nx">vel</span> <span class="o">:=</span> <span class="p">(</span><span class="o">*</span><span class="nx">Velocity</span><span class="p">)(</span><span class="nx">query</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">velID</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="nx">pos</span><span class="p">.</span><span class="nx">X</span> <span class="o">+=</span> <span class="nx">vel</span><span class="p">.</span><span class="nx">X</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="nx">pos</span><span class="p">.</span><span class="nx">Y</span> <span class="o">+=</span> <span class="nx">vel</span><span class="p">.</span><span class="nx">Y</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+
+
+</div>
+    </div>
+  </div>
+</div>
+<p>Where <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.Get" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.Get">ecs.Query.Get</code>
+    </a>
+</span> (resp. <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic#Query2.Get" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic.Query2.Get">generic.Query2.Get</code>
+    </a>
+</span>) return components of the entity at the
+current query iterator position.</p>
+<p>Comparing the two versions of the code above, one can clearly observe the advantages of the generic API
+over the ID-based API (see chapter on <a href="../../guide/apis/index.html">APIs</a>).
+Firstly, the generic code is shorter and more readable.
+But even more importantly, it much safer.
+A little mistake in line 9 or 10 of the ID-based version could result in silently casting a component
+to the wrong type, which would lead to bugs that are hard to track down.</p>
+
+<div class="box notices cstyle blue">
+  <div class="box-label"><i class="fa-fw fas fa-bug"></i> Tip</div>
+  <div class="box-content">
+
+<p>If you get error messages like &ldquo;index out of range [-1]&rdquo; or &ldquo;invalid memory address or nil pointer dereference&rdquo; from queries, you are probably using them in the wrong way. Try running with build tag <code>debug</code> for more helpful error messages:</p>
+<div class="wrap-code highlight"><pre tabindex="0"><code>go run -tags debug .</code></pre></div></div>
+</div>
+<h2 id="world-lock">World lock</h2>
+<p>When a query gets created, the <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#World" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.World">ecs.World</code>
+    </a>
+</span> gets locked for modifications.
+When locked, no entities can be created or removed, and no components can be added to
+or removed from entities.</p>
+<p>When a query is fully iterated, the world gets unlocked again. When a query is not fully iterated
+for some reason (see next section for examples), it must be closed with <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.Close" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.Close">ecs.Query.Close</code>
+    </a>
+</span>.</p>
+<p>Due to the world lock, denied operations like entity creation or removal must be deferred:</p>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1">// Create some entities.
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"></span><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1">// A slice that we (re)-use to defer entity removal.
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"></span><span class="kd">var</span> <span class="nx">toRemove</span> <span class="p">[]</span><span class="nx">ecs</span><span class="p">.</span><span class="nx">Entity</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="c1">// A time loop.
+</span></span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="c1"></span><span class="k">for</span> <span class="nx">time</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">time</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">time</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="c1">// Query... the world gets locked.
+</span></span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="c1"></span>	<span class="nx">query</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="nx">ecs</span><span class="p">.</span><span class="nf">All</span><span class="p">())</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="c1">// Iterate, and collect entities to remove.
+</span></span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">		<span class="k">if</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Float64</span><span class="p">()</span> <span class="p">&lt;</span> <span class="mf">0.1</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">			<span class="nx">toRemove</span> <span class="p">=</span> <span class="nb">append</span><span class="p">(</span><span class="nx">toRemove</span><span class="p">,</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Entity</span><span class="p">())</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">	<span class="c1">// The world is unlocked again.
+</span></span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1"></span>	<span class="c1">// Actually remove the collected entities.
+</span></span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">e</span> <span class="o">:=</span> <span class="k">range</span> <span class="nx">toRemove</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">		<span class="nx">world</span><span class="p">.</span><span class="nf">RemoveEntity</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="c1">// Empty the slice, so we can reuse it in the next time step.
+</span></span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="c1"></span>	<span class="nx">toRemove</span> <span class="p">=</span> <span class="nx">toRemove</span><span class="p">[:</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+
+
+<p>Where <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.Entity" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.Entity">ecs.Query.Entity</code>
+    </a>
+</span> returns the entity at the current query iterator position.</p>
+<h2 id="other-functionality">Other functionality</h2>
+<p>Besides <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.Next" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.Next">ecs.Query.Next</code>
+    </a>
+</span>, <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.Get" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.Get">ecs.Query.Get</code>
+    </a>
+</span> and <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.Entity" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.Entity">ecs.Query.Entity</code>
+    </a>
+</span>
+that we used above, queries have a few more useful methods.</p>
+<h3 id="querycount">Query.Count</h3>
+<p><span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.Count" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.Count">ecs.Query.Count</code>
+    </a>
+</span> allows for counting the entities in a query, very fast:</p>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nx">query</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="nx">ecs</span><span class="p">.</span><span class="nf">All</span><span class="p">())</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="nx">cnt</span> <span class="o">:=</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Count</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">cnt</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="nx">query</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span></code></pre></div>
+
+
+<p>Note that we need to call <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.Close" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.Close">ecs.Query.Close</code>
+    </a>
+</span> here, as the query was not (fully) iterated!
+After <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.Count" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.Count">ecs.Query.Count</code>
+    </a>
+</span>, the query could also be iterated as usual.</p>
+<h3 id="queryentityat">Query.EntityAt</h3>
+<p>With <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.EntityAt" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.EntityAt">ecs.Query.EntityAt</code>
+    </a>
+</span>, queries also support access by index.
+This is particularly useful to select random entities from a query,
+like in this example:</p>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1">// Create some entities.
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"></span><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1">// Query and count entities.
+</span></span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1"></span><span class="nx">query</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="nx">ecs</span><span class="p">.</span><span class="nf">All</span><span class="p">())</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="nx">cnt</span> <span class="o">:=</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Count</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="c1">// Draw random entities.
+</span></span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1"></span><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="nx">entity</span> <span class="o">:=</span> <span class="nx">query</span><span class="p">.</span><span class="nf">EntityAt</span><span class="p">(</span><span class="nx">rand</span><span class="p">.</span><span class="nf">Intn</span><span class="p">(</span><span class="nx">cnt</span><span class="p">))</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">entity</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="nx">query</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span></code></pre></div>
+
+
+<p>Note that we need to close the query manually, again!
+To access components of the retrieved entities, see chapter <a href="../../guide/world-access/index.html">World Entity Access</a>.</p>
+<p>Note that <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Query.EntityAt" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Query.EntityAt">ecs.Query.EntityAt</code>
+    </a>
+</span> may be slow when working with a large number of archetypes.
+Often, it is useful to register the underlying filter for speedup.
+See chapter <a href="../../guide/filters/index.html">Filter</a>, section <a href="../../guide/filters/index.html#filter-caching">Filter caching</a> for details.
+See the <a href="../../background/benchmarks/index.html#query">query benchmarks</a> for some numbers on performance.</p>
+
+            <footer class="footline">
+            </footer>
+          </article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation showVisitedLinks">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+<a href="https://mlange-42.github.io/arche/" title="Home"><img src="https://mlange-42.github.io/arche/images/logo-dark.svg" alt="Arche Logo"></img></a>
+        </div>
+        <div class="searchbox default-animation">
+          <i class="fas fa-search" title="Search (CTRL+ALT+f)"></i>
+          <label class="a11y-only" for="R-search-by">Search</label>
+          <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+          <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+        </div>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../../js/auto-complete.js?1716311092" defer></script>
+        <script src="../../js/lunr/lunr.min.js?1716311092" defer></script>
+        <script src="../../js/lunr/lunr.stemmer.support.min.js?1716311092" defer></script>
+        <script src="../../js/lunr/lunr.multi.min.js?1716311092" defer></script>
+        <script src="../../js/lunr/lunr.en.min.js?1716311092" defer></script>
+        <script src="../../js/search.js?1716311092" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation">
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-topics">
+          <ul class="enlarge morespace collapsible-menu">
+          <li data-nav-id="/quickstart/index.html" class=""><a class="padding" href="../../quickstart/index.html">Quickstart<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/index.html" class="parent "><input type="checkbox" id="R-section-231d7ac600b0ccff382b28de1eb3e8ed" aria-controls="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed" checked><label for="R-section-231d7ac600b0ccff382b28de1eb3e8ed"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu User Guide</span></label><a class="padding" href="../../guide/index.html">User Guide<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed" class="morespace collapsible-menu">
+          <li data-nav-id="/guide/apis/index.html" class=""><a class="padding" href="../../guide/apis/index.html">Generic &amp; ID-based API<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world/index.html" class=""><a class="padding" href="../../guide/world/index.html">The World<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/entities/index.html" class=""><a class="padding" href="../../guide/entities/index.html">Entities &amp; Components<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/queries/index.html" class="active"><a class="padding" href="../../guide/queries/index.html">Queries<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/filters/index.html" class=""><a class="padding" href="../../guide/filters/index.html">Filters<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world-access/index.html" class=""><a class="padding" href="../../guide/world-access/index.html">World Entity Access<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/relations/index.html" class=""><a class="padding" href="../../guide/relations/index.html">Entity Relations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/batch-ops/index.html" class=""><a class="padding" href="../../guide/batch-ops/index.html">Batch Operations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/resources/index.html" class=""><a class="padding" href="../../guide/resources/index.html">ECS Resources<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/events/index.html" class=""><a class="padding" href="../../guide/events/index.html">Event System<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/stats/index.html" class=""><a class="padding" href="../../guide/stats/index.html">World Statistics<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/performance/index.html" class=""><a class="padding" href="../../guide/performance/index.html">Performance Tips<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/tools/index.html" class=""><a class="padding" href="../../guide/tools/index.html">Tools<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/background/index.html" class=""><input type="checkbox" id="R-section-2c311fb29b03520a1306c5c783eda95a" aria-controls="R-subsections-2c311fb29b03520a1306c5c783eda95a"><label for="R-section-2c311fb29b03520a1306c5c783eda95a"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu Background</span></label><a class="padding" href="../../background/index.html">Background<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-2c311fb29b03520a1306c5c783eda95a" class="morespace collapsible-menu">
+          <li data-nav-id="/background/design/index.html" class=""><a class="padding" href="../../background/design/index.html">Design Philosophy<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/architecture/index.html" class=""><a class="padding" href="../../background/architecture/index.html">Architecture<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/benchmarks/index.html" class=""><a class="padding" href="../../background/benchmarks/index.html">Benchmarks<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/changelog/index.html" class=""><a class="padding" href="../../background/changelog/index.html">Changelog<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/made_with/index.html" class=""><a class="padding" href="../../made_with/index.html">Made with Arche<i class="fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div id="R-shortcuts">
+          <div class="nav-title padding">More</div>
+          <ul class="space">
+            <li><a class="padding" href="https://github.com/mlange-42/arche"><i class='fab fa-fw fa-github'></i> GitHub repo</a></li>
+            <li><a class="padding" href="https://pkg.go.dev/github.com/mlange-42/arche"><i class='fas fa-fw fa-bookmark'></i> API reference</a></li>
+          </ul>
+        </div>
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks showVariantSwitch showVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-language fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = baseUri + this.value;">
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch showVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-paint-brush fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.variants && variants.changeVariant( this.value );">
+                      <option id="R-auto" value="auto" selected>Auto</option>
+                      <option id="R-light" value="light">Light</option>
+                      <option id="R-dark" value="dark">Dark</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.variants && variants.markSelectedVariant();</script>
+              </li>
+              <li class="footerVisitedLinks showVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fas fa-history fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter">
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../../js/clipboard.min.js?1716311092" defer></script>
+    <script src="../../js/perfect-scrollbar.min.js?1716311092" defer></script>
+    <script src="../../js/theme.js?1716311092" defer></script>
+  </body>
+</html>

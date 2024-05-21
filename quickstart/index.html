@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.121.0">
+    <meta name="generator" content="Relearn 5.23.2+tip">
+    <meta name="description" content="Quickstart guide to install and use Arche.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta name="twitter:title" content="Quickstart :: Arche">
+    <meta name="twitter:description" content="Quickstart guide to install and use Arche.">
+    <meta property="og:title" content="Quickstart :: Arche">
+    <meta property="og:description" content="Quickstart guide to install and use Arche.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mlange-42.github.io/arche/quickstart/index.html">
+    <meta property="og:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta property="og:site_name" content="Arche">
+    <title>Quickstart :: Arche</title>
+    <link href="../quickstart/index.xml" rel="alternate" type="application/rss+xml" title="Quickstart :: Arche">
+    <link href="../images/favicon.svg?1716311092" rel="icon" type="image/svg+xml">
+    <!-- https://github.com/filamentgroup/loadCSS/blob/master/README.md#how-to-use -->
+    <link href="../css/fontawesome-all.min.css?1716311092" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fontawesome-all.min.css?1716311092" rel="stylesheet"></noscript>
+    <link href="../css/nucleus.css?1716311092" rel="stylesheet">
+    <link href="../css/auto-complete.css?1716311092" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/auto-complete.css?1716311092" rel="stylesheet"></noscript>
+    <link href="../css/perfect-scrollbar.min.css?1716311092" rel="stylesheet">
+    <link href="../css/fonts.css?1716311092" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../css/fonts.css?1716311092" rel="stylesheet"></noscript>
+    <link href="../css/theme.css?1716311092" rel="stylesheet">
+    <link href="../css/theme-auto.css?1716311092" rel="stylesheet" id="R-variant-style">
+    <link href="../css/chroma-auto.css?1716311092" rel="stylesheet" id="R-variant-chroma-style">
+    <link href="../css/variant.css?1716311092" rel="stylesheet">
+    <link href="../css/print.css?1716311092" rel="stylesheet" media="print">
+    <link href="../css/ie.css?1716311092" rel="stylesheet">
+    <script src="../js/url.js?1716311092"></script>
+    <script src="../js/variant.js?1716311092"></script>
+    <script>
+      // hack to let hugo tell us how to get to the root when using relativeURLs, it needs to be called *url= for it to do its magic:
+      // https://github.com/gohugoio/hugo/blob/145b3fcce35fbac25c7033c91c1b7ae6d1179da8/transform/urlreplacers/absurlreplacer.go#L72
+      window.index_js_url="../index.search.js";
+      var root_url="../";
+      var baseUri=root_url.replace(/\/$/, '');
+      window.relearn = window.relearn || {};
+      window.relearn.baseUriFull='https:\/\/mlange-42.github.io\/arche/';
+      // variant stuff
+      window.relearn.themeVariantModifier='';
+      window.variants && variants.init( [ 'auto', 'light', 'dark' ] );
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script><link href="../css/style.css" rel="stylesheet">
+<link href="../css/cards.css" rel="stylesheet">
+
+  </head>
+  <body class="mobile-support html disableInlineCopyToClipboard" data-url="../quickstart/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper"><nav class="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage-example">Usage example</a></li>
+    <li><a href="#whats-next">What&rsquo;s next?</a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../index.html"><span itemprop="name">Arche</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Quickstart</span><meta itemprop="position" content="2"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-edit" data-content-empty="disable" data-width-s="area-more" data-width-m="show" data-width-l="show"><a class="topbar-control" href="https://github.com/mlange-42/arche/edit/main/docs/content/quickstart/_index.md" target="_blank" title="Edit (CTRL&#43;ALT&#43;w)"><i class="fa-fw fas fa-pen"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../index.html" title="Arche (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../guide/index.html" title="User Guide (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable default" tabindex="-1">
+        <div class="flex-block-wrapper">
+          <article class="default">
+            <header class="headline">
+            </header>
+<h1 id="quickstart">Quickstart</h1>
+
+<p>This page shows how to install Arche, and gives a minimal usage example.</p>
+<p>Finally, it points into possible directions to continue.</p>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#installation">Installation</a></li>
+    <li><a href="#usage-example">Usage example</a></li>
+    <li><a href="#whats-next">What&rsquo;s next?</a></li>
+  </ul>
+</nav>
+<h2 id="installation">Installation</h2>
+<p>To use Arche in a Go project, run:</p>
+<div class="wrap-code highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="ln">1</span><span class="cl">go get github.com/mlange-42/arche</span></span></code></pre></div><h2 id="usage-example">Usage example</h2>
+<p>Here is the classical Position/Velocity example that every ECS shows in the docs.
+It uses the type-safe  <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic">generic</code>
+    </a>
+</span> API.</p>
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="s">&#34;math/rand&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="s">&#34;github.com/mlange-42/arche/ecs&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="s">&#34;github.com/mlange-42/arche/generic&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1">// Position component
+</span></span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Position</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="nx">X</span> <span class="kt">float64</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="nx">Y</span> <span class="kt">float64</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1">// Velocity component
+</span></span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1"></span><span class="kd">type</span> <span class="nx">Velocity</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">	<span class="nx">X</span> <span class="kt">float64</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">	<span class="nx">Y</span> <span class="kt">float64</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl">
+</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl">	<span class="c1">// Create a World.
+</span></span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="c1"></span>	<span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="c1">// Create a component mapper.
+</span></span></span><span class="line"><span class="ln">27</span><span class="cl"><span class="c1"></span>	<span class="nx">mapper</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap2</span><span class="p">[</span><span class="nx">Position</span><span class="p">,</span> <span class="nx">Velocity</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">28</span><span class="cl">
+</span></span><span class="line"><span class="ln">29</span><span class="cl">	<span class="c1">// Create entities.
+</span></span></span><span class="line"><span class="ln">30</span><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">31</span><span class="cl">		<span class="c1">// Create a new Entity with components.
+</span></span></span><span class="line"><span class="ln">32</span><span class="cl"><span class="c1"></span>		<span class="nx">entity</span> <span class="o">:=</span> <span class="nx">mapper</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">		<span class="c1">// Get the components
+</span></span></span><span class="line"><span class="ln">34</span><span class="cl"><span class="c1"></span>		<span class="nx">pos</span><span class="p">,</span> <span class="nx">vel</span> <span class="o">:=</span> <span class="nx">mapper</span><span class="p">.</span><span class="nf">Get</span><span class="p">(</span><span class="nx">entity</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">35</span><span class="cl">		<span class="c1">// Initialize component fields.
+</span></span></span><span class="line"><span class="ln">36</span><span class="cl"><span class="c1"></span>		<span class="nx">pos</span><span class="p">.</span><span class="nx">X</span> <span class="p">=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Float64</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="ln">37</span><span class="cl">		<span class="nx">pos</span><span class="p">.</span><span class="nx">Y</span> <span class="p">=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Float64</span><span class="p">()</span> <span class="o">*</span> <span class="mi">100</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">		<span class="nx">vel</span><span class="p">.</span><span class="nx">X</span> <span class="p">=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">NormFloat64</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">		<span class="nx">vel</span><span class="p">.</span><span class="nx">Y</span> <span class="p">=</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">NormFloat64</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">41</span><span class="cl">
+</span></span><span class="line"><span class="ln">42</span><span class="cl">	<span class="c1">// Create a generic filter.
+</span></span></span><span class="line"><span class="ln">43</span><span class="cl"><span class="c1"></span>	<span class="nx">filter</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewFilter2</span><span class="p">[</span><span class="nx">Position</span><span class="p">,</span> <span class="nx">Velocity</span><span class="p">]()</span>
+</span></span><span class="line"><span class="ln">44</span><span class="cl">
+</span></span><span class="line"><span class="ln">45</span><span class="cl">	<span class="c1">// Time loop.
+</span></span></span><span class="line"><span class="ln">46</span><span class="cl"><span class="c1"></span>	<span class="k">for</span> <span class="nx">t</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">t</span> <span class="p">&lt;</span> <span class="mi">1000</span><span class="p">;</span> <span class="nx">t</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">47</span><span class="cl">		<span class="c1">// Get a fresh query.
+</span></span></span><span class="line"><span class="ln">48</span><span class="cl"><span class="c1"></span>		<span class="nx">query</span> <span class="o">:=</span> <span class="nx">filter</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">49</span><span class="cl">		<span class="c1">// Iterate it
+</span></span></span><span class="line"><span class="ln">50</span><span class="cl"><span class="c1"></span>		<span class="k">for</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">51</span><span class="cl">			<span class="c1">// Component access through the Query.
+</span></span></span><span class="line"><span class="ln">52</span><span class="cl"><span class="c1"></span>			<span class="nx">pos</span><span class="p">,</span> <span class="nx">vel</span> <span class="o">:=</span> <span class="nx">query</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">53</span><span class="cl">			<span class="c1">// Update component fields.
+</span></span></span><span class="line"><span class="ln">54</span><span class="cl"><span class="c1"></span>			<span class="nx">pos</span><span class="p">.</span><span class="nx">X</span> <span class="o">+=</span> <span class="nx">vel</span><span class="p">.</span><span class="nx">X</span>
+</span></span><span class="line"><span class="ln">55</span><span class="cl">			<span class="nx">pos</span><span class="p">.</span><span class="nx">Y</span> <span class="o">+=</span> <span class="nx">vel</span><span class="p">.</span><span class="nx">Y</span>
+</span></span><span class="line"><span class="ln">56</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">57</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">58</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+
+
+<h2 id="whats-next">What&rsquo;s next?</h2>
+<p>If you ask <strong>&ldquo;What is ECS?&rdquo;</strong>, take a look at the great <a href="https://github.com/SanderMertens/ecs-faq" target="_blank"><strong>ECS FAQ</strong></a> by Sander Mertens, the author of the <a href="http://flecs.dev" target="_blank">Flecs</a> ECS.</p>
+<p>To learn how to use Arche, read the <a href="../guide/index.html">User Guide</a>,
+browse the <a href="https://pkg.go.dev/github.com/mlange-42/arche" target="_blank">API documentation</a>,
+or take a look at the <a href="https://github.com/mlange-42/arche/tree/main/_examples">examples</a> in the <a href="https://github.com/mlange-42/arche/">GitHub repository</a>.</p>
+<p>You can also read about Arche&rsquo;s <a href="../background/design/index.html">Design Philosophy</a>
+and <a href="../background/architecture/index.html">Architecture</a> for more background information.</p>
+<p>See the <a href="../background/benchmarks/index.html">Benchmarks</a> if you are interested in some numbers on Arche&rsquo;s performance.</p>
+
+            <footer class="footline">
+            </footer>
+          </article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation showVisitedLinks">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+<a href="https://mlange-42.github.io/arche/" title="Home"><img src="https://mlange-42.github.io/arche/images/logo-dark.svg" alt="Arche Logo"></img></a>
+        </div>
+        <div class="searchbox default-animation">
+          <i class="fas fa-search" title="Search (CTRL+ALT+f)"></i>
+          <label class="a11y-only" for="R-search-by">Search</label>
+          <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+          <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+        </div>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../js/auto-complete.js?1716311092" defer></script>
+        <script src="../js/lunr/lunr.min.js?1716311092" defer></script>
+        <script src="../js/lunr/lunr.stemmer.support.min.js?1716311092" defer></script>
+        <script src="../js/lunr/lunr.multi.min.js?1716311092" defer></script>
+        <script src="../js/lunr/lunr.en.min.js?1716311092" defer></script>
+        <script src="../js/search.js?1716311092" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation">
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-topics">
+          <ul class="enlarge morespace collapsible-menu">
+          <li data-nav-id="/quickstart/index.html" class="active"><a class="padding" href="../quickstart/index.html">Quickstart<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/index.html" class=""><input type="checkbox" id="R-section-231d7ac600b0ccff382b28de1eb3e8ed" aria-controls="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed"><label for="R-section-231d7ac600b0ccff382b28de1eb3e8ed"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu User Guide</span></label><a class="padding" href="../guide/index.html">User Guide<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed" class="morespace collapsible-menu">
+          <li data-nav-id="/guide/apis/index.html" class=""><a class="padding" href="../guide/apis/index.html">Generic &amp; ID-based API<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world/index.html" class=""><a class="padding" href="../guide/world/index.html">The World<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/entities/index.html" class=""><a class="padding" href="../guide/entities/index.html">Entities &amp; Components<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/queries/index.html" class=""><a class="padding" href="../guide/queries/index.html">Queries<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/filters/index.html" class=""><a class="padding" href="../guide/filters/index.html">Filters<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world-access/index.html" class=""><a class="padding" href="../guide/world-access/index.html">World Entity Access<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/relations/index.html" class=""><a class="padding" href="../guide/relations/index.html">Entity Relations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/batch-ops/index.html" class=""><a class="padding" href="../guide/batch-ops/index.html">Batch Operations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/resources/index.html" class=""><a class="padding" href="../guide/resources/index.html">ECS Resources<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/events/index.html" class=""><a class="padding" href="../guide/events/index.html">Event System<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/stats/index.html" class=""><a class="padding" href="../guide/stats/index.html">World Statistics<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/performance/index.html" class=""><a class="padding" href="../guide/performance/index.html">Performance Tips<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/tools/index.html" class=""><a class="padding" href="../guide/tools/index.html">Tools<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/background/index.html" class=""><input type="checkbox" id="R-section-2c311fb29b03520a1306c5c783eda95a" aria-controls="R-subsections-2c311fb29b03520a1306c5c783eda95a"><label for="R-section-2c311fb29b03520a1306c5c783eda95a"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu Background</span></label><a class="padding" href="../background/index.html">Background<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-2c311fb29b03520a1306c5c783eda95a" class="morespace collapsible-menu">
+          <li data-nav-id="/background/design/index.html" class=""><a class="padding" href="../background/design/index.html">Design Philosophy<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/architecture/index.html" class=""><a class="padding" href="../background/architecture/index.html">Architecture<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/benchmarks/index.html" class=""><a class="padding" href="../background/benchmarks/index.html">Benchmarks<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/changelog/index.html" class=""><a class="padding" href="../background/changelog/index.html">Changelog<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/made_with/index.html" class=""><a class="padding" href="../made_with/index.html">Made with Arche<i class="fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div id="R-shortcuts">
+          <div class="nav-title padding">More</div>
+          <ul class="space">
+            <li><a class="padding" href="https://github.com/mlange-42/arche"><i class='fab fa-fw fa-github'></i> GitHub repo</a></li>
+            <li><a class="padding" href="https://pkg.go.dev/github.com/mlange-42/arche"><i class='fas fa-fw fa-bookmark'></i> API reference</a></li>
+          </ul>
+        </div>
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks showVariantSwitch showVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-language fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = baseUri + this.value;">
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch showVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-paint-brush fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.variants && variants.changeVariant( this.value );">
+                      <option id="R-auto" value="auto" selected>Auto</option>
+                      <option id="R-light" value="light">Light</option>
+                      <option id="R-dark" value="dark">Dark</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.variants && variants.markSelectedVariant();</script>
+              </li>
+              <li class="footerVisitedLinks showVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fas fa-history fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter">
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../js/clipboard.min.js?1716311092" defer></script>
+    <script src="../js/perfect-scrollbar.min.js?1716311092" defer></script>
+    <script src="../js/theme.js?1716311092" defer></script>
+  </body>
+</html>

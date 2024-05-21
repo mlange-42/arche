@@ -1,0 +1,21 @@
+@import "theme-relearn-dark.css";
+
+:root {
+    --MENU-HEADER-BG-color: var(--MENU-SECTIONS-BG-color);
+    --MENU-HOME-LINK-color: var(--MENU-SECTIONS-LINK-color);
+    --MENU-HOME-LINK-HOVER-color: var(--MENU-SECTIONS-LINK-HOVER-color);
+
+    --MAIN-LINK-color: rgba( 147, 176, 255, 1 );
+    --MAIN-LINK-HOVER-color: rgba( 120, 150, 250, 1 );
+    --MENU-SECTION-ACTIVE-CATEGORY-color: var(--INTERNAL-MAIN-LINK-color);
+    --MENU-VISITED-color: var(--INTERNAL-MAIN-LINK-color);
+    
+    --CODE-theme: github-dark;
+    --CODE-INLINE-color: var(--INTERNAL-MAIN-LINK-color);
+
+    --BOX-BG-color: rgba( 30, 30, 30, 1 );
+}
+
+.light {
+    display: none !important;
+}

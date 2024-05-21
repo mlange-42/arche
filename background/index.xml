@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Background on Arche</title>
+    <link>https://mlange-42.github.io/arche/background/index.html</link>
+    <description>Recent content in Background on Arche</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="https://mlange-42.github.io/arche/background/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Design Philosophy</title>
+      <link>https://mlange-42.github.io/arche/background/design/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/background/design/index.html</guid>
+      <description>Unlike most other ECS implementations, Arche is designed for the development of scientific, individual-based models rather than for game development. This motivates some design decisions, with an emphasis on simplicity, safety and performance. Nevertheless, Arche can also be used for game development.
+Simple core API Determinism Strict and panic Limitations Simple core API The ecs.World object is a pure and simple ECS implementation in the sense of a data store for entities and components, with query and iteration capabilities.</description>
+    </item>
+    <item>
+      <title>Architecture</title>
+      <link>https://mlange-42.github.io/arche/background/architecture/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/background/architecture/index.html</guid>
+      <description>Arche uses an archetype-based architecture. Therefore the name &amp;#x1f609;.
+This chapter explains the concept and Arche&amp;rsquo;s take on it.
+Archetypes World entity access Performance Details Archetype graph Entity relations Archetype removal Archetypes The ASCII graph below illustrates the approach. Components for entities are stored in so-called archetypes. Archetypes represent unique combinations of components. This means that component data for all entities with exactly the same component is stored in the same archetype.</description>
+    </item>
+    <item>
+      <title>Benchmarks</title>
+      <link>https://mlange-42.github.io/arche/background/benchmarks/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/background/benchmarks/index.html</guid>
+      <description>This chapter gives an overview of the runtime cost of typical Arche operations. All time information is per entity. Batch operations are performed in batches of 1000 entities.
+Absolute numbers are not really meaningful, as they heavily depend on the hardware. However, all benchmarks run in the CI in the same job and hence on the same machine, and can be compared.
+Benchmark code: benchmark/table in the GitHub repository.
+Benchmarks are run automatically in the GitHub CI, and are updated on this page on every merge into the main branch.</description>
+    </item>
+    <item>
+      <title>Changelog</title>
+      <link>https://mlange-42.github.io/arche/background/changelog/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/background/changelog/index.html</guid>
+      <description>[v0.13.0] Features Adds function ResourceTypeID to register/get a resource ID from a reflect.Type (#420) Other Fix component type in examples/base (#419) [v0.12.0] Features Adds Entity.ID() and Entity.Generation() (#408, delaneyj) Documentation Adds a showcase chapter &amp;ldquo;Made with Arche&amp;rdquo; to the documentation page (#411) Performance Re-arrange struct fields to save memory in a few places (#413) Bugfixes Fix crash caused by extending layouts of an inactive archetype (#416, reported in #415) First-time contributors delaneyj [v0.</description>
+    </item>
+  </channel>
+</rss>
