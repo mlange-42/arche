@@ -1,4 +1,4 @@
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.12.0...main)
+## [[v0.13.0]](https://github.com/mlange-42/arche/compare/v0.12.0...v0.13.0)
 
 ### Features
 
