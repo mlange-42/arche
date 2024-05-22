@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "*.jsonschema": "json"
+    },
+    "json.schemas": [
+        {
+            "fileMatch": [
+                "/**/*.gen.json"
+            ],
+            "url": "/benchmark/competition/geck.GeneratorOptions.jsonschema"
+        }
+    ]
+}

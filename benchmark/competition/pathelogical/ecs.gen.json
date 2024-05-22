@@ -1,0 +1,25 @@
+{
+  "folderPath": "geckecs",
+  "bundles": [
+    {
+      "name": "doc",
+      "components": [
+        { "name": "Comp1" },
+        { "name": "Comp2" },
+        { "name": "Comp3" },
+        { "name": "Comp4" },
+        { "name": "Comp5" },
+        { "name": "Comp6" },
+        { "name": "Comp7" },
+        { "name": "Comp8" },
+        { "name": "Comp9" },
+        { "name": "Comp10" }
+      ]
+    }
+  ],
+  "componentSets": [
+    {
+      "owned": [{ "name": "Comp1" }, { "name": "Comp2" }, { "name": "Comp3" }]
+    }
+  ]
+}
