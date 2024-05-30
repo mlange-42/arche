@@ -28,14 +28,14 @@ type Entity struct {
 	gen uint32 // Entity generation
 }
 
-// newEntity creates a new Entity.
-func newEntity(id eid) Entity {
-	return Entity{id, 0}
+// NewEntity creates a new Entity.
+func NewEntity(id uint32) Entity {
+	return Entity{eid(id), 0}
 }
 
-// newEntityGen creates a new Entity with a given generation.
-func newEntityGen(id eid, gen uint32) Entity {
-	return Entity{id, gen}
+// NewEntityGen creates a new Entity with a given generation.
+func NewEntityGen(id, gen uint32) Entity {
+	return Entity{eid(id), gen}
 }
 
 // IsZero returns whether this entity is the reserved zero entity.
