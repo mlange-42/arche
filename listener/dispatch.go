@@ -12,10 +12,10 @@ import (
 //
 // To make it possible for systems to add listeners, Dispatch can be added to the [ecs.World] as a resource.
 type Dispatch struct {
-	listeners     []ecs.Listener
-	events        event.Subscription
-	components    ecs.Mask
-	hasComponents bool
+	listeners     []ecs.Listener     // Sub-listeners to dispatch events to.
+	events        event.Subscription // Subscribed event types.
+	components    ecs.Mask           // Subscribed components.
+	hasComponents bool               // Whether there is a restriction to components.
 }
 
 // NewDispatch returns a new [Dispatch] listener with the given sub-listeners.

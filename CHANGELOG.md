@@ -1,3 +1,9 @@
+## [[v0.13.1]](https://github.com/mlange-42/arche/compare/v0.13.0...v0.13.1)
+
+### Bugfixes
+
+* Fixes dispatch listener bug that did not clear component restriction (#424, [g-getsov](https://github.com/g-getsov))
+
 ## [[v0.13.0]](https://github.com/mlange-42/arche/compare/v0.12.0...v0.13.0)
 
 ### Features
