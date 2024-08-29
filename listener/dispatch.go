@@ -45,7 +45,7 @@ func (l *Dispatch) AddListener(ls ecs.Listener) {
 	l.listeners = append(l.listeners, ls)
 	l.events |= ls.Subscriptions()
 
-	cmp := l.Components()
+	cmp := ls.Components()
 	if cmp == nil {
 		l.hasComponents = false
 	} else {
