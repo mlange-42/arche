@@ -35,12 +35,18 @@ func TestDispatch(t *testing.T) {
 		event.Components,
 		posID,
 	)
+	h3 := EventHandler{}
+	l3 := listener.NewCallback(
+		h3.Notify,
+		event.Entities,
+	)
 
 	ls := listener.NewDispatch(&l1)
 	ls.AddListener(&l2)
 	world.SetListener(&ls)
 
 	assert.Equal(t, event.Entities|event.Components, ls.Subscriptions())
+	assert.NotNil(t, ls.Components())
 
 	world.NewEntity(posID, velID)
 	e := world.NewEntity()
@@ -55,6 +61,11 @@ func TestDispatch(t *testing.T) {
 
 	assert.Equal(t, 1, len(h1.events))
 	assert.Equal(t, 2, len(h2.events))
+
+	ls.AddListener(&l3)
+
+	assert.Equal(t, event.Entities|event.Components, ls.Subscriptions())
+	assert.Nil(t, ls.Components())
 }
 
 func TestDispatchRelations(t *testing.T) {
