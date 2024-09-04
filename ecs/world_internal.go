@@ -414,6 +414,7 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 	w.exchangeNoNotify(entity, add, rem, relation, hasRelation, target)
 }
 
+// perform exchange operation without notifying listeners.
 func (w *World) exchangeNoNotify(entity Entity, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) (*archetype, *Mask, Entity, *ID) {
 	w.checkLocked()
 
@@ -490,6 +491,7 @@ func (w *World) exchangeNoNotify(entity Entity, add []ID, rem []ID, relation ID,
 	return arch, &oldMask, oldTarget, oldRel
 }
 
+// notify listeners for an exchange.
 func (w *World) notifyExchange(arch *archetype, oldMask *Mask, entity Entity, add []ID, rem []ID, oldTarget Entity, oldRel *ID) {
 	var newRel *ID
 	if arch.HasRelationComponent {

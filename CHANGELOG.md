@@ -1,3 +1,9 @@
+## [[v0.13.2]](https://github.com/mlange-42/arche/compare/v0.13.1...v0.13.2)
+
+### Bugfixes
+
+* Ensure Assign() copies components before notifying listeners (#426, [g-getsov](https://github.com/g-getsov))
+
 ## [[v0.13.1]](https://github.com/mlange-42/arche/compare/v0.13.0...v0.13.1)
 
 ### Bugfixes
