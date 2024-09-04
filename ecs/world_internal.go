@@ -391,24 +391,30 @@ func (w *World) assign(entity Entity, relation ID, hasRelation bool, target Enti
 	if len == 0 {
 		panic("no components given to assign")
 	}
-	if len == 1 {
-		c := comps[0]
-		w.exchange(entity, []ID{c.ID}, nil, relation, hasRelation, target)
-		w.copyTo(entity, c.ID, c.Comp)
-		return
-	}
 	ids := make([]ID, len)
 	for i, c := range comps {
 		ids[i] = c.ID
 	}
-	w.exchange(entity, ids, nil, relation, hasRelation, target)
+	arch, oldMask, oldTarget, oldRel := w.exchangeNoNotify(entity, ids, nil, relation, hasRelation, target)
 	for _, c := range comps {
 		w.copyTo(entity, c.ID, c.Comp)
+	}
+	if w.listener != nil {
+		w.notifyExchange(arch, oldMask, entity, ids, nil, oldTarget, oldRel)
 	}
 }
 
 // exchange with relation target.
 func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) {
+	if w.listener != nil {
+		arch, oldMask, oldTarget, oldRel := w.exchangeNoNotify(entity, add, rem, relation, hasRelation, target)
+		w.notifyExchange(arch, oldMask, entity, add, rem, oldTarget, oldRel)
+		return
+	}
+	w.exchangeNoNotify(entity, add, rem, relation, hasRelation, target)
+}
+
+func (w *World) exchangeNoNotify(entity Entity, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) (*archetype, *Mask, Entity, *ID) {
 	w.checkLocked()
 
 	if !w.entityPool.Alive(entity) {
@@ -419,7 +425,7 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 		if hasRelation {
 			panic("exchange operation has no effect, but a relation is specified. Use World.Relation instead")
 		}
-		return
+		return nil, nil, Entity{}, nil
 	}
 	index := &w.entities[entity.id]
 	oldArch := index.arch
@@ -481,30 +487,32 @@ func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRela
 
 	w.cleanupArchetype(oldArch)
 
-	if w.listener != nil {
-		var newRel *ID
-		if arch.HasRelationComponent {
-			newRel = &arch.RelationComponent
-		}
-		relChanged := false
-		if oldRel != nil || newRel != nil {
-			relChanged = (oldRel == nil) != (newRel == nil) || *oldRel != *newRel
-		}
-		targChanged := oldTarget != arch.RelationTarget
+	return arch, &oldMask, oldTarget, oldRel
+}
 
-		bits := subscription(false, false, len(add) > 0, len(rem) > 0, relChanged, relChanged || targChanged)
-		trigger := w.listener.Subscriptions() & bits
-		if trigger != 0 {
-			changed := oldMask.Xor(&arch.Mask)
-			added := arch.Mask.And(&changed)
-			removed := oldMask.And(&changed)
-			if subscribes(trigger, &added, &removed, w.listener.Components(), oldRel, newRel) {
-				w.listener.Notify(w,
-					EntityEvent{Entity: entity, Added: added, Removed: removed,
-						AddedIDs: add, RemovedIDs: rem, OldRelation: oldRel, NewRelation: newRel,
-						OldTarget: oldTarget, EventTypes: bits},
-				)
-			}
+func (w *World) notifyExchange(arch *archetype, oldMask *Mask, entity Entity, add []ID, rem []ID, oldTarget Entity, oldRel *ID) {
+	var newRel *ID
+	if arch.HasRelationComponent {
+		newRel = &arch.RelationComponent
+	}
+	relChanged := false
+	if oldRel != nil || newRel != nil {
+		relChanged = (oldRel == nil) != (newRel == nil) || *oldRel != *newRel
+	}
+	targChanged := oldTarget != arch.RelationTarget
+
+	bits := subscription(false, false, len(add) > 0, len(rem) > 0, relChanged, relChanged || targChanged)
+	trigger := w.listener.Subscriptions() & bits
+	if trigger != 0 {
+		changed := oldMask.Xor(&arch.Mask)
+		added := arch.Mask.And(&changed)
+		removed := oldMask.And(&changed)
+		if subscribes(trigger, &added, &removed, w.listener.Components(), oldRel, newRel) {
+			w.listener.Notify(w,
+				EntityEvent{Entity: entity, Added: added, Removed: removed,
+					AddedIDs: add, RemovedIDs: rem, OldRelation: oldRel, NewRelation: newRel,
+					OldTarget: oldTarget, EventTypes: bits},
+			)
 		}
 	}
 }

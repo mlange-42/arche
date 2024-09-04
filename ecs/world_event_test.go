@@ -107,6 +107,14 @@ func TestWorldListener(t *testing.T) {
 		EventTypes:  event.ComponentRemoved | event.RelationChanged | event.TargetChanged,
 	}, events[len(events)-1])
 
+	w.Assign(e0, Component{ID: posID, Comp: &Position{X: 1, Y: 2}})
+	assert.Equal(t, 11, len(events))
+	assert.Equal(t, EntityEvent{
+		Entity:     e0,
+		Added:      All(posID),
+		AddedIDs:   []ID{posID},
+		EventTypes: event.ComponentAdded,
+	}, events[len(events)-1])
 }
 
 func TestWorldListenerBuilder(t *testing.T) {
