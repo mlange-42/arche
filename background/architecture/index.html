@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.121.0">
+    <meta name="generator" content="Relearn 5.23.2+tip">
+    <meta name="description" content="Arche&#39;s internal ECS architecture.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta name="twitter:title" content="Architecture :: Arche">
+    <meta name="twitter:description" content="Arche&#39;s internal ECS architecture.">
+    <meta property="og:title" content="Architecture :: Arche">
+    <meta property="og:description" content="Arche&#39;s internal ECS architecture.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://mlange-42.github.io/arche/background/architecture/index.html">
+    <meta property="og:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta property="article:section" content="Background :: Arche">
+    <meta property="og:site_name" content="Arche">
+    <title>Architecture :: Arche</title>
+    <link href="../../images/favicon.svg?1725973335" rel="icon" type="image/svg+xml">
+    <!-- https://github.com/filamentgroup/loadCSS/blob/master/README.md#how-to-use -->
+    <link href="../../css/fontawesome-all.min.css?1725973335" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fontawesome-all.min.css?1725973335" rel="stylesheet"></noscript>
+    <link href="../../css/nucleus.css?1725973335" rel="stylesheet">
+    <link href="../../css/auto-complete.css?1725973335" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/auto-complete.css?1725973335" rel="stylesheet"></noscript>
+    <link href="../../css/perfect-scrollbar.min.css?1725973335" rel="stylesheet">
+    <link href="../../css/fonts.css?1725973335" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fonts.css?1725973335" rel="stylesheet"></noscript>
+    <link href="../../css/theme.css?1725973335" rel="stylesheet">
+    <link href="../../css/theme-auto.css?1725973335" rel="stylesheet" id="R-variant-style">
+    <link href="../../css/chroma-auto.css?1725973335" rel="stylesheet" id="R-variant-chroma-style">
+    <link href="../../css/variant.css?1725973335" rel="stylesheet">
+    <link href="../../css/print.css?1725973335" rel="stylesheet" media="print">
+    <link href="../../css/ie.css?1725973335" rel="stylesheet">
+    <script src="../../js/url.js?1725973335"></script>
+    <script src="../../js/variant.js?1725973335"></script>
+    <script>
+      // hack to let hugo tell us how to get to the root when using relativeURLs, it needs to be called *url= for it to do its magic:
+      // https://github.com/gohugoio/hugo/blob/145b3fcce35fbac25c7033c91c1b7ae6d1179da8/transform/urlreplacers/absurlreplacer.go#L72
+      window.index_js_url="../../index.search.js";
+      var root_url="../../";
+      var baseUri=root_url.replace(/\/$/, '');
+      window.relearn = window.relearn || {};
+      window.relearn.baseUriFull='https:\/\/mlange-42.github.io\/arche/';
+      // variant stuff
+      window.relearn.themeVariantModifier='';
+      window.variants && variants.init( [ 'auto', 'light', 'dark' ] );
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script><link href="../../css/style.css" rel="stylesheet">
+<link href="../../css/cards.css" rel="stylesheet">
+
+  </head>
+  <body class="mobile-support html disableInlineCopyToClipboard" data-url="../../background/architecture/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper"><nav class="TableOfContents">
+  <ul>
+    <li><a href="#archetypes">Archetypes</a></li>
+    <li><a href="#world-entity-access">World entity access</a></li>
+    <li><a href="#performance">Performance</a></li>
+    <li><a href="#details">Details</a>
+      <ul>
+        <li><a href="#archetype-graph">Archetype graph</a></li>
+        <li><a href="#entity-relations">Entity relations</a></li>
+        <li><a href="#archetype-removal">Archetype removal</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../index.html"><span itemprop="name">Arche</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../background/index.html"><span itemprop="name">Background</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Architecture</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-edit" data-content-empty="disable" data-width-s="area-more" data-width-m="show" data-width-l="show"><a class="topbar-control" href="https://github.com/mlange-42/arche/edit/main/docs/content/background/architecture.md" target="_blank" title="Edit (CTRL&#43;ALT&#43;w)"><i class="fa-fw fas fa-pen"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../background/design/index.html" title="Design Philosophy (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../background/benchmarks/index.html" title="Benchmarks (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable default" tabindex="-1">
+        <div class="flex-block-wrapper">
+          <article class="default">
+            <header class="headline">
+            </header>
+<h1 id="architecture">Architecture</h1>
+
+<p>Arche uses an archetype-based architecture. Therefore the name &#x1f609;.</p>
+<p>This chapter explains the concept and Arche&rsquo;s take on it.</p>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#archetypes">Archetypes</a></li>
+    <li><a href="#world-entity-access">World entity access</a></li>
+    <li><a href="#performance">Performance</a></li>
+    <li><a href="#details">Details</a>
+      <ul>
+        <li><a href="#archetype-graph">Archetype graph</a></li>
+        <li><a href="#entity-relations">Entity relations</a></li>
+        <li><a href="#archetype-removal">Archetype removal</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+<h2 id="archetypes">Archetypes</h2>
+<p>The ASCII graph below illustrates the approach.
+Components for entities are stored in so-called archetypes. Archetypes represent unique combinations of components. This means that component data for all entities with exactly the same component is stored in the same archetype.</p>
+<p>In the illustration below, the first archetype holds entities with (only/exactly) the components A, B and C,
+as well as their components.
+Similarly, the second archetype contains all entities with A and C, and their components.</p>
+<div class="wrap-code highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="ln"> 1</span><span class="cl"> Entities   Archetypes   Bit masks    Queries
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">   E         E Comps
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">  |0|       |2|A|B|C|    111...   &lt;-.      &lt;---.
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">  |1|---.   |8|A|B|C|               |          |
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">  |2|   &#39;--&gt;|1|A|B|C|               |          |
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">  |3|       |3|A|B|C|               |--Q(A,C)  |
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">  |4|                               |  101...  |
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">  |6|   .--&gt;|7|A|C|      101...   &lt;-&#39;          |--Q(B)
+</span></span><span class="line"><span class="ln">10</span><span class="cl">  |7|---&#39;   |6|A|C|                            |  010...
+</span></span><span class="line"><span class="ln">11</span><span class="cl">  |8|       |4|A|C|                            |
+</span></span><span class="line"><span class="ln">12</span><span class="cl">  |9|---.                                      |
+</span></span><span class="line"><span class="ln">13</span><span class="cl">  |.|   |   |5|B|C|      011...            &lt;---&#39;
+</span></span><span class="line"><span class="ln">14</span><span class="cl">  |.|   &#39;--&gt;|9|B|C|
+</span></span><span class="line"><span class="ln">15</span><span class="cl">  |.|
+</span></span><span class="line"><span class="ln">16</span><span class="cl">  |.| &lt;===&gt; [Entity pool]</span></span></code></pre></div><p><em>Illustration of Arche&rsquo;s archetype-based architecture.</em></p>
+<p>The exact component composition of each archetype is encoded in a bitmask for fast comparison.
+Thus, queries can easily identify their relevant archetypes, and then simply iterate entities linearly, which is very fast
+and cache-friendly. Components can be accessed through a query in a very efficiently (≈1ns).</p>
+<h2 id="world-entity-access">World entity access</h2>
+<p>For getting components by entity, e.g. for hierarchies, the world contains a list that is indexed by the entity ID (left-most in the figure). For each entity, it references its current archetype and the position of the entity in the archetype. This way, getting components for entities (i.e. random access) is fast, although not as fast as in queries (≈2ns vs. 1ns).</p>
+<p>Note that the entities list also contains entities that are currently not alive,
+because they were removed.
+These entities are recycled when new entities are requested from the <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#World" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.World">ecs.World</code>
+    </a>
+</span>.
+Therefore, besides the ID shown in the illustration, each entity also has a generation
+variable. It is incremented on each &ldquo;reincarnation&rdquo; of an entity.
+Thus, it allows to distinguish recycled from dead entities, as well as from previous or later &ldquo;incarnations&rdquo;.</p>
+<h2 id="performance">Performance</h2>
+<p>Obviously, archetypes are an optimization for iteration speed.
+But they also come with a downside. Adding or removing components to/from an entity requires moving all the components of the entity to another archetype.
+This takes roughly 10-20ns per involved component.
+To reduce the number of archetype changes, it is recommended to add/remove/exchange multiple components at the same time rather than one after the other.</p>
+<p>However, as the benchmarks on the <a href="https://github.com/mlange-42/arche#benchmarks" target="_blank">repo README</a> illustrate,
+Arche seems to be the fastest Go ECS available.
+Not only in terms of iteration speed, which is particularly tailored for.
+Even when it comes to entity manipulation (adding, removing components etc.),
+where sparse-set ECS implementations should shine, Arche leads the field.</p>
+<p>For more numbers on performance, see chapter <a href="../../background/benchmarks/index.html">Benchmarks</a>.</p>
+<h2 id="details">Details</h2>
+<p>Actually, the explanation above is quite simplified.
+Particularly it leaves out <a href="../../guide/relations/index.html">Entity Relations</a> and the <em>archetypes graph</em> and <em>nodes</em>.</p>
+<h3 id="archetype-graph">Archetype graph</h3>
+<p>When components are added to or removed from an entity, it is necessary to find its new archetype.
+To accelerate the search, a graph of <em>archetype nodes</em> (or just <em>nodes</em>) is used.
+The figure below illustrates the concept.
+Each arrow represents the transition between two archetypes when a single component is added (solid arrow head)
+or removed (empty arrow head).
+Following these transitions, the archetype resulting from addition and/or removal of an arbitrary number
+of components can be found easily.</p>
+<p>
+
+<img alt="Archetype graph light" width="600" class="light" src="../../images/background/archetype-graph.svg"></img>
+<img alt="Archetype graph dark" width="600" class="dark" src="../../images/background/archetype-graph-dark.svg"></img>
+<br>
+<em>Illustration of the archetype graph. Letters represent components. Boxes represent archetype nodes.
+Arrows represent transitions when a single component is added or removed.</em></p>
+<p>Nodes and connections are created as needed. When searching for an archetype, the algorithm proceeds transition by transition.
+When looking for the next archetype, established transitions are checked first.
+If this is not successful, the resulting component mask is used to search through all nodes.
+On success, a new connection is established.
+If the required node was still not found, a new node is created.
+Then, the next transition it processed and so on, until the final node is found.
+Only then, an archetype is created for the node.</p>
+<p>As a result, the graph will in most cases not be fully connected.
+There will also not be all possible nodes (combinations of components) present.
+Nodes that are only traversed by the search but never receive entities contain no archetype and are called inactive.</p>
+<p>The graph stabilizes quickly.
+Then, only the fast following of transitions is required to find an archetype when components are added or removed.
+Transitions are stored in the nodes with lookup approx. 10 times faster than Go&rsquo;s <code>map</code>.</p>
+<h3 id="entity-relations">Entity relations</h3>
+<p>The <em>archetype nodes</em> explained above are utilized to implement Arche&rsquo;s <a href="../../guide/relations/index.html">Entity Relations</a> feature.
+When an archetype contains a relation components, the respective node contains an archetype &ldquo;table&rdquo;
+for each entity that is a target of that relation.
+As an example, we have components <code>A</code>, <code>B</code> and <code>R</code>, where <code>R</code> is a relation.
+Further, we have two parent entities <code>E1</code> and <code>E2</code>.
+When you create some entities with components <code>A B R(E1)</code> and <code>A B R(E2)</code>, i.e. with relation targets <code>E1</code> and <code>E2</code>,
+the following node is created:</p>
+<div class="wrap-code highlight"><pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="ln"> 1</span><span class="cl">  Node [ A B R ]
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">    |
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl">    |--- E1   E Comps
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">    |        |3|A|B|R|
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">    |        |6|A|B|R|
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">    |        |7|A|B|R|
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">    |
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">    &#39;--- E2   E Comps
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">             |4|A|B|R|
+</span></span><span class="line"><span class="ln">10</span><span class="cl">             |5|A|B|R|</span></span></code></pre></div><p>When querying without specifying a target, the &ldquo;inner&rdquo; archetypes are simply iterated if the node matches the filter.
+When querying with a relation target (and the node matches), the archetype for the target entity is looked up in a standard Go <code>map</code>.</p>
+<h3 id="archetype-removal">Archetype removal</h3>
+<p>Normal archetypes without a relation are never removed, because they are not a temporary thing.
+For relation archetypes, however, things are different.
+Once a target entity dies, it will never appear again (actually it could, after dying another 4294967294 times).</p>
+<p>In Arche, empty archetypes with a dead target are recycled.
+They are deactivated, but their allocated memory for entities and components is retained.
+When an archetype in the same node, but for another target entity is requested, it is reused.
+To be able to efficiently detect whether an archetype can be removed,
+a bitset is used to keep track of entities that are the target of a relation.</p>
+
+            <footer class="footline">
+            </footer>
+          </article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation showVisitedLinks">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+<a href="https://mlange-42.github.io/arche/" title="Home"><img src="https://mlange-42.github.io/arche/images/logo-dark.svg" alt="Arche Logo"></img></a>
+        </div>
+        <div class="searchbox default-animation">
+          <i class="fas fa-search" title="Search (CTRL+ALT+f)"></i>
+          <label class="a11y-only" for="R-search-by">Search</label>
+          <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+          <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+        </div>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../../js/auto-complete.js?1725973335" defer></script>
+        <script src="../../js/lunr/lunr.min.js?1725973335" defer></script>
+        <script src="../../js/lunr/lunr.stemmer.support.min.js?1725973335" defer></script>
+        <script src="../../js/lunr/lunr.multi.min.js?1725973335" defer></script>
+        <script src="../../js/lunr/lunr.en.min.js?1725973335" defer></script>
+        <script src="../../js/search.js?1725973335" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation">
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-topics">
+          <ul class="enlarge morespace collapsible-menu">
+          <li data-nav-id="/quickstart/index.html" class=""><a class="padding" href="../../quickstart/index.html">Quickstart<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/index.html" class=""><input type="checkbox" id="R-section-231d7ac600b0ccff382b28de1eb3e8ed" aria-controls="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed"><label for="R-section-231d7ac600b0ccff382b28de1eb3e8ed"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu User Guide</span></label><a class="padding" href="../../guide/index.html">User Guide<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed" class="morespace collapsible-menu">
+          <li data-nav-id="/guide/apis/index.html" class=""><a class="padding" href="../../guide/apis/index.html">Generic &amp; ID-based API<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world/index.html" class=""><a class="padding" href="../../guide/world/index.html">The World<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/entities/index.html" class=""><a class="padding" href="../../guide/entities/index.html">Entities &amp; Components<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/queries/index.html" class=""><a class="padding" href="../../guide/queries/index.html">Queries<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/filters/index.html" class=""><a class="padding" href="../../guide/filters/index.html">Filters<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world-access/index.html" class=""><a class="padding" href="../../guide/world-access/index.html">World Entity Access<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/relations/index.html" class=""><a class="padding" href="../../guide/relations/index.html">Entity Relations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/batch-ops/index.html" class=""><a class="padding" href="../../guide/batch-ops/index.html">Batch Operations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/resources/index.html" class=""><a class="padding" href="../../guide/resources/index.html">ECS Resources<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/events/index.html" class=""><a class="padding" href="../../guide/events/index.html">Event System<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/stats/index.html" class=""><a class="padding" href="../../guide/stats/index.html">World Statistics<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/performance/index.html" class=""><a class="padding" href="../../guide/performance/index.html">Performance Tips<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/tools/index.html" class=""><a class="padding" href="../../guide/tools/index.html">Tools<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/background/index.html" class="parent "><input type="checkbox" id="R-section-2c311fb29b03520a1306c5c783eda95a" aria-controls="R-subsections-2c311fb29b03520a1306c5c783eda95a" checked><label for="R-section-2c311fb29b03520a1306c5c783eda95a"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu Background</span></label><a class="padding" href="../../background/index.html">Background<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-2c311fb29b03520a1306c5c783eda95a" class="morespace collapsible-menu">
+          <li data-nav-id="/background/design/index.html" class=""><a class="padding" href="../../background/design/index.html">Design Philosophy<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/architecture/index.html" class="active"><a class="padding" href="../../background/architecture/index.html">Architecture<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/benchmarks/index.html" class=""><a class="padding" href="../../background/benchmarks/index.html">Benchmarks<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/changelog/index.html" class=""><a class="padding" href="../../background/changelog/index.html">Changelog<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/made_with/index.html" class=""><a class="padding" href="../../made_with/index.html">Made with Arche<i class="fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div id="R-shortcuts">
+          <div class="nav-title padding">More</div>
+          <ul class="space">
+            <li><a class="padding" href="https://github.com/mlange-42/arche"><i class='fab fa-fw fa-github'></i> GitHub repo</a></li>
+            <li><a class="padding" href="https://pkg.go.dev/github.com/mlange-42/arche"><i class='fas fa-fw fa-bookmark'></i> API reference</a></li>
+          </ul>
+        </div>
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks showVariantSwitch showVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-language fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = baseUri + this.value;">
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch showVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-paint-brush fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.variants && variants.changeVariant( this.value );">
+                      <option id="R-auto" value="auto" selected>Auto</option>
+                      <option id="R-light" value="light">Light</option>
+                      <option id="R-dark" value="dark">Dark</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.variants && variants.markSelectedVariant();</script>
+              </li>
+              <li class="footerVisitedLinks showVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fas fa-history fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter">
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../../js/clipboard.min.js?1725973335" defer></script>
+    <script src="../../js/perfect-scrollbar.min.js?1725973335" defer></script>
+    <script src="../../js/theme.js?1725973335" defer></script>
+  </body>
+</html>

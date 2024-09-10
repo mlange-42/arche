@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Arche</title>
+    <link>https://mlange-42.github.io/arche/index.html</link>
+    <description>Recent content on Arche</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <atom:link href="https://mlange-42.github.io/arche/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Quickstart</title>
+      <link>https://mlange-42.github.io/arche/quickstart/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/quickstart/index.html</guid>
+      <description>This page shows how to install Arche, and gives a minimal usage example.
+Finally, it points into possible directions to continue.
+Installation Usage example What&amp;rsquo;s next? Installation To use Arche in a Go project, run:
+1go get github.com/mlange-42/archeUsage example Here is the classical Position/Velocity example that every ECS shows in the docs. It uses the type-safe generic API.
+1package main 2 3import ( 4	&amp;#34;math/rand&amp;#34; 5 6	&amp;#34;github.com/mlange-42/arche/ecs&amp;#34; 7	&amp;#34;github.com/mlange-42/arche/generic&amp;#34; 8) 9 10// Position component 11type Position struct { 12	X float64 13	Y float64 14} 15 16// Velocity component 17type Velocity struct { 18	X float64 19	Y float64 20} 21 22func main() { 23	// Create a World.</description>
+    </item>
+    <item>
+      <title>User Guide</title>
+      <link>https://mlange-42.github.io/arche/guide/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/index.html</guid>
+      <description>Arche&amp;rsquo;s user guide.
+Usage The following chapters are designed to be read sequentially in the presented order. If you are familiar with ECS and know what you are looking for, you may also just look it up or use the search.
+If you are not familiar with the Entity Component System (ECS) concept, take a look at the great ECS FAQ by Sander Mertens, the author of the Flecs ECS.</description>
+    </item>
+    <item>
+      <title>Background</title>
+      <link>https://mlange-42.github.io/arche/background/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/background/index.html</guid>
+      <description>Background information on Arche&amp;rsquo;s design, architecture, performance and history.</description>
+    </item>
+    <item>
+      <title>Made with Arche</title>
+      <link>https://mlange-42.github.io/arche/made_with/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/made_with/index.html</guid>
+      <description>If you made something using Arche and would like to see it here, feel free to open an issue or start a discussion in the GitHub repository.
+Tiny World A tiny, slow-paced world and colony building game. Arche Demo Demo models and visualizations for Arche. </description>
+    </item>
+  </channel>
+</rss>
