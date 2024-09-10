@@ -9,7 +9,7 @@ import (
 )
 
 func TestEntityAsIndex(t *testing.T) {
-	entity := Entity{1, 0}
+	entity := Entity{id: 1}
 	arr := []int{0, 1, 2}
 
 	val := arr[entity.id]
