@@ -273,6 +273,26 @@ func ExampleWorld_Batch() {
 	// Output:
 }
 
+func ExampleWorld_Mask() {
+	world := ecs.NewWorld()
+	posID := ecs.ComponentID[Position](&world)
+	velID := ecs.ComponentID[Velocity](&world)
+
+	e1 := world.NewEntity(posID)
+	e2 := world.NewEntity(velID)
+
+	filter := ecs.All(posID)
+
+	// Use the entity's mask to check whether it is in the filter:
+	m1 := world.Mask(e1)
+	m2 := world.Mask(e2)
+	fmt.Println(filter.Matches(&m1))
+	fmt.Println(filter.Matches(&m2))
+	// Output:
+	//true
+	//false
+}
+
 func ExampleWorld_SetListener() {
 	world := ecs.NewWorld()
 

@@ -1,3 +1,9 @@
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.13.2...main)
+
+### Documentation
+
+* Adds an example for `World.Mask`, showing how to check whether a filter "contains" an entity (#428)
+
 ## [[v0.13.2]](https://github.com/mlange-42/arche/compare/v0.13.1...v0.13.2)
 
 ### Bugfixes
