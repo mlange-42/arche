@@ -35,33 +35,33 @@ func TestWorldConfig(t *testing.T) {
 func TestWorldEntites(t *testing.T) {
 	w := NewWorld()
 
-	assert.Equal(t, newEntityGen(1, 0), w.NewEntity())
-	assert.Equal(t, newEntityGen(2, 0), w.NewEntity())
-	assert.Equal(t, newEntityGen(3, 0), w.NewEntity())
+	assert.Equal(t, NewEntityGen(1, 0), w.NewEntity())
+	assert.Equal(t, NewEntityGen(2, 0), w.NewEntity())
+	assert.Equal(t, NewEntityGen(3, 0), w.NewEntity())
 
 	assert.Equal(t, 0, int(w.entities[0].index))
 	assert.Equal(t, 0, int(w.entities[1].index))
 	assert.Equal(t, 1, int(w.entities[2].index))
 	assert.Equal(t, 2, int(w.entities[3].index))
-	w.RemoveEntity(newEntityGen(2, 0))
-	assert.False(t, w.Alive(newEntityGen(2, 0)))
+	w.RemoveEntity(NewEntityGen(2, 0))
+	assert.False(t, w.Alive(NewEntityGen(2, 0)))
 
 	assert.Equal(t, 0, int(w.entities[1].index))
 	assert.Equal(t, 1, int(w.entities[3].index))
 
-	assert.Equal(t, newEntityGen(2, 1), w.NewEntity())
-	assert.False(t, w.Alive(newEntityGen(2, 0)))
-	assert.True(t, w.Alive(newEntityGen(2, 1)))
+	assert.Equal(t, NewEntityGen(2, 1), w.NewEntity())
+	assert.False(t, w.Alive(NewEntityGen(2, 0)))
+	assert.True(t, w.Alive(NewEntityGen(2, 1)))
 
 	assert.Equal(t, 2, int(w.entities[2].index))
 
-	w.RemoveEntity(newEntityGen(3, 0))
-	w.RemoveEntity(newEntityGen(2, 1))
-	w.RemoveEntity(newEntityGen(1, 0))
+	w.RemoveEntity(NewEntityGen(3, 0))
+	w.RemoveEntity(NewEntityGen(2, 1))
+	w.RemoveEntity(NewEntityGen(1, 0))
 
-	assert.PanicsWithValue(t, "can't remove a dead entity", func() { w.RemoveEntity(newEntityGen(3, 0)) })
-	assert.PanicsWithValue(t, "can't remove a dead entity", func() { w.RemoveEntity(newEntityGen(2, 1)) })
-	assert.PanicsWithValue(t, "can't remove a dead entity", func() { w.RemoveEntity(newEntityGen(1, 0)) })
+	assert.PanicsWithValue(t, "can't remove a dead entity", func() { w.RemoveEntity(NewEntityGen(3, 0)) })
+	assert.PanicsWithValue(t, "can't remove a dead entity", func() { w.RemoveEntity(NewEntityGen(2, 1)) })
+	assert.PanicsWithValue(t, "can't remove a dead entity", func() { w.RemoveEntity(NewEntityGen(1, 0)) })
 }
 
 func TestWorldNewEntites(t *testing.T) {
@@ -181,8 +181,8 @@ func TestWorldComponents(t *testing.T) {
 	w.Remove(e0)
 
 	w.RemoveEntity(e0)
-	assert.PanicsWithValue(t, "can't check for component of a dead entity", func() { w.Has(newEntityGen(1, 0), posID) })
-	assert.PanicsWithValue(t, "can't get component of a dead entity", func() { w.Get(newEntityGen(1, 0), posID) })
+	assert.PanicsWithValue(t, "can't check for component of a dead entity", func() { w.Has(NewEntityGen(1, 0), posID) })
+	assert.PanicsWithValue(t, "can't get component of a dead entity", func() { w.Get(NewEntityGen(1, 0), posID) })
 }
 
 func TestWorldIds(t *testing.T) {
