@@ -23,4 +23,11 @@ A tiny, slow-paced world and colony building game.
 Demo models and visualizations for Arche.
 {{< /card >}}
 
+{{< card 
+    title="Beecs"
+    image=https://github.com/user-attachments/assets/6fb0db2a-e31c-4565-8def-362624b606df
+    link=https://github.com/mlange-42/beecs >}}
+The [BEEHAVE](https://beehave-model.net/) honeybee model, using Arche.
+{{< /card >}}
+
 {{< /row >}}
