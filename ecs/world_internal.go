@@ -405,6 +405,8 @@ func (w *World) assign(entity Entity, relation ID, hasRelation bool, target Enti
 }
 
 // exchange with relation target.
+// Panics if adding a component already present or removing a component not present.
+// Also panics if the same component ID is in the add or remove list twice.
 func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) {
 	if w.listener != nil {
 		arch, oldMask, oldTarget, oldRel := w.exchangeNoNotify(entity, add, rem, relation, hasRelation, target)
@@ -520,6 +522,8 @@ func (w *World) notifyExchange(arch *archetype, oldMask *Mask, entity Entity, ad
 }
 
 // Modify a mask by adding and removing IDs.
+// Panics if adding a component already present or removing a component not present.
+// Also panics if the same component ID is in the add or remove list twice.
 func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 	for _, comp := range rem {
 		if !mask.Get(comp) {
