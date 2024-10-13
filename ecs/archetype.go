@@ -140,29 +140,6 @@ func (a *archetype) AllocN(count uint32) {
 	a.len += count
 }
 
-// Add adds an entity with components to the archetype.
-func (a *archetype) Add(entity Entity, components ...Component) uint32 {
-	if len(components) != len(a.node.Ids) {
-		panic("Invalid number of components")
-	}
-	idx := a.len
-
-	a.extend(1)
-	a.addEntity(idx, &entity)
-	for _, c := range components {
-		lay := a.getLayout(c.ID)
-		size := lay.itemSize
-		if size == 0 {
-			continue
-		}
-		src := reflect.ValueOf(c.Comp).UnsafePointer()
-		dst := a.Get(idx, c.ID)
-		a.copy(src, dst, size)
-	}
-	a.len++
-	return idx
-}
-
 // Remove removes an entity and its components from the archetype.
 //
 // Performs a swap-remove and reports whether a swap was necessary

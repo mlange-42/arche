@@ -18,17 +18,13 @@ func TestArchetype(t *testing.T) {
 	data := archetypeData{}
 	arch.Init(&node, &data, 0, false, 16, Entity{})
 
-	arch.Add(
-		newEntity(0),
-		Component{ID: id(0), Comp: &Position{1, 2}},
-		Component{ID: id(1), Comp: &rotation{3}},
-	)
+	idx := arch.Alloc(newEntity(0))
+	arch.Set(idx, id(0), &Position{1, 2})
+	arch.Set(idx, id(1), &rotation{3})
 
-	arch.Add(
-		newEntity(1),
-		Component{ID: id(0), Comp: &Position{4, 5}},
-		Component{ID: id(1), Comp: &rotation{6}},
-	)
+	idx = arch.Alloc(newEntity(1))
+	arch.Set(idx, id(0), &Position{4, 5})
+	arch.Set(idx, id(1), &rotation{6})
 
 	assert.Equal(t, 2, int(arch.Len()))
 
@@ -57,13 +53,6 @@ func TestArchetype(t *testing.T) {
 	assert.Equal(t, 4, pos0.X)
 	assert.Equal(t, 5, pos0.Y)
 	assert.Equal(t, 6, rot0.Angle)
-
-	assert.PanicsWithValue(t, "Invalid number of components", func() {
-		arch.Add(
-			newEntity(1),
-			Component{ID: id(0), Comp: &Position{4, 5}},
-		)
-	})
 }
 
 func TestNewArchetype(t *testing.T) {
@@ -189,8 +178,13 @@ func TestArchetypeAddGetSet(t *testing.T) {
 	assert.Equal(t, 1, int(a.Cap()))
 	assert.Equal(t, 0, int(a.Len()))
 
-	a.Add(Entity{1, 0}, Component{ID: id(0), Comp: &testStruct0{100}}, Component{ID: id(1), Comp: &label{}})
-	a.Add(Entity{2, 0}, Component{ID: id(0), Comp: &testStruct0{200}}, Component{ID: id(1), Comp: &label{}})
+	idx := a.Alloc(Entity{1, 0})
+	a.Set(idx, id(0), &testStruct0{100})
+	a.Set(idx, id(1), &label{})
+
+	idx = a.Alloc(Entity{2, 0})
+	a.Set(idx, id(0), &testStruct0{200})
+	a.Set(idx, id(1), &label{})
 
 	ts := (*testStruct0)(a.Get(0, id(0)))
 	assert.Equal(t, 100, int(ts.Val))
@@ -222,17 +216,13 @@ func TestArchetypeReset(t *testing.T) {
 	data := archetypeData{}
 	arch.Init(&node, &data, 0, false, 16, Entity{})
 
-	arch.Add(
-		newEntity(0),
-		Component{ID: id(0), Comp: &Position{1, 2}},
-		Component{ID: id(1), Comp: &rotation{3}},
-	)
+	idx := arch.Alloc(newEntity(0))
+	arch.Set(idx, id(0), &Position{1, 2})
+	arch.Set(idx, id(1), &rotation{3})
 
-	arch.Add(
-		newEntity(1),
-		Component{ID: id(0), Comp: &Position{4, 5}},
-		Component{ID: id(1), Comp: &rotation{6}},
-	)
+	idx = arch.Alloc(newEntity(1))
+	arch.Set(idx, id(0), &Position{4, 5})
+	arch.Set(idx, id(1), &rotation{6})
 
 	assert.Equal(t, Position{1, 2}, *(*Position)(arch.Get(0, id(0))))
 	assert.Equal(t, Position{4, 5}, *(*Position)(arch.Get(1, id(0))))
@@ -241,17 +231,13 @@ func TestArchetypeReset(t *testing.T) {
 	arch.Reset()
 	assert.Equal(t, 0, int(arch.Len()))
 
-	arch.Add(
-		newEntity(0),
-		Component{ID: id(0), Comp: &Position{10, 20}},
-		Component{ID: id(1), Comp: &rotation{3}},
-	)
+	idx = arch.Alloc(newEntity(0))
+	arch.Set(idx, id(0), &Position{10, 20})
+	arch.Set(idx, id(1), &rotation{3})
 
-	arch.Add(
-		newEntity(1),
-		Component{ID: id(0), Comp: &Position{40, 50}},
-		Component{ID: id(1), Comp: &rotation{6}},
-	)
+	idx = arch.Alloc(newEntity(1))
+	arch.Set(idx, id(0), &Position{40, 50})
+	arch.Set(idx, id(1), &rotation{6})
 
 	assert.Equal(t, Position{10, 20}, *(*Position)(arch.Get(0, id(0))))
 	assert.Equal(t, Position{40, 50}, *(*Position)(arch.Get(1, id(0))))
