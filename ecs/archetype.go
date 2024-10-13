@@ -184,6 +184,9 @@ func (a *archetype) Remove(index uint32) bool {
 			a.copy(src, dst, size)
 		}
 	}
+
+	// Zero the free memory to allow the garbage collector
+	// to take into account pointers in the removed component.
 	a.ZeroAll(old)
 	a.len--
 
@@ -197,7 +200,7 @@ func (a *archetype) ZeroAll(index uint32) {
 	}
 }
 
-// ZeroAll resets a block of storage in one buffer.
+// Zero resets a block of storage in one buffer.
 func (a *archetype) Zero(index uint32, id ID) {
 	lay := a.getLayout(id)
 	size := lay.itemSize
