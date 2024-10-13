@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.121.0">
+    <meta name="generator" content="Relearn 5.23.2+tip">
+    <meta name="description" content="Documentation for Arche, the Go Entity Component System (ECS)">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta name="twitter:title" content="Arche">
+    <meta name="twitter:description" content="Documentation for Arche, the Go Entity Component System (ECS)">
+    <meta property="og:title" content="Arche">
+    <meta property="og:description" content="Documentation for Arche, the Go Entity Component System (ECS)">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://mlange-42.github.io/arche/index.html">
+    <meta property="og:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta property="og:site_name" content="Arche">
+    <title>Arche</title>
+    <link href="./index.xml" rel="alternate" type="application/rss+xml" title="Arche">
+    <link href="./images/favicon.svg?1728833897" rel="icon" type="image/svg+xml">
+    <!-- https://github.com/filamentgroup/loadCSS/blob/master/README.md#how-to-use -->
+    <link href="./css/fontawesome-all.min.css?1728833897" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="./css/fontawesome-all.min.css?1728833897" rel="stylesheet"></noscript>
+    <link href="./css/nucleus.css?1728833897" rel="stylesheet">
+    <link href="./css/auto-complete.css?1728833897" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="./css/auto-complete.css?1728833897" rel="stylesheet"></noscript>
+    <link href="./css/perfect-scrollbar.min.css?1728833897" rel="stylesheet">
+    <link href="./css/fonts.css?1728833897" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="./css/fonts.css?1728833897" rel="stylesheet"></noscript>
+    <link href="./css/theme.css?1728833897" rel="stylesheet">
+    <link href="./css/theme-auto.css?1728833897" rel="stylesheet" id="R-variant-style">
+    <link href="./css/chroma-auto.css?1728833897" rel="stylesheet" id="R-variant-chroma-style">
+    <link href="./css/variant.css?1728833897" rel="stylesheet">
+    <link href="./css/print.css?1728833897" rel="stylesheet" media="print">
+    <link href="./css/ie.css?1728833897" rel="stylesheet">
+    <script src="./js/url.js?1728833897"></script>
+    <script src="./js/variant.js?1728833897"></script>
+    <script>
+      // hack to let hugo tell us how to get to the root when using relativeURLs, it needs to be called *url= for it to do its magic:
+      // https://github.com/gohugoio/hugo/blob/145b3fcce35fbac25c7033c91c1b7ae6d1179da8/transform/urlreplacers/absurlreplacer.go#L72
+      window.index_js_url="./index.search.js";
+      var root_url="./";
+      var baseUri=root_url.replace(/\/$/, '');
+      window.relearn = window.relearn || {};
+      window.relearn.baseUriFull='https:\/\/mlange-42.github.io\/arche/';
+      // variant stuff
+      window.relearn.themeVariantModifier='';
+      window.variants && variants.init( [ 'auto', 'light', 'dark' ] );
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script><link href="./css/style.css" rel="stylesheet">
+<link href="./css/cards.css" rel="stylesheet">
+
+  </head>
+  <body class="mobile-support html disableInlineCopyToClipboard" data-url="./index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper"><nav class="TableOfContents">
+  <ul>
+    <li><a href="#arches-features">Arche&rsquo;s Features</a></li>
+    <li><a href="#cite-as">Cite as</a></li>
+    <li><a href="#contributing">Contributing</a></li>
+    <li><a href="#license">License</a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Arche</span><meta itemprop="position" content="1"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-edit" data-content-empty="disable" data-width-s="area-more" data-width-m="show" data-width-l="show"><a class="topbar-control" href="https://github.com/mlange-42/arche/edit/main/docs/content/_index.md" target="_blank" title="Edit (CTRL&#43;ALT&#43;w)"><i class="fa-fw fas fa-pen"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><span class="topbar-control"><i class="fa-fw fas fa-chevron-left"></i></span>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="./quickstart/index.html" title="Quickstart (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable home" tabindex="-1">
+        <div class="flex-block-wrapper">
+          <article class="home">
+            <header class="headline">
+            </header>
+
+
+
+
+<img src="images/logo-light.svg" alt="Arche" class="light" style="width: 100%; max-width: 680px; margin:24px auto 24px auto;"/>
+<img src="images/logo-dark.svg" alt="Arche" class="dark" style="width: 100%; max-width: 680px; margin:24px auto 24px auto;"/>
+
+<div style="width 100%; text-align: center;">
+<a href="https://github.com/mlange-42/arche/actions/workflows/tests.yml" style="display:inline-block">
+<img alt="Test status" src="https://img.shields.io/github/actions/workflow/status/mlange-42/arche/tests.yml?branch=main&label=Tests&logo=github"></img></a>
+
+<a href="https://badge.coveralls.io/github/mlange-42/arche?branch=main" style="display:inline-block">
+<img alt="Coverage Status" src="https://img.shields.io/coverallsCoverage/github/mlange-42/arche?logo=coveralls"></img></a>
+
+<a href="https://goreportcard.com/report/github.com/mlange-42/arche" style="display:inline-block">
+<img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/mlange-42/arche"></img></a>
+
+<a href="https://mlange-42.github.io/arche/" style="display:inline-block">
+<img alt="User Guide" src="https://img.shields.io/badge/user_guide-%23007D9C?logo=go&logoColor=white&labelColor=gray"></img></a>
+
+<a href="https://pkg.go.dev/github.com/mlange-42/arche" style="display:inline-block">
+<img alt="Go Reference" src="https://img.shields.io/badge/reference-%23007D9C?logo=go&logoColor=white&labelColor=gray"></img></a>
+
+<a href="https://github.com/mlange-42/arche" style="display:inline-block">
+<img alt="GitHub" src="https://img.shields.io/badge/github-repo-blue?logo=github"></img></a>
+
+<a href="https://doi.org/10.5281/zenodo.7656484" style="display:inline-block">
+<img alt="DOI:10.5281/zenodo.7656484" src="https://img.shields.io/badge/10.5281%2Fzenodo.7656484-blue?label=doi"></img></a>
+
+<a href="https://github.com/mlange-42/arche/blob/main/LICENSE" style="display:inline-block">
+<img alt="MIT license" src="https://img.shields.io/badge/MIT-brightgreen?label=license"></img></a>
+</div>
+
+<p><em>Arche</em> is an <a href="./background/architecture/index.html">archetype</a>-based <a href="https://en.wikipedia.org/wiki/Entity_component_system" target="_blank">Entity Component System</a> for <a href="https://go.dev/" target="_blank">Go</a>.</p>
+<p><em>Arche</em> is designed for the use in simulation models of the
+<a href="https://www.ufz.de/index.php?en=34213" target="_blank">Department of Ecological Modelling</a> at the
+<a href="https://www.ufz.de" target="_blank">Helmholtz Centre for Environmental Research</a>.</p>
+<h2 id="arches-features">Arche&rsquo;s Features</h2>
+<ul>
+<li>Simple core API. See the <a href="https://pkg.go.dev/github.com/mlange-42/arche" target="_blank">API docs</a>.</li>
+<li>Optional logic <a href="https://pkg.go.dev/github.com/mlange-42/arche/filter" target="_blank">filter</a> and type-safe <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic" target="_blank">generic</a> API.</li>
+<li>Entity relations as first-class feature. See the <a href="https://mlange-42.github.io/arche/guide/relations/" target="_blank">User Guide</a>.</li>
+<li>World serialization and deserialization with <a href="https://github.com/mlange-42/arche-serde" target="_blank">arche-serde</a>.</li>
+<li>No systems. Just queries. Use your own structure (or the <a href="https://github.com/mlange-42/arche#tools" target="_blank">Tools</a>).</li>
+<li>No dependencies. Except for unit tests (<a href="https://coveralls.io/github/mlange-42/arche" target="_blank">100% coverage</a>).</li>
+<li>Probably the fastest Go ECS out there. See the <a href="https://github.com/mlange-42/arche#benchmarks" target="_blank">Benchmarks</a>.</li>
+</ul>
+<p>For more information, see the <a href="https://github.com/mlange-42/arche" target="_blank">GitHub repository</a> and <a href="https://pkg.go.dev/github.com/mlange-42/arche" target="_blank">API docs</a>.</p>
+<h2 id="cite-as">Cite as</h2>
+<p>Lange, M. (2023): Arche – An archetype-based Entity Component System for Go. DOI <a href="https://doi.org/10.5281/zenodo.7656484" target="_blank">10.5281/zenodo.7656484</a>,  GitHub repository: <a href="https://github.com/mlange-42/arche" target="_blank">https://github.com/mlange-42/arche</a></p>
+<h2 id="contributing">Contributing</h2>
+<p>Open an <a href="https://github.com/mlange-42/arche/issues" target="_blank">issue</a>
+or start a <a href="https://github.com/mlange-42/arche/discussions" target="_blank">discussion</a>
+in the <a href="https://github.com/mlange-42/arche/">GitHub repository</a>
+if you have questions, feedback, feature ideas or want to report a bug.
+Pull requests are welcome.</p>
+<h2 id="license">License</h2>
+<p><em>Arche</em> and all its sources are released under the <a href="https://github.com/mlange-42/arche/blob/main/LICENSE" target="_blank">MIT License</a>.</p>
+
+            <footer class="footline">
+            </footer>
+          </article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation showVisitedLinks">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+<a href="https://mlange-42.github.io/arche/" title="Home"><img src="https://mlange-42.github.io/arche/images/logo-dark.svg" alt="Arche Logo"></img></a>
+        </div>
+        <div class="searchbox default-animation">
+          <i class="fas fa-search" title="Search (CTRL+ALT+f)"></i>
+          <label class="a11y-only" for="R-search-by">Search</label>
+          <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+          <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+        </div>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="./js/auto-complete.js?1728833897" defer></script>
+        <script src="./js/lunr/lunr.min.js?1728833897" defer></script>
+        <script src="./js/lunr/lunr.stemmer.support.min.js?1728833897" defer></script>
+        <script src="./js/lunr/lunr.multi.min.js?1728833897" defer></script>
+        <script src="./js/lunr/lunr.en.min.js?1728833897" defer></script>
+        <script src="./js/search.js?1728833897" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation">
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-topics">
+          <ul class="enlarge morespace collapsible-menu">
+          <li data-nav-id="/quickstart/index.html" class=""><a class="padding" href="./quickstart/index.html">Quickstart<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/index.html" class=""><input type="checkbox" id="R-section-231d7ac600b0ccff382b28de1eb3e8ed" aria-controls="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed"><label for="R-section-231d7ac600b0ccff382b28de1eb3e8ed"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu User Guide</span></label><a class="padding" href="./guide/index.html">User Guide<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed" class="morespace collapsible-menu">
+          <li data-nav-id="/guide/apis/index.html" class=""><a class="padding" href="./guide/apis/index.html">Generic &amp; ID-based API<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world/index.html" class=""><a class="padding" href="./guide/world/index.html">The World<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/entities/index.html" class=""><a class="padding" href="./guide/entities/index.html">Entities &amp; Components<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/queries/index.html" class=""><a class="padding" href="./guide/queries/index.html">Queries<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/filters/index.html" class=""><a class="padding" href="./guide/filters/index.html">Filters<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world-access/index.html" class=""><a class="padding" href="./guide/world-access/index.html">World Entity Access<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/relations/index.html" class=""><a class="padding" href="./guide/relations/index.html">Entity Relations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/batch-ops/index.html" class=""><a class="padding" href="./guide/batch-ops/index.html">Batch Operations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/resources/index.html" class=""><a class="padding" href="./guide/resources/index.html">ECS Resources<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/events/index.html" class=""><a class="padding" href="./guide/events/index.html">Event System<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/stats/index.html" class=""><a class="padding" href="./guide/stats/index.html">World Statistics<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/performance/index.html" class=""><a class="padding" href="./guide/performance/index.html">Performance Tips<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/tools/index.html" class=""><a class="padding" href="./guide/tools/index.html">Tools<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/background/index.html" class=""><input type="checkbox" id="R-section-2c311fb29b03520a1306c5c783eda95a" aria-controls="R-subsections-2c311fb29b03520a1306c5c783eda95a"><label for="R-section-2c311fb29b03520a1306c5c783eda95a"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu Background</span></label><a class="padding" href="./background/index.html">Background<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-2c311fb29b03520a1306c5c783eda95a" class="morespace collapsible-menu">
+          <li data-nav-id="/background/design/index.html" class=""><a class="padding" href="./background/design/index.html">Design Philosophy<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/architecture/index.html" class=""><a class="padding" href="./background/architecture/index.html">Architecture<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/benchmarks/index.html" class=""><a class="padding" href="./background/benchmarks/index.html">Benchmarks<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/changelog/index.html" class=""><a class="padding" href="./background/changelog/index.html">Changelog<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/made_with/index.html" class=""><a class="padding" href="./made_with/index.html">Made with Arche<i class="fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div id="R-shortcuts">
+          <div class="nav-title padding">More</div>
+          <ul class="space">
+            <li><a class="padding" href="https://github.com/mlange-42/arche"><i class='fab fa-fw fa-github'></i> GitHub repo</a></li>
+            <li><a class="padding" href="https://pkg.go.dev/github.com/mlange-42/arche"><i class='fas fa-fw fa-bookmark'></i> API reference</a></li>
+          </ul>
+        </div>
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks showVariantSwitch showVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-language fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = baseUri + this.value;">
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch showVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-paint-brush fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.variants && variants.changeVariant( this.value );">
+                      <option id="R-auto" value="auto" selected>Auto</option>
+                      <option id="R-light" value="light">Light</option>
+                      <option id="R-dark" value="dark">Dark</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.variants && variants.markSelectedVariant();</script>
+              </li>
+              <li class="footerVisitedLinks showVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fas fa-history fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter">
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="./js/clipboard.min.js?1728833897" defer></script>
+    <script src="./js/perfect-scrollbar.min.js?1728833897" defer></script>
+    <script src="./js/theme.js?1728833897" defer></script>
+  </body>
+</html>
