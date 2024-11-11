@@ -95,7 +95,9 @@ func (p *entityPool) Available() int {
 	return int(p.available)
 }
 
-// bitPool is an entityPool implementation using implicit linked lists.
+// bitPool is a pool of bits that makes it possible to obtain an un-set bit,
+// and to recycle that bit for later use.
+// This implementation uses an implicit list.
 type bitPool struct {
 	length    uint16
 	bits      [MaskTotalBits]uint8
