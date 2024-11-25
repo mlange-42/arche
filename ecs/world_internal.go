@@ -922,12 +922,12 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 			relation = ID{}
 			hasRelation = false
 		}
-		if next, ok := curr.TransitionRemove.Get(id.id); ok {
+		if next, ok := curr.neighbors.Get(id.id); ok {
 			curr = next
 		} else {
 			next, _ := w.findOrCreateArchetypeSlow(mask, relation, hasRelation)
-			next.TransitionAdd.Set(id.id, curr)
-			curr.TransitionRemove.Set(id.id, next)
+			next.neighbors.Set(id.id, curr)
+			curr.neighbors.Set(id.id, next)
 			curr = next
 		}
 	}
@@ -946,12 +946,12 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 			relation = id
 			hasRelation = true
 		}
-		if next, ok := curr.TransitionAdd.Get(id.id); ok {
+		if next, ok := curr.neighbors.Get(id.id); ok {
 			curr = next
 		} else {
 			next, _ := w.findOrCreateArchetypeSlow(mask, relation, hasRelation)
-			next.TransitionRemove.Set(id.id, curr)
-			curr.TransitionAdd.Set(id.id, next)
+			next.neighbors.Set(id.id, curr)
+			curr.neighbors.Set(id.id, next)
 			curr = next
 		}
 	}
