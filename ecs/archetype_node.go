@@ -26,8 +26,7 @@ type nodeData struct {
 	zeroValue         []byte                // Used as source for setting storage to zero
 	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
 	archetypeData     pagedSlice[archetypeData]
-	TransitionAdd     idMap[*archNode] // Mapping from component ID to add to the resulting archetype
-	TransitionRemove  idMap[*archNode] // Mapping from component ID to remove to the resulting archetype
+	neighbors         idMap[*archNode] // Mapping from component ID to add/remove, to the resulting archetype
 	capacityIncrement uint32           // Capacity increment
 }
 
@@ -70,8 +69,7 @@ func newArchNode(mask Mask, data *nodeData, relation ID, hasRelation bool, capac
 	data.capacityIncrement = uint32(capacityIncrement)
 	data.zeroValue = zeroValue
 	data.zeroPointer = zeroPointer
-	data.TransitionAdd = newIDMap[*archNode]()
-	data.TransitionRemove = newIDMap[*archNode]()
+	data.neighbors = newIDMap[*archNode]()
 
 	return archNode{
 		nodeData:    data,
