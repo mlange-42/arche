@@ -1,13 +1,13 @@
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.13.2...main)
+## [[v0.13.3]](https://github.com/mlange-42/arche/compare/v0.13.2...v0.13.3)
+
+### Performance
+
+* Simplifies the archetype graph to use only a single list of neighbors per node, saving a bit of memory (#433)
 
 ### Documentation
 
 * Adds an example for `World.Mask`, showing how to check whether a filter "contains" an entity (#428)
 * Adds the [beecs](https://github.com/mlange-42/beecs) implementation of [BEEHAVE](https://beehave-model.net/) to the showcase (#429)
-
-### Performance
-
-* Simplifies the archetype graph to use only a single list of neighbors per node, saving a bit of memory (#433)
 
 ## [[v0.13.2]](https://github.com/mlange-42/arche/compare/v0.13.1...v0.13.2)
 
