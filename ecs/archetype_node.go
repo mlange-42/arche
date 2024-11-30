@@ -98,11 +98,12 @@ func (a *archNode) Archetypes() archetypes {
 // GetArchetype returns the archetype for the given relation target.
 //
 // The target is ignored if the node has no relation component.
-func (a *archNode) GetArchetype(target Entity) *archetype {
+func (a *archNode) GetArchetype(target Entity) (*archetype, bool) {
 	if a.HasRelation {
-		return a.archetypeMap[target]
+		arch, ok := a.archetypeMap[target]
+		return arch, ok
 	}
-	return a.archetype
+	return a.archetype, a.archetype != nil
 }
 
 // SetArchetype sets the archetype for a node without a relation.

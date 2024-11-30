@@ -130,8 +130,9 @@ func TestArchetypeExtendLayouts(t *testing.T) {
 
 	node = newArchNode(All(id(0), id(1)), &nodeData{}, id(2), true, 8, comps)
 	node.CreateArchetype(16, entity)
-	arch2 := node.GetArchetype(entity)
+	arch2, ok := node.GetArchetype(entity)
 
+	assert.True(t, ok)
 	assert.Equal(t, len(arch2.layouts), 16)
 	node.ExtendArchetypeLayouts(16)
 	assert.Equal(t, len(arch2.layouts), 16)
