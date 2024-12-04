@@ -1,0 +1,40 @@
+body {
+    font-size: 1.15rem;
+    tab-size: 2em;
+}
+
+.small {
+    font-size: 1.1rem;
+}
+
+pre:not(.mermaid) code {
+    font-size: 0.96rem;
+}
+
+#R-sidebar {
+    font-size: 1.0rem;
+}
+
+#TableOfContents, .TableOfContents {
+    font-size: 1.1rem;
+}
+
+nav#TableOfContents ul {
+    text-align: center;
+}
+
+nav#TableOfContents ul ul {
+    display: none;
+}
+
+#TableOfContents > ul > li {
+    display: inline;
+}
+
+#TableOfContents > ul > li + li::before {
+    content: " \002022  ";
+}
+
+#TableOfContents > ul > li > a, .TableOfContents > ul > li > a {
+    font-weight: 400;
+}
