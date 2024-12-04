@@ -729,8 +729,8 @@ func (w *World) setRelation(entity Entity, comp ID, target Entity) {
 		return
 	}
 
-	arch := oldArch.node.GetArchetype(target)
-	if arch == nil {
+	arch, ok := oldArch.node.GetArchetype(target)
+	if !ok {
 		arch = w.createArchetype(oldArch.node, target, true)
 	}
 
@@ -824,8 +824,8 @@ func (w *World) setRelationArch(oldArch *archetype, oldArchLen uint32, comp ID, 
 
 	oldIDs := oldArch.Components()
 
-	arch := oldArch.node.GetArchetype(target)
-	if arch == nil {
+	arch, ok := oldArch.node.GetArchetype(target)
+	if !ok {
 		arch = w.createArchetype(oldArch.node, target, true)
 	}
 
@@ -955,8 +955,8 @@ func (w *World) findOrCreateArchetype(start *archetype, add []ID, rem []ID, targ
 			curr = next
 		}
 	}
-	arch := curr.GetArchetype(target)
-	if arch == nil {
+	arch, ok := curr.GetArchetype(target)
+	if !ok {
 		arch = w.createArchetype(curr, target, true)
 	}
 	return arch
