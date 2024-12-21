@@ -1959,7 +1959,7 @@ func TestWorldPointerStressTestAssign(t *testing.T) {
 			w.Assign(e,
 				Component{
 					ID:   id,
-					Comp: &PointerType{&Position{X: int(e.id), Y: 2}},
+					Comp: &PointerComp{&PointerType{&Position{X: int(e.id), Y: 2}}},
 				},
 			)
 		}
