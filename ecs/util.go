@@ -2,7 +2,6 @@ package ecs
 
 import (
 	"fmt"
-	"reflect"
 	"strings"
 
 	"github.com/mlange-42/arche/ecs/event"
@@ -168,40 +167,6 @@ func (p *pagedSlice[T]) Set(index int32, value T) {
 // Len returns the current number of items in the paged slice.
 func (p *pagedSlice[T]) Len() int32 {
 	return p.len
-}
-
-func containsPointers(value reflect.Value) bool {
-	return containsPointersRecursive(value, true)
-}
-
-func containsPointersRecursive(value reflect.Value, root bool) bool {
-	switch value.Kind() {
-	case reflect.Interface:
-		return true
-	case reflect.Ptr:
-		if !root {
-			return true
-		}
-		v := value.Elem()
-		return containsPointersRecursive(v, false)
-	case reflect.Struct:
-		for i := 0; i < value.NumField(); i++ {
-			if containsPointersRecursive(value.Field(i), false) {
-				return true
-			}
-		}
-	case reflect.Slice:
-		return value.Len() > 0
-	case reflect.Array:
-		for i := 0; i < value.Len(); i++ {
-			if containsPointersRecursive(value.Index(i), false) {
-				return true
-			}
-		}
-	case reflect.Map:
-		return value.Len() > 0
-	}
-	return false
 }
 
 // Prints world nodes and archetypes.

@@ -1,7 +1,6 @@
 package ecs
 
 import (
-	"reflect"
 	"testing"
 	"unsafe"
 
@@ -162,39 +161,4 @@ func BenchmarkPagedSlice_Get(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		sum += *s.Get(int32(i % count))
 	}
-}
-
-func TestContainsPointers(t *testing.T) {
-	v1 := struct{ V int }{}
-	assert.False(t, containsPointers(reflect.ValueOf(v1)))
-	assert.False(t, containsPointers(reflect.ValueOf(&v1)))
-
-	v2 := struct{ V []int }{}
-	assert.False(t, containsPointers(reflect.ValueOf(v2)))
-	assert.False(t, containsPointers(reflect.ValueOf(&v2)))
-
-	v2 = struct{ V []int }{V: []int{1, 2, 3}}
-	assert.True(t, containsPointers(reflect.ValueOf(v2)))
-	assert.True(t, containsPointers(reflect.ValueOf(&v2)))
-
-	v3 := struct{ V *int }{}
-	assert.True(t, containsPointers(reflect.ValueOf(v3)))
-	assert.True(t, containsPointers(reflect.ValueOf(&v3)))
-}
-
-func BenchmarkContainsPointers(b *testing.B) {
-	b.StopTimer()
-
-	v := struct{ V []int }{V: []int{1, 2, 3}}
-	rVal := reflect.ValueOf(v)
-
-	b.StartTimer()
-
-	val := false
-	for i := 0; i < b.N; i++ {
-		val = containsPointers(rVal)
-	}
-	b.StopTimer()
-
-	assert.True(b, val)
 }
