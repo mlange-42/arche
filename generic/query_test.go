@@ -7,6 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+//lint:file-ignore SA1019 Ignore deprecated World.Assign.
+
 func TestQueryOptionalNot(t *testing.T) {
 	w := ecs.NewWorld()
 
@@ -16,18 +18,9 @@ func TestQueryOptionalNot(t *testing.T) {
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
-	w.Assign(e0, ecs.Component{ID: ids[1], Comp: &testStruct1{1}})
-
-	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
-	w.Assign(e1, ecs.Component{ID: ids[1], Comp: &testStruct1{2}})
-	w.Assign(e1, ecs.Component{ID: ids[2], Comp: &testStruct2{1, 1}})
-	w.Assign(e1, ecs.Component{ID: ids[8], Comp: &testStruct8{}})
-
-	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{3}})
-	w.Assign(e2, ecs.Component{ID: ids[1], Comp: &testStruct1{3}})
-	w.Assign(e2, ecs.Component{ID: ids[2], Comp: &testStruct2{1, 1}})
-	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
+	w.Add(e0, ids[0], ids[1])
+	w.Add(e1, ids[0], ids[1], ids[2], ids[8])
+	w.Add(e2, ids[0], ids[1], ids[2], ids[9])
 
 	query2 := NewFilter2[testStruct0, testStruct1]().Query(&w)
 	cnt := 0
@@ -111,13 +104,9 @@ func TestQuery0(t *testing.T) {
 	e1 := w.NewEntity()
 	e2 := w.NewEntity()
 
-	w.Assign(e0, ecs.Component{ID: ids[0], Comp: &testStruct0{1}})
-	w.Assign(e0, ecs.Component{ID: ids[8], Comp: &testStruct8{}})
-
-	w.Assign(e1, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
-
-	w.Assign(e2, ecs.Component{ID: ids[0], Comp: &testStruct0{2}})
-	w.Assign(e2, ecs.Component{ID: ids[9], Comp: &testStruct9{}})
+	w.Add(e0, ids[0], ids[8])
+	w.Add(e1, ids[0])
+	w.Add(e2, ids[0], ids[9])
 
 	cnt := 0
 	filter :=
