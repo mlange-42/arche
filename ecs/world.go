@@ -64,9 +64,44 @@ func NewWorld(config ...Config) World {
 //	// even faster
 //	world.NewEntity(ids...)
 //
-// For more advanced and batched entity creation, see [Builder].
-// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+// For more advanced and batched entity creation, see [Builder] and [Batch].
+// See also [World.NewEntityAndThen] the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) NewEntity(comps ...ID) Entity {
+	return w.newEntity(nil, comps...)
+}
+
+// NewEntityAndThen returns a new or recycled [Entity].
+// The given component types are added to the entity.
+//
+// The callback fn is called before the world's listener is notified.
+// Use this to configure the entity's components so that listener subscribers
+// are notified after full initialization.
+//
+// Panics when called on a locked world.
+// Do not use during [Query] iteration!
+//
+// ⚠️ Important:
+// Entities are intended to be stored and passed around via copy, not via pointers! See [Entity].
+//
+// Note that calling a method with varargs in Go causes a slice allocation.
+// For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
+//
+//	// fast
+//	world.NewEntityAndThen(nil, idA, idB, idC)
+//	// even faster
+//	world.NewEntity(nil, ids...)
+//
+// For more advanced and batched entity creation, see [Builder] and [Batch].
+// See also [World.NewEntity] and the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+func (w *World) NewEntityAndThen(fn func(e Entity), comps ...ID) Entity {
+	return w.newEntity(fn, comps...)
+}
+
+// newEntity returns a new or recycled [Entity].
+// The given component types are added to the entity.
+//
+// The callback fn is called before the world's listener is notified.
+func (w *World) newEntity(fn func(Entity), comps ...ID) Entity {
 	w.checkLocked()
 
 	arch := w.archetypes.Get(0)
@@ -75,6 +110,10 @@ func (w *World) NewEntity(comps ...ID) Entity {
 	}
 
 	entity := w.createEntity(arch)
+
+	if fn != nil {
+		fn(entity)
+	}
 
 	if w.listener != nil {
 		var newRel *ID
@@ -269,10 +308,35 @@ func (w *World) HasUnchecked(entity Entity, comp ID) bool {
 //	// even faster
 //	world.Add(entity, ids...)
 //
-// See also [World.Exchange].
+// See also [World.AddAndThen], [World.Exchange] and [World.ExchangeAndThen].
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
+}
+
+// Add adds components to an [Entity].
+//
+// The callback fn is called before the world's listener is notified.
+// Use this to configure the entity's components so that listener subscribers
+// are notified after full initialization.
+//
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called with components that can't be added because they are already present.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// Note that calling a method with varargs in Go causes a slice allocation.
+// For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
+//
+//	// fast
+//	world.Add(entity, idA, idB, idC)
+//	// even faster
+//	world.Add(entity, ids...)
+//
+// See also [World.Add], [World.Exchange] and [World.ExchangeAndThen].
+// See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+func (w *World) AddAndThen(entity Entity, fn func(Entity), comps ...ID) {
+	w.ExchangeAndThen(entity, comps, nil, fn)
 }
 
 // Assign assigns multiple components to an [Entity], using pointers for the content.
@@ -340,7 +404,27 @@ func (w *World) Remove(entity Entity, comps ...ID) {
 //
 // See also [Relations.Exchange] and the generic variants under [github.com/mlange-42/arche/generic.Exchange].
 func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
-	w.exchange(entity, add, rem, ID{}, false, Entity{})
+	w.exchange(entity, add, rem, ID{}, false, Entity{}, nil)
+}
+
+// Exchange adds and removes components in one pass.
+// This is more efficient than subsequent use of [World.Add] and [World.Remove].
+//
+// The callback fn is called before the world's listener is notified.
+// Use this to configure the entity's components so that listener subscribers
+// are notified after full initialization.
+//
+// When a [Relation] component is removed and another one is added,
+// the target entity of the relation is reset to zero.
+//
+// Panics:
+//   - when called for a removed (and potentially recycled) entity.
+//   - when called with components that can't be added or removed because they are already present/not present, respectively.
+//   - when called on a locked world. Do not use during [Query] iteration!
+//
+// See also [Relations.Exchange] and the generic variants under [github.com/mlange-42/arche/generic.Exchange].
+func (w *World) ExchangeAndThen(entity Entity, add []ID, rem []ID, fn func(Entity)) {
+	w.exchange(entity, add, rem, ID{}, false, Entity{}, fn)
 }
 
 // Reset removes all entities and resources from the world.

@@ -86,7 +86,7 @@ func (r *Relations) SetBatchQ(filter Filter, comp ID, target Entity) Query {
 //
 // See also the generic variants under [github.com/mlange-42/arche/generic.Exchange].
 func (r *Relations) Exchange(entity Entity, add []ID, rem []ID, relation ID, target Entity) {
-	r.world.exchange(entity, add, rem, relation, true, target)
+	r.world.exchange(entity, add, rem, relation, true, target, nil)
 }
 
 // ExchangeBatch exchanges components for many entities, matching a filter.

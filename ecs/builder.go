@@ -115,7 +115,7 @@ func (b *Builder) Add(entity Entity, target ...Entity) {
 			panic("can't set target entity: builder has no relation")
 		}
 		if b.comps == nil {
-			b.world.exchange(entity, b.ids, nil, b.relationID, b.hasRelation, target[0])
+			b.world.exchange(entity, b.ids, nil, b.relationID, b.hasRelation, target[0], nil)
 			return
 		}
 		b.world.assign(entity, b.relationID, b.hasRelation, target[0], b.comps...)

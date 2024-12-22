@@ -407,13 +407,19 @@ func (w *World) assign(entity Entity, relation ID, hasRelation bool, target Enti
 // exchange with relation target.
 // Panics if adding a component already present or removing a component not present.
 // Also panics if the same component ID is in the add or remove list twice.
-func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) {
+func (w *World) exchange(entity Entity, add []ID, rem []ID, relation ID, hasRelation bool, target Entity, fn func(Entity)) {
 	if w.listener != nil {
 		arch, oldMask, oldTarget, oldRel := w.exchangeNoNotify(entity, add, rem, relation, hasRelation, target)
+		if fn != nil {
+			fn(entity)
+		}
 		w.notifyExchange(arch, oldMask, entity, add, rem, oldTarget, oldRel)
 		return
 	}
 	w.exchangeNoNotify(entity, add, rem, relation, hasRelation, target)
+	if fn != nil {
+		fn(entity)
+	}
 }
 
 // perform exchange operation without notifying listeners.

@@ -283,13 +283,13 @@ func TestWorldExchange(t *testing.T) {
 	e0 = w.NewEntity(rel1ID)
 
 	assert.PanicsWithValue(t, "entity already has a relation component",
-		func() { w.exchange(e0, []ID{rel2ID}, nil, rel2ID, true, target) })
+		func() { w.exchange(e0, []ID{rel2ID}, nil, rel2ID, true, target, nil) })
 	assert.PanicsWithValue(t, "can't add relation: Position is not a relation component",
-		func() { w.exchange(e0, []ID{posID}, nil, posID, true, target) })
+		func() { w.exchange(e0, []ID{posID}, nil, posID, true, target, nil) })
 
 	w.Remove(e0, rel1ID)
 	assert.PanicsWithValue(t, "can't add relation: resulting entity has no component testRelationA",
-		func() { w.exchange(e0, []ID{posID}, nil, rel1ID, true, target) })
+		func() { w.exchange(e0, []ID{posID}, nil, rel1ID, true, target, nil) })
 }
 
 func TestWorldExchangeRelation(t *testing.T) {
