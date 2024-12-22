@@ -193,7 +193,9 @@ func (a *archetype) SetEntity(index uint32, entity Entity) {
 	a.addEntity(index, &entity)
 }
 
-// Set overwrites a component with the data behind the given pointer
+// Set overwrites a component with the data behind the given pointer.
+//
+// Deprecated: Method is slow and should not be used.
 func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
 	lay := a.getLayout(id)
 	dst := a.Get(index, id)

@@ -892,7 +892,9 @@ func (w *World) checkLocked() {
 	}
 }
 
-// Copies a component to an entity
+// Copies a component to an entity.
+//
+// Deprecated: Method is slow and should not be used.
 func (w *World) copyTo(entity Entity, id ID, comp interface{}) unsafe.Pointer {
 	if !w.Has(entity, id) {
 		panic("can't copy component into entity that has no such component type")
