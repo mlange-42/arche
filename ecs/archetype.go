@@ -201,10 +201,12 @@ func (a *archetype) Set(index uint32, id ID, comp interface{}) unsafe.Pointer {
 	if size == 0 {
 		return dst
 	}
-	rValue := reflect.ValueOf(comp)
+	rValue := reflect.ValueOf(comp).Elem()
 
-	src := rValue.UnsafePointer()
-	a.copy(src, dst, size)
+	valueType := rValue.Type()
+	valuePtr := reflect.NewAt(valueType, dst)
+	valuePtr.Elem().Set(rValue)
+
 	return dst
 }
 
