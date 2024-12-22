@@ -26,13 +26,14 @@ func TestMap1Generated(t *testing.T) {
 	assert.NotNil(t, s0)
 
 	e = w.NewEntity()
-	mut.Assign(e, &testStruct0{})
+	mut.Assign(e, &testStruct0{val: 42})
 	assert.True(t, map0.Has(e))
+	assert.Equal(t, testStruct0{val: 42}, *map0.Get(e))
 
 	e = mut.New()
 	assert.True(t, map0.Has(e))
 
-	e = mut.NewWith(&testStruct0{})
+	e = mut.NewWith(&testStruct0{val: 23})
 
 	assert.Panics(t, func() {
 		mut.NewWith(&testStruct0{}, e)
@@ -40,6 +41,7 @@ func TestMap1Generated(t *testing.T) {
 
 	s0 = mut.Get(e)
 	assert.NotNil(t, s0)
+	assert.Equal(t, testStruct0{val: 23}, *s0)
 
 	mut.NewBatch(2)
 
@@ -180,7 +182,7 @@ func TestMap2Generated(t *testing.T) {
 	assert.NotNil(t, s1)
 
 	e = w.NewEntity()
-	mut.Assign(e, &testStruct0{}, &testStruct1{})
+	mut.Assign(e, &testStruct0{val: 23}, &testStruct1{val: 42})
 	assert.True(t, map0.Has(e))
 	assert.True(t, map1.Has(e))
 
