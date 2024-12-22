@@ -1,12 +1,17 @@
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.13.3...main)
 
-### Bugfixes
+### Performance
 
-* Prevent garbage collection of slices and pointers in components added via `World.Assign` and similar methods (#438, issue #437)
+* Optimizes `Map.Set`, `MapX.Assign` and `MapX.NewWith`, by not using runtime reflection (#440)
 
 ### Documentation
 
-* Adds benchmarks for `World.Assign` and `World.NewWith` to the user guide (#438)
+* Adds benchmarks for `World.Assign` and `World.NewEntityWith` to the user guide (#438)
+* Adds benchmarks for `MapX.Assign` and `MapX.NewWith` to the user guide (#440)
+
+### Bugfixes
+
+* Prevent garbage collection of slices and pointers in components added via `World.Assign` and similar methods (#438, issue #437)
 
 ## [[v0.13.3]](https://github.com/mlange-42/arche/compare/v0.13.2...v0.13.3)
 

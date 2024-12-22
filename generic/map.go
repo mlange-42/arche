@@ -69,7 +69,12 @@ func (m *Map[T]) HasUnchecked(entity ecs.Entity) bool {
 //
 // See also [ecs.World.Set].
 func (m *Map[T]) Set(entity ecs.Entity, comp *T) *T {
-	return (*T)(m.world.Set(entity, m.id, comp))
+	p := (*T)(m.world.Get(entity, m.id))
+	if p == nil {
+		panic("can't copy component into entity that has no such component type")
+	}
+	*p = *comp
+	return p
 }
 
 // GetRelation returns the target entity for the given entity and the Map's relation component.

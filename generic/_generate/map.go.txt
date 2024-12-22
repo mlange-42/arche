@@ -101,12 +101,18 @@ func (m *Map{{ .Index }}{{ .Types }}) NewBatchQ(count int, target ...ecs.Entity)
 // See also [ecs.NewBuilderWith].
 func (m *Map{{ .Index }}{{ .Types }}) NewWith({{ .Arguments }}, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		return m.world.NewEntityWith({{ .Components }})
+		entity := m.world.NewEntity(m.ids...)
+		{{ .Assign }}
+		return entity
 	}
+
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, {{ .Components }}).WithRelation(m.relation).New(target[0])
+	entity := m.world.NewEntity(m.ids...)
+	{{ .Assign }}
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map{{ .Index }}'s components to the given entity.
@@ -170,9 +176,9 @@ func (m *Map{{ .Index }}{{ .Types }}) AddBatchQ(filter ecs.Filter, target ...ecs
 //
 // See also [ecs.World.Assign].
 func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) {
-	m.world.Assign(entity,
-		{{ .Components }}
-	)
+	m.world.Add(entity, m.ids...)
+
+	{{ .Assign }}
 }
 {{ end }}
 

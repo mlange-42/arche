@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/mlange-42/arche/ecs"
+	"github.com/mlange-42/arche/generic"
 )
 
 func benchesEntities() []bench {
@@ -20,6 +21,9 @@ func benchesEntities() []bench {
 
 		{Name: "World.NewEntityWith w/ 1 Comp", Desc: "memory already allocated", F: entitiesCreateWith_1Comp_1000, N: 1000},
 		{Name: "World.NewEntityWith w/ 5 Comps", Desc: "memory already allocated", F: entitiesCreateWith_5Comp_1000, N: 1000},
+
+		{Name: "MapX.NewEntityWith w/ 1 Comp", Desc: "memory already allocated", F: entitiesCreateWithGeneric_1Comp_1000, N: 1000},
+		{Name: "MapX.NewEntityWith w/ 5 Comps", Desc: "memory already allocated", F: entitiesCreateWithGeneric_5Comp_1000, N: 1000},
 	}
 }
 
@@ -134,6 +138,48 @@ func entitiesCreateWith_5Comp_1000(b *testing.B) {
 		b.StartTimer()
 		for j := 0; j < 1000; j++ {
 			_ = w.NewEntityWith(comps...)
+		}
+		b.StopTimer()
+		w.Batch().RemoveEntities(ecs.All())
+	}
+}
+
+func entitiesCreateWithGeneric_1Comp_1000(b *testing.B) {
+	b.StopTimer()
+
+	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+
+	mapper := generic.NewMap1[comp1](&w)
+
+	c1 := comp1{}
+
+	for i := 0; i < b.N; i++ {
+		b.StartTimer()
+		for j := 0; j < 1000; j++ {
+			_ = mapper.NewWith(&c1)
+		}
+		b.StopTimer()
+		w.Batch().RemoveEntities(ecs.All())
+	}
+}
+
+func entitiesCreateWithGeneric_5Comp_1000(b *testing.B) {
+	b.StopTimer()
+
+	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+
+	mapper := generic.NewMap5[comp1, comp2, comp3, comp4, comp5](&w)
+
+	c1 := comp1{}
+	c2 := comp2{}
+	c3 := comp3{}
+	c4 := comp4{}
+	c5 := comp5{}
+
+	for i := 0; i < b.N; i++ {
+		b.StartTimer()
+		for j := 0; j < 1000; j++ {
+			_ = mapper.NewWith(&c1, &c2, &c3, &c4, &c5)
 		}
 		b.StopTimer()
 		w.Batch().RemoveEntities(ecs.All())
