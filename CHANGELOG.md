@@ -1,5 +1,9 @@
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.13.3...main)
 
+### Features
+
+* Slow assignment methods like `World.Assign` and `World.NewEntityWith` are deprecated, in favour of their faster generic counterparts (#441)
+
 ### Performance
 
 * Optimizes `Map.Set`, `MapX.Assign` and `MapX.NewWith`, by not using runtime reflection (#440)
