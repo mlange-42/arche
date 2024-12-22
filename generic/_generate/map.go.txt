@@ -170,9 +170,9 @@ func (m *Map{{ .Index }}{{ .Types }}) AddBatchQ(filter ecs.Filter, target ...ecs
 //
 // See also [ecs.World.Assign].
 func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) {
-	m.world.Assign(entity,
-		{{ .Components }}
-	)
+	m.world.Add(entity, m.ids...)
+	
+	{{ .Assign }}
 }
 {{ end }}
 

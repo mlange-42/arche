@@ -178,9 +178,9 @@ func (m *Map1[A]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query1[A] {
 //
 // See also [ecs.World.Assign].
 func (m *Map1[A]) Assign(entity ecs.Entity, a *A) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
 }
 
 // Remove the Map1's components from the given entity.
@@ -437,10 +437,10 @@ func (m *Map2[A, B]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query2[A
 //
 // See also [ecs.World.Assign].
 func (m *Map2[A, B]) Assign(entity ecs.Entity, a *A, b *B) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
 }
 
 // Remove the Map2's components from the given entity.
@@ -705,11 +705,11 @@ func (m *Map3[A, B, C]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query
 //
 // See also [ecs.World.Assign].
 func (m *Map3[A, B, C]) Assign(entity ecs.Entity, a *A, b *B, c *C) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
 }
 
 // Remove the Map3's components from the given entity.
@@ -982,12 +982,12 @@ func (m *Map4[A, B, C, D]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Qu
 //
 // See also [ecs.World.Assign].
 func (m *Map4[A, B, C, D]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
 }
 
 // Remove the Map4's components from the given entity.
@@ -1268,13 +1268,13 @@ func (m *Map5[A, B, C, D, E]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity)
 //
 // See also [ecs.World.Assign].
 func (m *Map5[A, B, C, D, E]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
 }
 
 // Remove the Map5's components from the given entity.
@@ -1563,14 +1563,14 @@ func (m *Map6[A, B, C, D, E, F]) AddBatchQ(filter ecs.Filter, target ...ecs.Enti
 //
 // See also [ecs.World.Assign].
 func (m *Map6[A, B, C, D, E, F]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
 }
 
 // Remove the Map6's components from the given entity.
@@ -1867,15 +1867,15 @@ func (m *Map7[A, B, C, D, E, F, G]) AddBatchQ(filter ecs.Filter, target ...ecs.E
 //
 // See also [ecs.World.Assign].
 func (m *Map7[A, B, C, D, E, F, G]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
 }
 
 // Remove the Map7's components from the given entity.
@@ -2180,16 +2180,16 @@ func (m *Map8[A, B, C, D, E, F, G, H]) AddBatchQ(filter ecs.Filter, target ...ec
 //
 // See also [ecs.World.Assign].
 func (m *Map8[A, B, C, D, E, F, G, H]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
 }
 
 // Remove the Map8's components from the given entity.
@@ -2502,17 +2502,17 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) AddBatchQ(filter ecs.Filter, target ..
 //
 // See also [ecs.World.Assign].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-		ecs.Component{ID: m.id8, Comp: i},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
+	*(*I)(m.world.Get(entity, m.id8)) = *i
 }
 
 // Remove the Map9's components from the given entity.
@@ -2833,18 +2833,18 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) AddBatchQ(filter ecs.Filter, targe
 //
 // See also [ecs.World.Assign].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-		ecs.Component{ID: m.id8, Comp: i},
-		ecs.Component{ID: m.id9, Comp: j},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
+	*(*I)(m.world.Get(entity, m.id8)) = *i
+	*(*J)(m.world.Get(entity, m.id9)) = *j
 }
 
 // Remove the Map10's components from the given entity.
@@ -3173,19 +3173,19 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) AddBatchQ(filter ecs.Filter, ta
 //
 // See also [ecs.World.Assign].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-		ecs.Component{ID: m.id8, Comp: i},
-		ecs.Component{ID: m.id9, Comp: j},
-		ecs.Component{ID: m.id10, Comp: k},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
+	*(*I)(m.world.Get(entity, m.id8)) = *i
+	*(*J)(m.world.Get(entity, m.id9)) = *j
+	*(*K)(m.world.Get(entity, m.id10)) = *k
 }
 
 // Remove the Map11's components from the given entity.
@@ -3522,20 +3522,20 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) AddBatchQ(filter ecs.Filter,
 //
 // See also [ecs.World.Assign].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, l *L) {
-	m.world.Assign(entity,
-		ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-		ecs.Component{ID: m.id8, Comp: i},
-		ecs.Component{ID: m.id9, Comp: j},
-		ecs.Component{ID: m.id10, Comp: k},
-		ecs.Component{ID: m.id11, Comp: l},
-	)
+	m.world.Add(entity, m.ids...)
+
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
+	*(*I)(m.world.Get(entity, m.id8)) = *i
+	*(*J)(m.world.Get(entity, m.id9)) = *j
+	*(*K)(m.world.Get(entity, m.id10)) = *k
+	*(*L)(m.world.Get(entity, m.id11)) = *l
 }
 
 // Remove the Map12's components from the given entity.
