@@ -100,15 +100,17 @@ func (m *Map{{ .Index }}{{ .Types }}) NewBatchQ(count int, target ...ecs.Entity)
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map{{ .Index }}{{ .Types }}) NewWith({{ .Arguments }}, target ...ecs.Entity) ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	{{ .Assign }}
-
 	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		{{ .Assign }}
 		return entity
 	}
+
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
+	entity := m.world.NewEntity(m.ids...)
+	{{ .Assign }}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }

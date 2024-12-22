@@ -107,15 +107,17 @@ func (m *Map1[A]) NewBatchQ(count int, target ...ecs.Entity) Query1[A] {
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map1[A]) NewWith(a *A, target ...ecs.Entity) ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	*(*A)(m.world.Get(entity, m.id0)) = *a
-
 	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
 		return entity
 	}
+
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -365,16 +367,19 @@ func (m *Map2[A, B]) NewBatchQ(count int, target ...ecs.Entity) Query2[A, B] {
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map2[A, B]) NewWith(a *A, b *B, target ...ecs.Entity) ecs.Entity {
-	entity := m.world.NewEntity(m.ids...)
-	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-
 	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
 		return entity
 	}
+
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -631,17 +636,21 @@ func (m *Map3[A, B, C]) NewBatchQ(count int, target ...ecs.Entity) Query3[A, B, 
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map3[A, B, C]) NewWith(a *A, b *B, c *C, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
 	*(*C)(m.world.Get(entity, m.id2)) = *c
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -905,18 +914,23 @@ func (m *Map4[A, B, C, D]) NewBatchQ(count int, target ...ecs.Entity) Query4[A, 
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map4[A, B, C, D]) NewWith(a *A, b *B, c *C, d *D, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		*(*D)(m.world.Get(entity, m.id3)) = *d
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
 	*(*C)(m.world.Get(entity, m.id2)) = *c
 	*(*D)(m.world.Get(entity, m.id3)) = *d
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -1187,19 +1201,25 @@ func (m *Map5[A, B, C, D, E]) NewBatchQ(count int, target ...ecs.Entity) Query5[
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map5[A, B, C, D, E]) NewWith(a *A, b *B, c *C, d *D, e *E, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		*(*D)(m.world.Get(entity, m.id3)) = *d
+		*(*E)(m.world.Get(entity, m.id4)) = *e
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
 	*(*C)(m.world.Get(entity, m.id2)) = *c
 	*(*D)(m.world.Get(entity, m.id3)) = *d
 	*(*E)(m.world.Get(entity, m.id4)) = *e
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -1477,6 +1497,20 @@ func (m *Map6[A, B, C, D, E, F]) NewBatchQ(count int, target ...ecs.Entity) Quer
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map6[A, B, C, D, E, F]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		*(*D)(m.world.Get(entity, m.id3)) = *d
+		*(*E)(m.world.Get(entity, m.id4)) = *e
+		*(*F)(m.world.Get(entity, m.id5)) = *f
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -1484,13 +1518,6 @@ func (m *Map6[A, B, C, D, E, F]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, tar
 	*(*D)(m.world.Get(entity, m.id3)) = *d
 	*(*E)(m.world.Get(entity, m.id4)) = *e
 	*(*F)(m.world.Get(entity, m.id5)) = *f
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -1775,6 +1802,21 @@ func (m *Map7[A, B, C, D, E, F, G]) NewBatchQ(count int, target ...ecs.Entity) Q
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map7[A, B, C, D, E, F, G]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		*(*D)(m.world.Get(entity, m.id3)) = *d
+		*(*E)(m.world.Get(entity, m.id4)) = *e
+		*(*F)(m.world.Get(entity, m.id5)) = *f
+		*(*G)(m.world.Get(entity, m.id6)) = *g
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -1783,13 +1825,6 @@ func (m *Map7[A, B, C, D, E, F, G]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, 
 	*(*E)(m.world.Get(entity, m.id4)) = *e
 	*(*F)(m.world.Get(entity, m.id5)) = *f
 	*(*G)(m.world.Get(entity, m.id6)) = *g
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -2081,6 +2116,22 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewBatchQ(count int, target ...ecs.Entity
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		*(*D)(m.world.Get(entity, m.id3)) = *d
+		*(*E)(m.world.Get(entity, m.id4)) = *e
+		*(*F)(m.world.Get(entity, m.id5)) = *f
+		*(*G)(m.world.Get(entity, m.id6)) = *g
+		*(*H)(m.world.Get(entity, m.id7)) = *h
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -2090,13 +2141,6 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewWith(a *A, b *B, c *C, d *D, e *E, f *
 	*(*F)(m.world.Get(entity, m.id5)) = *f
 	*(*G)(m.world.Get(entity, m.id6)) = *g
 	*(*H)(m.world.Get(entity, m.id7)) = *h
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -2395,6 +2439,23 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) NewBatchQ(count int, target ...ecs.Ent
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		*(*D)(m.world.Get(entity, m.id3)) = *d
+		*(*E)(m.world.Get(entity, m.id4)) = *e
+		*(*F)(m.world.Get(entity, m.id5)) = *f
+		*(*G)(m.world.Get(entity, m.id6)) = *g
+		*(*H)(m.world.Get(entity, m.id7)) = *h
+		*(*I)(m.world.Get(entity, m.id8)) = *i
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -2405,13 +2466,6 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) NewWith(a *A, b *B, c *C, d *D, e *E, 
 	*(*G)(m.world.Get(entity, m.id6)) = *g
 	*(*H)(m.world.Get(entity, m.id7)) = *h
 	*(*I)(m.world.Get(entity, m.id8)) = *i
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -2717,6 +2771,24 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewBatchQ(count int, target ...ecs
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		*(*D)(m.world.Get(entity, m.id3)) = *d
+		*(*E)(m.world.Get(entity, m.id4)) = *e
+		*(*F)(m.world.Get(entity, m.id5)) = *f
+		*(*G)(m.world.Get(entity, m.id6)) = *g
+		*(*H)(m.world.Get(entity, m.id7)) = *h
+		*(*I)(m.world.Get(entity, m.id8)) = *i
+		*(*J)(m.world.Get(entity, m.id9)) = *j
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -2728,13 +2800,6 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewWith(a *A, b *B, c *C, d *D, e 
 	*(*H)(m.world.Get(entity, m.id7)) = *h
 	*(*I)(m.world.Get(entity, m.id8)) = *i
 	*(*J)(m.world.Get(entity, m.id9)) = *j
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -3047,6 +3112,25 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewBatchQ(count int, target ...
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		*(*D)(m.world.Get(entity, m.id3)) = *d
+		*(*E)(m.world.Get(entity, m.id4)) = *e
+		*(*F)(m.world.Get(entity, m.id5)) = *f
+		*(*G)(m.world.Get(entity, m.id6)) = *g
+		*(*H)(m.world.Get(entity, m.id7)) = *h
+		*(*I)(m.world.Get(entity, m.id8)) = *i
+		*(*J)(m.world.Get(entity, m.id9)) = *j
+		*(*K)(m.world.Get(entity, m.id10)) = *k
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -3059,13 +3143,6 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewWith(a *A, b *B, c *C, d *D,
 	*(*I)(m.world.Get(entity, m.id8)) = *i
 	*(*J)(m.world.Get(entity, m.id9)) = *j
 	*(*K)(m.world.Get(entity, m.id10)) = *k
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -3385,6 +3462,26 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewBatchQ(count int, target 
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, l *L, target ...ecs.Entity) ecs.Entity {
+	if len(target) == 0 {
+		entity := m.world.NewEntity(m.ids...)
+		*(*A)(m.world.Get(entity, m.id0)) = *a
+		*(*B)(m.world.Get(entity, m.id1)) = *b
+		*(*C)(m.world.Get(entity, m.id2)) = *c
+		*(*D)(m.world.Get(entity, m.id3)) = *d
+		*(*E)(m.world.Get(entity, m.id4)) = *e
+		*(*F)(m.world.Get(entity, m.id5)) = *f
+		*(*G)(m.world.Get(entity, m.id6)) = *g
+		*(*H)(m.world.Get(entity, m.id7)) = *h
+		*(*I)(m.world.Get(entity, m.id8)) = *i
+		*(*J)(m.world.Get(entity, m.id9)) = *j
+		*(*K)(m.world.Get(entity, m.id10)) = *k
+		*(*L)(m.world.Get(entity, m.id11)) = *l
+		return entity
+	}
+
+	if !m.hasRelation {
+		panic("map has no relation defined")
+	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
 	*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -3398,13 +3495,6 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewWith(a *A, b *B, c *C, d 
 	*(*J)(m.world.Get(entity, m.id9)) = *j
 	*(*K)(m.world.Get(entity, m.id10)) = *k
 	*(*L)(m.world.Get(entity, m.id11)) = *l
-
-	if len(target) == 0 {
-		return entity
-	}
-	if !m.hasRelation {
-		panic("map has no relation defined")
-	}
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
