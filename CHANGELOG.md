@@ -17,6 +17,10 @@
 
 * Prevents garbage collection of slices and pointers in components added via `World.Assign` and similar methods (#438, issue #437)
 
+### Known issues
+
+* Generic `MapX.Assign` and `MapX.NewWith` notify listeners before setting components (#443)
+
 ## [[v0.13.3]](https://github.com/mlange-42/arche/compare/v0.13.2...v0.13.3)
 
 ### Performance
