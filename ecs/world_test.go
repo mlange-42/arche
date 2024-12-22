@@ -115,6 +115,86 @@ func TestWorldNewEntites(t *testing.T) {
 	}
 }
 
+func TestWorldNewEntityFn(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
+
+	e := w.NewEntityFn(
+		func(e Entity) {
+			pos := (*Position)(w.Get(e, posID))
+			*pos = Position{X: 1, Y: 2}
+		},
+		posID, velID,
+	)
+
+	pos := (*Position)(w.Get(e, posID))
+	assert.Equal(t, *pos, Position{X: 1, Y: 2})
+
+	// Test listener
+	event := false
+	listener := newTestListener(func(world *World, e EntityEvent) {
+		pos := (*Position)(w.Get(e.Entity, posID))
+		assert.Equal(t, *pos, Position{X: 1, Y: 2})
+		event = true
+	})
+	w.SetListener(&listener)
+
+	_ = w.NewEntityFn(
+		func(e Entity) {
+			pos := (*Position)(w.Get(e, posID))
+			*pos = Position{X: 1, Y: 2}
+		},
+		posID, velID,
+	)
+
+	assert.True(t, event)
+}
+
+func TestWorldAddFn(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
+
+	e := w.NewEntity()
+
+	w.AddFn(
+		e,
+		func(e Entity) {
+			pos := (*Position)(w.Get(e, posID))
+			*pos = Position{X: 1, Y: 2}
+		},
+		posID, velID,
+	)
+
+	pos := (*Position)(w.Get(e, posID))
+	assert.Equal(t, *pos, Position{X: 1, Y: 2})
+
+	// Test listener
+	e = w.NewEntity()
+
+	evt := false
+	listener := newTestListener(func(world *World, e EntityEvent) {
+		pos := (*Position)(w.Get(e.Entity, posID))
+		assert.Equal(t, *pos, Position{X: 1, Y: 2})
+		evt = true
+	})
+	w.SetListener(&listener)
+
+	w.AddFn(
+		e,
+		func(e Entity) {
+			pos := (*Position)(w.Get(e, posID))
+			*pos = Position{X: 1, Y: 2}
+		},
+		posID, velID,
+	)
+
+	assert.True(t, evt)
+}
+
 func TestWorldComponents(t *testing.T) {
 	w := NewWorld()
 
