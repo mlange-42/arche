@@ -65,12 +65,12 @@ func NewWorld(config ...Config) World {
 //	world.NewEntity(ids...)
 //
 // For more advanced and batched entity creation, see [Builder] and [Batch].
-// See also [World.NewEntityAndThen] the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
+// See also [World.NewEntityFn] the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) NewEntity(comps ...ID) Entity {
 	return w.newEntity(nil, comps...)
 }
 
-// NewEntityAndThen returns a new or recycled [Entity].
+// NewEntityFn returns a new or recycled [Entity].
 // The given component types are added to the entity.
 //
 // The callback fn is called before the world's listener is notified.
@@ -87,13 +87,13 @@ func (w *World) NewEntity(comps ...ID) Entity {
 // For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
 //
 //	// fast
-//	world.NewEntityAndThen(nil, idA, idB, idC)
+//	world.NewEntityFn(nil, idA, idB, idC)
 //	// even faster
 //	world.NewEntity(nil, ids...)
 //
 // For more advanced and batched entity creation, see [Builder] and [Batch].
 // See also [World.NewEntity] and the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
-func (w *World) NewEntityAndThen(fn func(e Entity), comps ...ID) Entity {
+func (w *World) NewEntityFn(fn func(e Entity), comps ...ID) Entity {
 	return w.newEntity(fn, comps...)
 }
 
@@ -308,7 +308,7 @@ func (w *World) HasUnchecked(entity Entity, comp ID) bool {
 //	// even faster
 //	world.Add(entity, ids...)
 //
-// See also [World.AddAndThen], [World.Exchange] and [World.ExchangeAndThen].
+// See also [World.AddFn], [World.Exchange] and [World.ExchangeFn].
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
 func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
@@ -333,10 +333,10 @@ func (w *World) Add(entity Entity, comps ...ID) {
 //	// even faster
 //	world.Add(entity, ids...)
 //
-// See also [World.Add], [World.Exchange] and [World.ExchangeAndThen].
+// See also [World.Add], [World.Exchange] and [World.ExchangeFn].
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
-func (w *World) AddAndThen(entity Entity, fn func(Entity), comps ...ID) {
-	w.ExchangeAndThen(entity, comps, nil, fn)
+func (w *World) AddFn(entity Entity, fn func(Entity), comps ...ID) {
+	w.ExchangeFn(entity, comps, nil, fn)
 }
 
 // Assign assigns multiple components to an [Entity], using pointers for the content.
@@ -423,7 +423,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 //   - when called on a locked world. Do not use during [Query] iteration!
 //
 // See also [Relations.Exchange] and the generic variants under [github.com/mlange-42/arche/generic.Exchange].
-func (w *World) ExchangeAndThen(entity Entity, add []ID, rem []ID, fn func(Entity)) {
+func (w *World) ExchangeFn(entity Entity, add []ID, rem []ID, fn func(Entity)) {
 	w.exchange(entity, add, rem, ID{}, false, Entity{}, fn)
 }
 

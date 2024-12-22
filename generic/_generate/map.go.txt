@@ -101,7 +101,7 @@ func (m *Map{{ .Index }}{{ .Types }}) NewBatchQ(count int, target ...ecs.Entity)
 // See also [ecs.NewBuilderWith].
 func (m *Map{{ .Index }}{{ .Types }}) NewWith({{ .Arguments }}, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				{{ .Assign }}
 			},
@@ -180,7 +180,7 @@ func (m *Map{{ .Index }}{{ .Types }}) AddBatchQ(filter ecs.Filter, target ...ecs
 //
 // See also [ecs.World.Assign].
 func (m *Map{{ .Index }}{{ .Types }}) Assign(entity ecs.Entity, {{ .Arguments }}) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			{{ .Assign }}

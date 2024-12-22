@@ -108,7 +108,7 @@ func (m *Map1[A]) NewBatchQ(count int, target ...ecs.Entity) Query1[A] {
 // See also [ecs.NewBuilderWith].
 func (m *Map1[A]) NewWith(a *A, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 			},
@@ -188,7 +188,7 @@ func (m *Map1[A]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query1[A] {
 //
 // See also [ecs.World.Assign].
 func (m *Map1[A]) Assign(entity ecs.Entity, a *A) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -376,7 +376,7 @@ func (m *Map2[A, B]) NewBatchQ(count int, target ...ecs.Entity) Query2[A, B] {
 // See also [ecs.NewBuilderWith].
 func (m *Map2[A, B]) NewWith(a *A, b *B, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -459,7 +459,7 @@ func (m *Map2[A, B]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query2[A
 //
 // See also [ecs.World.Assign].
 func (m *Map2[A, B]) Assign(entity ecs.Entity, a *A, b *B) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -653,7 +653,7 @@ func (m *Map3[A, B, C]) NewBatchQ(count int, target ...ecs.Entity) Query3[A, B, 
 // See also [ecs.NewBuilderWith].
 func (m *Map3[A, B, C]) NewWith(a *A, b *B, c *C, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -739,7 +739,7 @@ func (m *Map3[A, B, C]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Query
 //
 // See also [ecs.World.Assign].
 func (m *Map3[A, B, C]) Assign(entity ecs.Entity, a *A, b *B, c *C) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -939,7 +939,7 @@ func (m *Map4[A, B, C, D]) NewBatchQ(count int, target ...ecs.Entity) Query4[A, 
 // See also [ecs.NewBuilderWith].
 func (m *Map4[A, B, C, D]) NewWith(a *A, b *B, c *C, d *D, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -1028,7 +1028,7 @@ func (m *Map4[A, B, C, D]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity) Qu
 //
 // See also [ecs.World.Assign].
 func (m *Map4[A, B, C, D]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -1234,7 +1234,7 @@ func (m *Map5[A, B, C, D, E]) NewBatchQ(count int, target ...ecs.Entity) Query5[
 // See also [ecs.NewBuilderWith].
 func (m *Map5[A, B, C, D, E]) NewWith(a *A, b *B, c *C, d *D, e *E, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -1326,7 +1326,7 @@ func (m *Map5[A, B, C, D, E]) AddBatchQ(filter ecs.Filter, target ...ecs.Entity)
 //
 // See also [ecs.World.Assign].
 func (m *Map5[A, B, C, D, E]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -1538,7 +1538,7 @@ func (m *Map6[A, B, C, D, E, F]) NewBatchQ(count int, target ...ecs.Entity) Quer
 // See also [ecs.NewBuilderWith].
 func (m *Map6[A, B, C, D, E, F]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -1633,7 +1633,7 @@ func (m *Map6[A, B, C, D, E, F]) AddBatchQ(filter ecs.Filter, target ...ecs.Enti
 //
 // See also [ecs.World.Assign].
 func (m *Map6[A, B, C, D, E, F]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -1851,7 +1851,7 @@ func (m *Map7[A, B, C, D, E, F, G]) NewBatchQ(count int, target ...ecs.Entity) Q
 // See also [ecs.NewBuilderWith].
 func (m *Map7[A, B, C, D, E, F, G]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -1949,7 +1949,7 @@ func (m *Map7[A, B, C, D, E, F, G]) AddBatchQ(filter ecs.Filter, target ...ecs.E
 //
 // See also [ecs.World.Assign].
 func (m *Map7[A, B, C, D, E, F, G]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -2173,7 +2173,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewBatchQ(count int, target ...ecs.Entity
 // See also [ecs.NewBuilderWith].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -2274,7 +2274,7 @@ func (m *Map8[A, B, C, D, E, F, G, H]) AddBatchQ(filter ecs.Filter, target ...ec
 //
 // See also [ecs.World.Assign].
 func (m *Map8[A, B, C, D, E, F, G, H]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -2504,7 +2504,7 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) NewBatchQ(count int, target ...ecs.Ent
 // See also [ecs.NewBuilderWith].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -2608,7 +2608,7 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) AddBatchQ(filter ecs.Filter, target ..
 //
 // See also [ecs.World.Assign].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -2844,7 +2844,7 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewBatchQ(count int, target ...ecs
 // See also [ecs.NewBuilderWith].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -2951,7 +2951,7 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) AddBatchQ(filter ecs.Filter, targe
 //
 // See also [ecs.World.Assign].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -3193,7 +3193,7 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewBatchQ(count int, target ...
 // See also [ecs.NewBuilderWith].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -3303,7 +3303,7 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) AddBatchQ(filter ecs.Filter, ta
 //
 // See also [ecs.World.Assign].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
@@ -3551,7 +3551,7 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewBatchQ(count int, target 
 // See also [ecs.NewBuilderWith].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, l *L, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
-		entity := m.world.NewEntityAndThen(
+		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
 				*(*B)(m.world.Get(entity, m.id1)) = *b
@@ -3664,7 +3664,7 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) AddBatchQ(filter ecs.Filter,
 //
 // See also [ecs.World.Assign].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, l *L) {
-	m.world.AddAndThen(
+	m.world.AddFn(
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
