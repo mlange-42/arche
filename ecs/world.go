@@ -93,6 +93,10 @@ func (w *World) NewEntity(comps ...ID) Entity {
 // NewEntityWith returns a new or recycled [Entity].
 // The given component values are assigned to the entity.
 //
+// Deprecated: This method is slow. Instead, use NewWith of the generic API
+// under [github.com/mlange-42/arche/generic.Map1], etc.
+// This method may be removed in a future version.
+//
 // The components in the Comp field of [Component] must be pointers.
 // The passed pointers are no valid references to the assigned memory!
 //
@@ -273,6 +277,10 @@ func (w *World) Add(entity Entity, comps ...ID) {
 
 // Assign assigns multiple components to an [Entity], using pointers for the content.
 //
+// Deprecated: This method is slow. Instead, use Assign of the generic API
+// under [github.com/mlange-42/arche/generic.Map1], etc.
+// This method may be removed in a future version.
+//
 // The components in the Comp field of [Component] must be pointers.
 // The passed pointers are no valid references to the assigned memory!
 //
@@ -287,6 +295,10 @@ func (w *World) Assign(entity Entity, comps ...Component) {
 }
 
 // Set overwrites a component for an [Entity], using the given pointer for the content.
+//
+// Deprecated: This method is slow. Instead, use Set of the generic API
+// under [github.com/mlange-42/arche/generic.Map].
+// This method may be removed in a future version.
 //
 // The passed component must be a pointer.
 // Returns a pointer to the assigned memory.

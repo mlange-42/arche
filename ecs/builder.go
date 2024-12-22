@@ -19,6 +19,10 @@ func NewBuilder(w *World, comps ...ID) *Builder {
 }
 
 // NewBuilderWith creates a builder from component pointers.
+//
+// Deprecated: This method is slow. Instead, use NewWith of the generic API
+// under [github.com/mlange-42/arche/generic.Map1], etc.
+// This function may be removed in a future version.
 func NewBuilderWith(w *World, comps ...Component) *Builder {
 	return &Builder{
 		world: w,
