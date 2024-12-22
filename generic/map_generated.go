@@ -107,13 +107,17 @@ func (m *Map1[A]) NewBatchQ(count int, target ...ecs.Entity) Query1[A] {
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map1[A]) NewWith(a *A, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a})
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a}).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map1's components to the given entity.
@@ -361,17 +365,18 @@ func (m *Map2[A, B]) NewBatchQ(count int, target ...ecs.Entity) Query2[A, B] {
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map2[A, B]) NewWith(a *A, b *B, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map2's components to the given entity.
@@ -626,19 +631,19 @@ func (m *Map3[A, B, C]) NewBatchQ(count int, target ...ecs.Entity) Query3[A, B, 
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map3[A, B, C]) NewWith(a *A, b *B, c *C, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map3's components to the given entity.
@@ -900,21 +905,20 @@ func (m *Map4[A, B, C, D]) NewBatchQ(count int, target ...ecs.Entity) Query4[A, 
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map4[A, B, C, D]) NewWith(a *A, b *B, c *C, d *D, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-			ecs.Component{ID: m.id3, Comp: d},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map4's components to the given entity.
@@ -1183,23 +1187,21 @@ func (m *Map5[A, B, C, D, E]) NewBatchQ(count int, target ...ecs.Entity) Query5[
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map5[A, B, C, D, E]) NewWith(a *A, b *B, c *C, d *D, e *E, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-			ecs.Component{ID: m.id3, Comp: d},
-			ecs.Component{ID: m.id4, Comp: e},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map5's components to the given entity.
@@ -1475,25 +1477,22 @@ func (m *Map6[A, B, C, D, E, F]) NewBatchQ(count int, target ...ecs.Entity) Quer
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map6[A, B, C, D, E, F]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-			ecs.Component{ID: m.id3, Comp: d},
-			ecs.Component{ID: m.id4, Comp: e},
-			ecs.Component{ID: m.id5, Comp: f},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map6's components to the given entity.
@@ -1776,27 +1775,23 @@ func (m *Map7[A, B, C, D, E, F, G]) NewBatchQ(count int, target ...ecs.Entity) Q
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map7[A, B, C, D, E, F, G]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-			ecs.Component{ID: m.id3, Comp: d},
-			ecs.Component{ID: m.id4, Comp: e},
-			ecs.Component{ID: m.id5, Comp: f},
-			ecs.Component{ID: m.id6, Comp: g},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map7's components to the given entity.
@@ -2086,29 +2081,24 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewBatchQ(count int, target ...ecs.Entity
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-			ecs.Component{ID: m.id3, Comp: d},
-			ecs.Component{ID: m.id4, Comp: e},
-			ecs.Component{ID: m.id5, Comp: f},
-			ecs.Component{ID: m.id6, Comp: g},
-			ecs.Component{ID: m.id7, Comp: h},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map8's components to the given entity.
@@ -2405,31 +2395,25 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) NewBatchQ(count int, target ...ecs.Ent
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
+	*(*I)(m.world.Get(entity, m.id8)) = *i
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-			ecs.Component{ID: m.id3, Comp: d},
-			ecs.Component{ID: m.id4, Comp: e},
-			ecs.Component{ID: m.id5, Comp: f},
-			ecs.Component{ID: m.id6, Comp: g},
-			ecs.Component{ID: m.id7, Comp: h},
-			ecs.Component{ID: m.id8, Comp: i},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-		ecs.Component{ID: m.id8, Comp: i},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map9's components to the given entity.
@@ -2733,33 +2717,26 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewBatchQ(count int, target ...ecs
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
+	*(*I)(m.world.Get(entity, m.id8)) = *i
+	*(*J)(m.world.Get(entity, m.id9)) = *j
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-			ecs.Component{ID: m.id3, Comp: d},
-			ecs.Component{ID: m.id4, Comp: e},
-			ecs.Component{ID: m.id5, Comp: f},
-			ecs.Component{ID: m.id6, Comp: g},
-			ecs.Component{ID: m.id7, Comp: h},
-			ecs.Component{ID: m.id8, Comp: i},
-			ecs.Component{ID: m.id9, Comp: j},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-		ecs.Component{ID: m.id8, Comp: i},
-		ecs.Component{ID: m.id9, Comp: j},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map10's components to the given entity.
@@ -3070,35 +3047,27 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewBatchQ(count int, target ...
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
+	*(*I)(m.world.Get(entity, m.id8)) = *i
+	*(*J)(m.world.Get(entity, m.id9)) = *j
+	*(*K)(m.world.Get(entity, m.id10)) = *k
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-			ecs.Component{ID: m.id3, Comp: d},
-			ecs.Component{ID: m.id4, Comp: e},
-			ecs.Component{ID: m.id5, Comp: f},
-			ecs.Component{ID: m.id6, Comp: g},
-			ecs.Component{ID: m.id7, Comp: h},
-			ecs.Component{ID: m.id8, Comp: i},
-			ecs.Component{ID: m.id9, Comp: j},
-			ecs.Component{ID: m.id10, Comp: k},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-		ecs.Component{ID: m.id8, Comp: i},
-		ecs.Component{ID: m.id9, Comp: j},
-		ecs.Component{ID: m.id10, Comp: k},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map11's components to the given entity.
@@ -3416,37 +3385,28 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewBatchQ(count int, target 
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, l *L, target ...ecs.Entity) ecs.Entity {
+	entity := m.world.NewEntity(m.ids...)
+	*(*A)(m.world.Get(entity, m.id0)) = *a
+	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*H)(m.world.Get(entity, m.id7)) = *h
+	*(*I)(m.world.Get(entity, m.id8)) = *i
+	*(*J)(m.world.Get(entity, m.id9)) = *j
+	*(*K)(m.world.Get(entity, m.id10)) = *k
+	*(*L)(m.world.Get(entity, m.id11)) = *l
+
 	if len(target) == 0 {
-		return m.world.NewEntityWith(ecs.Component{ID: m.id0, Comp: a},
-			ecs.Component{ID: m.id1, Comp: b},
-			ecs.Component{ID: m.id2, Comp: c},
-			ecs.Component{ID: m.id3, Comp: d},
-			ecs.Component{ID: m.id4, Comp: e},
-			ecs.Component{ID: m.id5, Comp: f},
-			ecs.Component{ID: m.id6, Comp: g},
-			ecs.Component{ID: m.id7, Comp: h},
-			ecs.Component{ID: m.id8, Comp: i},
-			ecs.Component{ID: m.id9, Comp: j},
-			ecs.Component{ID: m.id10, Comp: k},
-			ecs.Component{ID: m.id11, Comp: l},
-		)
+		return entity
 	}
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	return ecs.NewBuilderWith(m.world, ecs.Component{ID: m.id0, Comp: a},
-		ecs.Component{ID: m.id1, Comp: b},
-		ecs.Component{ID: m.id2, Comp: c},
-		ecs.Component{ID: m.id3, Comp: d},
-		ecs.Component{ID: m.id4, Comp: e},
-		ecs.Component{ID: m.id5, Comp: f},
-		ecs.Component{ID: m.id6, Comp: g},
-		ecs.Component{ID: m.id7, Comp: h},
-		ecs.Component{ID: m.id8, Comp: i},
-		ecs.Component{ID: m.id9, Comp: j},
-		ecs.Component{ID: m.id10, Comp: k},
-		ecs.Component{ID: m.id11, Comp: l},
-	).WithRelation(m.relation).New(target[0])
+	m.world.Relations().Set(entity, m.relation, target[0])
+	return entity
 }
 
 // Add the Map12's components to the given entity.
