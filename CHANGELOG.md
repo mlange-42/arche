@@ -1,8 +1,8 @@
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.13.3...main)
+## [[v0.14.0]](https://github.com/mlange-42/arche/compare/v0.13.3...v0.14.0)
 
 ### Features
 
-* Slow assignment methods like `World.Assign` and `World.NewEntityWith` are deprecated, in favour of their faster generic counterparts (#441)
+* Slow assignment methods like `World.Assign` and `World.NewEntityWith` are deprecated, in favour of their now faster generic counterparts (#441)
 
 ### Performance
 
@@ -15,7 +15,7 @@
 
 ### Bugfixes
 
-* Prevent garbage collection of slices and pointers in components added via `World.Assign` and similar methods (#438, issue #437)
+* Prevents garbage collection of slices and pointers in components added via `World.Assign` and similar methods (#438, issue #437)
 
 ## [[v0.13.3]](https://github.com/mlange-42/arche/compare/v0.13.2...v0.13.3)
 
