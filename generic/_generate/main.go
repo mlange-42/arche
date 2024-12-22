@@ -24,7 +24,6 @@ type query struct {
 	ReturnAll     string
 	ReturnAllSafe string
 	Include       string
-	Components    string
 	Assign        string
 	Arguments     string
 	IDTypes       string
@@ -64,7 +63,6 @@ func generateMaps() {
 		fullTypes := ""
 		returnAll := ""
 		returnAllSafe := ""
-		components := ""
 		assign := ""
 		arguments := ""
 		idTypes := ""
@@ -97,7 +95,6 @@ func generateMaps() {
 				returnAllSafe += ",\n"
 				arguments += ", "
 			}
-			components += fmt.Sprintf("ecs.Component{ID: m.id%d, Comp: %s},\n", j, strings.ToLower(typeLetters[j]))
 			assign += fmt.Sprintf("*(*%s)(m.world.Get(entity, m.id%d)) = *%s\n", typeLetters[j], j, strings.ToLower(typeLetters[j]))
 		}
 
@@ -110,7 +107,6 @@ func generateMaps() {
 			ReturnAll:     returnAll,
 			ReturnAllSafe: returnAllSafe,
 			Variables:     variables,
-			Components:    components,
 			Assign:        assign[:len(assign)-1],
 			Arguments:     arguments,
 			IDTypes:       idTypes,
