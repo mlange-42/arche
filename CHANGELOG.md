@@ -1,5 +1,5 @@
 
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.14.0...main)
+## [[v0.14.1]](https://github.com/mlange-42/arche/compare/v0.14.0...v0.14.1)
 
 ### Features
 
@@ -8,6 +8,10 @@
 ### Bugfixes
 
 * Fixes generic `MapX.Assign` and `MapX.NewWith` notifying listeners before setting components (#445, issue #443)
+
+### Other
+
+* Retract version v0.14.0 due to issue #443 and required features (#446)
 
 ## [[v0.14.0]](https://github.com/mlange-42/arche/compare/v0.13.3...v0.14.0)
 
