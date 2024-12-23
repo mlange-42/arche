@@ -30,11 +30,11 @@
 // This section gives an overview on how to achieve typical ECS manipulation operations with Arche.
 //
 // Simple manipulations of a single entity:
-//   - Create an entity: [World.NewEntity], [World.NewEntityWith]
+//   - Create an entity: [World.NewEntity], [World.NewEntityFn]
 //   - Remove an entity: [World.RemoveEntity]
-//   - Add components: [World.Add]
+//   - Add components: [World.Add], [World.AddFn]
 //   - Remove components: [World.Remove]
-//   - Exchange components: [World.Exchange]
+//   - Exchange components: [World.Exchange], [World.ExchangeFn]
 //   - Change entity relation target: [Relations.Set]
 //
 // Manipulations of a single entity, with a relation target:
