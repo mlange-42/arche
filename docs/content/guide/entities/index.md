@@ -62,7 +62,7 @@ However, {{< api ecs World.NewEntity NewEntity >}} takes an arbitrary number of 
 {{< code-func entities_test.go TestEntitiesCreateComponents >}}
 
 We get an entity with `Position`, and another one with `Position` and `Heading`.
-The components of the entity are initialized with their zero value.
+The components of the entity are initialized with their zero values.
 
 ### Generic API
 
@@ -72,11 +72,11 @@ Creating entities using the [generic API](./apis) requires a generic *MapX*, lik
 
 We get an entity with `Position` and `Heading`, initialized to their zero values.
 
-Alternatively, entities can be created with initialized components through {{< api generic Map2.NewWith NewWith >}}:
+Alternatively, entities can be created with initialized components through {{< api generic Map2.NewWith Map2.NewWith >}}:
 
 {{< code-func entities_test.go TestEntitiesCreateWithComponentsGeneric >}}
 
-We get an entity with `Position` and `Heading`, initialized according to the passed pointers.
+We get an entity with `Position` and `Heading`, initialized according to values behind the passed pointers.
 
 {{% notice style="blue" icon="lightbulb" title="Note" %}}
 The `2` in `Map2` stands for the number of components.
@@ -110,7 +110,7 @@ Note that generic types like *MapX* should be stored and re-used where possible,
 {{% /notice %}}
 
 Using the generic API, it is also possible to assign initialized components with
-{{< api generic Map2.Assign >}}, similar to {{< api generic Map2.NewWith NewWith >}}:
+{{< api generic Map2.Assign >}}, similar to {{< api generic Map2.NewWith Map2.NewWith >}}:
 
 {{< code-func entities_test.go TestEntitiesAssignGeneric >}}
 
