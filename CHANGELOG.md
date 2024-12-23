@@ -1,3 +1,14 @@
+
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.14.0...main)
+
+### Features
+
+* Adds `World.NewEntityFn`, `World.AddFn` and `World.ExchangeFn` that call a callback function before listener notification (#445)
+
+### Bugfixes
+
+* Fixes generic `MapX.Assign` and `MapX.NewWith` notifying listeners before setting components (#445, issue #443)
+
 ## [[v0.14.0]](https://github.com/mlange-42/arche/compare/v0.13.3...v0.14.0)
 
 ### Features
