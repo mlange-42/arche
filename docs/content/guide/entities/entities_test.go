@@ -134,21 +134,6 @@ func TestEntitiesExchangeGeneric(t *testing.T) {
 	exchange.Exchange(entity)
 }
 
-func TestEntitiesAssign(t *testing.T) {
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-	headID := ecs.ComponentID[Heading](&world)
-
-	entity := world.NewEntity()
-
-	world.Assign(
-		entity,
-		ecs.Component{ID: posID, Comp: &Position{X: 1, Y: 2}},
-		ecs.Component{ID: headID, Comp: &Heading{Angle: 180}},
-	)
-}
-
 func TestEntitiesAssignGeneric(t *testing.T) {
 	world := ecs.NewWorld()
 

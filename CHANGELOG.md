@@ -9,6 +9,10 @@
 
 * Fixes generic `MapX.Assign` and `MapX.NewWith` notifying listeners before setting components (#445, issue #443)
 
+### Documentation
+
+* Removes references to deprecated methods from the user guide (#447)
+
 ### Other
 
 * Retract version v0.14.0 due to issue #443 and required features (#446)
