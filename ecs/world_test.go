@@ -115,6 +115,86 @@ func TestWorldNewEntites(t *testing.T) {
 	}
 }
 
+func TestWorldNewEntityFn(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
+
+	e := w.NewEntityFn(
+		func(e Entity) {
+			pos := (*Position)(w.Get(e, posID))
+			*pos = Position{X: 1, Y: 2}
+		},
+		posID, velID,
+	)
+
+	pos := (*Position)(w.Get(e, posID))
+	assert.Equal(t, *pos, Position{X: 1, Y: 2})
+
+	// Test listener
+	event := false
+	listener := newTestListener(func(world *World, e EntityEvent) {
+		pos := (*Position)(w.Get(e.Entity, posID))
+		assert.Equal(t, *pos, Position{X: 1, Y: 2})
+		event = true
+	})
+	w.SetListener(&listener)
+
+	_ = w.NewEntityFn(
+		func(e Entity) {
+			pos := (*Position)(w.Get(e, posID))
+			*pos = Position{X: 1, Y: 2}
+		},
+		posID, velID,
+	)
+
+	assert.True(t, event)
+}
+
+func TestWorldAddFn(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
+
+	e := w.NewEntity()
+
+	w.AddFn(
+		e,
+		func(e Entity) {
+			pos := (*Position)(w.Get(e, posID))
+			*pos = Position{X: 1, Y: 2}
+		},
+		posID, velID,
+	)
+
+	pos := (*Position)(w.Get(e, posID))
+	assert.Equal(t, *pos, Position{X: 1, Y: 2})
+
+	// Test listener
+	e = w.NewEntity()
+
+	evt := false
+	listener := newTestListener(func(world *World, e EntityEvent) {
+		pos := (*Position)(w.Get(e.Entity, posID))
+		assert.Equal(t, *pos, Position{X: 1, Y: 2})
+		evt = true
+	})
+	w.SetListener(&listener)
+
+	w.AddFn(
+		e,
+		func(e Entity) {
+			pos := (*Position)(w.Get(e, posID))
+			*pos = Position{X: 1, Y: 2}
+		},
+		posID, velID,
+	)
+
+	assert.True(t, evt)
+}
+
 func TestWorldComponents(t *testing.T) {
 	w := NewWorld()
 
@@ -283,13 +363,13 @@ func TestWorldExchange(t *testing.T) {
 	e0 = w.NewEntity(rel1ID)
 
 	assert.PanicsWithValue(t, "entity already has a relation component",
-		func() { w.exchange(e0, []ID{rel2ID}, nil, rel2ID, true, target) })
+		func() { w.exchange(e0, []ID{rel2ID}, nil, rel2ID, true, target, nil) })
 	assert.PanicsWithValue(t, "can't add relation: Position is not a relation component",
-		func() { w.exchange(e0, []ID{posID}, nil, posID, true, target) })
+		func() { w.exchange(e0, []ID{posID}, nil, posID, true, target, nil) })
 
 	w.Remove(e0, rel1ID)
 	assert.PanicsWithValue(t, "can't add relation: resulting entity has no component testRelationA",
-		func() { w.exchange(e0, []ID{posID}, nil, rel1ID, true, target) })
+		func() { w.exchange(e0, []ID{posID}, nil, rel1ID, true, target, nil) })
 }
 
 func TestWorldExchangeRelation(t *testing.T) {
