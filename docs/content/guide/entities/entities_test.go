@@ -53,18 +53,6 @@ func TestEntitiesCreateComponents(t *testing.T) {
 	_ = world.NewEntity(posID, headID)
 }
 
-func TestEntitiesCreateWithComponents(t *testing.T) {
-	world := ecs.NewWorld()
-
-	posID := ecs.ComponentID[Position](&world)
-	headID := ecs.ComponentID[Heading](&world)
-
-	_ = world.NewEntityWith(
-		ecs.Component{ID: posID, Comp: &Position{X: 1, Y: 2}},
-		ecs.Component{ID: headID, Comp: &Heading{Angle: 180}},
-	)
-}
-
 func TestEntitiesCreateGeneric(t *testing.T) {
 	world := ecs.NewWorld()
 
