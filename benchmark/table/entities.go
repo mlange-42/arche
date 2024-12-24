@@ -19,11 +19,11 @@ func benchesEntities() []bench {
 		{Name: "World.RemoveEntity w/ 1 Comp", Desc: "", F: entitiesRemove_1Comp_1000, N: 1000},
 		{Name: "World.RemoveEntity w/ 5 Comps", Desc: "", F: entitiesRemove_5Comp_1000, N: 1000},
 
+		{Name: "Map1.NewWith w/ 1 Comp", Desc: "memory already allocated", F: entitiesCreateWithGeneric_1Comp_1000, N: 1000},
+		{Name: "Map5.NewWith w/ 5 Comps", Desc: "memory already allocated", F: entitiesCreateWithGeneric_5Comp_1000, N: 1000},
+
 		{Name: "World.NewEntityWith w/ 1 Comp", Desc: "⚠️ deprecated, memory already allocated", F: entitiesCreateWith_1Comp_1000, N: 1000},
 		{Name: "World.NewEntityWith w/ 5 Comps", Desc: "⚠️ deprecated, memory already allocated", F: entitiesCreateWith_5Comp_1000, N: 1000},
-
-		{Name: "MapX.NewEntityWith w/ 1 Comp", Desc: "memory already allocated", F: entitiesCreateWithGeneric_1Comp_1000, N: 1000},
-		{Name: "MapX.NewEntityWith w/ 5 Comps", Desc: "memory already allocated", F: entitiesCreateWithGeneric_5Comp_1000, N: 1000},
 	}
 }
 
