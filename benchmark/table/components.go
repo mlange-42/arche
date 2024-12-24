@@ -17,10 +17,11 @@ func benchesComponents() []bench {
 
 		{Name: "World.Exchange 1 Comp", Desc: "memory already allocated", F: componentsExchange1_1000, N: 1000},
 
+		{Name: "Map1.Assign 1 Comps", Desc: "memory already allocated", F: componentsAssignGeneric1_1000, N: 1000},
+		{Name: "Map5.Assign 5 Comps", Desc: "memory already allocated", F: componentsAssignGeneric5_1000, N: 1000},
+
 		{Name: "World.Assign 1 Comp", Desc: "⚠️ deprecated, memory already allocated", F: componentsAssign1_1000, N: 1000},
 		{Name: "World.Assign 5 Comps", Desc: "⚠️ deprecated, memory already allocated", F: componentsAssign5_1000, N: 1000},
-		{Name: "MapX.Assign 1 Comps", Desc: "memory already allocated", F: componentsAssignGeneric1_1000, N: 1000},
-		{Name: "MapX.Assign 5 Comps", Desc: "memory already allocated", F: componentsAssignGeneric5_1000, N: 1000},
 	}
 }
 
