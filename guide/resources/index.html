@@ -1,0 +1,1672 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.121.0">
+    <meta name="generator" content="Relearn 5.23.2+tip">
+    <meta name="description" content="ECS resources in Arche.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta name="twitter:title" content="ECS Resources :: Arche">
+    <meta name="twitter:description" content="ECS resources in Arche.">
+    <meta property="og:title" content="ECS Resources :: Arche">
+    <meta property="og:description" content="ECS resources in Arche.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://mlange-42.github.io/arche/guide/resources/index.html">
+    <meta property="og:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta property="article:section" content="User Guide :: Arche">
+    <meta property="og:site_name" content="Arche">
+    <title>ECS Resources :: Arche</title>
+    <link href="../../images/favicon.svg?1735006219" rel="icon" type="image/svg+xml">
+    <!-- https://github.com/filamentgroup/loadCSS/blob/master/README.md#how-to-use -->
+    <link href="../../css/fontawesome-all.min.css?1735006219" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fontawesome-all.min.css?1735006219" rel="stylesheet"></noscript>
+    <link href="../../css/nucleus.css?1735006219" rel="stylesheet">
+    <link href="../../css/auto-complete.css?1735006219" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/auto-complete.css?1735006219" rel="stylesheet"></noscript>
+    <link href="../../css/perfect-scrollbar.min.css?1735006219" rel="stylesheet">
+    <link href="../../css/fonts.css?1735006219" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fonts.css?1735006219" rel="stylesheet"></noscript>
+    <link href="../../css/theme.css?1735006219" rel="stylesheet">
+    <link href="../../css/theme-auto.css?1735006219" rel="stylesheet" id="R-variant-style">
+    <link href="../../css/chroma-auto.css?1735006219" rel="stylesheet" id="R-variant-chroma-style">
+    <link href="../../css/variant.css?1735006219" rel="stylesheet">
+    <link href="../../css/print.css?1735006219" rel="stylesheet" media="print">
+    <link href="../../css/ie.css?1735006219" rel="stylesheet">
+    <script src="../../js/url.js?1735006219"></script>
+    <script src="../../js/variant.js?1735006219"></script>
+    <script>
+      // hack to let hugo tell us how to get to the root when using relativeURLs, it needs to be called *url= for it to do its magic:
+      // https://github.com/gohugoio/hugo/blob/145b3fcce35fbac25c7033c91c1b7ae6d1179da8/transform/urlreplacers/absurlreplacer.go#L72
+      window.index_js_url="../../index.search.js";
+      var root_url="../../";
+      var baseUri=root_url.replace(/\/$/, '');
+      window.relearn = window.relearn || {};
+      window.relearn.baseUriFull='https:\/\/mlange-42.github.io\/arche/';
+      // variant stuff
+      window.relearn.themeVariantModifier='';
+      window.variants && variants.init( [ 'auto', 'light', 'dark' ] );
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script><link href="../../css/style.css" rel="stylesheet">
+<link href="../../css/cards.css" rel="stylesheet">
+
+  </head>
+  <body class="mobile-support html disableInlineCopyToClipboard" data-url="../../guide/resources/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper"><nav class="TableOfContents">
+  <ul>
+    <li><a href="#resource-types">Resource types</a></li>
+    <li><a href="#resource-ids">Resource IDs</a></li>
+    <li><a href="#adding-resources">Adding resources</a></li>
+    <li><a href="#accessing-resources">Accessing resources</a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../index.html"><span itemprop="name">Arche</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../guide/index.html"><span itemprop="name">User Guide</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">ECS Resources</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-edit" data-content-empty="disable" data-width-s="area-more" data-width-m="show" data-width-l="show"><a class="topbar-control" href="https://github.com/mlange-42/arche/edit/main/docs/content/guide/resources/index.md" target="_blank" title="Edit (CTRL&#43;ALT&#43;w)"><i class="fa-fw fas fa-pen"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../guide/batch-ops/index.html" title="Batch Operations (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../guide/events/index.html" title="Event System (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable default" tabindex="-1">
+        <div class="flex-block-wrapper">
+          <article class="default">
+            <header class="headline">
+            </header>
+<h1 id="ecs-resources">ECS Resources</h1>
+
+<p>So far, we stored all data in components, associated to entities.
+However, sometimes this is not optimal.
+This particularly applies to non-ECS data structures,
+and &ldquo;things&rdquo; that appear only once in a model or game.</p>
+<p>For these cases, Arche provides so-called <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Resources" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Resources">ecs.Resources</code>
+    </a>
+</span>.
+A resource can be thought of as a component that only appears once, globally,
+in an <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#World" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.World">ecs.World</code>
+    </a>
+</span>.</p>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#resource-types">Resource types</a></li>
+    <li><a href="#resource-ids">Resource IDs</a></li>
+    <li><a href="#adding-resources">Adding resources</a></li>
+    <li><a href="#accessing-resources">Accessing resources</a></li>
+  </ul>
+</nav>
+<h2 id="resource-types">Resource types</h2>
+<p>Just like with components, any Go struct (or other Go type) can be a resource.
+An example:</p>
+<div class="wrap-code highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">type</span> <span class="nx">Grid</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nx">Data</span> <span class="p">[][]</span><span class="nx">ecs</span><span class="p">.</span><span class="nx">Entity</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">    <span class="nx">Width</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">    <span class="nx">Height</span> <span class="kt">int</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="p">}</span></span></span></code></pre></div><h2 id="resource-ids">Resource IDs</h2>
+<p>Also analogous to components, resources are identified by a unique ID that can be obtained or registered using <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#ResourceID" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.ResourceID">ecs.ResourceID</code>
+    </a>
+</span>:</p>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nx">gridID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ResourceID</span><span class="p">[</span><span class="nx">Grid</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">gridID</span>
+</span></span></code></pre></div>
+
+
+<p>As with components, a resource is registered and assigned an ID on first use automatically.</p>
+<h2 id="adding-resources">Adding resources</h2>
+<p>The most simple way to add a resource to the world is the function <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#AddResource" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.AddResource">ecs.AddResource</code>
+    </a>
+</span>:</p>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1">// Create the resource, and add a pointer to it to the world.
+</span></span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c1"></span><span class="nx">grid</span> <span class="o">:=</span> <span class="nf">NewGrid</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="nx">ecs</span><span class="p">.</span><span class="nf">AddResource</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">grid</span><span class="p">)</span>
+</span></span></code></pre></div>
+
+
+<p>An ID is automatically assigned to type <code>Grid</code> here, if it was not registered before with <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#ResourceID" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.ResourceID">ecs.ResourceID</code>
+    </a>
+</span>.</p>
+<p><span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#AddResource" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.AddResource">ecs.AddResource</code>
+    </a>
+</span>, however, is not particularly efficient.
+It a resource needs to be added (and removed) repeatedly, use <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#World.Resources" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.World.Resources">ecs.World.Resources</code>
+    </a>
+</span>:</p>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nx">gridID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ResourceID</span><span class="p">[</span><span class="nx">Grid</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="c1">// Create the resource, and add a pointer to it to the world.
+</span></span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="c1"></span><span class="nx">grid</span> <span class="o">:=</span> <span class="nf">NewGrid</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="nx">world</span><span class="p">.</span><span class="nf">Resources</span><span class="p">().</span><span class="nf">Add</span><span class="p">(</span><span class="nx">gridID</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">grid</span><span class="p">)</span>
+</span></span></code></pre></div>
+
+
+<h2 id="accessing-resources">Accessing resources</h2>
+<p>Access to resources is obtained via <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#World.Resources" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.World.Resources">ecs.World.Resources</code>
+    </a>
+</span> in the ID-based API,
+and via <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic#Resource" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic.Resource">generic.Resource</code>
+    </a>
+</span> in the generic API:</p>
+
+<div class="tab-panel" data-tab-group="93e0d3a0e31260404768001f0b46c726">
+  <div class="tab-nav">
+    <div class="tab-nav-title">&#8203;</div>
+    <button
+      data-tab-item="generic"
+      class="tab-nav-button tab-panel-style cstyle initial active" tabindex="-1"
+      onclick="switchTab('93e0d3a0e31260404768001f0b46c726','generic')"
+    >
+      <span class="tab-nav-text">generic</span>
+    </button>
+    <button
+      data-tab-item="id-based"
+      class="tab-nav-button tab-panel-style cstyle initial"
+      onclick="switchTab('93e0d3a0e31260404768001f0b46c726','id-based')"
+    >
+      <span class="tab-nav-text">ID-based</span>
+    </button>
+  </div>
+  <div class="tab-content-container">
+    <div
+      data-tab-item="generic"
+      class="tab-content tab-panel-style cstyle initial active">
+      <div class="tab-content-text">
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1">// Create the resource, and add a pointer to it to the world.
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"></span><span class="nx">grid</span> <span class="o">:=</span> <span class="nf">NewGrid</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="nx">ecs</span><span class="p">.</span><span class="nf">AddResource</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">grid</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1">// Then, somewhere else in the code...
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"></span><span class="nx">gridRes</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewResource</span><span class="p">[</span><span class="nx">Grid</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="nx">grid2</span> <span class="o">:=</span> <span class="nx">gridRes</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">grid2</span><span class="p">.</span><span class="nx">Data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+</span></span></code></pre></div>
+
+
+</div>
+    </div>
+    <div
+      data-tab-item="id-based"
+      class="tab-content tab-panel-style cstyle initial">
+      <div class="tab-content-text">
+
+
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1">// Create the resource, and add a pointer to it to the world.
+</span></span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="c1"></span><span class="nx">grid</span> <span class="o">:=</span> <span class="nf">NewGrid</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="nx">ecs</span><span class="p">.</span><span class="nf">AddResource</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="o">&amp;</span><span class="nx">grid</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1">// Then, somewhere else in the code...
+</span></span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="c1"></span><span class="nx">gridID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ResourceID</span><span class="p">[</span><span class="nx">Grid</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="nx">grid2</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">Resources</span><span class="p">().</span><span class="nf">Get</span><span class="p">(</span><span class="nx">gridID</span><span class="p">).(</span><span class="o">*</span><span class="nx">Grid</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">grid2</span><span class="p">.</span><span class="nx">Data</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+</span></span></code></pre></div>
+
+
+</div>
+    </div>
+  </div>
+</div>
+<p>Note that in the ID-based example, we need to cast the pointer retrieved from
+<span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Resources.Get" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Resources.Get">ecs.Resources.Get</code>
+    </a>
+</span> to <code>*Grid</code>, similar to the cast in ID-based component access.
+However, the syntax is a bit different here as we cast an <code>interface{}</code>,
+rather than an <code>unsafe.Pointer</code> for components.</p>
+<p>As with components, the generic API is the recommended way for normal usage.</p>
+
+            <footer class="footline">
+            </footer>
+          </article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation showVisitedLinks">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+<a href="https://mlange-42.github.io/arche/" title="Home"><img src="https://mlange-42.github.io/arche/images/logo-dark.svg" alt="Arche Logo"></img></a>
+        </div>
+        <div class="searchbox default-animation">
+          <i class="fas fa-search" title="Search (CTRL+ALT+f)"></i>
+          <label class="a11y-only" for="R-search-by">Search</label>
+          <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+          <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+        </div>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../../js/auto-complete.js?1735006219" defer></script>
+        <script src="../../js/lunr/lunr.min.js?1735006219" defer></script>
+        <script src="../../js/lunr/lunr.stemmer.support.min.js?1735006219" defer></script>
+        <script src="../../js/lunr/lunr.multi.min.js?1735006219" defer></script>
+        <script src="../../js/lunr/lunr.en.min.js?1735006219" defer></script>
+        <script src="../../js/search.js?1735006219" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation">
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-topics">
+          <ul class="enlarge morespace collapsible-menu">
+          <li data-nav-id="/quickstart/index.html" class=""><a class="padding" href="../../quickstart/index.html">Quickstart<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/index.html" class="parent "><input type="checkbox" id="R-section-231d7ac600b0ccff382b28de1eb3e8ed" aria-controls="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed" checked><label for="R-section-231d7ac600b0ccff382b28de1eb3e8ed"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu User Guide</span></label><a class="padding" href="../../guide/index.html">User Guide<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed" class="morespace collapsible-menu">
+          <li data-nav-id="/guide/apis/index.html" class=""><a class="padding" href="../../guide/apis/index.html">Generic &amp; ID-based API<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world/index.html" class=""><a class="padding" href="../../guide/world/index.html">The World<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/entities/index.html" class=""><a class="padding" href="../../guide/entities/index.html">Entities &amp; Components<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/queries/index.html" class=""><a class="padding" href="../../guide/queries/index.html">Queries<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/filters/index.html" class=""><a class="padding" href="../../guide/filters/index.html">Filters<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world-access/index.html" class=""><a class="padding" href="../../guide/world-access/index.html">World Entity Access<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/relations/index.html" class=""><a class="padding" href="../../guide/relations/index.html">Entity Relations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/batch-ops/index.html" class=""><a class="padding" href="../../guide/batch-ops/index.html">Batch Operations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/resources/index.html" class="active"><a class="padding" href="../../guide/resources/index.html">ECS Resources<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/events/index.html" class=""><a class="padding" href="../../guide/events/index.html">Event System<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/stats/index.html" class=""><a class="padding" href="../../guide/stats/index.html">World Statistics<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/performance/index.html" class=""><a class="padding" href="../../guide/performance/index.html">Performance Tips<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/tools/index.html" class=""><a class="padding" href="../../guide/tools/index.html">Tools<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/background/index.html" class=""><input type="checkbox" id="R-section-2c311fb29b03520a1306c5c783eda95a" aria-controls="R-subsections-2c311fb29b03520a1306c5c783eda95a"><label for="R-section-2c311fb29b03520a1306c5c783eda95a"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu Background</span></label><a class="padding" href="../../background/index.html">Background<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-2c311fb29b03520a1306c5c783eda95a" class="morespace collapsible-menu">
+          <li data-nav-id="/background/design/index.html" class=""><a class="padding" href="../../background/design/index.html">Design Philosophy<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/architecture/index.html" class=""><a class="padding" href="../../background/architecture/index.html">Architecture<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/benchmarks/index.html" class=""><a class="padding" href="../../background/benchmarks/index.html">Benchmarks<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/changelog/index.html" class=""><a class="padding" href="../../background/changelog/index.html">Changelog<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/made_with/index.html" class=""><a class="padding" href="../../made_with/index.html">Made with Arche<i class="fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div id="R-shortcuts">
+          <div class="nav-title padding">More</div>
+          <ul class="space">
+            <li><a class="padding" href="https://github.com/mlange-42/arche"><i class='fab fa-fw fa-github'></i> GitHub repo</a></li>
+            <li><a class="padding" href="https://pkg.go.dev/github.com/mlange-42/arche"><i class='fas fa-fw fa-bookmark'></i> API reference</a></li>
+          </ul>
+        </div>
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks showVariantSwitch showVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-language fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = baseUri + this.value;">
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch showVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-paint-brush fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.variants && variants.changeVariant( this.value );">
+                      <option id="R-auto" value="auto" selected>Auto</option>
+                      <option id="R-light" value="light">Light</option>
+                      <option id="R-dark" value="dark">Dark</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.variants && variants.markSelectedVariant();</script>
+              </li>
+              <li class="footerVisitedLinks showVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fas fa-history fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter">
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../../js/clipboard.min.js?1735006219" defer></script>
+    <script src="../../js/perfect-scrollbar.min.js?1735006219" defer></script>
+    <script src="../../js/theme.js?1735006219" defer></script>
+  </body>
+</html>

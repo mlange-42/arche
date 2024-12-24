@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.121.0">
+    <meta name="generator" content="Relearn 5.23.2+tip">
+    <meta name="description" content="Arche changelog.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta name="twitter:title" content="Changelog :: Arche">
+    <meta name="twitter:description" content="Arche changelog.">
+    <meta property="og:title" content="Changelog :: Arche">
+    <meta property="og:description" content="Arche changelog.">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://mlange-42.github.io/arche/background/changelog/index.html">
+    <meta property="og:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta property="article:section" content="Background :: Arche">
+    <meta property="og:site_name" content="Arche">
+    <title>Changelog :: Arche</title>
+    <link href="../../images/favicon.svg?1735006219" rel="icon" type="image/svg+xml">
+    <!-- https://github.com/filamentgroup/loadCSS/blob/master/README.md#how-to-use -->
+    <link href="../../css/fontawesome-all.min.css?1735006219" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fontawesome-all.min.css?1735006219" rel="stylesheet"></noscript>
+    <link href="../../css/nucleus.css?1735006219" rel="stylesheet">
+    <link href="../../css/auto-complete.css?1735006219" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/auto-complete.css?1735006219" rel="stylesheet"></noscript>
+    <link href="../../css/perfect-scrollbar.min.css?1735006219" rel="stylesheet">
+    <link href="../../css/fonts.css?1735006219" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fonts.css?1735006219" rel="stylesheet"></noscript>
+    <link href="../../css/theme.css?1735006219" rel="stylesheet">
+    <link href="../../css/theme-auto.css?1735006219" rel="stylesheet" id="R-variant-style">
+    <link href="../../css/chroma-auto.css?1735006219" rel="stylesheet" id="R-variant-chroma-style">
+    <link href="../../css/variant.css?1735006219" rel="stylesheet">
+    <link href="../../css/print.css?1735006219" rel="stylesheet" media="print">
+    <link href="../../css/ie.css?1735006219" rel="stylesheet">
+    <script src="../../js/url.js?1735006219"></script>
+    <script src="../../js/variant.js?1735006219"></script>
+    <script>
+      // hack to let hugo tell us how to get to the root when using relativeURLs, it needs to be called *url= for it to do its magic:
+      // https://github.com/gohugoio/hugo/blob/145b3fcce35fbac25c7033c91c1b7ae6d1179da8/transform/urlreplacers/absurlreplacer.go#L72
+      window.index_js_url="../../index.search.js";
+      var root_url="../../";
+      var baseUri=root_url.replace(/\/$/, '');
+      window.relearn = window.relearn || {};
+      window.relearn.baseUriFull='https:\/\/mlange-42.github.io\/arche/';
+      // variant stuff
+      window.relearn.themeVariantModifier='';
+      window.variants && variants.init( [ 'auto', 'light', 'dark' ] );
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script><link href="../../css/style.css" rel="stylesheet">
+<link href="../../css/cards.css" rel="stylesheet">
+
+  </head>
+  <body class="mobile-support html disableInlineCopyToClipboard" data-url="../../background/changelog/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper"><nav class="TableOfContents">
+  <ul>
+    <li><a href="#unpublishedhttpsgithubcommlange-42archecomparev0141main"><a href="https://github.com/mlange-42/arche/compare/v0.14.1...main">[unpublished]</a></a>
+      <ul>
+        <li><a href="#documentation">Documentation</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0141httpsgithubcommlange-42archecomparev0140v0141"><a href="https://github.com/mlange-42/arche/compare/v0.14.0...v0.14.1">[v0.14.1]</a></a>
+      <ul>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#bugfixes">Bugfixes</a></li>
+        <li><a href="#documentation-1">Documentation</a></li>
+        <li><a href="#other">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0140httpsgithubcommlange-42archecomparev0133v0140"><a href="https://github.com/mlange-42/arche/compare/v0.13.3...v0.14.0">[v0.14.0]</a></a>
+      <ul>
+        <li><a href="#features-1">Features</a></li>
+        <li><a href="#performance">Performance</a></li>
+        <li><a href="#documentation-2">Documentation</a></li>
+        <li><a href="#bugfixes-1">Bugfixes</a></li>
+        <li><a href="#known-issues">Known issues</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0133httpsgithubcommlange-42archecomparev0132v0133"><a href="https://github.com/mlange-42/arche/compare/v0.13.2...v0.13.3">[v0.13.3]</a></a>
+      <ul>
+        <li><a href="#performance-1">Performance</a></li>
+        <li><a href="#documentation-3">Documentation</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0132httpsgithubcommlange-42archecomparev0131v0132"><a href="https://github.com/mlange-42/arche/compare/v0.13.1...v0.13.2">[v0.13.2]</a></a>
+      <ul>
+        <li><a href="#bugfixes-2">Bugfixes</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0131httpsgithubcommlange-42archecomparev0130v0131"><a href="https://github.com/mlange-42/arche/compare/v0.13.0...v0.13.1">[v0.13.1]</a></a>
+      <ul>
+        <li><a href="#bugfixes-3">Bugfixes</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0130httpsgithubcommlange-42archecomparev0120v0130"><a href="https://github.com/mlange-42/arche/compare/v0.12.0...v0.13.0">[v0.13.0]</a></a>
+      <ul>
+        <li><a href="#features-2">Features</a></li>
+        <li><a href="#other-1">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0120httpsgithubcommlange-42archecomparev0110v0120"><a href="https://github.com/mlange-42/arche/compare/v0.11.0...v0.12.0">[v0.12.0]</a></a>
+      <ul>
+        <li><a href="#features-3">Features</a></li>
+        <li><a href="#documentation-4">Documentation</a></li>
+        <li><a href="#performance-2">Performance</a></li>
+        <li><a href="#bugfixes-4">Bugfixes</a></li>
+        <li><a href="#first-time-contributors">First-time contributors</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0110httpsgithubcommlange-42archecomparev0101v0110"><a href="https://github.com/mlange-42/arche/compare/v0.10.1...v0.11.0">[v0.11.0]</a></a>
+      <ul>
+        <li><a href="#highlights">Highlights</a></li>
+        <li><a href="#breaking-changes">Breaking changes</a></li>
+        <li><a href="#features-4">Features</a></li>
+        <li><a href="#documentation-5">Documentation</a></li>
+        <li><a href="#bugfixes-5">Bugfixes</a></li>
+        <li><a href="#performance-3">Performance</a></li>
+        <li><a href="#other-2">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0101httpsgithubcommlange-42archecomparev0100v0101"><a href="https://github.com/mlange-42/arche/compare/v0.10.0...v0.10.1">[v0.10.1]</a></a>
+      <ul>
+        <li><a href="#bugfixes-6">Bugfixes</a></li>
+        <li><a href="#other-3">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v0100httpsgithubcommlange-42archecomparev090v0100"><a href="https://github.com/mlange-42/arche/compare/v0.9.0...v0.10.0">[v0.10.0]</a></a>
+      <ul>
+        <li><a href="#highlights-1">Highlights</a></li>
+        <li><a href="#breaking-changes-1">Breaking changes</a></li>
+        <li><a href="#features-5">Features</a></li>
+        <li><a href="#performance-4">Performance</a></li>
+        <li><a href="#documentation-6">Documentation</a></li>
+        <li><a href="#other-4">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v090httpsgithubcommlange-42archecomparev081v090"><a href="https://github.com/mlange-42/arche/compare/v0.8.1...v0.9.0">[v0.9.0]</a></a>
+      <ul>
+        <li><a href="#infrastructure">Infrastructure</a></li>
+      </ul>
+    </li>
+    <li><a href="#v081httpsgithubcommlange-42archecomparev080v081"><a href="https://github.com/mlange-42/arche/compare/v0.8.0...v0.8.1">[v0.8.1]</a></a>
+      <ul>
+        <li><a href="#documentation-7">Documentation</a></li>
+      </ul>
+    </li>
+    <li><a href="#v080httpsgithubcommlange-42archecomparev071v080"><a href="https://github.com/mlange-42/arche/compare/v0.7.1...v0.8.0">[v0.8.0]</a></a>
+      <ul>
+        <li><a href="#highlights-2">Highlights</a></li>
+        <li><a href="#breaking-changes-2">Breaking changes</a></li>
+        <li><a href="#features-6">Features</a></li>
+        <li><a href="#performance-5">Performance</a></li>
+        <li><a href="#documentation-8">Documentation</a></li>
+        <li><a href="#other-5">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v071httpsgithubcommlange-42archecomparev070v071"><a href="https://github.com/mlange-42/arche/compare/v0.7.0...v0.7.1">[v0.7.1]</a></a>
+      <ul>
+        <li><a href="#documentation-9">Documentation</a></li>
+        <li><a href="#other-6">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v070httpsgithubcommlange-42archecomparev063v070"><a href="https://github.com/mlange-42/arche/compare/v0.6.3...v0.7.0">[v0.7.0]</a></a>
+      <ul>
+        <li><a href="#features-7">Features</a></li>
+        <li><a href="#performance-6">Performance</a></li>
+        <li><a href="#bugfixes-7">Bugfixes</a></li>
+      </ul>
+    </li>
+    <li><a href="#v063httpsgithubcommlange-42archecomparev062v063"><a href="https://github.com/mlange-42/arche/compare/v0.6.2...v0.6.3">[v0.6.3]</a></a>
+      <ul>
+        <li><a href="#documentation-10">Documentation</a></li>
+        <li><a href="#other-7">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v062httpsgithubcommlange-42archecomparev061v062"><a href="https://github.com/mlange-42/arche/compare/v0.6.1...v0.6.2">[v0.6.2]</a></a>
+      <ul>
+        <li><a href="#performance-7">Performance</a></li>
+      </ul>
+    </li>
+    <li><a href="#v061httpsgithubcommlange-42archecomparev060v061"><a href="https://github.com/mlange-42/arche/compare/v0.6.0...v0.6.1">[v0.6.1]</a></a>
+      <ul>
+        <li><a href="#documentation-11">Documentation</a></li>
+      </ul>
+    </li>
+    <li><a href="#v060httpsgithubcommlange-42archecomparev051v060"><a href="https://github.com/mlange-42/arche/compare/v0.5.1...v0.6.0">[v0.6.0]</a></a>
+      <ul>
+        <li><a href="#highlights-3">Highlights</a></li>
+        <li><a href="#breaking-changes-3">Breaking changes</a></li>
+        <li><a href="#features-8">Features</a></li>
+        <li><a href="#performance-8">Performance</a></li>
+        <li><a href="#bugfixes-8">Bugfixes</a></li>
+        <li><a href="#documentation-12">Documentation</a></li>
+        <li><a href="#other-8">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v051httpsgithubcommlange-42archecomparev050v051"><a href="https://github.com/mlange-42/arche/compare/v0.5.0...v0.5.1">[v0.5.1]</a></a>
+      <ul>
+        <li><a href="#performance-9">Performance</a></li>
+        <li><a href="#documentation-13">Documentation</a></li>
+        <li><a href="#other-9">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v050httpsgithubcommlange-42archecomparev046v050"><a href="https://github.com/mlange-42/arche/compare/v0.4.6...v0.5.0">[v0.5.0]</a></a>
+      <ul>
+        <li><a href="#features-9">Features</a></li>
+        <li><a href="#documentation-14">Documentation</a></li>
+      </ul>
+    </li>
+    <li><a href="#v046httpsgithubcommlange-42archecomparev045v046"><a href="https://github.com/mlange-42/arche/compare/v0.4.5...v0.4.6">[v0.4.6]</a></a>
+      <ul>
+        <li><a href="#performance-10">Performance</a></li>
+        <li><a href="#documentation-15">Documentation</a></li>
+      </ul>
+    </li>
+    <li><a href="#v045httpsgithubcommlange-42archecomparev044v045"><a href="https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5">[v0.4.5]</a></a>
+      <ul>
+        <li><a href="#features-10">Features</a></li>
+        <li><a href="#other-10">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v044httpsgithubcommlange-42archecomparev043v044"><a href="https://github.com/mlange-42/arche/compare/v0.4.3...v0.4.4">[v0.4.4]</a></a>
+      <ul>
+        <li><a href="#features-11">Features</a></li>
+        <li><a href="#documentation-16">Documentation</a></li>
+        <li><a href="#bugfixes-9">Bugfixes</a></li>
+        <li><a href="#other-11">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v043httpsgithubcommlange-42archecomparev042v043"><a href="https://github.com/mlange-42/arche/compare/v0.4.2...v0.4.3">[v0.4.3]</a></a>
+      <ul>
+        <li><a href="#bugfixes-10">Bugfixes</a></li>
+      </ul>
+    </li>
+    <li><a href="#v042httpsgithubcommlange-42archecomparev041v042"><a href="https://github.com/mlange-42/arche/compare/v0.4.1...v0.4.2">[v0.4.2]</a></a>
+      <ul>
+        <li><a href="#performance-11">Performance</a></li>
+      </ul>
+    </li>
+    <li><a href="#v041httpsgithubcommlange-42archecomparev040v041"><a href="https://github.com/mlange-42/arche/compare/v0.4.0...v0.4.1">[v0.4.1]</a></a>
+      <ul>
+        <li><a href="#bugfixes-11">Bugfixes</a></li>
+        <li><a href="#other-12">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v040httpsgithubcommlange-42archecomparev031v040"><a href="https://github.com/mlange-42/arche/compare/v0.3.1...v0.4.0">[v0.4.0]</a></a>
+      <ul>
+        <li><a href="#features-12">Features</a></li>
+        <li><a href="#performance-12">Performance</a></li>
+        <li><a href="#other-13">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v031httpsgithubcommlange-42archecomparev030v031"><a href="https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1">[v0.3.1]</a></a>
+      <ul>
+        <li><a href="#other-14">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v030httpsgithubcommlange-42archecomparev020v030"><a href="https://github.com/mlange-42/arche/compare/v0.2.0...v0.3.0">[v0.3.0]</a></a>
+      <ul>
+        <li><a href="#features-13">Features</a></li>
+        <li><a href="#performance-13">Performance</a></li>
+        <li><a href="#other-15">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v020httpsgithubcommlange-42archecomparev014v020"><a href="https://github.com/mlange-42/arche/compare/v0.1.4...v0.2.0">[v0.2.0]</a></a>
+      <ul>
+        <li><a href="#features-14">Features</a></li>
+        <li><a href="#performance-14">Performance</a></li>
+        <li><a href="#other-16">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v014httpsgithubcommlange-42archecomparev013v014"><a href="https://github.com/mlange-42/arche/compare/v0.1.3...v0.1.4">[v0.1.4]</a></a>
+      <ul>
+        <li><a href="#documentation-17">Documentation</a></li>
+      </ul>
+    </li>
+    <li><a href="#v013httpsgithubcommlange-42archecomparev012v013"><a href="https://github.com/mlange-42/arche/compare/v0.1.2...v0.1.3">[v0.1.3]</a></a>
+      <ul>
+        <li><a href="#features-15">Features</a></li>
+      </ul>
+    </li>
+    <li><a href="#v012httpsgithubcommlange-42archecomparev011v012"><a href="https://github.com/mlange-42/arche/compare/v0.1.1...v0.1.2">[v0.1.2]</a></a>
+      <ul>
+        <li><a href="#other-17">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v011httpsgithubcommlange-42archecomparev010v011"><a href="https://github.com/mlange-42/arche/compare/v0.1.0...v0.1.1">[v0.1.1]</a></a>
+      <ul>
+        <li><a href="#other-18">Other</a></li>
+      </ul>
+    </li>
+    <li><a href="#v010httpsgithubcommlange-42archetreev010"><a href="https://github.com/mlange-42/arche/tree/v0.1.0">[v0.1.0]</a></a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../index.html"><span itemprop="name">Arche</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../background/index.html"><span itemprop="name">Background</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Changelog</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-edit" data-content-empty="disable" data-width-s="area-more" data-width-m="show" data-width-l="show"><a class="topbar-control" href="https://github.com/mlange-42/arche/edit/main/docs/content/background/changelog.md" target="_blank" title="Edit (CTRL&#43;ALT&#43;w)"><i class="fa-fw fas fa-pen"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../background/benchmarks/index.html" title="Benchmarks (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../made_with/index.html" title="Made with Arche (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable default" tabindex="-1">
+        <div class="flex-block-wrapper">
+          <article class="default">
+            <header class="headline">
+            </header>
+<h1 id="changelog">Changelog</h1>
+
+<h2 id="unpublishedhttpsgithubcommlange-42archecomparev0141main"><a href="https://github.com/mlange-42/arche/compare/v0.14.1...main" target="_blank">[unpublished]</a></h2>
+<h3 id="documentation">Documentation</h3>
+<ul>
+<li>Fix method names and ordering in benchmark tables (448)</li>
+</ul>
+<h2 id="v0141httpsgithubcommlange-42archecomparev0140v0141"><a href="https://github.com/mlange-42/arche/compare/v0.14.0...v0.14.1" target="_blank">[v0.14.1]</a></h2>
+<h3 id="features">Features</h3>
+<ul>
+<li>Adds <code>World.NewEntityFn</code>, <code>World.AddFn</code> and <code>World.ExchangeFn</code> that call a callback function before listener notification (#445)</li>
+</ul>
+<h3 id="bugfixes">Bugfixes</h3>
+<ul>
+<li>Fixes generic <code>MapX.Assign</code> and <code>MapX.NewWith</code> notifying listeners before setting components (#445, issue #443)</li>
+</ul>
+<h3 id="documentation-1">Documentation</h3>
+<ul>
+<li>Removes references to deprecated methods from the user guide (#447)</li>
+</ul>
+<h3 id="other">Other</h3>
+<ul>
+<li>Retract version v0.14.0 due to issue #443 and required features (#446)</li>
+</ul>
+<h2 id="v0140httpsgithubcommlange-42archecomparev0133v0140"><a href="https://github.com/mlange-42/arche/compare/v0.13.3...v0.14.0" target="_blank">[v0.14.0]</a></h2>
+<h3 id="features-1">Features</h3>
+<ul>
+<li>Slow assignment methods like <code>World.Assign</code> and <code>World.NewEntityWith</code> are deprecated, in favour of their now faster generic counterparts (#441)</li>
+</ul>
+<h3 id="performance">Performance</h3>
+<ul>
+<li>Optimizes <code>Map.Set</code>, <code>MapX.Assign</code> and <code>MapX.NewWith</code>, by not using runtime reflection (#440)</li>
+</ul>
+<h3 id="documentation-2">Documentation</h3>
+<ul>
+<li>Adds benchmarks for <code>World.Assign</code> and <code>World.NewEntityWith</code> to the user guide (#438)</li>
+<li>Adds benchmarks for <code>MapX.Assign</code> and <code>MapX.NewWith</code> to the user guide (#440)</li>
+</ul>
+<h3 id="bugfixes-1">Bugfixes</h3>
+<ul>
+<li>Prevents garbage collection of slices and pointers in components added via <code>World.Assign</code> and similar methods (#438, issue #437)</li>
+</ul>
+<h3 id="known-issues">Known issues</h3>
+<ul>
+<li>Generic <code>MapX.Assign</code> and <code>MapX.NewWith</code> notify listeners before setting components (#443)</li>
+</ul>
+<h2 id="v0133httpsgithubcommlange-42archecomparev0132v0133"><a href="https://github.com/mlange-42/arche/compare/v0.13.2...v0.13.3" target="_blank">[v0.13.3]</a></h2>
+<h3 id="performance-1">Performance</h3>
+<ul>
+<li>Simplifies the archetype graph to use only a single list of neighbors per node, saving a bit of memory (#433)</li>
+</ul>
+<h3 id="documentation-3">Documentation</h3>
+<ul>
+<li>Adds an example for <code>World.Mask</code>, showing how to check whether a filter &ldquo;contains&rdquo; an entity (#428)</li>
+<li>Adds the <a href="https://github.com/mlange-42/beecs" target="_blank">beecs</a> implementation of <a href="https://beehave-model.net/" target="_blank">BEEHAVE</a> to the showcase (#429)</li>
+</ul>
+<h2 id="v0132httpsgithubcommlange-42archecomparev0131v0132"><a href="https://github.com/mlange-42/arche/compare/v0.13.1...v0.13.2" target="_blank">[v0.13.2]</a></h2>
+<h3 id="bugfixes-2">Bugfixes</h3>
+<ul>
+<li>Ensure Assign() copies components before notifying listeners (#426, <a href="https://github.com/g-getsov" target="_blank">g-getsov</a>)</li>
+</ul>
+<h2 id="v0131httpsgithubcommlange-42archecomparev0130v0131"><a href="https://github.com/mlange-42/arche/compare/v0.13.0...v0.13.1" target="_blank">[v0.13.1]</a></h2>
+<h3 id="bugfixes-3">Bugfixes</h3>
+<ul>
+<li>Fixes dispatch listener bug that did not clear component restriction (#424, <a href="https://github.com/g-getsov" target="_blank">g-getsov</a>)</li>
+</ul>
+<h2 id="v0130httpsgithubcommlange-42archecomparev0120v0130"><a href="https://github.com/mlange-42/arche/compare/v0.12.0...v0.13.0" target="_blank">[v0.13.0]</a></h2>
+<h3 id="features-2">Features</h3>
+<ul>
+<li>Adds function <code>ResourceTypeID</code> to register/get a resource ID from a <code>reflect.Type</code> (#420)</li>
+</ul>
+<h3 id="other-1">Other</h3>
+<ul>
+<li>Fix component type in examples/base (#419)</li>
+</ul>
+<h2 id="v0120httpsgithubcommlange-42archecomparev0110v0120"><a href="https://github.com/mlange-42/arche/compare/v0.11.0...v0.12.0" target="_blank">[v0.12.0]</a></h2>
+<h3 id="features-3">Features</h3>
+<ul>
+<li>Adds <code>Entity.ID()</code> and <code>Entity.Generation()</code> (#408, <a href="https://github.com/delaneyj" target="_blank">delaneyj</a>)</li>
+</ul>
+<h3 id="documentation-4">Documentation</h3>
+<ul>
+<li>Adds a showcase chapter &ldquo;Made with Arche&rdquo; to the documentation page (#411)</li>
+</ul>
+<h3 id="performance-2">Performance</h3>
+<ul>
+<li>Re-arrange struct fields to save memory in a few places (#413)</li>
+</ul>
+<h3 id="bugfixes-4">Bugfixes</h3>
+<ul>
+<li>Fix crash caused by extending layouts of an inactive archetype (#416, reported in #415)</li>
+</ul>
+<h3 id="first-time-contributors">First-time contributors</h3>
+<ul>
+<li><a href="https://github.com/delaneyj" target="_blank">delaneyj</a></li>
+</ul>
+<h2 id="v0110httpsgithubcommlange-42archecomparev0101v0110"><a href="https://github.com/mlange-42/arche/compare/v0.10.1...v0.11.0" target="_blank">[v0.11.0]</a></h2>
+<h3 id="highlights">Highlights</h3>
+<p>Arche now has a dedicated <a href="https://mlange-42.github.io/arche/" target="_blank">documentation site</a>
+with a structured user guide and background information.
+We hope that this will lower the barrier to entrance significantly.</p>
+<p>Further, Arche got a few new features:</p>
+<ul>
+<li><code>Query.EntityAt</code> was added for random access to query entities.</li>
+<li>Generic filters now support <code>Exclusive</code>, like ID-based filters.</li>
+<li>Build tag <code>debug</code> improves error messages in a few places where we rely on standard library panics for performance.</li>
+</ul>
+<h3 id="breaking-changes">Breaking changes</h3>
+<ul>
+<li>Renames types in <code>ecs.stats</code> to follow Go standards.
+<code>stats.WorldStats</code> -&gt; <code>stats.World</code>, <code>stats.NodeStats</code> -&gt; <code>stats.Node</code>, &hellip; (#388)</li>
+</ul>
+<h3 id="features-4">Features</h3>
+<ul>
+<li>Adds method <code>Query.EntityAt()</code>, useful for things like random sampling of entities (#358)</li>
+<li>Adds build tag <code>debug</code> to improve error messages in a few places where we rely on standard library panics for performance (#377)</li>
+<li>Adds method <code>FilterX.Exclusive()</code> to all generic filters (#381)</li>
+</ul>
+<h3 id="documentation-5">Documentation</h3>
+<ul>
+<li>Adds a dedicated Arche <a href="https://mlange-42.github.io/arche/" target="_blank">User Guide</a> web site (#380, #382, #383, #384, #385)</li>
+<li>Adds <del><a href="https://github.com/mlange-42/arche/blob/main/BENCHMARKS.md" target="_blank">BENCHMARKS.md</a></del> <a href="https://mlange-42.github.io/arche/background/benchmarks/" target="_blank">benchmarks</a> for a tabular overview of the runtime cost of typical <em>Arche</em> ECS operations (#367, #372)</li>
+<li>Link benchmarking code in <code>README.md</code> and benchmarking tables (#375)</li>
+<li>Documents build tags <code>tiny</code> and <code>debug</code> in package docs of <code>ecs</code> (#377)</li>
+<li>Adds examples to demonstrate the use of non-ECS data structures together with ECS (#379)</li>
+</ul>
+<h3 id="bugfixes-5">Bugfixes</h3>
+<ul>
+<li>Prevents using the same component multiple times in any operations, through panic (#357)</li>
+</ul>
+<h3 id="performance-3">Performance</h3>
+<ul>
+<li>Generic filters use <code>Mask</code> instead of slower <code>MaskFilter</code> if no components are excluded (#381)</li>
+</ul>
+<h3 id="other-2">Other</h3>
+<ul>
+<li>Improves error messages for running out of world locks, components or resources, and on unbalanced unlock (#363)</li>
+<li>Adds benchmarks for query creation (#366)</li>
+<li>Upgrade to Go 1.22 in CI (#376)</li>
+<li>Renames directory <code>examples</code> to <code>_examples</code> to accommodate changed test coverage behaviour of Go 1.22 (#376)</li>
+<li>In unit tests, error messages of all panics are asserted (#377)</li>
+</ul>
+<h2 id="v0101httpsgithubcommlange-42archecomparev0100v0101"><a href="https://github.com/mlange-42/arche/compare/v0.10.0...v0.10.1" target="_blank">[v0.10.1]</a></h2>
+<h3 id="bugfixes-6">Bugfixes</h3>
+<ul>
+<li>Fix IsRelation check to allow for non-struct components, like type aliases (#354)</li>
+</ul>
+<h3 id="other-3">Other</h3>
+<ul>
+<li>Repository <a href="https://github.com/mlange-42/arche-demo" target="_blank">arche-demo</a> provides a <a href="https://mlange-42.github.io/arche-demo/" target="_blank">live demo</a>
+of several models built with Arche.</li>
+</ul>
+<h2 id="v0100httpsgithubcommlange-42archecomparev090v0100"><a href="https://github.com/mlange-42/arche/compare/v0.9.0...v0.10.0" target="_blank">[v0.10.0]</a></h2>
+<h3 id="highlights-1">Highlights</h3>
+<ul>
+<li>Arche supports full world serialization and deserialization, in conjunction with <a href="https://github.com/mlange-42/arche-serde" target="_blank">arche-serde</a> (#319)</li>
+<li>Supports 256 instead of 128 component types as well as resource types and engine locks (#313)</li>
+<li>Generic API supports up to 12 instead of 8 component types (#324)</li>
+<li>Reworked event system with granular subscription to different event types and components (#333, #334, #335, #337, #340)</li>
+</ul>
+<h3 id="breaking-changes-1">Breaking changes</h3>
+<ul>
+<li><code>MaskTotalBits</code> changed from 128 to 256 (#313)</li>
+<li>Removes <code>Mask.Lo</code> and <code>Mask.Hi</code>, internal mask representation is now private (#313)</li>
+<li><code>Filter.Matches(Mask)</code> became <code>Filter.Matches(*Mask)</code>; same for all <code>Filter</code> implementations (#313)<br>
+This change was necessary to get the same performance as before, despite the more heavyweight implementation of the now 256 bits <code>Mask</code>.</li>
+<li>Component and resource IDs are now opaque types instead of type aliases for <code>uint8</code> (#330)</li>
+<li>Restructures <code>EntityEvent</code> to remove redundant information and better handle relation changes (#333)</li>
+<li>World event listener changed from a simple function to a <code>Listener</code> interface (#334)</li>
+<li>Removes <code>World.ComponentType(ID)</code>, use function <code>ComponentInfo(ID)</code> instead (#341)</li>
+</ul>
+<h3 id="features-5">Features</h3>
+<ul>
+<li>Adds functions <code>ComponentInfo(*World, ID)</code> and <code>ResourceType(*World, ResID)</code> (#315, #318)</li>
+<li>Adds methods <code>World.Ids(Entity)</code> and <code>Query.Ids()</code> to get component IDs for an entity (#315, #325)</li>
+<li>Entities support JSON marshalling and unmarshalling (#319)</li>
+<li>The world&rsquo;s entity state can be extracted and re-established via <code>World.DumpEntities()</code> and <code>World.LoadEntities()</code> (#319, #326)</li>
+<li>Adds functions <code>ComponentIDs(*World)</code> and <code>ResourceIDs(*World)</code> to get all registered IDs (#330)</li>
+<li>Adds methods <code>Mask.And</code>, <code>Mask.Or</code> and <code>Mask.Xor</code> (#335)</li>
+<li>Adds build tag <code>tiny</code> to restrict to 64 components for an extra bit of performance (#338)</li>
+<li>Adds methods <code>Relations.Exchange()</code>, <code>Relations.ExchangeBatch()</code>, <code>Relations.ExchangeBatchQ()</code> for exchange with relation target (#342)</li>
+<li>Generic API adds <code>Exchange.WithRelation()</code> and optional target argument for operations with relation target (#342)</li>
+<li>Generic API adds <code>MapX.AddBatch()</code>, <code>MapX.AddBatchQ()</code>, <code>MapX.RemoveBatch()</code>and <code>MapX.RemoveBatchQ()</code> (#342)</li>
+<li>Generic API adds optional relation target argument to most <code>MapX</code> methods (#342)</li>
+<li>Generic API adds <code>FilterX.Filter()</code> to get an <code>ecs.Filter</code> from a generic one (#342)</li>
+<li>Generic API adds <code>Map.SetRelationBatch()</code> and <code>Map.SetRelationBatchQ()</code> (#344)</li>
+<li>All batch operations (except entity creation) return the number of affected entities (#348)</li>
+</ul>
+<h3 id="performance-4">Performance</h3>
+<ul>
+<li>Reduces archetype memory footprint by using a dynamically sized slice for storage lookup (#327)</li>
+<li>Reduces event listener overhead through granular subscriptions and elimination of a heap allocation (#333, #334, #335, #337, #340)</li>
+</ul>
+<h3 id="documentation-6">Documentation</h3>
+<ul>
+<li>Adds an overview to packages <code>ecs</code> and <code>generic</code> on how to achieve ECS manipulation operations (#345)</li>
+</ul>
+<h3 id="other-4">Other</h3>
+<ul>
+<li>Entity generation data type changed from <code>uint16</code> to <code>uint32</code> (#317)</li>
+<li>Adds <a href="https://github.com/unitoftime/ecs" target="_blank">unitoftime/ecs</a> to competition benchmarks (#311)</li>
+<li>Adds competition benchmarks for accessing 10 components (#328)</li>
+</ul>
+<h2 id="v090httpsgithubcommlange-42archecomparev081v090"><a href="https://github.com/mlange-42/arche/compare/v0.8.1...v0.9.0" target="_blank">[v0.9.0]</a></h2>
+<h3 id="infrastructure">Infrastructure</h3>
+<ul>
+<li>Upgraded to Go 1.21 toolchain (#308)</li>
+</ul>
+<h2 id="v081httpsgithubcommlange-42archecomparev080v081"><a href="https://github.com/mlange-42/arche/compare/v0.8.0...v0.8.1" target="_blank">[v0.8.1]</a></h2>
+<h3 id="documentation-7">Documentation</h3>
+<ul>
+<li>Emphasize in <code>Entity</code> and <code>World</code> docs that entities are intended to be stored and passed by copy, not by pointer (#306)</li>
+</ul>
+<h2 id="v080httpsgithubcommlange-42archecomparev071v080"><a href="https://github.com/mlange-42/arche/compare/v0.7.1...v0.8.0" target="_blank">[v0.8.0]</a></h2>
+<h3 id="highlights-2">Highlights</h3>
+<p>Entity relations were added as a first-class feature (#231, #271)</p>
+<p>Relations are used to represent graphs of entities, e.g. hierarchies.
+They can be added, removed and queried just like normal components.
+The new feature offers ergonomic handling of entity relations,
+and provides relation queries with native performance.</p>
+<h3 id="breaking-changes-2">Breaking changes</h3>
+<ul>
+<li>Removed <code>World.Batch</code> for entity batch creation, use <code>Builder</code> instead (#239)</li>
+<li>Rework of generic entity creation API, use <code>MapX.New</code>, <code>MapX.NewWith</code>, <code>MapX.NewBatch</code> and <code>MapX.NewQuery</code> (#239, #252)</li>
+<li>Stats object <code>WorldStats</code> etc. adapted for new structure of archetypes nested in nodes (#258)</li>
+<li>Removed generic filter method <code>FilterX.Filter</code> (#271)</li>
+<li>Method <code>Batch.NewQuery</code> renamed to <code>Batch.NewBatchQ</code> (#298)</li>
+</ul>
+<h3 id="features-6">Features</h3>
+<ul>
+<li>Relation archetypes are removed when they are empty <em>and</em> the target entity is dead (#238, #242)</li>
+<li>Support an unlimited number of cached filters, instead of 128 (#245)</li>
+<li><code>WorldStats</code> contains the number of cached filters (#247)</li>
+<li>Archetypes with entity relations are removed on <code>World.Reset</code> (#247)</li>
+<li>Capacity increment can be configured separately for relation archetypes (#257)</li>
+<li>Adds methods for faster, unchecked entity relation access (#259)</li>
+<li>Re-introduce <code>World.Batch</code> for batch-processing of entities (add/remove/exchange) (#264)</li>
+<li>New method <code>Builder.Add</code> for adding components with a target to entities (#264)</li>
+<li>New method <code>Batch.SetRelation</code> for batch-setting entity relations (#265)</li>
+<li>New methods <code>Builder.AddQ</code>, <code>Builder.RemoveQ</code> etc. to get a query over batch-processed entities (#297)</li>
+<li>Sends an <code>EntityEvent</code> to the world listener on relation target changes (#265)</li>
+</ul>
+<h3 id="performance-5">Performance</h3>
+<ul>
+<li>Reduce memory footprint of archetypes by moving properties to nodes (#237)</li>
+<li>Queries iterate archetype graph nodes in an outer loop, potentially skipping nested relation archetypes (#248)</li>
+<li>Relation archetypes are recycled in archetype graph nodes (#248)</li>
+<li>Already empty archetypes are not zeroed on reset (#248)</li>
+<li>Optimize <code>RelationFilter</code>: get archetype directly instead of iterating complete node (#251)</li>
+<li>Cached filters use swap-remove when removing an archetype (#253)</li>
+<li>Speed up generic query re-compilation after changing the relation target (#255)</li>
+<li>Speed up archetype and node iteration to be as fast as before the new nested structure (#270, #288)</li>
+<li><del>Filter cache stores archetype graph nodes instead of archetypes (#276)</del> (#288)</li>
+<li>Use <code>uint32</code> instead of <code>uintptr</code> for indices and query iteration counter (#283)</li>
+<li>Cached filters use a map for faster removal of archetypes (#289)</li>
+<li>Speed up iterating through many archetypes by approx. 10% (#301)</li>
+</ul>
+<h3 id="documentation-8">Documentation</h3>
+<ul>
+<li>Adds an example for creating and querying entity relations (#256)</li>
+<li>Adds a section on entity relations to the <code>ARCHITECTURE.md</code> document (#256)</li>
+<li>Replace Aos benchmarks plot in README for pointer iteration fix #284 (#285)</li>
+<li>Adds a plot for entity relation benchmarks to ARCHITECTURE.md (#290)</li>
+<li>Adds an outline of the most important types and functions to each sub-package (#295)</li>
+</ul>
+<h3 id="other-5">Other</h3>
+<ul>
+<li>Remove go-gameengine-ecs from Arche benchmarks (but not from competition!) (#228)</li>
+<li>Reduce memory size of <code>Query</code> and internal archetype list by 8 bytes (#230)</li>
+<li>Generic filters are locked when registered for caching (#241)</li>
+<li>Adds benchmarks for getting and setting entity relations (#259)</li>
+<li>Arche now has an official logo (#273)</li>
+<li>Use for loop with counter in AoS competition benchmarks, to allow for pointers (#284)</li>
+</ul>
+<h2 id="v071httpsgithubcommlange-42archecomparev070v071"><a href="https://github.com/mlange-42/arche/compare/v0.7.0...v0.7.1" target="_blank">[v0.7.1]</a></h2>
+<h3 id="documentation-9">Documentation</h3>
+<ul>
+<li>Tweak/improve example <code>batch_ops</code> (#222)</li>
+<li>Adds an example for running simulations in parallel (#223)</li>
+</ul>
+<h3 id="other-6">Other</h3>
+<ul>
+<li>Adds benchmarks for world component access with shuffled entities (#224)</li>
+</ul>
+<h2 id="v070httpsgithubcommlange-42archecomparev063v070"><a href="https://github.com/mlange-42/arche/compare/v0.6.3...v0.7.0" target="_blank">[v0.7.0]</a></h2>
+<h3 id="features-7">Features</h3>
+<ul>
+<li>Adds method <code>World.ComponentType(ID)</code> to get the <code>reflect.Type</code> for component IDs (#215)</li>
+<li>Adds methods <code>World.GetUnchecked</code> and <code>World.HasUnchecked</code> as optimized variants for known static entities (#217, #219)</li>
+<li>Adds method <code>MapX.GetUnchecked</code> to all generic mappers, as equivalent to previous point (#217, #219)</li>
+<li>Adds methods <code>Map.GetUnchecked</code> and <code>Map.HasUnchecked</code> to generic <code>Map</code>, as equivalent to previous points (#217, #219)</li>
+</ul>
+<h3 id="performance-6">Performance</h3>
+<ul>
+<li>Optimize <code>World.Alive(Entity)</code> by only checking the entity generation, but not <code>id == 0</code> (#220)</li>
+</ul>
+<h3 id="bugfixes-7">Bugfixes</h3>
+<ul>
+<li>All world methods with an entity as argument panic on a dead/recycled entity; causes 0.5ns slower <code>World.Get(Entity)</code> (#216)</li>
+</ul>
+<h2 id="v063httpsgithubcommlange-42archecomparev062v063"><a href="https://github.com/mlange-42/arche/compare/v0.6.2...v0.6.3" target="_blank">[v0.6.3]</a></h2>
+<h3 id="documentation-10">Documentation</h3>
+<ul>
+<li>Minor README and docstring tweaks (#211, #213)</li>
+</ul>
+<h3 id="other-7">Other</h3>
+<ul>
+<li>Use <a href="https://badge.coveralls.io/github/mlange-42/arche?branch=main" target="_blank">coveralls.io</a> for test coverage, add respective badge (#212)</li>
+</ul>
+<h2 id="v062httpsgithubcommlange-42archecomparev061v062"><a href="https://github.com/mlange-42/arche/compare/v0.6.1...v0.6.2" target="_blank">[v0.6.2]</a></h2>
+<h3 id="performance-7">Performance</h3>
+<ul>
+<li>Speed up generating world stats by factor 10, by re-using stats object (#210)</li>
+</ul>
+<h2 id="v061httpsgithubcommlange-42archecomparev060v061"><a href="https://github.com/mlange-42/arche/compare/v0.6.0...v0.6.1" target="_blank">[v0.6.1]</a></h2>
+<h3 id="documentation-11">Documentation</h3>
+<ul>
+<li>Extend documentation and benchmarks for <code>Entity</code> (#201)</li>
+<li>Add a section with links to the Arche tools <a href="https://github.com/mlange-42/arche-model" target="_blank">arche-model</a> and <a href="https://github.com/mlange-42/arche-pixel" target="_blank">arche-pixel</a> (#202)</li>
+</ul>
+<h2 id="v060httpsgithubcommlange-42archecomparev051v060"><a href="https://github.com/mlange-42/arche/compare/v0.5.1...v0.6.0" target="_blank">[v0.6.0]</a></h2>
+<p>Arche v0.6.0 features fast batch entity creation and deletion, cached filters, and many internal optimizations.</p>
+<h3 id="highlights-3">Highlights</h3>
+<ul>
+<li>Batch creation and deletion of entities, with up to 4x and 10x speedup, respectively. Even more when combined with <code>World.Reset()</code>.</li>
+<li>Cached filters for handling many archetypes and complex queries without slowdown.</li>
+<li>A lot of internal performance optimizations.</li>
+</ul>
+<h3 id="breaking-changes-3">Breaking changes</h3>
+<ul>
+<li>Generic mappers do no longer return all components when creating entities or components (#145)</li>
+<li>Resources API moved out of the world, to a helper to get by <code>World.Resources()</code> (#150)</li>
+<li><code>World.Reset()</code> does no longer remove the component change listener (#157)</li>
+<li>Removes methods <code>filter.ALL.Not()</code> and <code>filter.ANY.Not()</code>, use <code>NoneOf()</code> and <code>AnyNot()</code> instead (#160)</li>
+<li>World listener function takes a pointer to the <code>EntityEvent</code> instead of a copy as argument (#162)</li>
+</ul>
+<h3 id="features-8">Features</h3>
+<ul>
+<li>Adds method <code>World.Reset()</code>, to allow for more efficient systematic simulations (#138)</li>
+<li>Adds <code>World.Batch()</code> helper for performing optimized batch-creation and batch-removal of entities (#149)</li>
+<li>Adds method <code>Mask.Exclusive()</code> to create a filter matching an exact component composition (#149, #188)</li>
+<li>Generic mappers (<code>Map1</code>, &hellip;) have methods <code>NewEntities</code>, <code>NewEntitiesWith</code> and <code>RemoveEntities</code> for batch operations (#151)</li>
+<li>Batch-creation methods (ID-based and generic) have variants like <code>NewEntitiesQuery</code> that return a query over the created entities (#152)</li>
+<li>Notification during batch-creation is delayed until the resp. query is closed (#157)</li>
+<li>Batch-remove methods (<code>RemoveEntities()</code>) return the number of removed entities (#173)</li>
+<li>Filters can be cached and tracked by the <code>World</code> to speed up queries when there are many archetypes (#178)</li>
+<li>Function <code>AddResource[T](*World)</code> returns the ID of the resource (#183)</li>
+</ul>
+<h3 id="performance-8">Performance</h3>
+<ul>
+<li>Speedup of archetype mask checks by 10% by checking mask before empty archetype (#139)</li>
+<li>Speedup of generic queries and mappers to come closer to ID-based access (#144)</li>
+<li>Speedup of archetype mask checks by casting filter interface to concrete type when possible (#148)</li>
+<li>Optimized batch creation of entities (#159)</li>
+<li>More efficiently clear the memory of removed components, with 2-3x speedup (#165)</li>
+<li>Do not clear memory when adding entities to archetypes, not required anymore as of #147 (#165)</li>
+<li>Speed up copying entity to archetype by getting entity pointer without reflection (#166)</li>
+<li>Avoid slice allocations in generic mapper methods (#170)</li>
+<li>Avoid type checks in query when iterating archetypes (#179)</li>
+<li>Speed up counting entities in queries with a cached filter (#182)</li>
+<li>Implements a fast and memory-efficient lookup data structure for components ID keys, to reduce the memory footprint of archetypes and the archetype graph (#192)</li>
+<li>Speedup of archetype creation by 40% by using a <code>const</code> for archetype storage page sizes (#197)</li>
+</ul>
+<h3 id="bugfixes-8">Bugfixes</h3>
+<ul>
+<li>Archetype storage buffers are &ldquo;zeroed&rdquo; when removing entities, to allow GC on pointers and slices in components (#147)</li>
+<li>Use slices instead of arrays inside paged archetype list to ensure pointer persistence (#184)</li>
+</ul>
+<h3 id="documentation-12">Documentation</h3>
+<ul>
+<li>Adds an example for batch-creation and batch-removal of entities (#173)</li>
+<li>Adds code examples to most public types, methods and functions (#183, #189)</li>
+</ul>
+<h3 id="other-8">Other</h3>
+<ul>
+<li>Restructure and extend benchmarks (#146, #153, #155, #156)</li>
+<li>Add an ECS competition benchmark for adding and removing components (#170)</li>
+<li>Add benchmarks for different ways to implement parent-child relations between entities (#194, #195)</li>
+</ul>
+<h2 id="v051httpsgithubcommlange-42archecomparev050v051"><a href="https://github.com/mlange-42/arche/compare/v0.5.0...v0.5.1" target="_blank">[v0.5.1]</a></h2>
+<h3 id="performance-9">Performance</h3>
+<ul>
+<li>Speedup of archetype access by 5-10% by merging storages into archetypes (#137)</li>
+</ul>
+<h3 id="documentation-13">Documentation</h3>
+<ul>
+<li>Document all private functions, types and methods  (#136)</li>
+<li>Adds a section  and plot on benchmarks against other Go ECS implementations to the README (#138)</li>
+</ul>
+<h3 id="other-9">Other</h3>
+<ul>
+<li>Internal code refactoring (#136)
+<ul>
+<li>Move method <code>nextArchetype</code> from <code>World</code> to <code>Query</code>.</li>
+<li>Remove internal type <code>queryIter</code>.</li>
+<li>Move repetitive pointer copying code in <code>storage</code> into a private method.</li>
+<li>Move repetitive entity creation code in  <code>World</code> into a private method.</li>
+</ul>
+</li>
+</ul>
+<h2 id="v050httpsgithubcommlange-42archecomparev046v050"><a href="https://github.com/mlange-42/arche/compare/v0.4.6...v0.5.0" target="_blank">[v0.5.0]</a></h2>
+<p>Feature release. Does not break v0.4.x projects.</p>
+<h3 id="features-9">Features</h3>
+<ul>
+<li>The World handles ECS resources, i.e. component-like global data (#132)</li>
+<li>Generic access to world resources (#132)</li>
+</ul>
+<h3 id="documentation-14">Documentation</h3>
+<ul>
+<li>Adds an example for the use of resources (#132)</li>
+</ul>
+<h2 id="v046httpsgithubcommlange-42archecomparev045v046"><a href="https://github.com/mlange-42/arche/compare/v0.4.5...v0.4.6" target="_blank">[v0.4.6]</a></h2>
+<h3 id="performance-10">Performance</h3>
+<ul>
+<li>Speedup archetype access by 10%, by elimination of bounds checks (#126)</li>
+<li>Speedup entity access from queries by 50% by using a component storage for them (#131)</li>
+<li>Minor optimizations of component storage (#128)</li>
+</ul>
+<h3 id="documentation-15">Documentation</h3>
+<ul>
+<li>Adds an example to demonstrate how to implement classical ECS systems (#129)</li>
+</ul>
+<h2 id="v045httpsgithubcommlange-42archecomparev044v045"><a href="https://github.com/mlange-42/arche/compare/v0.4.4...v0.4.5" target="_blank">[v0.4.5]</a></h2>
+<h3 id="features-10">Features</h3>
+<ul>
+<li>Adds memory per entity to archetype stats (#124)</li>
+</ul>
+<h3 id="other-10">Other</h3>
+<ul>
+<li>Adds benchmarks of Arche vs. Array of Structs (AoS) and Array of Pointers (AoP), for different memory per entity and number of entities (#123)</li>
+</ul>
+<h2 id="v044httpsgithubcommlange-42archecomparev043v044"><a href="https://github.com/mlange-42/arche/compare/v0.4.3...v0.4.4" target="_blank">[v0.4.4]</a></h2>
+<h3 id="features-11">Features</h3>
+<ul>
+<li><code>Query</code> has methods <code>Count()</code> and <code>Step(int)</code>, primarily for effective random sampling (#119)</li>
+</ul>
+<h3 id="documentation-16">Documentation</h3>
+<ul>
+<li>Adds example <code>random_sampling</code> to demonstrate usage of <code>Query.Count()</code> and <code>Query.Step(int)</code> (#119)</li>
+</ul>
+<h3 id="bugfixes-9">Bugfixes</h3>
+<ul>
+<li><code>Query.Next</code>, <code>Query.Get</code>, etc. now always panic when called on a closed query (#117)</li>
+</ul>
+<h3 id="other-11">Other</h3>
+<ul>
+<li>Update to <a href="https://github.com/marioolofo/go-gameengine-ecs" target="_blank">go-gameengine-ecs</a> v0.9.0 in benchmarks (#116)</li>
+<li>Remove internal wrapper structs in generic queries and maps (#120)</li>
+</ul>
+<h2 id="v043httpsgithubcommlange-42archecomparev042v043"><a href="https://github.com/mlange-42/arche/compare/v0.4.2...v0.4.3" target="_blank">[v0.4.3]</a></h2>
+<h3 id="bugfixes-10">Bugfixes</h3>
+<ul>
+<li><code>EntityEvent</code> has more consistent values when an entity is removed (#115)
+<ul>
+<li><code>EntityEvent.NewMask</code> is zero</li>
+<li><code>EntityEvent.Removed</code> is contains all former components</li>
+<li><code>EntityEvent.Current</code> is <code>nil</code></li>
+</ul>
+</li>
+</ul>
+<h2 id="v042httpsgithubcommlange-42archecomparev041v042"><a href="https://github.com/mlange-42/arche/compare/v0.4.1...v0.4.2" target="_blank">[v0.4.2]</a></h2>
+<h3 id="performance-11">Performance</h3>
+<ul>
+<li>Avoid creation of unused archetypes by splitting the archetype graph out of the actual archetypes (#113)</li>
+<li>Use slice instead of fixed-size array for type lookup in component registry (#113)</li>
+<li>Avoid copying <code>entityIndex</code> structs by using pointers (#114)</li>
+</ul>
+<h2 id="v041httpsgithubcommlange-42archecomparev040v041"><a href="https://github.com/mlange-42/arche/compare/v0.4.0...v0.4.1" target="_blank">[v0.4.1]</a></h2>
+<h3 id="bugfixes-11">Bugfixes</h3>
+<ul>
+<li>Fix units symbol for bytes from <code>b</code> to <code>B</code> in string formatting of world statistics (#111)</li>
+</ul>
+<h3 id="other-12">Other</h3>
+<ul>
+<li>Adds <a href="https://github.com/wfranczyk/ento" target="_blank">github.com/wfranczyk/ento</a> to benchmarks (#110)</li>
+</ul>
+<h2 id="v040httpsgithubcommlange-42archecomparev031v040"><a href="https://github.com/mlange-42/arche/compare/v0.3.1...v0.4.0" target="_blank">[v0.4.0]</a></h2>
+<p>API revision, split out generics and filters into separate packages.</p>
+<h3 id="features-12">Features</h3>
+<ul>
+<li>Generic queries support optional, additional and excluded components (#53, #56, #58, #59, #60, #63)</li>
+<li>Logic filters for complex queries (#54, #58, #61)</li>
+<li><code>Query</code> and <code>World</code> have a method <code>Mask(Entity)</code> to access archetype masks (#65)</li>
+<li>Generic query <code>Get</code> method returns all queried components (#83)</li>
+<li>Added method <code>World.Stats()</code> for inspecting otherwise inaccessible world statistics (#67)</li>
+<li>Entities can be initialized with components, via ID as well as using generics (#76)</li>
+<li>A listener function can be registered to the world, for notification on entity changes (#77)</li>
+<li>Support for up to 128 distinct component types per world (was limited to 64 before) (#78)</li>
+<li>Generic entity manipulation through types <code>Map1</code>, <code>Map2</code>, &hellip; and <code>Exchange</code> (#79, #84, #87)</li>
+</ul>
+<h3 id="performance-12">Performance</h3>
+<ul>
+<li>Generic queries are compiled to masks and cached on first build (#62)</li>
+<li>Optimization of adding/removing components, with 2-3x speedup and vast reduction of (number of) allocations (#93)</li>
+<li>Speed up component world access by use of nil pointer check instead of bitmask (#96)</li>
+</ul>
+<h3 id="other-13">Other</h3>
+<ul>
+<li>Overhaul of the module structure, with generics and filters in separate packages (#55, #57, #61, #64)</li>
+<li>Boilerplate code for generic filters and queries is auto-generated with <code>go generate</code> (#64)</li>
+<li>Ensure 100% test coverage by adding a CI check for it (#68)</li>
+<li><code>World.RemEntity(Entity)</code> is now <code>World.RemoveEntity(Entity)</code> (#87)</li>
+<li>More examples as user documentation (#83, #95)</li>
+<li>General API cleanup with renaming of several types and methods (#100)</li>
+</ul>
+<h2 id="v031httpsgithubcommlange-42archecomparev030v031"><a href="https://github.com/mlange-42/arche/compare/v0.3.0...v0.3.1" target="_blank">[v0.3.1]</a></h2>
+<h3 id="other-14">Other</h3>
+<ul>
+<li>Fix failing <a href="https://pkg.go.dev" target="_blank">https://pkg.go.dev</a> to fetch Arche version v0.3.0</li>
+</ul>
+<h2 id="v030httpsgithubcommlange-42archecomparev020v030"><a href="https://github.com/mlange-42/arche/compare/v0.2.0...v0.3.0" target="_blank">[v0.3.0]</a></h2>
+<h3 id="features-13">Features</h3>
+<ul>
+<li>Added a layer of generic access as alternative for using component IDs, for type safety and ergonomics (#47, #48)
+<ul>
+<li>Generic queries like <code>Query1[T]</code>, <code>Query2[T, U]</code>, &hellip; (#47)</li>
+<li>Generic add, assign and remove (<code>Add[T]()</code>, <code>Add2[T, U](), ...</code>) (#47)</li>
+<li>Generic get, has, and set through component mapper <code>Map[T]</code> (#47)</li>
+</ul>
+</li>
+</ul>
+<h3 id="performance-13">Performance</h3>
+<ul>
+<li>Use of an archetype graph to speed up finding the target archetype for component addition/removal (#42)</li>
+<li>Minor optimization of component access by queries (#50)</li>
+</ul>
+<h3 id="other-15">Other</h3>
+<ul>
+<li>Reduced dependencies by moving profiling and benchmarking to sub-modules (#46)</li>
+<li>Smaller integer type for component identifiers (#47)</li>
+</ul>
+<h2 id="v020httpsgithubcommlange-42archecomparev014v020"><a href="https://github.com/mlange-42/arche/compare/v0.1.4...v0.2.0" target="_blank">[v0.2.0]</a></h2>
+<h3 id="features-14">Features</h3>
+<ul>
+<li><code>World</code> has method <code>Exchange</code> to add and remove components in one go (#38)</li>
+<li><code>World</code> has method <code>Assign</code> add and assign components in one go (#38)</li>
+<li><code>World</code> has method <code>AssignN</code> add and assign multiple components in one go (#38)</li>
+</ul>
+<h3 id="performance-14">Performance</h3>
+<ul>
+<li>Optimization of <code>Query</code> iteration, avoids allocations and makes it approx. 30% faster (#35)</li>
+<li>Much smaller archetype data structure at the cost of one more index lookup (#37)</li>
+</ul>
+<h3 id="other-16">Other</h3>
+<ul>
+<li>Removed method <code>Query.Count()</code>, as it was a by-product of the allocations in the above point (#35)</li>
+<li>Archetypes are stored in a paged collection to use more efficient access by pointers (#36)</li>
+</ul>
+<h2 id="v014httpsgithubcommlange-42archecomparev013v014"><a href="https://github.com/mlange-42/arche/compare/v0.1.3...v0.1.4" target="_blank">[v0.1.4]</a></h2>
+<h3 id="documentation-17">Documentation</h3>
+<ul>
+<li>Extended and improved documentation (#34)</li>
+</ul>
+<h2 id="v013httpsgithubcommlange-42archecomparev012v013"><a href="https://github.com/mlange-42/arche/compare/v0.1.2...v0.1.3" target="_blank">[v0.1.3]</a></h2>
+<h3 id="features-15">Features</h3>
+<ul>
+<li>Add <code>Config</code> to allow for configuration of the world (currently only storage capacity increment) (#28)</li>
+<li><code>Query</code> has a method <code>Count()</code>, reporting the total number of matching entities (#30)</li>
+</ul>
+<h2 id="v012httpsgithubcommlange-42archecomparev011v012"><a href="https://github.com/mlange-42/arche/compare/v0.1.1...v0.1.2" target="_blank">[v0.1.2]</a></h2>
+<h3 id="other-17">Other</h3>
+<ul>
+<li>Use aligned item size in component storage for faster query iteration (#25)</li>
+<li>Queries lock the World, and automatically unlock it after iteration (#26)</li>
+</ul>
+<h2 id="v011httpsgithubcommlange-42archecomparev010v011"><a href="https://github.com/mlange-42/arche/compare/v0.1.0...v0.1.1" target="_blank">[v0.1.1]</a></h2>
+<h3 id="other-18">Other</h3>
+<ul>
+<li>Avoid allocation in <code>World.Has(entity, compID)</code> (#16)</li>
+<li><code>World.RemEntity(entity)</code> panics on dead entity, like all other <code>World</code> methods (#18)</li>
+<li>Reserve zero value <code>Entity</code> to serve as nil/undefined value (#23)</li>
+</ul>
+<h2 id="v010httpsgithubcommlange-42archetreev010"><a href="https://github.com/mlange-42/arche/tree/v0.1.0" target="_blank">[v0.1.0]</a></h2>
+<p>Initial release.</p>
+<p>Basic ECS implementation.</p>
+
+            <footer class="footline">
+            </footer>
+          </article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation showVisitedLinks">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+<a href="https://mlange-42.github.io/arche/" title="Home"><img src="https://mlange-42.github.io/arche/images/logo-dark.svg" alt="Arche Logo"></img></a>
+        </div>
+        <div class="searchbox default-animation">
+          <i class="fas fa-search" title="Search (CTRL+ALT+f)"></i>
+          <label class="a11y-only" for="R-search-by">Search</label>
+          <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+          <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+        </div>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../../js/auto-complete.js?1735006219" defer></script>
+        <script src="../../js/lunr/lunr.min.js?1735006219" defer></script>
+        <script src="../../js/lunr/lunr.stemmer.support.min.js?1735006219" defer></script>
+        <script src="../../js/lunr/lunr.multi.min.js?1735006219" defer></script>
+        <script src="../../js/lunr/lunr.en.min.js?1735006219" defer></script>
+        <script src="../../js/search.js?1735006219" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation">
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-topics">
+          <ul class="enlarge morespace collapsible-menu">
+          <li data-nav-id="/quickstart/index.html" class=""><a class="padding" href="../../quickstart/index.html">Quickstart<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/index.html" class=""><input type="checkbox" id="R-section-231d7ac600b0ccff382b28de1eb3e8ed" aria-controls="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed"><label for="R-section-231d7ac600b0ccff382b28de1eb3e8ed"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu User Guide</span></label><a class="padding" href="../../guide/index.html">User Guide<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-231d7ac600b0ccff382b28de1eb3e8ed" class="morespace collapsible-menu">
+          <li data-nav-id="/guide/apis/index.html" class=""><a class="padding" href="../../guide/apis/index.html">Generic &amp; ID-based API<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world/index.html" class=""><a class="padding" href="../../guide/world/index.html">The World<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/entities/index.html" class=""><a class="padding" href="../../guide/entities/index.html">Entities &amp; Components<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/queries/index.html" class=""><a class="padding" href="../../guide/queries/index.html">Queries<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/filters/index.html" class=""><a class="padding" href="../../guide/filters/index.html">Filters<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/world-access/index.html" class=""><a class="padding" href="../../guide/world-access/index.html">World Entity Access<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/relations/index.html" class=""><a class="padding" href="../../guide/relations/index.html">Entity Relations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/batch-ops/index.html" class=""><a class="padding" href="../../guide/batch-ops/index.html">Batch Operations<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/resources/index.html" class=""><a class="padding" href="../../guide/resources/index.html">ECS Resources<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/events/index.html" class=""><a class="padding" href="../../guide/events/index.html">Event System<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/stats/index.html" class=""><a class="padding" href="../../guide/stats/index.html">World Statistics<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/performance/index.html" class=""><a class="padding" href="../../guide/performance/index.html">Performance Tips<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/guide/tools/index.html" class=""><a class="padding" href="../../guide/tools/index.html">Tools<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/background/index.html" class="parent "><input type="checkbox" id="R-section-2c311fb29b03520a1306c5c783eda95a" aria-controls="R-subsections-2c311fb29b03520a1306c5c783eda95a" checked><label for="R-section-2c311fb29b03520a1306c5c783eda95a"><i class="fas fa-chevron-down"></i><i class="fas fa-chevron-right"></i><span class="a11y-only">Submenu Background</span></label><a class="padding" href="../../background/index.html">Background<i class="fas fa-check read-icon"></i></a><ul id="R-subsections-2c311fb29b03520a1306c5c783eda95a" class="morespace collapsible-menu">
+          <li data-nav-id="/background/design/index.html" class=""><a class="padding" href="../../background/design/index.html">Design Philosophy<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/architecture/index.html" class=""><a class="padding" href="../../background/architecture/index.html">Architecture<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/benchmarks/index.html" class=""><a class="padding" href="../../background/benchmarks/index.html">Benchmarks<i class="fas fa-check read-icon"></i></a></li>
+          <li data-nav-id="/background/changelog/index.html" class="active"><a class="padding" href="../../background/changelog/index.html">Changelog<i class="fas fa-check read-icon"></i></a></li></ul></li>
+          <li data-nav-id="/made_with/index.html" class=""><a class="padding" href="../../made_with/index.html">Made with Arche<i class="fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div id="R-shortcuts">
+          <div class="nav-title padding">More</div>
+          <ul class="space">
+            <li><a class="padding" href="https://github.com/mlange-42/arche"><i class='fab fa-fw fa-github'></i> GitHub repo</a></li>
+            <li><a class="padding" href="https://pkg.go.dev/github.com/mlange-42/arche"><i class='fas fa-fw fa-bookmark'></i> API reference</a></li>
+          </ul>
+        </div>
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks showVariantSwitch showVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-language fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = baseUri + this.value;">
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch showVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fas fa-paint-brush fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.variants && variants.changeVariant( this.value );">
+                      <option id="R-auto" value="auto" selected>Auto</option>
+                      <option id="R-light" value="light">Light</option>
+                      <option id="R-dark" value="dark">Dark</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.variants && variants.markSelectedVariant();</script>
+              </li>
+              <li class="footerVisitedLinks showVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fas fa-history fa-fw"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter">
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../../js/clipboard.min.js?1735006219" defer></script>
+    <script src="../../js/perfect-scrollbar.min.js?1735006219" defer></script>
+    <script src="../../js/theme.js?1735006219" defer></script>
+  </body>
+</html>

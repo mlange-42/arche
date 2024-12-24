@@ -1,0 +1,17 @@
+@import "theme-relearn-light.css";
+
+:root {
+    --MENU-HEADER-BG-color: var(--MENU-SECTIONS-BG-color);
+    --MENU-HOME-LINK-color: var(--MENU-SECTIONS-LINK-color);
+    --MENU-HOME-LINK-HOVER-color: var(--MENU-SECTIONS-LINK-HOVER-color);
+    
+    --MENU-VISITED-color: var(--INTERNAL-MAIN-LINK-color);
+
+    --CODE-theme: github;
+    --CODE-INLINE-color: rgba( 94, 94, 94, 1 );
+    --CODE-INLINE-BG-color: rgba( 255, 250, 233, 1 );
+}
+
+.dark {
+    display: none !important;
+}
