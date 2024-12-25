@@ -7,7 +7,7 @@
 
 ### Documentation
 
-* Fix method names and ordering in benchmark tables (448)
+* Fix method names and ordering in benchmark tables (#448)
 
 ## [[v0.14.1]](https://github.com/mlange-42/arche/compare/v0.14.0...v0.14.1)
 
