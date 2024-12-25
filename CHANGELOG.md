@@ -1,6 +1,10 @@
 
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.14.1...main)
 
+### Performance
+
+* Optimize `MapX.Assign` and `MapX.NewWith` by use of `World.GetUnchecked` (#449)
+
 ### Documentation
 
 * Fix method names and ordering in benchmark tables (448)
