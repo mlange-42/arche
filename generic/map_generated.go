@@ -379,7 +379,7 @@ func (m *Map2[A, B]) NewWith(a *A, b *B, target ...ecs.Entity) ecs.Entity {
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
 			},
 			m.ids...,
 		)
@@ -391,7 +391,7 @@ func (m *Map2[A, B]) NewWith(a *A, b *B, target ...ecs.Entity) ecs.Entity {
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -463,7 +463,7 @@ func (m *Map2[A, B]) Assign(entity ecs.Entity, a *A, b *B) {
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
 		},
 		m.ids...,
 	)
@@ -656,8 +656,8 @@ func (m *Map3[A, B, C]) NewWith(a *A, b *B, c *C, target ...ecs.Entity) ecs.Enti
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
 			},
 			m.ids...,
 		)
@@ -669,8 +669,8 @@ func (m *Map3[A, B, C]) NewWith(a *A, b *B, c *C, target ...ecs.Entity) ecs.Enti
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -743,8 +743,8 @@ func (m *Map3[A, B, C]) Assign(entity ecs.Entity, a *A, b *B, c *C) {
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
 		},
 		m.ids...,
 	)
@@ -942,9 +942,9 @@ func (m *Map4[A, B, C, D]) NewWith(a *A, b *B, c *C, d *D, target ...ecs.Entity)
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
-				*(*D)(m.world.Get(entity, m.id3)) = *d
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+				*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
 			},
 			m.ids...,
 		)
@@ -956,9 +956,9 @@ func (m *Map4[A, B, C, D]) NewWith(a *A, b *B, c *C, d *D, target ...ecs.Entity)
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
-	*(*D)(m.world.Get(entity, m.id3)) = *d
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+	*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -1032,9 +1032,9 @@ func (m *Map4[A, B, C, D]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D) {
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
-			*(*D)(m.world.Get(entity, m.id3)) = *d
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+			*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
 		},
 		m.ids...,
 	)
@@ -1237,10 +1237,10 @@ func (m *Map5[A, B, C, D, E]) NewWith(a *A, b *B, c *C, d *D, e *E, target ...ec
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
-				*(*D)(m.world.Get(entity, m.id3)) = *d
-				*(*E)(m.world.Get(entity, m.id4)) = *e
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+				*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+				*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
 			},
 			m.ids...,
 		)
@@ -1252,10 +1252,10 @@ func (m *Map5[A, B, C, D, E]) NewWith(a *A, b *B, c *C, d *D, e *E, target ...ec
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
-	*(*D)(m.world.Get(entity, m.id3)) = *d
-	*(*E)(m.world.Get(entity, m.id4)) = *e
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+	*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+	*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -1330,10 +1330,10 @@ func (m *Map5[A, B, C, D, E]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *D, 
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
-			*(*D)(m.world.Get(entity, m.id3)) = *d
-			*(*E)(m.world.Get(entity, m.id4)) = *e
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+			*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+			*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
 		},
 		m.ids...,
 	)
@@ -1541,11 +1541,11 @@ func (m *Map6[A, B, C, D, E, F]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, tar
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
-				*(*D)(m.world.Get(entity, m.id3)) = *d
-				*(*E)(m.world.Get(entity, m.id4)) = *e
-				*(*F)(m.world.Get(entity, m.id5)) = *f
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+				*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+				*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+				*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
 			},
 			m.ids...,
 		)
@@ -1557,11 +1557,11 @@ func (m *Map6[A, B, C, D, E, F]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, tar
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
-	*(*D)(m.world.Get(entity, m.id3)) = *d
-	*(*E)(m.world.Get(entity, m.id4)) = *e
-	*(*F)(m.world.Get(entity, m.id5)) = *f
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+	*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+	*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+	*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -1637,11 +1637,11 @@ func (m *Map6[A, B, C, D, E, F]) Assign(entity ecs.Entity, a *A, b *B, c *C, d *
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
-			*(*D)(m.world.Get(entity, m.id3)) = *d
-			*(*E)(m.world.Get(entity, m.id4)) = *e
-			*(*F)(m.world.Get(entity, m.id5)) = *f
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+			*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+			*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+			*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
 		},
 		m.ids...,
 	)
@@ -1854,12 +1854,12 @@ func (m *Map7[A, B, C, D, E, F, G]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, 
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
-				*(*D)(m.world.Get(entity, m.id3)) = *d
-				*(*E)(m.world.Get(entity, m.id4)) = *e
-				*(*F)(m.world.Get(entity, m.id5)) = *f
-				*(*G)(m.world.Get(entity, m.id6)) = *g
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+				*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+				*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+				*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+				*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
 			},
 			m.ids...,
 		)
@@ -1871,12 +1871,12 @@ func (m *Map7[A, B, C, D, E, F, G]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, 
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
-	*(*D)(m.world.Get(entity, m.id3)) = *d
-	*(*E)(m.world.Get(entity, m.id4)) = *e
-	*(*F)(m.world.Get(entity, m.id5)) = *f
-	*(*G)(m.world.Get(entity, m.id6)) = *g
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+	*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+	*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+	*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+	*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -1953,12 +1953,12 @@ func (m *Map7[A, B, C, D, E, F, G]) Assign(entity ecs.Entity, a *A, b *B, c *C, 
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
-			*(*D)(m.world.Get(entity, m.id3)) = *d
-			*(*E)(m.world.Get(entity, m.id4)) = *e
-			*(*F)(m.world.Get(entity, m.id5)) = *f
-			*(*G)(m.world.Get(entity, m.id6)) = *g
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+			*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+			*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+			*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+			*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
 		},
 		m.ids...,
 	)
@@ -2176,13 +2176,13 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewWith(a *A, b *B, c *C, d *D, e *E, f *
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
-				*(*D)(m.world.Get(entity, m.id3)) = *d
-				*(*E)(m.world.Get(entity, m.id4)) = *e
-				*(*F)(m.world.Get(entity, m.id5)) = *f
-				*(*G)(m.world.Get(entity, m.id6)) = *g
-				*(*H)(m.world.Get(entity, m.id7)) = *h
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+				*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+				*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+				*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+				*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+				*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
 			},
 			m.ids...,
 		)
@@ -2194,13 +2194,13 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewWith(a *A, b *B, c *C, d *D, e *E, f *
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
-	*(*D)(m.world.Get(entity, m.id3)) = *d
-	*(*E)(m.world.Get(entity, m.id4)) = *e
-	*(*F)(m.world.Get(entity, m.id5)) = *f
-	*(*G)(m.world.Get(entity, m.id6)) = *g
-	*(*H)(m.world.Get(entity, m.id7)) = *h
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+	*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+	*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+	*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+	*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+	*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -2278,13 +2278,13 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Assign(entity ecs.Entity, a *A, b *B, c *
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
-			*(*D)(m.world.Get(entity, m.id3)) = *d
-			*(*E)(m.world.Get(entity, m.id4)) = *e
-			*(*F)(m.world.Get(entity, m.id5)) = *f
-			*(*G)(m.world.Get(entity, m.id6)) = *g
-			*(*H)(m.world.Get(entity, m.id7)) = *h
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+			*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+			*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+			*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+			*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+			*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
 		},
 		m.ids...,
 	)
@@ -2507,14 +2507,14 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) NewWith(a *A, b *B, c *C, d *D, e *E, 
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
-				*(*D)(m.world.Get(entity, m.id3)) = *d
-				*(*E)(m.world.Get(entity, m.id4)) = *e
-				*(*F)(m.world.Get(entity, m.id5)) = *f
-				*(*G)(m.world.Get(entity, m.id6)) = *g
-				*(*H)(m.world.Get(entity, m.id7)) = *h
-				*(*I)(m.world.Get(entity, m.id8)) = *i
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+				*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+				*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+				*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+				*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+				*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+				*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
 			},
 			m.ids...,
 		)
@@ -2526,14 +2526,14 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) NewWith(a *A, b *B, c *C, d *D, e *E, 
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
-	*(*D)(m.world.Get(entity, m.id3)) = *d
-	*(*E)(m.world.Get(entity, m.id4)) = *e
-	*(*F)(m.world.Get(entity, m.id5)) = *f
-	*(*G)(m.world.Get(entity, m.id6)) = *g
-	*(*H)(m.world.Get(entity, m.id7)) = *h
-	*(*I)(m.world.Get(entity, m.id8)) = *i
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+	*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+	*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+	*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+	*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+	*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+	*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -2612,14 +2612,14 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) Assign(entity ecs.Entity, a *A, b *B, 
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
-			*(*D)(m.world.Get(entity, m.id3)) = *d
-			*(*E)(m.world.Get(entity, m.id4)) = *e
-			*(*F)(m.world.Get(entity, m.id5)) = *f
-			*(*G)(m.world.Get(entity, m.id6)) = *g
-			*(*H)(m.world.Get(entity, m.id7)) = *h
-			*(*I)(m.world.Get(entity, m.id8)) = *i
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+			*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+			*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+			*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+			*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+			*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+			*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
 		},
 		m.ids...,
 	)
@@ -2847,15 +2847,15 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewWith(a *A, b *B, c *C, d *D, e 
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
-				*(*D)(m.world.Get(entity, m.id3)) = *d
-				*(*E)(m.world.Get(entity, m.id4)) = *e
-				*(*F)(m.world.Get(entity, m.id5)) = *f
-				*(*G)(m.world.Get(entity, m.id6)) = *g
-				*(*H)(m.world.Get(entity, m.id7)) = *h
-				*(*I)(m.world.Get(entity, m.id8)) = *i
-				*(*J)(m.world.Get(entity, m.id9)) = *j
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+				*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+				*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+				*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+				*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+				*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+				*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
+				*(*J)(m.world.GetUnchecked(entity, m.id9)) = *j
 			},
 			m.ids...,
 		)
@@ -2867,15 +2867,15 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewWith(a *A, b *B, c *C, d *D, e 
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
-	*(*D)(m.world.Get(entity, m.id3)) = *d
-	*(*E)(m.world.Get(entity, m.id4)) = *e
-	*(*F)(m.world.Get(entity, m.id5)) = *f
-	*(*G)(m.world.Get(entity, m.id6)) = *g
-	*(*H)(m.world.Get(entity, m.id7)) = *h
-	*(*I)(m.world.Get(entity, m.id8)) = *i
-	*(*J)(m.world.Get(entity, m.id9)) = *j
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+	*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+	*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+	*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+	*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+	*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+	*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
+	*(*J)(m.world.GetUnchecked(entity, m.id9)) = *j
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -2955,15 +2955,15 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Assign(entity ecs.Entity, a *A, b 
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
-			*(*D)(m.world.Get(entity, m.id3)) = *d
-			*(*E)(m.world.Get(entity, m.id4)) = *e
-			*(*F)(m.world.Get(entity, m.id5)) = *f
-			*(*G)(m.world.Get(entity, m.id6)) = *g
-			*(*H)(m.world.Get(entity, m.id7)) = *h
-			*(*I)(m.world.Get(entity, m.id8)) = *i
-			*(*J)(m.world.Get(entity, m.id9)) = *j
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+			*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+			*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+			*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+			*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+			*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+			*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
+			*(*J)(m.world.GetUnchecked(entity, m.id9)) = *j
 		},
 		m.ids...,
 	)
@@ -3196,16 +3196,16 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewWith(a *A, b *B, c *C, d *D,
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
-				*(*D)(m.world.Get(entity, m.id3)) = *d
-				*(*E)(m.world.Get(entity, m.id4)) = *e
-				*(*F)(m.world.Get(entity, m.id5)) = *f
-				*(*G)(m.world.Get(entity, m.id6)) = *g
-				*(*H)(m.world.Get(entity, m.id7)) = *h
-				*(*I)(m.world.Get(entity, m.id8)) = *i
-				*(*J)(m.world.Get(entity, m.id9)) = *j
-				*(*K)(m.world.Get(entity, m.id10)) = *k
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+				*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+				*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+				*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+				*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+				*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+				*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
+				*(*J)(m.world.GetUnchecked(entity, m.id9)) = *j
+				*(*K)(m.world.GetUnchecked(entity, m.id10)) = *k
 			},
 			m.ids...,
 		)
@@ -3217,16 +3217,16 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewWith(a *A, b *B, c *C, d *D,
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
-	*(*D)(m.world.Get(entity, m.id3)) = *d
-	*(*E)(m.world.Get(entity, m.id4)) = *e
-	*(*F)(m.world.Get(entity, m.id5)) = *f
-	*(*G)(m.world.Get(entity, m.id6)) = *g
-	*(*H)(m.world.Get(entity, m.id7)) = *h
-	*(*I)(m.world.Get(entity, m.id8)) = *i
-	*(*J)(m.world.Get(entity, m.id9)) = *j
-	*(*K)(m.world.Get(entity, m.id10)) = *k
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+	*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+	*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+	*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+	*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+	*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+	*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
+	*(*J)(m.world.GetUnchecked(entity, m.id9)) = *j
+	*(*K)(m.world.GetUnchecked(entity, m.id10)) = *k
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -3307,16 +3307,16 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Assign(entity ecs.Entity, a *A,
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
-			*(*D)(m.world.Get(entity, m.id3)) = *d
-			*(*E)(m.world.Get(entity, m.id4)) = *e
-			*(*F)(m.world.Get(entity, m.id5)) = *f
-			*(*G)(m.world.Get(entity, m.id6)) = *g
-			*(*H)(m.world.Get(entity, m.id7)) = *h
-			*(*I)(m.world.Get(entity, m.id8)) = *i
-			*(*J)(m.world.Get(entity, m.id9)) = *j
-			*(*K)(m.world.Get(entity, m.id10)) = *k
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+			*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+			*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+			*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+			*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+			*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+			*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
+			*(*J)(m.world.GetUnchecked(entity, m.id9)) = *j
+			*(*K)(m.world.GetUnchecked(entity, m.id10)) = *k
 		},
 		m.ids...,
 	)
@@ -3554,17 +3554,17 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewWith(a *A, b *B, c *C, d 
 		entity := m.world.NewEntityFn(
 			func(entity ecs.Entity) {
 				*(*A)(m.world.Get(entity, m.id0)) = *a
-				*(*B)(m.world.Get(entity, m.id1)) = *b
-				*(*C)(m.world.Get(entity, m.id2)) = *c
-				*(*D)(m.world.Get(entity, m.id3)) = *d
-				*(*E)(m.world.Get(entity, m.id4)) = *e
-				*(*F)(m.world.Get(entity, m.id5)) = *f
-				*(*G)(m.world.Get(entity, m.id6)) = *g
-				*(*H)(m.world.Get(entity, m.id7)) = *h
-				*(*I)(m.world.Get(entity, m.id8)) = *i
-				*(*J)(m.world.Get(entity, m.id9)) = *j
-				*(*K)(m.world.Get(entity, m.id10)) = *k
-				*(*L)(m.world.Get(entity, m.id11)) = *l
+				*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+				*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+				*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+				*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+				*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+				*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+				*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+				*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
+				*(*J)(m.world.GetUnchecked(entity, m.id9)) = *j
+				*(*K)(m.world.GetUnchecked(entity, m.id10)) = *k
+				*(*L)(m.world.GetUnchecked(entity, m.id11)) = *l
 			},
 			m.ids...,
 		)
@@ -3576,17 +3576,17 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewWith(a *A, b *B, c *C, d 
 	}
 	entity := m.world.NewEntity(m.ids...)
 	*(*A)(m.world.Get(entity, m.id0)) = *a
-	*(*B)(m.world.Get(entity, m.id1)) = *b
-	*(*C)(m.world.Get(entity, m.id2)) = *c
-	*(*D)(m.world.Get(entity, m.id3)) = *d
-	*(*E)(m.world.Get(entity, m.id4)) = *e
-	*(*F)(m.world.Get(entity, m.id5)) = *f
-	*(*G)(m.world.Get(entity, m.id6)) = *g
-	*(*H)(m.world.Get(entity, m.id7)) = *h
-	*(*I)(m.world.Get(entity, m.id8)) = *i
-	*(*J)(m.world.Get(entity, m.id9)) = *j
-	*(*K)(m.world.Get(entity, m.id10)) = *k
-	*(*L)(m.world.Get(entity, m.id11)) = *l
+	*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+	*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+	*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+	*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+	*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+	*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+	*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+	*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
+	*(*J)(m.world.GetUnchecked(entity, m.id9)) = *j
+	*(*K)(m.world.GetUnchecked(entity, m.id10)) = *k
+	*(*L)(m.world.GetUnchecked(entity, m.id11)) = *l
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
@@ -3668,17 +3668,17 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Assign(entity ecs.Entity, a 
 		entity,
 		func(entity ecs.Entity) {
 			*(*A)(m.world.Get(entity, m.id0)) = *a
-			*(*B)(m.world.Get(entity, m.id1)) = *b
-			*(*C)(m.world.Get(entity, m.id2)) = *c
-			*(*D)(m.world.Get(entity, m.id3)) = *d
-			*(*E)(m.world.Get(entity, m.id4)) = *e
-			*(*F)(m.world.Get(entity, m.id5)) = *f
-			*(*G)(m.world.Get(entity, m.id6)) = *g
-			*(*H)(m.world.Get(entity, m.id7)) = *h
-			*(*I)(m.world.Get(entity, m.id8)) = *i
-			*(*J)(m.world.Get(entity, m.id9)) = *j
-			*(*K)(m.world.Get(entity, m.id10)) = *k
-			*(*L)(m.world.Get(entity, m.id11)) = *l
+			*(*B)(m.world.GetUnchecked(entity, m.id1)) = *b
+			*(*C)(m.world.GetUnchecked(entity, m.id2)) = *c
+			*(*D)(m.world.GetUnchecked(entity, m.id3)) = *d
+			*(*E)(m.world.GetUnchecked(entity, m.id4)) = *e
+			*(*F)(m.world.GetUnchecked(entity, m.id5)) = *f
+			*(*G)(m.world.GetUnchecked(entity, m.id6)) = *g
+			*(*H)(m.world.GetUnchecked(entity, m.id7)) = *h
+			*(*I)(m.world.GetUnchecked(entity, m.id8)) = *i
+			*(*J)(m.world.GetUnchecked(entity, m.id9)) = *j
+			*(*K)(m.world.GetUnchecked(entity, m.id10)) = *k
+			*(*L)(m.world.GetUnchecked(entity, m.id11)) = *l
 		},
 		m.ids...,
 	)

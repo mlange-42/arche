@@ -95,7 +95,11 @@ func generateMaps() {
 				returnAllSafe += ",\n"
 				arguments += ", "
 			}
-			assign += fmt.Sprintf("*(*%s)(m.world.Get(entity, m.id%d)) = *%s\n", typeLetters[j], j, strings.ToLower(typeLetters[j]))
+			if j == 0 {
+				assign += fmt.Sprintf("*(*%s)(m.world.Get(entity, m.id%d)) = *%s\n", typeLetters[j], j, strings.ToLower(typeLetters[j]))
+			} else {
+				assign += fmt.Sprintf("*(*%s)(m.world.GetUnchecked(entity, m.id%d)) = *%s\n", typeLetters[j], j, strings.ToLower(typeLetters[j]))
+			}
 		}
 
 		data := query{
