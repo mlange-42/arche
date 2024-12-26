@@ -1,5 +1,4 @@
-
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.14.1...main)
+## [[v0.14.2]](https://github.com/mlange-42/arche/compare/v0.14.1...v0.14.2)
 
 ### Performance
 
@@ -8,6 +7,11 @@
 ### Documentation
 
 * Fix method names and ordering in benchmark tables (#448)
+* Document listener notification handling in `MapX.NewWith` (#450)
+
+### Bugfixes
+
+* Fix missing listener notification in `MapX.NewWith` when called with a relation target (#450)
 
 ## [[v0.14.1]](https://github.com/mlange-42/arche/compare/v0.14.0...v0.14.1)
 

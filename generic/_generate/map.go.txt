@@ -97,6 +97,7 @@ func (m *Map{{ .Index }}{{ .Types }}) NewBatchQ(count int, target ...ecs.Entity)
 // NewWith creates a new [ecs.Entity] with the Map{{ .Index }}'s components, using the supplied values.
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
+// A potential [ecs.Listener] is notified about the relation target change in a separate event.
 //
 // See also [ecs.NewBuilderWith].
 func (m *Map{{ .Index }}{{ .Types }}) NewWith({{ .Arguments }}, target ...ecs.Entity) ecs.Entity {
@@ -113,8 +114,12 @@ func (m *Map{{ .Index }}{{ .Types }}) NewWith({{ .Arguments }}, target ...ecs.En
 	if !m.hasRelation {
 		panic("map has no relation defined")
 	}
-	entity := m.world.NewEntity(m.ids...)
-	{{ .Assign }}
+	entity := m.world.NewEntityFn(
+			func(entity ecs.Entity) {
+				{{ .Assign }}
+			},
+			m.ids...,
+		)
 	m.world.Relations().Set(entity, m.relation, target[0])
 	return entity
 }
