@@ -329,9 +329,9 @@ func (w *World) Add(entity Entity, comps ...ID) {
 // For maximum performance, pre-allocate a slice of component IDs and pass it using ellipsis:
 //
 //	// fast
-//	world.Add(entity, idA, idB, idC)
+//	world.AddFn(entity, nil, idA, idB, idC)
 //	// even faster
-//	world.Add(entity, ids...)
+//	world.AddFn(entity, nil, ids...)
 //
 // See also [World.Add], [World.Exchange] and [World.ExchangeFn].
 // See also the generic variants under [github.com/mlange-42/arche/generic.Map1], etc.
