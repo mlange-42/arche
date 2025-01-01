@@ -439,8 +439,8 @@ func (w *World) exchangeNoNotify(entity Entity, add []ID, rem []ID, relation ID,
 	index := &w.entities[entity.id]
 	oldArch := index.arch
 
-	oldMask := oldArch.Mask
-	mask := w.getExchangeMask(oldMask, add, rem)
+	mask := oldArch.Mask
+	w.getExchangeMask(&mask, add, rem)
 
 	if hasRelation {
 		if !mask.Get(relation) {
@@ -496,7 +496,7 @@ func (w *World) exchangeNoNotify(entity Entity, add []ID, rem []ID, relation ID,
 
 	w.cleanupArchetype(oldArch)
 
-	return arch, &oldMask, oldTarget, oldRel
+	return arch, &oldArch.Mask, oldTarget, oldRel
 }
 
 // notify listeners for an exchange.
@@ -530,7 +530,7 @@ func (w *World) notifyExchange(arch *archetype, oldMask *Mask, entity Entity, ad
 // Modify a mask by adding and removing IDs.
 // Panics if adding a component already present or removing a component not present.
 // Also panics if the same component ID is in the add or remove list twice.
-func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
+func (w *World) getExchangeMask(mask *Mask, add []ID, rem []ID) {
 	for _, comp := range rem {
 		if !mask.Get(comp) {
 			panic(fmt.Sprintf("entity does not have a component of type %v, can't remove", w.registry.Types[comp.id]))
@@ -543,7 +543,6 @@ func (w *World) getExchangeMask(mask Mask, add []ID, rem []ID) Mask {
 		}
 		mask.Set(comp, true)
 	}
-	return mask
 }
 
 // ExchangeBatch exchanges components for many entities, matching a filter.
@@ -615,7 +614,8 @@ func (w *World) exchangeBatchNoNotify(filter Filter, add []ID, rem []ID, relatio
 }
 
 func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, rem []ID, relation ID, hasRelation bool, target Entity) (*archetype, uint32) {
-	mask := w.getExchangeMask(oldArch.Mask, add, rem)
+	mask := oldArch.Mask
+	w.getExchangeMask(&mask, add, rem)
 	oldIDs := oldArch.Components()
 
 	if hasRelation {

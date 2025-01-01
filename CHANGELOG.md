@@ -1,17 +1,23 @@
+## [[v0.14.3]](https://github.com/mlange-42/arche/compare/v0.14.2...v0.14.3)
+
+### Performance
+
+* Avoids a bitmask heap escape in world component operations (add, remove, exchange, ...), with around 20ns improvement (#452)
+
 ## [[v0.14.2]](https://github.com/mlange-42/arche/compare/v0.14.1...v0.14.2)
 
 ### Performance
 
-* Optimize `MapX.Assign` and `MapX.NewWith` by use of `World.GetUnchecked` (#449)
+* Optimizes `MapX.Assign` and `MapX.NewWith` by use of `World.GetUnchecked` (#449)
 
 ### Documentation
 
-* Fix method names and ordering in benchmark tables (#448)
-* Document listener notification handling in `MapX.NewWith` (#450)
+* Fixes method names and ordering in benchmark tables (#448)
+* Documents listener notification handling in `MapX.NewWith` (#450)
 
 ### Bugfixes
 
-* Fix missing listener notification in `MapX.NewWith` when called with a relation target (#450)
+* Fixes missing listener notification in `MapX.NewWith` when called with a relation target (#450)
 
 ## [[v0.14.1]](https://github.com/mlange-42/arche/compare/v0.14.0...v0.14.1)
 
