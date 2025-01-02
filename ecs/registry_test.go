@@ -81,3 +81,26 @@ func TestRegistryRelations(t *testing.T) {
 	assert.False(t, registry.IsRelation.Get(id(id3)))
 	assert.False(t, registry.IsRelation.Get(id(id4)))
 }
+
+func BenchmarkMaskToTypes(b *testing.B) {
+	b.StopTimer()
+
+	registry := newComponentRegistry()
+
+	tp := reflect.TypeOf((*Position)(nil)).Elem()
+	idValue, _ := registry.ComponentID(tp)
+	id := ID{id: idValue}
+
+	mask := All(id)
+	comps := []componentType{}
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		comps = registry.toTypes(&mask)
+	}
+
+	b.StopTimer()
+
+	assert.Equal(b, componentType{ID: id, Type: tp}, comps[0])
+}

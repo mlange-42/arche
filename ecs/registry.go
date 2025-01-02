@@ -39,7 +39,7 @@ func (r *componentRegistry) ComponentType(id uint8) (reflect.Type, bool) {
 	return r.Types[id], r.Used.Get(ID{id: id})
 }
 
-// ComponentType returns the type of a component by ID.
+// Count returns the total number of reserved IDs. It is the maximum ID plus 1.
 func (r *componentRegistry) Count() int {
 	return len(r.Components)
 }
@@ -78,4 +78,24 @@ func (r *componentRegistry) isRelation(tp reflect.Type) bool {
 	}
 	field := tp.Field(0)
 	return field.Type == relationType && field.Name == relationType.Name()
+}
+
+func (r *componentRegistry) toTypes(mask *Mask) []componentType {
+	count := int(mask.TotalBitsSet())
+	types := make([]componentType, count)
+
+	idx := 0
+	for i := range mask.bits {
+		if mask.bits[i] == 0 {
+			continue
+		}
+		for j := 0; j < wordSize; j++ {
+			id := ID{id: uint8(i*wordSize + j)}
+			if mask.Get(id) {
+				types[idx] = componentType{ID: id, Type: r.Types[id.id]}
+				idx++
+			}
+		}
+	}
+	return types
 }
