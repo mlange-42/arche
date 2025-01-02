@@ -16,7 +16,7 @@ func TestBitMaskTiny(t *testing.T) {
 	assert.True(t, mask.IsZero())
 }
 
-func TestMaskToTypes(t *testing.T) {
+func TestMaskTinyToTypes(t *testing.T) {
 	w := NewWorld()
 
 	id1 := ComponentID[Position](&w)
