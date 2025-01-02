@@ -82,6 +82,24 @@ func TestRegistryRelations(t *testing.T) {
 	assert.False(t, registry.IsRelation.Get(id(id4)))
 }
 
+func TestToTypes(t *testing.T) {
+	w := NewWorld()
+
+	id1 := ComponentID[Position](&w)
+	id2 := ComponentID[Velocity](&w)
+
+	mask := All()
+	comps := w.registry.toTypes(&mask)
+	assert.Equal(t, []componentType{}, comps)
+
+	mask = All(id1, id2)
+	comps = w.registry.toTypes(&mask)
+	assert.Equal(t, []componentType{
+		{ID: id1, Type: reflect.TypeOf((*Position)(nil)).Elem()},
+		{ID: id2, Type: reflect.TypeOf((*Velocity)(nil)).Elem()},
+	}, comps)
+}
+
 func BenchmarkMaskToTypes(b *testing.B) {
 	b.StopTimer()
 
