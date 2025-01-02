@@ -2,6 +2,7 @@ package ecs
 
 import (
 	"math/rand"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -125,6 +126,47 @@ func TestBitMask256(t *testing.T) {
 
 	assert.True(t, mask.ContainsAny(all(id(6), id(big+2), id(big+6))))
 	assert.False(t, mask.ContainsAny(all(id(6), id(big+3), id(big+5))))
+}
+
+func TestMaskToTypes(t *testing.T) {
+	w := NewWorld()
+
+	id1 := ComponentID[Position](&w)
+	id2 := ComponentID[Velocity](&w)
+
+	mask := All()
+	comps := mask.toTypes(&w.registry)
+	assert.Equal(t, []componentType{}, comps)
+
+	mask = All(id1, id2)
+	comps = mask.toTypes(&w.registry)
+	assert.Equal(t, []componentType{
+		{ID: id1, Type: reflect.TypeOf((*Position)(nil)).Elem()},
+		{ID: id2, Type: reflect.TypeOf((*Velocity)(nil)).Elem()},
+	}, comps)
+}
+
+func BenchmarkMaskToTypes(b *testing.B) {
+	b.StopTimer()
+
+	registry := newComponentRegistry()
+
+	tp := reflect.TypeOf((*Position)(nil)).Elem()
+	idValue, _ := registry.ComponentID(tp)
+	id := ID{id: idValue}
+
+	mask := All(id)
+	comps := []componentType{}
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		comps = mask.toTypes(&registry)
+	}
+
+	b.StopTimer()
+
+	assert.Equal(b, componentType{ID: id, Type: tp}, comps[0])
 }
 
 func TestBitMask64(t *testing.T) {

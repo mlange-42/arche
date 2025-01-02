@@ -132,12 +132,20 @@ func (b *Mask) toTypes(reg *componentRegistry) []componentType {
 	count := int(b.TotalBitsSet())
 	types := make([]componentType, count)
 
+	totalIDs := reg.Count()
+	bins := totalIDs/wordSize + 1
+	bits := totalIDs % wordSize
+
 	idx := 0
-	for i := range b.bits {
+	for i := 0; i < bins; i++ {
 		if b.bits[i] == 0 {
 			continue
 		}
-		for j := 0; j < wordSize; j++ {
+		cnt := wordSize
+		if i == bins-1 {
+			cnt = bits
+		}
+		for j := 0; j < cnt; j++ {
 			id := ID{id: uint8(i*wordSize + j)}
 			if b.Get(id) {
 				types[idx] = componentType{ID: id, Type: reg.Types[id.id]}

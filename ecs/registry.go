@@ -39,7 +39,7 @@ func (r *componentRegistry) ComponentType(id uint8) (reflect.Type, bool) {
 	return r.Types[id], r.Used.Get(ID{id: id})
 }
 
-// ComponentType returns the type of a component by ID.
+// Count returns the total number of reserved IDs. It is the maximum ID plus 1.
 func (r *componentRegistry) Count() int {
 	return len(r.Components)
 }

@@ -1,3 +1,9 @@
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.14.3...main)
+
+### Performance
+
+* Optimize mask to types conversion, speeding up archetype creation by up to 150ns (#453)
+
 ## [[v0.14.3]](https://github.com/mlange-42/arche/compare/v0.14.2...v0.14.3)
 
 ### Performance
