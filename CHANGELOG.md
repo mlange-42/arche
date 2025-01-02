@@ -1,4 +1,4 @@
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.14.3...main)
+## [[v0.14.4]](https://github.com/mlange-42/arche/compare/v0.14.3...v0.14.4)
 
 ### Performance
 
