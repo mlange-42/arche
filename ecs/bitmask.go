@@ -127,3 +127,31 @@ func (b *Mask) Xor(other *Mask) Mask {
 func (b *Mask) TotalBitsSet() int {
 	return bits.OnesCount64(b.bits[0]) + bits.OnesCount64(b.bits[1]) + bits.OnesCount64(b.bits[2]) + bits.OnesCount64(b.bits[3])
 }
+
+func (b *Mask) toTypes(reg *componentRegistry) []componentType {
+	count := int(b.TotalBitsSet())
+	types := make([]componentType, count)
+
+	totalIDs := reg.Count()
+	bins := totalIDs/wordSize + 1
+	bits := totalIDs % wordSize
+
+	idx := 0
+	for i := 0; i < bins; i++ {
+		if b.bits[i] == 0 {
+			continue
+		}
+		cnt := wordSize
+		if i == bins-1 {
+			cnt = bits
+		}
+		for j := 0; j < cnt; j++ {
+			id := ID{id: uint8(i*wordSize + j)}
+			if b.Get(id) {
+				types[idx] = componentType{ID: id, Type: reg.Types[id.id]}
+				idx++
+			}
+		}
+	}
+	return types
+}

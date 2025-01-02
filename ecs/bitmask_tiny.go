@@ -118,7 +118,7 @@ func (b *Mask) toTypes(reg *componentRegistry) []componentType {
 	types := make([]componentType, count)
 
 	idx := 0
-	for j := 0; j < wordSize; j++ {
+	for j := 0; j < totalIDs; j++ {
 		id := ID{id: uint8(j)}
 		if b.Get(id) {
 			types[idx] = componentType{ID: id, Type: reg.Types[id.id]}
