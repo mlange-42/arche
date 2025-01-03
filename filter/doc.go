@@ -1,4 +1,4 @@
-// Package filter contains Arche's advanced logic filtering API.
+// Package filter provides the advanced logic filtering API of Arche, an Entity Component System (ECS) for Go.
 //
 // See the top level module [github.com/mlange-42/arche] for an overview.
 //

@@ -3,6 +3,7 @@
 ### Documentation
 
 * Adds notes on entity and component pointer usage to docs and the user guide (#455)
+* Improves sub-package documentation for navigation and findability (#457)
 
 ## [[v0.14.4]](https://github.com/mlange-42/arche/compare/v0.14.3...v0.14.4)
 

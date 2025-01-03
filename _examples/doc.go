@@ -1,4 +1,4 @@
-// Package examples contains examples for Arche.
+// Package examples provides examples for Arche, an Entity Component System (ECS) for Go.
 //
 // See the top level module [github.com/mlange-42/arche] for an overview.
 //
