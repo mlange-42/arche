@@ -27,7 +27,9 @@ func (m *Map[T]) ID() ecs.ID {
 	return m.id
 }
 
-// Get gets the component for the given entity.
+// Get returns a pointer to the component of the given entity.
+//
+// ⚠️ Important: The obtained pointer should not be stored persistently!
 //
 // See [Map.HasUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
@@ -35,7 +37,9 @@ func (m *Map[T]) Get(entity ecs.Entity) *T {
 	return (*T)(m.world.Get(entity, m.id))
 }
 
-// GetUnchecked gets the component for the given entity.
+// GetUnchecked returns a pointer to the component of the given entity.
+//
+// ⚠️ Important: The obtained pointer should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.

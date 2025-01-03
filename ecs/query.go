@@ -96,7 +96,9 @@ func (q *Query) Has(comp ID) bool {
 	return q.access.HasComponent(comp)
 }
 
-// Get returns the pointer to the given component at the iterator's position.
+// Get returns a pointer to the given component at the iterator's position.
+//
+// ⚠️ Important: The obtained pointer should not be stored persistently!
 func (q *Query) Get(comp ID) unsafe.Pointer {
 	q.checkGet()
 	return q.access.Get(q.entityIndex, comp)

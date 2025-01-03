@@ -241,6 +241,8 @@ func (w *World) Alive(entity Entity) bool {
 // Get returns a pointer to the given component of an [Entity].
 // Returns nil if the entity has no such component.
 //
+// ⚠️ Important: The obtained pointer should not be stored persistently!
+//
 // Panics when called for a removed (and potentially recycled) entity.
 //
 // See [World.GetUnchecked] for an optimized version for static entities.
@@ -255,6 +257,8 @@ func (w *World) Get(entity Entity, comp ID) unsafe.Pointer {
 
 // GetUnchecked returns a pointer to the given component of an [Entity].
 // Returns nil if the entity has no such component.
+//
+// ⚠️ Important: The obtained pointer should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [World.Get],
 // for cases where entities are static or checked with [World.Alive] in user code.
