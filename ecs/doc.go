@@ -1,4 +1,6 @@
-// Package ecs contains Arche's core API.
+// Package ecs provides the core API of Arche, an Entity Component System (ECS) for Go.
+// See also package [github.com/mlange-42/arche/generic] for the type-safe generic API,
+// which is recommended for most users.
 //
 // See the top-level module [github.com/mlange-42/arche] for an overview.
 //

@@ -1,4 +1,4 @@
-// Package generic contains Arche's generic API.
+// Package generic provides the generic API of Arche, an Entity Component System (ECS) for Go.
 //
 // See the top level module [github.com/mlange-42/arche] for an overview.
 //
