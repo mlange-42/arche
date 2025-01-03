@@ -64,6 +64,11 @@ However, {{< api ecs World.NewEntity NewEntity >}} takes an arbitrary number of 
 We get an entity with `Position`, and another one with `Position` and `Heading`.
 The components of the entity are initialized with their zero values.
 
+{{% notice style="blue" icon="exclamation" title="Important" %}}
+Note that entities should always be stored and passed around by value/copy,
+never via pointers!
+{{< /notice >}}
+
 ### Generic API
 
 Creating entities using the [generic API](./apis) requires a generic *MapX*, like {{< api generic Map2 >}}:
