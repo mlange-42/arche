@@ -2,7 +2,7 @@
 
 ### Documentation
 
-* Adds notes on entity and component pointer usage to docs and the user guide (#454)
+* Adds notes on entity and component pointer usage to docs and the user guide (#455)
 
 ## [[v0.14.4]](https://github.com/mlange-42/arche/compare/v0.14.3...v0.14.4)
 
