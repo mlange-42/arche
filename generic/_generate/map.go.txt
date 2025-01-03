@@ -41,6 +41,8 @@ func NewMap{{ .Index }}{{ .TypesFull }}(w *ecs.World, relation ...Comp) Map{{ .I
 
 // Get all the Map{{ .Index }}'s components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map{{ .Index }}.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map{{ .Index }}{{ .Types }}) Get(entity ecs.Entity) ({{ .TypesReturn }}) {
@@ -48,6 +50,8 @@ func (m *Map{{ .Index }}{{ .Types }}) Get(entity ecs.Entity) ({{ .TypesReturn }}
 }
 
 // GetUnchecked all the Map{{ .Index }}'s components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map{{ .Index }}.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.

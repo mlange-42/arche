@@ -34,6 +34,11 @@ Here, we create a filter that gives us all entities with all the given component
 Where {{< api ecs Query.Get >}} (resp. {{< api generic Query2.Get >}}) return components of the entity at the
 current query iterator position.
 
+{{% notice style="blue" icon="exclamation" title="Important" %}}
+Note that the component pointers obtained from queries should never be stored persistently,
+and should only be used inside the query loop.
+{{< /notice >}}
+
 Comparing the two versions of the code above, one can clearly observe the advantages of the generic API
 over the ID-based API (see chapter on [APIs](./apis)).
 Firstly, the generic code is shorter and more readable.

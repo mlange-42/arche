@@ -371,6 +371,8 @@ type Query1[A any] struct {
 
 // Get returns all queried components for the current query iterator position.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query1[A]) Get() *A {
 	return (*A)(q.Query.Get(q.id0))
@@ -577,6 +579,8 @@ type Query2[A any, B any] struct {
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query2[A, B]) Get() (*A, *B) {
@@ -788,6 +792,8 @@ type Query3[A any, B any, C any] struct {
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query3[A, B, C]) Get() (*A, *B, *C) {
@@ -1003,6 +1009,8 @@ type Query4[A any, B any, C any, D any] struct {
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query4[A, B, C, D]) Get() (*A, *B, *C, *D) {
@@ -1222,6 +1230,8 @@ type Query5[A any, B any, C any, D any, E any] struct {
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query5[A, B, C, D, E]) Get() (*A, *B, *C, *D, *E) {
@@ -1445,6 +1455,8 @@ type Query6[A any, B any, C any, D any, E any, F any] struct {
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query6[A, B, C, D, E, F]) Get() (*A, *B, *C, *D, *E, *F) {
@@ -1672,6 +1684,8 @@ type Query7[A any, B any, C any, D any, E any, F any, G any] struct {
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query7[A, B, C, D, E, F, G]) Get() (*A, *B, *C, *D, *E, *F, *G) {
@@ -1903,6 +1917,8 @@ type Query8[A any, B any, C any, D any, E any, F any, G any, H any] struct {
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query8[A, B, C, D, E, F, G, H]) Get() (*A, *B, *C, *D, *E, *F, *G, *H) {
@@ -2138,6 +2154,8 @@ type Query9[A any, B any, C any, D any, E any, F any, G any, H any, I any] struc
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query9[A, B, C, D, E, F, G, H, I]) Get() (*A, *B, *C, *D, *E, *F, *G, *H, *I) {
@@ -2377,6 +2395,8 @@ type Query10[A any, B any, C any, D any, E any, F any, G any, H any, I any, J an
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query10[A, B, C, D, E, F, G, H, I, J]) Get() (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J) {
@@ -2620,6 +2640,8 @@ type Query11[A any, B any, C any, D any, E any, F any, G any, H any, I any, J an
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query11[A, B, C, D, E, F, G, H, I, J, K]) Get() (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K) {
@@ -2867,6 +2889,8 @@ type Query12[A any, B any, C any, D any, E any, F any, G any, H any, I any, J an
 }
 
 // Get returns all queried components for the current query iterator position.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // Use [ecs.Query.Entity] to get the current Entity.
 func (q *Query12[A, B, C, D, E, F, G, H, I, J, K, L]) Get() (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K, *L) {

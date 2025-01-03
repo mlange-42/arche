@@ -48,6 +48,8 @@ func NewMap1[A any](w *ecs.World, relation ...Comp) Map1[A] {
 
 // Get all the Map1's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map1.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map1[A]) Get(entity ecs.Entity) *A {
@@ -55,6 +57,8 @@ func (m *Map1[A]) Get(entity ecs.Entity) *A {
 }
 
 // GetUnchecked all the Map1's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map1.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -318,6 +322,8 @@ func NewMap2[A any, B any](w *ecs.World, relation ...Comp) Map2[A, B] {
 
 // Get all the Map2's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map2.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map2[A, B]) Get(entity ecs.Entity) (*A, *B) {
@@ -326,6 +332,8 @@ func (m *Map2[A, B]) Get(entity ecs.Entity) (*A, *B) {
 }
 
 // GetUnchecked all the Map2's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map2.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -597,6 +605,8 @@ func NewMap3[A any, B any, C any](w *ecs.World, relation ...Comp) Map3[A, B, C] 
 
 // Get all the Map3's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map3.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map3[A, B, C]) Get(entity ecs.Entity) (*A, *B, *C) {
@@ -606,6 +616,8 @@ func (m *Map3[A, B, C]) Get(entity ecs.Entity) (*A, *B, *C) {
 }
 
 // GetUnchecked all the Map3's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map3.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -885,6 +897,8 @@ func NewMap4[A any, B any, C any, D any](w *ecs.World, relation ...Comp) Map4[A,
 
 // Get all the Map4's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map4.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map4[A, B, C, D]) Get(entity ecs.Entity) (*A, *B, *C, *D) {
@@ -895,6 +909,8 @@ func (m *Map4[A, B, C, D]) Get(entity ecs.Entity) (*A, *B, *C, *D) {
 }
 
 // GetUnchecked all the Map4's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map4.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -1182,6 +1198,8 @@ func NewMap5[A any, B any, C any, D any, E any](w *ecs.World, relation ...Comp) 
 
 // Get all the Map5's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map5.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map5[A, B, C, D, E]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E) {
@@ -1193,6 +1211,8 @@ func (m *Map5[A, B, C, D, E]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E) {
 }
 
 // GetUnchecked all the Map5's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map5.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -1488,6 +1508,8 @@ func NewMap6[A any, B any, C any, D any, E any, F any](w *ecs.World, relation ..
 
 // Get all the Map6's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map6.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map6[A, B, C, D, E, F]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F) {
@@ -1500,6 +1522,8 @@ func (m *Map6[A, B, C, D, E, F]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F)
 }
 
 // GetUnchecked all the Map6's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map6.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -1803,6 +1827,8 @@ func NewMap7[A any, B any, C any, D any, E any, F any, G any](w *ecs.World, rela
 
 // Get all the Map7's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map7.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map7[A, B, C, D, E, F, G]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G) {
@@ -1816,6 +1842,8 @@ func (m *Map7[A, B, C, D, E, F, G]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, 
 }
 
 // GetUnchecked all the Map7's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map7.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -2127,6 +2155,8 @@ func NewMap8[A any, B any, C any, D any, E any, F any, G any, H any](w *ecs.Worl
 
 // Get all the Map8's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map8.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map8[A, B, C, D, E, F, G, H]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H) {
@@ -2141,6 +2171,8 @@ func (m *Map8[A, B, C, D, E, F, G, H]) Get(entity ecs.Entity) (*A, *B, *C, *D, *
 }
 
 // GetUnchecked all the Map8's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map8.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -2460,6 +2492,8 @@ func NewMap9[A any, B any, C any, D any, E any, F any, G any, H any, I any](w *e
 
 // Get all the Map9's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map9.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I) {
@@ -2475,6 +2509,8 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) Get(entity ecs.Entity) (*A, *B, *C, *D
 }
 
 // GetUnchecked all the Map9's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map9.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -2802,6 +2838,8 @@ func NewMap10[A any, B any, C any, D any, E any, F any, G any, H any, I any, J a
 
 // Get all the Map10's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map10.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J) {
@@ -2818,6 +2856,8 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) Get(entity ecs.Entity) (*A, *B, *C
 }
 
 // GetUnchecked all the Map10's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map10.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -3153,6 +3193,8 @@ func NewMap11[A any, B any, C any, D any, E any, F any, G any, H any, I any, J a
 
 // Get all the Map11's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map11.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K) {
@@ -3170,6 +3212,8 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) Get(entity ecs.Entity) (*A, *B,
 }
 
 // GetUnchecked all the Map11's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map11.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
@@ -3513,6 +3557,8 @@ func NewMap12[A any, B any, C any, D any, E any, F any, G any, H any, I any, J a
 
 // Get all the Map12's components for the given entity.
 //
+// ⚠️ Important: The obtained pointers should not be stored persistently!
+//
 // See [Map12.GetUnchecked] for an optimized version for static entities.
 // See also [ecs.World.Get].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Get(entity ecs.Entity) (*A, *B, *C, *D, *E, *F, *G, *H, *I, *J, *K, *L) {
@@ -3531,6 +3577,8 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) Get(entity ecs.Entity) (*A, 
 }
 
 // GetUnchecked all the Map12's components for the given entity.
+//
+// ⚠️ Important: The obtained pointers should not be stored persistently!
 //
 // GetUnchecked is an optimized version of [Map12.Get],
 // for cases where entities are static or checked with [ecs.World.Alive] in user code.
