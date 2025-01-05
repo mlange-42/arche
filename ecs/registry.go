@@ -94,6 +94,15 @@ func newComponentRegistry() componentRegistry {
 	}
 }
 
+// ComponentID returns the ID for a component type, and registers it if not already registered.
+// The second return value indicates if it is a newly created ID.
+func (r *componentRegistry) ComponentID(tp reflect.Type) (uint8, bool) {
+	if id, ok := r.Components[tp]; ok {
+		return id, false
+	}
+	return r.registerComponent(tp, MaskTotalBits), true
+}
+
 // Reset clears the registry.
 func (r *componentRegistry) Reset() {
 	r.registry.Reset()

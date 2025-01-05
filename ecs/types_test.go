@@ -36,7 +36,8 @@ type ChildOf struct {
 	Relation
 }
 type PointerComp struct {
-	Ptr *PointerType
+	Ptr   *PointerType
+	Value int
 }
 
 type PointerType struct {

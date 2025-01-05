@@ -248,10 +248,12 @@ func TestArchetypeReset(t *testing.T) {
 func TestArchetypeZero(t *testing.T) {
 	comps := []componentType{
 		{ID: id(0), Type: reflect.TypeOf(Position{})},
-		{ID: id(1), Type: reflect.TypeOf(rotation{})},
+		{ID: id(1), Type: reflect.TypeOf(PointerComp{})},
 	}
 
-	node := newArchNode(All(id(0), id(1)), &nodeData{compIsPointer: &Mask{}}, ID{}, false, 32, comps)
+	isPointer := All(id(1))
+
+	node := newArchNode(All(id(0), id(1)), &nodeData{compIsPointer: &isPointer}, ID{}, false, 32, comps)
 	arch := archetype{}
 	data := archetypeData{}
 	arch.Init(&node, &data, 0, false, 16, Entity{})
@@ -262,20 +264,37 @@ func TestArchetypeZero(t *testing.T) {
 	assert.Equal(t, Position{0, 0}, *(*Position)(arch.Get(0, id(0))))
 	assert.Equal(t, Position{0, 0}, *(*Position)(arch.Get(1, id(0))))
 
+	assert.Equal(t, PointerComp{nil, 0}, *(*PointerComp)(arch.Get(0, id(1))))
+	assert.Equal(t, PointerComp{nil, 0}, *(*PointerComp)(arch.Get(1, id(1))))
+
 	pos := (*Position)(arch.Get(0, id(0)))
 	pos.X = 100
 	pos = (*Position)(arch.Get(1, id(0)))
 	pos.X = 100
 
+	ptr := (*PointerComp)(arch.Get(0, id(1)))
+	ptr.Value = 99
+	ptr = (*PointerComp)(arch.Get(1, id(1)))
+	ptr.Value = 99
+
 	assert.Equal(t, Position{100, 0}, *(*Position)(arch.Get(0, id(0))))
 	assert.Equal(t, Position{100, 0}, *(*Position)(arch.Get(1, id(0))))
+
+	assert.Equal(t, PointerComp{nil, 99}, *(*PointerComp)(arch.Get(0, id(1))))
+	assert.Equal(t, PointerComp{nil, 99}, *(*PointerComp)(arch.Get(1, id(1))))
 
 	arch.Remove(0)
 	arch.Remove(0)
 	arch.Alloc(newEntity(0))
 	arch.Alloc(newEntity(1))
-	assert.Equal(t, Position{0, 0}, *(*Position)(arch.Get(0, id(0))))
-	assert.Equal(t, Position{0, 0}, *(*Position)(arch.Get(1, id(0))))
+
+	// Don't zero, as there are no pointers involved
+	assert.Equal(t, Position{100, 0}, *(*Position)(arch.Get(0, id(0))))
+	assert.Equal(t, Position{100, 0}, *(*Position)(arch.Get(1, id(0))))
+
+	// These should be zeroed
+	assert.Equal(t, PointerComp{nil, 0}, *(*PointerComp)(arch.Get(0, id(1))))
+	assert.Equal(t, PointerComp{nil, 0}, *(*PointerComp)(arch.Get(1, id(1))))
 }
 
 func BenchmarkIterArchetype_1000(b *testing.B) {
