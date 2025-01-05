@@ -82,6 +82,7 @@ func (r *registry) unregisterLastComponent() {
 type componentRegistry struct {
 	registry
 	IsRelation Mask
+	IsPointer  Mask
 }
 
 // newComponentRegistry creates a new ComponentRegistry.
@@ -89,6 +90,7 @@ func newComponentRegistry() componentRegistry {
 	return componentRegistry{
 		registry:   newRegistry(),
 		IsRelation: Mask{},
+		IsPointer:  Mask{},
 	}
 }
 
@@ -96,6 +98,7 @@ func newComponentRegistry() componentRegistry {
 func (r *componentRegistry) Reset() {
 	r.registry.Reset()
 	r.IsRelation.Reset()
+	r.IsPointer.Reset()
 }
 
 // registerComponent registers a components and assigns an ID for it.
@@ -104,6 +107,9 @@ func (r *componentRegistry) registerComponent(tp reflect.Type, totalBits int) ui
 	if r.isRelation(tp) {
 		r.IsRelation.Set(id(newID), true)
 	}
+	if r.isPointer(tp) {
+		r.IsPointer.Set(id(newID), true)
+	}
 	return newID
 }
 
@@ -111,6 +117,7 @@ func (r *componentRegistry) unregisterLastComponent() {
 	newID := uint8(len(r.Components) - 1)
 	r.registry.unregisterLastComponent()
 	r.IsRelation.Set(id(newID), false)
+	r.IsPointer.Set(id(newID), false)
 }
 
 func (r *componentRegistry) isRelation(tp reflect.Type) bool {
@@ -119,4 +126,32 @@ func (r *componentRegistry) isRelation(tp reflect.Type) bool {
 	}
 	field := tp.Field(0)
 	return field.Type == relationType && field.Name == relationType.Name()
+}
+
+// isPointer determines whether an object contains pointers that need proper garbage collection.
+func (r *componentRegistry) isPointer(tp reflect.Type) bool {
+	switch tp.Kind() {
+	case reflect.Pointer, reflect.Interface:
+		elem := tp.Elem()
+		return r.isPointerRecursive(elem)
+	default:
+		return r.isPointerRecursive(tp)
+	}
+}
+
+// isPointerRecursive determines whether an object contains pointers that need proper garbage collection.
+func (r *componentRegistry) isPointerRecursive(tp reflect.Type) bool {
+	switch tp.Kind() {
+	case reflect.Ptr, reflect.Interface, reflect.Slice, reflect.Map, reflect.Chan, reflect.Func:
+		return true
+	case reflect.Struct:
+		for i := 0; i < tp.NumField(); i++ {
+			if r.isPointerRecursive(tp.Field(i).Type) {
+				return true
+			}
+		}
+		return false
+	default:
+		return false
+	}
 }

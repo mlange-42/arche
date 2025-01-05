@@ -82,6 +82,16 @@ func TestRegistryRelations(t *testing.T) {
 	assert.False(t, registry.IsRelation.Get(id(id4)))
 }
 
+func TestRegistryIsPointer(t *testing.T) {
+	reg := newComponentRegistry()
+
+	assert.False(t, reg.isPointer(reflect.TypeOf(Position{})))
+
+	assert.True(t, reg.isPointer(reflect.TypeOf(PointerType{})))
+	assert.True(t, reg.isPointer(reflect.TypeOf(PointerComp{})))
+	assert.True(t, reg.isPointer(reflect.TypeOf(SliceType{})))
+}
+
 func BenchmarkComponentRegistryIsRelation(b *testing.B) {
 	b.StopTimer()
 
@@ -98,4 +108,22 @@ func BenchmarkComponentRegistryIsRelation(b *testing.B) {
 	b.StopTimer()
 
 	assert.False(b, isRel)
+}
+
+func BenchmarkComponentRegistryIsPointer2Fields(b *testing.B) {
+	b.StopTimer()
+
+	reg := newComponentRegistry()
+	tp := reflect.TypeOf((*Position)(nil)).Elem()
+	_ = reg.registerComponent(tp, MaskTotalBits)
+
+	isPtr := false
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		isPtr = reg.isPointer(tp)
+	}
+	b.StopTimer()
+
+	assert.False(b, isPtr)
 }

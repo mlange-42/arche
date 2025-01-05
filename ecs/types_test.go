@@ -43,6 +43,10 @@ type PointerType struct {
 	Pos *Position
 }
 
+type SliceType struct {
+	Slice []int
+}
+
 type testStruct0 struct{ Val int32 }
 type testStruct1 struct{ val int32 }
 type testStruct2 struct{ val int32 }
