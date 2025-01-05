@@ -249,11 +249,12 @@ func TestArchetypeZero(t *testing.T) {
 	comps := []componentType{
 		{ID: id(0), Type: reflect.TypeOf(Position{})},
 		{ID: id(1), Type: reflect.TypeOf(PointerComp{})},
+		{ID: id(2), Type: reflect.TypeOf(label{})},
 	}
 
 	isPointer := All(id(1))
 
-	node := newArchNode(All(id(0), id(1)), &nodeData{compIsPointer: &isPointer}, ID{}, false, 32, comps)
+	node := newArchNode(All(id(0), id(1), id(2)), &nodeData{compIsPointer: &isPointer}, ID{}, false, 32, comps)
 	arch := archetype{}
 	data := archetypeData{}
 	arch.Init(&node, &data, 0, false, 16, Entity{})

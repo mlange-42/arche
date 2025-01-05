@@ -83,13 +83,57 @@ func TestRegistryRelations(t *testing.T) {
 }
 
 func TestRegistryIsPointer(t *testing.T) {
-	reg := newComponentRegistry()
+	registry := newComponentRegistry()
 
-	assert.False(t, reg.isPointer(reflect.TypeOf(Position{})))
+	structComp := reflect.TypeOf(Position{})
+	ptrComp := reflect.TypeOf(&Position{})
+	withPtrComp := reflect.TypeOf(PointerType{})
+	withSliceComp := reflect.TypeOf(SliceType{})
 
-	assert.True(t, reg.isPointer(reflect.TypeOf(PointerType{})))
-	assert.True(t, reg.isPointer(reflect.TypeOf(PointerComp{})))
-	assert.True(t, reg.isPointer(reflect.TypeOf(SliceType{})))
+	assert.False(t, registry.isPointer(structComp))
+	assert.True(t, registry.isPointer(ptrComp))
+	assert.True(t, registry.isPointer(withPtrComp))
+	assert.True(t, registry.isPointer(withSliceComp))
+
+	id1, _ := registry.ComponentID(structComp)
+	id2, _ := registry.ComponentID(ptrComp)
+	id3, _ := registry.ComponentID(withPtrComp)
+	id4, _ := registry.ComponentID(withSliceComp)
+
+	assert.False(t, registry.IsPointer.Get(id(id1)))
+	assert.True(t, registry.IsPointer.Get(id(id2)))
+	assert.True(t, registry.IsPointer.Get(id(id3)))
+	assert.True(t, registry.IsPointer.Get(id(id4)))
+}
+
+func TestRegistryReset(t *testing.T) {
+	registry := newComponentRegistry()
+
+	structComp := reflect.TypeOf(Position{})
+	ptrComp := reflect.TypeOf(&Position{})
+	relCompTp := reflect.TypeOf(relationComp{})
+
+	id1, _ := registry.ComponentID(structComp)
+	id2, _ := registry.ComponentID(ptrComp)
+	id3, _ := registry.ComponentID(relCompTp)
+
+	assert.False(t, registry.IsRelation.Get(id(id1)))
+	assert.False(t, registry.IsRelation.Get(id(id2)))
+	assert.True(t, registry.IsRelation.Get(id(id3)))
+
+	assert.False(t, registry.IsPointer.Get(id(id1)))
+	assert.True(t, registry.IsPointer.Get(id(id2)))
+	assert.False(t, registry.IsPointer.Get(id(id3)))
+
+	registry.Reset()
+
+	assert.Equal(t, 0, len(registry.Components))
+	assert.Equal(t, make([]reflect.Type, MaskTotalBits), registry.Types)
+	assert.Equal(t, 0, len(registry.IDs))
+
+	assert.True(t, registry.Used.IsZero())
+	assert.True(t, registry.IsRelation.IsZero())
+	assert.True(t, registry.IsPointer.IsZero())
 }
 
 func BenchmarkComponentRegistryIsRelation(b *testing.B) {

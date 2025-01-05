@@ -184,9 +184,6 @@ func (a *archetype) ZeroAll(index uint32) {
 func (a *archetype) Zero(index uint32, id ID) {
 	lay := a.getLayout(id)
 	size := lay.itemSize
-	if size == 0 {
-		return
-	}
 	dst := unsafe.Add(lay.pointer, index*size)
 	a.copy(a.node.zeroPointer, dst, size)
 }

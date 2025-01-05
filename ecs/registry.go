@@ -137,25 +137,14 @@ func (r *componentRegistry) isRelation(tp reflect.Type) bool {
 	return field.Type == relationType && field.Name == relationType.Name()
 }
 
-// isPointer determines whether an object contains pointers that need proper garbage collection.
+// isPointerRecursive determines whether an object contains pointers that need proper garbage collection.
 func (r *componentRegistry) isPointer(tp reflect.Type) bool {
 	switch tp.Kind() {
-	case reflect.Pointer, reflect.Interface:
-		elem := tp.Elem()
-		return r.isPointerRecursive(elem)
-	default:
-		return r.isPointerRecursive(tp)
-	}
-}
-
-// isPointerRecursive determines whether an object contains pointers that need proper garbage collection.
-func (r *componentRegistry) isPointerRecursive(tp reflect.Type) bool {
-	switch tp.Kind() {
-	case reflect.Ptr, reflect.Interface, reflect.Slice, reflect.Map, reflect.Chan, reflect.Func:
+	case reflect.Pointer, reflect.Interface, reflect.Slice, reflect.Map, reflect.Chan, reflect.Func:
 		return true
 	case reflect.Struct:
 		for i := 0; i < tp.NumField(); i++ {
-			if r.isPointerRecursive(tp.Field(i).Type) {
+			if r.isPointer(tp.Field(i).Type) {
 				return true
 			}
 		}
