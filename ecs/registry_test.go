@@ -81,3 +81,21 @@ func TestRegistryRelations(t *testing.T) {
 	assert.False(t, registry.IsRelation.Get(id(id3)))
 	assert.False(t, registry.IsRelation.Get(id(id4)))
 }
+
+func BenchmarkComponentRegistryIsRelation(b *testing.B) {
+	b.StopTimer()
+
+	reg := newComponentRegistry()
+	tp := reflect.TypeOf((*Position)(nil)).Elem()
+	_ = reg.registerComponent(tp, MaskTotalBits)
+
+	isRel := false
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		isRel = reg.isRelation(tp)
+	}
+	b.StopTimer()
+
+	assert.False(b, isRel)
+}
