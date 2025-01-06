@@ -1,3 +1,9 @@
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.14.5...main)
+
+### Performance
+
+* Zeros only the memory of components with pointers, speeding up most component operations and entity removal by 10-20% (#459)
+
 ## [[v0.14.5]](https://github.com/mlange-42/arche/compare/v0.14.4...v0.14.5)
 
 ### Documentation

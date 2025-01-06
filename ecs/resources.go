@@ -10,13 +10,13 @@ import (
 // Access it using [World.Resources].
 type Resources struct {
 	resources []any
-	registry  componentRegistry
+	registry  registry
 }
 
 // newResources creates a new Resources manager.
 func newResources() Resources {
 	return Resources{
-		registry:  newComponentRegistry(),
+		registry:  newRegistry(),
 		resources: make([]any, MaskTotalBits),
 	}
 }

@@ -36,11 +36,16 @@ type ChildOf struct {
 	Relation
 }
 type PointerComp struct {
-	Ptr *PointerType
+	Ptr   *PointerType
+	Value int
 }
 
 type PointerType struct {
 	Pos *Position
+}
+
+type SliceType struct {
+	Slice []int
 }
 
 type testStruct0 struct{ Val int32 }

@@ -27,7 +27,12 @@ type nodeData struct {
 	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
 	archetypeData     pagedSlice[archetypeData]
 	neighbors         idMap[*archNode] // Mapping from component ID to add/remove, to the resulting archetype
+	compIsPointer     *Mask            // Mapping from component IDs to whether they are or contain pointers.
 	capacityIncrement uint32           // Capacity increment
+}
+
+func newNodeData(compIsPointer *Mask) nodeData {
+	return nodeData{compIsPointer: compIsPointer}
 }
 
 // Creates a new archNode

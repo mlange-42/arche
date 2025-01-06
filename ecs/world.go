@@ -318,7 +318,7 @@ func (w *World) Add(entity Entity, comps ...ID) {
 	w.Exchange(entity, comps, nil)
 }
 
-// Add adds components to an [Entity].
+// AddFn adds components to an [Entity].
 //
 // The callback fn is called before the world's listener is notified.
 // Use this to configure the entity's components so that listener subscribers
@@ -411,7 +411,7 @@ func (w *World) Exchange(entity Entity, add []ID, rem []ID) {
 	w.exchange(entity, add, rem, ID{}, false, Entity{}, nil)
 }
 
-// Exchange adds and removes components in one pass.
+// ExchangeFn adds and removes components in one pass.
 // This is more efficient than subsequent use of [World.Add] and [World.Remove].
 //
 // The callback fn is called before the world's listener is notified.
