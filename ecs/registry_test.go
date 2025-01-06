@@ -157,8 +157,30 @@ func BenchmarkComponentRegistryIsRelation(b *testing.B) {
 func BenchmarkComponentRegistryIsPointer2Fields(b *testing.B) {
 	b.StopTimer()
 
+	template := struct{ A, B int }{}
+
 	reg := newComponentRegistry()
-	tp := reflect.TypeOf((*Position)(nil)).Elem()
+	tp := reflect.TypeOf(template)
+	_ = reg.registerComponent(tp, MaskTotalBits)
+
+	isPtr := false
+
+	b.StartTimer()
+	for i := 0; i < b.N; i++ {
+		isPtr = reg.isPointer(tp)
+	}
+	b.StopTimer()
+
+	assert.False(b, isPtr)
+}
+
+func BenchmarkComponentRegistryIsPointer5Fields(b *testing.B) {
+	b.StopTimer()
+
+	template := struct{ A, B, C, D, E int }{}
+
+	reg := newComponentRegistry()
+	tp := reflect.TypeOf(template)
 	_ = reg.registerComponent(tp, MaskTotalBits)
 
 	isPtr := false
