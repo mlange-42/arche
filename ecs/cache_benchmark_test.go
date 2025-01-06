@@ -40,7 +40,8 @@ func benchmarkCachedFilters(b *testing.B, arches int, count int, cached bool) {
 
 	NewBuilder(&world, id).NewBatch(count)
 
-	var filter Filter = All(id)
+	baseFilter := All(id)
+	var filter Filter = &baseFilter
 	if cached {
 		f := world.Cache().Register(filter)
 		filter = &f

@@ -33,7 +33,7 @@ func TestQueryIterate(t *testing.T) {
 	velID := ecs.ComponentID[Velocity](&world)
 
 	filter := ecs.All(posID, velID)
-	query := world.Query(filter)
+	query := world.Query(&filter)
 	for query.Next() {
 		pos := (*Position)(query.Get(posID))
 		vel := (*Velocity)(query.Get(velID))
@@ -65,10 +65,13 @@ func TestQueryRemoveEntities(t *testing.T) {
 	// A slice that we (re)-use to defer entity removal.
 	var toRemove []ecs.Entity
 
+	// Create a filter
+	filter := ecs.All()
+
 	// A time loop.
 	for time := 0; time < 100; time++ {
 		// Query... the world gets locked.
-		query := world.Query(ecs.All())
+		query := world.Query(&filter)
 		// Iterate, and collect entities to remove.
 		for query.Next() {
 			if rand.Float64() < 0.1 {
@@ -88,7 +91,8 @@ func TestQueryRemoveEntities(t *testing.T) {
 func TestQueryCount(t *testing.T) {
 	world := ecs.NewWorld()
 
-	query := world.Query(ecs.All())
+	filter := ecs.All()
+	query := world.Query(&filter)
 
 	cnt := query.Count()
 	fmt.Println(cnt)
@@ -104,8 +108,11 @@ func TestQueryEntityAt(t *testing.T) {
 		world.NewEntity()
 	}
 
+	// Create a filter
+	filter := ecs.All()
+
 	// Query and count entities.
-	query := world.Query(ecs.All())
+	query := world.Query(&filter)
 	cnt := query.Count()
 
 	// Draw random entities.

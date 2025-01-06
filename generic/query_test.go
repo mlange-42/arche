@@ -1833,3 +1833,22 @@ type testStruct13 struct {
 	val12 int32
 	val13 int32
 }
+
+func BenchmarkQueryCreate(b *testing.B) {
+	b.StopTimer()
+
+	world := ecs.NewWorld()
+	builder := NewMap1[Position](&world)
+	builder.NewBatch(100)
+
+	filter := NewFilter1[Position]()
+
+	var query Query1[Position]
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		query = filter.Query(&world)
+		query.Close()
+	}
+}

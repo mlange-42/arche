@@ -34,7 +34,7 @@ func runQuery1kArch(b *testing.B, count int) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			pos := (*c.TestStruct10)(query.Get(ids[10]))
 			pos.Val = 1
@@ -105,7 +105,7 @@ func runFilter1kArch(b *testing.B, count int) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			pos := (*c.TestStruct10)(query.Get(ids[10]))
 			pos.Val = 1
@@ -141,7 +141,7 @@ func runQuery1Of1kArch(b *testing.B, count int) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			pos := (*c.TestStruct6)(query.Get(ids[10]))
 			pos.Val = 1
@@ -211,7 +211,7 @@ func runQuery1kTargets(b *testing.B, count int) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			pos := (*c.TestStruct0)(query.Get(posID))
 			pos.Val = 1

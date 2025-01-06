@@ -379,7 +379,7 @@ func ExampleMask() {
 	velID := ComponentID[Velocity](&world)
 
 	filter := All(posID, velID)
-	query := world.Query(filter)
+	query := world.Query(&filter)
 
 	for query.Next() {
 		// ...

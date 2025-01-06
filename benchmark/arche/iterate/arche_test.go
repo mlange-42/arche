@@ -21,7 +21,7 @@ func runIter(b *testing.B, count int) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		cnt := 0
 		for query.Next() {
 			cnt++
@@ -39,7 +39,8 @@ func runGet(b *testing.B, count int) {
 
 	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
-	query := world.Query(ecs.All(posID, rotID))
+	filter := ecs.All(posID, rotID)
+	query := world.Query(&filter)
 	for query.Next() {
 		b.StartTimer()
 		for i := 0; i < b.N; i++ {
@@ -65,7 +66,8 @@ func runGetEntity(b *testing.B, count int) {
 
 	ecs.NewBuilder(&world, posID, rotID).NewBatch(count)
 
-	query := world.Query(ecs.All(posID, rotID))
+	filter := ecs.All(posID, rotID)
+	query := world.Query(&filter)
 	for query.Next() {
 		b.StartTimer()
 		var e ecs.Entity
@@ -95,7 +97,7 @@ func runQuery(b *testing.B, count int) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			pos := (*c.Position)(query.Get(posID))
 			pos.X = 1.0
@@ -137,7 +139,7 @@ func runFilter(b *testing.B, count int) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			pos := (*c.Position)(query.Get(posID))
 			pos.X = 1.0
@@ -181,7 +183,7 @@ func runQuery5C(b *testing.B, count int) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			t1 := (*c.TestStruct0)(query.Get(id0))
 			t2 := (*c.TestStruct1)(query.Get(id1))

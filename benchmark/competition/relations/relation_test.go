@@ -64,7 +64,7 @@ func benchmarkRelation(b *testing.B, numParents int, numChildren int) {
 
 	b.StopTimer()
 
-	parQuery := world.Query(parentFilter)
+	parQuery := world.Query(&parentFilter)
 
 	expected := numChildren * b.N
 	for parQuery.Next() {

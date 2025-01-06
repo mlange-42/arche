@@ -428,13 +428,13 @@ func TestWorldExchangeBatch(t *testing.T) {
 	}, events[201])
 
 	filter := All(posID, relID)
-	query := w.Query(filter)
+	query := w.Query(&filter)
 	assert.Equal(t, 200, query.Count())
 	for query.Next() {
 		assert.False(t, query.Relation(relID).IsZero())
 	}
 
-	query = w.Batch().ExchangeQ(filter, []ID{velID}, []ID{posID})
+	query = w.Batch().ExchangeQ(&filter, []ID{velID}, []ID{posID})
 	assert.Equal(t, 200, query.Count())
 	for query.Next() {
 		assert.True(t, query.Has(velID))

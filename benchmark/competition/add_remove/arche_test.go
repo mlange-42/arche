@@ -17,13 +17,13 @@ func BenchmarkIterArche(b *testing.B) {
 
 	ecs.NewBuilder(&world, posID).NewBatch(nEntities)
 
-	var filterPos ecs.Filter = ecs.All(posID)
-	var filterPosVel ecs.Filter = ecs.All(posID, velID)
+	filterPos := ecs.All(posID)
+	filterPosVel := ecs.All(posID, velID)
 
 	entities := make([]ecs.Entity, 0, nEntities)
 
 	// Iterate once for more fairness
-	query := world.Query(filterPos)
+	query := world.Query(&filterPos)
 	for query.Next() {
 		entities = append(entities, query.Entity())
 	}
@@ -33,7 +33,7 @@ func BenchmarkIterArche(b *testing.B) {
 	}
 
 	entities = entities[:0]
-	query = world.Query(filterPosVel)
+	query = world.Query(&filterPosVel)
 	for query.Next() {
 		entities = append(entities, query.Entity())
 	}
@@ -47,7 +47,7 @@ func BenchmarkIterArche(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filterPos)
+		query := world.Query(&filterPos)
 		for query.Next() {
 			entities = append(entities, query.Entity())
 		}
@@ -57,7 +57,7 @@ func BenchmarkIterArche(b *testing.B) {
 		}
 
 		entities = entities[:0]
-		query = world.Query(filterPosVel)
+		query = world.Query(&filterPosVel)
 		for query.Next() {
 			entities = append(entities, query.Entity())
 		}
@@ -82,8 +82,8 @@ func BenchmarkBuildArche(b *testing.B) {
 			world.NewEntity(ids...)
 		}
 
-		var filterPos ecs.Filter = ecs.All(posID)
-		var filterPosVel ecs.Filter = ecs.All(posID, velID)
+		filterPos := ecs.All(posID)
+		filterPosVel := ecs.All(posID, velID)
 
 		_ = filterPos
 		_ = filterPosVel

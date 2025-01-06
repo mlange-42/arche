@@ -597,7 +597,8 @@ func (w *World) Stats() *stats.World {
 func (w *World) DumpEntities() EntityDump {
 	alive := []uint32{}
 
-	query := w.Query(All())
+	filter := All()
+	query := w.Query(&filter)
 	for query.Next() {
 		alive = append(alive, uint32(query.Entity().id))
 	}

@@ -175,7 +175,7 @@ func BenchmarkWorldNewQuery(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		q := world.Query(filter)
+		q := world.Query(&filter)
 		q.Close()
 	}
 }
@@ -193,7 +193,7 @@ func BenchmarkWorldNewQueryNext(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		q := world.Query(filter)
+		q := world.Query(&filter)
 		q.Next()
 		q.Close()
 	}

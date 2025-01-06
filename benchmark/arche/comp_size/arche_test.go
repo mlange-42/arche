@@ -17,7 +17,7 @@ func benchmarkCompSizeSimple1x08B(bench *testing.B, count int) {
 	bench.StartTimer()
 
 	for i := 0; i < bench.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			a := (*A)(query.Get(aID))
 			a.V++
@@ -36,7 +36,7 @@ func benchmarkCompSizeSimple1x16B(bench *testing.B, count int) {
 	bench.StartTimer()
 
 	for i := 0; i < bench.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			ab := (*AB)(query.Get(abID))
 
@@ -56,7 +56,7 @@ func benchmarkCompSizeSimple1x32B(bench *testing.B, count int) {
 	bench.StartTimer()
 
 	for i := 0; i < bench.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			abcd := (*ABCD)(query.Get(abcdID))
 
@@ -76,7 +76,7 @@ func benchmarkCompSizeSimple1x64B(bench *testing.B, count int) {
 	bench.StartTimer()
 
 	for i := 0; i < bench.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			all := (*All)(query.Get(allID))
 
@@ -96,7 +96,7 @@ func benchmarkCompSizeSimple1x128B(bench *testing.B, count int) {
 	bench.StartTimer()
 
 	for i := 0; i < bench.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			all := (*All128B)(query.Get(allID))
 
@@ -123,7 +123,7 @@ func benchmarkCompSize8x08B(bench *testing.B, count int) {
 	bench.StartTimer()
 
 	for i := 0; i < bench.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			a := (*A)(query.Get(aID))
 			b := (*B)(query.Get(bID))
@@ -153,7 +153,7 @@ func benchmarkCompSize4x16B(bench *testing.B, count int) {
 	bench.StartTimer()
 
 	for i := 0; i < bench.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			ab := (*AB)(query.Get(abID))
 			cd := (*CD)(query.Get(cdID))
@@ -177,7 +177,7 @@ func benchmarkCompSize2x32B(bench *testing.B, count int) {
 	bench.StartTimer()
 
 	for i := 0; i < bench.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			abcd := (*ABCD)(query.Get(abcdID))
 			efgh := (*EFGH)(query.Get(efghID))
@@ -198,7 +198,7 @@ func benchmarkCompSize1x64B(bench *testing.B, count int) {
 	bench.StartTimer()
 
 	for i := 0; i < bench.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			all := (*All)(query.Get(allID))
 

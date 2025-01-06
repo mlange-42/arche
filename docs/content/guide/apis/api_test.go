@@ -23,7 +23,7 @@ func TestIDs(t *testing.T) {
 	velID := ecs.ComponentID[Velocity](&world)
 	filter := ecs.All(posID, velID)
 
-	query := world.Query(filter)
+	query := world.Query(&filter)
 	for query.Next() {
 		pos := (*Position)(query.Get(posID))
 		vel := (*Velocity)(query.Get(posID))
