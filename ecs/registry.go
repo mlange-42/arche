@@ -5,12 +5,12 @@ import (
 	"reflect"
 )
 
-// componentRegistry keeps track of component or resource IDs.
+// componentRegistry keeps track of type IDs.
 type registry struct {
-	Components map[reflect.Type]uint8
-	Types      []reflect.Type
-	IDs        []uint8
-	Used       Mask
+	Components map[reflect.Type]uint8 // Mapping from types to IDs.
+	Types      []reflect.Type         // Mapping from IDs to types.
+	IDs        []uint8                // List of IDs.
+	Used       Mask                   // Mapping from IDs tu used status.
 }
 
 // newComponentRegistry creates a new ComponentRegistry.
@@ -79,10 +79,12 @@ func (r *registry) unregisterLastComponent() {
 }
 
 // componentRegistry keeps track of component IDs.
+// In addition to [registry], it determines whether types
+// are relation components and/or contain (or are) pointers.
 type componentRegistry struct {
 	registry
-	IsRelation Mask
-	IsPointer  Mask
+	IsRelation Mask // Mapping from IDs to whether the component is a relation component.
+	IsPointer  Mask // Mapping from IDs to whether the component contains pointers.
 }
 
 // newComponentRegistry creates a new ComponentRegistry.
@@ -129,6 +131,7 @@ func (r *componentRegistry) unregisterLastComponent() {
 	r.IsPointer.Set(id(newID), false)
 }
 
+// isRelation determines whether a type is a relation component.
 func (r *componentRegistry) isRelation(tp reflect.Type) bool {
 	if tp.Kind() != reflect.Struct || tp.NumField() == 0 {
 		return false
@@ -137,7 +140,7 @@ func (r *componentRegistry) isRelation(tp reflect.Type) bool {
 	return field.Type == relationType && field.Name == relationType.Name()
 }
 
-// isPointerRecursive determines whether an object contains pointers that need proper garbage collection.
+// isPointerRecursive determines whether a type contains pointers that need proper garbage collection, or is a pointer itself.
 func (r *componentRegistry) isPointer(tp reflect.Type) bool {
 	switch tp.Kind() {
 	case reflect.Pointer, reflect.Interface, reflect.Slice, reflect.Map, reflect.Chan, reflect.Func:
