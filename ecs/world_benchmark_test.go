@@ -5,7 +5,19 @@ import (
 
 	"github.com/mlange-42/arche/ecs/event"
 	"github.com/mlange-42/arche/ecs/stats"
+	"github.com/stretchr/testify/assert"
 )
+
+func BenchmarkNewWorld(b *testing.B) {
+	var world World
+
+	for i := 0; i < b.N; i++ {
+		world = NewWorld()
+	}
+
+	b.StopTimer()
+	assert.False(b, world.Alive(Entity{}))
+}
 
 func BenchmarkEntityAlive_1000(b *testing.B) {
 	b.StopTimer()
