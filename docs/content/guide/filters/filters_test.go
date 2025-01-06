@@ -34,7 +34,7 @@ func TestMask(t *testing.T) {
 
 	mask := ecs.All(posID, headID)
 
-	query := world.Query(mask)
+	query := world.Query(&mask)
 	query.Close()
 }
 

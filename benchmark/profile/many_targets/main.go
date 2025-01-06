@@ -47,9 +47,9 @@ func run(rounds, iters, entities int) {
 			childBuilder.NewBatch(perArch, target)
 		}
 
-		var filter ecs.Filter = ecs.All(posID, relID)
+		filter := ecs.All(posID, relID)
 		for j := 0; j < iters; j++ {
-			query := world.Query(filter)
+			query := world.Query(&filter)
 			for query.Next() {
 				pos := (*c.TestStruct0)(query.Get(posID))
 				pos.Val++

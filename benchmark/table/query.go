@@ -38,7 +38,7 @@ func queryIter_100_000(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := w.Query(filter)
+		query := w.Query(&filter)
 		b.StartTimer()
 		for query.Next() {
 		}
@@ -58,7 +58,7 @@ func queryIterGet_1_100_000(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := w.Query(filter)
+		query := w.Query(&filter)
 		b.StartTimer()
 		for query.Next() {
 			c1 = (*comp1)(query.Get(id1))
@@ -84,7 +84,7 @@ func queryIterGet_2_100_000(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := w.Query(filter)
+		query := w.Query(&filter)
 		b.StartTimer()
 		for query.Next() {
 			c1 = (*comp1)(query.Get(id1))
@@ -117,7 +117,7 @@ func queryIterGet_5_100_000(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := w.Query(filter)
+		query := w.Query(&filter)
 		b.StartTimer()
 		for query.Next() {
 			c1 = (*comp1)(query.Get(id1))
@@ -146,7 +146,7 @@ func queryIterEntity_100_000(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := w.Query(filter)
+		query := w.Query(&filter)
 		b.StartTimer()
 		for query.Next() {
 			e = query.Entity()
@@ -171,7 +171,7 @@ func queryRelation_100_000(b *testing.B) {
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		query := w.Query(filter)
+		query := w.Query(&filter)
 		b.StartTimer()
 		for query.Next() {
 			par = query.Relation(id1)
@@ -194,7 +194,8 @@ func queryEntityAt_1Arch_1000(b *testing.B) {
 		indices[i] = rand.Intn(1000)
 	}
 
-	query := w.Query(ecs.All(id1))
+	filter := ecs.All(id1)
+	query := w.Query(&filter)
 	b.StartTimer()
 	var e ecs.Entity
 	for i := 0; i < b.N; i++ {
@@ -258,7 +259,8 @@ func queryEntityAt_5Arch_1000(b *testing.B) {
 	}
 	rand.Shuffle(len(indices), func(i, j int) { indices[i], indices[j] = indices[j], indices[i] })
 
-	query := w.Query(ecs.All(id1))
+	filter := ecs.All(id1)
+	query := w.Query(&filter)
 	b.StartTimer()
 	var e ecs.Entity
 	for i := 0; i < b.N; i++ {
@@ -320,7 +322,7 @@ func queryCreate(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		query.Close()
 	}
 }

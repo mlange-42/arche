@@ -25,11 +25,11 @@ func BenchmarkIterArche(b *testing.B) {
 	ecs.NewBuilder(&world, posID).NewBatch(nPos)
 	ecs.NewBuilder(&world, posID, c1ID, c2ID, c3ID, c4ID, c5ID, c6ID, c7ID, c8ID, c9ID).NewBatch(nPosAll)
 
-	var filter ecs.Filter = ecs.All(posID, c1ID, c2ID, c3ID, c4ID, c5ID, c6ID, c7ID, c8ID, c9ID)
+	filter := ecs.All(posID, c1ID, c2ID, c3ID, c4ID, c5ID, c6ID, c7ID, c8ID, c9ID)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			pos := (*Position)(query.Get(posID))
 			c1 := (*Comp1)(query.Get(c1ID))

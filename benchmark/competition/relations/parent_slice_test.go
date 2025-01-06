@@ -55,7 +55,7 @@ func benchmarkParentSlice(b *testing.B, numParents int, numChildren int) {
 	}
 
 	b.StopTimer()
-	query := world.Query(parentFilter)
+	query := world.Query(&parentFilter)
 
 	expected := numChildren * b.N
 	for query.Next() {

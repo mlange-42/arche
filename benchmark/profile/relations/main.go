@@ -97,7 +97,7 @@ func run(rounds, iters, numParents, numChildren int) {
 			}
 		}
 
-		parQuery := world.Query(parentFilter)
+		parQuery := world.Query(&parentFilter)
 
 		expected := numChildren * iters
 		for parQuery.Next() {

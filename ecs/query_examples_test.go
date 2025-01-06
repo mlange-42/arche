@@ -13,7 +13,7 @@ func ExampleQuery() {
 	velID := ecs.ComponentID[Velocity](&world)
 
 	filter := ecs.All(posID, velID)
-	query := world.Query(filter)
+	query := world.Query(&filter)
 	for query.Next() {
 		pos := (*Position)(query.Get(posID))
 		vel := (*Velocity)(query.Get(velID))
@@ -28,7 +28,8 @@ func ExampleQuery_Count() {
 	posID := ecs.ComponentID[Position](&world)
 	world.NewEntity(posID)
 
-	query := world.Query(ecs.All(posID))
+	filter := ecs.All(posID)
+	query := world.Query(&filter)
 	cnt := query.Count()
 	fmt.Println(cnt)
 
@@ -41,7 +42,8 @@ func ExampleQuery_Close() {
 	posID := ecs.ComponentID[Position](&world)
 	world.NewEntity(posID)
 
-	query := world.Query(ecs.All(posID))
+	filter := ecs.All(posID)
+	query := world.Query(&filter)
 	cnt := query.Count()
 	fmt.Println(cnt)
 

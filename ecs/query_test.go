@@ -609,7 +609,7 @@ func BenchmarkQueryCreate(b *testing.B) {
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		query.Close()
 	}
 }

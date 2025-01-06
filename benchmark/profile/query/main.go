@@ -1,10 +1,10 @@
 package main
 
 // Profiling:
-// go build ./benchmark/profile/iter
-// iter
-// go tool pprof -http=":8000" -nodefraction=0.001 iter cpu.pprof
-// go tool pprof -http=":8000" -nodefraction=0.001 iter mem.pprof
+// go build ./benchmark/profile/query
+// query
+// go tool pprof -http=":8000" -nodefraction=0.001 query cpu.pprof
+// go tool pprof -http=":8000" -nodefraction=0.001 query mem.pprof
 
 import (
 	"github.com/mlange-42/arche/ecs"
@@ -24,7 +24,7 @@ type velocity struct {
 func main() {
 
 	count := 250
-	iters := 10000
+	iters := 1000000
 	entities := 1000
 
 	stop := profile.Start(profile.CPUProfile, profile.ProfilePath("."))
@@ -50,15 +50,11 @@ func run(rounds, iters, entities int) {
 		}
 
 		filter := ecs.All(posID, velID)
+		var query ecs.Query
 
 		for j := 0; j < iters; j++ {
-			query := world.Query(&filter)
-			for query.Next() {
-				pos := (*position)(query.Get(posID))
-				vel := (*velocity)(query.Get(velID))
-				pos.X += vel.X
-				pos.Y += vel.Y
-			}
+			query = world.Query(&filter)
+			query.Close()
 		}
 	}
 }

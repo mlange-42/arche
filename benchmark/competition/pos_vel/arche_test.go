@@ -17,11 +17,11 @@ func BenchmarkIterArche(b *testing.B) {
 	ecs.NewBuilder(&world, posID).NewBatch(nPos)
 	ecs.NewBuilder(&world, posID, velID).NewBatch(nPosVel)
 
-	var filter ecs.Filter = ecs.All(posID, velID)
+	filter := ecs.All(posID, velID)
 	b.StartTimer()
 
 	for i := 0; i < b.N; i++ {
-		query := world.Query(filter)
+		query := world.Query(&filter)
 		for query.Next() {
 			pos := (*Position)(query.Get(posID))
 			vel := (*Velocity)(query.Get(velID))

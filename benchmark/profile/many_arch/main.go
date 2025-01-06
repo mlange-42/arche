@@ -50,9 +50,9 @@ func run(rounds, iters, entities int) {
 			}
 		}
 
-		var filter ecs.Filter = ecs.All(ids[6])
+		filter := ecs.All(ids[6])
 		for j := 0; j < iters; j++ {
-			query := world.Query(filter)
+			query := world.Query(&filter)
 			for query.Next() {
 				pos := (*c.TestStruct6)(query.Get(ids[6]))
 				pos.Val++
