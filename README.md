@@ -218,25 +218,6 @@ Benchmark code: [`benchmark/competition/add_remove`](https://github.com/mlange-4
 Left panel: iteration, right panel: world setup and entity creation.*
 </div>
 
-### Arche vs. Array of Structs
-
-The plot below shows CPU time benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue) (with structs escaped to the heap).
-
-Arche takes a constant time of just over 2ns per entity, regardless of the memory per entity (x-axis) and the number of entities (line styles).
-For AoS and AoP, time per access increases with memory per entity as well as number of entities, due to cache misses.
-
-In the given example with components of 16 bytes each, from 64 bytes per entity onwards (i.e. 4 components or 8 `float64` values),
-Arche outperforms AoS and AoP, particularly with a large number of entities.
-Note that the maximum shown here corresponds to only 25 MB of entity data!
-
-Benchmark code: [`benchmark/competition/array_of_structs`](https://github.com/mlange-42/arche/tree/main/benchmark/competition/array_of_structs).
-
-<div align="center" width="100%">
-
-![Benchmark vs. AoS and AoP](https://user-images.githubusercontent.com/44003176/237245154-0070bba0-c8fe-447e-a710-e370af1dcdab.svg)  
-*CPU benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue).*
-</div>
-
 ## Cite as
 
 Lange, M. (2023): Arche &ndash; An archetype-based Entity Component System for Go. DOI [10.5281/zenodo.7656484](https://doi.org/10.5281/zenodo.7656484),  GitHub repository: https://github.com/mlange-42/arche
