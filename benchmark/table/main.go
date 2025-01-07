@@ -18,6 +18,7 @@ func main() {
 	}
 	for _, info := range infos {
 		fmt.Printf("CPU: %s\n\n", info.ModelName)
+		break
 	}
 
 	benchmark.RunBenchmarks("Query", benchesQuery(), benchmark.ToMarkdown)
