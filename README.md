@@ -159,7 +159,8 @@ Neither is silent failure, given the scientific background.
 
 A tabular overview of the runtime cost of typical *Arche* ECS operations is provided under [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the Arche's [User Guide](https://mlange-42.github.io/arche/).
 
-See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
+See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml)
+and the [go-ecs-benchmarks](https://github.com/mlange-42/go-ecs-benchmarks) repository.
 
 ## Cite as
 
