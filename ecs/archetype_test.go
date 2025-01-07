@@ -105,7 +105,7 @@ func TestArchetypeExtend(t *testing.T) {
 	assert.Equal(t, 8, int(arch.Cap()))
 
 	arch.extend(17)
-	assert.Equal(t, 24, int(arch.Cap()))
+	assert.Equal(t, 32, int(arch.Cap()))
 }
 
 func TestArchetypeExtendLayouts(t *testing.T) {

@@ -330,7 +330,10 @@ func (a *archetype) extend(by uint32) {
 	if a.cap >= required {
 		return
 	}
-	a.cap = max(a.cap*2, a.node.initialCapacity)
+	for a.cap < required {
+		a.cap *= 2
+	}
+	a.cap = max(a.cap, a.node.initialCapacity)
 
 	old := a.entityBuffer
 	a.entityBuffer = reflect.New(reflect.ArrayOf(int(a.cap), entityType)).Elem()
