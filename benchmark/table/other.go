@@ -11,7 +11,8 @@ import (
 func benchesOther() []benchmark.Benchmark {
 	return []benchmark.Benchmark{
 		{Name: "ecs.NewWorld", Desc: "", F: newWorld, N: 1, Factor: 0.001, Units: "μs"},
-		{Name: "ecs.ComponentID", Desc: "registered component", F: componentID, N: 1},
+		{Name: "World.Reset", Desc: "empty world", F: resetWorld, N: 1},
+		{Name: "ecs.ComponentID", Desc: "component already registered", F: componentID, N: 1},
 	}
 }
 
@@ -20,6 +21,21 @@ func newWorld(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		w = ecs.NewWorld()
+	}
+	b.StopTimer()
+
+	assert.False(b, w.IsLocked())
+}
+
+func resetWorld(b *testing.B) {
+	b.StopTimer()
+
+	w := ecs.NewWorld()
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		w.Reset()
 	}
 	b.StopTimer()
 
