@@ -17,21 +17,21 @@ type archNode struct {
 }
 
 type nodeData struct {
-	archetype         *archetype            // The single archetype for nodes without entity relation
-	archetypeMap      map[Entity]*archetype // Mapping from relation targets to archetypes
-	zeroPointer       unsafe.Pointer        // Points to zeroValue for fast access
-	Types             []reflect.Type        // Component type per column
-	Ids               []ID                  // List of component IDs
-	freeIndices       []int32               // Indices of free/inactive archetypes
-	zeroValue         []byte                // Used as source for setting storage to zero
-	archetypes        pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
-	archetypeData     pagedSlice[archetypeData]
-	neighbors         idMap[*archNode] // Mapping from component ID to add/remove, to the resulting archetype
-	capacityIncrement uint32           // Capacity increment
+	archetype       *archetype            // The single archetype for nodes without entity relation
+	archetypeMap    map[Entity]*archetype // Mapping from relation targets to archetypes
+	zeroPointer     unsafe.Pointer        // Points to zeroValue for fast access
+	Types           []reflect.Type        // Component type per column
+	Ids             []ID                  // List of component IDs
+	freeIndices     []int32               // Indices of free/inactive archetypes
+	zeroValue       []byte                // Used as source for setting storage to zero
+	archetypes      pagedSlice[archetype] // Storage for archetypes in nodes with entity relation
+	archetypeData   pagedSlice[archetypeData]
+	neighbors       idMap[*archNode] // Mapping from component ID to add/remove, to the resulting archetype
+	initialCapacity uint32           // Initial capacity of component columns
 }
 
 // Creates a new archNode
-func newArchNode(mask Mask, data *nodeData, relation ID, hasRelation bool, capacityIncrement int, components []componentType) archNode {
+func newArchNode(mask Mask, data *nodeData, relation ID, hasRelation bool, initialCapacity int, components []componentType) archNode {
 	var arch map[Entity]*archetype
 	if hasRelation {
 		arch = map[Entity]*archetype{}
@@ -66,7 +66,7 @@ func newArchNode(mask Mask, data *nodeData, relation ID, hasRelation bool, capac
 	data.Ids = ids
 	data.Types = types
 	data.archetypeMap = arch
-	data.capacityIncrement = uint32(capacityIncrement)
+	data.initialCapacity = uint32(initialCapacity)
 	data.zeroValue = zeroValue
 	data.zeroPointer = zeroPointer
 	data.neighbors = newIDMap[*archNode]()
