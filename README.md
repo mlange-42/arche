@@ -23,13 +23,11 @@
 
 ## Features
 
-* Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
-* Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
-* Entity relations as first-class feature. See the [User Guide](https://mlange-42.github.io/arche/guide/relations/).
-* World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
+* Designed for performance and carefully optimized. See the [Benchmarks](#benchmarks).
+* Well-documented [API](https://pkg.go.dev/github.com/mlange-42/arche) and comprehensive [User Guide](https://mlange-42.github.io/arche/).
 * No systems. Just queries. Use your own structure (or the [Tools](#tools)).
-* No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
-* Probably the fastest Go ECS out there. See the [Benchmarks](#benchmarks).
+* No dependencies. Except for unit tests (100% [test coverage](https://coveralls.io/github/mlange-42/arche)).
+* World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
 
 ## Installation
 
@@ -166,57 +164,6 @@ Neither is silent failure, given the scientific background.
 A tabular overview of the runtime cost of typical *Arche* ECS operations is provided under [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the Arche's [User Guide](https://mlange-42.github.io/arche/).
 
 See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
-
-### Arche vs. other Go ECS implementations
-
-To the best of the author's knowledge, there are only a handful of ECS implementations in Go that are serious and somewhat maintained:
-
-* [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs) v0.9.0
-* [Donburi](https://github.com/yohamta/donburi) v1.15.6
-* [Ento](https://github.com/wwfranczyk/ento) v0.1.0
-* [unitoftime/ecs](https://github.com/unitoftime/ecs) v0.0.3
-
-Here, *Arche* v0.14.5 is benchmarked against these implementations.
-Feel free to open an issue if you have suggestions for improvements on the benchmarking code or other engines to include.
-
-#### Position/Velocity
-
-Build:
-* Create 1000 entities with `Pos{float64, float64}` and `Vel{float64, float64}`.
-* Create 9000 entities with only `Pos{float64, float64}`.
-
-Iterate:
-* Iterate all entities with `Pos` and `Vel`, and add `Vel` to `Pos`.
-
-Benchmark code: [`benchmark/competition/pos_vel`](https://github.com/mlange-42/arche/tree/main/benchmark/competition/pos_vel).
-
-<div align="center" width="100%">
-
-![Benchmark vs. Go ECSs - Pos/Vel](https://github.com/mlange-42/arche/assets/44003176/7b73f9d8-238c-4d7a-98a1-267ad0b5e4a8)  
-*Position/Velocity benchmarks of Arche (left-most) vs. other Go ECS implementations.
-Left panel: query iteration (log scale), right panel: world setup and entity creation.*
-</div>
-
-#### Add/remove component
-
-Build:
-* Create 1000 entities with `Pos{float64, float64}`.
-
-Iterate:
-* Get all entities with `Pos`, and add `Vel{float64, float64}` component.
-* Get all entities with `Pos` and `Vel`, and remove `Vel` component.
-
-> Note: The iteration is performed once before benchmarking,
-> to avoid biasing slower implementations through one-time allocations.
-
-Benchmark code: [`benchmark/competition/add_remove`](https://github.com/mlange-42/arche/tree/main/benchmark/competition/add_remove).
-
-<div align="center" width="100%">
-
-![Benchmark vs. Go ECSs - Add/remove](https://github.com/mlange-42/arche/assets/44003176/7a127568-e71a-441f-91b0-6e626b3fcf19)  
-*Add/remove component benchmarks of Arche (left-most) vs. other Go ECS implementations.
-Left panel: iteration, right panel: world setup and entity creation.*
-</div>
 
 ## Cite as
 
