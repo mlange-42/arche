@@ -44,11 +44,6 @@ func (p *entityPool) Get() Entity {
 // Allocates and returns a new entity. For internal use.
 func (p *entityPool) getNew() Entity {
 	e := newEntity(eid(len(p.entities)))
-	if len(p.entities) == cap(p.entities) {
-		old := p.entities
-		p.entities = make([]Entity, len(p.entities), len(p.entities)+int(p.capacityIncrement))
-		copy(p.entities, old)
-	}
 	p.entities = append(p.entities, e)
 	return e
 }
