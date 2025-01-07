@@ -137,7 +137,7 @@ For a batteries-included implementation, see module [arche-model](https://github
 The type-safe generic API and advanced logic filters are provided in the packages
 [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) and
 [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter), respectively.
-Both packages are built on top of the `ecs` package, so they could also be implemented by a user.
+Both packages are built on top of the core [ecs](https://pkg.go.dev/github.com/mlange-42/arche/ecs) package, so they could also be implemented by a user.
 
 ### Determinism
 
@@ -151,7 +151,7 @@ However, given the same operations on the `ecs.World`, iteration order will alwa
 It panics on unexpected operations, like removing a dead entity,
 adding a component that is already present, or attempting to change a locked world.
 This may not seem idiomatic for Go.
-However, explicit error handling in performance hotspots is not an option.
+However, explicit error handling in performance hot spots is not an option.
 Neither is silent failure, given the scientific background.
 
 ### Limitations
