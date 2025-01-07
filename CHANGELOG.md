@@ -1,5 +1,9 @@
 ## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.14.5...main)
 
+### Performance
+
+* Optimizes entity creation by an altered growth policy for archetypes, entity list and entity pool (#464)
+
 ### Other
 
 *  Use mask pointers in all tests and benchmarks (#460)
