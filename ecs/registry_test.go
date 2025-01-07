@@ -82,30 +82,6 @@ func TestRegistryRelations(t *testing.T) {
 	assert.False(t, registry.IsRelation.Get(id(id4)))
 }
 
-func TestRegistryIsPointer(t *testing.T) {
-	registry := newComponentRegistry()
-
-	structComp := reflect.TypeOf(Position{})
-	ptrComp := reflect.TypeOf(&Position{})
-	withPtrComp := reflect.TypeOf(PointerType{})
-	withSliceComp := reflect.TypeOf(SliceType{})
-
-	assert.False(t, registry.isPointer(structComp))
-	assert.True(t, registry.isPointer(ptrComp))
-	assert.True(t, registry.isPointer(withPtrComp))
-	assert.True(t, registry.isPointer(withSliceComp))
-
-	id1, _ := registry.ComponentID(structComp)
-	id2, _ := registry.ComponentID(ptrComp)
-	id3, _ := registry.ComponentID(withPtrComp)
-	id4, _ := registry.ComponentID(withSliceComp)
-
-	assert.False(t, registry.IsPointer.Get(id(id1)))
-	assert.True(t, registry.IsPointer.Get(id(id2)))
-	assert.True(t, registry.IsPointer.Get(id(id3)))
-	assert.True(t, registry.IsPointer.Get(id(id4)))
-}
-
 func TestRegistryReset(t *testing.T) {
 	registry := newComponentRegistry()
 
@@ -121,10 +97,6 @@ func TestRegistryReset(t *testing.T) {
 	assert.False(t, registry.IsRelation.Get(id(id2)))
 	assert.True(t, registry.IsRelation.Get(id(id3)))
 
-	assert.False(t, registry.IsPointer.Get(id(id1)))
-	assert.True(t, registry.IsPointer.Get(id(id2)))
-	assert.False(t, registry.IsPointer.Get(id(id3)))
-
 	registry.Reset()
 
 	assert.Equal(t, 0, len(registry.Components))
@@ -133,7 +105,6 @@ func TestRegistryReset(t *testing.T) {
 
 	assert.True(t, registry.Used.IsZero())
 	assert.True(t, registry.IsRelation.IsZero())
-	assert.True(t, registry.IsPointer.IsZero())
 }
 
 func BenchmarkComponentRegistryIsRelation(b *testing.B) {
@@ -152,44 +123,4 @@ func BenchmarkComponentRegistryIsRelation(b *testing.B) {
 	b.StopTimer()
 
 	assert.False(b, isRel)
-}
-
-func BenchmarkComponentRegistryIsPointer2Fields(b *testing.B) {
-	b.StopTimer()
-
-	template := struct{ A, B int }{}
-
-	reg := newComponentRegistry()
-	tp := reflect.TypeOf(template)
-	_ = reg.registerComponent(tp, MaskTotalBits)
-
-	isPtr := false
-
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
-		isPtr = reg.isPointer(tp)
-	}
-	b.StopTimer()
-
-	assert.False(b, isPtr)
-}
-
-func BenchmarkComponentRegistryIsPointer5Fields(b *testing.B) {
-	b.StopTimer()
-
-	template := struct{ A, B, C, D, E int }{}
-
-	reg := newComponentRegistry()
-	tp := reflect.TypeOf(template)
-	_ = reg.registerComponent(tp, MaskTotalBits)
-
-	isPtr := false
-
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
-		isPtr = reg.isPointer(tp)
-	}
-	b.StopTimer()
-
-	assert.False(b, isPtr)
 }
