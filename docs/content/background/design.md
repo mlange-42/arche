@@ -20,9 +20,9 @@ There is neither an update loop nor systems.
 These should be implemented by the user.
 For a batteries-included implementation, see module [arche-model](https://github.com/mlange-42/arche-model).
 
-The packages {{< api filter >}} and {{< api generic >}}
-provide a layer around the core for richer resp. generic queries and manipulation.
-They are built on top of the {{< api ecs >}} package, so they could also be implemented by a user.
+The type-safe generic API and advanced logic filters are provided in the packages
+{{< api generic >}} and {{< api filter >}}, respectively.
+Both packages are built on top of the core {{< api ecs >}} package, so they could also be implemented by a user.
 
 ## Determinism
 
@@ -36,7 +36,7 @@ Arche puts an emphasis on safety and on avoiding undefined behavior.
 It panics on unexpected operations, like removing a dead entity,
 adding a component that is already present, or attempting to change a locked world.
 This may not seem idiomatic for Go.
-However, explicit error handling in performance hotspots is not an option.
+However, explicit error handling in performance hot spots is not an option.
 Neither is silent failure, given the scientific background.
 
 ## Limitations
