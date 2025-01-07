@@ -23,7 +23,7 @@
 
 ## Features
 
-* Designed for performance and carefully optimized. See the [Benchmarks](#benchmarks).
+* Designed for performance and highly optimized. See the [Benchmarks](#benchmarks).
 * Well-documented [API](https://pkg.go.dev/github.com/mlange-42/arche) and comprehensive [User Guide](https://mlange-42.github.io/arche/).
 * No systems. Just queries. Use your own structure (or the [Tools](#tools)).
 * No dependencies. Except for unit tests (100% [test coverage](https://coveralls.io/github/mlange-42/arche)).
