@@ -171,12 +171,12 @@ See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actio
 
 To the best of the author's knowledge, there are only a handful of ECS implementations in Go that are serious and somewhat maintained:
 
-* [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs)
-* [Donburi](https://github.com/yohamta/donburi)
-* [Ento](https://github.com/wwfranczyk/ento)
-* [unitoftime/ecs](https://github.com/unitoftime/ecs)
+* [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs) v0.9.0
+* [Donburi](https://github.com/yohamta/donburi) v1.15.6
+* [Ento](https://github.com/wwfranczyk/ento) v0.1.0
+* [unitoftime/ecs](https://github.com/unitoftime/ecs) v0.0.3
 
-Here, *Arche* is benchmarked against these implementations.
+Here, *Arche* v0.14.5 is benchmarked against these implementations.
 Feel free to open an issue if you have suggestions for improvements on the benchmarking code or other engines to include.
 
 #### Position/Velocity
