@@ -4,11 +4,12 @@ import (
 	"math/rand"
 	"testing"
 
+	"github.com/mlange-42/arche/benchmark"
 	"github.com/mlange-42/arche/ecs"
 )
 
-func benchesWorld() []bench {
-	return []bench{
+func benchesWorld() []benchmark.Benchmark {
+	return []benchmark.Benchmark{
 		{Name: "World.Get", Desc: "random, 1000 entities", F: worldGet_1000, N: 1000},
 		{Name: "World.GetUnchecked", Desc: "random, 1000 entities", F: worldGetUnchecked_1000, N: 1000},
 		{Name: "World.Has", Desc: "random, 1000 entities", F: worldHas_1000, N: 1000},

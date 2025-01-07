@@ -2,25 +2,18 @@ package main
 
 import (
 	"fmt"
-	"testing"
 	"time"
-)
 
-type bench struct {
-	Name string
-	Desc string
-	F    func(b *testing.B)
-	N    int
-	T    float64
-}
+	"github.com/mlange-42/arche/benchmark"
+)
 
 func main() {
 	fmt.Printf("Last run: %s\n\n", time.Now().Format(time.RFC1123))
 
-	runBenches("Query", benchesQuery(), toMarkdown)
-	runBenches("World access", benchesWorld(), toMarkdown)
-	runBenches("Entities", benchesEntities(), toMarkdown)
-	runBenches("Entities, batched", benchesEntitiesBatch(), toMarkdown)
-	runBenches("Components", benchesComponents(), toMarkdown)
-	runBenches("Components, batched", benchesComponentsBatch(), toMarkdown)
+	benchmark.RunBenchmarks("Query", benchesQuery(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("World access", benchesWorld(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Entities", benchesEntities(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Entities, batched", benchesEntitiesBatch(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Components", benchesComponents(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Components, batched", benchesComponentsBatch(), benchmark.ToMarkdown)
 }

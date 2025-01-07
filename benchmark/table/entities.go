@@ -3,12 +3,13 @@ package main
 import (
 	"testing"
 
+	"github.com/mlange-42/arche/benchmark"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/generic"
 )
 
-func benchesEntities() []bench {
-	return []bench{
+func benchesEntities() []benchmark.Benchmark {
+	return []benchmark.Benchmark{
 		{Name: "Entity.IsZero", Desc: "", F: entitiesIsZero_2, N: 2},
 
 		{Name: "World.NewEntity", Desc: "memory already allocated", F: entitiesCreate_1000, N: 1000},

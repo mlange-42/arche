@@ -3,12 +3,13 @@ package main
 import (
 	"testing"
 
+	"github.com/mlange-42/arche/benchmark"
 	"github.com/mlange-42/arche/ecs"
 	"github.com/mlange-42/arche/generic"
 )
 
-func benchesComponents() []bench {
-	return []bench{
+func benchesComponents() []benchmark.Benchmark {
+	return []benchmark.Benchmark{
 		{Name: "World.Add 1 Comp", Desc: "memory already allocated", F: componentsAdd1_1000, N: 1000},
 		{Name: "World.Add 5 Comps", Desc: "memory already allocated", F: componentsAdd5_1000, N: 1000},
 
