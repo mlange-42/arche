@@ -111,6 +111,19 @@ func BenchmarkNewEntitiesBatch_1_000_000_New(b *testing.B) {
 	}
 }
 
+func BenchmarkNewEntities_1_000_000_New(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+
+		posID := ComponentID[Position](&world)
+		velID := ComponentID[Velocity](&world)
+
+		for i := 0; i < 1_000_000; i++ {
+			world.NewEntity(posID, velID)
+		}
+	}
+}
+
 func BenchmarkNewEntities_10_000_Reset(b *testing.B) {
 	b.StopTimer()
 	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
