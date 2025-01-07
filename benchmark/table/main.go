@@ -29,4 +29,5 @@ func main() {
 	benchmark.RunBenchmarks("Entities, batched", benchesEntitiesBatch(), benchmark.ToMarkdown)
 	benchmark.RunBenchmarks("Components", benchesComponents(), benchmark.ToMarkdown)
 	benchmark.RunBenchmarks("Components, batched", benchesComponentsBatch(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Other", benchesOther(), benchmark.ToMarkdown)
 }

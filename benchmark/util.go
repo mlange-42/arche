@@ -7,11 +7,13 @@ import (
 )
 
 type Benchmark struct {
-	Name string
-	Desc string
-	F    func(b *testing.B)
-	N    int
-	T    float64
+	Name   string
+	Desc   string
+	F      func(b *testing.B)
+	N      int
+	T      float64
+	Factor float64
+	Units  string
 }
 
 func RunBenchmarks(title string, benches []Benchmark, format func([]Benchmark) string) {
@@ -31,7 +33,16 @@ func ToMarkdown(benches []Benchmark) string {
 
 	for i := range benches {
 		bench := &benches[i]
-		t := fmt.Sprintf("%.1f ns", bench.T)
+		factor := bench.Factor
+		if factor == 0 {
+			factor = 1
+		}
+		units := bench.Units
+		if units == "" {
+			units = "ns"
+		}
+
+		t := fmt.Sprintf("%.1f %s", bench.T*factor, units)
 		b.WriteString(fmt.Sprintf("| %-32s | %12s | %-28s |\n", bench.Name, t, bench.Desc))
 	}
 	b.WriteString("\n")
