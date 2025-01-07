@@ -9,12 +9,13 @@ import (
 )
 
 func main() {
+	fmt.Printf("Last run: %s\n", time.Now().Format(time.RFC1123))
+	fmt.Print("Arche v0.14.5\n")
+
 	infos, err := cpu.Info()
 	if err != nil {
 		panic(err)
 	}
-
-	fmt.Printf("Last run: %s\n", time.Now().Format(time.RFC1123))
 	for _, info := range infos {
 		fmt.Printf("CPU: %s\n\n", info.ModelName)
 	}
