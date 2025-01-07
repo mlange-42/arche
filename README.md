@@ -134,10 +134,10 @@ There is neither an update loop nor systems.
 These should be implemented by the user.
 For a batteries-included implementation, see module [arche-model](https://github.com/mlange-42/arche-model).
 
-The packages [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter)
-and [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic)
-provide a layer around the core for richer resp. generic queries and manipulation.
-They are built on top of the `ecs` package, so they could also be implemented by a user.
+The type-safe generic API and advanced logic filters are provided in the packages
+[generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) and
+[filter](https://pkg.go.dev/github.com/mlange-42/arche/filter), respectively.
+Both packages are built on top of the `ecs` package, so they could also be implemented by a user.
 
 ### Determinism
 
