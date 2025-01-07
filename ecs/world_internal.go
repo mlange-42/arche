@@ -277,12 +277,6 @@ func (w *World) createEntity(arch *archetype) Entity {
 	idx := arch.Alloc(entity)
 	len := len(w.entities)
 	if int(entity.id) == len {
-		if len == cap(w.entities) {
-			old := w.entities
-			w.entities = make([]entityIndex, len, len+w.config.CapacityIncrement)
-			copy(w.entities, old)
-
-		}
 		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
 		w.targetEntities.ExtendTo(len + w.config.CapacityIncrement)
 	} else {

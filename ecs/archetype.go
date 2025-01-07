@@ -93,7 +93,7 @@ func (a *archetype) Init(node *archNode, data *archetypeData, index int32, forSt
 
 	cap := 1
 	if forStorage {
-		cap = int(node.capacityIncrement)
+		cap = int(node.initialCapacity)
 	}
 
 	for i, id := range node.Ids {
@@ -330,7 +330,10 @@ func (a *archetype) extend(by uint32) {
 	if a.cap >= required {
 		return
 	}
-	a.cap = capacityU32(required, a.node.capacityIncrement)
+	for a.cap < required {
+		a.cap *= 2
+	}
+	a.cap = max(a.cap, a.node.initialCapacity)
 
 	old := a.entityBuffer
 	a.entityBuffer = reflect.New(reflect.ArrayOf(int(a.cap), entityType)).Elem()

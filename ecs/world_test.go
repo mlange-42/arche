@@ -28,8 +28,8 @@ func TestWorldConfig(t *testing.T) {
 	world.NewEntity()
 	world.NewEntity(relID)
 
-	assert.Equal(t, uint32(32), world.nodes.Get(0).capacityIncrement)
-	assert.Equal(t, uint32(8), world.nodes.Get(1).capacityIncrement)
+	assert.Equal(t, uint32(32), world.nodes.Get(0).initialCapacity)
+	assert.Equal(t, uint32(8), world.nodes.Get(1).initialCapacity)
 }
 
 func TestWorldEntites(t *testing.T) {

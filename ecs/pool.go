@@ -12,21 +12,19 @@ type number interface {
 // entityPool is an implementation using implicit linked lists.
 // Implements https://skypjack.github.io/2019-05-06-ecs-baf-part-3/
 type entityPool struct {
-	entities          []Entity
-	next              eid
-	available         uint32
-	capacityIncrement uint32
+	entities  []Entity
+	next      eid
+	available uint32
 }
 
 // newEntityPool creates a new, initialized Entity pool.
-func newEntityPool(capacityIncrement uint32) entityPool {
-	entities := make([]Entity, 1, capacityIncrement)
+func newEntityPool(initialCapacity uint32) entityPool {
+	entities := make([]Entity, 1, initialCapacity)
 	entities[0] = Entity{0, math.MaxUint32}
 	return entityPool{
-		entities:          entities,
-		next:              0,
-		available:         0,
-		capacityIncrement: capacityIncrement,
+		entities:  entities,
+		next:      0,
+		available: 0,
 	}
 }
 
@@ -44,11 +42,6 @@ func (p *entityPool) Get() Entity {
 // Allocates and returns a new entity. For internal use.
 func (p *entityPool) getNew() Entity {
 	e := newEntity(eid(len(p.entities)))
-	if len(p.entities) == cap(p.entities) {
-		old := p.entities
-		p.entities = make([]Entity, len(p.entities), len(p.entities)+int(p.capacityIncrement))
-		copy(p.entities, old)
-	}
 	p.entities = append(p.entities, e)
 	return e
 }
