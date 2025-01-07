@@ -1774,6 +1774,22 @@ func TestWorldResetGC(t *testing.T) {
 	w.NewEntity(compID)
 }
 
+func TestWorldZeroMem(t *testing.T) {
+	w := NewWorld()
+	posID := ComponentID[Position](&w)
+
+	e := w.NewEntity(posID)
+	pos := (*Position)(w.Get(e, posID))
+	pos.X = 99
+
+	w.RemoveEntity(e)
+
+	e = w.NewEntity(posID)
+	pos = (*Position)(w.Get(e, posID))
+
+	assert.Equal(t, 0, pos.X)
+}
+
 func Test1000Archetypes(t *testing.T) {
 	_ = testStruct0{1}
 	_ = testStruct1{1}

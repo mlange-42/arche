@@ -1001,7 +1001,7 @@ func (w *World) createArchetypeNode(mask Mask, relation ID, hasRelation bool) *a
 
 	types := mask.toTypes(&w.registry)
 
-	w.nodeData.Add(newNodeData(&w.registry.IsPointer))
+	w.nodeData.Add(nodeData{})
 	w.nodes.Add(newArchNode(mask, w.nodeData.Get(w.nodeData.Len()-1), relation, hasRelation, capInc, types))
 	nd := w.nodes.Get(w.nodes.Len() - 1)
 	w.relationNodes = append(w.relationNodes, nd)

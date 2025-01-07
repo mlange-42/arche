@@ -173,9 +173,6 @@ func (a *archetype) Remove(index uint32) bool {
 // ZeroAll resets a block of storage in all buffers.
 func (a *archetype) ZeroAll(index uint32) {
 	for _, id := range a.node.Ids {
-		if !a.node.compIsPointer.Get(id) {
-			continue
-		}
 		a.Zero(index, id)
 	}
 }
@@ -184,6 +181,9 @@ func (a *archetype) ZeroAll(index uint32) {
 func (a *archetype) Zero(index uint32, id ID) {
 	lay := a.getLayout(id)
 	size := lay.itemSize
+	if size == 0 {
+		return
+	}
 	dst := unsafe.Add(lay.pointer, index*size)
 	a.copy(a.node.zeroPointer, dst, size)
 }
