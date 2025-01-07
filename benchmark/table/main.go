@@ -8,9 +8,11 @@ import (
 	"github.com/shirou/gopsutil/v4/cpu"
 )
 
+const version = "v0.14.6-dev"
+
 func main() {
-	fmt.Printf("Last run: %s\n", time.Now().Format(time.RFC1123))
-	fmt.Print("Arche v0.14.5\n")
+	fmt.Printf("Last run: %s  \n", time.Now().Format(time.RFC1123))
+	fmt.Printf("Version: Arche %s \n", version)
 
 	infos, err := cpu.Info()
 	if err != nil {
