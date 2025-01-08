@@ -15,6 +15,7 @@ to the [go-ecs-benchmarks](https://github.com/mlange-42/go-ecs-benchmarks) repos
 ### Features
 
 * Adds methods `Batch.New` and `Batch.NewQ` for batch entity creation (#468)
+* Deprecates `ecs.Component`, as a followup of deprecation of all methods that use it (#470)
 
 ### Performance
 

@@ -21,6 +21,9 @@ type ResID struct {
 
 // Component is a component ID/pointer pair.
 //
+// Deprecated: This type is used only by the deprecated methods [World.Assign], [World.NewEntityWith], etc.
+// It may be removed in a future version.
+//
 // It is a helper for [World.Assign], [World.NewEntityWith] and [NewBuilderWith].
 // It is not related to how components are implemented in Arche.
 type Component struct {
