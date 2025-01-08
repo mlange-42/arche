@@ -293,8 +293,13 @@ func (w *World) createEntities(arch *archetype, count uint32) {
 
 	len := len(w.entities)
 	required := len + int(count) - w.entityPool.Available()
-	capacity := capacity(required, w.config.CapacityIncrement)
-	if required > cap(w.entities) {
+
+	capacity := cap(w.entities)
+	for capacity <= required {
+		capacity *= 2
+	}
+
+	if capacity > cap(w.entities) {
 		old := w.entities
 		w.entities = make([]entityIndex, required, capacity)
 		copy(w.entities, old)
