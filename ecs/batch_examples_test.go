@@ -16,6 +16,31 @@ func ExampleBatch() {
 	// Output:
 }
 
+func ExampleBatch_New() {
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[Position](&world)
+	velID := ecs.ComponentID[Velocity](&world)
+
+	world.Batch().New(100, posID, velID)
+	// Output:
+}
+
+func ExampleBatch_NewQ() {
+	world := ecs.NewWorld()
+
+	posID := ecs.ComponentID[Position](&world)
+	velID := ecs.ComponentID[Velocity](&world)
+
+	query := world.Batch().NewQ(100, posID, velID)
+
+	for query.Next() {
+		pos := (*Position)(query.Get(posID))
+		pos.X = 100
+	}
+	// Output:
+}
+
 func ExampleBatch_Add() {
 	world := ecs.NewWorld()
 

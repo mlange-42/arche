@@ -30,9 +30,7 @@ func TestBatchCreate(t *testing.T) {
 	posID := ecs.ComponentID[Position](&world)
 	headID := ecs.ComponentID[Heading](&world)
 
-	builder := ecs.NewBuilder(&world, posID, headID)
-
-	builder.NewBatch(100)
+	world.Batch().New(100, posID, headID)
 }
 
 func TestBatchCreateGeneric(t *testing.T) {
@@ -49,9 +47,7 @@ func TestBatchCreateQuery(t *testing.T) {
 	posID := ecs.ComponentID[Position](&world)
 	headID := ecs.ComponentID[Heading](&world)
 
-	builder := ecs.NewBuilder(&world, posID, headID)
-
-	query := builder.NewBatchQ(100)
+	query := world.Batch().NewQ(100, posID, headID)
 	for query.Next() {
 		pos := (*Position)(query.Get(posID))
 		head := (*Heading)(query.Get(headID))
@@ -84,8 +80,7 @@ func TestBatchAddQuery(t *testing.T) {
 	headID := ecs.ComponentID[Heading](&world)
 
 	// Create 100 entities with Position.
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID)
 
 	// Filter for entities with Position.
 	filter := ecs.All(posID)
@@ -124,8 +119,7 @@ func TestBatchRelations(t *testing.T) {
 	parent := world.NewEntity()
 
 	// Create 100 entities with ChildOf relation.
-	builder := ecs.NewBuilder(&world, childID)
-	builder.NewBatch(100)
+	world.Batch().New(100, childID)
 
 	// Filter for entities with ChildOf.
 	filter := ecs.All(childID)
@@ -158,8 +152,7 @@ func TestBatchRemoveEntities(t *testing.T) {
 	posID := ecs.ComponentID[Position](&world)
 
 	// Create 100 entities with Position.
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID)
 
 	// Filter for entities with Position.
 	filter := ecs.All(posID)

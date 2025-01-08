@@ -36,14 +36,11 @@ func run() {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	// Create an entity builder with components.
-	builder := ecs.NewBuilder(&world, posID, velID)
-
 	// Batch-create entities.
-	builder.NewBatch(100)
+	world.Batch().New(100, posID, velID)
 
 	// Batch-create entities, and iterate them.
-	query := builder.NewBatchQ(100)
+	query := world.Batch().NewQ(100, posID, velID)
 	for query.Next() {
 		pos := (*Position)(query.Get(posID))
 		pos.X = 1.0

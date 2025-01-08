@@ -4,6 +4,10 @@
 
 * Removes `ecs.Config`; the world is configured with initial capacities directly (#467)
 
+### Features
+
+* Adds methods `Batch.New` and `Batch.NewQ` for batch entity creation (#468)
+
 ### Performance
 
 * Optimizes entity creation by an altered growth policy for archetypes, entity list and entity pool (#464, #466)

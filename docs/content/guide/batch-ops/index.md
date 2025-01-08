@@ -17,7 +17,7 @@ Most batch methods come in two flavors. A "normal" one, and one suffixed with `Q
 
 Entity creation is probably the most common use case for batching.
 When the number of similar entities that are to be created are known,
-creation can be batched with {{< api ecs Builder.NewBatch >}}.
+creation can be batched with {{< api ecs Batch.New >}}.
 In the generic API, *MapX* provide e.g. {{< api generic Map2.NewBatch >}}.
 
 {{< tabs >}}
