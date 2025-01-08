@@ -35,10 +35,6 @@ no_heading = true
 
 *Arche* is an [archetype](/background/architecture)-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
 
-*Arche* is designed for the use in simulation models of the
-[Department of Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
-[Helmholtz Centre for Environmental Research](https://www.ufz.de).
-
 ## Arche's Features
 
 - Designed for performance and highly optimized. See the [Benchmarks](https://github.com/mlange-42/arche#benchmarks).
