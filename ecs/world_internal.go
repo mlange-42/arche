@@ -272,7 +272,7 @@ func (w *World) createEntity(arch *archetype) Entity {
 	len := len(w.entities)
 	if int(entity.id) == len {
 		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
-		w.targetEntities.ExtendTo(len + w.config.initialCapacity)
+		w.targetEntities.ExtendTo(cap(w.entities))
 	} else {
 		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
 		w.targetEntities.Set(entity.id, false)
