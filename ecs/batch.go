@@ -7,6 +7,20 @@ type Batch struct {
 	world *World
 }
 
+// New creates many entities with the given components.
+//
+// See also [Builder] for more flexible batch-creation of entities.
+func (b *Batch) New(count int, comps ...ID) {
+	b.world.newEntities(count, ID{}, false, Entity{}, comps...)
+}
+
+// NewQ creates many entities with the given components, and returns a query over them.
+//
+// See also [Builder] for more flexible batch-creation of entities.
+func (b *Batch) NewQ(count int, comps ...ID) Query {
+	return b.world.newEntitiesQuery(count, ID{}, false, Entity{}, comps...)
+}
+
 // Add adds components to many entities, matching a filter.
 // Returns the number of affected entities.
 //

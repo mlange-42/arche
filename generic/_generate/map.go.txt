@@ -102,8 +102,6 @@ func (m *Map{{ .Index }}{{ .Types }}) NewBatchQ(count int, target ...ecs.Entity)
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map{{ .Index }}'s [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map{{ .Index }}{{ .Types }}) NewWith({{ .Arguments }}, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(

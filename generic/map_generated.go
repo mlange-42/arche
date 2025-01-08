@@ -109,8 +109,6 @@ func (m *Map1[A]) NewBatchQ(count int, target ...ecs.Entity) Query1[A] {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map1's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map1[A]) NewWith(a *A, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -386,8 +384,6 @@ func (m *Map2[A, B]) NewBatchQ(count int, target ...ecs.Entity) Query2[A, B] {
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map2's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map2[A, B]) NewWith(a *A, b *B, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -672,8 +668,6 @@ func (m *Map3[A, B, C]) NewBatchQ(count int, target ...ecs.Entity) Query3[A, B, 
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map3's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map3[A, B, C]) NewWith(a *A, b *B, c *C, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -967,8 +961,6 @@ func (m *Map4[A, B, C, D]) NewBatchQ(count int, target ...ecs.Entity) Query4[A, 
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map4's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map4[A, B, C, D]) NewWith(a *A, b *B, c *C, d *D, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -1271,8 +1263,6 @@ func (m *Map5[A, B, C, D, E]) NewBatchQ(count int, target ...ecs.Entity) Query5[
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map5's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map5[A, B, C, D, E]) NewWith(a *A, b *B, c *C, d *D, e *E, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -1584,8 +1574,6 @@ func (m *Map6[A, B, C, D, E, F]) NewBatchQ(count int, target ...ecs.Entity) Quer
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map6's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map6[A, B, C, D, E, F]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -1906,8 +1894,6 @@ func (m *Map7[A, B, C, D, E, F, G]) NewBatchQ(count int, target ...ecs.Entity) Q
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map7's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map7[A, B, C, D, E, F, G]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -2237,8 +2223,6 @@ func (m *Map8[A, B, C, D, E, F, G, H]) NewBatchQ(count int, target ...ecs.Entity
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map8's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map8[A, B, C, D, E, F, G, H]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -2577,8 +2561,6 @@ func (m *Map9[A, B, C, D, E, F, G, H, I]) NewBatchQ(count int, target ...ecs.Ent
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map9's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map9[A, B, C, D, E, F, G, H, I]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -2926,8 +2908,6 @@ func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewBatchQ(count int, target ...ecs
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map10's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map10[A, B, C, D, E, F, G, H, I, J]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -3284,8 +3264,6 @@ func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewBatchQ(count int, target ...
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map11's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map11[A, B, C, D, E, F, G, H, I, J, K]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(
@@ -3651,8 +3629,6 @@ func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewBatchQ(count int, target 
 //
 // The optional argument can be used to set the target [ecs.Entity] for the Map12's [ecs.Relation].
 // A potential [ecs.Listener] is notified about the relation target change in a separate event.
-//
-// See also [ecs.NewBuilderWith].
 func (m *Map12[A, B, C, D, E, F, G, H, I, J, K, L]) NewWith(a *A, b *B, c *C, d *D, e *E, f *F, g *G, h *H, i *I, j *J, k *K, l *L, target ...ecs.Entity) ecs.Entity {
 	if len(target) == 0 {
 		entity := m.world.NewEntityFn(

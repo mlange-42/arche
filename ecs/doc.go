@@ -46,7 +46,7 @@
 //   - Exchange components: [Relations.Exchange]
 //
 // Batch-manipulations of many entities:
-//   - Create entities: [Builder.NewBatch], [Builder.NewBatchQ]
+//   - Create entities: [Builder.NewBatch], [Builder.NewBatchQ], [Batch.New], [Batch.NewQ]
 //   - Remove entities: [Batch.RemoveEntities]
 //   - Add components: [Batch.Add], [Batch.AddQ]
 //   - Remove components: [Batch.Remove], [Batch.RemoveQ]
