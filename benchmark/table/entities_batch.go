@@ -3,11 +3,12 @@ package main
 import (
 	"testing"
 
+	"github.com/mlange-42/arche/benchmark"
 	"github.com/mlange-42/arche/ecs"
 )
 
-func benchesEntitiesBatch() []bench {
-	return []bench{
+func benchesEntitiesBatch() []benchmark.Benchmark {
+	return []benchmark.Benchmark{
 		{Name: "Builder.NewBatch", Desc: "1000, memory already allocated", F: entitiesBatchCreate_1000, N: 1000},
 		{Name: "Builder.NewBatch w/ 1 Comp", Desc: "1000, memory already allocated", F: entitiesBatchCreate_1Comp_1000, N: 1000},
 		{Name: "Builder.NewBatch w/ 5 Comps", Desc: "1000, memory already allocated", F: entitiesBatchCreate_5Comp_1000, N: 1000},

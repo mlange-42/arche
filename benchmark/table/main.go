@@ -2,25 +2,32 @@ package main
 
 import (
 	"fmt"
-	"testing"
 	"time"
+
+	"github.com/mlange-42/arche/benchmark"
+	"github.com/shirou/gopsutil/v4/cpu"
 )
 
-type bench struct {
-	Name string
-	Desc string
-	F    func(b *testing.B)
-	N    int
-	T    float64
-}
+const version = "v0.14.6-dev"
 
 func main() {
-	fmt.Printf("Last run: %s\n\n", time.Now().Format(time.RFC1123))
+	fmt.Printf("Last run: %s  \n", time.Now().Format(time.RFC1123))
+	fmt.Printf("Version: Arche %s \n", version)
 
-	runBenches("Query", benchesQuery(), toMarkdown)
-	runBenches("World access", benchesWorld(), toMarkdown)
-	runBenches("Entities", benchesEntities(), toMarkdown)
-	runBenches("Entities, batched", benchesEntitiesBatch(), toMarkdown)
-	runBenches("Components", benchesComponents(), toMarkdown)
-	runBenches("Components, batched", benchesComponentsBatch(), toMarkdown)
+	infos, err := cpu.Info()
+	if err != nil {
+		panic(err)
+	}
+	for _, info := range infos {
+		fmt.Printf("CPU: %s\n\n", info.ModelName)
+		break
+	}
+
+	benchmark.RunBenchmarks("Query", benchesQuery(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("World access", benchesWorld(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Entities", benchesEntities(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Entities, batched", benchesEntitiesBatch(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Components", benchesComponents(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Components, batched", benchesComponentsBatch(), benchmark.ToMarkdown)
+	benchmark.RunBenchmarks("Other", benchesOther(), benchmark.ToMarkdown)
 }

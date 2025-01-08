@@ -4,6 +4,11 @@
 
 * Optimizes entity creation by an altered growth policy for archetypes, entity list and entity pool (#464)
 
+### Documentation
+
+* Rewrites features and benchmarks sections of the README (#462)
+* Adds version and CPU information to the benchmark tables (#462)
+
 ### Other
 
 *  Use mask pointers in all tests and benchmarks (#460)

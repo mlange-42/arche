@@ -10,10 +10,6 @@
 
 *Arche* is an [archetype](https://mlange-42.github.io/arche/background/architecture/)-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
 
-*Arche* is designed for the use in simulation models of the
-[Department of Ecological Modelling](https://www.ufz.de/index.php?en=34213) at the
-[Helmholtz Centre for Environmental Research](https://www.ufz.de).
-
 <div align="center" width="100%">
 
 &mdash;&mdash;
@@ -23,13 +19,11 @@
 
 ## Features
 
-* Simple [core API](https://pkg.go.dev/github.com/mlange-42/arche/ecs). See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
-* Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
-* Entity relations as first-class feature. See the [User Guide](https://mlange-42.github.io/arche/guide/relations/).
-* World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
+* Designed for performance and highly optimized. See the [Benchmarks](#benchmarks).
+* Well-documented [API](https://pkg.go.dev/github.com/mlange-42/arche) and comprehensive [User Guide](https://mlange-42.github.io/arche/).
 * No systems. Just queries. Use your own structure (or the [Tools](#tools)).
-* No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
-* Probably the fastest Go ECS out there. See the [Benchmarks](#benchmarks).
+* No dependencies. Except for unit tests (100% [test coverage](https://coveralls.io/github/mlange-42/arche)).
+* World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
 
 ## Installation
 
@@ -136,10 +130,10 @@ There is neither an update loop nor systems.
 These should be implemented by the user.
 For a batteries-included implementation, see module [arche-model](https://github.com/mlange-42/arche-model).
 
-The packages [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter)
-and [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic)
-provide a layer around the core for richer resp. generic queries and manipulation.
-They are built on top of the `ecs` package, so they could also be implemented by a user.
+The type-safe generic API and advanced logic filters are provided in the packages
+[generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) and
+[filter](https://pkg.go.dev/github.com/mlange-42/arche/filter), respectively.
+Both packages are built on top of the core [ecs](https://pkg.go.dev/github.com/mlange-42/arche/ecs) package, so they could also be implemented by a user.
 
 ### Determinism
 
@@ -153,7 +147,7 @@ However, given the same operations on the `ecs.World`, iteration order will alwa
 It panics on unexpected operations, like removing a dead entity,
 adding a component that is already present, or attempting to change a locked world.
 This may not seem idiomatic for Go.
-However, explicit error handling in performance hotspots is not an option.
+However, explicit error handling in performance hot spots is not an option.
 Neither is silent failure, given the scientific background.
 
 ### Limitations
@@ -165,77 +159,8 @@ Neither is silent failure, given the scientific background.
 
 A tabular overview of the runtime cost of typical *Arche* ECS operations is provided under [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the Arche's [User Guide](https://mlange-42.github.io/arche/).
 
-See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml).
-
-### Arche vs. other Go ECS implementations
-
-To the best of the author's knowledge, there are only a handful of ECS implementations in Go that are serious and somewhat maintained:
-
-* [go-gameengine-ecs](https://github.com/marioolofo/go-gameengine-ecs)
-* [Donburi](https://github.com/yohamta/donburi)
-* [Ento](https://github.com/wwfranczyk/ento)
-* [unitoftime/ecs](https://github.com/unitoftime/ecs)
-
-Here, *Arche* is benchmarked against these implementations.
-Feel free to open an issue if you have suggestions for improvements on the benchmarking code or other engines to include.
-
-#### Position/Velocity
-
-Build:
-* Create 1000 entities with `Pos{float64, float64}` and `Vel{float64, float64}`.
-* Create 9000 entities with only `Pos{float64, float64}`.
-
-Iterate:
-* Iterate all entities with `Pos` and `Vel`, and add `Vel` to `Pos`.
-
-Benchmark code: [`benchmark/competition/pos_vel`](https://github.com/mlange-42/arche/tree/main/benchmark/competition/pos_vel).
-
-<div align="center" width="100%">
-
-![Benchmark vs. Go ECSs - Pos/Vel](https://github.com/mlange-42/arche/assets/44003176/7b73f9d8-238c-4d7a-98a1-267ad0b5e4a8)  
-*Position/Velocity benchmarks of Arche (left-most) vs. other Go ECS implementations.
-Left panel: query iteration (log scale), right panel: world setup and entity creation.*
-</div>
-
-#### Add/remove component
-
-Build:
-* Create 1000 entities with `Pos{float64, float64}`.
-
-Iterate:
-* Get all entities with `Pos`, and add `Vel{float64, float64}` component.
-* Get all entities with `Pos` and `Vel`, and remove `Vel` component.
-
-> Note: The iteration is performed once before benchmarking,
-> to avoid biasing slower implementations through one-time allocations.
-
-Benchmark code: [`benchmark/competition/add_remove`](https://github.com/mlange-42/arche/tree/main/benchmark/competition/add_remove).
-
-<div align="center" width="100%">
-
-![Benchmark vs. Go ECSs - Add/remove](https://github.com/mlange-42/arche/assets/44003176/7a127568-e71a-441f-91b0-6e626b3fcf19)  
-*Add/remove component benchmarks of Arche (left-most) vs. other Go ECS implementations.
-Left panel: iteration, right panel: world setup and entity creation.*
-</div>
-
-### Arche vs. Array of Structs
-
-The plot below shows CPU time benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue) (with structs escaped to the heap).
-
-Arche takes a constant time of just over 2ns per entity, regardless of the memory per entity (x-axis) and the number of entities (line styles).
-For AoS and AoP, time per access increases with memory per entity as well as number of entities, due to cache misses.
-
-In the given example with components of 16 bytes each, from 64 bytes per entity onwards (i.e. 4 components or 8 `float64` values),
-Arche outperforms AoS and AoP, particularly with a large number of entities.
-Note that the maximum shown here corresponds to only 25 MB of entity data!
-
-Benchmark code: [`benchmark/competition/array_of_structs`](https://github.com/mlange-42/arche/tree/main/benchmark/competition/array_of_structs).
-
-<div align="center" width="100%">
-
-![Benchmark vs. AoS and AoP](https://user-images.githubusercontent.com/44003176/237245154-0070bba0-c8fe-447e-a710-e370af1dcdab.svg)  
-*CPU benchmarks of Arche (black) vs. Array of Structs (AoS, red) and Array of Pointers (AoP, blue).*
-</div>
+See also the latest [Benchmarks CI run](https://github.com/mlange-42/arche/actions/workflows/benchmarks.yml)
+and the [go-ecs-benchmarks](https://github.com/mlange-42/go-ecs-benchmarks) repository.
 
 ## Cite as
 

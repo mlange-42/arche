@@ -3,11 +3,12 @@ package main
 import (
 	"testing"
 
+	"github.com/mlange-42/arche/benchmark"
 	"github.com/mlange-42/arche/ecs"
 )
 
-func benchesComponentsBatch() []bench {
-	return []bench{
+func benchesComponentsBatch() []benchmark.Benchmark {
+	return []benchmark.Benchmark{
 		{Name: "Batch.Add 1 Comp", Desc: "1000, memory already allocated", F: componentsBatchAdd1_1000, N: 1000},
 		{Name: "Batch.Add 5 Comps", Desc: "1000, memory already allocated", F: componentsBatchAdd5_1000, N: 1000},
 

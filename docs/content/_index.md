@@ -41,13 +41,11 @@ no_heading = true
 
 ## Arche's Features
 
-- Simple core API. See the [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
-- Optional logic [filter](https://pkg.go.dev/github.com/mlange-42/arche/filter) and type-safe [generic](https://pkg.go.dev/github.com/mlange-42/arche/generic) API.
-- Entity relations as first-class feature. See the [User Guide](https://mlange-42.github.io/arche/guide/relations/).
-- World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
+- Designed for performance and highly optimized. See the [Benchmarks](https://github.com/mlange-42/arche#benchmarks).
+- Well-documented [API](https://pkg.go.dev/github.com/mlange-42/arche) and comprehensive [User Guide](https://mlange-42.github.io/arche/).
 - No systems. Just queries. Use your own structure (or the [Tools](https://github.com/mlange-42/arche#tools)).
-- No dependencies. Except for unit tests ([100% coverage](https://coveralls.io/github/mlange-42/arche)).
-- Probably the fastest Go ECS out there. See the [Benchmarks](https://github.com/mlange-42/arche#benchmarks).
+- No dependencies. Except for unit tests (100% [test coverage](https://coveralls.io/github/mlange-42/arche)).
+- World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
 
 For more information, see the [GitHub repository](https://github.com/mlange-42/arche) and [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 

@@ -17,7 +17,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.22.x'
+          go-version: '1.23.x'
       - name: Install dependencies
         run: go get .
       - name: Run internal benchmarks
@@ -36,7 +36,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.22.x'
+          go-version: '1.23.x'
       - name: Install dependencies
         run: go get .
       - name: Run internal benchmarks (tiny)
@@ -47,103 +47,6 @@ jobs:
           cd benchmark
           go test -tags tiny -benchmem -run=^$ -bench ^.*$ ./arche/...
   
-  relations:
-    name: Entity relations
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.22.x'
-      - name: Install dependencies
-        run: go get .
-      - name: Benchmark entity relations
-        run: |
-          cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/relations/...
- 
-
-  relations_tiny:
-    name: Entity relations (tiny)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.22.x'
-      - name: Install dependencies
-        run: go get .
-      - name: Benchmark entity relations (tiny)
-        run: |
-          cd benchmark
-          go test -tags tiny -benchmem -run=^$ -bench ^.*$ ./competition/relations/...
-  
-  other_methods:
-    name: vs. Array of Structs
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.22.x'
-      - name: Install dependencies
-        run: go get .
-      - name: Benchmark vs. Array of Structs
-        run: |
-          cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/array_of_structs/...
-  
-  competition:
-    name: ECS competition
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.22.x'
-      - name: Install dependencies
-        run: go get .
-      - name: Benchmark Pos/Vel
-        run: |
-          cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/pos_vel/... --count 10
-      - name: Benchmark Access 10 Components
-        run: |
-          cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/many_components/... --count 10
-      - name: Benchmark Add/Remove Components
-        run: |
-          cd benchmark
-          go test -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 10
-
-  competition_tiny:
-    name: ECS competition (tiny)
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Setup Go
-        uses: actions/setup-go@v3
-        with:
-          go-version: '1.22.x'
-      - name: Install dependencies
-        run: go get .
-      - name: Benchmark Pos/Vel (tiny)
-        run: |
-          cd benchmark
-          go test -tags tiny -benchmem -run=^$ -bench ^.*$ ./competition/pos_vel/... --count 5
-      - name: Benchmark Access 10 Components (tiny)
-        run: |
-          cd benchmark
-          go test -tags tiny -benchmem -run=^$ -bench ^.*$ ./competition/many_components/... --count 5
-      - name: Benchmark Add/Remove Components (tiny)
-        run: |
-          cd benchmark
-          go test -tags tiny -benchmem -run=^$ -bench ^.*$ ./competition/add_remove/... --count 5
-
   tables:
     name: Benchmark Tables
     runs-on: ubuntu-latest
@@ -152,7 +55,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v3
         with:
-          go-version: '1.22.x'
+          go-version: '1.23.x'
       - name: Install dependencies
         run: go get .
       - name: Benchmark tables
