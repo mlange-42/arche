@@ -8,8 +8,7 @@ func ExampleBatch() {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	builder := ecs.NewBuilder(&world, posID, velID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID, velID)
 
 	world.Batch().Remove(ecs.All(posID, velID), velID)
 	world.Batch().RemoveEntities(ecs.All(posID))
@@ -47,8 +46,7 @@ func ExampleBatch_Add() {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID)
 
 	filter := ecs.All(posID)
 	world.Batch().Add(filter, velID)
@@ -61,8 +59,7 @@ func ExampleBatch_AddQ() {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID)
 
 	filter := ecs.All(posID)
 	query := world.Batch().AddQ(filter, velID)
@@ -80,8 +77,7 @@ func ExampleBatch_Remove() {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	builder := ecs.NewBuilder(&world, posID, velID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID, velID)
 
 	filter := ecs.All(posID, velID)
 	world.Batch().Remove(filter, velID)
@@ -94,8 +90,7 @@ func ExampleBatch_RemoveQ() {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	builder := ecs.NewBuilder(&world, posID, velID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID, velID)
 
 	filter := ecs.All(posID, velID)
 	query := world.Batch().RemoveQ(filter, velID)
@@ -113,8 +108,7 @@ func ExampleBatch_Exchange() {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID)
 
 	filter := ecs.All(posID)
 	world.Batch().Exchange(
@@ -131,8 +125,7 @@ func ExampleBatch_ExchangeQ() {
 	posID := ecs.ComponentID[Position](&world)
 	velID := ecs.ComponentID[Velocity](&world)
 
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID)
 
 	filter := ecs.All(posID)
 	query := world.Batch().ExchangeQ(
@@ -153,8 +146,7 @@ func ExampleBatch_RemoveEntities() {
 
 	posID := ecs.ComponentID[Position](&world)
 
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID)
 
 	filter := ecs.All(posID)
 	world.Batch().RemoveEntities(filter)
@@ -169,8 +161,7 @@ func ExampleBatch_SetRelation() {
 
 	target := world.NewEntity()
 
-	builder := ecs.NewBuilder(&world, posID, childID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID, childID)
 
 	filter := ecs.All(childID)
 	world.Batch().SetRelation(filter, childID, target)
@@ -185,8 +176,7 @@ func ExampleBatch_SetRelationQ() {
 
 	target := world.NewEntity()
 
-	builder := ecs.NewBuilder(&world, posID, childID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID, childID)
 
 	filter := ecs.All(childID)
 	query := world.Batch().SetRelationQ(filter, childID, target)

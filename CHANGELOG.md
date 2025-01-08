@@ -27,6 +27,7 @@ to the [go-ecs-benchmarks](https://github.com/mlange-42/go-ecs-benchmarks) repos
 * Adds version and CPU information to the [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the user guide (#462)
 * Removed deprecated methods from the [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the user guide (#462)
 * Adds world creation and component ID lookup to the [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the user guide (#462)
+* Uses the new methods `Batch.New` and `Batch.NewQ` in examples where applicable, instead of `Builder` (#470)
 
 ### Other
 
