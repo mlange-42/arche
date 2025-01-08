@@ -1788,6 +1788,17 @@ func TestWorldZeroMem(t *testing.T) {
 	pos = (*Position)(w.Get(e, posID))
 
 	assert.Equal(t, 0, pos.X)
+
+	e = w.NewEntity(posID)
+	pos = (*Position)(w.Get(e, posID))
+	pos.X = 99
+
+	w.Reset()
+
+	e = w.NewEntity(posID)
+	pos = (*Position)(w.Get(e, posID))
+
+	assert.Equal(t, 0, pos.X)
 }
 
 func Test1000Archetypes(t *testing.T) {
