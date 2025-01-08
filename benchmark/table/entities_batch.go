@@ -9,9 +9,9 @@ import (
 
 func benchesEntitiesBatch() []benchmark.Benchmark {
 	return []benchmark.Benchmark{
-		{Name: "Builder.NewBatch", Desc: "1000, memory already allocated", F: entitiesBatchCreate_1000, N: 1000},
-		{Name: "Builder.NewBatch w/ 1 Comp", Desc: "1000, memory already allocated", F: entitiesBatchCreate_1Comp_1000, N: 1000},
-		{Name: "Builder.NewBatch w/ 5 Comps", Desc: "1000, memory already allocated", F: entitiesBatchCreate_5Comp_1000, N: 1000},
+		{Name: "Batch.New", Desc: "1000, memory already allocated", F: entitiesBatchCreate_1000, N: 1000},
+		{Name: "Batch.New w/ 1 Comp", Desc: "1000, memory already allocated", F: entitiesBatchCreate_1Comp_1000, N: 1000},
+		{Name: "Batch.New w/ 5 Comps", Desc: "1000, memory already allocated", F: entitiesBatchCreate_5Comp_1000, N: 1000},
 
 		{Name: "Batch.RemoveEntities", Desc: "1000", F: entitiesBatchRemove_1000, N: 1000},
 		{Name: "Batch.RemoveEntities w/ 1 Comp", Desc: "1000", F: entitiesBatchRemove_1Comp_1000, N: 1000},
@@ -23,11 +23,10 @@ func entitiesBatchCreate_1000(b *testing.B) {
 	b.StopTimer()
 
 	w := ecs.NewWorld()
-	builder := ecs.NewBuilder(&w)
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
-		builder.NewBatch(1000)
+		w.Batch().New(1000)
 		b.StopTimer()
 		w.Batch().RemoveEntities(ecs.All())
 	}
@@ -37,12 +36,13 @@ func entitiesBatchCreate_1Comp_1000(b *testing.B) {
 	b.StopTimer()
 
 	w := ecs.NewWorld()
-	id1 := ecs.ComponentID[comp1](&w)
-	builder := ecs.NewBuilder(&w, id1)
+	ids := []ecs.ID{
+		ecs.ComponentID[comp1](&w),
+	}
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
-		builder.NewBatch(1000)
+		w.Batch().New(1000, ids...)
 		b.StopTimer()
 		w.Batch().RemoveEntities(ecs.All())
 	}
@@ -58,11 +58,10 @@ func entitiesBatchCreate_5Comp_1000(b *testing.B) {
 	id4 := ecs.ComponentID[comp4](&w)
 	id5 := ecs.ComponentID[comp5](&w)
 	ids := []ecs.ID{id1, id2, id3, id4, id5}
-	builder := ecs.NewBuilder(&w, ids...)
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
-		builder.NewBatch(1000)
+		w.Batch().New(1000, ids...)
 		b.StopTimer()
 		w.Batch().RemoveEntities(ecs.All())
 	}

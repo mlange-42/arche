@@ -30,8 +30,7 @@ func componentsAdd1_1000(b *testing.B) {
 	id1 := ecs.ComponentID[comp1](&w)
 	filter := ecs.All(id1)
 
-	builder := ecs.NewBuilder(&w)
-	query := builder.NewBatchQ(1000)
+	query := w.Batch().NewQ(1000)
 
 	entities := make([]ecs.Entity, 0, 1000)
 	for query.Next() {
@@ -61,8 +60,7 @@ func componentsAdd5_1000(b *testing.B) {
 	ids := []ecs.ID{id1, id2, id3, id4, id5}
 	filter := ecs.All(ids...)
 
-	builder := ecs.NewBuilder(&w)
-	query := builder.NewBatchQ(1000)
+	query := w.Batch().NewQ(1000)
 
 	entities := make([]ecs.Entity, 0, 1000)
 	for query.Next() {
@@ -86,8 +84,7 @@ func componentsRemove1_1000(b *testing.B) {
 	id1 := ecs.ComponentID[comp1](&w)
 	filter := ecs.All()
 
-	builder := ecs.NewBuilder(&w, id1)
-	query := builder.NewBatchQ(1000)
+	query := w.Batch().NewQ(1000, id1)
 
 	entities := make([]ecs.Entity, 0, 1000)
 	for query.Next() {
@@ -116,8 +113,7 @@ func componentsRemove5_1000(b *testing.B) {
 	ids := []ecs.ID{id1, id2, id3, id4, id5}
 	filter := ecs.All()
 
-	builder := ecs.NewBuilder(&w, ids...)
-	query := builder.NewBatchQ(1000)
+	query := w.Batch().NewQ(1000, ids...)
 
 	entities := make([]ecs.Entity, 0, 1000)
 	for query.Next() {
@@ -144,8 +140,7 @@ func componentsExchange1_1000(b *testing.B) {
 	ex1 := []ecs.ID{id1}
 	ex2 := []ecs.ID{id2}
 
-	builder := ecs.NewBuilder(&w, id1)
-	query := builder.NewBatchQ(1000)
+	query := w.Batch().NewQ(1000, id1)
 
 	entities := make([]ecs.Entity, 0, 1000)
 	for query.Next() {
@@ -170,8 +165,7 @@ func componentsAssignGeneric1_1000(b *testing.B) {
 
 	filter := ecs.All(id1)
 
-	builder := ecs.NewBuilder(&w)
-	query := builder.NewBatchQ(1000)
+	query := w.Batch().NewQ(1000)
 
 	entities := make([]ecs.Entity, 0, 1000)
 	for query.Next() {
@@ -205,8 +199,7 @@ func componentsAssignGeneric5_1000(b *testing.B) {
 	ids := []ecs.ID{id1, id2, id3, id4, id5}
 	filter := ecs.All(ids...)
 
-	builder := ecs.NewBuilder(&w)
-	query := builder.NewBatchQ(1000)
+	query := w.Batch().NewQ(1000)
 
 	entities := make([]ecs.Entity, 0, 1000)
 	for query.Next() {

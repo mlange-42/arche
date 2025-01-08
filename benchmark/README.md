@@ -1,6 +1,6 @@
 # Benchmarks
 
-[Arche benchmarks](./arche/) and [competition](./competition/) against other Go ECS implementations. [Profiling](./profile/).
+Arche's [benchmarks](./arche/) and [profiling](./profile/).
 
 See also the internal benchmarks in packages [ecs](../ecs/), [generic](../generic/) and [filter](../filter/).
 

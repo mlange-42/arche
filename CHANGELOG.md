@@ -1,4 +1,12 @@
-## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.14.5...main)
+## [[v0.15.0]](https://github.com/mlange-42/arche/compare/v0.14.5...v0.15.0)
+
+Arche v0.15.0 features optimizations that vastly speed up the creation of huge numbers (millions) of entities.
+Namely, all memory is grown exponentially now, rather than linearly.
+This also causes a breaking change, as the former "capacity increments" turned into
+just initial capacities.
+
+Further, the README was revised and the ECS competition benchmarks were extended and moved
+to the [go-ecs-benchmarks](https://github.com/mlange-42/go-ecs-benchmarks) repository.
 
 ### Breaking changes
 
@@ -7,6 +15,7 @@
 ### Features
 
 * Adds methods `Batch.New` and `Batch.NewQ` for batch entity creation (#468)
+* Deprecates `ecs.Component`, as a followup of deprecation of all methods that use it (#470)
 
 ### Performance
 
@@ -15,11 +24,14 @@
 ### Documentation
 
 * Rewrites features and benchmarks sections of the README (#462)
-* Adds version and CPU information to the benchmark tables (#462)
+* Adds version and CPU information to the [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the user guide (#462)
+* Removed deprecated methods from the [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the user guide (#462)
+* Adds world creation and component ID lookup to the [benchmarks](https://mlange-42.github.io/arche/background/benchmarks/) in the user guide (#462)
+* Uses the new methods `Batch.New` and `Batch.NewQ` in examples where applicable, instead of `Builder` (#470)
 
 ### Other
 
-*  Use mask pointers in all tests and benchmarks (#460)
+*  Uses mask pointers in all tests and benchmarks (#460)
 
 ## [[v0.14.5]](https://github.com/mlange-42/arche/compare/v0.14.4...v0.14.5)
 

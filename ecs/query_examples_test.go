@@ -57,8 +57,7 @@ func ExampleQuery_EntityAt() {
 	posID := ecs.ComponentID[Position](&world)
 
 	// Create entities.
-	builder := ecs.NewBuilder(&world, posID)
-	builder.NewBatch(100)
+	world.Batch().New(100, posID)
 
 	// Create a random generator.
 	rng := rand.New(rand.NewSource(42))
