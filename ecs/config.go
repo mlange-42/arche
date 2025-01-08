@@ -1,6 +1,6 @@
 package ecs
 
-// Config provides configuration for an ECS [World].
+// config provides configuration for an ECS [World].
 type config struct {
 	// Initial capacity for archetypes and the entity index.
 	// The default value is 128.

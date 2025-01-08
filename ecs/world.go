@@ -33,7 +33,7 @@ type World struct {
 	config         config                    // World configuration.
 }
 
-// NewWorld creates a new [World] from an optional [Config].
+// NewWorld creates a new [World].
 //
 // Accepts zero, one or two arguments.
 // The first argument is the initial capacity of the world.

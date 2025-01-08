@@ -8,7 +8,7 @@ import (
 	"github.com/mlange-42/arche/ecs/event"
 )
 
-// fromConfig creates a new [World] from a [Config].
+// fromConfig creates a new [World] from a [config].
 func fromConfig(conf config) World {
 	entities := make([]entityIndex, 1, conf.initialCapacity)
 	entities[0] = entityIndex{arch: nil, index: 0}
