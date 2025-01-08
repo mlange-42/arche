@@ -18,6 +18,8 @@ func TestWorldConfig(t *testing.T) {
 		func() { _ = NewWorld(0) })
 	assert.PanicsWithValue(t, "only positive values for the World's initialCapacity are allowed",
 		func() { _ = NewWorld(1024, 0) })
+	assert.PanicsWithValue(t, "can only use a maximum of two values for the World's initialCapacity",
+		func() { _ = NewWorld(1024, 128, 32) })
 
 	world := NewWorld(32, 8)
 
