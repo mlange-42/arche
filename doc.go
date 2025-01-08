@@ -1,4 +1,4 @@
-// Package arche is an archetype-based Entity Component System (ECS) for Go.
+// Package arche provides an archetype-based Entity Component System (ECS) for Go.
 //
 // See the sub-packages:
 //
