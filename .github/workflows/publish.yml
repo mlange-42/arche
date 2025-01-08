@@ -40,7 +40,7 @@ jobs:
       - name: Build Site
         run: hugo -s docs --noChmod
       - name: Archive artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: public
           path: docs/public
