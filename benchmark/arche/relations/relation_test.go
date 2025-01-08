@@ -11,7 +11,7 @@ import (
 func benchmarkRelation(b *testing.B, numParents int, numChildren int) {
 	b.StopTimer()
 
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	world := ecs.NewWorld()
 	parentID := ecs.ComponentID[ParentList](&world)
 	childID := ecs.ComponentID[ChildRelation](&world)
 

@@ -9,14 +9,8 @@ import (
 )
 
 // fromConfig creates a new [World] from a [Config].
-func fromConfig(conf Config) World {
-	if conf.CapacityIncrement < 1 {
-		panic("invalid CapacityIncrement in config, must be > 0")
-	}
-	if conf.RelationCapacityIncrement < 1 {
-		conf.RelationCapacityIncrement = conf.CapacityIncrement
-	}
-	entities := make([]entityIndex, 1, conf.CapacityIncrement)
+func fromConfig(conf config) World {
+	entities := make([]entityIndex, 1, conf.initialCapacity)
 	entities[0] = entityIndex{arch: nil, index: 0}
 	targetEntities := bitSet{}
 	targetEntities.ExtendTo(1)
@@ -25,7 +19,7 @@ func fromConfig(conf Config) World {
 		config:         conf,
 		entities:       entities,
 		targetEntities: targetEntities,
-		entityPool:     newEntityPool(uint32(conf.CapacityIncrement)),
+		entityPool:     newEntityPool(uint32(conf.initialCapacity)),
 		registry:       newComponentRegistry(),
 		archetypes:     pagedSlice[archetype]{},
 		archetypeData:  pagedSlice[archetypeData]{},
@@ -278,7 +272,7 @@ func (w *World) createEntity(arch *archetype) Entity {
 	len := len(w.entities)
 	if int(entity.id) == len {
 		w.entities = append(w.entities, entityIndex{arch: arch, index: idx})
-		w.targetEntities.ExtendTo(len + w.config.CapacityIncrement)
+		w.targetEntities.ExtendTo(len + w.config.initialCapacity)
 	} else {
 		w.entities[entity.id] = entityIndex{arch: arch, index: idx}
 		w.targetEntities.Set(entity.id, false)
@@ -993,9 +987,9 @@ func (w *World) findArchetypeSlow(mask Mask) (*archNode, bool) {
 
 // Creates a node in the archetype graph.
 func (w *World) createArchetypeNode(mask Mask, relation ID, hasRelation bool) *archNode {
-	capInc := w.config.CapacityIncrement
+	capInc := w.config.initialCapacity
 	if hasRelation {
-		capInc = w.config.RelationCapacityIncrement
+		capInc = w.config.initialCapacityRelations
 	}
 
 	types := mask.toTypes(&w.registry)

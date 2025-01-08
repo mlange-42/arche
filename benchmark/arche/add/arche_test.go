@@ -11,7 +11,7 @@ import (
 func addArche(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		world := ecs.NewWorld()
 
 		posID := ecs.ComponentID[c.Position](&world)
 		rotID := ecs.ComponentID[c.Rotation](&world)
@@ -29,7 +29,7 @@ func addArche(b *testing.B, count int) {
 func addArcheBatch(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		world := ecs.NewWorld()
 
 		posID := ecs.ComponentID[c.Position](&world)
 		rotID := ecs.ComponentID[c.Rotation](&world)
@@ -43,7 +43,7 @@ func addArcheBatch(b *testing.B, count int) {
 func addSetArche(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		world := ecs.NewWorld()
 
 		posID := ecs.ComponentID[c.Position](&world)
 		rotID := ecs.ComponentID[c.Rotation](&world)
@@ -65,7 +65,7 @@ func addSetArche(b *testing.B, count int) {
 func addSetArcheBatch(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		world := ecs.NewWorld()
 
 		posID := ecs.ComponentID[c.Position](&world)
 		rotID := ecs.ComponentID[c.Rotation](&world)
@@ -85,7 +85,7 @@ func addSetArcheBatch(b *testing.B, count int) {
 func addArcheGeneric(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		world := ecs.NewWorld()
 		mut := generic.NewMap2[c.Position, c.Rotation](&world)
 		b.StartTimer()
 
@@ -100,7 +100,7 @@ func addArcheGeneric(b *testing.B, count int) {
 func addArcheGenericBatch(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		world := ecs.NewWorld()
 		mut := generic.NewMap2[c.Position, c.Rotation](&world)
 		b.StartTimer()
 
@@ -111,7 +111,7 @@ func addArcheGenericBatch(b *testing.B, count int) {
 func addSetArcheGeneric(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		world := ecs.NewWorld()
 		mut := generic.NewMap2[c.Position, c.Rotation](&world)
 		b.StartTimer()
 
@@ -129,7 +129,7 @@ func addSetArcheGeneric(b *testing.B, count int) {
 func addSetArcheGenericBatch(b *testing.B, count int) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		world := ecs.NewWorld()
 		mut := generic.NewMap2[c.Position, c.Rotation](&world)
 		b.StartTimer()
 

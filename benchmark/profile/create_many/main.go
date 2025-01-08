@@ -36,9 +36,7 @@ func main() {
 
 func run(iters, entityCount int) {
 	for i := 0; i < iters; i++ {
-		world := ecs.NewWorld(
-			ecs.NewConfig().WithCapacityIncrement(1024),
-		)
+		world := ecs.NewWorld(1024)
 
 		posID := ecs.ComponentID[position](&world)
 		rotID := ecs.ComponentID[rotation](&world)

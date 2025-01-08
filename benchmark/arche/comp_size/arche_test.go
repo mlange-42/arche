@@ -8,7 +8,7 @@ import (
 
 func benchmarkCompSizeSimple1x08B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	aID := ecs.ComponentID[A](&world)
 
@@ -27,7 +27,7 @@ func benchmarkCompSizeSimple1x08B(bench *testing.B, count int) {
 
 func benchmarkCompSizeSimple1x16B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	abID := ecs.ComponentID[AB](&world)
 
@@ -47,7 +47,7 @@ func benchmarkCompSizeSimple1x16B(bench *testing.B, count int) {
 
 func benchmarkCompSizeSimple1x32B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	abcdID := ecs.ComponentID[ABCD](&world)
 
@@ -67,7 +67,7 @@ func benchmarkCompSizeSimple1x32B(bench *testing.B, count int) {
 
 func benchmarkCompSizeSimple1x64B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	allID := ecs.ComponentID[All](&world)
 
@@ -87,7 +87,7 @@ func benchmarkCompSizeSimple1x64B(bench *testing.B, count int) {
 
 func benchmarkCompSizeSimple1x128B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	allID := ecs.ComponentID[All128B](&world)
 
@@ -107,7 +107,7 @@ func benchmarkCompSizeSimple1x128B(bench *testing.B, count int) {
 
 func benchmarkCompSize8x08B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	aID := ecs.ComponentID[A](&world)
 	bID := ecs.ComponentID[B](&world)
@@ -141,7 +141,7 @@ func benchmarkCompSize8x08B(bench *testing.B, count int) {
 
 func benchmarkCompSize4x16B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	abID := ecs.ComponentID[AB](&world)
 	cdID := ecs.ComponentID[CD](&world)
@@ -167,7 +167,7 @@ func benchmarkCompSize4x16B(bench *testing.B, count int) {
 
 func benchmarkCompSize2x32B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	abcdID := ecs.ComponentID[ABCD](&world)
 	efghID := ecs.ComponentID[EFGH](&world)
@@ -189,7 +189,7 @@ func benchmarkCompSize2x32B(bench *testing.B, count int) {
 
 func benchmarkCompSize1x64B(bench *testing.B, count int) {
 	bench.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	allID := ecs.ComponentID[All](&world)
 

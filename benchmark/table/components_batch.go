@@ -22,7 +22,7 @@ func benchesComponentsBatch() []benchmark.Benchmark {
 func componentsBatchAdd1_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	filter := ecs.All(id1)
 
@@ -40,7 +40,7 @@ func componentsBatchAdd1_1000(b *testing.B) {
 func componentsBatchAdd5_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	id3 := ecs.ComponentID[comp3](&w)
@@ -63,7 +63,7 @@ func componentsBatchAdd5_1000(b *testing.B) {
 func componentsBatchRemove1_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	filter := ecs.All(id1)
 
@@ -81,7 +81,7 @@ func componentsBatchRemove1_1000(b *testing.B) {
 func componentsBatchRemove5_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	id3 := ecs.ComponentID[comp3](&w)
@@ -104,7 +104,7 @@ func componentsBatchRemove5_1000(b *testing.B) {
 func componentsBatchExchange1_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	filter1 := ecs.All(id1)

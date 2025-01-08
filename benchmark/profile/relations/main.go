@@ -44,7 +44,7 @@ func main() {
 
 func run(rounds, iters, numParents, numChildren int) {
 	for i := 0; i < rounds; i++ {
-		world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+		world := ecs.NewWorld()
 		parentID := ecs.ComponentID[ParentList](&world)
 		childID := ecs.ComponentID[ChildRelation](&world)
 

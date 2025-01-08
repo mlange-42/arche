@@ -22,7 +22,7 @@ func benchesEntitiesBatch() []benchmark.Benchmark {
 func entitiesBatchCreate_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	builder := ecs.NewBuilder(&w)
 
 	for i := 0; i < b.N; i++ {
@@ -36,7 +36,7 @@ func entitiesBatchCreate_1000(b *testing.B) {
 func entitiesBatchCreate_1Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	builder := ecs.NewBuilder(&w, id1)
 
@@ -51,7 +51,7 @@ func entitiesBatchCreate_1Comp_1000(b *testing.B) {
 func entitiesBatchCreate_5Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	id3 := ecs.ComponentID[comp3](&w)
@@ -71,7 +71,7 @@ func entitiesBatchCreate_5Comp_1000(b *testing.B) {
 func entitiesBatchRemove_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	builder := ecs.NewBuilder(&w)
 
 	entities := make([]ecs.Entity, 0, 1000)
@@ -88,7 +88,7 @@ func entitiesBatchRemove_1000(b *testing.B) {
 func entitiesBatchRemove_1Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	builder := ecs.NewBuilder(&w, id1)
 
@@ -106,7 +106,7 @@ func entitiesBatchRemove_1Comp_1000(b *testing.B) {
 func entitiesBatchRemove_5Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	id3 := ecs.ComponentID[comp3](&w)

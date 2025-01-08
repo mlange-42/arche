@@ -23,7 +23,7 @@ func benchesWorld() []benchmark.Benchmark {
 func worldGet_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
 	entities := make([]ecs.Entity, 0, 1000)
@@ -49,7 +49,7 @@ func worldGet_1000(b *testing.B) {
 func worldGetUnchecked_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
 	entities := make([]ecs.Entity, 0, 1000)
@@ -75,7 +75,7 @@ func worldGetUnchecked_1000(b *testing.B) {
 func worldHas_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
 	entities := make([]ecs.Entity, 0, 1000)
@@ -101,7 +101,7 @@ func worldHas_1000(b *testing.B) {
 func worldHasUnchecked_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
 	entities := make([]ecs.Entity, 0, 1000)
@@ -127,7 +127,7 @@ func worldHasUnchecked_1000(b *testing.B) {
 func worldAlive_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
 	entities := make([]ecs.Entity, 0, 1000)
@@ -153,7 +153,7 @@ func worldAlive_1000(b *testing.B) {
 func worldRelation_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[relComp1](&w)
 	parent := w.NewEntity()
 
@@ -181,7 +181,7 @@ func worldRelation_1000(b *testing.B) {
 func worldRelationUnchecked_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[relComp1](&w)
 	parent := w.NewEntity()
 

@@ -28,7 +28,7 @@ func benchesEntities() []benchmark.Benchmark {
 func entitiesIsZero_2(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	e := w.NewEntity()
 	z := ecs.Entity{}
 	var zero1 bool
@@ -47,7 +47,7 @@ func entitiesIsZero_2(b *testing.B) {
 func entitiesCreate_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
@@ -62,7 +62,7 @@ func entitiesCreate_1000(b *testing.B) {
 func entitiesCreate_1Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
 	for i := 0; i < b.N; i++ {
@@ -78,7 +78,7 @@ func entitiesCreate_1Comp_1000(b *testing.B) {
 func entitiesCreate_5Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	id3 := ecs.ComponentID[comp3](&w)
@@ -99,7 +99,7 @@ func entitiesCreate_5Comp_1000(b *testing.B) {
 func entitiesCreateWithGeneric_1Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 
 	mapper := generic.NewMap1[comp1](&w)
 
@@ -118,7 +118,7 @@ func entitiesCreateWithGeneric_1Comp_1000(b *testing.B) {
 func entitiesCreateWithGeneric_5Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 
 	mapper := generic.NewMap5[comp1, comp2, comp3, comp4, comp5](&w)
 
@@ -141,7 +141,7 @@ func entitiesCreateWithGeneric_5Comp_1000(b *testing.B) {
 func entitiesRemove_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	builder := ecs.NewBuilder(&w)
 
 	entities := make([]ecs.Entity, 0, 1000)
@@ -163,7 +163,7 @@ func entitiesRemove_1000(b *testing.B) {
 func entitiesRemove_1Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	builder := ecs.NewBuilder(&w, id1)
 
@@ -186,7 +186,7 @@ func entitiesRemove_1Comp_1000(b *testing.B) {
 func entitiesRemove_5Comp_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	id3 := ecs.ComponentID[comp3](&w)

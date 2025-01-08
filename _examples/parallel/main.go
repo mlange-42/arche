@@ -23,7 +23,7 @@ func runSequential() {
 	start := time.Now()
 
 	// Create an empty world. It will be reused for all simulations.
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 
 	// Run many simulations.
 	for i := 0; i < totalRuns; i++ {
@@ -67,7 +67,7 @@ func runParallel() {
 // Each worker needs its own world.
 func worker(jobs <-chan int, results chan<- int) {
 	// Create the worker's world. Will be reused for all jobs of the worker.
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 
 	// Process incoming jobs.
 	for j := range jobs {

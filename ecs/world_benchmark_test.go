@@ -22,7 +22,7 @@ func BenchmarkNewWorld(b *testing.B) {
 func BenchmarkEntityAlive_1000(b *testing.B) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+	world := NewWorld(1024)
 	posID := ComponentID[Position](&world)
 
 	entities := make([]Entity, 0, 1000)
@@ -78,7 +78,7 @@ func BenchmarkGetResourceShortcut(b *testing.B) {
 
 func BenchmarkNewEntities_10_000_New(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+		world := NewWorld(1024)
 
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
@@ -91,7 +91,7 @@ func BenchmarkNewEntities_10_000_New(b *testing.B) {
 
 func BenchmarkNewEntitiesBatch_10_000_New(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+		world := NewWorld()
 
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
@@ -102,7 +102,7 @@ func BenchmarkNewEntitiesBatch_10_000_New(b *testing.B) {
 
 func BenchmarkNewEntitiesBatch_1_000_000_New(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+		world := NewWorld()
 
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
@@ -113,7 +113,7 @@ func BenchmarkNewEntitiesBatch_1_000_000_New(b *testing.B) {
 
 func BenchmarkNewEntities_1_000_000_New(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+		world := NewWorld(1024)
 
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
@@ -126,7 +126,7 @@ func BenchmarkNewEntities_1_000_000_New(b *testing.B) {
 
 func BenchmarkNewEntities_10_000_Reset(b *testing.B) {
 	b.StopTimer()
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+	world := NewWorld(1024)
 
 	posID := ComponentID[Position](&world)
 	velID := ComponentID[Velocity](&world)
@@ -146,7 +146,7 @@ func BenchmarkNewEntities_10_000_Reset(b *testing.B) {
 
 func BenchmarkNewEntitiesBatch_10_000_Reset(b *testing.B) {
 	b.StopTimer()
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024))
+	world := NewWorld()
 
 	posID := ComponentID[Position](&world)
 	velID := ComponentID[Velocity](&world)
@@ -165,7 +165,7 @@ func BenchmarkNewEntitiesBatch_10_000_Reset(b *testing.B) {
 func BenchmarkRemoveEntities_10_000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+		world := NewWorld(10000)
 
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
@@ -189,7 +189,7 @@ func BenchmarkRemoveEntities_10_000(b *testing.B) {
 
 func BenchmarkWorldNewQuery(b *testing.B) {
 	b.StopTimer()
-	world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+	world := NewWorld()
 	posID := ComponentID[Position](&world)
 	velID := ComponentID[Velocity](&world)
 
@@ -206,7 +206,7 @@ func BenchmarkWorldNewQuery(b *testing.B) {
 
 func BenchmarkWorldNewQueryNext(b *testing.B) {
 	b.StopTimer()
-	world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+	world := NewWorld()
 
 	posID := ComponentID[Position](&world)
 	velID := ComponentID[Velocity](&world)
@@ -225,7 +225,7 @@ func BenchmarkWorldNewQueryNext(b *testing.B) {
 
 func BenchmarkWorldNewQueryCached(b *testing.B) {
 	b.StopTimer()
-	world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+	world := NewWorld()
 	posID := ComponentID[Position](&world)
 	velID := ComponentID[Velocity](&world)
 
@@ -243,7 +243,7 @@ func BenchmarkWorldNewQueryCached(b *testing.B) {
 
 func BenchmarkWorldNewQueryNextCached(b *testing.B) {
 	b.StopTimer()
-	world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+	world := NewWorld()
 
 	posID := ComponentID[Position](&world)
 	velID := ComponentID[Velocity](&world)
@@ -264,7 +264,7 @@ func BenchmarkWorldNewQueryNextCached(b *testing.B) {
 func BenchmarkRemoveEntitiesBatch_10_000(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := NewWorld(NewConfig().WithCapacityIncrement(10000))
+		world := NewWorld()
 
 		posID := ComponentID[Position](&world)
 		velID := ComponentID[Velocity](&world)
