@@ -22,13 +22,6 @@ func TestCapacityNonZero(t *testing.T) {
 	assert.Equal(t, 16, capacityNonZero(9, 8))
 }
 
-func TestCapacityU32(t *testing.T) {
-	assert.Equal(t, 0, int(capacityU32(0, 8)))
-	assert.Equal(t, 8, int(capacityU32(1, 8)))
-	assert.Equal(t, 8, int(capacityU32(8, 8)))
-	assert.Equal(t, 16, int(capacityU32(9, 8)))
-}
-
 func TestLockMask(t *testing.T) {
 	locks := lockMask{}
 

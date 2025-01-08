@@ -67,11 +67,7 @@ func ExampleWorld() {
 func ExampleNewWorld() {
 	defaultWorld := ecs.NewWorld()
 
-	configWorld := ecs.NewWorld(
-		ecs.NewConfig().
-			WithCapacityIncrement(1024).
-			WithRelationCapacityIncrement(64),
-	)
+	configWorld := ecs.NewWorld(1024, 128)
 
 	_, _ = defaultWorld, configWorld
 	// Output:

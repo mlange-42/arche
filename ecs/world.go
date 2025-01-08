@@ -30,21 +30,18 @@ type World struct {
 	resources      Resources                 // World resources.
 	registry       componentRegistry         // Component registry.
 	locks          lockMask                  // World locks.
-	config         Config                    // World configuration.
+	config         config                    // World configuration.
 }
 
-// NewWorld creates a new [World] from an optional [Config].
+// NewWorld creates a new [World].
 //
-// Uses the default [Config] if called without an argument.
-// Accepts zero or one arguments.
-func NewWorld(config ...Config) World {
-	if len(config) > 1 {
-		panic("can't use more than one Config")
-	}
-	if len(config) == 1 {
-		return fromConfig(config[0])
-	}
-	return fromConfig(NewConfig())
+// Accepts zero, one or two arguments.
+// The first argument is the initial capacity of the world.
+// The second argument is the initial capacity of relation archetypes.
+// If only one argument is provided, it is used for both capacities.
+// If no arguments are provided, the default of 128 is used.
+func NewWorld(initialCapacity ...int) World {
+	return fromConfig(newConfig(initialCapacity...))
 }
 
 // NewEntity returns a new or recycled [Entity].
@@ -631,7 +628,7 @@ func (w *World) LoadEntities(data *EntityDump) {
 		panic("can set entity data only on a fresh or reset world")
 	}
 
-	capacity := capacity(len(data.Entities), w.config.CapacityIncrement)
+	capacity := capacity(len(data.Entities), w.config.initialCapacity)
 
 	entities := make([]Entity, 0, capacity)
 	entities = append(entities, data.Entities...)

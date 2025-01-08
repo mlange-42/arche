@@ -26,7 +26,7 @@ func benchesComponents() []benchmark.Benchmark {
 func componentsAdd1_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	filter := ecs.All(id1)
 
@@ -51,7 +51,7 @@ func componentsAdd1_1000(b *testing.B) {
 func componentsAdd5_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	id3 := ecs.ComponentID[comp3](&w)
@@ -82,7 +82,7 @@ func componentsAdd5_1000(b *testing.B) {
 func componentsRemove1_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	filter := ecs.All()
 
@@ -107,7 +107,7 @@ func componentsRemove1_1000(b *testing.B) {
 func componentsRemove5_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	id3 := ecs.ComponentID[comp3](&w)
@@ -137,7 +137,7 @@ func componentsRemove5_1000(b *testing.B) {
 func componentsExchange1_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	filter := ecs.All(id2)
@@ -165,7 +165,7 @@ func componentsExchange1_1000(b *testing.B) {
 func componentsAssignGeneric1_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
 	filter := ecs.All(id1)
@@ -195,7 +195,7 @@ func componentsAssignGeneric1_1000(b *testing.B) {
 func componentsAssignGeneric5_1000(b *testing.B) {
 	b.StopTimer()
 
-	w := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
 	id3 := ecs.ComponentID[comp3](&w)

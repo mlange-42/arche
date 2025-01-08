@@ -13,9 +13,7 @@ func TestRelationStress(t *testing.T) {
 	numParents := 100
 	numChildren := 100
 
-	world := ecs.NewWorld(
-		ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128),
-	)
+	world := ecs.NewWorld(1024, 128)
 
 	posID := ecs.ComponentID[Position](&world)
 	relID := ecs.ComponentID[ChildOf](&world)

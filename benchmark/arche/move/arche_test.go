@@ -11,9 +11,7 @@ import (
 func runArcheMove(b *testing.B, count int, add, rem []g.Comp) {
 	for i := 0; i < b.N; i++ {
 		b.StopTimer()
-		world := ecs.NewWorld(
-			ecs.NewConfig().WithCapacityIncrement(1024),
-		)
+		world := ecs.NewWorld(1024)
 		c.RegisterAll(&world)
 
 		addIDs := make([]ecs.ID, len(add))

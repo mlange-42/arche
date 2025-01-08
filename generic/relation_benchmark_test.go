@@ -14,7 +14,7 @@ type testRelationA struct {
 func benchmarkRelationGetQuery(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	world := ecs.NewWorld(1024, 128)
 	relID := ecs.ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
@@ -39,7 +39,7 @@ func benchmarkRelationGetQuery(b *testing.B, count int) {
 func benchmarkRelationGetWorld(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	world := ecs.NewWorld(1024, 128)
 	relID := ecs.ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
@@ -67,7 +67,7 @@ func benchmarkRelationGetWorld(b *testing.B, count int) {
 func benchmarkRelationGetWorldUnchecked(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	world := ecs.NewWorld(1024, 128)
 	relID := ecs.ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
@@ -94,7 +94,7 @@ func benchmarkRelationGetWorldUnchecked(b *testing.B, count int) {
 func benchmarkRelationSet(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	world := ecs.NewWorld(1024, 128)
 	relID := ecs.ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()

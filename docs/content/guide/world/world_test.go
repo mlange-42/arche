@@ -12,17 +12,12 @@ func TestWorldSimple(t *testing.T) {
 }
 
 func TestWorldConfig(t *testing.T) {
-	config := ecs.NewConfig().WithCapacityIncrement(1024)
-	world := ecs.NewWorld(config)
+	world := ecs.NewWorld(1024)
 	_ = world
 }
 
 func TestWorldConfigRelations(t *testing.T) {
-	config := ecs.NewConfig().
-		WithCapacityIncrement(1024).
-		WithRelationCapacityIncrement(128)
-
-	world := ecs.NewWorld(config)
+	world := ecs.NewWorld(1028, 128)
 	_ = world
 }
 

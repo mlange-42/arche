@@ -22,12 +22,7 @@ type velocity struct {
 	Y int
 }
 
-type rotation struct {
-	Angle int
-}
-
 func main() {
-
 	count := 100
 	iters := 1000
 	entities := 1000
@@ -43,9 +38,7 @@ func main() {
 
 func run(rounds, iters, numEntities int) {
 	for i := 0; i < rounds; i++ {
-		world := ecs.NewWorld(
-			ecs.NewConfig().WithCapacityIncrement(1024),
-		)
+		world := ecs.NewWorld(1024)
 
 		posID := ecs.ComponentID[position](&world)
 		velID := ecs.ComponentID[velocity](&world)

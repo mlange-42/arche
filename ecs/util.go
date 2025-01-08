@@ -32,15 +32,6 @@ func capacityNonZero(size, increment int) int {
 	return cap
 }
 
-// Calculates the capacity required for size, given an increment.
-func capacityU32(size, increment uint32) uint32 {
-	cap := increment * (size / increment)
-	if size%increment != 0 {
-		cap += increment
-	}
-	return cap
-}
-
 // Creates an [event.Subscription] mask from the given booleans.
 func subscription(entityCreated, entityRemoved, componentAdded, componentRemoved, relationChanged, targetChanged bool) event.Subscription {
 	var bits event.Subscription = 0

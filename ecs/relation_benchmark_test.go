@@ -7,7 +7,7 @@ import (
 func benchmarkRelationGetQuery(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	world := NewWorld(1024, 128)
 	relID := ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
@@ -32,7 +32,7 @@ func benchmarkRelationGetQuery(b *testing.B, count int) {
 func benchmarkRelationGetQueryUnchecked(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	world := NewWorld(1024, 128)
 	relID := ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
@@ -57,7 +57,7 @@ func benchmarkRelationGetQueryUnchecked(b *testing.B, count int) {
 func benchmarkRelationGetWorld(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	world := NewWorld(1024, 128)
 	relID := ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
@@ -83,7 +83,7 @@ func benchmarkRelationGetWorld(b *testing.B, count int) {
 func benchmarkRelationGetWorldUnchecked(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	world := NewWorld(1024, 128)
 	relID := ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()
@@ -109,7 +109,7 @@ func benchmarkRelationGetWorldUnchecked(b *testing.B, count int) {
 func benchmarkRelationSet(b *testing.B, count int) {
 	b.StopTimer()
 
-	world := NewWorld(NewConfig().WithCapacityIncrement(1024).WithRelationCapacityIncrement(128))
+	world := NewWorld(1024, 128)
 	relID := ComponentID[testRelationA](&world)
 
 	target := world.NewEntity()

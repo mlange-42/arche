@@ -12,16 +12,16 @@ import (
 )
 
 func TestWorldConfig(t *testing.T) {
-	_ = NewWorld(NewConfig())
+	_ = NewWorld()
 
-	assert.PanicsWithValue(t, "invalid CapacityIncrement in config, must be > 0",
-		func() { _ = NewWorld(Config{}) })
-	assert.PanicsWithValue(t, "can't use more than one Config",
-		func() { _ = NewWorld(Config{}, Config{}) })
+	assert.PanicsWithValue(t, "only positive values for the World's initialCapacity are allowed",
+		func() { _ = NewWorld(0) })
+	assert.PanicsWithValue(t, "only positive values for the World's initialCapacity are allowed",
+		func() { _ = NewWorld(1024, 0) })
+	assert.PanicsWithValue(t, "can only use a maximum of two values for the World's initialCapacity",
+		func() { _ = NewWorld(1024, 128, 32) })
 
-	world := NewWorld(
-		NewConfig().WithCapacityIncrement(32).WithRelationCapacityIncrement(8),
-	)
+	world := NewWorld(32, 8)
 
 	relID := ComponentID[testRelationA](&world)
 
@@ -65,7 +65,7 @@ func TestWorldEntites(t *testing.T) {
 }
 
 func TestWorldNewEntites(t *testing.T) {
-	w := NewWorld(NewConfig().WithCapacityIncrement(32))
+	w := NewWorld(32)
 
 	posID := ComponentID[Position](&w)
 	velID := ComponentID[Velocity](&w)
@@ -704,7 +704,7 @@ func TestWorldIter(t *testing.T) {
 }
 
 func TestWorldNewEntities(t *testing.T) {
-	world := NewWorld(NewConfig().WithCapacityIncrement(16))
+	world := NewWorld(16)
 
 	events := []EntityEvent{}
 	listener := newTestListener(func(w *World, e EntityEvent) {
@@ -780,7 +780,7 @@ func TestWorldNewEntities(t *testing.T) {
 }
 
 func TestWorldNewEntitiesWith(t *testing.T) {
-	world := NewWorld(NewConfig().WithCapacityIncrement(16))
+	world := NewWorld(16)
 
 	events := []EntityEvent{}
 	listener := newTestListener(func(world *World, e EntityEvent) {
@@ -855,7 +855,7 @@ func TestWorldNewEntitiesWith(t *testing.T) {
 }
 
 func TestWorldRemoveEntities(t *testing.T) {
-	world := NewWorld(NewConfig().WithCapacityIncrement(16))
+	world := NewWorld(16)
 
 	events := []EntityEvent{}
 	listener := newTestListener(func(world *World, e EntityEvent) {

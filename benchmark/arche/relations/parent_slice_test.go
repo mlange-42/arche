@@ -11,7 +11,7 @@ import (
 func benchmarkParentSlice(b *testing.B, numParents int, numChildren int) {
 	b.StopTimer()
 
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(1024))
+	world := ecs.NewWorld()
 	parentID := ecs.ComponentID[ParentSlice](&world)
 	childID := ecs.ComponentID[Child](&world)
 

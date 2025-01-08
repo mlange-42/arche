@@ -11,7 +11,7 @@ import (
 
 func runIter(b *testing.B, count int) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
@@ -32,7 +32,7 @@ func runIter(b *testing.B, count int) {
 
 func runGet(b *testing.B, count int) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
@@ -59,7 +59,7 @@ func runGet(b *testing.B, count int) {
 
 func runGetEntity(b *testing.B, count int) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
@@ -87,7 +87,7 @@ func runGetEntity(b *testing.B, count int) {
 
 func runQuery(b *testing.B, count int) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
@@ -107,7 +107,7 @@ func runQuery(b *testing.B, count int) {
 
 func runQueryCached(b *testing.B, count int) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
@@ -129,7 +129,7 @@ func runQueryCached(b *testing.B, count int) {
 
 func runFilter(b *testing.B, count int) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
@@ -149,7 +149,7 @@ func runFilter(b *testing.B, count int) {
 
 func runQueryGeneric(b *testing.B, count int) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	posID := ecs.ComponentID[c.Position](&world)
 	rotID := ecs.ComponentID[c.Rotation](&world)
@@ -170,7 +170,7 @@ func runQueryGeneric(b *testing.B, count int) {
 
 func runQuery5C(b *testing.B, count int) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	id0 := ecs.ComponentID[c.TestStruct0](&world)
 	id1 := ecs.ComponentID[c.TestStruct1](&world)
@@ -197,7 +197,7 @@ func runQuery5C(b *testing.B, count int) {
 
 func runQueryGeneric5C(b *testing.B, count int) {
 	b.StopTimer()
-	world := ecs.NewWorld(ecs.NewConfig().WithCapacityIncrement(count))
+	world := ecs.NewWorld(count)
 
 	id0 := ecs.ComponentID[c.TestStruct0](&world)
 	id1 := ecs.ComponentID[c.TestStruct1](&world)
