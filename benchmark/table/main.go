@@ -12,7 +12,7 @@ const version = "v0.14.6-dev"
 
 func main() {
 	fmt.Printf("Last run: %s  \n", time.Now().Format(time.RFC1123))
-	fmt.Printf("Version: Arche %s \n", version)
+	fmt.Printf("Version: Arche %s  \n", version)
 
 	infos, err := cpu.Info()
 	if err != nil {
