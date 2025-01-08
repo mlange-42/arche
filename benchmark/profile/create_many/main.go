@@ -41,6 +41,8 @@ func run(iters, entityCount int) {
 		posID := ecs.ComponentID[position](&world)
 		rotID := ecs.ComponentID[rotation](&world)
 
-		ecs.NewBuilder(&world, posID, rotID).NewBatch(entityCount)
+		for range entityCount {
+			world.NewEntity(posID, rotID)
+		}
 	}
 }

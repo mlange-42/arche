@@ -10,7 +10,7 @@
 
 ### Performance
 
-* Optimizes entity creation by an altered growth policy for archetypes, entity list and entity pool (#464, #466)
+* Optimizes entity creation by an altered growth policy for archetypes, entity list and entity pool (#464, #466, #469)
 
 ### Documentation
 
