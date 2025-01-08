@@ -10,7 +10,7 @@ type config struct {
 	initialCapacityRelations int
 }
 
-// NewConfig creates a new default [World] configuration.
+// newConfig creates a new default [World] configuration.
 func newConfig(initialCapacity ...int) config {
 	switch len(initialCapacity) {
 	case 0:
