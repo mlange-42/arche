@@ -173,18 +173,12 @@ func componentsBatchExchange1_1000(b *testing.B) {
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
-
-	id3 := ecs.ComponentID[comp3](&w)
-	id4 := ecs.ComponentID[comp4](&w)
-	id5 := ecs.ComponentID[comp5](&w)
-	id6 := ecs.ComponentID[comp6](&w)
-
 	filter1 := ecs.All(id1)
 	filter2 := ecs.All(id2)
 	ex1 := []ecs.ID{id1}
 	ex2 := []ecs.ID{id2}
 
-	w.Batch().New(1000, id1, id3, id4, id5, id6)
+	w.Batch().New(1000, id1)
 
 	// Run once to allocate memory
 	w.Batch().Exchange(filter1, ex2, ex1)
@@ -204,12 +198,18 @@ func componentsBatchExchange1of5_1000(b *testing.B) {
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
+
+	id3 := ecs.ComponentID[comp3](&w)
+	id4 := ecs.ComponentID[comp4](&w)
+	id5 := ecs.ComponentID[comp5](&w)
+	id6 := ecs.ComponentID[comp6](&w)
+
 	filter1 := ecs.All(id1)
 	filter2 := ecs.All(id2)
 	ex1 := []ecs.ID{id1}
 	ex2 := []ecs.ID{id2}
 
-	w.Batch().New(1000, id1)
+	w.Batch().New(1000, id1, id3, id4, id5, id6)
 
 	// Run once to allocate memory
 	w.Batch().Exchange(filter1, ex2, ex1)
