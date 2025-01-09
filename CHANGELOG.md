@@ -2,7 +2,7 @@
 
 ### Performance
 
-* Optimize batch operations (add, remove, exchange) by bulk-copying components (#473)
+* Optimizes batch operations (add, remove, exchange) by bulk-copying components (#473)
 
 ## [[v0.15.0]](https://github.com/mlange-42/arche/compare/v0.14.5...v0.15.0)
 
