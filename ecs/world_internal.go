@@ -644,16 +644,13 @@ func (w *World) exchangeArch(oldArch *archetype, oldArchLen uint32, add []ID, re
 		idx := startIdx + i
 		entity := oldArch.GetEntity(i)
 		index := &w.entities[entity.id]
-		arch.SetEntity(idx, entity)
 		index.arch = arch
 		index.index = idx
+	}
 
-		for _, id := range oldIDs {
-			if mask.Get(id) {
-				comp := oldArch.Get(i, id)
-				arch.SetPointer(idx, id, comp)
-			}
-		}
+	arch.CopyEntitiesFrom(oldArch, startIdx)
+	for _, id := range oldIDs {
+		arch.CopyFrom(oldArch, id, startIdx)
 	}
 
 	if !target.IsZero() {

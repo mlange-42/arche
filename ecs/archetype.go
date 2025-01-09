@@ -225,6 +225,35 @@ func (a *archetype) SetPointer(index uint32, id ID, comp unsafe.Pointer) unsafe.
 	return dst
 }
 
+// CopyFrom copies an entire component column from another archetype into this one,
+// starting at startIndex in this one.
+func (a *archetype) CopyFrom(other *archetype, id ID, startIndex uint32) {
+	if !a.Mask.Get(id) {
+		return
+	}
+	lay := a.getLayout(id)
+	size := lay.itemSize
+	if size == 0 {
+		return
+	}
+
+	otherLay := other.getLayout(id)
+
+	dst := lay.Get(uint32(startIndex))
+	src := otherLay.Get(0)
+
+	a.copy(src, dst, size*other.len)
+}
+
+// CopyFrom copies all entities from another archetype into this one,
+// starting at startIndex in this one.
+func (a *archetype) CopyEntitiesFrom(other *archetype, startIndex uint32) {
+	dst := unsafe.Add(a.entityPointer, startIndex*entitySize)
+	src := other.entityPointer
+
+	a.copy(src, dst, entitySize*other.len)
+}
+
 // Reset removes all entities and components.
 //
 // Does NOT free the reserved memory.

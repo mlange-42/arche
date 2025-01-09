@@ -1,3 +1,9 @@
+## [[v0.15.1]](https://github.com/mlange-42/arche/compare/v0.15.0...v0.15.1)
+
+### Performance
+
+* Optimizes batch operations (add, remove, exchange) by bulk-copying components (#473)
+
 ## [[v0.15.0]](https://github.com/mlange-42/arche/compare/v0.14.5...v0.15.0)
 
 Arche v0.15.0 features optimizations that vastly speed up the creation of huge numbers (millions) of entities.

@@ -630,6 +630,52 @@ func BenchmarkWorldExchangeBatchNoListener_1000(b *testing.B) {
 	}
 }
 
+func BenchmarkWorldExchangeBatchLargeNoListener_1000(b *testing.B) {
+	b.StopTimer()
+
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	allIDs := []ID{
+		posID,
+		ComponentID[testStruct0](&world),
+		ComponentID[testStruct1](&world),
+		ComponentID[testStruct2](&world),
+		ComponentID[testStruct3](&world),
+		ComponentID[testStruct4](&world),
+		ComponentID[testStruct5](&world),
+		ComponentID[testStruct6](&world),
+		ComponentID[testStruct7](&world),
+		ComponentID[testStruct8](&world),
+		ComponentID[testStruct9](&world),
+	}
+
+	builder := NewBuilder(&world, allIDs...)
+	builder.NewBatch(1000)
+
+	filterPos := All(posID)
+	filterVel := All(velID)
+
+	pos := []ID{posID}
+	vel := []ID{velID}
+
+	world.Batch().Exchange(filterPos, vel, pos)
+	world.Batch().Exchange(filterVel, pos, vel)
+
+	b.StartTimer()
+	hasPos := true
+	for i := 0; i < b.N; i++ {
+		if hasPos {
+			world.Batch().Exchange(filterPos, vel, pos)
+		} else {
+			world.Batch().Exchange(filterVel, pos, vel)
+		}
+		hasPos = !hasPos
+	}
+}
+
 func BenchmarkWorldExchangeBatchNoEvent_1000(b *testing.B) {
 	b.StopTimer()
 
