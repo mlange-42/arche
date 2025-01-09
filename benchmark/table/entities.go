@@ -20,8 +20,8 @@ func benchesEntities() []benchmark.Benchmark {
 		{Name: "World.RemoveEntity w/ 1 Comp", Desc: "", F: entitiesRemove_1Comp_1000, N: 1000},
 		{Name: "World.RemoveEntity w/ 5 Comps", Desc: "", F: entitiesRemove_5Comp_1000, N: 1000},
 
-		{Name: "Map1.NewWith w/ 1 Comp", Desc: "memory already allocated", F: entitiesCreateWithGeneric_1Comp_1000, N: 1000},
-		{Name: "Map5.NewWith w/ 5 Comps", Desc: "memory already allocated", F: entitiesCreateWithGeneric_5Comp_1000, N: 1000},
+		{Name: "Map1.NewWith 1 Comp", Desc: "memory already allocated", F: entitiesCreateWithGeneric_1Comp_1000, N: 1000},
+		{Name: "Map5.NewWith 5 Comps", Desc: "memory already allocated", F: entitiesCreateWithGeneric_5Comp_1000, N: 1000},
 	}
 }
 
