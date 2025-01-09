@@ -539,6 +539,33 @@ func TestWorldExchangeBatch(t *testing.T) {
 	q.Close()
 }
 
+func TestWorldExchangeBatch2(t *testing.T) {
+	w := NewWorld()
+
+	posID := ComponentID[Position](&w)
+	velID := ComponentID[Velocity](&w)
+	rotID := ComponentID[rotation](&w)
+
+	query := w.Batch().NewQ(100, posID, velID)
+	for query.Next() {
+		pos := (*Position)(query.Get(posID))
+		pos.X = int(query.Entity().ID())
+	}
+
+	w.Batch().Exchange(All(posID), []ID{rotID}, []ID{velID})
+
+	query = w.Query(All(posID, rotID))
+	assert.Equal(t, 100, query.Count())
+
+	i := 1
+	for query.Next() {
+		pos := (*Position)(query.Get(posID))
+		assert.Equal(t, int(query.Entity().ID()), pos.X)
+		assert.Equal(t, i, pos.X)
+		i++
+	}
+}
+
 func TestWorldAssignSet(t *testing.T) {
 	w := NewWorld()
 
