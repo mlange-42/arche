@@ -27,6 +27,11 @@ type comp5 struct {
 	W int64
 }
 
+type comp6 struct {
+	V int64
+	W int64
+}
+
 type relComp1 struct {
 	ecs.Relation
 }

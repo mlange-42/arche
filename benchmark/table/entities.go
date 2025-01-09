@@ -64,11 +64,12 @@ func entitiesCreate_1Comp_1000(b *testing.B) {
 
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
+	ids := []ecs.ID{id1}
 
 	for i := 0; i < b.N; i++ {
 		b.StartTimer()
 		for j := 0; j < 1000; j++ {
-			_ = w.NewEntity(id1)
+			_ = w.NewEntity(ids...)
 		}
 		b.StopTimer()
 		w.Batch().RemoveEntities(ecs.All())
