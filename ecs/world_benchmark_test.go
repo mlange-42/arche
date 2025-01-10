@@ -598,6 +598,38 @@ func BenchmarkWorldExchangeEventCallback_1000(b *testing.B) {
 	_ = temp
 }
 
+func BenchmarkWorldExchangeBatchNoListener_1(b *testing.B) {
+	b.StopTimer()
+
+	world := NewWorld()
+
+	posID := ComponentID[Position](&world)
+	velID := ComponentID[Velocity](&world)
+
+	builder := NewBuilder(&world, posID)
+	builder.NewBatch(1)
+
+	filterPos := All(posID)
+	filterVel := All(velID)
+
+	pos := []ID{posID}
+	vel := []ID{velID}
+
+	world.Batch().Exchange(filterPos, vel, pos)
+	world.Batch().Exchange(filterVel, pos, vel)
+
+	b.StartTimer()
+	hasPos := true
+	for i := 0; i < b.N; i++ {
+		if hasPos {
+			world.Batch().Exchange(filterPos, vel, pos)
+		} else {
+			world.Batch().Exchange(filterVel, pos, vel)
+		}
+		hasPos = !hasPos
+	}
+}
+
 func BenchmarkWorldExchangeBatchNoListener_1000(b *testing.B) {
 	b.StopTimer()
 
