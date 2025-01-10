@@ -188,6 +188,20 @@ func (a *archetype) Zero(index uint32, id ID) {
 	a.copy(a.node.zeroPointer, dst, size)
 }
 
+// Zero resets a block of storage in one buffer.
+func (a *archetype) ZeroRange(start, len uint32, id ID) {
+	lay := a.getLayout(id)
+	size := lay.itemSize
+	if size == 0 {
+		return
+	}
+	var i uint32
+	for i = 0; i < len; i++ {
+		dst := unsafe.Add(lay.pointer, (i+start)*size)
+		a.copy(a.node.zeroPointer, dst, size)
+	}
+}
+
 // SetEntity overwrites an entity
 func (a *archetype) SetEntity(index uint32, entity Entity) {
 	a.addEntity(index, &entity)
@@ -261,10 +275,16 @@ func (a *archetype) Reset() {
 	if a.len == 0 {
 		return
 	}
-	a.len = 0
-	for _, buf := range a.buffers {
-		buf.SetZero()
+	if a.len <= 64 { // A coarse estimate where manually zeroing is faster
+		for _, id := range a.node.Ids {
+			a.ZeroRange(0, a.len, id)
+		}
+	} else {
+		for _, buf := range a.buffers {
+			buf.SetZero()
+		}
 	}
+	a.len = 0
 }
 
 // Deactivate the archetype for later re-use.
