@@ -1,3 +1,9 @@
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.15.1...main)
+
+### Performance
+
+* Speeds up reset of small archetypes by zeroing memory manually (#475)
+
 ## [[v0.15.1]](https://github.com/mlange-42/arche/compare/v0.15.0...v0.15.1)
 
 ### Performance
