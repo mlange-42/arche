@@ -1,3 +1,9 @@
+## [[unpublished]](https://github.com/mlange-42/arche/compare/v0.15.2...main)
+
+### Performance
+
+* Avoids heap allocations in generic `MapX` by using arrays for IDs (#478)
+
 ## [[v0.15.2]](https://github.com/mlange-42/arche/compare/v0.15.1...v0.15.2)
 
 ### Performance
