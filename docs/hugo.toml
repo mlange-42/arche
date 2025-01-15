@@ -5,12 +5,12 @@ languageCode = 'en-us'
 title = 'Arche'
 
 enableEmoji = true
+theme = "hugo-theme-relearn"
 
 [module]
 [[module.imports]]
     path = 'github.com/McShelby/hugo-theme-relearn'
 
-theme = "hugo-theme-relearn"
 
 [outputs]
 home = [ "html", "rss", "search"]
