@@ -1,5 +1,4 @@
 [![Arche (logo)](https://user-images.githubusercontent.com/44003176/236701164-28178d13-7e52-4449-baa4-41b764183cbd.png)](https://github.com/mlange-42/arche)
-[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 [![Test status](https://img.shields.io/github/actions/workflow/status/mlange-42/arche/tests.yml?branch=main&label=Tests&logo=github)](https://github.com/mlange-42/arche/actions/workflows/tests.yml)
 [![Coverage Status](https://img.shields.io/coverallsCoverage/github/mlange-42/arche?logo=coveralls)](https://badge.coveralls.io/github/mlange-42/arche?branch=main)
 [![Go Report Card](https://goreportcard.com/badge/github.com/mlange-42/arche)](https://goreportcard.com/report/github.com/mlange-42/arche)
@@ -8,6 +7,7 @@
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
 [![DOI:10.5281/zenodo.7656484](https://img.shields.io/badge/10.5281%2Fzenodo.7656484-blue?label=doi)](https://doi.org/10.5281/zenodo.7656484)
 [![MIT license](https://img.shields.io/badge/MIT-brightgreen?label=license)](https://github.com/mlange-42/arche/blob/main/LICENSE)
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 
 *Arche* is an [archetype](https://mlange-42.github.io/arche/background/architecture/)-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
 
