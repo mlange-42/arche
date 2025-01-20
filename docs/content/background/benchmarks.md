@@ -16,6 +16,7 @@ Benchmark code: {{< repo "/tree/main/benchmark/table" "benchmark/table" >}} in t
 
 Benchmarks are run automatically in the GitHub CI, and are updated on this page on every merge into the `main` branch.
 They always reflect the latest development state of Arche.
+
 For a benchmark comparison with other ECS implementations,
 see the [go-ecs-benchmarks](https://github.com/mlange-42/go-ecs-benchmarks) repository.
 
