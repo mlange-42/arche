@@ -30,6 +30,9 @@ no_heading = true
 
 <a href="https://github.com/mlange-42/arche/blob/main/LICENSE" style="display:inline-block">
 <img alt="MIT license" src="https://img.shields.io/badge/MIT-brightgreen?label=license"></img></a>
+
+<a href="https://github.com/avelino/awesome-go" style="display:inline-block">
+<img alt="Mentioned in Awesome Go" src="https://awesome.re/mentioned-badge.svg"></img></a>
 </div>
 {{< /html >}}
 

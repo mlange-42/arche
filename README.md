@@ -7,6 +7,7 @@
 [![GitHub](https://img.shields.io/badge/github-repo-blue?logo=github)](https://github.com/mlange-42/arche)
 [![DOI:10.5281/zenodo.7656484](https://img.shields.io/badge/10.5281%2Fzenodo.7656484-blue?label=doi)](https://doi.org/10.5281/zenodo.7656484)
 [![MIT license](https://img.shields.io/badge/MIT-brightgreen?label=license)](https://github.com/mlange-42/arche/blob/main/LICENSE)
+[![Mentioned in Awesome Go](https://awesome.re/mentioned-badge.svg)](https://github.com/avelino/awesome-go)
 
 *Arche* is an [archetype](https://mlange-42.github.io/arche/background/architecture/)-based [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) for [Go](https://go.dev/).
 
