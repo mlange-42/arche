@@ -7,6 +7,9 @@ no_heading = true
 <img src="images/logo-dark.svg" alt="Arche" class="dark" style="width: 100%; max-width: 680px; margin:24px auto 24px auto;"/>
 
 <div style="width 100%; text-align: center;">
+<a href="https://github.com/avelino/awesome-go" style="display:inline-block">
+<img alt="Mentioned in Awesome Go" src="https://awesome.re/mentioned-badge.svg"></img></a>
+
 <a href="https://github.com/mlange-42/arche/actions/workflows/tests.yml" style="display:inline-block">
 <img alt="Test status" src="https://img.shields.io/github/actions/workflow/status/mlange-42/arche/tests.yml?branch=main&label=Tests&logo=github"></img></a>
 
