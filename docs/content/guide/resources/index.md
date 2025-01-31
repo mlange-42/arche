@@ -44,7 +44,7 @@ The most simple way to add a resource to the world is the function {{< api ecs A
 An ID is automatically assigned to type `Grid` here, if it was not registered before with {{< api ecs ResourceID >}}.
 
 {{< api ecs AddResource >}}, however, is not particularly efficient.
-It a resource needs to be added (and removed) repeatedly, use {{< api ecs World.Resources >}}:
+If a resource needs to be added (and removed) repeatedly, use {{< api ecs World.Resources >}}:
 
 {{< code-func resources_test.go TestResourceAdd2 >}}
 
