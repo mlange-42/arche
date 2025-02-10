@@ -1,3 +1,11 @@
+html:not(.dark) .dark {
+  display: none !important;
+}
+
+html.dark .light {
+  display: none !important;
+}
+
 /* navigation bar */
 .hextra-scrollbar a {
   overflow: hidden;
