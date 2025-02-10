@@ -96,11 +96,11 @@ Components are added to and removed from entities through the world,
 with {{< api ecs World.Add >}} and {{< api ecs World.Remove >}}.
 With generics, use a {{< api generic Map2 >}} again:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func entities_test.go TestEntitiesAddRemoveGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func entities_test.go TestEntitiesAddRemove >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -121,11 +121,11 @@ Sometimes one or more components should be added to an entity, and others should
 This can be bundled into a single exchange operation for efficiency.
 This is done with {{< api ecs World.Exchange >}}, or using a {{< api generic Exchange >}}:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func entities_test.go TestEntitiesExchangeGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func entities_test.go TestEntitiesExchange >}}
 {{< /tab >}}
 {{< /tabs >}}

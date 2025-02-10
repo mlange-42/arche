@@ -14,11 +14,11 @@ This is possible through {{< api ecs World >}} methods, or using a generic *MapX
 For a given entity, components can be accessed using {{< api ecs World.Get >}}
 or {{< api generic Map2.Get >}}, respectively:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func access_test.go TestGetGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func access_test.go TestGet >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -26,11 +26,11 @@ or {{< api generic Map2.Get >}}, respectively:
 Similarly, it is also possible to check if an entity has a given component with
 {{< api ecs World.Has >}} or {{< api generic Map.Has >}}, respectively:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func access_test.go TestHasGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func access_test.go TestHas >}}
 {{< /tab >}}
 {{< /tabs >}}

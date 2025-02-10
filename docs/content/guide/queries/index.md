@@ -20,11 +20,11 @@ The most basic type of filter is {{< api ecs Mask >}}. For more advanced filters
 
 Here, we create a filter that gives us all entities with all the given components, and potentially further components. Then, we create an {{< api ecs Query >}} (or generic *QueryX*, e.g. {{< api generic Query2 >}}) and iterate it.
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func queries_test.go TestQueryIterateGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func queries_test.go TestQueryIterate >}}
 {{< /tab >}}
 {{< /tabs >}}

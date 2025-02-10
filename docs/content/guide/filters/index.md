@@ -36,11 +36,11 @@ and anything else that we are not interested in.
 
 Particular components can be excluded with {{< api ecs Mask.Without >}} and {{< api generic Filter2.Without >}}:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestMaskWithoutGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestMaskWithout >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -52,11 +52,11 @@ Here, we filter for all entities that have a `Position`, but no `Heading`. Other
 With {{< api ecs Mask.Exclusive >}} and {{< api generic Filter2.Exclusive >}},
 we can exclude all components that are not in the filter:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestMaskExclusiveGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestMaskExclusive >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -99,11 +99,11 @@ With a high number of archetypes in the world, this can slow down query iteratio
 To prevent this slowdown, filters can be registered to the {{< api ecs World.Cache >}} via
 {{< api ecs Cache.Register >}}. For generic filters, there is {{< api generic Filter2.Register >}}:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestRegisterGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestRegister >}}
 {{< /tab >}}
 {{< /tabs >}}

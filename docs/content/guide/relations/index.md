@@ -54,11 +54,11 @@ Thus, we have created a relation type. When added to an entity, a target entity 
 When creating entities, we can use an {{< api ecs Builder >}} to set a relation target.
 In the generic API, we use a *MapX* (e.g. {{< api generic Map2 >}}).
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestCreateEntityGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestCreateEntity >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -70,11 +70,11 @@ With the ID-based API, we use the helper {{< api ecs World.Relations >}} for thi
 like for most operations on entity relations.
 In the generic API, we use a *MapX* (e.g. {{< api generic Map2 >}}) again.
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestAddRelationGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestAddRelation >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -88,22 +88,22 @@ Alternatively, we can use a {{< api generic.Exchange >}}:
 We can also change the target of an already assigned relation component.
 This is done via {{< api ecs Relations.Set >}} or {{< api generic Map.SetRelation >}}:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestSetRelationGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestSetRelation >}}
 {{< /tab >}}
 {{< /tabs >}}
 
 Similarly, relation targets can be obtained with {{< api ecs Relations.Get >}} or {{< api generic Map.GetRelation >}}:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestGetRelationGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestGetRelation >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -115,11 +115,11 @@ And now for the best: querying for entities that have a certain relation and tar
 In the ID-based API, relation targets can be queries with {{< api ecs RelationFilter >}}.
 In the generic API, it is supported by all *FilterX* via e.g. {{< api generic Filter2.WithRelation >}}.
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestRelationQueryGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestRelationQuery >}}
 {{< /tab >}}
 {{< /tabs >}}

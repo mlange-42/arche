@@ -52,11 +52,11 @@ If a resource needs to be added (and removed) repeatedly, use {{< api ecs World.
 Access to resources is obtained via {{< api ecs World.Resources >}} in the ID-based API,
 and via {{< api generic Resource >}} in the generic API:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func resources_test.go TestResourceGetGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func resources_test.go TestResourceGet >}}
 {{< /tab >}}
 {{< /tabs >}}
