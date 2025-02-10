@@ -85,3 +85,4 @@ CPU: Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz
 | ecs.NewWorld                     |      40.1 μs |                              |
 | World.Reset                      |     251.6 ns |                              |
 | ecs.ComponentID                  |      65.6 ns | registered component         |
+
