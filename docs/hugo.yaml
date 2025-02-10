@@ -5,6 +5,7 @@ title: Arche
 module:
   imports:
     path: github.com/imfing/hextra
+
 menu:
   main:
     - name: API reference
@@ -21,6 +22,10 @@ menu:
         icon: github
 
 params:
+  theme:
+    default: system
+    displayToggle: true
+  
   #repoURL: https://github.com/mlange-42/arche/
   #editURL: https://github.com/mlange-42/arche/edit/main/docs/content/${FilePath}
   apiURL: https://pkg.go.dev/github.com/mlange-42/arche/
