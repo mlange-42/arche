@@ -1,5 +1,5 @@
 +++
-title = ''
+title = 'Arche'
 type = "docs"
 +++
 {{< html >}}
@@ -8,31 +8,31 @@ type = "docs"
 
 <div style="width 100%; text-align: center;">
 <a href="https://github.com/mlange-42/arche/actions/workflows/tests.yml" style="display:inline-block">
-<img alt="Test status" src="https://img.shields.io/github/actions/workflow/status/mlange-42/arche/tests.yml?branch=main&label=Tests&logo=github"></img></a>
+<img alt="Test status" src="https://img.shields.io/github/actions/workflow/status/mlange-42/arche/tests.yml?branch=main&label=Tests&logo=github" style="margin:0;"></img></a>
 
 <a href="https://badge.coveralls.io/github/mlange-42/arche?branch=main" style="display:inline-block">
-<img alt="Coverage Status" src="https://img.shields.io/coverallsCoverage/github/mlange-42/arche?logo=coveralls"></img></a>
+<img alt="Coverage Status" src="https://img.shields.io/coverallsCoverage/github/mlange-42/arche?logo=coveralls" style="margin:0;"></img></a>
 
 <a href="https://goreportcard.com/report/github.com/mlange-42/arche" style="display:inline-block">
-<img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/mlange-42/arche"></img></a>
+<img alt="Go Report Card" src="https://goreportcard.com/badge/github.com/mlange-42/arche" style="margin:0;"></img></a>
 
 <a href="https://mlange-42.github.io/arche/" style="display:inline-block">
-<img alt="User Guide" src="https://img.shields.io/badge/user_guide-%23007D9C?logo=go&logoColor=white&labelColor=gray"></img></a>
+<img alt="User Guide" src="https://img.shields.io/badge/user_guide-%23007D9C?logo=go&logoColor=white&labelColor=gray" style="margin:0;"></img></a>
 
 <a href="https://pkg.go.dev/github.com/mlange-42/arche" style="display:inline-block">
-<img alt="Go Reference" src="https://img.shields.io/badge/reference-%23007D9C?logo=go&logoColor=white&labelColor=gray"></img></a>
+<img alt="Go Reference" src="https://img.shields.io/badge/reference-%23007D9C?logo=go&logoColor=white&labelColor=gray" style="margin:0;"></img></a>
 
 <a href="https://github.com/mlange-42/arche" style="display:inline-block">
-<img alt="GitHub" src="https://img.shields.io/badge/github-repo-blue?logo=github"></img></a>
+<img alt="GitHub" src="https://img.shields.io/badge/github-repo-blue?logo=github" style="margin:0;"></img></a>
 
 <a href="https://doi.org/10.5281/zenodo.7656484" style="display:inline-block">
-<img alt="DOI:10.5281/zenodo.7656484" src="https://img.shields.io/badge/10.5281%2Fzenodo.7656484-blue?label=doi"></img></a>
+<img alt="DOI:10.5281/zenodo.7656484" src="https://img.shields.io/badge/10.5281%2Fzenodo.7656484-blue?label=doi" style="margin:0;"></img></a>
 
 <a href="https://github.com/mlange-42/arche/blob/main/LICENSE" style="display:inline-block">
-<img alt="MIT license" src="https://img.shields.io/badge/MIT-brightgreen?label=license"></img></a>
+<img alt="MIT license" src="https://img.shields.io/badge/MIT-brightgreen?label=license" style="margin:0;"></img></a>
 
 <a href="https://github.com/avelino/awesome-go" style="display:inline-block">
-<img alt="Mentioned in Awesome Go" src="https://awesome.re/mentioned-badge.svg"></img></a>
+<img alt="Mentioned in Awesome Go" src="https://awesome.re/mentioned-badge.svg" style="margin:0;"></img></a>
 </div>
 {{< /html >}}
 
