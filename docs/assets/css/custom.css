@@ -3,8 +3,11 @@ html {
   font-family: "Roboto Flex", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
-.content {
-  font-family: "Roboto Flex", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+.content p,
+.content a,
+.content li,
+.content table,
+.content button {
   font-size: 18px;
   font-weight: 200;
   font-stretch: 112.5%;
@@ -125,10 +128,6 @@ nav .hx-pt-6 {
 
 .hextra-code-block pre {
   font-size: 1.0em;
-}
-
-.hextra-code-block:not(.no-wrap) pre {
-  text-wrap: auto;
 }
 
 /* images */
