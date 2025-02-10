@@ -81,6 +81,7 @@ html.dark .content :where(a):not(:where([class~="not-prose"], [class~="not-prose
   margin-bottom: 0.0rem;
 }
 
+/* divs spacing */
 .hx-mt-6 {
   margin-top: 0.8rem;
 }
@@ -96,6 +97,12 @@ nav .hx-pt-6 {
 
 nav .hx-pt-6 .hx-font-semibold {
   font-weight: 200;
+}
+
+/* tables */
+.content :where(table):not(:where(.hextra-code-block table, [class~="not-prose"], [class~="not-prose"] *)) {
+  display: table;
+  width: 100%;
 }
 
 /* code blocks */

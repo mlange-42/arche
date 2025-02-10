@@ -10,19 +10,19 @@ import (
 
 func benchesComponents() []benchmark.Benchmark {
 	return []benchmark.Benchmark{
-		{Name: "World.Add 1 Comp", Desc: "memory already allocated", F: componentsAdd1_1000, N: 1000},
-		{Name: "World.Add 5 Comps", Desc: "memory already allocated", F: componentsAdd5_1000, N: 1000},
-		{Name: "World.Add 1 to 5 Comps", Desc: "memory already allocated", F: componentsAdd1to5_1000, N: 1000},
+		{Name: "World.Add 1 Comp", Desc: "memory already alloc.", F: componentsAdd1_1000, N: 1000},
+		{Name: "World.Add 5 Comps", Desc: "memory already alloc.", F: componentsAdd5_1000, N: 1000},
+		{Name: "World.Add 1 to 5 Comps", Desc: "memory already alloc.", F: componentsAdd1to5_1000, N: 1000},
 
-		{Name: "World.Remove 1 Comp", Desc: "memory already allocated", F: componentsRemove1_1000, N: 1000},
-		{Name: "World.Remove 5 Comps", Desc: "memory already allocated", F: componentsRemove5_1000, N: 1000},
-		{Name: "World.Remove 1 of 5 Comps", Desc: "memory already allocated", F: componentsRemove1of5_1000, N: 1000},
+		{Name: "World.Remove 1 Comp", Desc: "memory already alloc.", F: componentsRemove1_1000, N: 1000},
+		{Name: "World.Remove 5 Comps", Desc: "memory already alloc.", F: componentsRemove5_1000, N: 1000},
+		{Name: "World.Remove 1 of 5 Comps", Desc: "memory already alloc.", F: componentsRemove1of5_1000, N: 1000},
 
-		{Name: "World.Exchange 1 Comp", Desc: "memory already allocated", F: componentsExchange1_1000, N: 1000},
-		{Name: "World.Exchange 1 of 5 Comps", Desc: "memory already allocated", F: componentsExchange1of5_1000, N: 1000},
+		{Name: "World.Exchange 1 Comp", Desc: "memory already alloc.", F: componentsExchange1_1000, N: 1000},
+		{Name: "World.Exchange 1 of 5 Comps", Desc: "memory already alloc.", F: componentsExchange1of5_1000, N: 1000},
 
-		{Name: "Map1.Assign 1 Comps", Desc: "memory already allocated", F: componentsAssignGeneric1_1000, N: 1000},
-		{Name: "Map5.Assign 5 Comps", Desc: "memory already allocated", F: componentsAssignGeneric5_1000, N: 1000},
+		{Name: "Map1.Assign 1 Comps", Desc: "memory already alloc.", F: componentsAssignGeneric1_1000, N: 1000},
+		{Name: "Map5.Assign 5 Comps", Desc: "memory already alloc.", F: componentsAssignGeneric5_1000, N: 1000},
 	}
 }
 

@@ -6,6 +6,7 @@ import (
 	"testing"
 )
 
+// Benchmark represents a benchmark to be run.
 type Benchmark struct {
 	Name   string
 	Desc   string
@@ -16,6 +17,7 @@ type Benchmark struct {
 	Units  string
 }
 
+// RunBenchmarks runs the benchmarks and prints the results.
 func RunBenchmarks(title string, benches []Benchmark, format func([]Benchmark) string) {
 	for i := range benches {
 		b := &benches[i]
@@ -25,6 +27,7 @@ func RunBenchmarks(title string, benches []Benchmark, format func([]Benchmark) s
 	fmt.Printf("## %s\n\n%s", title, format(benches))
 }
 
+// ToMarkdown converts the benchmarks to a markdown table.
 func ToMarkdown(benches []Benchmark) string {
 	b := strings.Builder{}
 
