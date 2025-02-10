@@ -15,6 +15,6 @@
 {{ $trim := strings.TrimPrefix $unindentStr (index $t .) }}
 {{ $code = printf "%s%s\n" $code $trim }}
 {{ end }}
-{{ $code := printf "\n```go\n%s\n```\n" $code }}
+{{ $code := printf "\n```go\n%s\n```\n" $code | markdownify }}
 {{ $code | safeHTML }}
 {{ end }}

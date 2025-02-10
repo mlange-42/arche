@@ -16,6 +16,6 @@
 
 {{ $func := printf "func %s(t *testing.T) {" $main }}
 {{ $s = replace $s $func "func main() {" }}
-{{ $code := printf "\n```go\n%s\n```\n" $s }}
+{{ $code := printf "\n```go\n%s\n```\n" $s | markdownify }}
 {{ $code | safeHTML }}
 {{ end }}

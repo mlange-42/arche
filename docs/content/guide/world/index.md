@@ -16,7 +16,7 @@ Most world functionality is covered in chapters [Entities & Components](./entiti
 
 To create a world with default settings, use {{< api ecs NewWorld >}}:
 
-{{% code-func world_test.go TestWorldSimple %}}
+{{< code-func world_test.go TestWorldSimple >}}
 
 A world can also be configured with an initial capacity:
 

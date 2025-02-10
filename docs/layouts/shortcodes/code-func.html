@@ -19,6 +19,6 @@
       {{ $started = true }}
     {{ end }}
   {{ end }}
-  {{ $code := printf "\n```go\n%s\n```\n" $code }}
+  {{ $code := printf "\n```go\n%s\n```\n" $code | markdownify }}
   {{ $code | safeHTML }}
 {{ end }}

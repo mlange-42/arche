@@ -14,7 +14,7 @@ An *Entity* ({{< api ecs Entity >}}) in Arche is merely an ID and contains no da
 The only method of an entity is {{< api ecs Entity.IsZero >}}.
 The only entity that can be directly created by the user is the zero entity, in two possible ways:
 
-{{< code-func entities_test.go TestZeroEntity >}}
+{{% code-func entities_test.go TestZeroEntity %}}
 
 All other entities must be created through the {{< api ecs World >}} (see section [Creating entities](#creating-entities) below)
 
