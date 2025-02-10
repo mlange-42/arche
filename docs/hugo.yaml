@@ -16,7 +16,7 @@ module:
   theme: "hugo-theme-relearn"
 
 outputs:
-  home: ["html", "rss", "search"]
+  home: ["html", "rss"]
 
 params:
   images: ["images/social.png"]
