@@ -63,16 +63,20 @@ nav .hx-pt-6 .hx-font-semibold {
   text-decoration-line: none;
 }
 
+.content :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
+  text-decoration-line: underline;
+}
+
 html.dark .content :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  color: hsl(var(--primary-hue) var(--primary-saturation) calc(calc(var(--primary-lightness) / 50) * 65) / var(--tw-text-opacity));
+  color: hsl(var(--primary-hue) var(--primary-saturation) calc(calc(var(--primary-lightness) / 50) * 60) / var(--tw-text-opacity));
 }
 
 .dark\:hx-text-primary-600:is(html[class~="dark"] *) {
-  color: hsl(var(--primary-hue) var(--primary-saturation) calc(calc(var(--primary-lightness) / 50) * 65) / var(--tw-text-opacity));
+  color: hsl(var(--primary-hue) var(--primary-saturation) calc(calc(var(--primary-lightness) / 50) * 60) / var(--tw-text-opacity));
 }
 
-.content :where(a):not(:where([class~="not-prose"], [class~="not-prose"] *)):hover {
-  text-decoration-line: underline;
+.data-\[state\=selected\]\:dark\:hx-text-primary-600:is(html[class~="dark"] *)[data-state="selected"] {
+  color: hsl(var(--primary-hue) var(--primary-saturation) calc(calc(var(--primary-lightness) / 50) * 60) / var(--tw-text-opacity));
 }
 
 /* paragraph line height */
@@ -139,7 +143,7 @@ nav .hx-pt-6 {
 
 /* page titles */
 .content :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
-  font-size: 2.8rem;
+  font-size: 3rem;
   font-weight: 200;
   font-stretch: 120%;
   text-align: center;
@@ -150,11 +154,13 @@ nav .hx-pt-6 {
 .content :where(h2):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 2.0rem;
   font-weight: 400;
+  font-stretch: 120%;
 }
 
 .content :where(h3):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   margin-top: 1.66rem;
   font-weight: 400;
+  font-stretch: 120%;
 }
 
 /* syntax highlighting with GitHub style */
