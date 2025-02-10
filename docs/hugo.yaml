@@ -44,7 +44,7 @@ params:
       path: images/logo-light.svg
       dark: images/logo-dark.svg
       link: /arche
-      width: 120
+      width: 140
 
 markup:
   goldmark:

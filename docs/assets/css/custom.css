@@ -60,11 +60,13 @@ nav .hx-pt-6 .hx-font-semibold {
 
 /* links */
 .content a {
-  text-decoration-line: none;
+  text-decoration: none;
+  text-decoration-color: currentColor;
 }
 
 .content a:hover {
-  text-decoration-line: underline;
+  text-decoration: underline;
+  text-decoration-color: currentColor;
 }
 
 html.dark .content a {
