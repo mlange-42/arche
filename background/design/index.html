@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.143.1">
+    <meta name="generator" content="Relearn 7.3.2+5f9fee85c496d624b916f206a0e97bf0861fe268">
+    <meta name="description" content="Specific design considerations behind Arche.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta name="twitter:title" content="Design Philosophy :: Arche">
+    <meta name="twitter:description" content="Specific design considerations behind Arche.">
+    <meta property="og:url" content="https://mlange-42.github.io/arche/background/design/index.html">
+    <meta property="og:site_name" content="Arche">
+    <meta property="og:title" content="Design Philosophy :: Arche">
+    <meta property="og:description" content="Specific design considerations behind Arche.">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="Background">
+    <meta property="og:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta itemprop="name" content="Design Philosophy :: Arche">
+    <meta itemprop="description" content="Specific design considerations behind Arche.">
+    <meta itemprop="wordCount" content="300">
+    <meta itemprop="image" content="https://mlange-42.github.io/arche/images/social.png">
+    <title>Design Philosophy :: Arche</title>
+    <link href="../../images/favicon.svg?1739208916" rel="icon" type="image/svg+xml">
+    <link href="../../css/fontawesome-all.min.css?1739208916" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fontawesome-all.min.css?1739208916" rel="stylesheet"></noscript>
+    <link href="../../css/auto-complete.css?1739208916" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/auto-complete.css?1739208916" rel="stylesheet"></noscript>
+    <link href="../../css/perfect-scrollbar.min.css?1739208916" rel="stylesheet">
+    <link href="../../css/theme.min.css?1739208916" rel="stylesheet">
+    <link href="../../css/format-html.min.css?1739208916" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..\/..';
+      window.relearn.relBaseUri='..\/..';
+      window.relearn.absBaseUri='https:\/\/mlange-42.github.io\/arche';
+      window.relearn.min = `.min`;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto', 'mylight', 'mydark' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script><link href='../../css/style.css' rel="stylesheet">
+
+<link href='../../css/cards.css' rel="stylesheet">
+
+  </head>
+  <body class="mobile-support html disableInlineCopyToClipboard" data-url="../../background/design/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#simple-core-api">Simple core API</a></li>
+    <li><a href="#determinism">Determinism</a></li>
+    <li><a href="#strict-and-panic">Strict and panic</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../index.html"><span itemprop="name">Arche</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../background/index.html"><span itemprop="name">Background</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Design Philosophy</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-edit" data-content-empty="disable" data-width-s="area-more" data-width-m="show" data-width-l="show"><a class="topbar-control" href="https://github.com/mlange-42/arche/edit/main/docs/content/background/design.md" target="_blank" title="Edit (CTRL&#43;ALT&#43;w)"><i class="fa-fw fas fa-pen"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../background/index.html" title="Background (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../background/architecture/index.html" title="Architecture (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable background" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+<h1 id="design-philosophy">Design Philosophy</h1>
+
+<p>Unlike most other ECS implementations, Arche is designed for the development of scientific,
+individual-based models rather than for game development.
+This motivates some design decisions, with an emphasis on simplicity, safety and performance.
+Nevertheless, Arche can also be used for game development.</p>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#simple-core-api">Simple core API</a></li>
+    <li><a href="#determinism">Determinism</a></li>
+    <li><a href="#strict-and-panic">Strict and panic</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+  </ul>
+</nav>
+<h2 id="simple-core-api">Simple core API</h2>
+<p>The <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#World" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.World">ecs.World</code>
+    </a>
+</span> object is a pure and simple ECS implementation in the sense of a data store
+for entities and components, with query and iteration capabilities.
+More advanced features like batch operations or entity relations are provided through separate objects.</p>
+<p>There is neither an update loop nor systems.
+These should be implemented by the user.
+For a batteries-included implementation, see module <a href="https://github.com/mlange-42/arche-model" rel="external" target="_blank">arche-model</a>.</p>
+<p>The type-safe generic API and advanced logic filters are provided in the packages
+<span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic">generic</code>
+    </a>
+</span> and <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/filter" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="filter">filter</code>
+    </a>
+</span>, respectively.
+Both packages are built on top of the core <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs">ecs</code>
+    </a>
+</span> package, so they could also be implemented by a user.</p>
+<h2 id="determinism">Determinism</h2>
+<p>Iteration order in Arche is deterministic and reproducible.
+This does not mean that entities are iterated in their order of insertion, nor in the same order in successive iterations.
+However, given the same operations on the <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#World" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.World">ecs.World</code>
+    </a>
+</span>, iteration order will always be the same.</p>
+<h2 id="strict-and-panic">Strict and panic</h2>
+<p>Arche puts an emphasis on safety and on avoiding undefined behavior.
+It panics on unexpected operations, like removing a dead entity,
+adding a component that is already present, or attempting to change a locked world.
+This may not seem idiomatic for Go.
+However, explicit error handling in performance hot spots is not an option.
+Neither is silent failure, given the scientific background.</p>
+<h2 id="limitations">Limitations</h2>
+<ul>
+<li>The number of component types per <code>World</code> is limited to 256. This is mainly a performance decision.</li>
+<li>The number of entities alive at any one time is limited to just under 5 billion (<code>uint32</code> ID).</li>
+</ul>
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation showVisitedLinks">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+<a href="https://mlange-42.github.io/arche/" title="Home"><img src="https://mlange-42.github.io/arche/images/logo-dark.svg" alt="Arche Logo"></img></a>
+        </div>
+        <script>
+          window.index_js_url="../../searchindex.en.js?1739208916";
+        </script>
+        <search><form action="../../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../../js/auto-complete.js?1739208916" defer></script>
+        <script src="../../js/lunr/lunr.min.js?1739208916" defer></script>
+        <script src="../../js/lunr/lunr.stemmer.support.min.js?1739208916" defer></script>
+        <script src="../../js/lunr/lunr.multi.min.js?1739208916" defer></script>
+        <script src="../../js/lunr/lunr.en.min.js?1739208916" defer></script>
+        <script src="../../js/search.js?1739208916" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation">
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/quickstart/index.html"><a class="padding" href="../../quickstart/index.html">Quickstart<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/index.html"><input type="checkbox" id="R-section-94eda0941ce4ed1918fdd1b038022890" aria-controls="R-subsections-94eda0941ce4ed1918fdd1b038022890"><label for="R-section-94eda0941ce4ed1918fdd1b038022890"><i class="fa-fw fas fa-chevron-right"></i><span class="a11y-only">Submenu User Guide</span></label><a class="padding" href="../../guide/index.html">User Guide<i class="fa-fw fas fa-check read-icon"></i></a><ul id="R-subsections-94eda0941ce4ed1918fdd1b038022890" class="collapsible-menu">
+            <li class="" data-nav-id="/guide/apis/index.html"><a class="padding" href="../../guide/apis/index.html">Generic &amp; ID-based API<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/world/index.html"><a class="padding" href="../../guide/world/index.html">The World<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/entities/index.html"><a class="padding" href="../../guide/entities/index.html">Entities &amp; Components<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/queries/index.html"><a class="padding" href="../../guide/queries/index.html">Queries<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/filters/index.html"><a class="padding" href="../../guide/filters/index.html">Filters<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/world-access/index.html"><a class="padding" href="../../guide/world-access/index.html">World Entity Access<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/relations/index.html"><a class="padding" href="../../guide/relations/index.html">Entity Relations<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/batch-ops/index.html"><a class="padding" href="../../guide/batch-ops/index.html">Batch Operations<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/resources/index.html"><a class="padding" href="../../guide/resources/index.html">ECS Resources<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/events/index.html"><a class="padding" href="../../guide/events/index.html">Event System<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/stats/index.html"><a class="padding" href="../../guide/stats/index.html">World Statistics<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/performance/index.html"><a class="padding" href="../../guide/performance/index.html">Performance Tips<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/tools/index.html"><a class="padding" href="../../guide/tools/index.html">Tools<i class="fa-fw fas fa-check read-icon"></i></a></li></ul></li>
+            <li class="parent " data-nav-id="/background/index.html"><input type="checkbox" id="R-section-41dba48017bfaad2d030f2bc994c8d85" aria-controls="R-subsections-41dba48017bfaad2d030f2bc994c8d85" checked><label for="R-section-41dba48017bfaad2d030f2bc994c8d85"><i class="fa-fw fas fa-chevron-right"></i><span class="a11y-only">Submenu Background</span></label><a class="padding" href="../../background/index.html">Background<i class="fa-fw fas fa-check read-icon"></i></a><ul id="R-subsections-41dba48017bfaad2d030f2bc994c8d85" class="collapsible-menu">
+            <li class="active " data-nav-id="/background/design/index.html"><a class="padding" href="../../background/design/index.html">Design Philosophy<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/background/architecture/index.html"><a class="padding" href="../../background/architecture/index.html">Architecture<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/background/benchmarks/index.html"><a class="padding" href="../../background/benchmarks/index.html">Benchmarks<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/background/changelog/index.html"><a class="padding" href="../../background/changelog/index.html">Changelog<i class="fa-fw fas fa-check read-icon"></i></a></li></ul></li>
+            <li class="" data-nav-id="/made_with/index.html"><a class="padding" href="../../made_with/index.html">Made with Arche<i class="fa-fw fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div id="R-shortcutmenu-shortcuts" class="R-sidebarmenu">
+          <div class="nav-title padding">More</div>
+          <ul class="space collapsible-menu">
+            <li class="" data-nav-id="https://github.com/mlange-42/arche"><a class="padding" href="https://github.com/mlange-42/arche" rel="external" target="_blank"><i class='fab fa-fw fa-github'></i> GitHub repo<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="https://pkg.go.dev/github.com/mlange-42/arche"><a class="padding" href="https://pkg.go.dev/github.com/mlange-42/arche" rel="external" target="_blank"><i class='fas fa-fw fa-bookmark'></i> API reference<i class="fa-fw fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks showVariantSwitch showVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../../background/design/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch showVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                      <option id="R-select-variant-mylight" value="mylight">Light</option>
+                      <option id="R-select-variant-mydark" value="mydark">Dark</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks showVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter">
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../../js/clipboard.min.js?1739208916" defer></script>
+    <script src="../../js/perfect-scrollbar.min.js?1739208916" defer></script>
+    <script src="../../js/theme.js?1739208916" defer></script>
+  </body>
+</html>

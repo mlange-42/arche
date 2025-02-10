@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>User Guide :: Arche</title>
+    <link>https://mlange-42.github.io/arche/guide/index.html</link>
+    <description>Comprehensive Arche user guide.</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <atom:link href="https://mlange-42.github.io/arche/guide/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Generic &amp; ID-based API</title>
+      <link>https://mlange-42.github.io/arche/guide/apis/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/apis/index.html</guid>
+      <description>Overview of Arche&#39;s generic and ID-based APIs.</description>
+    </item>
+    <item>
+      <title>The World</title>
+      <link>https://mlange-42.github.io/arche/guide/world/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/world/index.html</guid>
+      <description>The World as Arche&#39;s central data storage.</description>
+    </item>
+    <item>
+      <title>Entities &amp; Components</title>
+      <link>https://mlange-42.github.io/arche/guide/entities/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/entities/index.html</guid>
+      <description>Entities, components, creation and removal in Arche.</description>
+    </item>
+    <item>
+      <title>Queries</title>
+      <link>https://mlange-42.github.io/arche/guide/queries/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/queries/index.html</guid>
+      <description>Usage of Arche&#39;s queries.</description>
+    </item>
+    <item>
+      <title>Filters</title>
+      <link>https://mlange-42.github.io/arche/guide/filters/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/filters/index.html</guid>
+      <description>Arche&#39;s filter APIs.</description>
+    </item>
+    <item>
+      <title>World Entity Access</title>
+      <link>https://mlange-42.github.io/arche/guide/world-access/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/world-access/index.html</guid>
+      <description>Access to components through the world, by entity ID.</description>
+    </item>
+    <item>
+      <title>Entity Relations</title>
+      <link>https://mlange-42.github.io/arche/guide/relations/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/relations/index.html</guid>
+      <description>Arche&#39;s entity relationships feature.</description>
+    </item>
+    <item>
+      <title>Batch Operations</title>
+      <link>https://mlange-42.github.io/arche/guide/batch-ops/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/batch-ops/index.html</guid>
+      <description>Batch operations in Arche.</description>
+    </item>
+    <item>
+      <title>ECS Resources</title>
+      <link>https://mlange-42.github.io/arche/guide/resources/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/resources/index.html</guid>
+      <description>ECS resources in Arche.</description>
+    </item>
+    <item>
+      <title>Event System</title>
+      <link>https://mlange-42.github.io/arche/guide/events/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/events/index.html</guid>
+      <description>Arche&#39;s event system for entity modification.</description>
+    </item>
+    <item>
+      <title>World Statistics</title>
+      <link>https://mlange-42.github.io/arche/guide/stats/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/stats/index.html</guid>
+      <description>Arche&#39;s world statistics feature for engine insights.</description>
+    </item>
+    <item>
+      <title>Performance Tips</title>
+      <link>https://mlange-42.github.io/arche/guide/performance/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/performance/index.html</guid>
+      <description>Performance tips on how to get the most out of Arche.</description>
+    </item>
+    <item>
+      <title>Tools</title>
+      <link>https://mlange-42.github.io/arche/guide/tools/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/tools/index.html</guid>
+      <description>External tools built for Arche.</description>
+    </item>
+  </channel>
+</rss>

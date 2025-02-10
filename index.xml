@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Arche</title>
+    <link>https://mlange-42.github.io/arche/index.html</link>
+    <description>Arche is an archetype-based Entity Component System for Go.&#xA;Arche’s Features Designed for performance and highly optimized. See the Benchmarks. Well-documented API and comprehensive User Guide. No systems. Just queries. Use your own structure (or the Tools). No dependencies. Except for unit tests (100% test coverage). World serialization and deserialization with arche-serde. For more information, see the GitHub repository and API docs.</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <atom:link href="https://mlange-42.github.io/arche/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Quickstart</title>
+      <link>https://mlange-42.github.io/arche/quickstart/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/quickstart/index.html</guid>
+      <description>Quickstart guide to install and use Arche.</description>
+    </item>
+    <item>
+      <title>User Guide</title>
+      <link>https://mlange-42.github.io/arche/guide/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/guide/index.html</guid>
+      <description>Comprehensive Arche user guide.</description>
+    </item>
+    <item>
+      <title>Background</title>
+      <link>https://mlange-42.github.io/arche/background/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/background/index.html</guid>
+      <description>Background information on Arche&#39;s design, architecture, performance and history.</description>
+    </item>
+    <item>
+      <title>Made with Arche</title>
+      <link>https://mlange-42.github.io/arche/made_with/index.html</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>https://mlange-42.github.io/arche/made_with/index.html</guid>
+      <description>Projects using Arche.</description>
+    </item>
+  </channel>
+</rss>

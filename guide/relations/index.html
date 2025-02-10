@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr" itemscope itemtype="http://schema.org/Article" data-r-output-format="html">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="height=device-height, width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <meta name="generator" content="Hugo 0.143.1">
+    <meta name="generator" content="Relearn 7.3.2+5f9fee85c496d624b916f206a0e97bf0861fe268">
+    <meta name="description" content="Arche&#39;s entity relationships feature.">
+    <meta name="author" content="">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta name="twitter:title" content="Entity Relations :: Arche">
+    <meta name="twitter:description" content="Arche&#39;s entity relationships feature.">
+    <meta property="og:url" content="https://mlange-42.github.io/arche/guide/relations/index.html">
+    <meta property="og:site_name" content="Arche">
+    <meta property="og:title" content="Entity Relations :: Arche">
+    <meta property="og:description" content="Arche&#39;s entity relationships feature.">
+    <meta property="og:locale" content="en_us">
+    <meta property="og:type" content="article">
+    <meta property="article:section" content="User Guide">
+    <meta property="og:image" content="https://mlange-42.github.io/arche/images/social.png">
+    <meta itemprop="name" content="Entity Relations :: Arche">
+    <meta itemprop="description" content="Arche&#39;s entity relationships feature.">
+    <meta itemprop="wordCount" content="1682">
+    <meta itemprop="image" content="https://mlange-42.github.io/arche/images/social.png">
+    <title>Entity Relations :: Arche</title>
+    <link href="../../images/favicon.svg?1739208916" rel="icon" type="image/svg+xml">
+    <link href="../../css/fontawesome-all.min.css?1739208916" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/fontawesome-all.min.css?1739208916" rel="stylesheet"></noscript>
+    <link href="../../css/auto-complete.css?1739208916" rel="stylesheet" media="print" onload="this.media='all';this.onload=null;"><noscript><link href="../../css/auto-complete.css?1739208916" rel="stylesheet"></noscript>
+    <link href="../../css/perfect-scrollbar.min.css?1739208916" rel="stylesheet">
+    <link href="../../css/theme.min.css?1739208916" rel="stylesheet">
+    <link href="../../css/format-html.min.css?1739208916" rel="stylesheet" id="R-format-style">
+    <script>
+      window.relearn = window.relearn || {};
+      window.relearn.relBasePath='..\/..';
+      window.relearn.relBaseUri='..\/..';
+      window.relearn.absBaseUri='https:\/\/mlange-42.github.io\/arche';
+      window.relearn.min = `.min`;
+      window.relearn.disableAnchorCopy=false;
+      window.relearn.disableAnchorScrolling=false;
+      // variant stuff
+      window.relearn.themevariants = [ 'auto', 'mylight', 'mydark' ];
+      window.relearn.customvariantname = "my-custom-variant";
+      window.relearn.changeVariant = function(variant) {
+        var oldVariant = document.documentElement.dataset.rThemeVariant;
+        window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        document.documentElement.dataset.rThemeVariant = variant;
+        if (oldVariant != variant) {
+          document.dispatchEvent( new CustomEvent('themeVariantLoaded', { detail: { variant, oldVariant } }) );
+        }
+      }
+      window.relearn.markVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant");
+        var select = document.querySelector("#R-select-variant");
+        if (select) {
+          select.value = variant;
+        }
+      }
+      window.relearn.initVariant = function() {
+        var variant = window.localStorage.getItem(window.relearn.absBaseUri + "/variant") ?? "";
+        if( variant == window.relearn.customvariantname ){
+        }else if( !variant || !window.relearn.themevariants.includes(variant) ){
+          variant = window.relearn.themevariants[0];
+          window.localStorage.setItem(window.relearn.absBaseUri + "/variant", variant);
+        }
+        document.documentElement.dataset.rThemeVariant = variant;
+      }
+      window.relearn.initVariant();
+      window.relearn.markVariant();
+      // translations
+      window.T_Copy_to_clipboard = `Copy to clipboard`;
+      window.T_Copied_to_clipboard = `Copied to clipboard!`;
+      window.T_Copy_link_to_clipboard = `Copy link to clipboard`;
+      window.T_Link_copied_to_clipboard = `Copied link to clipboard!`;
+      window.T_Reset_view = `Reset view`;
+      window.T_View_reset = `View reset!`;
+      window.T_No_results_found = `No results found for "{0}"`;
+      window.T_N_results_found = `{1} results found for "{0}"`;
+    </script><link href='../../css/style.css' rel="stylesheet">
+
+<link href='../../css/cards.css' rel="stylesheet">
+
+  </head>
+  <body class="mobile-support html disableInlineCopyToClipboard" data-url="../../guide/relations/index.html">
+    <div id="R-body" class="default-animation">
+      <div id="R-body-overlay"></div>
+      <nav id="R-topbar">
+        <div class="topbar-wrapper">
+          <div class="topbar-sidebar-divider"></div>
+          <div class="topbar-area topbar-area-start" data-area="start">
+            <div class="topbar-button topbar-button-sidebar" data-content-empty="disable" data-width-s="show" data-width-m="hide" data-width-l="hide"><button class="topbar-control" onclick="toggleNav()" type="button" title="Menu (CTRL&#43;ALT&#43;n)"><i class="fa-fw fas fa-bars"></i></button>
+            </div>
+            <div class="topbar-button topbar-button-toc" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="Table of Contents (CTRL&#43;ALT&#43;t)"><i class="fa-fw fas fa-list-alt"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+<nav class="TableOfContents">
+  <ul>
+    <li><a href="#relation-components">Relation components</a></li>
+    <li><a href="#creating-relations">Creating relations</a>
+      <ul>
+        <li><a href="#on-new-entities">On new entities</a></li>
+        <li><a href="#when-adding-components">When adding components</a></li>
+      </ul>
+    </li>
+    <li><a href="#set-and-get-relations">Set and get relations</a></li>
+    <li><a href="#querying-relations">Querying relations</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+    <li><a href="#when-to-use-and-when-not">When to use, and when not</a></li>
+    <li><a href="#benchmarks">Benchmarks</a></li>
+    <li><a href="#longer-example">Longer example</a></li>
+  </ul>
+</nav>
+                </div>
+              </div>
+            </div>
+          </div>
+          <ol class="topbar-breadcrumbs breadcrumbs highlightable" itemscope itemtype="http://schema.org/BreadcrumbList"><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../index.html"><span itemprop="name">Arche</span></a><meta itemprop="position" content="1">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><a itemprop="item" href="../../guide/index.html"><span itemprop="name">User Guide</span></a><meta itemprop="position" content="2">&nbsp;>&nbsp;</li><li
+            itemscope itemtype="https://schema.org/ListItem" itemprop="itemListElement"><span itemprop="name">Entity Relations</span><meta itemprop="position" content="3"></li>
+          </ol>
+          <div class="topbar-area topbar-area-end" data-area="end">
+            <div class="topbar-button topbar-button-edit" data-content-empty="disable" data-width-s="area-more" data-width-m="show" data-width-l="show"><a class="topbar-control" href="https://github.com/mlange-42/arche/edit/main/docs/content/guide/relations/index.md" target="_blank" title="Edit (CTRL&#43;ALT&#43;w)"><i class="fa-fw fas fa-pen"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-prev" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../guide/world-access/index.html" title="World Entity Access (🡐)"><i class="fa-fw fas fa-chevron-left"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-next" data-content-empty="disable" data-width-s="show" data-width-m="show" data-width-l="show"><a class="topbar-control" href="../../guide/batch-ops/index.html" title="Batch Operations (🡒)"><i class="fa-fw fas fa-chevron-right"></i></a>
+            </div>
+            <div class="topbar-button topbar-button-more" data-content-empty="hide" data-width-s="show" data-width-m="show" data-width-l="show"><button class="topbar-control" onclick="toggleTopbarFlyout(this)" type="button" title="More"><i class="fa-fw fas fa-ellipsis-v"></i></button>
+              <div class="topbar-content">
+                <div class="topbar-content-wrapper">
+                  <div class="topbar-area topbar-area-more" data-area="more">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+      <div id="R-main-overlay"></div>
+      <main id="R-body-inner" class="highlightable guide" tabindex="-1">
+        <div class="flex-block-wrapper">
+<article class="default">
+  <header class="headline">
+  </header>
+<h1 id="entity-relations">Entity Relations</h1>
+
+<p>In a basic ECS, relations between entities, like hierarchies, can be represented
+by storing entities in components.
+E.g., we could have a child component like this:</p>
+<div class="highlight wrap-code"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">type</span> <span class="nx">ChildOf</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nx">Parent</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">Entity</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">}</span></span></span></code></pre></div>
+<p>Or, alternatively, a parent component with many children:</p>
+<div class="highlight wrap-code"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">type</span> <span class="nx">Parent</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nx">Children</span> <span class="p">[]</span><span class="nx">ecs</span><span class="p">.</span><span class="nx">Entity</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">}</span></span></span></code></pre></div>
+<p>In conjunction with <a href="../../guide/world-access/index.html">World Entity Access</a>, this is often sufficient.
+However, we are not able to leverage the power of queries to e.g. get all children of a particular parent.</p>
+<p>To make entity relations even more useful and efficient, Arche supports them as first class feature.
+Relations are added to and removed from entities just like components,
+and hence can be queried like components, with the usual efficiency.
+This is achieved by creating separate <a href="../../background/architecture/index.html#archetypes">archetypes</a>
+for relations with different target entities.</p>
+<nav id="TableOfContents">
+  <ul>
+    <li><a href="#relation-components">Relation components</a></li>
+    <li><a href="#creating-relations">Creating relations</a>
+      <ul>
+        <li><a href="#on-new-entities">On new entities</a></li>
+        <li><a href="#when-adding-components">When adding components</a></li>
+      </ul>
+    </li>
+    <li><a href="#set-and-get-relations">Set and get relations</a></li>
+    <li><a href="#querying-relations">Querying relations</a></li>
+    <li><a href="#limitations">Limitations</a></li>
+    <li><a href="#when-to-use-and-when-not">When to use, and when not</a></li>
+    <li><a href="#benchmarks">Benchmarks</a></li>
+    <li><a href="#longer-example">Longer example</a></li>
+  </ul>
+</nav>
+<h2 id="relation-components">Relation components</h2>
+<p>To use entity relations, create components that have <em>embedded</em> an <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Relation" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Relation">ecs.Relation</code>
+    </a>
+</span> as their first member:</p>
+<div class="highlight wrap-code"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="kd">type</span> <span class="nx">ChildOf</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">    <span class="nx">ecs</span><span class="p">.</span><span class="nx">Relation</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="p">}</span></span></span></code></pre></div>
+<p>That&rsquo;s all to make a component be treated as an entity relation by Arche.
+Thus, we have created a relation type. When added to an entity, a target entity for the relation can be defined.</p>
+
+<details open class=" box cstyle notices blue">
+  <summary class="box-label" tabindex="-1">
+    <i class="fa-fw fas fa-lightbulb"></i> 
+    Note
+  </summary>
+  <div class="box-content">
+<p>Note that each entity can only have one relation component. See section <a href="../../guide/relations/index.html#limitations">Limitations</a>.</p>
+  </div>
+</details>
+<h2 id="creating-relations">Creating relations</h2>
+<h3 id="on-new-entities">On new entities</h3>
+<p>When creating entities, we can use an <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Builder" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Builder">ecs.Builder</code>
+    </a>
+</span> to set a relation target.
+In the generic API, we use a <em>MapX</em> (e.g. <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic#Map2" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic.Map2">generic.Map2</code>
+    </a>
+</span>).</p>
+<div class="tab-panel" data-tab-group="5191781872f1a3e30644dca2bacacd18">
+  <div class="tab-nav">
+    <div class="tab-nav-title">&#8203;</div>
+    <button
+      data-tab-item="generic"
+      class="tab-nav-button tab-panel-style cstyle initial active" tabindex="-1"
+      onclick="switchTab('5191781872f1a3e30644dca2bacacd18','generic')"
+    >
+      <span class="tab-nav-text">generic</span>
+    </button>
+    <button
+      data-tab-item="id-based"
+      class="tab-nav-button tab-panel-style cstyle initial"
+      onclick="switchTab('5191781872f1a3e30644dca2bacacd18','id-based')"
+    >
+      <span class="tab-nav-text">ID-based</span>
+    </button>
+  </div>
+  <div class="tab-content-container">
+    <div
+      data-tab-item="generic"
+      class="tab-content tab-panel-style cstyle initial active">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="c1">// The second argument specifies the relation component.</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nx">builder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap2</span><span class="p">[</span><span class="nx">Position</span><span class="p">,</span> <span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">T</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">]())</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span> <span class="c1">// An entity with a zero target.</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="nx">parent</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">9</span><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="c1">// An entity with parent as target.</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+    <div
+      data-tab-item="id-based"
+      class="tab-content tab-panel-style cstyle initial">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="nx">posID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">Position</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="nx">childID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="c1">// We set the relation component with WithRelation.</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="nx">builder</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewBuilder</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="nx">posID</span><span class="p">,</span> <span class="nx">childID</span><span class="p">).</span><span class="nf">WithRelation</span><span class="p">(</span><span class="nx">childID</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span> <span class="c1">// An entity with a zero target.</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="nx">parent</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">parent</span><span class="p">)</span> <span class="c1">// An entity with parent as target.</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+<h3 id="when-adding-components">When adding components</h3>
+<p>A relation target can also be given when adding a relation component.
+With the ID-based API, we use the helper <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#World.Relations" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.World.Relations">ecs.World.Relations</code>
+    </a>
+</span> for this,
+like for most operations on entity relations.
+In the generic API, we use a <em>MapX</em> (e.g. <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic#Map2" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic.Map2">generic.Map2</code>
+    </a>
+</span>) again.</p>
+<div class="tab-panel" data-tab-group="1b62ff1b4df6972b335541f740ecd00b">
+  <div class="tab-nav">
+    <div class="tab-nav-title">&#8203;</div>
+    <button
+      data-tab-item="generic"
+      class="tab-nav-button tab-panel-style cstyle initial active" tabindex="-1"
+      onclick="switchTab('1b62ff1b4df6972b335541f740ecd00b','generic')"
+    >
+      <span class="tab-nav-text">generic</span>
+    </button>
+    <button
+      data-tab-item="id-based"
+      class="tab-nav-button tab-panel-style cstyle initial"
+      onclick="switchTab('1b62ff1b4df6972b335541f740ecd00b','id-based')"
+    >
+      <span class="tab-nav-text">ID-based</span>
+    </button>
+  </div>
+  <div class="tab-content-container">
+    <div
+      data-tab-item="generic"
+      class="tab-content tab-panel-style cstyle initial active">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nx">builder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap1</span><span class="p">[</span><span class="nx">Position</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nx">adder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap1</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">T</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">]())</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="nx">parent</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="nx">child</span> <span class="o">:=</span> <span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">
+</span></span><span class="line"><span class="ln">9</span><span class="cl"><span class="nx">adder</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+    <div
+      data-tab-item="id-based"
+      class="tab-content tab-panel-style cstyle initial">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="nx">posID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">Position</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="nx">childID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="nx">parent</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="nx">child</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">(</span><span class="nx">posID</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="nx">world</span><span class="p">.</span><span class="nf">Relations</span><span class="p">().</span><span class="nf">Exchange</span><span class="p">(</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">	<span class="nx">child</span><span class="p">,</span>             <span class="c1">// The entity to modify</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="p">[]</span><span class="nx">ecs</span><span class="p">.</span><span class="nx">ID</span><span class="p">{</span><span class="nx">childID</span><span class="p">},</span> <span class="c1">// Component(s) to add</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="kc">nil</span><span class="p">,</span>               <span class="c1">// Component(s) to remove</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="nx">childID</span><span class="p">,</span>           <span class="c1">// The relation component of the added components</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">	<span class="nx">parent</span><span class="p">,</span>            <span class="c1">// The target entity</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="p">)</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+<p>Alternatively, we can use a <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic.Exchange" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic.Exchange">generic.Exchange</code>
+    </a>
+</span>:</p>
+
+
+
+
+
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+  
+    
+    
+    
+      
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+    
+    
+    
+    
+    
+  
+    
+      
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="nx">builder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap1</span><span class="p">[</span><span class="nx">Position</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="nx">adder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nf">NewExchange</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">).</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">	<span class="nf">Adds</span><span class="p">(</span><span class="nx">generic</span><span class="p">.</span><span class="nx">T</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">]()).</span>        <span class="c1">// Component(s) to add</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="nf">WithRelation</span><span class="p">(</span><span class="nx">generic</span><span class="p">.</span><span class="nx">T</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">]())</span> <span class="c1">// The relation component of the added components</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="nx">parent</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="nx">child</span> <span class="o">:=</span> <span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl">
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="nx">adder</span><span class="p">.</span><span class="nf">Add</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span>
+</span></span></code></pre></div>
+
+
+<h2 id="set-and-get-relations">Set and get relations</h2>
+<p>We can also change the target of an already assigned relation component.
+This is done via <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Relations.Set" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Relations.Set">ecs.Relations.Set</code>
+    </a>
+</span> or <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic#Map.SetRelation" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic.Map.SetRelation">generic.Map.SetRelation</code>
+    </a>
+</span>:</p>
+<div class="tab-panel" data-tab-group="77a50097f63f62756fc74c7ea54e0fc2">
+  <div class="tab-nav">
+    <div class="tab-nav-title">&#8203;</div>
+    <button
+      data-tab-item="generic"
+      class="tab-nav-button tab-panel-style cstyle initial active" tabindex="-1"
+      onclick="switchTab('77a50097f63f62756fc74c7ea54e0fc2','generic')"
+    >
+      <span class="tab-nav-text">generic</span>
+    </button>
+    <button
+      data-tab-item="id-based"
+      class="tab-nav-button tab-panel-style cstyle initial"
+      onclick="switchTab('77a50097f63f62756fc74c7ea54e0fc2','id-based')"
+    >
+      <span class="tab-nav-text">ID-based</span>
+    </button>
+  </div>
+  <div class="tab-content-container">
+    <div
+      data-tab-item="generic"
+      class="tab-content tab-panel-style cstyle initial active">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nx">builder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap1</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nx">mapper</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="nx">parent</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl"><span class="nx">child</span> <span class="o">:=</span> <span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">8</span><span class="cl">
+</span></span><span class="line"><span class="ln">9</span><span class="cl"><span class="nx">mapper</span><span class="p">.</span><span class="nf">SetRelation</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+    <div
+      data-tab-item="id-based"
+      class="tab-content tab-panel-style cstyle initial">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nx">childID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl">
+</span></span><span class="line"><span class="ln">5</span><span class="cl"><span class="nx">parent</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="nx">child</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">(</span><span class="nx">childID</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="nx">world</span><span class="p">.</span><span class="nf">Relations</span><span class="p">().</span><span class="nf">Set</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">childID</span><span class="p">,</span> <span class="nx">parent</span><span class="p">)</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+<p>Similarly, relation targets can be obtained with <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#Relations.Get" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.Relations.Get">ecs.Relations.Get</code>
+    </a>
+</span> or <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic#Map.GetRelation" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic.Map.GetRelation">generic.Map.GetRelation</code>
+    </a>
+</span>:</p>
+<div class="tab-panel" data-tab-group="0b33c05336abe758f91660b12963bc86">
+  <div class="tab-nav">
+    <div class="tab-nav-title">&#8203;</div>
+    <button
+      data-tab-item="generic"
+      class="tab-nav-button tab-panel-style cstyle initial active" tabindex="-1"
+      onclick="switchTab('0b33c05336abe758f91660b12963bc86','generic')"
+    >
+      <span class="tab-nav-text">generic</span>
+    </button>
+    <button
+      data-tab-item="id-based"
+      class="tab-nav-button tab-panel-style cstyle initial"
+      onclick="switchTab('0b33c05336abe758f91660b12963bc86','id-based')"
+    >
+      <span class="tab-nav-text">ID-based</span>
+    </button>
+  </div>
+  <div class="tab-content-container">
+    <div
+      data-tab-item="generic"
+      class="tab-content tab-panel-style cstyle initial active">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl">
+</span></span><span class="line"><span class="ln">3</span><span class="cl"><span class="nx">builder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap1</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nx">mapper</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="nx">child</span> <span class="o">:=</span> <span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">7</span><span class="cl">
+</span></span><span class="line"><span class="ln">8</span><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">mapper</span><span class="p">.</span><span class="nf">GetRelation</span><span class="p">(</span><span class="nx">child</span><span class="p">)</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+    <div
+      data-tab-item="id-based"
+      class="tab-content tab-panel-style cstyle initial">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln">1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">2</span><span class="cl"><span class="nx">childID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">3</span><span class="cl">
+</span></span><span class="line"><span class="ln">4</span><span class="cl"><span class="nx">child</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">(</span><span class="nx">childID</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">5</span><span class="cl">
+</span></span><span class="line"><span class="ln">6</span><span class="cl"><span class="nx">_</span> <span class="p">=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">Relations</span><span class="p">().</span><span class="nf">Get</span><span class="p">(</span><span class="nx">child</span><span class="p">,</span> <span class="nx">childID</span><span class="p">)</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+<h2 id="querying-relations">Querying relations</h2>
+<p>And now for the best: querying for entities that have a certain relation and target.</p>
+<p>In the ID-based API, relation targets can be queries with <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/ecs#RelationFilter" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="ecs.RelationFilter">ecs.RelationFilter</code>
+    </a>
+</span>.
+In the generic API, it is supported by all <em>FilterX</em> via e.g. <span class="copy-to-clipboard">
+    <a href="https://pkg.go.dev/github.com/mlange-42/arche/generic#Filter2.WithRelation" target="_blank">
+        <code class="copy-to-clipboard-code" data-code="generic.Filter2.WithRelation">generic.Filter2.WithRelation</code>
+    </a>
+</span>.</p>
+<div class="tab-panel" data-tab-group="0041bc5bdc0416ac870b9797bbb7c864">
+  <div class="tab-nav">
+    <div class="tab-nav-title">&#8203;</div>
+    <button
+      data-tab-item="generic"
+      class="tab-nav-button tab-panel-style cstyle initial active" tabindex="-1"
+      onclick="switchTab('0041bc5bdc0416ac870b9797bbb7c864','generic')"
+    >
+      <span class="tab-nav-text">generic</span>
+    </button>
+    <button
+      data-tab-item="id-based"
+      class="tab-nav-button tab-panel-style cstyle initial"
+      onclick="switchTab('0041bc5bdc0416ac870b9797bbb7c864','id-based')"
+    >
+      <span class="tab-nav-text">ID-based</span>
+    </button>
+  </div>
+  <div class="tab-content-container">
+    <div
+      data-tab-item="generic"
+      class="tab-content tab-panel-style cstyle initial active">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="c1">// Two parent entities.</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl"><span class="nx">parent1</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="nx">parent2</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="c1">// A builder with a relation</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="nx">builder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap2</span><span class="p">[</span><span class="nx">Position</span><span class="p">,</span> <span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">T</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">]())</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1">// Create 10 entities for each parent.</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">parent1</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl">	<span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">parent2</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="c1">// A filter for all entities with Position,</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="c1">// and a ChildOf relation.</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="nx">filter</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewFilter2</span><span class="p">[</span><span class="nx">Position</span><span class="p">,</span> <span class="nx">ChildOf</span><span class="p">]().</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">	<span class="nf">WithRelation</span><span class="p">(</span><span class="nx">generic</span><span class="p">.</span><span class="nx">T</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">]())</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl">
+</span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="c1">// We specify the target when querying.</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl"><span class="c1">// Alternatively, a fixed target can be specified in WithRelation above.</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="nx">query</span> <span class="o">:=</span> <span class="nx">filter</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="nx">parent1</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nf">Count</span><span class="p">())</span> <span class="c1">// Prints 10</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">
+</span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="nx">query</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+    <div
+      data-tab-item="id-based"
+      class="tab-content tab-panel-style cstyle initial">
+      <div class="tab-content-text">
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl"><span class="nx">posID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">Position</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="nx">childID</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nx">ComponentID</span><span class="p">[</span><span class="nx">ChildOf</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl"><span class="c1">// Two parent entities.</span>
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl"><span class="nx">parent1</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl"><span class="nx">parent2</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">NewEntity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl"><span class="c1">// A builder with a relation</span>
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="nx">builder</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewBuilder</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="nx">posID</span><span class="p">,</span> <span class="nx">childID</span><span class="p">).</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl">	<span class="nf">WithRelation</span><span class="p">(</span><span class="nx">childID</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="c1">// Create 10 entities for each parent.</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl"><span class="k">for</span> <span class="nx">i</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">15</span><span class="cl">	<span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">parent1</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl">	<span class="nx">builder</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">parent2</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl">
+</span></span><span class="line"><span class="ln">19</span><span class="cl"><span class="c1">// A filter for all entities with Position,</span>
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="c1">// and ChildOf with target parent1.</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="nx">filter</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewRelationFilter</span><span class="p">(</span><span class="nx">ecs</span><span class="p">.</span><span class="nf">All</span><span class="p">(</span><span class="nx">posID</span><span class="p">,</span> <span class="nx">childID</span><span class="p">),</span> <span class="nx">parent1</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">
+</span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="nx">query</span> <span class="o">:=</span> <span class="nx">world</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">filter</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl"><span class="nx">fmt</span><span class="p">.</span><span class="nf">Println</span><span class="p">(</span><span class="nx">query</span><span class="p">.</span><span class="nf">Count</span><span class="p">())</span> <span class="c1">// Prints 10</span>
+</span></span><span class="line"><span class="ln">25</span><span class="cl">
+</span></span><span class="line"><span class="ln">26</span><span class="cl"><span class="nx">query</span><span class="p">.</span><span class="nf">Close</span><span class="p">()</span>
+</span></span></code></pre></div>
+      </div>
+    </div>
+  </div>
+</div>
+<h2 id="limitations">Limitations</h2>
+<p>Entity relations in Arche are inspired by <a href="https://github.com/SanderMertens/flecs" rel="external" target="_blank">Flecs</a>.
+However, the implementation in <em>Arche</em> is currently limited in that it only supports a single relation per entity, and no chained (or nested) relation queries.</p>
+<h2 id="when-to-use-and-when-not">When to use, and when not</h2>
+<p>When using Arche&rsquo;s entity relations, an archetype is created for each target entity of a relation.
+Thus, entity relations are not efficient if the number of target entities is high (tens of thousands),
+while only a low number of entities has a relation to each particular target (less than a few dozens).
+Particularly in the extreme case of 1:1 relations, storing entities in components
+as explained in the introduction of this chapter is more efficient.</p>
+<p>However, with a moderate number of relation targets, particularly with many entities per target,
+entity relations are very efficient. See section <a href="../../guide/relations/index.html#benchmarks">Benchmarks</a> below, for a comparison of different ways to represent entity relations.</p>
+<p>Beyond use cases where the relation target is a &ldquo;physical&rdquo; entity that appears
+in a simulation or game, targets can also be more abstract, like categories.
+Examples:</p>
+<ul>
+<li>Different tree species in a forest model</li>
+<li>Behavioral states in a finite state machine</li>
+<li>The opposing factions in a strategy game</li>
+<li>Render layers in a game or other graphical application</li>
+</ul>
+<p>This concept is particularly useful for things that would best be expressed by components,
+but the possible components (or categories) are only known at runtime.
+Thus, it is not possible to create ordinary components for them.
+However, these categories can be represented by entities, which are used as relation targets.</p>
+<p>See the last section of this chapter (<a href="../../guide/relations/index.html#longer-example">Longer example</a>)
+for an implementation of the tree species example above.</p>
+<h2 id="benchmarks">Benchmarks</h2>
+<p>The figure below compares the iteration time per entity for different ways of representing entity relations.
+The task is to sum up a value over the children of each parent.</p>
+<p>The following ways to represent entity relations are shown in the figure:</p>
+<ul>
+<li><em>ParentList</em> (purple): Children form an implicit linked list. The parent references the first child.
+<ul>
+<li>Query over parents, inner loop implicit linked list of children, using world access for next child and value component.</li>
+</ul>
+</li>
+<li><em>ParentSlice</em> (red): The parent holds a slice of all its children.
+<ul>
+<li>Query over parents, inner loop over slice of children using world access for value component.</li>
+</ul>
+</li>
+<li><em>Child</em> (green): Each child references its parent.
+<ul>
+<li>Query over all child entities and retrieval of the parent sum component using world access.</li>
+</ul>
+</li>
+<li><em>Default</em> (blue): Using Arche&rsquo;s relations feature without filter caching.
+<ul>
+<li>Outer query over parents, inner loop over children using relation queries.</li>
+</ul>
+</li>
+<li><em>Cached</em> (black): Using Arche&rsquo;s relations feature with filter caching.
+<ul>
+<li>Same as above, using an additional component per parent to store cached filters.</li>
+</ul>
+</li>
+</ul>
+<p>The first three representations are possible in any ECS, while the last two use Arche&rsquo;s entity relations feature.</p>
+<p><a href="#R-image-e95d15456ab8499fba12ab2d156f7943" class="lightbox-link"><img alt="Benchmarks Entity relations" class="lazy lightbox figure-image" loading="lazy" src="https://user-images.githubusercontent.com/44003176/238461931-7824bfeb-4a03-49e8-9de8-0650032259c0.svg" style=" height: auto; width: auto;"></a>
+<a href="javascript:history.back();" class="lightbox-back" id="R-image-e95d15456ab8499fba12ab2d156f7943"><img alt="Benchmarks Entity relations" class="lazy lightbox lightbox-image" loading="lazy" src="https://user-images.githubusercontent.com/44003176/238461931-7824bfeb-4a03-49e8-9de8-0650032259c0.svg"></a><br>
+<em>Iteration time per entity for different ways of representing entity relations. Color: ways to represent entity relations; Line style: total number of child entities; Markers: number of children per parent entity</em></p>
+<p>The benchmarks show that Arche&rsquo;s relations feature outperforms the other representations, except when there are very few children per parent.
+Only when there is a huge number of parents and significantly fewer than 100 children per parent,
+the <em>Child</em> representation should perform better.</p>
+<p>The <a href="https://github.com/mlange-42/arche/tree/main/benchmark/competition">benchmark code</a>
+can be found in the <a href="https://github.com/mlange-42/arche/">GitHub repository</a>.</p>
+<h2 id="longer-example">Longer example</h2>
+<p>To conclude this chapter, here is a longer example that uses Arche&rsquo; entity relations feature
+to represent tree species in a forest model.</p>
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+
+  
+  
+  <div class="highlight"><pre tabindex="0" class="chroma"><code class="language-go" data-lang="go"><span class="line"><span class="ln"> 1</span><span class="cl"><span class="kn">package</span> <span class="nx">main</span>
+</span></span><span class="line"><span class="ln"> 2</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 3</span><span class="cl"><span class="kn">import</span> <span class="p">(</span>
+</span></span><span class="line"><span class="ln"> 4</span><span class="cl">	<span class="s">&#34;math/rand&#34;</span>
+</span></span><span class="line"><span class="ln"> 5</span><span class="cl">
+</span></span><span class="line"><span class="ln"> 6</span><span class="cl">	<span class="s">&#34;github.com/mlange-42/arche/ecs&#34;</span>
+</span></span><span class="line"><span class="ln"> 7</span><span class="cl">	<span class="s">&#34;github.com/mlange-42/arche/generic&#34;</span>
+</span></span><span class="line"><span class="ln"> 8</span><span class="cl"><span class="p">)</span>
+</span></span><span class="line"><span class="ln"> 9</span><span class="cl">
+</span></span><span class="line"><span class="ln">10</span><span class="cl"><span class="c1">// SpeciesParams component for species (relation targets).</span>
+</span></span><span class="line"><span class="ln">11</span><span class="cl"><span class="kd">type</span> <span class="nx">SpeciesParams</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">12</span><span class="cl">	<span class="nx">GrowthRate</span> <span class="kt">float64</span>
+</span></span><span class="line"><span class="ln">13</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">14</span><span class="cl">
+</span></span><span class="line"><span class="ln">15</span><span class="cl"><span class="c1">// Species relation component for tree individuals.</span>
+</span></span><span class="line"><span class="ln">16</span><span class="cl"><span class="kd">type</span> <span class="nx">Species</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">17</span><span class="cl">	<span class="nx">ecs</span><span class="p">.</span><span class="nx">Relation</span>
+</span></span><span class="line"><span class="ln">18</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">19</span><span class="cl">
+</span></span><span class="line"><span class="ln">20</span><span class="cl"><span class="c1">// Biomass component for tree individuals.</span>
+</span></span><span class="line"><span class="ln">21</span><span class="cl"><span class="kd">type</span> <span class="nx">Biomass</span> <span class="kd">struct</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">22</span><span class="cl">	<span class="nx">BM</span> <span class="kt">float64</span>
+</span></span><span class="line"><span class="ln">23</span><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="ln">24</span><span class="cl">
+</span></span><span class="line"><span class="ln">25</span><span class="cl"><span class="kd">func</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">26</span><span class="cl">	<span class="nx">world</span> <span class="o">:=</span> <span class="nx">ecs</span><span class="p">.</span><span class="nf">NewWorld</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">27</span><span class="cl">
+</span></span><span class="line"><span class="ln">28</span><span class="cl">	<span class="nx">speciesBuilder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap1</span><span class="p">[</span><span class="nx">SpeciesParams</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">29</span><span class="cl">	<span class="nx">treeBuilder</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewMap2</span><span class="p">[</span><span class="nx">Biomass</span><span class="p">,</span> <span class="nx">Species</span><span class="p">](</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">T</span><span class="p">[</span><span class="nx">Species</span><span class="p">]())</span>
+</span></span><span class="line"><span class="ln">30</span><span class="cl">
+</span></span><span class="line"><span class="ln">31</span><span class="cl">	<span class="c1">// Create 10 species.</span>
+</span></span><span class="line"><span class="ln">32</span><span class="cl">	<span class="k">for</span> <span class="nx">s</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">s</span> <span class="p">&lt;</span> <span class="mi">10</span><span class="p">;</span> <span class="nx">s</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">33</span><span class="cl">		<span class="nx">species</span> <span class="o">:=</span> <span class="nx">speciesBuilder</span><span class="p">.</span><span class="nf">NewWith</span><span class="p">(</span>
+</span></span><span class="line"><span class="ln">34</span><span class="cl">			<span class="o">&amp;</span><span class="nx">SpeciesParams</span><span class="p">{</span><span class="nx">GrowthRate</span><span class="p">:</span> <span class="nx">rand</span><span class="p">.</span><span class="nf">Float64</span><span class="p">()},</span>
+</span></span><span class="line"><span class="ln">35</span><span class="cl">		<span class="p">)</span>
+</span></span><span class="line"><span class="ln">36</span><span class="cl">
+</span></span><span class="line"><span class="ln">37</span><span class="cl">		<span class="c1">// Create 100 trees per species. Biomass is zero.</span>
+</span></span><span class="line"><span class="ln">38</span><span class="cl">		<span class="k">for</span> <span class="nx">t</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">t</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">t</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">39</span><span class="cl">			<span class="nx">treeBuilder</span><span class="p">.</span><span class="nf">New</span><span class="p">(</span><span class="nx">species</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">40</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">41</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">42</span><span class="cl">
+</span></span><span class="line"><span class="ln">43</span><span class="cl">	<span class="nx">speciesFilter</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewFilter1</span><span class="p">[</span><span class="nx">SpeciesParams</span><span class="p">]()</span>
+</span></span><span class="line"><span class="ln">44</span><span class="cl">	<span class="nx">treeFilter</span> <span class="o">:=</span> <span class="nx">generic</span><span class="p">.</span><span class="nx">NewFilter1</span><span class="p">[</span><span class="nx">Biomass</span><span class="p">]().</span> <span class="c1">// We want to access biomass.</span>
+</span></span><span class="line"><span class="ln">45</span><span class="cl">							<span class="nf">With</span><span class="p">(</span><span class="nx">generic</span><span class="p">.</span><span class="nx">T</span><span class="p">[</span><span class="nx">Species</span><span class="p">]()).</span>        <span class="c1">// We want this, but will not access it</span>
+</span></span><span class="line"><span class="ln">46</span><span class="cl">							<span class="nf">WithRelation</span><span class="p">(</span><span class="nx">generic</span><span class="p">.</span><span class="nx">T</span><span class="p">[</span><span class="nx">Species</span><span class="p">]())</span> <span class="c1">// Finally, the relation.</span>
+</span></span><span class="line"><span class="ln">47</span><span class="cl">
+</span></span><span class="line"><span class="ln">48</span><span class="cl">	<span class="c1">// Time loop.</span>
+</span></span><span class="line"><span class="ln">49</span><span class="cl">	<span class="k">for</span> <span class="nx">tick</span> <span class="o">:=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">tick</span> <span class="p">&lt;</span> <span class="mi">100</span><span class="p">;</span> <span class="nx">tick</span><span class="o">++</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">50</span><span class="cl">		<span class="c1">// Query and iterate species.</span>
+</span></span><span class="line"><span class="ln">51</span><span class="cl">		<span class="nx">speciesQuery</span> <span class="o">:=</span> <span class="nx">speciesFilter</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">52</span><span class="cl">		<span class="k">for</span> <span class="nx">speciesQuery</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">53</span><span class="cl">			<span class="c1">// Get species params and entity.</span>
+</span></span><span class="line"><span class="ln">54</span><span class="cl">			<span class="nx">params</span> <span class="o">:=</span> <span class="nx">speciesQuery</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">55</span><span class="cl">			<span class="nx">species</span> <span class="o">:=</span> <span class="nx">speciesQuery</span><span class="p">.</span><span class="nf">Entity</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">56</span><span class="cl">
+</span></span><span class="line"><span class="ln">57</span><span class="cl">			<span class="c1">// Query and iterate trees for the current species.</span>
+</span></span><span class="line"><span class="ln">58</span><span class="cl">			<span class="nx">treeQuery</span> <span class="o">:=</span> <span class="nx">treeFilter</span><span class="p">.</span><span class="nf">Query</span><span class="p">(</span><span class="o">&amp;</span><span class="nx">world</span><span class="p">,</span> <span class="nx">species</span><span class="p">)</span>
+</span></span><span class="line"><span class="ln">59</span><span class="cl">			<span class="k">for</span> <span class="nx">treeQuery</span><span class="p">.</span><span class="nf">Next</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="ln">60</span><span class="cl">				<span class="nx">bm</span> <span class="o">:=</span> <span class="nx">treeQuery</span><span class="p">.</span><span class="nf">Get</span><span class="p">()</span>
+</span></span><span class="line"><span class="ln">61</span><span class="cl">				<span class="c1">// Increase biomass by the species&#39; growth rate.</span>
+</span></span><span class="line"><span class="ln">62</span><span class="cl">				<span class="nx">bm</span><span class="p">.</span><span class="nx">BM</span> <span class="o">+=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">GrowthRate</span>
+</span></span><span class="line"><span class="ln">63</span><span class="cl">			<span class="p">}</span>
+</span></span><span class="line"><span class="ln">64</span><span class="cl">		<span class="p">}</span>
+</span></span><span class="line"><span class="ln">65</span><span class="cl">	<span class="p">}</span>
+</span></span><span class="line"><span class="ln">66</span><span class="cl">
+</span></span><span class="line"><span class="ln">67</span><span class="cl">	<span class="nx">_</span> <span class="p">=</span> <span class="nx">world</span>
+</span></span><span class="line"><span class="ln">68</span><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+
+
+
+  <footer class="footline">
+  </footer>
+</article>
+        </div>
+      </main>
+    </div>
+    <aside id="R-sidebar" class="default-animation showVisitedLinks">
+      <div id="R-header-topbar" class="default-animation"></div>
+      <div id="R-header-wrapper" class="default-animation">
+        <div id="R-header" class="default-animation">
+<a href="https://mlange-42.github.io/arche/" title="Home"><img src="https://mlange-42.github.io/arche/images/logo-dark.svg" alt="Arche Logo"></img></a>
+        </div>
+        <script>
+          window.index_js_url="../../searchindex.en.js?1739208916";
+        </script>
+        <search><form action="../../search/index.html" method="get">
+          <div class="searchbox default-animation">
+            <button class="search-detail" type="submit" title="Search (CTRL+ALT+f)"><i class="fas fa-search"></i></button>
+            <label class="a11y-only" for="R-search-by">Search</label>
+            <input data-search-input id="R-search-by" name="search-by" class="search-by" type="search" placeholder="Search...">
+            <button class="search-clear" type="button" data-search-clear="" title="Clear search"><i class="fas fa-times" title="Clear search"></i></button>
+          </div>
+        </form></search>
+        <script>
+          var contentLangs=['en'];
+        </script>
+        <script src="../../js/auto-complete.js?1739208916" defer></script>
+        <script src="../../js/lunr/lunr.min.js?1739208916" defer></script>
+        <script src="../../js/lunr/lunr.stemmer.support.min.js?1739208916" defer></script>
+        <script src="../../js/lunr/lunr.multi.min.js?1739208916" defer></script>
+        <script src="../../js/lunr/lunr.en.min.js?1739208916" defer></script>
+        <script src="../../js/search.js?1739208916" defer></script>
+      </div>
+      <div id="R-homelinks" class="default-animation">
+        <hr class="padding">
+      </div>
+      <div id="R-content-wrapper" class="highlightable">
+        <div id="R-shortcutmenu-home" class="R-sidebarmenu">
+          <ul class="enlarge morespace collapsible-menu">
+            <li class="" data-nav-id="/quickstart/index.html"><a class="padding" href="../../quickstart/index.html">Quickstart<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="parent " data-nav-id="/guide/index.html"><input type="checkbox" id="R-section-94eda0941ce4ed1918fdd1b038022890" aria-controls="R-subsections-94eda0941ce4ed1918fdd1b038022890" checked><label for="R-section-94eda0941ce4ed1918fdd1b038022890"><i class="fa-fw fas fa-chevron-right"></i><span class="a11y-only">Submenu User Guide</span></label><a class="padding" href="../../guide/index.html">User Guide<i class="fa-fw fas fa-check read-icon"></i></a><ul id="R-subsections-94eda0941ce4ed1918fdd1b038022890" class="collapsible-menu">
+            <li class="" data-nav-id="/guide/apis/index.html"><a class="padding" href="../../guide/apis/index.html">Generic &amp; ID-based API<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/world/index.html"><a class="padding" href="../../guide/world/index.html">The World<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/entities/index.html"><a class="padding" href="../../guide/entities/index.html">Entities &amp; Components<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/queries/index.html"><a class="padding" href="../../guide/queries/index.html">Queries<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/filters/index.html"><a class="padding" href="../../guide/filters/index.html">Filters<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/world-access/index.html"><a class="padding" href="../../guide/world-access/index.html">World Entity Access<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="active " data-nav-id="/guide/relations/index.html"><a class="padding" href="../../guide/relations/index.html">Entity Relations<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/batch-ops/index.html"><a class="padding" href="../../guide/batch-ops/index.html">Batch Operations<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/resources/index.html"><a class="padding" href="../../guide/resources/index.html">ECS Resources<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/events/index.html"><a class="padding" href="../../guide/events/index.html">Event System<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/stats/index.html"><a class="padding" href="../../guide/stats/index.html">World Statistics<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/performance/index.html"><a class="padding" href="../../guide/performance/index.html">Performance Tips<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/guide/tools/index.html"><a class="padding" href="../../guide/tools/index.html">Tools<i class="fa-fw fas fa-check read-icon"></i></a></li></ul></li>
+            <li class="" data-nav-id="/background/index.html"><input type="checkbox" id="R-section-41dba48017bfaad2d030f2bc994c8d85" aria-controls="R-subsections-41dba48017bfaad2d030f2bc994c8d85"><label for="R-section-41dba48017bfaad2d030f2bc994c8d85"><i class="fa-fw fas fa-chevron-right"></i><span class="a11y-only">Submenu Background</span></label><a class="padding" href="../../background/index.html">Background<i class="fa-fw fas fa-check read-icon"></i></a><ul id="R-subsections-41dba48017bfaad2d030f2bc994c8d85" class="collapsible-menu">
+            <li class="" data-nav-id="/background/design/index.html"><a class="padding" href="../../background/design/index.html">Design Philosophy<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/background/architecture/index.html"><a class="padding" href="../../background/architecture/index.html">Architecture<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/background/benchmarks/index.html"><a class="padding" href="../../background/benchmarks/index.html">Benchmarks<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="/background/changelog/index.html"><a class="padding" href="../../background/changelog/index.html">Changelog<i class="fa-fw fas fa-check read-icon"></i></a></li></ul></li>
+            <li class="" data-nav-id="/made_with/index.html"><a class="padding" href="../../made_with/index.html">Made with Arche<i class="fa-fw fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div id="R-shortcutmenu-shortcuts" class="R-sidebarmenu">
+          <div class="nav-title padding">More</div>
+          <ul class="space collapsible-menu">
+            <li class="" data-nav-id="https://github.com/mlange-42/arche"><a class="padding" href="https://github.com/mlange-42/arche" rel="external" target="_blank"><i class='fab fa-fw fa-github'></i> GitHub repo<i class="fa-fw fas fa-check read-icon"></i></a></li>
+            <li class="" data-nav-id="https://pkg.go.dev/github.com/mlange-42/arche"><a class="padding" href="https://pkg.go.dev/github.com/mlange-42/arche" rel="external" target="_blank"><i class='fas fa-fw fa-bookmark'></i> API reference<i class="fa-fw fas fa-check read-icon"></i></a></li>
+          </ul>
+        </div>
+        <div class="padding footermargin footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks"></div>
+        <div id="R-menu-footer">
+          <hr class="padding default-animation footerLangSwitch footerVariantSwitch footerVisitedLinks footerFooter showVariantSwitch showVisitedLinks">
+          <div id="R-prefooter" class="footerLangSwitch footerVariantSwitch footerVisitedLinks showVariantSwitch showVisitedLinks">
+            <ul>
+              <li id="R-select-language-container" class="footerLangSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-language"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-language">Language</label>
+                    <select id="R-select-language" onchange="location = this.querySelector( this.value ).dataset.url;">
+                      <option id="R-select-language-en" value="#R-select-language-en" data-url="../../guide/relations/index.html" lang="en-us" selected></option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+              <li id="R-select-variant-container" class="footerVariantSwitch showVariantSwitch">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-paint-brush"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <label class="a11y-only" for="R-select-variant">Theme</label>
+                    <select id="R-select-variant" onchange="window.relearn.changeVariant( this.value );">
+                      <option id="R-select-variant-auto" value="auto" selected>Auto</option>
+                      <option id="R-select-variant-mylight" value="mylight">Light</option>
+                      <option id="R-select-variant-mydark" value="mydark">Dark</option>
+                    </select>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+                <script>window.relearn.markVariant();</script>
+              </li>
+              <li class="footerVisitedLinks showVisitedLinks">
+                <div class="padding menu-control">
+                  <i class="fa-fw fas fa-history"></i>
+                  <span>&nbsp;</span>
+                  <div class="control-style">
+                    <button onclick="clearHistory();">Clear History</button>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </li>
+            </ul>
+          </div>
+          <div id="R-footer" class="footerFooter">
+          </div>
+        </div>
+      </div>
+    </aside>
+    <script src="../../js/clipboard.min.js?1739208916" defer></script>
+    <script src="../../js/perfect-scrollbar.min.js?1739208916" defer></script>
+    <script src="../../js/theme.js?1739208916" defer></script>
+  </body>
+</html>
