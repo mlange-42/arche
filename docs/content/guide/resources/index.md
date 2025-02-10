@@ -1,5 +1,6 @@
 +++
 title = 'ECS Resources'
+type = "docs"
 weight = 100
 description = 'ECS resources in Arche.'
 +++
@@ -11,8 +12,6 @@ and "things" that appear only once in a model or game.
 For these cases, Arche provides so-called {{< api ecs Resources >}}.
 A resource can be thought of as a component that only appears once, globally,
 in an {{< api ecs World >}}.
-
-{{< toc >}}
 
 ## Resource types
 

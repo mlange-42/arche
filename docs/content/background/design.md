@@ -1,5 +1,6 @@
 +++
 title = 'Design Philosophy'
+type = 'docs'
 weight = 20
 description = 'Specific design considerations behind Arche.'
 +++
@@ -7,8 +8,6 @@ Unlike most other ECS implementations, Arche is designed for the development of 
 individual-based models rather than for game development.
 This motivates some design decisions, with an emphasis on simplicity, safety and performance.
 Nevertheless, Arche can also be used for game development.
-
-{{< toc >}}
 
 ## Simple core API
 

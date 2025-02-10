@@ -1,5 +1,6 @@
 +++
 title = 'Tools'
+type = "docs"
 weight = 999
 description = 'External tools built for Arche.'
 +++

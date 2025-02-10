@@ -1,5 +1,6 @@
 +++
 title = 'Filters'
+type = "docs"
 weight = 60
 description = "Arche's filter APIs."
 +++
@@ -14,8 +15,6 @@ The following sections present the filtering options available in Arche.
 > Filters should be stored and re-used where possible, particularly over time steps.
 > Contrary, [Queries](./queries) are for one-time utilization and must be created
 > from a filter before every iteration loop.
-
-{{< toc >}}
 
 ## Core filters
 

@@ -1,5 +1,6 @@
 +++
 title = 'World Entity Access'
+type = "docs"
 weight = 70
 description = 'Access to components through the world, by entity ID.'
 +++
@@ -7,8 +8,6 @@ So far, we only used {{< api ecs Query >}} to access components.
 Component access in queries is highly efficient, but it does not provide
 access to the components of a specific entity.
 This is possible through {{< api ecs World >}} methods, or using a generic *MapX* (like {{< api generic Map2 >}}) or {{< api generic Map >}}.
-
-{{< toc >}}
 
 ## Getting components
 

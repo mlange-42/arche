@@ -1,5 +1,6 @@
 +++
 title = 'Performance Tips'
+type = "docs"
 weight = 130
 description = "Performance tips on how to get the most out of Arche."
 +++
@@ -12,8 +13,6 @@ Due to its cache-friendliness, [archetype-based ECS](/background/architecture) c
 
 Nevertheless, each ECS has its strengths and weaknesses.
 This chapter provides tips on what you should pay attention to in order to get the most out of Arche.
-
-{{< toc >}}
 
 ## Optimized for Iteration
 

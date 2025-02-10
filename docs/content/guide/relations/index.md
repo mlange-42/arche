@@ -1,5 +1,6 @@
 +++
 title = 'Entity Relations'
+type = "docs"
 weight = 80
 description = "Arche's entity relationships feature."
 +++
@@ -29,8 +30,6 @@ Relations are added to and removed from entities just like components,
 and hence can be queried like components, with the usual efficiency.
 This is achieved by creating separate [archetypes](/background/architecture#archetypes)
 for relations with different target entities.
-
-{{< toc >}}
 
 ## Relation components
 

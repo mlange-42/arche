@@ -1,5 +1,6 @@
 +++
 title = "Made with Arche"
+type = "docs"
 weight = 4
 description = "Projects using Arche."
 +++

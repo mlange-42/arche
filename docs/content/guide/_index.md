@@ -1,6 +1,7 @@
 +++
 archetype = "chapter"
 title = "User Guide"
+type = "docs"
 weight = 2
 part = 1
 description = 'Comprehensive Arche user guide.'

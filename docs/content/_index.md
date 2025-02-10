@@ -1,5 +1,6 @@
 +++
 title = 'Arche'
+type = "docs"
 no_heading = true
 +++
 {{< html >}}

@@ -1,5 +1,6 @@
 +++
 title = 'Queries'
+type = "docs"
 weight = 50
 description = "Usage of Arche's queries."
 +++
@@ -11,8 +12,6 @@ They allow for very fast retrieval and iteration of entities with certain compon
 > Queries are for one-time utilization.
 > A query can be iterated through only once, and a new one must be created before every loop.
 > Contrary, the underlying [Filters](./filters) should be stored and re-used.
-
-{{< toc >}}
 
 ## Query creation & iteration
 

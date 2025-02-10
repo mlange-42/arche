@@ -1,5 +1,6 @@
 +++
 title = 'The World'
+type = "docs"
 weight = 30
 description = "The World as Arche's central data storage."
 +++
@@ -10,8 +11,6 @@ For the internal structure of the world, see chapter [Architecture](/background/
 
 Here, we only deal with world creation.
 Most world functionality is covered in chapters [Entities & Components](./entities) and [World Entity Access](./world-access).
-
-{{< toc >}}
 
 ## World creation
 

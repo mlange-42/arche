@@ -1,12 +1,11 @@
 +++
 title = 'Entities & Components'
+type = "docs"
 weight = 40
 description = 'Entities, components, creation and removal in Arche.'
 +++
 Entities and components are the primary building blocks of the ECS concept.
 This chapter explains their representation and manipulation in Arche.
-
-{{< toc >}}
 
 ## Entities
 

@@ -1,5 +1,6 @@
 +++
 title = 'World Statistics'
+type = "docs"
 weight = 120
 description = "Arche's world statistics feature for engine insights."
 +++
@@ -11,8 +12,6 @@ for example in order to judge effects of different ways of implementing somethin
 Otherwise, users would have to rely on logic reasoning and sufficient understanding of Arche to derive these numbers.
 
 For that sake, Arche provides statistics about its internals, prepared in a compact and digestible form.
-
-{{< toc >}}
 
 ## Accessing statistics
 
