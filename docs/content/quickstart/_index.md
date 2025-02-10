@@ -21,7 +21,7 @@ go get github.com/mlange-42/arche
 Here is the classical Position/Velocity example that every ECS shows in the docs.
 It uses the type-safe  {{< api generic >}} API.
 
-{{< code example_test.go >}}
+{{% code example_test.go %}}
 
 ## What's next?
 

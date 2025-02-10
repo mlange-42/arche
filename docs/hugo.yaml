@@ -21,6 +21,10 @@ menu:
         icon: github
 
 params:
+  #repoURL: https://github.com/mlange-42/arche/
+  #editURL: https://github.com/mlange-42/arche/edit/main/docs/content/${FilePath}
+  apiURL: https://pkg.go.dev/github.com/mlange-42/arche/
+
   search:
     enable: true
     type: flexsearch
@@ -32,6 +36,9 @@ params:
     displayLogo: false
 
 markup:
+  goldmark:
+    renderer:
+      unsafe: true
   highlight:
     lineNumbersInTable: false
     lineNos: true

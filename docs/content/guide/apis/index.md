@@ -17,12 +17,12 @@ Both APIs can be mixed as needed.
 
 > [!TIP]
 > In this user guide, most code examples will be presented with two tabs, one for each API:
-> 
-> {{< tabs >}}
-> {{< tab title="generic" >}}
-> {{< code-func api_test.go TestGeneric >}}
-> {{< /tab >}}
-> {{< tab title="ID-based" >}}
-> {{< code-func api_test.go TestIDs >}}
-> {{< /tab >}}
-> {{< /tabs >}}
+
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
+{{< code-func api_test.go TestGeneric >}}
+{{< /tab >}}
+{{< tab >}}
+{{< code-func api_test.go TestIDs >}}
+{{< /tab >}}
+{{< /tabs >}}

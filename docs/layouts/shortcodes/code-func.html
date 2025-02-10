@@ -1,4 +1,3 @@
-
 {{ $file := .Get 0 }}
 {{ $func := .Get 1 }}
 {{ $startPrefix := printf "func %s(" $func }}
@@ -13,12 +12,13 @@
       {{ break }}
     {{ end }}
     {{ if $started }}
-    {{ $trim := strings.TrimPrefix "\t" . }}
-    {{ $code = printf "%s%s\n" $code $trim }}
+      {{ $trim := strings.TrimPrefix "\t" . }}
+      {{ $code = printf "%s%s\n" $code $trim }}
     {{end}}
     {{ if and (not $started) (strings.HasPrefix . $startPrefix) }}
       {{ $started = true }}
     {{ end }}
   {{ end }}
-  {{ highlight $code "go" }}
+  {{ $code := printf "\n```go\n%s\n```\n" $code }}
+  {{ $code | safeHTML }}
 {{ end }}
