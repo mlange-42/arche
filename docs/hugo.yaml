@@ -37,8 +37,13 @@ params:
       # index page by: content | summary | heading | title
       index: content
   navbar:
-    displayTitle: true
-    displayLogo: false
+    displayTitle: false
+    displayLogo: true
+    logo:
+      path: images/logo-light.svg
+      dark: images/logo-dark.svg
+      link: /arche
+      width: 120
 
 markup:
   goldmark:

@@ -1,7 +1,6 @@
 +++
-title = 'Arche'
+title = ''
 type = "docs"
-no_heading = true
 +++
 {{< html >}}
 <img src="images/logo-light.svg" alt="Arche" class="light" style="width: 100%; max-width: 680px; margin:24px auto 24px auto;"/>

@@ -83,8 +83,8 @@ Following these transitions, the archetype resulting from addition and/or remova
 of components can be found easily.
 
 {{< html >}}
-<img alt="Archetype graph light" width="600" class="light" src="/images/background/archetype-graph.svg"></img>
-<img alt="Archetype graph dark" width="600" class="dark" src="/images/background/archetype-graph-dark.svg"></img>
+<img alt="Archetype graph light" width="600" class="light" src="../images/archetype-graph.svg"></img>
+<img alt="Archetype graph dark" width="600" class="dark" src="../images/archetype-graph-dark.svg"></img>
 {{< /html >}}  
 *Illustration of the archetype graph. Letters represent components. Boxes represent archetype nodes.
 Arrows represent transitions when a single component is added or removed.*
