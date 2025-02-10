@@ -30,8 +30,10 @@ params:
     - identifier: auto
       name: Auto
       auto: []
-    - identifier: "light"
-    - identifier: "dark"
+    - identifier: "mylight"
+      name: Light
+    - identifier: "mydark"
+      name: Dark
 
   disableLandingPageButton: true
   showVisitedLinks: true
