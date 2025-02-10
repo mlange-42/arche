@@ -61,6 +61,12 @@ nav .hx-pt-6 .hx-font-semibold {
   font-stretch: 112.5%;
 }
 
+/* pager */
+.hx-font-medium {
+  font-weight: 300;
+  font-stretch: 112.5%;
+}
+
 /* links */
 .content a {
   text-decoration: none;
@@ -111,7 +117,7 @@ html.dark .hextra-tabs-toggle[data-state="selected"] {
 
 /* space above TOC */
 nav .hx-pt-6 {
-  padding-top: 1rem;
+  padding-top: 1.33rem;
   font-size: 100%;
 }
 
