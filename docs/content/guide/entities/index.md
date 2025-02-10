@@ -16,7 +16,7 @@ The only entity that can be directly created by the user is the zero entity, in 
 
 {{% code-func entities_test.go TestZeroEntity %}}
 
-All other entities must be created through the {{< api ecs World >}} (see section [Creating entities](#creating-entities) below)
+All other entities must be created through the {{< api ecs World >}} (see section [Create entities](#create-entities) below)
 
 ## Components
 
@@ -36,12 +36,12 @@ type Heading struct {
 }
 ```
 
-Components are stored in the [World](./world) and accessed through [Queries](./queries) or
-through the world itself (see [World Entity Access](./world-access)).
+Components are stored in the [World](../world) and accessed through [Queries](../queries) or
+through the world itself (see [World Entity Access](../world-access)).
 
 ### Component IDs
 
-Each component type has a unique ID, which is used to access it in the [ID-based API](./apis).
+Each component type has a unique ID, which is used to access it in the [ID-based API](../apis).
 Component IDs can be registered as well as obtained through {{< api ecs ComponentID >}}.
 
 {{< code-func entities_test.go TestComponentID >}}
@@ -69,7 +69,7 @@ never via pointers!
 
 ### Generic API
 
-Creating entities using the [generic API](./apis) requires a generic *MapX*, like {{< api generic Map2 >}}:
+Creating entities using the [generic API](../apis) requires a generic *MapX*, like {{< api generic Map2 >}}:
 
 {{< code-func entities_test.go TestEntitiesCreateGeneric >}}
 
@@ -88,7 +88,7 @@ We get an entity with `Position` and `Heading`, initialized according to values 
 
 ### Batch Creation
 
-For faster batch creation of many entities, see chapter [Batch Operations](./batch-ops).
+For faster batch creation of many entities, see chapter [Batch Operations](../batch-ops).
 
 ## Add and remove components
 

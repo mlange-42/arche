@@ -4,16 +4,16 @@ type = "docs"
 weight = 60
 description = "Arche's filter APIs."
 +++
-*Filters* provide the logic for filtering entities in [Queries](./queries).
+*Filters* provide the logic for filtering entities in [Queries](../queries).
 
-Due to the [archetype](/background/architecture#archetypes)-based architecture of Arche :wink:, filters are very efficient.
+Due to the [archetype](../../background/architecture#archetypes)-based architecture of Arche :wink:, filters are very efficient.
 Instead of against every single entity, they are only matched against archetypes.
 
 The following sections present the filtering options available in Arche.
 
 > [!IMPORTANT]
 > Filters should be stored and re-used where possible, particularly over time steps.
-> Contrary, [Queries](./queries) are for one-time utilization and must be created
+> Contrary, [Queries](../queries) are for one-time utilization and must be created
 > from a filter before every iteration loop.
 
 ## Core filters
@@ -81,7 +81,7 @@ This requires the respective component(s) to be present, but they are not obtain
 
 ### Relation filters
 
-Filters for [Entity Relations](./relations) are covered in the respective chapter.
+Filters for [Entity Relations](../relations) are covered in the respective chapter.
 
 ## Logic filters
 
@@ -93,7 +93,7 @@ Here are some examples:
 
 ## Filter caching
 
-Normally, when iterating a [Query](./queries), the underlying filter is evaluated on each [archetype](/background/architecture#archetypes).
+Normally, when iterating a [Query](../queries), the underlying filter is evaluated on each [archetype](../../background/architecture#archetypes).
 With a high number of archetypes in the world, this can slow down query iteration and other query functions.
 
 To prevent this slowdown, filters can be registered to the {{< api ecs World.Cache >}} via

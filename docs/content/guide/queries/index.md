@@ -11,12 +11,12 @@ They allow for very fast retrieval and iteration of entities with certain compon
 > [!IMPORTANT]
 > Queries are for one-time utilization.
 > A query can be iterated through only once, and a new one must be created before every loop.
-> Contrary, the underlying [Filters](./filters) should be stored and re-used.
+> Contrary, the underlying [Filters](../filters) should be stored and re-used.
 
 ## Query creation & iteration
 
 Queries are created through the {{< api ecs World >}} using a *Filter* (interface {{< api ecs Filter >}}).
-The most basic type of filter is {{< api ecs Mask >}}. For more advanced filters, see chapter [Filters](./filters).
+The most basic type of filter is {{< api ecs Mask >}}. For more advanced filters, see chapter [Filters](../filters).
 
 Here, we create a filter that gives us all entities with all the given components, and potentially further components. Then, we create an {{< api ecs Query >}} (or generic *QueryX*, e.g. {{< api generic Query2 >}}) and iterate it.
 
@@ -37,7 +37,7 @@ current query iterator position.
 > and should only be used inside the query loop.
 
 Comparing the two versions of the code above, one can clearly observe the advantages of the generic API
-over the ID-based API (see chapter on [APIs](./apis)).
+over the ID-based API (see chapter on [APIs](../apis)).
 Firstly, the generic code is shorter and more readable.
 But even more importantly, it much safer.
 A little mistake in line 9 or 10 of the ID-based version could result in silently casting a component
@@ -89,9 +89,9 @@ like in this example:
 {{< code-func queries_test.go TestQueryEntityAt >}}
 
 Note that we need to close the query manually, again!
-To access components of the retrieved entities, see chapter [World Entity Access](./world-access).
+To access components of the retrieved entities, see chapter [World Entity Access](../world-access).
 
 Note that {{< api ecs Query.EntityAt >}} may be slow when working with a large number of archetypes.
 Often, it is useful to register the underlying filter for speedup.
-See chapter [Filter](./filters), section [Filter caching](./filters#filter-caching) for details.
-See the [query benchmarks](/background/benchmarks#query) for some numbers on performance.
+See chapter [Filter](../filters), section [Filter caching](../filters#filter-caching) for details.
+See the [query benchmarks](../../background/benchmarks#query) for some numbers on performance.

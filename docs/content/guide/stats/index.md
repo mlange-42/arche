@@ -39,7 +39,7 @@ Node -- Components:  2, Entities:    100, Capacity:    128, Memory:     4.0 kB, 
 {{< api "ecs/stats" World stats.World >}} provides world information like a list of all component types
 and the total memory reserved for entities and components.
 Further, it contains {{< api "ecs/stats" Entities stats.Entities >}} and
-a {{< api "ecs/stats" Node stats.Node >}} for each active [archetype node](/background/architecture#archetype-graph).
+a {{< api "ecs/stats" Node stats.Node >}} for each active [archetype node](../../background/architecture#archetype-graph).
 
 ## Entity stats
 
@@ -48,7 +48,7 @@ live capacity, alive entities and available entities for recycling.
 
 ## Node stats
 
-{{< api "ecs/stats" Node stats.Node >}} provides information about an [archetype node](/background/architecture#archetype-graph), like its components, memory in total and per entity,
+{{< api "ecs/stats" Node stats.Node >}} provides information about an [archetype node](../../background/architecture#archetype-graph), like its components, memory in total and per entity,
 and more state information.
 
 Further, it contains a {{< api "ecs/stats" Node stats.Archetype >}} for each archetype.

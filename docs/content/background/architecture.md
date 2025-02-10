@@ -65,12 +65,12 @@ Not only in terms of iteration speed, which is particularly tailored for.
 Even when it comes to entity manipulation (adding, removing components etc.),
 where sparse-set ECS implementations should shine, Arche leads the field.
 
-For more numbers on performance, see chapter [Benchmarks](./benchmarks). 
+For more numbers on performance, see chapter [Benchmarks](../benchmarks). 
 
 ## Details
 
 Actually, the explanation above is quite simplified.
-Particularly it leaves out [Entity Relations](/guide/relations) and the *archetypes graph* and *nodes*.
+Particularly it leaves out [Entity Relations](../../guide/relations) and the *archetypes graph* and *nodes*.
 
 ### Archetype graph
 
@@ -107,7 +107,7 @@ Transitions are stored in the nodes with lookup approx. 10 times faster than Go'
 
 ### Entity relations
 
-The *archetype nodes* explained above are utilized to implement Arche's [Entity Relations](/guide/relations) feature.
+The *archetype nodes* explained above are utilized to implement Arche's [Entity Relations](../../guide/relations) feature.
 When an archetype contains a relation components, the respective node contains an archetype "table"
 for each entity that is a target of that relation.
 As an example, we have components `A`, `B` and `R`, where `R` is a relation.

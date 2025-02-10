@@ -6,11 +6,11 @@ description = "The World as Arche's central data storage."
 +++
 
 The *World* ({{< api ecs World >}}) is the central data storage in Arche.
-It manages and stores entities ({{< api ecs Entity >}}), their components, as well as [Resources](./resources).
-For the internal structure of the world, see chapter [Architecture](/background/architecture).
+It manages and stores entities ({{< api ecs Entity >}}), their components, as well as [Resources](../resources).
+For the internal structure of the world, see chapter [Architecture](../../background/architecture).
 
 Here, we only deal with world creation.
-Most world functionality is covered in chapters [Entities & Components](./entities) and [World Entity Access](./world-access).
+Most world functionality is covered in chapters [Entities & Components](../entities) and [World Entity Access](../world-access).
 
 ## World creation
 
@@ -24,7 +24,7 @@ A world can also be configured with an initial capacity:
 
 The initial capacity is used to initialize archetypes, the entity list, etc.
 
-For archetypes with an [Entity Relation](./relations), a separate initial capacity can be specified:
+For archetypes with an [Entity Relation](../relations), a separate initial capacity can be specified:
 
 {{< code-func world_test.go TestWorldConfigRelations >}}
 

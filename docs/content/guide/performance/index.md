@@ -9,18 +9,18 @@ It will probably not get into your way in this regard.
 Experience shows that in simulation built with Arche, ECS code like queries, entity creation etc.
 takes between 5% and 15% of the total CPU time.
 Keep in mind that this is not "on top" of the simulation, but replaces the overhead any other implementation for storing and iterating entities would have.
-Due to its cache-friendliness, [archetype-based ECS](/background/architecture) can outperform e.g. an [Array of Structs](https://en.wikipedia.org/wiki/AoS_and_SoA) implementation, particularly for simulations with many entities and/or many variables per entity.
+Due to its cache-friendliness, [archetype-based ECS](../../background/architecture) can outperform e.g. an [Array of Structs](https://en.wikipedia.org/wiki/AoS_and_SoA) implementation, particularly for simulations with many entities and/or many variables per entity.
 
 Nevertheless, each ECS has its strengths and weaknesses.
 This chapter provides tips on what you should pay attention to in order to get the most out of Arche.
 
 ## Optimized for Iteration
 
-Being an [archetype-based ECS](/background/architecture), Arche is optimized for queries and iteration.
+Being an [archetype-based ECS](../../background/architecture), Arche is optimized for queries and iteration.
 Adding and removing components is comparatively costly with this architecture,
 because components must be moved around between archetypes.
 The runtime difference between accessing a component and adding/removing a component is at least one order of magnitude.
-For some numbers for comparison, see the [Benchmarks](/background/benchmarks).
+For some numbers for comparison, see the [Benchmarks](../../background/benchmarks).
 
 ## Queries & Components
 
@@ -45,7 +45,7 @@ This way, the filter is not checked against archetypes during query iteration.
 Instead, the archetypes relevant for the filter are cached,
 and checks are only required when new archetypes are created.
 
-For details, see the section on caching in chapter [Filters](./filters#filter-caching).
+For details, see the section on caching in chapter [Filters](../filters#filter-caching).
 
 ## World access
 
@@ -57,13 +57,13 @@ Further, world access can't benefit from the cache-friendly linearity of query i
 This becomes more severe when the length of "jumps" between entities increases.
 Thus, is it more efficient to randomly access among e.g. 1000 entities compared to 100k entities.
 
-As an example, say we have 1000 parent entities, 100k child entities, and don't use [Entity Relations](./relations).
+As an example, say we have 1000 parent entities, 100k child entities, and don't use [Entity Relations](../relations).
 Here, it would be better to use a query over the children and access the parent of each child by world access. We jump around between 1000 entities.
 Alternatively, we could query the parents and access the children of each parent by world access.
 The number of accesses through the world would be the same, but we would jump between 100k entities,
 which would be slower.
 
-See also the [benchmarks](./relations/#benchmarks) for [Entity Relations](./relations).
+See also the [benchmarks](../relations/#benchmarks) for [Entity Relations](../relations).
 
 ## World operations
 
@@ -110,6 +110,6 @@ Batching can speed up operations by up to an order of magnitude.
 It allows for bulk allocation of component memory and entities,
 and cuts off the overhead that is otherwise required for each entity, repeatedly. 
 Entity creation is the most common use case for batching.
-For details, see the chapter on [Batch Operations](./batch-ops).
+For details, see the chapter on [Batch Operations](../batch-ops).
 
-See also the [Benchmarks](/background/benchmarks#entities) for batched vs. un-batched operations.
+See also the [Benchmarks](../../background/benchmarks#entities) for batched vs. un-batched operations.

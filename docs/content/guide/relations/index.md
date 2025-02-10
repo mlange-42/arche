@@ -22,13 +22,13 @@ type Parent struct {
 }
 ```
 
-In conjunction with [World Entity Access](./world-access), this is often sufficient.
+In conjunction with [World Entity Access](../world-access), this is often sufficient.
 However, we are not able to leverage the power of queries to e.g. get all children of a particular parent.
 
 To make entity relations even more useful and efficient, Arche supports them as first class feature.
 Relations are added to and removed from entities just like components,
 and hence can be queried like components, with the usual efficiency.
-This is achieved by creating separate [archetypes](/background/architecture#archetypes)
+This is achieved by creating separate [archetypes](../../background/architecture#archetypes)
 for relations with different target entities.
 
 ## Relation components

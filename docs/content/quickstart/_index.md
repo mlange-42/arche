@@ -27,11 +27,11 @@ It uses the type-safe  {{< api generic >}} API.
 
 If you ask **"What is ECS?"**, take a look at the great [**ECS FAQ**](https://github.com/SanderMertens/ecs-faq) by Sander Mertens, the author of the [Flecs](http://flecs.dev) ECS.
 
-To learn how to use Arche, read the [User Guide](/guide),
+To learn how to use Arche, read the [User Guide](../guide),
 browse the [API documentation](https://pkg.go.dev/github.com/mlange-42/arche),
 or take a look at the {{< repo "tree/main/_examples" examples >}} in the {{< repo "" "GitHub repository" >}}.
 
-You can also read about Arche's [Design Philosophy](/background/design)
-and [Architecture](/background/architecture) for more background information.
+You can also read about Arche's [Design Philosophy](../background/design)
+and [Architecture](../background/architecture) for more background information.
 
-See the [Benchmarks](/background/benchmarks) if you are interested in some numbers on Arche's performance.
+See the [Benchmarks](../background/benchmarks) if you are interested in some numbers on Arche's performance.

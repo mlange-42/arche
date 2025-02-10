@@ -4,9 +4,9 @@ type = "docs"
 weight = 90
 description = 'Batch operations in Arche.'
 +++
-Compared to [Queries](./queries) and [World Entity Access](./world-access),
+Compared to [Queries](../queries) and [World Entity Access](../world-access),
 creation and removal of entities or components are relatively costly operations.
-See the [Benchmarks](/background/benchmarks) for some numbers.
+See the [Benchmarks](../../background/benchmarks) for some numbers.
 
 For these operations, Arche provides batched versions.
 This allows to create or manipulate a large number of entities much faster than one by one.
