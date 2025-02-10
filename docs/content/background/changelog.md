@@ -4,4 +4,4 @@ weight = 90
 description = 'Arche changelog.'
 +++
 
-{{% include file="/background/_changelog.md" %}}
+{{< include file="/background/_changelog.md" >}}
