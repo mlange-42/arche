@@ -3,6 +3,9 @@ title = 'Design Philosophy'
 type = 'docs'
 weight = 20
 description = 'Specific design considerations behind Arche.'
+
+[params]
+prev = "/background"
 +++
 Unlike most other ECS implementations, Arche is designed for the development of scientific,
 individual-based models rather than for game development.

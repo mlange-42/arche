@@ -3,6 +3,9 @@ title = 'Generic & ID-based API'
 type = "docs"
 weight = 20
 description = "Overview of Arche's generic and ID-based APIs."
+
+[params]
+prev = "/guide"
 +++
 
 Arche provides two different APIs:

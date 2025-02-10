@@ -5,6 +5,10 @@ type = "docs"
 weight = 2
 part = 1
 description = 'Comprehensive Arche user guide.'
+
+[params]
+prev = "/quickstart"
+next = "/guide/apis"
 +++
 
 The following chapters are designed to be read sequentially in the presented order.

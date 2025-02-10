@@ -3,6 +3,9 @@ title = 'Quickstart'
 type = 'docs'
 weight = 1
 description = 'Quickstart guide to install and use Arche.'
+
+[params]
+next = "/guide"
 +++
 This page shows how to install Arche, and gives a minimal usage example.
 

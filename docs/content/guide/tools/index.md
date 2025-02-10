@@ -3,6 +3,9 @@ title = 'Tools'
 type = "docs"
 weight = 999
 description = 'External tools built for Arche.'
+
+[params]
+next = "/background"
 +++
 A number of tools has been created for Arche.
 
