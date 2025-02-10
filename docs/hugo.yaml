@@ -25,9 +25,10 @@ params:
   theme:
     default: system
     displayToggle: true
+  footer:
+    displayPoweredBy: false
+    displayCopyright: false
   
-  #repoURL: https://github.com/mlange-42/arche/
-  #editURL: https://github.com/mlange-42/arche/edit/main/docs/content/${FilePath}
   apiURL: https://pkg.go.dev/github.com/mlange-42/arche/
 
   search:

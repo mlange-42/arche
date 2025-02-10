@@ -7,7 +7,7 @@ html {
   font-family: "Roboto Flex", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   font-size: 18px;
   font-weight: 200;
-  font-stretch: 120%;
+  font-stretch: 112.5%;
 }
 
 /* themed images */
@@ -44,8 +44,18 @@ body:is(html[class~="dark"] *) {
 .hextra-scrollbar a {
   overflow: hidden;
   word-break: keep-all;
+  white-space: nowrap;
   font-size: 100%;
-  font-weight: 200;
+  font-weight: 300;
+  font-stretch: 112.5%;
+}
+
+/* TOC */
+nav .hx-pt-6 .hx-font-semibold {
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 300;
+  font-stretch: 112.5%;
 }
 
 /* links */
@@ -90,13 +100,10 @@ html.dark .content :where(a):not(:where([class~="not-prose"], [class~="not-prose
   padding-top: 0.0rem;
 }
 
+/* space above TOC */
 nav .hx-pt-6 {
-  padding-top: 0.8rem;
+  padding-top: 1rem;
   font-size: 100%;
-}
-
-nav .hx-pt-6 .hx-font-semibold {
-  font-weight: 200;
 }
 
 /* tables */
@@ -130,10 +137,11 @@ nav .hx-pt-6 .hx-font-semibold {
   font-size: 100%;
 }
 
-/* smaller headings */
+/* page titles */
 .content :where(h1):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
   font-size: 2.8rem;
   font-weight: 200;
+  font-stretch: 120%;
   text-align: center;
   padding-top: 1.66rem;
   padding-bottom: 1rem;

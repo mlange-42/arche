@@ -7,9 +7,6 @@ part = 1
 description = 'Comprehensive Arche user guide.'
 +++
 
-Arche's user guide.
-
-## Usage
 The following chapters are designed to be read sequentially in the presented order.
 If you are familiar with ECS and know what you are looking for,
 you may also just look it up or use the search.
