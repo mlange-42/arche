@@ -10,11 +10,10 @@ Instead of against every single entity, they are only matched against archetypes
 
 The following sections present the filtering options available in Arche.
 
-{{% notice style="blue" icon="exclamation" title="Important" %}}
-Filters should be stored and re-used where possible, particularly over time steps.
-Contrary, [Queries](./queries) are for one-time utilization and must be created
-from a filter before every iteration loop.
-{{% /notice %}}
+> [!IMPORTANT]
+> Filters should be stored and re-used where possible, particularly over time steps.
+> Contrary, [Queries](./queries) are for one-time utilization and must be created
+> from a filter before every iteration loop.
 
 {{< toc >}}
 

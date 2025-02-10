@@ -22,4 +22,4 @@ see the [go-ecs-benchmarks](https://github.com/mlange-42/go-ecs-benchmarks) repo
 
 {{< toc >}}
 
-{{< include file="/background/_benchmarks.md" >}}
+{{< include "/background/_benchmarks.md" >}}

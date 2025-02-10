@@ -45,9 +45,8 @@ type ChildOf struct {
 That's all to make a component be treated as an entity relation by Arche.
 Thus, we have created a relation type. When added to an entity, a target entity for the relation can be defined.
 
-{{% notice style="blue" icon="lightbulb" title="Note" %}}
-Note that each entity can only have one relation component. See section [Limitations](#limitations).
-{{% /notice %}}
+> [!TIP]
+> Note that each entity can only have one relation component. See section [Limitations](#limitations).
 
 ## Creating relations
 

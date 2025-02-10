@@ -64,10 +64,9 @@ However, {{< api ecs World.NewEntity NewEntity >}} takes an arbitrary number of 
 We get an entity with `Position`, and another one with `Position` and `Heading`.
 The components of the entity are initialized with their zero values.
 
-{{% notice style="blue" icon="exclamation" title="Important" %}}
-Note that entities should always be stored and passed around by value/copy,
+> [!IMPORTANT]
+> Note that entities should always be stored and passed around by value/copy,
 never via pointers!
-{{< /notice >}}
 
 ### Generic API
 
@@ -83,11 +82,10 @@ Alternatively, entities can be created with initialized components through {{< a
 
 We get an entity with `Position` and `Heading`, initialized according to values behind the passed pointers.
 
-{{% notice style="blue" icon="lightbulb" title="Note" %}}
-The `2` in `Map2` stands for the number of components.
-In the generic API, there are also `FilterX` and `QueryX`.
-All these types are available for `X` in range 0 (or 1) to 12.
-{{% /notice %}}
+> [!TIP]
+> The `2` in `Map2` stands for the number of components.
+> In the generic API, there are also `FilterX` and `QueryX`.
+> All these types are available for `X` in range 0 (or 1) to 12.
 
 ### Batch Creation
 
@@ -110,9 +108,8 @@ With generics, use a {{< api generic Map2 >}} again:
 
 First, we add `Position` and `Heading` to the entity, then we remove both.
 
-{{% notice style="blue" icon="exclamation" title="Important" %}}
-Note that generic types like *MapX* should be stored and re-used where possible, particularly over time steps.
-{{% /notice %}}
+> [!IMPORTANT]
+> Note that generic types like *MapX* should be stored and re-used where possible, particularly over time steps.
 
 Using the generic API, it is also possible to assign initialized components with
 {{< api generic Map2.Assign >}}, similar to {{< api generic Map2.NewWith Map2.NewWith >}}:

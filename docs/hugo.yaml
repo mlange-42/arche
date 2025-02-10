@@ -4,16 +4,9 @@ relativeURLs: true
 languageCode: en-us
 title: Arche
 
-enableEmoji: true
-
-renderer:
-  unsafe: true
-
 module:
   imports:
-    path: github.com/McShelby/hugo-theme-relearn
-
-  theme: "hugo-theme-relearn"
+    path: github.com/imfing/hextra
 
 outputs:
   home: ["html", "rss"]

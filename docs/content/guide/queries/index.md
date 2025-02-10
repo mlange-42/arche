@@ -7,11 +7,10 @@ description = "Usage of Arche's queries."
 Queries ({{< api ecs Query >}}) are the heart of Arche's query engine.
 They allow for very fast retrieval and iteration of entities with certain components.
 
-{{% notice style="blue" icon="exclamation" title="Important" %}}
-Queries are for one-time utilization.
-A query can be iterated through only once, and a new one must be created before every loop.
-Contrary, the underlying [Filters](./filters) should be stored and re-used.
-{{% /notice %}}
+> [!IMPORTANT]
+> Queries are for one-time utilization.
+> A query can be iterated through only once, and a new one must be created before every loop.
+> Contrary, the underlying [Filters](./filters) should be stored and re-used.
 
 {{< toc >}}
 
@@ -34,10 +33,9 @@ Here, we create a filter that gives us all entities with all the given component
 Where {{< api ecs Query.Get >}} (resp. {{< api generic Query2.Get >}}) return components of the entity at the
 current query iterator position.
 
-{{% notice style="blue" icon="exclamation" title="Important" %}}
-Note that the component pointers obtained from queries should never be stored persistently,
-and should only be used inside the query loop.
-{{< /notice >}}
+> [!IMPORTANT]
+> Note that the component pointers obtained from queries should never be stored persistently,
+> and should only be used inside the query loop.
 
 Comparing the two versions of the code above, one can clearly observe the advantages of the generic API
 over the ID-based API (see chapter on [APIs](./apis)).
@@ -46,13 +44,13 @@ But even more importantly, it much safer.
 A little mistake in line 9 or 10 of the ID-based version could result in silently casting a component
 to the wrong type, which would lead to bugs that are hard to track down.
 
-{{% notice style="blue" icon="bug" title="Tip" %}}
-If you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference" from queries, you are probably using them in the wrong way. Try running with build tag `debug` for more helpful error messages:
-
-```
-go run -tags debug .
-```
-{{% /notice %}}
+> [!TIP]
+> If you get error messages like "index out of range [-1]" or "invalid memory address or nil pointer dereference" from queries, you
+> are probably using them in the wrong way. Try running with build tag `debug` for more helpful error messages:
+> 
+> ```
+> go run -tags debug .
+> ```
 
 ## World lock
 

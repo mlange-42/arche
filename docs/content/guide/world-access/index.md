@@ -39,9 +39,8 @@ Similarly, it is also possible to check if an entity has a given component with
 Note that we have to use {{< api generic Map >}} here, which is similar to
 {{< api generic Map1 >}} for a single component, but offers more functionality.
 
-{{% notice style="blue" icon="exclamation" title="Important" %}}
-Note that the component pointers obtained here should never be stored persistently.
-{{< /notice >}}
+> [!IMPORTANT]
+> Note that the component pointers obtained here should never be stored persistently.
 
 ## Unchecked access
 
