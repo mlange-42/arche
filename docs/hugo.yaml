@@ -1,0 +1,57 @@
+baseURL: https://mlange-42.github.io/arche/
+canonifyURLs: true
+relativeURLs: true
+languageCode: en-us
+title: Arche
+
+enableEmoji: true
+
+renderer:
+  unsafe: true
+
+module:
+  imports:
+    path: github.com/McShelby/hugo-theme-relearn
+
+  theme: "hugo-theme-relearn"
+
+outputs:
+  home: ["html", "rss"]
+
+params:
+  images: ["images/social.png"]
+  description: "Documentation for Arche, the Go Entity Component System (ECS)"
+
+  repoURL: "https://github.com/mlange-42/arche/"
+  editURL: "https://github.com/mlange-42/arche/edit/main/docs/content/${FilePath}"
+  apiURL: "https://pkg.go.dev/github.com/mlange-42/arche/"
+
+  themeVariant:
+    - identifier: auto
+      name: Auto
+      auto: []
+    - identifier: "light"
+    - identifier: "dark"
+
+  disableLandingPageButton: true
+  showVisitedLinks: true
+  collapsibleMenu: true
+  disableInlineCopyToClipBoard: true
+
+menu:
+  shortcuts:
+    - name: <i class='fab fa-fw fa-github'></i> GitHub repo
+      identifier: repo
+      url: https://github.com/mlange-42/arche
+      weight: 10
+
+    - name: <i class='fas fa-fw fa-bookmark'></i> API reference
+      identifier: api
+      url: https://pkg.go.dev/github.com/mlange-42/arche
+      weight: 20
+
+markup:
+  highlight:
+    lineNumbersInTable: false
+    lineNos: true
+    noClasses: false
