@@ -1,7 +1,11 @@
 +++
 title = 'Changelog'
+type = 'docs'
 weight = 90
 description = 'Arche changelog.'
+
+[params]
+next = "/made_with"
 +++
 
-{{< include file="/background/_changelog.md" >}}
+{{% include "/generated/_changelog.md" %}}

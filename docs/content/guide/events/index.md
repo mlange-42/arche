@@ -1,5 +1,6 @@
 +++
 title = 'Event System'
+type = "docs"
 weight = 110
 description = "Arche's event system for entity modification."
 +++
@@ -15,8 +16,6 @@ It can be used to automatically insert entities into these structures on creatio
 or component addition, and to remove them on entity or component removal.
 
 The types of interest here are {{< api ecs Listener >}} and {{< api ecs EntityEvent >}}.
-
-{{< toc >}}
 
 ## Subscriptions
 

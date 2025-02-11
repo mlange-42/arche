@@ -1,5 +1,6 @@
 +++
 title = 'Entity Relations'
+type = "docs"
 weight = 80
 description = "Arche's entity relationships feature."
 +++
@@ -21,16 +22,14 @@ type Parent struct {
 }
 ```
 
-In conjunction with [World Entity Access](./world-access), this is often sufficient.
+In conjunction with [World Entity Access](../world-access), this is often sufficient.
 However, we are not able to leverage the power of queries to e.g. get all children of a particular parent.
 
 To make entity relations even more useful and efficient, Arche supports them as first class feature.
 Relations are added to and removed from entities just like components,
 and hence can be queried like components, with the usual efficiency.
-This is achieved by creating separate [archetypes](/background/architecture#archetypes)
+This is achieved by creating separate [archetypes](../../background/architecture#archetypes)
 for relations with different target entities.
-
-{{< toc >}}
 
 ## Relation components
 
@@ -45,9 +44,8 @@ type ChildOf struct {
 That's all to make a component be treated as an entity relation by Arche.
 Thus, we have created a relation type. When added to an entity, a target entity for the relation can be defined.
 
-{{% notice style="blue" icon="lightbulb" title="Note" %}}
-Note that each entity can only have one relation component. See section [Limitations](#limitations).
-{{% /notice %}}
+> [!TIP]
+> Note that each entity can only have one relation component. See section [Limitations](#limitations).
 
 ## Creating relations
 
@@ -56,11 +54,11 @@ Note that each entity can only have one relation component. See section [Limitat
 When creating entities, we can use an {{< api ecs Builder >}} to set a relation target.
 In the generic API, we use a *MapX* (e.g. {{< api generic Map2 >}}).
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestCreateEntityGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestCreateEntity >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -72,11 +70,11 @@ With the ID-based API, we use the helper {{< api ecs World.Relations >}} for thi
 like for most operations on entity relations.
 In the generic API, we use a *MapX* (e.g. {{< api generic Map2 >}}) again.
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestAddRelationGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestAddRelation >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -90,22 +88,22 @@ Alternatively, we can use a {{< api generic.Exchange >}}:
 We can also change the target of an already assigned relation component.
 This is done via {{< api ecs Relations.Set >}} or {{< api generic Map.SetRelation >}}:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestSetRelationGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestSetRelation >}}
 {{< /tab >}}
 {{< /tabs >}}
 
 Similarly, relation targets can be obtained with {{< api ecs Relations.Get >}} or {{< api generic Map.GetRelation >}}:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestGetRelationGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestGetRelation >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -117,11 +115,11 @@ And now for the best: querying for entities that have a certain relation and tar
 In the ID-based API, relation targets can be queries with {{< api ecs RelationFilter >}}.
 In the generic API, it is supported by all *FilterX* via e.g. {{< api generic Filter2.WithRelation >}}.
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestRelationQueryGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func relations_test.go TestRelationQuery >}}
 {{< /tab >}}
 {{< /tabs >}}

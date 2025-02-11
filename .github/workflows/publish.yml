@@ -29,10 +29,10 @@ jobs:
           go test -v ./docs/content/...
       - name: Run benchmark tables
         run: |
-          go run ./benchmark/table | tee docs/content/background/_benchmarks.md
+          go run ./benchmark/table | tee docs/content/generated/_benchmarks.md
       - name: Copy changelog
         run: |
-          cp ./CHANGELOG.md ./docs/content/background/_changelog.md
+          cp ./CHANGELOG.md ./docs/content/generated/_changelog.md
       - name: Setup Hugo
         uses: peaceiris/actions-hugo@v2
         with:

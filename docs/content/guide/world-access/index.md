@@ -1,5 +1,6 @@
 +++
 title = 'World Entity Access'
+type = "docs"
 weight = 70
 description = 'Access to components through the world, by entity ID.'
 +++
@@ -8,18 +9,16 @@ Component access in queries is highly efficient, but it does not provide
 access to the components of a specific entity.
 This is possible through {{< api ecs World >}} methods, or using a generic *MapX* (like {{< api generic Map2 >}}) or {{< api generic Map >}}.
 
-{{< toc >}}
-
 ## Getting components
 
 For a given entity, components can be accessed using {{< api ecs World.Get >}}
 or {{< api generic Map2.Get >}}, respectively:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func access_test.go TestGetGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func access_test.go TestGet >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -27,11 +26,11 @@ or {{< api generic Map2.Get >}}, respectively:
 Similarly, it is also possible to check if an entity has a given component with
 {{< api ecs World.Has >}} or {{< api generic Map.Has >}}, respectively:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func access_test.go TestHasGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func access_test.go TestHas >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -39,9 +38,8 @@ Similarly, it is also possible to check if an entity has a given component with
 Note that we have to use {{< api generic Map >}} here, which is similar to
 {{< api generic Map1 >}} for a single component, but offers more functionality.
 
-{{% notice style="blue" icon="exclamation" title="Important" %}}
-Note that the component pointers obtained here should never be stored persistently.
-{{< /notice >}}
+> [!IMPORTANT]
+> Note that the component pointers obtained here should never be stored persistently.
 
 ## Unchecked access
 

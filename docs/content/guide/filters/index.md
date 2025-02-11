@@ -1,22 +1,20 @@
 +++
 title = 'Filters'
+type = "docs"
 weight = 60
 description = "Arche's filter APIs."
 +++
-*Filters* provide the logic for filtering entities in [Queries](./queries).
+*Filters* provide the logic for filtering entities in [Queries](../queries).
 
-Due to the [archetype](/background/architecture#archetypes)-based architecture of Arche :wink:, filters are very efficient.
+Due to the [archetype](../../background/architecture#archetypes)-based architecture of Arche :wink:, filters are very efficient.
 Instead of against every single entity, they are only matched against archetypes.
 
 The following sections present the filtering options available in Arche.
 
-{{% notice style="blue" icon="exclamation" title="Important" %}}
-Filters should be stored and re-used where possible, particularly over time steps.
-Contrary, [Queries](./queries) are for one-time utilization and must be created
-from a filter before every iteration loop.
-{{% /notice %}}
-
-{{< toc >}}
+> [!IMPORTANT]
+> Filters should be stored and re-used where possible, particularly over time steps.
+> Contrary, [Queries](../queries) are for one-time utilization and must be created
+> from a filter before every iteration loop.
 
 ## Core filters
 
@@ -38,11 +36,11 @@ and anything else that we are not interested in.
 
 Particular components can be excluded with {{< api ecs Mask.Without >}} and {{< api generic Filter2.Without >}}:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestMaskWithoutGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestMaskWithout >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -54,11 +52,11 @@ Here, we filter for all entities that have a `Position`, but no `Heading`. Other
 With {{< api ecs Mask.Exclusive >}} and {{< api generic Filter2.Exclusive >}},
 we can exclude all components that are not in the filter:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestMaskExclusiveGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestMaskExclusive >}}
 {{< /tab >}}
 {{< /tabs >}}
@@ -83,7 +81,7 @@ This requires the respective component(s) to be present, but they are not obtain
 
 ### Relation filters
 
-Filters for [Entity Relations](./relations) are covered in the respective chapter.
+Filters for [Entity Relations](../relations) are covered in the respective chapter.
 
 ## Logic filters
 
@@ -95,17 +93,17 @@ Here are some examples:
 
 ## Filter caching
 
-Normally, when iterating a [Query](./queries), the underlying filter is evaluated on each [archetype](/background/architecture#archetypes).
+Normally, when iterating a [Query](../queries), the underlying filter is evaluated on each [archetype](../../background/architecture#archetypes).
 With a high number of archetypes in the world, this can slow down query iteration and other query functions.
 
 To prevent this slowdown, filters can be registered to the {{< api ecs World.Cache >}} via
 {{< api ecs Cache.Register >}}. For generic filters, there is {{< api generic Filter2.Register >}}:
 
-{{< tabs >}}
-{{< tab title="generic" >}}
+{{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestRegisterGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func filters_test.go TestRegister >}}
 {{< /tab >}}
 {{< /tabs >}}

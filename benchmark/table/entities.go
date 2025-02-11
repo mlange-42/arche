@@ -12,16 +12,16 @@ func benchesEntities() []benchmark.Benchmark {
 	return []benchmark.Benchmark{
 		{Name: "Entity.IsZero", Desc: "", F: entitiesIsZero_2, N: 2},
 
-		{Name: "World.NewEntity", Desc: "memory already allocated", F: entitiesCreate_1000, N: 1000},
-		{Name: "World.NewEntity w/ 1 Comp", Desc: "memory already allocated", F: entitiesCreate_1Comp_1000, N: 1000},
-		{Name: "World.NewEntity w/ 5 Comps", Desc: "memory already allocated", F: entitiesCreate_5Comp_1000, N: 1000},
+		{Name: "World.NewEntity", Desc: "memory already alloc.", F: entitiesCreate_1000, N: 1000},
+		{Name: "World.NewEntity w/ 1 Comp", Desc: "memory already alloc.", F: entitiesCreate_1Comp_1000, N: 1000},
+		{Name: "World.NewEntity w/ 5 Comps", Desc: "memory already alloc.", F: entitiesCreate_5Comp_1000, N: 1000},
 
 		{Name: "World.RemoveEntity", Desc: "", F: entitiesRemove_1000, N: 1000},
 		{Name: "World.RemoveEntity w/ 1 Comp", Desc: "", F: entitiesRemove_1Comp_1000, N: 1000},
 		{Name: "World.RemoveEntity w/ 5 Comps", Desc: "", F: entitiesRemove_5Comp_1000, N: 1000},
 
-		{Name: "Map1.NewWith 1 Comp", Desc: "memory already allocated", F: entitiesCreateWithGeneric_1Comp_1000, N: 1000},
-		{Name: "Map5.NewWith 5 Comps", Desc: "memory already allocated", F: entitiesCreateWithGeneric_5Comp_1000, N: 1000},
+		{Name: "Map1.NewWith 1 Comp", Desc: "memory already alloc.", F: entitiesCreateWithGeneric_1Comp_1000, N: 1000},
+		{Name: "Map5.NewWith 5 Comps", Desc: "memory already alloc.", F: entitiesCreateWithGeneric_5Comp_1000, N: 1000},
 	}
 }
 

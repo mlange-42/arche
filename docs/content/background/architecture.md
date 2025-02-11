@@ -1,13 +1,12 @@
 +++
 title = 'Architecture'
+type = 'docs'
 weight = 30
 description = "Arche's internal ECS architecture."
 +++
 Arche uses an archetype-based architecture. Therefore the name :wink:.
 
 This chapter explains the concept and Arche's take on it.
-
-{{< toc >}}
 
 ## Archetypes
 
@@ -66,12 +65,12 @@ Not only in terms of iteration speed, which is particularly tailored for.
 Even when it comes to entity manipulation (adding, removing components etc.),
 where sparse-set ECS implementations should shine, Arche leads the field.
 
-For more numbers on performance, see chapter [Benchmarks](./benchmarks). 
+For more numbers on performance, see chapter [Benchmarks](../benchmarks). 
 
 ## Details
 
 Actually, the explanation above is quite simplified.
-Particularly it leaves out [Entity Relations](/guide/relations) and the *archetypes graph* and *nodes*.
+Particularly it leaves out [Entity Relations](../../guide/relations) and the *archetypes graph* and *nodes*.
 
 ### Archetype graph
 
@@ -84,8 +83,8 @@ Following these transitions, the archetype resulting from addition and/or remova
 of components can be found easily.
 
 {{< html >}}
-<img alt="Archetype graph light" width="600" class="light" src="/images/background/archetype-graph.svg"></img>
-<img alt="Archetype graph dark" width="600" class="dark" src="/images/background/archetype-graph-dark.svg"></img>
+<img alt="Archetype graph light" width="600" class="light" src="../images/archetype-graph.svg"></img>
+<img alt="Archetype graph dark" width="600" class="dark" src="../images/archetype-graph-dark.svg"></img>
 {{< /html >}}  
 *Illustration of the archetype graph. Letters represent components. Boxes represent archetype nodes.
 Arrows represent transitions when a single component is added or removed.*
@@ -108,7 +107,7 @@ Transitions are stored in the nodes with lookup approx. 10 times faster than Go'
 
 ### Entity relations
 
-The *archetype nodes* explained above are utilized to implement Arche's [Entity Relations](/guide/relations) feature.
+The *archetype nodes* explained above are utilized to implement Arche's [Entity Relations](../../guide/relations) feature.
 When an archetype contains a relation components, the respective node contains an archetype "table"
 for each entity that is a target of that relation.
 As an example, we have components `A`, `B` and `R`, where `R` is a relation.

@@ -1,7 +1,11 @@
 +++
 title = 'Generic & ID-based API'
+type = "docs"
 weight = 20
 description = "Overview of Arche's generic and ID-based APIs."
+
+[params]
+prev = "/guide"
 +++
 
 Arche provides two different APIs:
@@ -14,17 +18,14 @@ Further, it is more flexible and may be more appropriate for tasks like automate
 
 Both APIs can be mixed as needed.
 
-{{< notice style="blue" icon="lightbulb" title="Tip" >}}
-In this user guide, most code examples will be presented with two tabs, one for each API:
-
-{{< tabs >}}
-{{< tab title="generic" >}}
+> [!TIP]
+> In this user guide, most code examples will be presented with two tabs, one for each API:
+> 
+> {{< tabs items="generic,ID-based" >}}
+{{< tab >}}
 {{< code-func api_test.go TestGeneric >}}
 {{< /tab >}}
-{{< tab title="ID-based" >}}
+{{< tab >}}
 {{< code-func api_test.go TestIDs >}}
 {{< /tab >}}
 {{< /tabs >}}
-
-{{< /notice >}}
-

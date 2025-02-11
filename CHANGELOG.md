@@ -4,6 +4,10 @@
 
 * Avoids heap allocations in generic `MapX` by using arrays for IDs (#478)
 
+### Documentation
+
+* Migrates the user guide to the [Hextra](https://imfing.github.io/hextra/) theme (#488)
+
 ## [[v0.15.2]](https://github.com/mlange-42/arche/compare/v0.15.1...v0.15.2)
 
 ### Performance

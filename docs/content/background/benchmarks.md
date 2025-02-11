@@ -1,5 +1,6 @@
 +++
 title = 'Benchmarks'
+type = 'docs'
 weight = 60
 description = 'An overview of the runtime cost of typical Arche operations.'
 +++
@@ -20,6 +21,4 @@ They always reflect the latest development state of Arche.
 For a benchmark comparison with other ECS implementations,
 see the [go-ecs-benchmarks](https://github.com/mlange-42/go-ecs-benchmarks) repository.
 
-{{< toc >}}
-
-{{< include file="/background/_benchmarks.md" >}}
+{{% include "/generated/_benchmarks.md" %}}
