@@ -4,7 +4,7 @@ html {
 }
 
 .content p,
-.content a,
+.content :not(h1, h2, h3) a,
 .content li,
 .content table,
 .content button {

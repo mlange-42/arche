@@ -6,7 +6,7 @@
 
 ### Documentation
 
-* Migrates the user guide to the [Hextra](https://imfing.github.io/hextra/) theme (#488)
+* Migrates the user guide to the [Hextra](https://imfing.github.io/hextra/) theme (#488, #489)
 
 ## [[v0.15.2]](https://github.com/mlange-42/arche/compare/v0.15.1...v0.15.2)
 
