@@ -132,6 +132,10 @@ nav .hx-pt-6 {
   border-radius: 0.5rem;
 }
 
+.hextra-code-block pre:is(html[class~="dark"] *) {
+  background-color: hsl(var(--primary-hue) var(--primary-saturation) calc(var(--primary-lightness) + calc(calc(100% - var(--primary-lightness)) / 50) * 27) / 0.07);
+}
+
 .hextra-code-block pre {
   font-size: 1.0em;
 }
