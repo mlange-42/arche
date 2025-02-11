@@ -127,6 +127,33 @@ nav .hx-pt-6 {
   width: 100%;
 }
 
+/* boxes */
+.dark\:hx-text-green-200:is(html[class~="dark"] *) {
+  --tw-text-opacity: 1;
+  color: rgb(243 244 246 / var(--tw-text-opacity));
+  background-color: rgba(20, 83, 45, 0.2);
+  border-width: 2px;
+}
+
+.dark\:hx-text-indigo-200:is(html[class~="dark"] *) {
+  --tw-text-opacity: 1;
+  color: rgb(243 244 246 / var(--tw-text-opacity));
+  background-color: rgb(49 46 129 / 0.2);
+  border-width: 2px;
+}
+
+.dark\:hx-text-indigo-200>p,
+.hx-text-indigo-200>p {
+  font-weight: 400;
+  border-bottom: 2px solid rgb(199 210 254 / 0.3);
+}
+
+.dark\:hx-text-green-200>p,
+.hx-text-green-200>p {
+  font-weight: 400;
+  border-bottom: 2px solid rgb(187 247 208 / 0.3);
+}
+
 /* code blocks */
 .hextra-code-block pre:not(.lntable pre) {
   border-radius: 0.5rem;
