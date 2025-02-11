@@ -1,6 +1,7 @@
 +++
 title = 'Arche'
-type = "docs"
+type = 'docs'
+description = 'Arche is an archetype-based Entity Component System (ECS) for Go.'
 +++
 {{< html >}}
 <img src="images/logo-light.svg" alt="Arche" class="light" style="width: 100%; max-width: 680px; margin:24px auto 36px auto;"/>
