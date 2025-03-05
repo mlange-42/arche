@@ -1,6 +1,6 @@
 module github.com/mlange-42/arche/benchmark
 
-go 1.23
+go 1.24
 
 require (
 	github.com/mlange-42/arche v0.14.5
