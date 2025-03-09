@@ -26,6 +26,14 @@
 * No dependencies. Except for unit tests (100% [test coverage](https://coveralls.io/github/mlange-42/arche)).
 * World serialization and deserialization with [arche-serde](https://github.com/mlange-42/arche-serde).
 
+> [!IMPORTANT]
+> Arche has a successor: [Ark](https://github.com/mlange-42/ark).
+>  - If you are new here, use [Ark](https://github.com/mlange-42/ark).
+>  - If you use Arche's generic API, consider migrating to [Ark](https://github.com/mlange-42/ark). It will be easy.
+>  - If you use Arche's ID-based API, stay with Arche.
+> 
+> Arche will still be maintained further.
+
 ## Installation
 
 To use *Arche* in a Go project, run:

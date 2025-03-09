@@ -49,6 +49,14 @@ description = 'Arche is an archetype-based Entity Component System (ECS) for Go.
 
 For more information, see the [GitHub repository](https://github.com/mlange-42/arche) and [API docs](https://pkg.go.dev/github.com/mlange-42/arche).
 
+> [!IMPORTANT]
+> Arche has a successor: [Ark](https://github.com/mlange-42/ark).
+>  - If you are new here, use [Ark](https://github.com/mlange-42/ark).
+>  - If you use Arche's generic API, consider migrating to [Ark](https://github.com/mlange-42/ark). It will be easy.
+>  - If you use Arche's ID-based API, stay with Arche.
+> 
+> Arche will still be maintained further.
+
 ## Cite as
 
 Lange, M. (2023): Arche &ndash; An archetype-based Entity Component System for Go. DOI [10.5281/zenodo.7656484](https://doi.org/10.5281/zenodo.7656484),  GitHub repository: https://github.com/mlange-42/arche
