@@ -21,8 +21,6 @@ func benchesWorld() []benchmark.Benchmark {
 }
 
 func worldGet_1000(b *testing.B) {
-	b.StopTimer()
-
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
@@ -35,20 +33,16 @@ func worldGet_1000(b *testing.B) {
 	rand.Shuffle(len(entities), func(i, j int) { entities[i], entities[j] = entities[j], entities[i] })
 
 	var comp *comp1
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, e := range entities {
 			comp = (*comp1)(w.Get(e, id1))
 		}
 	}
-	b.StopTimer()
 	v := comp.V * comp.V
 	_ = v
 }
 
 func worldGetUnchecked_1000(b *testing.B) {
-	b.StopTimer()
-
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
@@ -61,20 +55,16 @@ func worldGetUnchecked_1000(b *testing.B) {
 	rand.Shuffle(len(entities), func(i, j int) { entities[i], entities[j] = entities[j], entities[i] })
 
 	var comp *comp1
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, e := range entities {
 			comp = (*comp1)(w.GetUnchecked(e, id1))
 		}
 	}
-	b.StopTimer()
 	v := comp.V * comp.V
 	_ = v
 }
 
 func worldHas_1000(b *testing.B) {
-	b.StopTimer()
-
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
@@ -87,20 +77,15 @@ func worldHas_1000(b *testing.B) {
 	rand.Shuffle(len(entities), func(i, j int) { entities[i], entities[j] = entities[j], entities[i] })
 
 	var has bool
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, e := range entities {
 			has = w.Has(e, id1)
 		}
 	}
-	b.StopTimer()
-	v := !has
-	_ = v
+	_ = has
 }
 
 func worldHasUnchecked_1000(b *testing.B) {
-	b.StopTimer()
-
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
@@ -113,20 +98,15 @@ func worldHasUnchecked_1000(b *testing.B) {
 	rand.Shuffle(len(entities), func(i, j int) { entities[i], entities[j] = entities[j], entities[i] })
 
 	var has bool
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, e := range entities {
 			has = w.HasUnchecked(e, id1)
 		}
 	}
-	b.StopTimer()
-	v := !has
-	_ = v
+	_ = has
 }
 
 func worldAlive_1000(b *testing.B) {
-	b.StopTimer()
-
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 
@@ -139,20 +119,15 @@ func worldAlive_1000(b *testing.B) {
 	rand.Shuffle(len(entities), func(i, j int) { entities[i], entities[j] = entities[j], entities[i] })
 
 	var has bool
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, e := range entities {
 			has = w.Alive(e)
 		}
 	}
-	b.StopTimer()
-	v := !has
-	_ = v
+	_ = has
 }
 
 func worldRelation_1000(b *testing.B) {
-	b.StopTimer()
-
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[relComp1](&w)
 	parent := w.NewEntity()
@@ -167,20 +142,15 @@ func worldRelation_1000(b *testing.B) {
 
 	var par ecs.Entity
 	rel := w.Relations()
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, e := range entities {
 			par = rel.Get(e, id1)
 		}
 	}
-	b.StopTimer()
-	v := par.IsZero()
-	_ = v
+	_ = par
 }
 
 func worldRelationUnchecked_1000(b *testing.B) {
-	b.StopTimer()
-
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[relComp1](&w)
 	parent := w.NewEntity()
@@ -195,13 +165,10 @@ func worldRelationUnchecked_1000(b *testing.B) {
 
 	var par ecs.Entity
 	rel := w.Relations()
-	b.StartTimer()
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, e := range entities {
 			par = rel.GetUnchecked(e, id1)
 		}
 	}
-	b.StopTimer()
-	v := par.IsZero()
-	_ = v
+	_ = par
 }

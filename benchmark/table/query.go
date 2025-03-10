@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"math/rand"
 	"testing"
 
@@ -36,11 +35,8 @@ func queryIter_100_000(b *testing.B) {
 	builder.NewBatch(100_000)
 	filter := ecs.All()
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
+	for b.Loop() {
 		query := w.Query(&filter)
-		b.StartTimer()
 		for query.Next() {
 		}
 	}
@@ -56,18 +52,13 @@ func queryIterGet_1_100_000(b *testing.B) {
 
 	var c1 *comp1
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
+	for b.Loop() {
 		query := w.Query(&filter)
-		b.StartTimer()
 		for query.Next() {
 			c1 = (*comp1)(query.Get(id1))
 		}
 	}
-	b.StopTimer()
-	sum := c1.V
-	_ = sum
+	_ = c1
 }
 
 func queryIterGet_2_100_000(b *testing.B) {
@@ -82,17 +73,13 @@ func queryIterGet_2_100_000(b *testing.B) {
 	var c1 *comp1
 	var c2 *comp2
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
+	for b.Loop() {
 		query := w.Query(&filter)
-		b.StartTimer()
 		for query.Next() {
 			c1 = (*comp1)(query.Get(id1))
 			c2 = (*comp2)(query.Get(id2))
 		}
 	}
-	b.StopTimer()
 	sum := c1.V + c2.V
 	_ = sum
 }
@@ -115,11 +102,8 @@ func queryIterGet_5_100_000(b *testing.B) {
 	var c4 *comp4
 	var c5 *comp5
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
+	for b.Loop() {
 		query := w.Query(&filter)
-		b.StartTimer()
 		for query.Next() {
 			c1 = (*comp1)(query.Get(id1))
 			c2 = (*comp2)(query.Get(id2))
@@ -128,7 +112,6 @@ func queryIterGet_5_100_000(b *testing.B) {
 			c5 = (*comp5)(query.Get(id5))
 		}
 	}
-	b.StopTimer()
 	sum := c1.V + c2.V + c3.V + c4.V + c5.V
 	_ = sum
 }
@@ -142,20 +125,14 @@ func queryIterEntity_100_000(b *testing.B) {
 	filter := ecs.All(id1)
 
 	var e ecs.Entity
-	var s string
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
+	for b.Loop() {
 		query := w.Query(&filter)
-		b.StartTimer()
 		for query.Next() {
 			e = query.Entity()
 		}
-		b.StopTimer()
-		s = fmt.Sprint(e)
 	}
-	_ = s
+	_ = e
 }
 
 func queryRelation_100_000(b *testing.B) {
@@ -169,22 +146,16 @@ func queryRelation_100_000(b *testing.B) {
 
 	var par ecs.Entity
 
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		b.StopTimer()
+	for b.Loop() {
 		query := w.Query(&filter)
-		b.StartTimer()
 		for query.Next() {
 			par = query.Relation(id1)
 		}
 	}
-	b.StopTimer()
-	sum := par.IsZero()
-	_ = sum
+	_ = par
 }
 
 func queryEntityAt_1Arch_1000(b *testing.B) {
-	b.StopTimer()
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	builder := ecs.NewBuilder(&w, id1)
@@ -197,9 +168,8 @@ func queryEntityAt_1Arch_1000(b *testing.B) {
 
 	filter := ecs.All(id1)
 	query := w.Query(&filter)
-	b.StartTimer()
 	var e ecs.Entity
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, idx := range indices {
 			e = query.EntityAt(idx)
 		}
@@ -208,7 +178,6 @@ func queryEntityAt_1Arch_1000(b *testing.B) {
 }
 
 func queryEntityAtRegistered_1Arch_1000(b *testing.B) {
-	b.StopTimer()
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	builder := ecs.NewBuilder(&w, id1)
@@ -224,9 +193,8 @@ func queryEntityAtRegistered_1Arch_1000(b *testing.B) {
 	filter := w.Cache().Register(f)
 
 	query := w.Query(&filter)
-	b.StartTimer()
 	var e ecs.Entity
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, idx := range indices {
 			e = query.EntityAt(idx)
 		}
@@ -235,7 +203,6 @@ func queryEntityAtRegistered_1Arch_1000(b *testing.B) {
 }
 
 func queryEntityAt_5Arch_1000(b *testing.B) {
-	b.StopTimer()
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
@@ -262,9 +229,8 @@ func queryEntityAt_5Arch_1000(b *testing.B) {
 
 	filter := ecs.All(id1)
 	query := w.Query(&filter)
-	b.StartTimer()
 	var e ecs.Entity
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, idx := range indices {
 			e = query.EntityAt(idx)
 		}
@@ -273,7 +239,6 @@ func queryEntityAt_5Arch_1000(b *testing.B) {
 }
 
 func queryEntityAtRegistered_5Arch_1000(b *testing.B) {
-	b.StopTimer()
 	w := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&w)
 	id2 := ecs.ComponentID[comp2](&w)
@@ -301,9 +266,8 @@ func queryEntityAtRegistered_5Arch_1000(b *testing.B) {
 	filter := w.Cache().Register(f)
 
 	query := w.Query(&filter)
-	b.StartTimer()
 	var e ecs.Entity
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		for _, idx := range indices {
 			e = query.EntityAt(idx)
 		}
@@ -312,7 +276,6 @@ func queryEntityAtRegistered_5Arch_1000(b *testing.B) {
 }
 
 func queryCreate(b *testing.B) {
-	b.StopTimer()
 
 	world := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&world)
@@ -320,16 +283,14 @@ func queryCreate(b *testing.B) {
 	builder.NewBatch(100)
 
 	filter := ecs.All(id1)
-	b.StartTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		query := world.Query(&filter)
 		query.Close()
 	}
 }
 
 func queryCreateCached(b *testing.B) {
-	b.StopTimer()
 
 	world := ecs.NewWorld()
 	id1 := ecs.ComponentID[comp1](&world)
@@ -338,9 +299,8 @@ func queryCreateCached(b *testing.B) {
 
 	f := ecs.All(id1)
 	filter := world.Cache().Register(f)
-	b.StartTimer()
 
-	for i := 0; i < b.N; i++ {
+	for b.Loop() {
 		query := world.Query(&filter)
 		query.Close()
 	}

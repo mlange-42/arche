@@ -326,3 +326,22 @@ func BenchmarkIterQueryGeneric_5C_10_000(b *testing.B) {
 func BenchmarkIterQueryGeneric_5C_100_000(b *testing.B) {
 	runQueryGeneric5C(b, 100000)
 }
+
+func BenchmarkPosVel(b *testing.B) {
+	count := 100000
+	world := ecs.NewWorld(1024)
+
+	mapper := generic.NewMap2[c.PositionF, c.VelocityF](&world)
+	mapper.NewBatch(count)
+
+	query := generic.NewFilter2[c.PositionF, c.VelocityF]()
+
+	for b.Loop() {
+		q := query.Query(&world)
+		for q.Next() {
+			pos, vel := q.Get()
+			pos.X += vel.X
+			pos.Y += vel.Y
+		}
+	}
+}
