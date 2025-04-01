@@ -31,9 +31,6 @@ description = 'Arche is an archetype-based Entity Component System (ECS) for Go.
 
 <a href="https://github.com/mlange-42/arche/blob/main/LICENSE" style="display:inline-block">
 <img alt="MIT license" src="https://img.shields.io/badge/MIT-brightgreen?label=license" style="margin:0;"></img></a>
-
-<a href="https://github.com/avelino/awesome-go" style="display:inline-block">
-<img alt="Mentioned in Awesome Go" src="https://awesome.re/mentioned-badge.svg" style="margin:0;"></img></a>
 </div>
 {{< /html >}}
 
