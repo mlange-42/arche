@@ -7,6 +7,16 @@ type Position struct {
 	Y int
 }
 
+type PositionF struct {
+	X float64
+	Y float64
+}
+
+type VelocityF struct {
+	X float64
+	Y float64
+}
+
 type Rotation struct {
 	Angle int
 }
